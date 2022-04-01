@@ -16,12 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.encrypt;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
@@ -90,6 +98,15 @@ public class GordianEncryptorAlgId {
      * @return the Identifier
      */
     public AlgorithmIdentifier getIdentifierForSpec(final GordianEncryptorSpec pSpec) {
+        /* Handle Composite keyPairs specially */
+        if (pSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            final Iterator<GordianEncryptorSpec> myIterator = pSpec.encryptorSpecIterator();
+            final ASN1EncodableVector ks = new ASN1EncodableVector();
+            while (myIterator.hasNext()) {
+                ks.add(getIdentifierForSpec(myIterator.next()));
+            }
+            return new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite, new DERSequence(ks));
+        }
         return theSpecMap.get(pSpec);
     }
 
@@ -100,6 +117,16 @@ public class GordianEncryptorAlgId {
      * @return the encryptorSpec (or null if not found)
      */
     public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        /* Handle Composite keyPairs specially */
+        if (MiscObjectIdentifiers.id_alg_composite.equals(pIdentifier.getAlgorithm())) {
+            final List<GordianEncryptorSpec> myList = new ArrayList<>();
+            final ASN1Sequence myAlgs = ASN1Sequence.getInstance(pIdentifier.getParameters());
+            final Enumeration<?> en = myAlgs.getObjects();
+            while (en.hasMoreElements()) {
+                myList.add(getSpecForIdentifier(AlgorithmIdentifier.getInstance(en.nextElement())));
+            }
+            return GordianEncryptorSpec.composite(myList);
+        }
         return theIdentifierMap.get(pIdentifier);
     }
 

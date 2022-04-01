@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Asymmetric KeyPair Specification.
  */
-public final class GordianKeyPairSpec {
+public class GordianKeyPairSpec {
     /**
      * The Separator.
      */
@@ -231,15 +233,6 @@ public final class GordianKeyPairSpec {
     }
 
     /**
-     * Create qTESLAKey.
-     * @param pKeyType the keyType
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec qTESLA(final GordianQTESLAKeyType pKeyType) {
-        return new GordianKeyPairSpec(GordianKeyPairType.QTESLA, pKeyType);
-    }
-
-    /**
      * Create lmsKey.
      * @param pKeySpec the keySpec
      * @return the KeySpec
@@ -257,6 +250,60 @@ public final class GordianKeyPairSpec {
     public static GordianKeyPairSpec hss(final GordianLMSKeySpec pKeySpec,
                                          final int pDepth) {
         return new GordianKeyPairSpec(GordianKeyPairType.LMS, new GordianHSSKeySpec(pKeySpec, pDepth));
+    }
+
+    /**
+     * Create SPHINCSPlusKey.
+     * @param pSpec the SPHINCSPlus Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec sphincsPlus(final GordianSPHINCSPlusSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.SPHINCSPLUS, pSpec);
+    }
+
+    /**
+     * Create CMCEKey.
+     * @param pSpec the CMCE Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec cmce(final GordianCMCESpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.CMCE, pSpec);
+    }
+
+    /**
+     * Create FRODOKey.
+     * @param pSpec the FRODO Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec frodo(final GordianFRODOSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.FRODO, pSpec);
+    }
+
+    /**
+     * Create SABERKey.
+     * @param pSpec the SABER Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec saber(final GordianSABERSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.SABER, pSpec);
+    }
+
+    /**
+     * Create CompositeKey.
+     * @param pSpecs the list of keySpecs
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec composite(final GordianKeyPairSpec... pSpecs) {
+        return composite(Arrays.asList(pSpecs));
+    }
+
+    /**
+     * Create CompositeKey.
+     * @param pSpecs the list of keySpecs
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec composite(final List<GordianKeyPairSpec> pSpecs) {
+        return new GordianKeyPairSpec(GordianKeyPairType.COMPOSITE, pSpecs);
     }
 
     /**
@@ -288,9 +335,10 @@ public final class GordianKeyPairSpec {
      * @return the modulus.
      */
     public GordianRSAModulus getRSAModulus() {
-        return theSubKeyType instanceof GordianRSAModulus
-               ? (GordianRSAModulus) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianRSAModulus)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianRSAModulus) theSubKeyType;
     }
 
     /**
@@ -298,9 +346,10 @@ public final class GordianKeyPairSpec {
      * @return the keyType.
      */
     public GordianDSAKeyType getDSAKeyType() {
-        return theSubKeyType instanceof GordianDSAKeyType
-               ? (GordianDSAKeyType) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianDSAKeyType)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianDSAKeyType) theSubKeyType;
     }
 
     /**
@@ -308,9 +357,10 @@ public final class GordianKeyPairSpec {
      * @return the dhGroup.
      */
     public GordianDHGroup getDHGroup() {
-        return theSubKeyType instanceof GordianDHGroup
-               ? (GordianDHGroup) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianDHGroup)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianDHGroup) theSubKeyType;
     }
 
     /**
@@ -318,9 +368,10 @@ public final class GordianKeyPairSpec {
      * @return the curve.
      */
     public GordianElliptic getElliptic() {
-        return theSubKeyType instanceof GordianElliptic
-               ? (GordianElliptic) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianElliptic)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianElliptic) theSubKeyType;
     }
 
     /**
@@ -328,9 +379,10 @@ public final class GordianKeyPairSpec {
      * @return the curve.
      */
     public GordianEdwardsElliptic getEdwardsElliptic() {
-        return theSubKeyType instanceof GordianEdwardsElliptic
-               ? (GordianEdwardsElliptic) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianEdwardsElliptic)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianEdwardsElliptic) theSubKeyType;
     }
 
     /**
@@ -338,9 +390,10 @@ public final class GordianKeyPairSpec {
      * @return the digestType.
      */
     public GordianSPHINCSDigestType getSPHINCSDigestType() {
-        return theSubKeyType instanceof GordianSPHINCSDigestType
-               ? (GordianSPHINCSDigestType) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianSPHINCSDigestType)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianSPHINCSDigestType) theSubKeyType;
     }
 
     /**
@@ -348,9 +401,10 @@ public final class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianMcElieceKeySpec getMcElieceKeySpec() {
-        return theSubKeyType instanceof GordianMcElieceKeySpec
-               ? (GordianMcElieceKeySpec) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianMcElieceKeySpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianMcElieceKeySpec) theSubKeyType;
     }
 
     /**
@@ -358,9 +412,10 @@ public final class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianLMSKeySpec getLMSKeySpec() {
-        return theSubKeyType instanceof GordianLMSKeySpec
-               ? (GordianLMSKeySpec) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianLMSKeySpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianLMSKeySpec) theSubKeyType;
     }
 
     /**
@@ -368,9 +423,10 @@ public final class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianHSSKeySpec getHSSKeySpec() {
-        return theSubKeyType instanceof GordianHSSKeySpec
-               ? (GordianHSSKeySpec) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianHSSKeySpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianHSSKeySpec) theSubKeyType;
     }
 
     /**
@@ -378,9 +434,10 @@ public final class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianXMSSKeySpec getXMSSKeySpec() {
-        return theSubKeyType instanceof GordianXMSSKeySpec
-               ? (GordianXMSSKeySpec) theSubKeyType
-               : null;
+        if (!(theSubKeyType instanceof GordianXMSSKeySpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianXMSSKeySpec) theSubKeyType;
     }
 
     /**
@@ -388,29 +445,62 @@ public final class GordianKeyPairSpec {
      * @return the digestType.
      */
     public GordianXMSSDigestType getXMSSDigestType() {
-        return theSubKeyType instanceof GordianXMSSKeySpec
-               ? ((GordianXMSSKeySpec) theSubKeyType).getDigestType()
-               : null;
+        return getXMSSKeySpec().getDigestType();
     }
 
     /**
-     * Obtain the qTESLA keyType.
-     * @return the keyType.
+     * Obtain the SPHINCSPlus keySpec.
+     * @return the keySpec.
      */
-    public GordianQTESLAKeyType getQTESLAKeyType() {
-        return theSubKeyType instanceof GordianQTESLAKeyType
-               ? (GordianQTESLAKeyType) theSubKeyType
-               : null;
+    public GordianSPHINCSPlusSpec getSPHINCSPlusKeySpec() {
+        if (!(theSubKeyType instanceof GordianSPHINCSPlusSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianSPHINCSPlusSpec) theSubKeyType;
     }
 
     /**
-     * Obtain the qTESLA category.
-     * @return the category.
+     * Obtain the CMCE keySpec.
+     * @return the keySpec.
      */
-    public int getQTESLACategory() {
-        return theSubKeyType instanceof GordianQTESLAKeyType
-               ? ((GordianQTESLAKeyType) theSubKeyType).getCategory()
-               : -1;
+    public GordianCMCESpec getCMCEKeySpec() {
+        if (!(theSubKeyType instanceof GordianCMCESpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianCMCESpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the FRODO keySpec.
+     * @return the keySpec.
+     */
+    public GordianFRODOSpec getFRODOKeySpec() {
+        if (!(theSubKeyType instanceof GordianFRODOSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianFRODOSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Saber keySpec.
+     * @return the keySpec.
+     */
+    public GordianSABERSpec getSABERKeySpec() {
+        if (!(theSubKeyType instanceof GordianSABERSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianSABERSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the composite keySpec iterator.
+     * @return the keySpec iterator.
+     */
+    public Iterator<GordianKeyPairSpec> keySpecIterator() {
+        if (!(theSubKeyType instanceof List)) {
+            throw new IllegalArgumentException();
+        }
+        return ((List<GordianKeyPairSpec>) theSubKeyType).iterator();
     }
 
     @Override
@@ -447,6 +537,14 @@ public final class GordianKeyPairSpec {
                     break;
                 case XDH:
                     theName = "X" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
+                    break;
+                case COMPOSITE:
+                    final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
+                    final StringBuilder myBuilder = new StringBuilder(theName);
+                    while (myIterator.hasNext()) {
+                        myBuilder.append(SEP).append(myIterator.next().toString());
+                    }
+                    theName = myBuilder.toString();
                     break;
                 default:
                     theName += SEP + theSubKeyType.toString();
@@ -526,8 +624,14 @@ public final class GordianKeyPairSpec {
             case XMSS:
                 return theSubKeyType instanceof GordianXMSSKeySpec
                         && ((GordianXMSSKeySpec) theSubKeyType).isValid();
-            case QTESLA:
-                return theSubKeyType instanceof GordianQTESLAKeyType;
+            case SPHINCSPLUS:
+                return theSubKeyType instanceof GordianSPHINCSPlusSpec;
+            case CMCE:
+                return theSubKeyType instanceof GordianCMCESpec;
+            case FRODO:
+                return theSubKeyType instanceof GordianFRODOSpec;
+            case SABER:
+                return theSubKeyType instanceof GordianSABERSpec;
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
                          && ((GordianLMSKeySpec) theSubKeyType).isValid())
@@ -539,9 +643,33 @@ public final class GordianKeyPairSpec {
             case RAINBOW:
             case NEWHOPE:
                 return theSubKeyType == null;
+            case COMPOSITE:
+                return theSubKeyType instanceof List && checkComposite();
             default:
                 return false;
         }
+    }
+
+    /**
+     * Check composite spec validity.
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+        final List<GordianKeyPairType> myExisting = new ArrayList<>();
+        final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
+        while (myIterator.hasNext()) {
+            /* Check that we have not got a duplicate */
+            final GordianKeyPairSpec mySpec = myIterator.next();
+            if (mySpec == null) {
+                return false;
+            }
+            final GordianKeyPairType myType = mySpec.getKeyPairType();
+            if (myExisting.contains(myType)) {
+                return false;
+            }
+            myExisting.add(myType);
+        }
+        return myExisting.size() > 1;
     }
 
     /**
@@ -590,9 +718,6 @@ public final class GordianKeyPairSpec {
         /* Add NewHope */
         mySpecs.add(GordianKeyPairSpec.newHope());
 
-        /* Add qTESLA */
-        EnumSet.allOf(GordianQTESLAKeyType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.qTESLA(t)));
-
         /* Add SPHINCS */
         EnumSet.allOf(GordianSPHINCSDigestType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincs(t)));
 
@@ -609,6 +734,12 @@ public final class GordianKeyPairSpec {
                 mySpecs.add(GordianKeyPairSpec.hss(t, i));
             }
         });
+
+        /* Add SPHINCSPlus/CMCE/Frodo/Saber */
+        EnumSet.allOf(GordianSPHINCSPlusSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincsPlus(t)));
+        EnumSet.allOf(GordianCMCESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.cmce(t)));
+        EnumSet.allOf(GordianFRODOSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.frodo(t)));
+        EnumSet.allOf(GordianSABERSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.saber(t)));
 
         /* Return the list */
         return mySpecs;

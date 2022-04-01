@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,15 +35,7 @@ public interface GordianSignatureFactory {
      * @return the signer
      * @throws OceanusException on error
      */
-    GordianKeyPairSignature createKeyPairSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
-
-    /**
-     * create keyPairSetSigner.
-     * @param pKeyPairSetSpec the keyPairSetSpec
-     * @return the encryptor
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSetSignature createKeyPairSetSigner(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
+    GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
      * Obtain predicate for signatures.

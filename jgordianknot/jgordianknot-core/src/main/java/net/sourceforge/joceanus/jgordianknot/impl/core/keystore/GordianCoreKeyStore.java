@@ -33,20 +33,15 @@ import org.bouncycastle.asn1.x500.X500Name;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSetCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -54,16 +49,12 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairCertificate;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSetCertificate;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreCertificate;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateHolder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElementBase;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairSetCertificateElement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairSetElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -102,12 +93,12 @@ public class GordianCoreKeyStore
     /**
      * The map of certificates by Subject.
      */
-    private final Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate<?>>> theSubjectCerts;
+    private final Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate>> theSubjectCerts;
 
     /**
      * The map of certificates by Issuer.
      */
-    private final Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate<?>>> theIssuerCerts;
+    private final Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate>> theIssuerCerts;
 
     /**
      * The aliases.
@@ -151,7 +142,7 @@ public class GordianCoreKeyStore
      * Obtain the subjectMapOfMaps.
      * @return the map
      */
-    Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate<?>>> getSubjectMapOfMaps() {
+    Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate>> getSubjectMapOfMaps() {
         return theSubjectCerts;
     }
 
@@ -159,7 +150,7 @@ public class GordianCoreKeyStore
      * Obtain the issuerMapofMaps.
      * @return the map
      */
-    private Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate<?>>> getIssuerMapOfMaps() {
+    private Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate>> getIssuerMapOfMaps() {
         return theIssuerCerts;
     }
 
@@ -176,29 +167,9 @@ public class GordianCoreKeyStore
      * @param pKey the key of the certificate
      * @return the certificate
      */
-    GordianCertificate<?> getCertificate(final GordianKeyStoreCertificateKey pKey) {
-        final Map<GordianCertificateId, GordianCertificate<?>> myCertMap = theSubjectCerts.get(pKey.getSubject());
+    GordianCertificate getCertificate(final GordianKeyStoreCertificateKey pKey) {
+        final Map<GordianCertificateId, GordianCertificate> myCertMap = theSubjectCerts.get(pKey.getSubject());
         return myCertMap == null ? null : myCertMap.get(pKey.getIssuer());
-    }
-
-    /**
-     * Obtain the certificate.
-     * @param pKey the key of the certificate
-     * @return the certificate
-     */
-    GordianKeyPairCertificate getKeyPairCertificate(final GordianKeyStoreCertificateKey pKey) {
-        final GordianCertificate<?> myCert = getCertificate(pKey);
-        return myCert instanceof GordianKeyPairCertificate ? (GordianKeyPairCertificate) myCert : null;
-    }
-
-    /**
-     * Obtain the certificate.
-     * @param pKey the key of the certificate
-     * @return the certificate
-     */
-    GordianKeyPairSetCertificate getKeyPairSetCertificate(final GordianKeyStoreCertificateKey pKey) {
-        final GordianCertificate<?> myCert = getCertificate(pKey);
-        return myCert instanceof GordianKeyPairSetCertificate ? (GordianKeyPairSetCertificate) myCert : null;
     }
 
     @Override
@@ -228,7 +199,7 @@ public class GordianCoreKeyStore
 
         /* Access the certificate */
         final GordianKeyStoreCertificateHolder myCertHolder = (GordianKeyStoreCertificateHolder) myEntry;
-        final GordianCertificate<?> myCert = getCertificate(myCertHolder.getCertificateKey());
+        final GordianCertificate myCert = getCertificate(myCertHolder.getCertificateKey());
 
         /* If the certificate is not referenced by any other alias */
         if (getCertificateAlias(myCert) == null) {
@@ -241,13 +212,13 @@ public class GordianCoreKeyStore
      * Remove certificate from maps.
      * @param pCertificate the certificate to remove
      */
-    private void removeCertificate(final GordianCertificate<?> pCertificate) {
+    private void removeCertificate(final GordianCertificate pCertificate) {
         /* Access the ids of the certificate */
         final GordianCertificateId mySubjectId = pCertificate.getSubject();
         final GordianCertificateId myIssuerId = pCertificate.getIssuer();
 
         /* If it is not referenced as issuer by any other certificate */
-        Map<GordianCertificateId, GordianCertificate<?>> myIssuedMap = theIssuerCerts.get(mySubjectId);
+        Map<GordianCertificateId, GordianCertificate> myIssuedMap = theIssuerCerts.get(mySubjectId);
         if (isWithoutIssue(myIssuedMap)) {
             /* If the certificate is not self-signed */
             if (!pCertificate.isSelfSigned()) {
@@ -263,7 +234,7 @@ public class GordianCoreKeyStore
             }
 
             /* Remove the certificate from the subject map */
-            final Map<GordianCertificateId, GordianCertificate<?>> myCertMap = theSubjectCerts.get(mySubjectId);
+            final Map<GordianCertificateId, GordianCertificate> myCertMap = theSubjectCerts.get(mySubjectId);
             myCertMap.remove(myIssuerId);
             if (myCertMap.isEmpty()) {
                 theSubjectCerts.remove(mySubjectId);
@@ -276,7 +247,7 @@ public class GordianCoreKeyStore
      * @param pIssuer the issuer Map
      * @return true/false
      */
-    private static boolean isWithoutIssue(final Map<GordianCertificateId, GordianCertificate<?>> pIssuer) {
+    private static boolean isWithoutIssue(final Map<GordianCertificateId, GordianCertificate> pIssuer) {
         /* If the map is null or empty then there are no children */
         if (pIssuer == null || pIssuer.isEmpty()) {
             return true;
@@ -285,7 +256,7 @@ public class GordianCoreKeyStore
         /* If there is only one certificate in the map */
         if (pIssuer.size() == 1) {
             /* If the single certificate is self-signed then we are childless */
-            final GordianCertificate<?> myCert = pIssuer.values().iterator().next();
+            final GordianCertificate myCert = pIssuer.values().iterator().next();
             return myCert.isSelfSigned();
         }
 
@@ -302,10 +273,10 @@ public class GordianCoreKeyStore
         theIssuerCerts.remove(pIssuerId);
 
         /* Look for all issuers */
-        final Map<GordianCertificateId, GordianCertificate<?>> myCertMap = theSubjectCerts.get(pIssuerId);
+        final Map<GordianCertificateId, GordianCertificate> myCertMap = theSubjectCerts.get(pIssuerId);
 
         /* Loop through all the certificates */
-        for (GordianCertificate<?> myCert : myCertMap.values()) {
+        for (GordianCertificate myCert : myCertMap.values()) {
             /* If the certificate is not referenced by any other alias */
             if (getCertificateAlias(myCert) == null) {
                 /* Remove the certificate from the maps */
@@ -315,15 +286,15 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public void setKeyPairCertificate(final String pAlias,
-                                      final GordianKeyPairCertificate pCertificate) throws OceanusException {
+    public void setCertificate(final String pAlias,
+                               final GordianCertificate pCertificate) throws OceanusException {
         /* Check the alias */
         checkAlias(pAlias);
 
         /* Check that we are not about to replace a non-certificate */
         final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         if (myEntry != null
-                && !(myEntry instanceof GordianCoreKeyStorePairCertificate)) {
+                && !(myEntry instanceof GordianCoreKeyStoreCertificate)) {
             throw new GordianDataException("Alias already exists for non-certificate");
         }
 
@@ -331,31 +302,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStorePairCertificateElement myCert = new GordianKeyStorePairCertificateElement(pCertificate);
-        theAliases.put(pAlias, myCert);
-
-        /* Store certificate */
-        storeCertificate(pCertificate);
-    }
-
-    @Override
-    public void setKeyPairSetCertificate(final String pAlias,
-                                         final GordianKeyPairSetCertificate pCertificate) throws OceanusException {
-        /* Check the alias */
-        checkAlias(pAlias);
-
-        /* Check that we are not about to replace a non-certificate */
-        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
-        if (myEntry != null
-                && !(myEntry instanceof GordianCoreKeyStorePairSetCertificate)) {
-            throw new GordianDataException("Alias already exists for non-certificate");
-        }
-
-        /* Remove any existing entry */
-        deleteEntry(pAlias);
-
-        /* Set the new value */
-        final GordianKeyStorePairSetCertificateElement myCert = new GordianKeyStorePairSetCertificateElement(pCertificate);
+        final GordianKeyStoreCertificateElement myCert = new GordianKeyStoreCertificateElement(pCertificate);
         theAliases.put(pAlias, myCert);
 
         /* Store certificate */
@@ -366,7 +313,7 @@ public class GordianCoreKeyStore
     public void setKeyPair(final String pAlias,
                            final GordianKeyPair pKeyPair,
                            final char[] pPassword,
-                           final List<GordianKeyPairCertificate> pCertificateChain) throws OceanusException {
+                           final List<GordianCertificate> pCertificateChain) throws OceanusException {
         /* Check the alias */
         checkAlias(pAlias);
 
@@ -386,43 +333,14 @@ public class GordianCoreKeyStore
         theAliases.put(pAlias, myPair);
 
         /* Store all the certificates in the chain */
-        for (GordianKeyPairCertificate myCert : pCertificateChain) {
+        for (GordianCertificate myCert : pCertificateChain) {
             storeCertificate(myCert);
         }
     }
 
     @Override
-    public void setKeyPairSet(final String pAlias,
-                              final GordianKeyPairSet pKeyPairSet,
-                              final char[] pPassword,
-                              final List<GordianKeyPairSetCertificate> pCertificateChain) throws OceanusException {
-        /* Check the alias */
-        checkAlias(pAlias);
-
-        /* Make sure that the keyPair has a private key */
-        if (pKeyPairSet.isPublicOnly()) {
-            throw new GordianDataException("Private Key missing");
-        }
-
-        /* Make sure that we have a valid certificate chain */
-        checkChain(pKeyPairSet, pCertificateChain);
-
-        /* Remove any existing entry */
-        deleteEntry(pAlias);
-
-        /* Set the new value */
-        final GordianKeyStorePairSetElement myPair = new GordianKeyStorePairSetElement(theFactory, theKeySetSpec, pKeyPairSet, pPassword, pCertificateChain);
-        theAliases.put(pAlias, myPair);
-
-        /* Store all the certificates in the chain */
-        for (GordianKeyPairSetCertificate myCert : pCertificateChain) {
-            storeCertificate(myCert);
-        }
-    }
-
-    @Override
-    public void updateKeyPairCertificateChain(final String pAlias,
-                                              final List<GordianKeyPairCertificate> pCertificateChain) throws OceanusException {
+    public void updateCertificateChain(final String pAlias,
+                                       final List<GordianCertificate> pCertificateChain) throws OceanusException {
         /* Obtain the keyStore Entry */
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         if (!(myEntry instanceof GordianKeyStorePairElement)) {
@@ -431,14 +349,14 @@ public class GordianCoreKeyStore
         final GordianKeyStorePairElement myKeyPairElement = (GordianKeyStorePairElement) myEntry;
 
         /* Access old keyPair */
-        final List<GordianKeyPairCertificate> myChain = myKeyPairElement.buildChain(this);
+        final List<GordianCertificate> myChain = myKeyPairElement.buildChain(this);
         final GordianKeyPair myKeyPair = myChain.get(0).getKeyPair();
 
         /* Make sure that we have a valid certificate chain */
         checkChain(myKeyPair, pCertificateChain);
 
         /* Access old certificate */
-        final GordianCertificate<?> myOldCert = getCertificate(myKeyPairElement.getCertificateKey());
+        final GordianCertificate myOldCert = getCertificate(myKeyPairElement.getCertificateKey());
 
         /* If the certificate is not referenced by any other alias */
         if (getCertificateAlias(myOldCert) == null) {
@@ -450,42 +368,7 @@ public class GordianCoreKeyStore
         myKeyPairElement.updateChain(pCertificateChain);
 
         /* Store all the certificates in the chain */
-        for (GordianKeyPairCertificate myCert : pCertificateChain) {
-            storeCertificate(myCert);
-        }
-    }
-
-    @Override
-    public void updateKeyPairSetCertificateChain(final String pAlias,
-                                                 final List<GordianKeyPairSetCertificate> pCertificateChain) throws OceanusException {
-        /* Obtain the keyStore Entry */
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        if (!(myEntry instanceof GordianKeyStorePairSetElement)) {
-            throw new GordianDataException("Entry not found");
-        }
-        final GordianKeyStorePairSetElement myKeyPairSetElement = (GordianKeyStorePairSetElement) myEntry;
-
-        /* Access old keyPair */
-        final List<GordianKeyPairSetCertificate> myChain = myKeyPairSetElement.buildChain(this);
-        final GordianKeyPairSet myKeyPairSet = myChain.get(0).getKeyPair();
-
-        /* Make sure that we have a valid certificate chain */
-        checkChain(myKeyPairSet, pCertificateChain);
-
-        /* Access old certificate */
-        final GordianCertificate<?> myOldCert = getCertificate(myKeyPairSetElement.getCertificateKey());
-
-        /* If the certificate is not referenced by any other alias */
-        if (getCertificateAlias(myOldCert) == null) {
-            /* Remove the certificate from the maps */
-            removeCertificate(myOldCert);
-        }
-
-        /* Update the chain */
-        myKeyPairSetElement.updateChain(pCertificateChain);
-
-        /* Store all the certificates in the chain */
-        for (GordianKeyPairSetCertificate myCert : pCertificateChain) {
+        for (GordianCertificate myCert : pCertificateChain) {
             storeCertificate(myCert);
         }
     }
@@ -533,17 +416,11 @@ public class GordianCoreKeyStore
     @Override
     public <T extends GordianKeyStoreEntry> boolean entryInstanceOf(final String pAlias,
                                                                     final Class<T> pClazz) {
-        if (pClazz.isAssignableFrom(GordianKeyStorePairCertificate.class)) {
-            return isKeyPairCertificateEntry(pAlias);
-        }
-        if (pClazz.isAssignableFrom(GordianKeyStorePairSetCertificate.class)) {
-            return isKeyPairSetCertificateEntry(pAlias);
+        if (pClazz.isAssignableFrom(GordianKeyStoreCertificate.class)) {
+            return isCertificateEntry(pAlias);
         }
         if (pClazz.isAssignableFrom(GordianKeyStorePair.class)) {
             return isKeyPairEntry(pAlias);
-        }
-        if (pClazz.isAssignableFrom(GordianKeyStorePairSet.class)) {
-            return isKeyPairSetEntry(pAlias);
         }
         if (pClazz.isAssignableFrom(GordianKeyStoreKey.class)) {
             return isKeyEntry(pAlias);
@@ -555,23 +432,13 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public boolean isKeyPairCertificateEntry(final String pAlias) {
-        return theAliases.get(pAlias) instanceof GordianKeyStorePairCertificateElement;
-    }
-
-    @Override
-    public boolean isKeyPairSetCertificateEntry(final String pAlias) {
-        return theAliases.get(pAlias) instanceof GordianKeyStorePairSetCertificateElement;
+    public boolean isCertificateEntry(final String pAlias) {
+        return theAliases.get(pAlias) instanceof GordianKeyStoreCertificateElement;
     }
 
     @Override
     public boolean isKeyPairEntry(final String pAlias) {
         return theAliases.get(pAlias) instanceof GordianKeyStorePairElement;
-    }
-
-    @Override
-    public boolean isKeyPairSetEntry(final String pAlias) {
-        return theAliases.get(pAlias) instanceof GordianKeyStorePairSetElement;
     }
 
     @Override
@@ -587,17 +454,11 @@ public class GordianCoreKeyStore
     @Override
     public GordianKeyStoreEntry getEntry(final String pAlias,
                                          final char[] pPassword) throws OceanusException {
-        if (isKeyPairCertificateEntry(pAlias)) {
-            return getKeyStorePairCertificate(pAlias);
-        }
-        if (isKeyPairSetCertificateEntry(pAlias)) {
-            return getKeyStorePairSetCertificate(pAlias);
+        if (isCertificateEntry(pAlias)) {
+            return getKeyStoreCertificate(pAlias);
         }
         if (isKeyPairEntry(pAlias)) {
             return getKeyStorePair(pAlias, pPassword);
-        }
-        if (isKeyPairSetEntry(pAlias)) {
-            return getKeyStorePairSet(pAlias, pPassword);
         }
         if (isKeyEntry(pAlias)) {
             return getKeyStoreKey(pAlias, pPassword);
@@ -608,12 +469,12 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public GordianKeyPairCertificate getKeyPairCertificate(final String pAlias) {
-        final GordianKeyStorePairCertificate myCert = getKeyStorePairCertificate(pAlias);
+    public GordianCertificate getCertificate(final String pAlias) {
+        final GordianKeyStoreCertificate myCert = getKeyStoreCertificate(pAlias);
         if (myCert != null) {
             return myCert.getCertificate();
         }
-        final List<GordianKeyPairCertificate> myChain = getKeyPairCertificateChain(pAlias);
+        final List<GordianCertificate> myChain = getCertificateChain(pAlias);
         return myChain == null || myChain.isEmpty() ? null : myChain.get(0);
     }
 
@@ -622,32 +483,10 @@ public class GordianCoreKeyStore
      * @param pAlias the alias
      * @return the certificate entry (or null)
      */
-    private GordianKeyStorePairCertificate getKeyStorePairCertificate(final String pAlias) {
+    private GordianKeyStoreCertificate getKeyStoreCertificate(final String pAlias) {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStorePairCertificateElement
-                ? ((GordianKeyStorePairCertificateElement) myEntry).buildEntry(this)
-                : null;
-    }
-
-    @Override
-    public GordianKeyPairSetCertificate getKeyPairSetCertificate(final String pAlias) {
-        final GordianKeyStorePairSetCertificate myCert = getKeyStorePairSetCertificate(pAlias);
-        if (myCert != null) {
-            return myCert.getCertificate();
-        }
-        final List<GordianKeyPairSetCertificate> myChain = getKeyPairSetCertificateChain(pAlias);
-        return myChain == null || myChain.isEmpty() ? null : myChain.get(0);
-    }
-
-    /**
-     * Obtain the keyStorePairSetCertificate.
-     * @param pAlias the alias
-     * @return the certificate entry (or null)
-     */
-    private GordianKeyStorePairSetCertificate getKeyStorePairSetCertificate(final String pAlias) {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStorePairSetCertificateElement
-                ? ((GordianKeyStorePairSetCertificateElement) myEntry).buildEntry(this)
+        return myEntry instanceof GordianKeyStoreCertificateElement
+                ? ((GordianKeyStoreCertificateElement) myEntry).buildEntry(this)
                 : null;
     }
 
@@ -659,7 +498,7 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public List<GordianKeyPairCertificate> getKeyPairCertificateChain(final String pAlias) {
+    public List<GordianCertificate> getCertificateChain(final String pAlias) {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStorePairElement
                 ? ((GordianKeyStorePairElement) myEntry).buildChain(this)
@@ -677,35 +516,6 @@ public class GordianCoreKeyStore
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStorePairElement
                 ? ((GordianKeyStorePairElement) myEntry).buildEntry(this, pPassword)
-                : null;
-    }
-
-    @Override
-    public List<GordianKeyPairSetCertificate> getKeyPairSetCertificateChain(final String pAlias) {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStorePairSetElement
-                ? ((GordianKeyStorePairSetElement) myEntry).buildChain(this)
-                : null;
-    }
-
-    @Override
-    public GordianKeyPairSet getKeyPairSet(final String pAlias,
-                                           final char[] pPassword) throws OceanusException {
-        final GordianKeyStorePairSet myPairSet = getKeyStorePairSet(pAlias, pPassword);
-        return myPairSet == null ? null : myPairSet.getKeyPairSet();
-    }
-
-    /**
-     * Obtain the keyStorePairSet.
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the keyPairSet entry (or null)
-     */
-    private GordianKeyStorePairSet getKeyStorePairSet(final String pAlias,
-                                                      final char[] pPassword) throws OceanusException {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStorePairSetElement
-                ? ((GordianKeyStorePairSetElement) myEntry).buildEntry(this, pPassword)
                 : null;
     }
 
@@ -760,14 +570,14 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public String getCertificateAlias(final GordianCertificate<?> pCertificate) {
+    public String getCertificateAlias(final GordianCertificate pCertificate) {
         /* Loop through the alias entries */
         for (Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
             /* Check for match on certificate entry */
             final GordianKeyStoreEntry myEntry = myRecord.getValue();
             if (myEntry instanceof GordianKeyStoreCertificateHolder) {
                 final GordianKeyStoreCertificateKey myKey = ((GordianKeyStoreCertificateHolder) myEntry).getCertificateKey();
-                final GordianCertificate<?> myCert = getCertificate(myKey);
+                final GordianCertificate myCert = getCertificate(myKey);
                 if (pCertificate.equals(myCert)) {
                     return myRecord.getKey();
                 }
@@ -782,13 +592,13 @@ public class GordianCoreKeyStore
      * Store certificate.
      * @param pCertificate the certificate
      */
-    void storeCertificate(final GordianCertificate<?> pCertificate) {
+    void storeCertificate(final GordianCertificate pCertificate) {
         /* Access the ids */
         final GordianCertificateId mySubjectId = pCertificate.getSubject();
         final GordianCertificateId myIssuerId = pCertificate.getIssuer();
 
         /* Add the certificate to the list of certificates for this subject */
-        Map<GordianCertificateId, GordianCertificate<?>> myMap = theSubjectCerts.computeIfAbsent(mySubjectId, i -> new LinkedHashMap<>());
+        Map<GordianCertificateId, GordianCertificate> myMap = theSubjectCerts.computeIfAbsent(mySubjectId, i -> new LinkedHashMap<>());
         myMap.put(myIssuerId, pCertificate);
 
         /* Add the certificate to the list of certificates for this issuer */
@@ -803,14 +613,14 @@ public class GordianCoreKeyStore
      * @throws OceanusException on error
      */
     private void checkChain(final GordianKeyPair pKeyPair,
-                            final List<GordianKeyPairCertificate> pChain) throws OceanusException {
+                            final List<GordianCertificate> pChain) throws OceanusException {
         /* Make sure that we have a chain */
         if (pChain == null || pChain.isEmpty()) {
             throw new GordianDataException("Empty chain");
         }
 
         /* Make sure that the keyPair matches end-entity certificate */
-        final GordianCoreKeyPairCertificate myCert = (GordianCoreKeyPairCertificate) pChain.get(0);
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) pChain.get(0);
         if (!myCert.checkMatchingPublicKey(pKeyPair)) {
             throw new GordianDataException("End-entity certificate does not match keyPair");
         }
@@ -819,8 +629,8 @@ public class GordianCoreKeyStore
         final int mySize = pChain.size();
         for (int i = 0; i < mySize - 1; i++) {
             /* Access the certificate */
-            final GordianCoreKeyPairCertificate myTestCert = (GordianCoreKeyPairCertificate) pChain.get(i);
-            final GordianCoreKeyPairCertificate mySignerCert = (GordianCoreKeyPairCertificate) pChain.get(i + 1);
+            final GordianCoreCertificate myTestCert = (GordianCoreCertificate) pChain.get(i);
+            final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pChain.get(i + 1);
 
             /* Check the hierarchy */
             if (!myTestCert.validateCertificate(mySignerCert)) {
@@ -828,9 +638,9 @@ public class GordianCoreKeyStore
             }
 
             /* Look up any existing certificate for the signer */
-            final Map<GordianCertificateId, GordianCertificate<?>> myMap = theSubjectCerts.get(mySignerCert.getSubject());
+            final Map<GordianCertificateId, GordianCertificate> myMap = theSubjectCerts.get(mySignerCert.getSubject());
             if (myMap != null) {
-                final GordianCoreKeyPairCertificate myExisting = (GordianCoreKeyPairCertificate) myMap.values().iterator().next();
+                final GordianCoreCertificate myExisting = (GordianCoreCertificate) myMap.values().iterator().next();
                 if (!myExisting.checkMatchingPublicKey(mySignerCert.getKeyPair())) {
                     throw new GordianDataException("Intermediate certificate does not match existing keyPair");
                 }
@@ -838,61 +648,8 @@ public class GordianCoreKeyStore
         }
 
         /* Check that we are anchored by a root certificate */
-        final GordianKeyPairCertificate myRoot = pChain.get(mySize - 1);
-        if (!((GordianCoreKeyPairCertificate) myRoot).validateRootCertificate()) {
-            throw new GordianDataException("Invalid root certificate");
-        }
-
-        /* Check that the root is known if the depth is greater than 1 */
-        if (mySize > 1 && getCertificateAlias(myRoot) == null) {
-            throw new GordianDataException("Unknown root certificate");
-        }
-    }
-
-    /**
-     * Check validity of certificate chain.
-     * @param pKeyPairSet the keyPairSet
-     * @param pChain the certificate chain
-     * @throws OceanusException on error
-     */
-    private void checkChain(final GordianKeyPairSet pKeyPairSet,
-                            final List<GordianKeyPairSetCertificate> pChain) throws OceanusException {
-        /* Make sure that we have a chain */
-        if (pChain == null || pChain.isEmpty()) {
-            throw new GordianDataException("Empty chain");
-        }
-
-        /* Make sure that the keyPair matches end-entity certificate */
-        final GordianCoreKeyPairSetCertificate myCert = (GordianCoreKeyPairSetCertificate) pChain.get(0);
-        if (!myCert.checkMatchingPublicKey(pKeyPairSet)) {
-            throw new GordianDataException("End-entity certificate does not match keyPair");
-        }
-
-        /* Loop through the certificates */
-        final int mySize = pChain.size();
-        for (int i = 0; i < mySize - 1; i++) {
-            /* Access the certificate */
-            final GordianCoreKeyPairSetCertificate myTestCert = (GordianCoreKeyPairSetCertificate) pChain.get(i);
-            final GordianCoreKeyPairSetCertificate mySignerCert = (GordianCoreKeyPairSetCertificate) pChain.get(i + 1);
-
-            /* Check the hierarchy */
-            if (!myTestCert.validateCertificate(mySignerCert)) {
-                throw new GordianDataException("Invalid certificate in path");
-            }
-
-            /* Look up any existing certificate for the signer */
-            final Map<GordianCertificateId, GordianCertificate<?>> myMap = theSubjectCerts.get(mySignerCert.getSubject());
-            if (myMap != null) {
-                final GordianCoreKeyPairSetCertificate myExisting = (GordianCoreKeyPairSetCertificate) myMap.values().iterator().next();
-                if (!myExisting.checkMatchingPublicKey(mySignerCert.getKeyPair())) {
-                    throw new GordianDataException("Intermediate certificate does not match existing keyPair");
-                }
-            }
-        }
-
-        /* Check that we are anchored by a root certificate */
-        final GordianKeyPairSetCertificate myRoot = pChain.get(mySize - 1);
-        if (!((GordianCoreKeyPairSetCertificate) myRoot).validateRootCertificate()) {
+        final GordianCertificate myRoot = pChain.get(mySize - 1);
+        if (!((GordianCoreCertificate) myRoot).validateRootCertificate()) {
             throw new GordianDataException("Invalid root certificate");
         }
 
@@ -914,11 +671,11 @@ public class GordianCoreKeyStore
         final BigInteger mySerial = pIssuer.getSerialNumber().getValue();
         for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theAliases.entrySet()) {
             /* If this is a keyPair(Set) entry */
-            if (myEntry.getValue() instanceof GordianKeyStorePairElementBase) {
+            if (myEntry.getValue() instanceof GordianKeyStorePairElement) {
                 /* Access details */
-                final GordianKeyStorePairElementBase<?, ?> myPair = (GordianKeyStorePairElementBase<?, ?>) myEntry.getValue();
+                final GordianKeyStorePairElement myPair = (GordianKeyStorePairElement) myEntry.getValue();
                 final GordianKeyStoreCertificateKey myCertKey =  myPair.getCertificateChain().get(0);
-                final GordianCoreCertificate<?, ?> myCert = (GordianCoreCertificate<?, ?>) getCertificate(myCertKey);
+                final GordianCoreCertificate myCert = (GordianCoreCertificate) getCertificate(myCertKey);
 
                 /* Return alias if we have a match */
                 if (myIssuer.equals(myCert.getIssuer().getName())

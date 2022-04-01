@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.api.zip;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -56,14 +55,5 @@ public interface GordianLock {
      * @throws OceanusException on error
      */
     void unlock(GordianKeyPair pKeyPair,
-                char[] pPassword) throws OceanusException;
-
-    /**
-     * Unlock with keyPairSet and password.
-     * @param pKeyPairSet the keyPairSet
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void unlock(GordianKeyPairSet pKeyPairSet,
                 char[] pPassword) throws OceanusException;
 }

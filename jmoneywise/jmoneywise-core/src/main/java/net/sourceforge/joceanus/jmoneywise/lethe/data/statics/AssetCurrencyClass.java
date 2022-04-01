@@ -818,7 +818,7 @@ public enum AssetCurrencyClass implements StaticInterface {
     STD(158, 157),
 
     /**
-     * Sao Tome and Pr�ncipe Dobra (New).
+     * Sao Tome and Príncipe Dobra (New).
      */
     STN(159, 158),
 

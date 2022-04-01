@@ -37,7 +37,7 @@ import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
@@ -250,7 +250,7 @@ public final class BouncyNewHopeKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyNewHopeAgreement(final BouncyFactory pFactory,
-                               final GordianKeyPairAgreementSpec pSpec) {
+                               final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -259,7 +259,7 @@ public final class BouncyNewHopeKeyPair {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             try {
                 /* Check keyPair */
                 BouncyKeyPair.checkKeyPair(pServer);
@@ -276,7 +276,7 @@ public final class BouncyNewHopeKeyPair {
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
 
                 /* Build the clientHello Message */
-                final byte[] myClientHello = buildClientHello(myKeySpec);
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
 
                 /* Derive the secret */
                 final byte[] mySecret = myPair.getSharedValue();
@@ -291,15 +291,14 @@ public final class BouncyNewHopeKeyPair {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Obtain keySpec */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
-            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
+            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
             /* Derive ephemeral Public key */
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();

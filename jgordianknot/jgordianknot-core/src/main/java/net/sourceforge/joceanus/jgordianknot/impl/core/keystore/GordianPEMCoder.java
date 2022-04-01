@@ -30,18 +30,13 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSetCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway.GordianLockResolver;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -49,9 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairCertificate;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSet;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSetCertificate;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
@@ -75,11 +68,6 @@ public class GordianPEMCoder {
     private final GordianCoreFactory theFactory;
 
     /**
-     * The KeySetSpec.
-     */
-    private final GordianKeySetHashSpec theKeySetHashSpec;
-
-    /**
      * The Parser.
      */
     private final GordianPEMParser theParser;
@@ -96,7 +84,6 @@ public class GordianPEMCoder {
     GordianPEMCoder(final GordianCoreKeyStore pKeyStore) {
         /* Store details */
         theFactory = pKeyStore.getFactory();
-        theKeySetHashSpec = pKeyStore.getKeySetSpec();
         theParser = new GordianPEMParser();
     }
 
@@ -163,21 +150,14 @@ public class GordianPEMCoder {
     private List<GordianPEMObject> encodeKeyStoreEntry(final GordianKeyStoreEntry pEntry,
                                                        final GordianCoreLock pLock) throws OceanusException {
         /* Handle certificates */
-        if (pEntry instanceof GordianKeyStorePairCertificate) {
-             final GordianKeyPairCertificate myCert = ((GordianKeyStorePairCertificate) pEntry).getCertificate();
+        if (pEntry instanceof GordianKeyStoreCertificate) {
+             final GordianCertificate myCert = ((GordianKeyStoreCertificate) pEntry).getCertificate();
              return Collections.singletonList(encodeCertificate(myCert));
         }
-        if (pEntry instanceof GordianKeyStorePairSetCertificate) {
-            final GordianKeyPairSetCertificate myCert = ((GordianKeyStorePairSetCertificate) pEntry).getCertificate();
-            return Collections.singletonList(encodeCertificate(myCert));
-        }
 
-        /* Handle keyPair and keyPairSet */
+        /* Handle keyPair */
         if (pEntry instanceof GordianKeyStorePair) {
             return encodePrivateKeyPair((GordianKeyStorePair) pEntry, pLock);
-        }
-        if (pEntry instanceof GordianKeyStorePairSet) {
-            return encodePrivateKeyPairSet((GordianKeyStorePairSet) pEntry, pLock);
         }
 
         /* Handle keySet and key */
@@ -212,12 +192,8 @@ public class GordianPEMCoder {
              /* Decode objects */
              case PRIVATEKEY:
                  return decodeKeyPair(pObjects, pPassword);
-             case PRIVATEKEYSET:
-                 return decodeKeyPairSet(pObjects, pPassword);
-             case KEYPAIRCERT:
-                 return decodeKeyPairCertificate(pObjects);
-             case KEYPAIRSETCERT:
-                 return decodeKeyPairSetCertificate(pObjects);
+             case CERT:
+                 return decodeCertificate(pObjects);
              case KEYSET:
                  return decodeKeySet(pObjects, pPassword);
              case KEY:
@@ -253,21 +229,14 @@ public class GordianPEMCoder {
                 throw new GordianDataException("Inconsistent chain");
             }
 
-            /* switch on object type */
-            switch (myObject.getObjectType()) {
-                /* Decode objects */
-                case KEYPAIRCERT:
-                    final GordianCoreKeyPairCertificate myKeyPairCert = decodeKeyPairCertificate(myObject);
-                    myChain.add(new GordianCoreKeyStorePairCertificate(myKeyPairCert, myDate));
-                    break;
-                case KEYPAIRSETCERT:
-                    final GordianCoreKeyPairSetCertificate myKeyPairSetCert = decodeKeyPairSetCertificate(myObject);
-                    myChain.add(new GordianCoreKeyStorePairSetCertificate(myKeyPairSetCert, myDate));
-                    break;
+             /* Decode objects */
+            if (myObject.getObjectType() == GordianPEMObjectType.CERT) {
+                final GordianCoreCertificate myKeyPairCert = decodeCertificate(myObject);
+                myChain.add(new GordianCoreKeyStoreCertificate(myKeyPairCert, myDate));
 
-                    /* Unsupported entry */
-                default:
-                    throw new GordianDataException(ERROR_UNSUPPORTED);
+                /* Unsupported entry */
+            } else {
+                throw new GordianDataException(ERROR_UNSUPPORTED);
             }
         }
 
@@ -276,21 +245,12 @@ public class GordianPEMCoder {
     }
 
     /**
-     * Encode a keyPairCertificate.
+     * Encode a Certificate.
      * @param pCertificate the certificate
      * @return the encoded object.
      */
-    static GordianPEMObject encodeCertificate(final GordianKeyPairCertificate pCertificate) {
-        return new GordianPEMObject(GordianPEMObjectType.KEYPAIRCERT, pCertificate.getEncoded());
-    }
-
-    /**
-     * Encode a keyPairSetCertificate.
-     * @param pCertificate the certificate
-     * @return the encoded object.
-     */
-    static GordianPEMObject encodeCertificate(final GordianKeyPairSetCertificate pCertificate) {
-        return new GordianPEMObject(GordianPEMObjectType.KEYPAIRSETCERT, pCertificate.getEncoded());
+    static GordianPEMObject encodeCertificate(final GordianCertificate pCertificate) {
+        return new GordianPEMObject(GordianPEMObjectType.CERT, pCertificate.getEncoded());
     }
 
     /**
@@ -309,7 +269,7 @@ public class GordianPEMCoder {
         myList.add(encodePrivateKey(pKeyPair, pLock));
 
         /* Loop through the certificates */
-        for (GordianKeyPairCertificate myCert : pKeyPair.getCertificateChain()) {
+        for (GordianCertificate myCert : pKeyPair.getCertificateChain()) {
             /* Add the encoded certificate */
             myList.add(encodeCertificate(myCert));
         }
@@ -338,54 +298,6 @@ public class GordianPEMCoder {
             /* Handle exceptions */
         } catch (IOException e) {
             throw new GordianIOException("Failed to encode privateKey", e);
-        }
-    }
-
-    /**
-     * Encode a keyPairSet.
-     * @param pKeyPairSet the keyPairSet
-     * @param pLock the lock
-     * @return the encoded object.
-     * @throws OceanusException on error
-     */
-    private List<GordianPEMObject> encodePrivateKeyPairSet(final GordianKeyStorePairSet pKeyPairSet,
-                                                           final GordianCoreLock pLock) throws OceanusException {
-        /* Create the list */
-        final List<GordianPEMObject> myList = new ArrayList<>();
-
-        /* Add the private key entry */
-        myList.add(encodePrivateKeySet(pKeyPairSet, pLock));
-
-        /* Loop through the certificates */
-        for (GordianKeyPairSetCertificate myCert : pKeyPairSet.getCertificateChain()) {
-            /* Add the encoded certificate */
-            myList.add(encodeCertificate(myCert));
-        }
-
-        /* Return the list */
-        return myList;
-    }
-
-    /**
-     * Encode a privateKeySet.
-     * @param pKeyPairSet the keyPairSet
-     * @param pLock the lock
-     * @return the encoded object.
-     * @throws OceanusException on error
-     */
-    private GordianPEMObject encodePrivateKeySet(final GordianKeyStorePairSet pKeyPairSet,
-                                                 final GordianCoreLock pLock) throws OceanusException {
-        /* Protect against exception */
-        try {
-            /* Build encoded object and return it */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKey = myHash.getKeySet().securePrivateKeySet(pKeyPairSet.getKeyPairSet());
-            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKey);
-            return new GordianPEMObject(GordianPEMObjectType.PRIVATEKEYSET, myInfo.getEncoded());
-
-           /* Handle exceptions */
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to encode privateKeySet", e);
         }
     }
 
@@ -449,59 +361,31 @@ public class GordianPEMCoder {
     }
 
     /**
-     * Decode a keyPairCertificate.
+     * Decode a Certificate.
      * @param pObjects the PEM object list
-     * @return the keyPairCertificate.
+     * @return the Certificate.
      * @throws OceanusException on error
      */
-    private GordianKeyStorePairCertificate decodeKeyPairCertificate(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private GordianKeyStoreCertificate decodeCertificate(final List<GordianPEMObject> pObjects) throws OceanusException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
 
         /* parse the certificate */
-        return new GordianCoreKeyStorePairCertificate(decodeKeyPairCertificate(pObjects.get(0)), new TethysDate());
+        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), new TethysDate());
     }
 
     /**
-     * Decode a keyPairCertificate.
+     * Decode a Certificate.
      * @param pObject the PEM object
-     * @return the keyPairCertificate.
+     * @return the Certificate.
      * @throws OceanusException on error
      */
-    private GordianCoreKeyPairCertificate decodeKeyPairCertificate(final GordianPEMObject pObject) throws OceanusException {
+    private GordianCoreCertificate decodeCertificate(final GordianPEMObject pObject) throws OceanusException {
         /* Reject if not keySetCertificate */
-        checkObjectType(pObject, GordianPEMObjectType.KEYPAIRCERT);
+        checkObjectType(pObject, GordianPEMObjectType.CERT);
 
         /* parse the encoded bytes */
-        return new GordianCoreKeyPairCertificate(theFactory, pObject.getEncoded());
-    }
-
-    /**
-     * Decode a keyPairSetCertificate.
-     * @param pObjects the PEM object list
-     * @return the keyPairSetCertificate.
-     * @throws OceanusException on error
-     */
-    private GordianKeyStorePairSetCertificate decodeKeyPairSetCertificate(final List<GordianPEMObject> pObjects) throws OceanusException {
-        /* Reject if not singleton list */
-        checkSingletonList(pObjects);
-
-        /* parse the certificate */
-        return new GordianCoreKeyStorePairSetCertificate(decodeKeyPairSetCertificate(pObjects.get(0)), new TethysDate());
-    }
-
-    /**
-     * Decode a keyPairSetCertificate.
-     * @param pObject the PEM object
-     * @return the keyPairSetCertificate.
-     * @throws OceanusException on error
-     */
-    private GordianCoreKeyPairSetCertificate decodeKeyPairSetCertificate(final GordianPEMObject pObject) throws OceanusException {
-        /* Reject if not keySetCertificate */
-        checkObjectType(pObject, GordianPEMObjectType.KEYPAIRSETCERT);
-
-        /* parse the encoded bytes */
-        return new GordianCoreKeyPairSetCertificate(theFactory, pObject.getEncoded());
+        return new GordianCoreCertificate(theFactory, pObject.getEncoded());
     }
 
     /**
@@ -515,7 +399,7 @@ public class GordianPEMCoder {
                                               final char[] pPassword) throws OceanusException {
         /* Initialise variables */
         EncryptedPrivateKeyInfo myPrivateInfo = null;
-        final List<GordianKeyPairCertificate> myChain = new ArrayList<>();
+        final List<GordianCertificate> myChain = new ArrayList<>();
 
         /* Loop through the entries */
         for (GordianPEMObject myObject : pObjects) {
@@ -525,7 +409,7 @@ public class GordianPEMCoder {
 
                 /* else decode next certificate in chain */
             } else {
-                myChain.add(decodeKeyPairCertificate(myObject));
+                myChain.add(decodeCertificate(myObject));
             }
         }
 
@@ -536,50 +420,11 @@ public class GordianPEMCoder {
 
         /* Derive the keyPair */
         final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo, pPassword);
-        final GordianCoreKeyPairCertificate myCert = (GordianCoreKeyPairCertificate) myChain.get(0);
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.get(0);
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
         /* Return the new keyPair */
         return new GordianCoreKeyStorePair(myPair, myChain, new TethysDate());
-    }
-
-    /**
-     * Decode a keyPairSet.
-     * @param pObjects the list of objects
-     * @param pPassword the password
-     * @return the keyPairSet.
-     * @throws OceanusException on error
-     */
-    private GordianKeyStorePairSet decodeKeyPairSet(final List<GordianPEMObject> pObjects,
-                                                    final char[] pPassword) throws OceanusException {
-        /* Initialise variables */
-        EncryptedPrivateKeyInfo myPrivateInfo = null;
-        final List<GordianKeyPairSetCertificate> myChain = new ArrayList<>();
-
-        /* Loop through the entries */
-        for (GordianPEMObject myObject : pObjects) {
-            /* Decode private key if first element */
-            if (myPrivateInfo == null) {
-                myPrivateInfo = EncryptedPrivateKeyInfo.getInstance(myObject.getEncoded());
-
-                /* else decode next certificate in chain */
-            } else {
-                myChain.add(decodeKeyPairSetCertificate(myObject));
-            }
-        }
-
-        /* Check that we have a privateKey and at least one certificate */
-        if (myPrivateInfo == null || myChain.isEmpty()) {
-            throw new GordianDataException("Insufficient entries");
-        }
-
-        /* Derive the keyPair */
-        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo, pPassword);
-        final GordianCoreKeyPairSetCertificate myCert = (GordianCoreKeyPairSetCertificate) myChain.get(0);
-        final GordianKeyPairSet myPairSet = mySecuringKeySet.deriveKeyPairSet(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
-
-        /* Return the new keyPairSet */
-        return new GordianCoreKeyStorePairSet(myPairSet, myChain, new TethysDate());
     }
 
     /**

@@ -96,14 +96,34 @@ public enum GordianKeyPairType {
     NEWHOPE,
 
     /**
-     * qTESLA.
-     */
-    QTESLA,
-
-    /**
      * LMS.
      */
-    LMS;
+    LMS,
+
+    /**
+     * SPHINCSPlus.
+     */
+    SPHINCSPLUS,
+
+    /**
+     * CMCE.
+     */
+    CMCE,
+
+    /**
+     * FRODO.
+     */
+    FRODO,
+
+    /**
+     * SABER.
+     */
+    SABER,
+
+    /**
+     * Composite.
+     */
+    COMPOSITE;
 
     /**
      * use random for signatures?
@@ -112,6 +132,7 @@ public enum GordianKeyPairType {
     public boolean useRandomForSignatures() {
         switch (this) {
             case SPHINCS:
+            case SPHINCSPLUS:
             case XMSS:
             case EDDSA:
                 return false;
@@ -127,9 +148,9 @@ public enum GordianKeyPairType {
     public boolean nullDigestForSignatures() {
         switch (this) {
             case SPHINCS:
+            case SPHINCSPLUS:
             case XMSS:
             case EDDSA:
-            case QTESLA:
             case LMS:
                 return true;
             default:
@@ -145,7 +166,6 @@ public enum GordianKeyPairType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case QTESLA:
                 return true;
             default:
                 return false;

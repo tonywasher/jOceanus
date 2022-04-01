@@ -31,20 +31,20 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -367,7 +367,6 @@ public class AsymmetricTest {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
         final GordianKeyPairFactory myFactory = pKeySpec.getFactory();
-        final GordianKeyPairSpec mySpec = pKeySpec.getKeySpec();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final X509EncodedKeySpec myPublic = myPairs.getX509Encoding();
 
@@ -396,7 +395,7 @@ public class AsymmetricTest {
         /* Check outgoing signature */
         final GordianSignatureFactory mySigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
-        GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(mySpec);
+        GordianSignature mySigner = mySigns.createSigner(mySpec);
         mySigner.initForSigning(myMirror);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
@@ -421,13 +420,13 @@ public class AsymmetricTest {
         final GordianSignatureFactory mySrcSigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final GordianSignatureFactory myTgtSigns = pSignature.getOwner().getPartner().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
-        GordianKeyPairSignature mySigner = mySrcSigns.createKeyPairSigner(mySpec);
+        GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
         mySigner.initForSigning(myPair);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
 
         /* Check sent signature */
-        mySigner = myTgtSigns.createKeyPairSigner(mySpec);
+        mySigner = myTgtSigns.createSigner(mySpec);
         mySigner.initForVerify(myPartnerSelf);
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature),"Failed to verify sent signature");
@@ -436,7 +435,7 @@ public class AsymmetricTest {
         mySigner.initForSigning(myPartnerSelf);
         mySigner.update(myMessage);
         mySignature = mySigner.sign();
-        mySigner = mySrcSigns.createKeyPairSigner(mySpec);
+        mySigner = mySrcSigns.createSigner(mySpec);
         mySigner.initForVerify(myPair);
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature),"Failed to verify returned signature");
@@ -451,48 +450,48 @@ public class AsymmetricTest {
     private void checkSelfAgreement(final FactoryAgreement pAgreement,
                                     final Object pResultType) throws OceanusException {
         /* Access the KeySpec */
-        final GordianKeyPairAgreementSpec mySpec = pAgreement.getSpec();
+        final GordianAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         GordianKeyPair myTarget = null;
 
         /* Check the agreement */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
-        final GordianKeyPairAgreement mySender = myAgrees.createKeyPairAgreement(mySpec);
+        final GordianAgreement mySender = myAgrees.createAgreement(mySpec);
         mySender.setResultType(pResultType);
-        final GordianKeyPairAgreement myResponder = myAgrees.createKeyPairAgreement(mySpec);
+        final GordianAgreement myResponder = myAgrees.createAgreement(mySpec);
 
         /* Access target if we are using one */
-        if (!(mySender instanceof GordianKeyPairAnonymousAgreement)) {
+        if (!(mySender instanceof GordianAnonymousAgreement)) {
             myTarget = myPairs.getTargetKeyPair();
         }
 
         /* Handle Anonymous */
-        if (mySender instanceof GordianKeyPairAnonymousAgreement
-                && myResponder instanceof GordianKeyPairAnonymousAgreement) {
-            final byte[] myClientHello = ((GordianKeyPairAnonymousAgreement) mySender).createClientHello(myPair);
-            ((GordianKeyPairAnonymousAgreement) myResponder).acceptClientHello(myPair, myClientHello);
+        if (mySender instanceof GordianAnonymousAgreement
+                && myResponder instanceof GordianAnonymousAgreement) {
+            final byte[] myClientHello = ((GordianAnonymousAgreement) mySender).createClientHello(myPair);
+            ((GordianAnonymousAgreement) myResponder).acceptClientHello(myPair, myClientHello);
 
             /* Handle Signed */
-        } else if (mySender instanceof GordianKeyPairSignedAgreement
-                    && myResponder instanceof GordianKeyPairSignedAgreement) {
+        } else if (mySender instanceof GordianSignedAgreement
+                    && myResponder instanceof GordianSignedAgreement) {
             /* Access the signer pair */
             final GordianKeyPair mySignPair = getFactorySigner(pAgreement);
 
             /* Check the agreement */
-            final byte[] myClientHello = ((GordianKeyPairSignedAgreement) mySender).createClientHello(myPair.getKeyPairSpec());
+            final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello();
             final byte[] myServerHello
-                    = ((GordianKeyPairSignedAgreement) myResponder).acceptClientHello(mySignPair, myClientHello);
-            ((GordianKeyPairSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
+                    = ((GordianSignedAgreement) myResponder).acceptClientHello(mySignPair, myClientHello);
+            ((GordianSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
 
             /* Handle ephemeral */
-        } else if (mySender instanceof GordianKeyPairHandshakeAgreement
-                && myResponder instanceof GordianKeyPairHandshakeAgreement) {
-            final byte[] myClientHello = ((GordianKeyPairHandshakeAgreement) mySender).createClientHello(myTarget);
-            final byte[] myServerHello = ((GordianKeyPairHandshakeAgreement) myResponder).acceptClientHello(myTarget, myPair, myClientHello);
-            final byte[] myClientConfirm = ((GordianKeyPairHandshakeAgreement) mySender).acceptServerHello(myPair, myServerHello);
+        } else if (mySender instanceof GordianHandshakeAgreement
+                && myResponder instanceof GordianHandshakeAgreement) {
+            final byte[] myClientHello = ((GordianHandshakeAgreement) mySender).createClientHello(myTarget);
+            final byte[] myServerHello = ((GordianHandshakeAgreement) myResponder).acceptClientHello(myTarget, myPair, myClientHello);
+            final byte[] myClientConfirm = ((GordianHandshakeAgreement) mySender).acceptServerHello(myPair, myServerHello);
             if (myClientConfirm != null) {
-                ((GordianKeyPairHandshakeAgreement) myResponder).acceptClientConfirm(myClientConfirm);
+                ((GordianHandshakeAgreement) myResponder).acceptClientConfirm(myClientConfirm);
             }
 
         } else {
@@ -513,7 +512,7 @@ public class AsymmetricTest {
      */
     private void checkPartnerAgreement(final FactoryAgreement pAgreement) throws OceanusException {
         /* Access the KeySpec */
-        final GordianKeyPairAgreementSpec mySpec = pAgreement.getSpec();
+        final GordianAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
@@ -523,37 +522,37 @@ public class AsymmetricTest {
         /* Check the agreement */
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
-        final GordianKeyPairAgreement mySender = mySrcAgrees.createKeyPairAgreement(mySpec);
+        final GordianAgreement mySender = mySrcAgrees.createAgreement(mySpec);
         mySender.setResultType(new GordianKeySetSpec());
-        final GordianKeyPairAgreement myResponder = myPartnerAgrees.createKeyPairAgreement(mySpec);
+        final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
 
         /* Handle Anonymous */
-        if (mySender instanceof GordianKeyPairAnonymousAgreement
-                && myResponder instanceof GordianKeyPairAnonymousAgreement) {
-            final byte[] myClientHello = ((GordianKeyPairAnonymousAgreement) mySender).createClientHello(myTarget);
-            ((GordianKeyPairAnonymousAgreement) myResponder).acceptClientHello(myPartnerTarget, myClientHello);
+        if (mySender instanceof GordianAnonymousAgreement
+                && myResponder instanceof GordianAnonymousAgreement) {
+            final byte[] myClientHello = ((GordianAnonymousAgreement) mySender).createClientHello(myTarget);
+            ((GordianAnonymousAgreement) myResponder).acceptClientHello(myPartnerTarget, myClientHello);
 
             /* Handle Signed */
-        } else if (mySender instanceof GordianKeyPairSignedAgreement
-                && myResponder instanceof GordianKeyPairSignedAgreement) {
+        } else if (mySender instanceof GordianSignedAgreement
+                && myResponder instanceof GordianSignedAgreement) {
             /* Access the signer pair */
             final GordianKeyPair mySignPair = getFactorySigner(pAgreement);
             final GordianKeyPair myPartnerSignPair = getPartnerSigner(pAgreement);
 
             /* Check the agreement */
-            final byte[] myClientHello = ((GordianKeyPairSignedAgreement) mySender).createClientHello(myPair.getKeyPairSpec());
+            final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello();
             final byte[] myServerHello
-                    = ((GordianKeyPairSignedAgreement) myResponder).acceptClientHello(myPartnerSignPair, myClientHello);
-            ((GordianKeyPairSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
+                    = ((GordianSignedAgreement) myResponder).acceptClientHello(myPartnerSignPair, myClientHello);
+            ((GordianSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
 
             /* Handle ephemeral */
-        } else if (mySender instanceof GordianKeyPairHandshakeAgreement
-                && myResponder instanceof GordianKeyPairHandshakeAgreement) {
-            final byte[] myClientHello = ((GordianKeyPairHandshakeAgreement) mySender).createClientHello(myPair);
-            final byte[] myServerHello = ((GordianKeyPairHandshakeAgreement) myResponder).acceptClientHello(myPartnerSelf, myPartnerTarget, myClientHello);
-            final byte[] myClientConfirm = ((GordianKeyPairHandshakeAgreement) mySender).acceptServerHello(myTarget, myServerHello);
+        } else if (mySender instanceof GordianHandshakeAgreement
+                && myResponder instanceof GordianHandshakeAgreement) {
+            final byte[] myClientHello = ((GordianHandshakeAgreement) mySender).createClientHello(myPair);
+            final byte[] myServerHello = ((GordianHandshakeAgreement) myResponder).acceptClientHello(myPartnerSelf, myPartnerTarget, myClientHello);
+            final byte[] myClientConfirm = ((GordianHandshakeAgreement) mySender).acceptServerHello(myTarget, myServerHello);
             if (myClientConfirm != null) {
-                ((GordianKeyPairHandshakeAgreement) myResponder).acceptClientConfirm(myClientConfirm);
+                ((GordianHandshakeAgreement) myResponder).acceptClientConfirm(myClientConfirm);
             }
 
         } else {
@@ -582,8 +581,8 @@ public class AsymmetricTest {
 
         /* Check the encryptor */
         final GordianEncryptorFactory myEncrypts = pEncryptor.getOwner().getFactory().getEncryptorFactory();
-        final GordianKeyPairEncryptor mySender = myEncrypts.createKeyPairEncryptor(mySpec);
-        final GordianKeyPairEncryptor myReceiver = myEncrypts.createKeyPairEncryptor(mySpec);
+        final GordianEncryptor mySender = myEncrypts.createEncryptor(mySpec);
+        final GordianEncryptor myReceiver = myEncrypts.createEncryptor(mySpec);
 
         /* Handle Initialisation */
         mySender.initForEncrypt(myPair);
@@ -631,8 +630,8 @@ public class AsymmetricTest {
         /* Check the encryptor */
         final GordianEncryptorFactory mySrcEncrypts = pEncryptor.getOwner().getFactory().getEncryptorFactory();
         final GordianEncryptorFactory myTgtEncrypts = pEncryptor.getOwner().getPartner().getEncryptorFactory();
-        final GordianKeyPairEncryptor mySender = mySrcEncrypts.createKeyPairEncryptor(mySpec);
-        final GordianKeyPairEncryptor myReceiver = myTgtEncrypts.createKeyPairEncryptor(mySpec);
+        final GordianEncryptor mySender = mySrcEncrypts.createEncryptor(mySpec);
+        final GordianEncryptor myReceiver = myTgtEncrypts.createEncryptor(mySpec);
 
         /* Handle Initialisation */
         mySender.initForEncrypt(myPair);
@@ -690,7 +689,7 @@ public class AsymmetricTest {
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pAgreement.getSpec());
 
         /* Check unique mapping */
-        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
         Assertions.assertEquals(pAgreement.getSpec(), mySpec, "Invalid mapping for  " + pAgreement.getSpec());
     }
 

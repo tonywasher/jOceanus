@@ -38,7 +38,6 @@ module net.sourceforge.joceanus.jgordianknot.core {
     exports net.sourceforge.joceanus.jgordianknot.api.factory;
     exports net.sourceforge.joceanus.jgordianknot.api.key;
     exports net.sourceforge.joceanus.jgordianknot.api.keypair;
-    exports net.sourceforge.joceanus.jgordianknot.api.keypairset;
     exports net.sourceforge.joceanus.jgordianknot.api.keyset;
     exports net.sourceforge.joceanus.jgordianknot.api.keystore;
     exports net.sourceforge.joceanus.jgordianknot.api.mac;

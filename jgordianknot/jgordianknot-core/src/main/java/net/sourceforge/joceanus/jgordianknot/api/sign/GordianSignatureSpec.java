@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -45,9 +48,9 @@ public final class GordianSignatureSpec {
     private final GordianSignatureType theSignatureType;
 
     /**
-     * DigestSpec.
+     * SignatureSpec.
      */
-    private final GordianDigestSpec theDigestSpec;
+    private final Object theSignatureSpec;
 
     /**
      * The Validity.
@@ -62,12 +65,12 @@ public final class GordianSignatureSpec {
     /**
      * Constructor.
      * @param pKeyPairType the keyPairType
-     * @param pDigestSpec the digestSpec
+     * @param pSignatureSpec the signatureSpec
      */
     public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
-                                final GordianDigestSpec pDigestSpec) {
+                                final Object pSignatureSpec) {
         /* Store parameters */
-        this(pKeyPairType, GordianSignatureType.NATIVE, pDigestSpec);
+        this(pKeyPairType, GordianSignatureType.NATIVE, pSignatureSpec);
     }
 
     /**
@@ -85,15 +88,15 @@ public final class GordianSignatureSpec {
      * Constructor.
      * @param pKeyPairType the keyPairType
      * @param pSignatureType the signatureType
-     * @param pDigestSpec the digestSpec
+     * @param pSignatureSpec the signatureSpec
      */
     public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
                                 final GordianSignatureType pSignatureType,
-                                final GordianDigestSpec pDigestSpec) {
+                                final Object pSignatureSpec) {
         /* Store parameters */
         theKeyPairType = pKeyPairType;
         theSignatureType = pSignatureType;
-        theDigestSpec = pDigestSpec;
+        theSignatureSpec = pSignatureSpec;
         isValid = checkValidity();
     }
 
@@ -156,27 +159,11 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create EdDSActxSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec edDSActx() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
-    }
-
-    /**
      * Create EdDSASpec.
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec edDSA() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.PURE);
-    }
-
-    /**
-     * Create EdDSAphSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec edDSAph() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.PREHASH);
+        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -184,7 +171,15 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec sphincs() {
-        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.PREHASH);
+        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create SPHINCSPlusSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec sphincsPlus() {
+        return new GordianSignatureSpec(GordianKeyPairType.SPHINCSPLUS, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -201,7 +196,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec xmss() {
-        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -213,19 +208,29 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create qTESLASpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec qTESLA() {
-        return new GordianSignatureSpec(GordianKeyPairType.QTESLA, GordianSignatureType.PURE);
-    }
-
-    /**
      * Create lmsSpec.
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec lms() {
-        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create CompositeSpec.
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    public static GordianSignatureSpec composite(final GordianSignatureSpec... pSpecs) {
+        return composite(Arrays.asList(pSpecs));
+    }
+
+    /**
+     * Create CompositeSpec.
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    public static GordianSignatureSpec composite(final List<GordianSignatureSpec> pSpecs) {
+        return new GordianSignatureSpec(GordianKeyPairType.COMPOSITE, pSpecs);
     }
 
     /**
@@ -248,17 +253,25 @@ public final class GordianSignatureSpec {
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
             case EDDSA:
-                return pKeySpec.getEdwardsElliptic().is25519() ? edDSActx() : edDSA();
+                return edDSA();
             case RAINBOW:
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:
                 return sphincs();
+            case SPHINCSPLUS:
+                return sphincsPlus();
             case XMSS:
                 return xmss();
-            case QTESLA:
-                return qTESLA();
             case LMS:
                 return lms();
+            case COMPOSITE:
+                final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
+                final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
+                while (myIterator.hasNext()) {
+                    final GordianKeyPairSpec mySpec = myIterator.next();
+                    mySpecs.add(defaultForKey(mySpec));
+                }
+                return GordianSignatureSpec.composite(mySpecs);
             default:
                 return null;
         }
@@ -281,11 +294,33 @@ public final class GordianSignatureSpec {
     }
 
     /**
+     * Obtain the signatureSpec.
+     * @return the signatureSpec.
+     */
+    public Object getSignatureSpec() {
+        return theSignatureSpec;
+    }
+
+    /**
      * Obtain the DigestSpec.
      * @return the digestSpec.
      */
     public GordianDigestSpec getDigestSpec() {
-        return theDigestSpec;
+        if (!(theSignatureSpec instanceof GordianDigestSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianDigestSpec) theSignatureSpec;
+    }
+
+    /**
+     * Obtain the composite signatureSpec iterator.
+     * @return the signatureeSpec iterator.
+     */
+    public Iterator<GordianSignatureSpec> signatureSpecIterator() {
+        if (!(theSignatureSpec instanceof List)) {
+            throw new IllegalArgumentException();
+        }
+        return ((List<GordianSignatureSpec>) theSignatureSpec).iterator();
     }
 
     /**
@@ -312,16 +347,38 @@ public final class GordianSignatureSpec {
             case GOST2012:
             case SM2:
             case RAINBOW:
-                return theDigestSpec != null && theDigestSpec.isValid() && theDigestSpec.getDigestType().supportsLargeData();
+                if (!(theSignatureSpec instanceof GordianDigestSpec)) {
+                    return false;
+                }
+                final GordianDigestSpec mySpec = getDigestSpec();
+                return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
             case EDDSA:
             case SPHINCS:
-            case QTESLA:
+            case SPHINCSPLUS:
             case XMSS:
             case LMS:
-                return theDigestSpec == null;
+                return theSignatureSpec == null;
+            case COMPOSITE:
+                return theSignatureSpec instanceof List && checkComposite();
             default:
                 return false;
         }
+    }
+
+    /**
+     * Check composite spec validity.
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+        final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
+        while (myIterator.hasNext()) {
+            /* Check that each spec is valid */
+            final GordianSignatureSpec mySpec = myIterator.next();
+            if (mySpec == null || !mySpec.isValid()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -333,8 +390,17 @@ public final class GordianSignatureSpec {
             if (theSignatureType != GordianSignatureType.NATIVE) {
                 theName += SEP + theSignatureType.toString();
             }
-            if (theDigestSpec != null) {
-                theName += SEP + theDigestSpec.toString();
+            if (theSignatureSpec != null) {
+                if (theKeyPairType == GordianKeyPairType.COMPOSITE) {
+                    final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
+                    final StringBuilder myBuilder = new StringBuilder(theName);
+                    while (myIterator.hasNext()) {
+                        myBuilder.append(SEP).append(myIterator.next().toString());
+                    }
+                    theName = myBuilder.toString();
+                } else {
+                    theName += SEP + theSignatureSpec.toString();
+                }
             }
         }
 
@@ -366,11 +432,8 @@ public final class GordianSignatureSpec {
             return false;
         }
 
-        /* Match digestSpec */
-        final GordianDigestSpec myDigest = myThat.getDigestSpec();
-        return theDigestSpec == null
-               ? myDigest == null
-               : theDigestSpec.equals(myThat.getDigestSpec());
+        /* Match signatureSpec */
+        return Objects.equals(theSignatureSpec, myThat.theSignatureSpec);
     }
 
     @Override
@@ -378,8 +441,8 @@ public final class GordianSignatureSpec {
         int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         hashCode += theSignatureType.hashCode();
         hashCode <<= TethysDataConverter.BYTE_SHIFT;
-        if (theDigestSpec != null) {
-            hashCode += theDigestSpec.hashCode();
+        if (theSignatureSpec != null) {
+            hashCode += theSignatureSpec.hashCode();
         }
         return hashCode;
     }

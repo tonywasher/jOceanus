@@ -37,12 +37,15 @@ import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
 import org.bouncycastle.jce.spec.ElGamalParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.QTESLAParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
@@ -526,6 +529,210 @@ public abstract class JcaKeyPairGenerator
     }
 
     /**
+     * Jca SPHINCSPlus KeyPair generator.
+     */
+    public static class JcaSPHINCSPlusKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * SPHINCS algorithm.
+         */
+        private static final String SPHINCS_ALGO = "SPHINCS+";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaSPHINCSPlusKeyPairGenerator(final JcaFactory pFactory,
+                                       final GordianKeyPairSpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SPHINCS_ALGO, true);
+                final SPHINCSPlusParameterSpec myParms = pKeySpec.getSPHINCSPlusKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SPHINCS_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create SPHINCS+generator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca CMCE KeyPair generator.
+     */
+    public static class JcaCMCEKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * FRODO algorithm.
+         */
+        private static final String CMCE_ALGO = "CMCE";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaCMCEKeyPairGenerator(final JcaFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(CMCE_ALGO, true);
+                final CMCEParameterSpec myParms = pKeySpec.getCMCEKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(CMCE_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create CMCEgenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca Frodo KeyPair generator.
+     */
+    public static class JcaFrodoKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * FRODO algorithm.
+         */
+        private static final String FRODO_ALGO = "FRODO";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaFrodoKeyPairGenerator(final JcaFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(FRODO_ALGO, true);
+                final FrodoParameterSpec myParms = pKeySpec.getFRODOKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(FRODO_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create FRODOgenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca SABER KeyPair generator.
+     */
+    public static class JcaSABERKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * FRODO algorithm.
+         */
+        private static final String SABER_ALGO = "SABER";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaSABERKeyPairGenerator(final JcaFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SABER_ALGO, true);
+                final SABERParameterSpec myParms = pKeySpec.getSABERKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SABER_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create SABERgenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
      * Jca Rainbow KeyPair generator.
      */
     public static class JcaRainbowKeyPairGenerator
@@ -817,66 +1024,6 @@ public abstract class JcaKeyPairGenerator
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create EdwardsGenerator", e);
-            }
-        }
-
-        @Override
-        public JcaKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final KeyPair myPair = theGenerator.generateKeyPair();
-            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
-            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
-            return new JcaKeyPair(myPublic, myPrivate);
-        }
-    }
-
-    /**
-     * Jca QTESLA KeyPair generator.
-     */
-    public static class JcaQTESLAKeyPairGenerator
-            extends JcaKeyPairGenerator {
-        /**
-         * Generator.
-         */
-        private final KeyPairGenerator theGenerator;
-
-        /**
-         * Constructor.
-         * @param pFactory the Security Factory
-         * @param pKeySpec the keySpec
-         * @throws OceanusException on error
-         */
-        JcaQTESLAKeyPairGenerator(final JcaFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pKeySpec);
-
-            /* Protect against exceptions */
-            try {
-                /* Create the parameters */
-                final String myCategory;
-                switch (pKeySpec.getQTESLAKeyType()) {
-                    case PROVABLY_SECURE_I:
-                        myCategory = QTESLAParameterSpec.PROVABLY_SECURE_I;
-                        break;
-                    case PROVABLY_SECURE_III:
-                        myCategory = QTESLAParameterSpec.PROVABLY_SECURE_III;
-                        break;
-                    default:
-                        throw new GordianLogicException("Invalid KeySpec" + pKeySpec);
-                }
-
-                /* Create and initialise the generator */
-                final String myJavaType = pKeySpec.getKeyPairType().toString();
-                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(myJavaType, true);
-                final AlgorithmParameterSpec myAlgo = new QTESLAParameterSpec(myCategory);
-                theGenerator.initialize(myAlgo, getRandom());
-
-                /* Create the factory */
-                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(myJavaType, true));
-
-            } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create qTESLAgenerator", e);
             }
         }
 

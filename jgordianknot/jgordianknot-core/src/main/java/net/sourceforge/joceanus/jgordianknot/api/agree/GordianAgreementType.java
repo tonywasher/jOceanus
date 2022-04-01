@@ -58,11 +58,51 @@ public enum GordianAgreementType {
     UNIFIED;
 
     /**
+     * Is this an anonymous agreement?
+     * @return true/false
+     */
+    public boolean isAnonymous() {
+        switch (this) {
+            case KEM:
+            case ANON:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this a signed agreement?
+     * @return true/false
+     */
+    public boolean isSigned() {
+        return this == SIGNED;
+    }
+
+    /**
+     * Is this an confirmable agreement?
+     * @return true/false
+     */
+    public boolean canConfirm() {
+        switch (this) {
+            case UNIFIED:
+            case MQV:
+            case SM2:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Is this Agreement supported for this KeyPairType?
      * @param pKeyPairType the keyPair
      * @return true/false
      */
     public boolean isSupported(final GordianKeyPairType pKeyPairType) {
+        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
+            return true;
+        }
         switch (this) {
             case KEM:
                 return hasKEM(pKeyPairType);
@@ -94,6 +134,9 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case SM2:
+            case CMCE:
+            case FRODO:
+            case SABER:
                 return true;
             default:
                 return false;

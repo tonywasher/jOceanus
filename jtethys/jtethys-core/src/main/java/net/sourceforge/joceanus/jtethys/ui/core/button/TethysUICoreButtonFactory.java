@@ -27,6 +27,6 @@ public abstract class TethysUICoreButtonFactory
         implements TethysUIButtonFactory {
     @Override
     public <T> TethysUIIconMapSet<T> newIconMapSet() {
-        return new TethysUICoreIconMapSet();
+        return new TethysUICoreIconMapSet<>();
     }
 }

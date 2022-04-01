@@ -54,8 +54,8 @@ public abstract class GordianCoreKeyPairGenerator
      * @param pFactory the Security Factory
      * @param pKeySpec the keySpec
      */
-    public GordianCoreKeyPairGenerator(final GordianCoreFactory pFactory,
-                                       final GordianKeyPairSpec pKeySpec) {
+    protected GordianCoreKeyPairGenerator(final GordianCoreFactory pFactory,
+                                          final GordianKeyPairSpec pKeySpec) {
         /* Store parameters */
         theKeySpec = pKeySpec;
         theFactory = pFactory;

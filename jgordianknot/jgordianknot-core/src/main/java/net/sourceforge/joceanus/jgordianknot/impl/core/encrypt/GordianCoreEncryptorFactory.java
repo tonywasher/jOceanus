@@ -16,19 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.encrypt;
 
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -52,7 +49,7 @@ public abstract class GordianCoreEncryptorFactory
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreEncryptorFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreEncryptorFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -65,22 +62,8 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     @Override
-    public Predicate<GordianEncryptorSpec> supportedKeyPairEncryptors() {
+    public Predicate<GordianEncryptorSpec> supportedEncryptors() {
         return this::validEncryptorSpec;
-    }
-
-    @Override
-    public GordianKeyPairSetEncryptor createKeyPairSetEncryptor(final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
-        /* Check valid spec */
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory mySetFactory = myPairFactory.getKeyPairSetFactory();
-        if (!mySetFactory.supportedKeyPairSetSpecs().test(pKeyPairSetSpec)
-                || !pKeyPairSetSpec.canEncrypt()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyPairSetSpec));
-        }
-
-        /* Create the new encryptor */
-        return new GordianCoreKeyPairSetEncryptor(myPairFactory, pKeyPairSetSpec);
     }
 
     /**
@@ -106,6 +89,18 @@ public abstract class GordianCoreEncryptorFactory
             return false;
         }
 
+        /* For Composite EncryptorSpec */
+        if (pSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            /* Loop through the specs */
+            final Iterator<GordianEncryptorSpec> myIterator = pSpec.encryptorSpecIterator();
+            while (myIterator.hasNext()) {
+                final GordianEncryptorSpec mySpec = myIterator.next();
+                if (!validEncryptorSpec(mySpec)) {
+                    return false;
+                }
+            }
+        }
+
         /* Check that spec is supported */
         return pSpec.isSupported();
     }
@@ -113,11 +108,6 @@ public abstract class GordianCoreEncryptorFactory
     @Override
     public boolean validEncryptorSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
                                                     final GordianEncryptorSpec pEncryptorSpec) {
-        /* Reject invalid encryptorSpec */
-        if (pEncryptorSpec == null || !pEncryptorSpec.isValid()) {
-            return false;
-        }
-
         /* Check that the encryptorSpec is supported */
         if (!validEncryptorSpec(pEncryptorSpec)) {
             return false;
@@ -158,6 +148,23 @@ public abstract class GordianCoreEncryptorFactory
             int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
             return pKeyPairSpec.getRSAModulus().getLength() >= (myLen << 1);
+        }
+
+        /* For Composite EncryptorSpec */
+        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            /* Loop through the keyPairs */
+            final Iterator<GordianKeyPairSpec> pairIterator = pKeyPairSpec.keySpecIterator();
+            final Iterator<GordianEncryptorSpec> encIterator = pEncryptorSpec.encryptorSpecIterator();
+            while (pairIterator.hasNext() && encIterator.hasNext()) {
+                final GordianKeyPairSpec myPairSpec = pairIterator.next();
+                final GordianEncryptorSpec myEncSpec = encIterator.next();
+               if (!validEncryptorSpecForKeyPairSpec(myPairSpec, myEncSpec)) {
+                    return false;
+                }
+            }
+            if (pairIterator.hasNext() || encIterator.hasNext()) {
+                return false;
+            }
         }
 
         /* OK */

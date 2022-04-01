@@ -33,9 +33,9 @@
                 }
 
                 /* Access signer */
-                final GordianSignatureSpec mySignSpec = GordianSignatureSpec.rsa(GordianSignatureType.PSS,
-                GordianDigestSpec.sha2(GordianLength.LEN_256));
-                final GordianKeyPairSignature mySigner = mySignatureFactory.createKeyPairSigner(mySignSpec);
+                final GordianSignatureSpec mySignSpec = GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1,
+                                                                                 GordianDigestSpec.sha2(GordianLength.LEN_256));
+                final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
                 /* Sign message */
                 final byte[] message = ....;
@@ -49,22 +49,58 @@
                 final boolean verified = mySigner.verify(mySignature);
             </source>
         </section>
+        <section name="Composite Signatures">
+            <p>Composite signatures may be created by a composite keyPair, as long as each element of the composite keyPair is assigned a valid signatureSpec.
+                The resulting signatures are encoded as an ASN1Sequence.</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+                    final GordianSignatureFactory mySignatureFactory = myKeyPairFactory.getSignatureFactory();
+
+                    /* Access keyPairGenerator */
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+                                                                                   GordianKeyPairSpec.ed25519());
+                    final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                    final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
+                    GordianKeyPair mySigningPair = myKeyPair;
+
+                    /* Access signer */
+                    final GordianSignatureSpec mySignSpec = GordianSignatureSpec.composite(GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1,
+                                                                                                                    GordianDigestSpec.sha2(GordianLength.LEN_256)),
+                                                                                           GordianSignatureSpec.edDSA());
+                    final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
+
+                    /* Sign message */
+                    final byte[] message = ....;
+                    mySigner.initForSigning(mySigningPair);
+                    mySigner.update(message);
+                    final byte[] mySignature = mySigner.sign();
+
+                    /* Verify signature */
+                    mySigner.initForVerify(myKeyPair);
+                    mySigner.update(message);
+                    final boolean verified = mySigner.verify(mySignature);
+                </source>
+            </subsection>
+        </section>
         <section name="Algorithms">
             <p>The following signature algorithms are supported.</p>
             <table class="defTable">
                 <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th></tr>
-                <tr><td>RSA</td><td>PSS, X931, ISO9796D2, PreHash</td></tr>
+                <tr><td>RSA</td><td>PSSMGF1, PSS128, PSS256, X931, ISO9796D2, PreHash</td></tr>
                 <tr><td>DSA</td><td>DSA, DetDSA</td></tr>
                 <tr><td>EC</td><td>ECDSA, ECDetDSA, ECNR</td></tr>
                 <tr><td>DSTU4145</td><td>Native</td></tr>
                 <tr><td>GOST2012</td><td>Native</td></tr>
                 <tr><td>SM2</td><td>Native</td></tr>
-                <tr><td>EdDSA</td><td>Pure, PreHash</td></tr>
+                <tr><td>EdDSA</td><td>Native</td></tr>
                 <tr><td>Rainbow</td><td>Native</td></tr>
-                <tr><td>SPHINCS256</td><td>PreHash</td></tr>
-                <tr><td>XMSS</td><td>Pure, PreHash</td></tr>
-                <tr><td>QTESLA</td><td>Pure</td></tr>
-                <tr><td>LMS</td><td>Pure</td></tr>
+                <tr><td>SPHINCS256</td><td>Native</td></tr>
+                <tr><td>SPHINCSPLUS</td><td>Native</td></tr>
+                <tr><td>XMSS</td><td>Native, PreHash</td></tr>
+                <tr><td>LMS</td><td>Native</td></tr>
             </table>
         </section>
     </body>

@@ -420,22 +420,6 @@ public class GordianStreamKeySpec
                     || theKeyLength != GordianLength.LEN_512);
     }
 
-    /**
-     * Check skein spec validity.
-     * @return valid true/false
-     */
-    private boolean checkKMACValidity() {
-        /* SubKeyType must be a GordianKMACXofKey */
-        if (!(theSubKeyType instanceof GordianKMACXofKey)) {
-            return false;
-        }
-
-        /* Check keyLength validity */
-        final GordianKMACXofKey myType = (GordianKMACXofKey) theSubKeyType;
-        return myType.getLength().getLength() <= theKeyLength.getLength()
-               && theStreamKeyType.validForKeyLength(theKeyLength);
-    }
-
     @Override
     public String toString() {
         /* If we have not yet loaded the name */

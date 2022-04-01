@@ -26,18 +26,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianKeyStorePairEntry;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -64,17 +62,12 @@ public class GordianCoreKeyStoreGateway
     /**
      * The encryption target certificate.
      */
-    private GordianCoreCertificate<?, ?> theTarget;
+    private GordianCoreCertificate theTarget;
 
     /**
      * The keyPairCertifier.
      */
     private GordianKeyStorePair theKeyPairCertifier;
-
-    /**
-     * The keyPairSetCertifier.
-     */
-    private GordianKeyStorePairSet theKeyPairSetCertifier;
 
     /**
      * The password callback.
@@ -132,14 +125,9 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public void setEncryptionTarget(final String pAlias) throws OceanusException {
-        final List<GordianKeyPairCertificate> myKeyPairChain = theKeyStore.getKeyPairCertificateChain(pAlias);
+        final List<GordianCertificate> myKeyPairChain = theKeyStore.getCertificateChain(pAlias);
         if (myKeyPairChain != null) {
-            theTarget = (GordianCoreKeyPairCertificate) myKeyPairChain.get(0);
-            return;
-        }
-        final List<GordianKeyPairSetCertificate> myKeyPairSetChain = theKeyStore.getKeyPairSetCertificateChain(pAlias);
-        if (myKeyPairSetChain != null) {
-            theTarget = (GordianCoreKeyPairSetCertificate) myKeyPairSetChain.get(0);
+            theTarget = (GordianCoreCertificate) myKeyPairChain.get(0);
             return;
         }
         throw new GordianDataException("Encryption target not found");
@@ -164,10 +152,10 @@ public class GordianCoreKeyStoreGateway
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
 
         /* If it is a keyPair(Set) */
-        if (myEntry instanceof GordianKeyStorePairEntry) {
+        if (myEntry instanceof GordianKeyStorePair) {
             /* Create the certificate request and write to output stream */
             final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theTarget);
-            final GordianPEMObject myCertReq = myBuilder.createCertificateRequest((GordianKeyStorePairEntry<?, ?>) myEntry);
+            final GordianPEMObject myCertReq = myBuilder.createCertificateRequest((GordianKeyStorePair) myEntry);
             final GordianPEMParser myParser = new GordianPEMParser();
             myParser.writePEMFile(pStream, Collections.singletonList(myCertReq));
 
@@ -178,33 +166,18 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void setKeyPairCertifier(final String pAlias,
-                                    final char[] pPassword) throws OceanusException {
+    public void setCertifier(final String pAlias,
+                             final char[] pPassword) throws OceanusException {
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
         if (myEntry instanceof GordianKeyStorePair) {
             final GordianKeyStorePair myPair = (GordianKeyStorePair) myEntry;
-            final GordianKeyPairCertificate myCert = myPair.getCertificateChain().get(0);
+            final GordianCertificate myCert = myPair.getCertificateChain().get(0);
             if (myCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)) {
                 theKeyPairCertifier = myPair;
                 return;
             }
         }
         throw new GordianDataException("Invalid keyPairCertifier");
-    }
-
-    @Override
-    public void setKeyPairSetCertifier(final String pAlias,
-                                       final char[] pPassword) throws OceanusException {
-        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
-        if (myEntry instanceof GordianKeyStorePairSet) {
-            final GordianKeyStorePairSet myPairSet = (GordianKeyStorePairSet) myEntry;
-            final GordianKeyPairSetCertificate myCert = myPairSet.getCertificateChain().get(0);
-            if (myCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)) {
-                theKeyPairSetCertifier = myPairSet;
-                return;
-            }
-        }
-        throw new GordianDataException("Invalid keyPairSetCertifier");
     }
 
     @Override
@@ -233,19 +206,12 @@ public class GordianCoreKeyStoreGateway
                                           final OutputStream pOutStream) throws OceanusException {
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
-        switch (myObject.getObjectType()) {
-            case KEYPAIRCERTREQ:
-                GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
-                List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
-                myParser.writePEMFile(pOutStream, myChain);
-                break;
-            case KEYPAIRSETCERTREQ:
-                myCRMParser = new GordianKeyPairSetCRMParser(theKeyStoreMgr, theKeyPairSetCertifier, thePasswordResolver);
-                myChain = myCRMParser.decodeCertificateRequest(myObject);
-                myParser.writePEMFile(pOutStream, myChain);
-                break;
-            default:
-                throw new GordianDataException("Unexpected object type");
+        if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
+            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
+            final List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
+            myParser.writePEMFile(pOutStream, myChain);
+        } else {
+            throw new GordianDataException("Unexpected object type");
         }
     }
 

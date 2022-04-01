@@ -22,25 +22,29 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaQTESLAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSPHINCSPlusKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -70,7 +74,6 @@ public class JcaKeyPairFactory
         setSignatureFactory(new JcaSignatureFactory(pFactory));
         setAgreementFactory(new JcaAgreementFactory(pFactory));
         setEncryptorFactory(new JcaEncryptorFactory(pFactory));
-        setKeyPairSetFactory(new GordianCoreKeyPairSetFactory(this));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }
 
@@ -95,7 +98,12 @@ public class JcaKeyPairFactory
     }
 
     @Override
-    public JcaKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        /* Handle composite keyPairGenerator */
+        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
+            return super.getKeyPairGenerator(pKeySpec);
+        }
+
         /* Look up in the cache */
         JcaKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -137,16 +145,22 @@ public class JcaKeyPairFactory
                 return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);
             case SPHINCS:
                 return new JcaSPHINCSKeyPairGenerator(getFactory(), pKeySpec);
+            case SPHINCSPLUS:
+                return new JcaSPHINCSPlusKeyPairGenerator(getFactory(), pKeySpec);
             case RAINBOW:
                 return new JcaRainbowKeyPairGenerator(getFactory(), pKeySpec);
             case MCELIECE:
                 return new JcaMcElieceKeyPairGenerator(getFactory(), pKeySpec);
             case NEWHOPE:
                 return new JcaNewHopeKeyPairGenerator(getFactory(), pKeySpec);
+            case CMCE:
+                return new JcaCMCEKeyPairGenerator(getFactory(), pKeySpec);
+            case FRODO:
+                return new JcaFrodoKeyPairGenerator(getFactory(), pKeySpec);
+            case SABER:
+                return new JcaSABERKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
-            case QTESLA:
-                return new JcaQTESLAKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:
                 return new JcaLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:

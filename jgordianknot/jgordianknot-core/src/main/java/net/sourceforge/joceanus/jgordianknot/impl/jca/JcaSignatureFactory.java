@@ -22,22 +22,21 @@ import java.security.Signature;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -63,7 +62,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public GordianKeyPairSignature createKeyPairSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -100,7 +99,7 @@ public class JcaSignatureFactory
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianKeyPairSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSASignature(getFactory(), pSignatureSpec);
@@ -117,12 +116,14 @@ public class JcaSignatureFactory
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSSignature(getFactory(), pSignatureSpec);
+            case SPHINCSPLUS:
+                return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
             case RAINBOW:
                 return new JcaRainbowSignature(getFactory(), pSignatureSpec);
-            case QTESLA:
-                return new JcaQTESLASignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
+            case COMPOSITE:
+                return new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
@@ -136,7 +137,6 @@ public class JcaSignatureFactory
         }
 
         /* Switch on KeyType */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (pSpec.getKeyPairType()) {
             case RSA:
                 return validRSASignature(pSpec);
@@ -149,14 +149,14 @@ public class JcaSignatureFactory
             case DSA:
                 return validDSASignature(pSpec);
             case RAINBOW:
-                return validRainbowSignature(myDigest);
+                return validRainbowSignature(pSpec.getDigestSpec());
             case XMSS:
             case SPHINCS:
-            case QTESLA:
-            case LMS:
-                return true;
+            case SPHINCSPLUS:
             case EDDSA:
-                return !GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+            case LMS:
+            case COMPOSITE:
+                return true;
             case DH:
             case NEWHOPE:
             case MCELIECE:
@@ -265,20 +265,5 @@ public class JcaSignatureFactory
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
         return pSpec.getDigestType() == GordianDigestType.SHA2
                 && pSpec.getStateLength() == null;
-    }
-
-    @Override
-    public boolean validSignatureSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
-                                                    final GordianSignatureSpec pSpec) {
-        /* validate the signatureSpec/keySpec */
-        if (!super.validSignatureSpecForKeyPairSpec(pKeyPairSpec, pSpec)) {
-            return false;
-        }
-
-        /* Disallow EdDSA 25519 PURE */
-        final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();
-        return myEdwards == null
-                || !myEdwards.is25519()
-                || pSpec.getSignatureType() != GordianSignatureType.PURE;
     }
 }

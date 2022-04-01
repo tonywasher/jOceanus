@@ -68,6 +68,10 @@ public enum GordianKDFType {
                 return isSupported4DH(pAgreeType);
             case XDH:
                 return isSupported4XDH(pAgreeType);
+            case CMCE:
+            case FRODO:
+            case SABER:
+                return pAgreeType == GordianAgreementType.KEM && this == NONE;
             default:
                 return true;
         }

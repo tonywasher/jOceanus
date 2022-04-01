@@ -16,22 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Handshake Two/ThreeShot Agreement.
- * @param <A> the agreement specification
- * @param <K> the keyPair Type
  */
-public interface GordianHandshakeAgreement<A, K>
-        extends GordianAgreement<A> {
+public interface GordianHandshakeAgreement
+        extends GordianAgreement {
     /**
      * create the clientHello.
      * @param pClient the client keyPair
      * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] createClientHello(K pClient) throws OceanusException;
+    byte[] createClientHello(GordianKeyPair pClient) throws OceanusException;
 
     /**
      * Accept the clientHello.
@@ -41,8 +40,8 @@ public interface GordianHandshakeAgreement<A, K>
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    byte[] acceptClientHello(K pClient,
-                             K pServer,
+    byte[] acceptClientHello(GordianKeyPair pClient,
+                             GordianKeyPair pServer,
                              byte[] pClientHello) throws OceanusException;
 
     /**
@@ -52,7 +51,7 @@ public interface GordianHandshakeAgreement<A, K>
      * @return the clientConfirm (or null if no confirmation)
      * @throws OceanusException on error
      */
-    byte[] acceptServerHello(K pServer,
+    byte[] acceptServerHello(GordianKeyPair pServer,
                              byte[] pServerHello) throws OceanusException;
 
     /**

@@ -40,7 +40,6 @@
             <ol>
                 <li><a href="personal.html">Personalisation</a></li>
                 <li><a href="keySet.html">KeySets</a></li>
-                <li><a href="keyPairSet.html">KeyPairSets</a></li>
                 <li><a href="zip.html">Secure ZipFile</a></li>
             </ol>
         </section>

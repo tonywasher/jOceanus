@@ -26,7 +26,7 @@ import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
 import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
 import org.bouncycastle.crypto.signers.SM2Signer;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -171,7 +172,7 @@ public final class BouncySM2KeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyECSM2Agreement(final BouncyFactory pFactory,
-                             final GordianKeyPairAgreementSpec pSpec) {
+                             final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -180,13 +181,13 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* process clientHello */
             BouncyKeyPair.checkKeyPair(pClient);
             BouncyKeyPair.checkKeyPair(pServer);
-            processClientHello(pClient, pServer, pClientHello);
+            processClientHelloASN1(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
@@ -223,14 +224,14 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
-            processServerHello(pServer, pServerHello);
+            processServerHelloASN1(pServer, pServerHello);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
@@ -273,7 +274,7 @@ public final class BouncySM2KeyPair {
             }
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            return buildClientConfirmASN1();
         }
     }
 

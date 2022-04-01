@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -134,6 +136,24 @@ public final class GordianEncryptorSpec {
     }
 
     /**
+     * Create CompositeSpec.
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    public static GordianEncryptorSpec composite(final GordianEncryptorSpec... pSpecs) {
+        return composite(Arrays.asList(pSpecs));
+    }
+
+    /**
+     * Create CompositeSpec.
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    public static GordianEncryptorSpec composite(final List<GordianEncryptorSpec> pSpecs) {
+        return new GordianEncryptorSpec(GordianKeyPairType.COMPOSITE, pSpecs);
+    }
+
+    /**
      * Create default signatureSpec for key.
      * @param pKeySpec the keySpec
      * @return the SignatureSpec
@@ -152,6 +172,14 @@ public final class GordianEncryptorSpec {
                 return pKeySpec.getMcElieceKeySpec().isCCA2()
                         ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
                         : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
+            case COMPOSITE:
+                final List<GordianEncryptorSpec> mySpecs = new ArrayList<>();
+                final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
+                while (myIterator.hasNext()) {
+                    final GordianKeyPairSpec mySpec = myIterator.next();
+                    mySpecs.add(defaultForKey(mySpec));
+                }
+                return GordianEncryptorSpec.composite(mySpecs);
             default:
                 return null;
         }
@@ -167,7 +195,7 @@ public final class GordianEncryptorSpec {
 
     /**
      * Obtain the encryptorType.
-     * @return the keyType.
+     * @return the encryptorType.
      */
     public Object getEncryptorType() {
         return theEncryptorType;
@@ -178,9 +206,10 @@ public final class GordianEncryptorSpec {
      * @return the digestSpec.
      */
     public GordianDigestSpec getDigestSpec() {
-        return theEncryptorType instanceof GordianDigestSpec
-               ? (GordianDigestSpec) theEncryptorType
-               : null;
+        if (!(theEncryptorType instanceof GordianDigestSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianDigestSpec) theEncryptorType;
     }
 
     /**
@@ -188,9 +217,10 @@ public final class GordianEncryptorSpec {
      * @return the encryptionType.
      */
     public GordianMcElieceEncryptionType getMcElieceType() {
-        return theEncryptorType instanceof GordianMcElieceEncryptionType
-               ? (GordianMcElieceEncryptionType) theEncryptorType
-               : null;
+        if (!(theEncryptorType instanceof GordianMcElieceEncryptionType)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianMcElieceEncryptionType) theEncryptorType;
     }
 
     /**
@@ -198,9 +228,21 @@ public final class GordianEncryptorSpec {
      * @return the encryptionSpec.
      */
     public GordianSM2EncryptionSpec getSM2EncryptionSpec() {
-        return theEncryptorType instanceof GordianSM2EncryptionSpec
-               ? (GordianSM2EncryptionSpec) theEncryptorType
-               : null;
+        if (!(theEncryptorType instanceof GordianSM2EncryptionSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianSM2EncryptionSpec) theEncryptorType;
+    }
+
+    /**
+     * Obtain the composite encryptorSpec iterator.
+     * @return the encryptorSpec iterator.
+     */
+    public Iterator<GordianEncryptorSpec> encryptorSpecIterator() {
+        if (!(theEncryptorType instanceof List)) {
+            throw new IllegalArgumentException();
+        }
+        return ((List<GordianEncryptorSpec>) theEncryptorType).iterator();
     }
 
     /**
@@ -233,6 +275,8 @@ public final class GordianEncryptorSpec {
                 return theEncryptorType == null;
             case MCELIECE:
                 return theEncryptorType instanceof GordianMcElieceEncryptionType;
+            case COMPOSITE:
+                return theEncryptorType instanceof List && checkComposite();
             default:
                 return false;
         }
@@ -243,21 +287,37 @@ public final class GordianEncryptorSpec {
      * @return true/false
      */
     public boolean isSupported() {
-        final GordianDigestSpec mySpec = getDigestSpec();
         switch (theKeyPairType) {
             case RSA:
             case ELGAMAL:
-                return mySpec != null && GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
+                final GordianDigestSpec mySpec = getDigestSpec();
+                return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
             case EC:
             case GOST2012:
             case MCELIECE:
             case SM2:
+            case COMPOSITE:
                 return true;
             default:
                 return false;
         }
     }
 
+    /**
+     * Check composite spec validity.
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+        final Iterator<GordianEncryptorSpec> myIterator = encryptorSpecIterator();
+        while (myIterator.hasNext()) {
+            /* Check that each spec is valid */
+            final GordianEncryptorSpec mySpec = myIterator.next();
+            if (mySpec == null || !mySpec.isValid()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
@@ -279,6 +339,14 @@ public final class GordianEncryptorSpec {
                         break;
                     case SM2:
                         theName += SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);
+                        break;
+                    case COMPOSITE:
+                        final Iterator<GordianEncryptorSpec> myIterator = encryptorSpecIterator();
+                        final StringBuilder myBuilder = new StringBuilder(theName);
+                        while (myIterator.hasNext()) {
+                            myBuilder.append(SEP).append(myIterator.next().toString());
+                        }
+                        theName = myBuilder.toString();
                         break;
                     default:
                         break;

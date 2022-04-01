@@ -36,10 +36,10 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -80,7 +80,7 @@ public class GordianKeyPairCRMParser
     @Override
     public List<GordianPEMObject> decodeCertificateRequest(final GordianPEMObject pObject) throws OceanusException {
         /* Reject if not KeyPairCertReq */
-        GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.KEYPAIRCERTREQ);
+        GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.CERTREQ);
 
         /* Derive the certificate request message */
         final CertReqMsg myReq = CertReqMsg.getInstance(pObject.getEncoded());
@@ -93,11 +93,11 @@ public class GordianKeyPairCRMParser
 
         /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
-        final List<GordianKeyPairCertificate> myChain = getKeyStoreMgr().signKeyPair(myPair, mySubject, myUsage, theSigner);
+        final List<GordianCertificate> myChain = getKeyStoreMgr().signKeyPair(myPair, mySubject, myUsage, theSigner);
 
         /* Create and return the object list */
         final List<GordianPEMObject> myObjects = new ArrayList<>();
-        for (GordianKeyPairCertificate myCert : myChain) {
+        for (GordianCertificate myCert : myChain) {
             myObjects.add(GordianPEMCoder.encodeCertificate(myCert));
         }
         return myObjects;
@@ -155,7 +155,7 @@ public class GordianKeyPairCRMParser
             final AlgorithmIdentifier myAlgId = mySigning.getAlgorithmIdentifier();
             final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
             final GordianSignatureSpec mySignSpec = mySignFactory.getSpecForIdentifier(myAlgId);
-            final GordianKeyPairSignature myVerifier = mySignFactory.createKeyPairSigner(mySignSpec);
+            final GordianSignature myVerifier = mySignFactory.createSigner(mySignSpec);
 
             /* Verify the signature */
             final byte[] mySignature = mySigning.getSignature().getBytes();

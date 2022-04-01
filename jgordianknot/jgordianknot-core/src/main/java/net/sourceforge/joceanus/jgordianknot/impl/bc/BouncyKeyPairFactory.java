@@ -19,8 +19,11 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
@@ -28,16 +31,18 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceKeyPair.BouncyMcElieceCCA2KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceKeyPair.BouncyMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyQTESLAKeyPair.BouncyQTESLAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSKeyPair.BouncySPHINCSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
@@ -45,7 +50,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMS
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -75,7 +79,6 @@ public class BouncyKeyPairFactory
         setSignatureFactory(new BouncySignatureFactory(pFactory));
         setAgreementFactory(new BouncyAgreementFactory(pFactory));
         setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
-        setKeyPairSetFactory(new GordianCoreKeyPairSetFactory(this));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }
 
@@ -100,7 +103,12 @@ public class BouncyKeyPairFactory
     }
 
     @Override
-    public BouncyKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        /* Handle composite keyPairGenerator */
+        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
+            return super.getKeyPairGenerator(pKeySpec);
+        }
+
         /* Look up in the cache */
         BouncyKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -150,6 +158,8 @@ public class BouncyKeyPairFactory
                 return new BouncyDHKeyPairGenerator(getFactory(), pKeySpec);
             case SPHINCS:
                 return new BouncySPHINCSKeyPairGenerator(getFactory(), pKeySpec);
+            case SPHINCSPLUS:
+                return new BouncySPHINCSPlusKeyPairGenerator(getFactory(), pKeySpec);
             case RAINBOW:
                 return new BouncyRainbowKeyPairGenerator(getFactory(), pKeySpec);
             case MCELIECE:
@@ -158,12 +168,16 @@ public class BouncyKeyPairFactory
                        : new BouncyMcElieceKeyPairGenerator(getFactory(), pKeySpec);
             case NEWHOPE:
                 return new BouncyNewHopeKeyPairGenerator(getFactory(), pKeySpec);
+            case CMCE:
+                return new BouncyCMCEKeyPairGenerator(getFactory(), pKeySpec);
+            case FRODO:
+                return new BouncyFrodoKeyPairGenerator(getFactory(), pKeySpec);
+            case SABER:
+                return new BouncySABERKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return pKeySpec.getXMSSKeySpec().isMT()
                        ? new BouncyXMSSMTKeyPairGenerator(getFactory(), pKeySpec)
                        : new BouncyXMSSKeyPairGenerator(getFactory(), pKeySpec);
-            case QTESLA:
-                return new BouncyQTESLAKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:
                 return pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
                        ? new BouncyHSSKeyPairGenerator(getFactory(), pKeySpec)
@@ -172,5 +186,4 @@ public class BouncyKeyPairFactory
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyPairType()));
         }
     }
-
 }

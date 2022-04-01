@@ -23,7 +23,7 @@
 
                 /* Access encryptor */
                 final GordianEncryptorSpec myEncryptSpec = GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256));
-                final GordianEncryptor myEncryptor = myEncryptorFactory.createKeyPairEncryptor(myEncryptSpec);
+                final GordianEncryptor myEncryptor = myEncryptorFactory.createEncryptor(myEncryptSpec);
 
                 /* Encrypt message */
                 final byte[] message = ....;
@@ -34,6 +34,37 @@
                 myEncryptor.initForDecrypt(myPair);
                 final byte[] myResult = myEncryptor.decrypt(myEncrypted);
             </source>
+        </section>
+        <section name="Composite Encryptors">
+            <p>Composite encryptions may be created by a composite keyPair, as long as each element of the composite keyPair is assigned a valid encryptorSpec.</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+                    final GordianEncryptorFactory myEncryptorFactory = myKeyPairFactory.getEncryptorFactory();
+
+                    /* Access keyPairGenerator */
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+                                                                                   GordianKeyPairSpec.elGamal(GordianDHGroup.rfc7919_ffdhe2048));
+                    final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                    final GordianKeyPair myPair = myGenerator.generateKeyPair();
+
+                    /* Access encryptor */
+                    final GordianEncryptorSpec myEncryptSpec = GordianEncryptorSpec.composite(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)),
+                                                                                              GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_256)));
+                    final GordianEncryptor myEncryptor = myEncryptorFactory.createEncryptor(myEncryptSpec);
+
+                    /* Encrypt message */
+                    final byte[] message = ....;
+                    myEncryptor.initForEncrypt(myPair);
+                    final byte[] myEncrypted = myEncryptor.encrypt(myMessage);
+
+                    /* Decrypt message */
+                    myEncryptor.initForDecrypt(myPair);
+                    final byte[] myResult = myEncryptor.decrypt(myEncrypted);
+                </source>
+            </subsection>
         </section>
         <section name="Algorithms">
             <p>The following encryptor algorithms are supported</p>

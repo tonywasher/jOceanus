@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -23,21 +23,16 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * CoreKeyPairSet.
+ * CompositeKeyPair.
  */
-public class GordianCoreKeyPairSet
-    implements GordianKeyPairSet {
+public class GordianCompositeKeyPair
+        implements GordianKeyPair {
     /**
-     * The keySetSpec.
+     * The KeySpec.
      */
-    private final GordianKeyPairSetSpec theSpec;
+    private final GordianKeyPairSpec theSpec;
 
     /**
      * The keyPairs.
@@ -45,7 +40,7 @@ public class GordianCoreKeyPairSet
     private final Map<GordianKeyPairSpec, GordianKeyPair> theKeyPairs;
 
     /**
-     * is the keyPairSet public only?
+     * is the keyPair public only?
      */
     private boolean isPublicOnly;
 
@@ -53,13 +48,13 @@ public class GordianCoreKeyPairSet
      * Constructor.
      * @param pSpec the spec
      */
-    GordianCoreKeyPairSet(final GordianKeyPairSetSpec pSpec) {
+    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
         theSpec = pSpec;
         theKeyPairs = new LinkedHashMap<>();
     }
 
     @Override
-    public GordianKeyPairSetSpec getKeyPairSetSpec() {
+    public GordianKeyPairSpec getKeyPairSpec() {
         return theSpec;
     }
 
@@ -69,11 +64,11 @@ public class GordianCoreKeyPairSet
     }
 
     /**
-     * Obtain a publicOnly version of this keySet.
-     * @return the publicOnly keySet
+     * Obtain a publicOnly version of this keyPair.
+     * @return the publicOnly keyPair
      */
-    public GordianCoreKeyPairSet getPublicOnly()  {
-        final GordianCoreKeyPairSet myPublicOnly = new GordianCoreKeyPairSet(theSpec);
+    public GordianCompositeKeyPair getPublicOnly()  {
+        final GordianCompositeKeyPair myPublicOnly = new GordianCompositeKeyPair(theSpec);
         for (GordianKeyPair myPair : theKeyPairs.values()) {
             myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianCoreKeyPair) myPair).getPublicOnly());
         }
@@ -81,7 +76,7 @@ public class GordianCoreKeyPairSet
     }
 
     /**
-     * Obtain an iterator for the keyPairSpecs.
+     * Obtain an iterator for the keyPairs.
      * @return the iterator
      */
     public Iterator<GordianKeyPair> iterator() {
@@ -91,24 +86,10 @@ public class GordianCoreKeyPairSet
     /**
      * Add keyPair.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
      */
-    void addKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-        /* Check publicOnly */
-        if (theKeyPairs.isEmpty()) {
-            isPublicOnly = pKeyPair.isPublicOnly();
-        } else if (isPublicOnly != pKeyPair.isPublicOnly()) {
-            throw new GordianLogicException("Mismatch on publicOnly");
-        }
-
-        /* Check uniqueness */
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
-        if (theKeyPairs.containsKey(mySpec)) {
-            throw new GordianLogicException("duplicate keyPairSpec");
-        }
-
+    void addKeyPair(final GordianKeyPair pKeyPair) {
         /* Add the keyPair */
-        theKeyPairs.put(mySpec, pKeyPair);
+        theKeyPairs.put(pKeyPair.getKeyPairSpec(), pKeyPair);
     }
 
     @Override
@@ -122,10 +103,10 @@ public class GordianCoreKeyPairSet
         }
 
         /* Check object is same class */
-        if (!(pThat instanceof GordianCoreKeyPairSet)) {
+        if (!(pThat instanceof GordianCompositeKeyPair)) {
             return false;
         }
-        final GordianCoreKeyPairSet myThat = (GordianCoreKeyPairSet) pThat;
+        final GordianCompositeKeyPair myThat = (GordianCompositeKeyPair) pThat;
         return Objects.equals(theKeyPairs, myThat.theKeyPairs);
     }
 

@@ -53,7 +53,7 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
@@ -489,7 +489,7 @@ public final class BouncyRSAKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyRSAEncapsulationAgreement(final BouncyFactory pFactory,
-                                        final GordianKeyPairAgreementSpec pSpec) {
+                                        final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -499,7 +499,7 @@ public final class BouncyRSAKeyPair {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -515,7 +515,7 @@ public final class BouncyRSAKeyPair {
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
 
             /* Build the clientHello Message */
-            final byte[] myClientHello = buildClientHello(myData);
+            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myData);
 
             /* Store secret and create initVector */
             storeSecret(myParms.getKey());
@@ -525,8 +525,8 @@ public final class BouncyRSAKeyPair {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -538,8 +538,7 @@ public final class BouncyRSAKeyPair {
             /* Parse clientHello message and store secret */
             final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
-            final byte[] myMessage = myHello.getEncapsulated();
+            final byte[] myMessage = pClientHello.getEncapsulated();
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
         }

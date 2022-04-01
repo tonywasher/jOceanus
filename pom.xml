@@ -71,7 +71,7 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.70</BouncyCastleVersion>
+    <BouncyCastleVersion>1.71</BouncyCastleVersion>
     <JUnitVersion>5.8.2</JUnitVersion>
     <JSONVersion>20211205</JSONVersion>
     <ApacheMavenVersion>3.8.3</ApacheMavenVersion>
@@ -86,29 +86,29 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.2</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.0</CheckStyleVersion>
-    <PMDVersion>6.43.0</PMDVersion>
+    <CheckStyleVersion>10.1</CheckStyleVersion>
+    <PMDVersion>6.44.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
-    <SitePluginVersion>3.9.1</SitePluginVersion>
-    <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
+    <SitePluginVersion>3.11.0</SitePluginVersion>
+    <DeployPluginVersion>3.0.0-M2</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.9.0</CompilerPluginVersion>
-    <ShadePluginVersion>3.2.4</ShadePluginVersion>
-    <DependencyPluginVersion>3.2.0</DependencyPluginVersion>
+    <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
+    <ShadePluginVersion>3.3.0</ShadePluginVersion>
+    <DependencyPluginVersion>3.3.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M5</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.2.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.2.2</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.1.2</ProjectInfoPluginVersion>
-    <JxrPluginVersion>3.1.1</JxrPluginVersion>
-    <JavaDocPluginVersion>3.3.1</JavaDocPluginVersion>
+    <ProjectInfoPluginVersion>3.2.2</ProjectInfoPluginVersion>
+    <JxrPluginVersion>3.2.0</JxrPluginVersion>
+    <JavaDocPluginVersion>3.3.2</JavaDocPluginVersion>
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.1.2</CheckStylePluginVersion>
-    <PMDPluginVersion>3.15.0</PMDPluginVersion>
+    <PMDPluginVersion>3.16.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.7</JacocoPluginVersion>
     <GPGPluginVersion>3.0.1</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>23.0.0</JetBrainsAnnotationsVersion>
@@ -519,7 +519,7 @@
           </reportSet>
         </reportSets>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>${ChangelogPluginVersion}</version>
@@ -530,7 +530,7 @@
             <tag implementation="java.lang.String">${currentRef}</tag>
           </tags>
         </configuration>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>

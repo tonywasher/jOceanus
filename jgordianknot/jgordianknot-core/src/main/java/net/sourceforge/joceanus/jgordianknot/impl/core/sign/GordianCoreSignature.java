@@ -20,7 +20,7 @@ import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * GordianKnot base for signature.
  */
 public abstract class GordianCoreSignature
-        implements GordianKeyPairSignature {
+        implements GordianSignature {
     /**
      * The Factory.
      */

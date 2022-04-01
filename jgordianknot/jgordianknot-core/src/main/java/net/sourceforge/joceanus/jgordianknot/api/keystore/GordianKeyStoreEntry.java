@@ -22,7 +22,6 @@ import java.util.List;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -38,27 +37,15 @@ public interface GordianKeyStoreEntry
     TethysDate getCreationDate();
 
     /**
-     * KeyStore keyPairCertificate API.
+     * KeyStore Certificate API.
      */
-    interface GordianKeyStorePairCertificate
+    interface GordianKeyStoreCertificate
             extends GordianKeyStoreEntry {
         /**
          * Obtain the certificate.
          * @return the certificate
          */
-        GordianKeyPairCertificate getCertificate();
-    }
-
-    /**
-     * KeyStore keyPairSetCertificate API.
-     */
-    interface GordianKeyStorePairSetCertificate
-            extends GordianKeyStoreEntry {
-        /**
-         * Obtain the certificate.
-         * @return the certificate
-         */
-        GordianKeyPairSetCertificate getCertificate();
+        GordianCertificate getCertificate();
     }
 
     /**
@@ -76,25 +63,7 @@ public interface GordianKeyStoreEntry
          * Obtain the certificate chain.
          * @return the certificate chain
          */
-        List<GordianKeyPairCertificate> getCertificateChain();
-    }
-
-    /**
-     * KeyStore KeyPairSet.
-     */
-    interface GordianKeyStorePairSet
-            extends GordianKeyStoreEntry {
-        /**
-         * Obtain the keyPair.
-         * @return the keyPair
-         */
-        GordianKeyPairSet getKeyPairSet();
-
-        /**
-         * Obtain the certificate chain.
-         * @return the certificate chain
-         */
-        List<GordianKeyPairSetCertificate> getCertificateChain();
+        List<GordianCertificate> getCertificateChain();
     }
 
     /**

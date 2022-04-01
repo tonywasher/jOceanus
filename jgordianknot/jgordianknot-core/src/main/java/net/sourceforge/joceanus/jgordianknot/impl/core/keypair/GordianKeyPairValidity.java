@@ -19,18 +19,18 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -66,8 +66,8 @@ public final class GordianKeyPairValidity {
             checkValidity(pFactory, pKeyPair, (GordianSignatureSpec) myCheck);
         } else if (myCheck instanceof GordianEncryptorSpec) {
             checkValidity(pFactory, pKeyPair, (GordianEncryptorSpec) myCheck);
-        } else if (myCheck instanceof GordianKeyPairAgreementSpec) {
-            checkValidity(pFactory, pKeyPair, (GordianKeyPairAgreementSpec) myCheck);
+        } else if (myCheck instanceof GordianAgreementSpec) {
+            checkValidity(pFactory, pKeyPair, (GordianAgreementSpec) myCheck);
         } else {
             throw new GordianLogicException("Unexpected keyPairType");
         }
@@ -88,7 +88,7 @@ public final class GordianKeyPairValidity {
 
         /* Create signer */
         final GordianSignatureFactory mySigns = pFactory.getKeyPairFactory().getSignatureFactory();
-        final GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(pSignSpec);
+        final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
         mySigner.initForSigning(pKeyPair);
@@ -118,7 +118,7 @@ public final class GordianKeyPairValidity {
 
         /* Create encryptor */
         final GordianEncryptorFactory myEncrypts = pFactory.getKeyPairFactory().getEncryptorFactory();
-        final GordianKeyPairEncryptor myEncryptor = myEncrypts.createKeyPairEncryptor(pEncryptSpec);
+        final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);
 
         /* Encrypt data */
         myEncryptor.initForEncrypt(pKeyPair);
@@ -143,17 +143,17 @@ public final class GordianKeyPairValidity {
      */
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianKeyPairAgreementSpec pAgreeSpec) throws OceanusException {
+                                      final GordianAgreementSpec pAgreeSpec) throws OceanusException {
         /* Create agreement on client side */
         final GordianAgreementFactory myAgrees = pFactory.getKeyPairFactory().getAgreementFactory();
-        GordianKeyPairAnonymousAgreement myAgreement
-                = (GordianKeyPairAnonymousAgreement) myAgrees.createKeyPairAgreement(pAgreeSpec);
+        GordianAnonymousAgreement myAgreement
+                = (GordianAnonymousAgreement) myAgrees.createAgreement(pAgreeSpec);
         final byte[] myHello = myAgreement.createClientHello(pKeyPair);
         final byte[] myClient = (byte[]) myAgreement.getResult();
 
         /* Accept agreement on server side */
         /* We have to use a new agreement due to bug in JCA NewHope support */
-        myAgreement = (GordianKeyPairAnonymousAgreement) myAgrees.createKeyPairAgreement(pAgreeSpec);
+        myAgreement = (GordianAnonymousAgreement) myAgrees.createAgreement(pAgreeSpec);
         myAgreement.acceptClientHello(pKeyPair, myHello);
         final byte[] myServer = (byte[]) myAgreement.getResult();
 
@@ -181,7 +181,7 @@ public final class GordianKeyPairValidity {
             case SM2:
             case RAINBOW:
             case SPHINCS:
-            case QTESLA:
+            case SPHINCSPLUS:
             case XMSS:
             case LMS:
                 return GordianSignatureSpec.defaultForKey(mySpec);
@@ -191,14 +191,17 @@ public final class GordianKeyPairValidity {
                 return mySpec.getMcElieceKeySpec().isCCA2()
                         ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
                         : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
+            case NEWHOPE:
             case DH:
-                return GordianKeyPairAgreementSpec.dhAnon(GordianKDFType.SHA256KDF);
+                return GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsElliptic().is25519()
-                        ? GordianKeyPairAgreementSpec.xdhAnon(GordianKDFType.SHA256KDF)
-                        : GordianKeyPairAgreementSpec.xdhAnon(GordianKDFType.SHA512KDF);
-            case NEWHOPE:
-                return GordianKeyPairAgreementSpec.newHope(GordianKDFType.SHA256KDF);
+                        ? GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF)
+                        : GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA512KDF);
+            case CMCE:
+            case FRODO:
+            case SABER:
+                return GordianAgreementSpec.kem(mySpec, GordianKDFType.NONE);
             default:
                 return null;
         }

@@ -37,10 +37,7 @@ import org.bouncycastle.crypto.params.Ed448KeyGenerationParameters;
 import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
 import org.bouncycastle.crypto.params.Ed448PublicKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
-import org.bouncycastle.crypto.signers.Ed25519ctxSigner;
-import org.bouncycastle.crypto.signers.Ed25519phSigner;
 import org.bouncycastle.crypto.signers.Ed448Signer;
-import org.bouncycastle.crypto.signers.Ed448phSigner;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
@@ -440,20 +437,9 @@ public final class BouncyEdDSAKeyPair {
             final byte[] myContext =  new byte[0];
 
             /* Create the internal digests */
-            switch (getSignatureSpec().getSignatureType()) {
-                case PREHASH:
-                    return is25519
-                           ? new Ed25519phSigner(myContext)
-                           : new Ed448phSigner(myContext);
-                case PURE:
-                    return is25519
-                           ? new Ed25519ctxSigner(myContext)
-                           : new Ed448Signer(myContext);
-                case NATIVE:
-                    return new Ed25519Signer();
-                default:
-                    throw new IllegalArgumentException("Invalid SignatureType: " + getSignatureSpec().getSignatureType());
-            }
+            return is25519
+                ? new Ed25519Signer()
+                : new Ed448Signer(myContext);
         }
 
         @Override

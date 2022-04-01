@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAE
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -51,7 +52,7 @@ public class BouncyEncryptorFactory
     }
 
     @Override
-    public GordianKeyPairEncryptor createKeyPairEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         /* Check validity of Encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
@@ -66,7 +67,7 @@ public class BouncyEncryptorFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianKeyPairEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
         switch (pSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncryptor(getFactory(), pSpec);
@@ -80,6 +81,8 @@ public class BouncyEncryptorFactory
                 return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
                        ? new BouncyMcElieceEncryptor(getFactory(), pSpec)
                        : new BouncyMcElieceCCA2Encryptor(getFactory(), pSpec);
+            case COMPOSITE:
+                return new GordianCompositeEncryptor(getFactory(), pSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
