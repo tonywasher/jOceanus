@@ -279,6 +279,7 @@ public class JcaAgreementFactory
             case CMCE:
             case FRODO:
             case SABER:
+            case COMPOSITE:
                 return true;
             case EC:
             case GOST2012:

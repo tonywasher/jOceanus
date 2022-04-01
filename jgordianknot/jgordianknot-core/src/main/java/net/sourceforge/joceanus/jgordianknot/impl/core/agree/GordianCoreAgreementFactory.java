@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -196,6 +197,10 @@ public abstract class GordianCoreAgreementFactory
                 && !pAgreementSpec.getAgreementType().canConfirm()) {
                 return false;
             }
+
+            /* Disallow SM2 with confirm */
+            return pAgreementSpec.getAgreementType() != GordianAgreementType.SM2
+                    || !pAgreementSpec.withConfirm();
         }
 
         /* OK */

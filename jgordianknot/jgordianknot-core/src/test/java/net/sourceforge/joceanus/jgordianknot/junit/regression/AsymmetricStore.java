@@ -765,7 +765,9 @@ class AsymmetricStore {
         /* Access the list of possible agreements */
         final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final List<GordianAgreementSpec> myAgreeSpecs = myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec);
+        final List<GordianAgreementSpec> myAgreeSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
+                ? compositeAgreementSpecProvider(pKeySpec)
+                : myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec);
 
         /* Skip key if there are no possible agreements */
         if (myAgreeSpecs.isEmpty()) {
@@ -820,8 +822,9 @@ class AsymmetricStore {
                                                   GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
                                                   GordianKeyPairSpec.ed25519()));
         myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048),
-                                                  GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
-                                                  GordianKeyPairSpec.x25519()));
+                                                  GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1)));
+        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1),
+                                                  GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1)));
         myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488),
                                                   GordianKeyPairSpec.frodo(GordianFRODOSpec.AES19888),
                                                   GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)));

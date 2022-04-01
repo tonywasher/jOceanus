@@ -163,8 +163,26 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     /**
+     * Store client.
+     * @param pClient the client
+     */
+    protected void storeClient(final GordianKeyPair pClient) {
+        /* Store the client */
+        theClient = pClient;
+    }
+
+    /**
+     * Store server.
+     * @param pServer the server
+     */
+    protected void storeServer(final GordianKeyPair pServer) {
+        /* Store the server */
+        theServer = pServer;
+    }
+
+    /**
      * Store client ephemeral.
-     * @param pEphemeral the server ephemeral
+     * @param pEphemeral the client ephemeral
      */
     protected void storeClientEphemeral(final GordianKeyPair pEphemeral) {
         /* Store the ephemeral */
@@ -207,7 +225,7 @@ public abstract class GordianCoreEphemeralAgreement
 
     /**
      * Create the clientHello ASN1.
-     * @param pClien the client keyPair
+     * @param pClient the client keyPair
      * @return the clientHello message
      * @throws OceanusException on error
      */

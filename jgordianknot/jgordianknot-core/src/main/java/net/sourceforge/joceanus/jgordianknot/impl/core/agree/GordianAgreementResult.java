@@ -107,14 +107,8 @@ public class GordianAgreementResult {
      */
     public void reset() {
         /* Reset the client and serverIVs */
-        if (theClientIV != null) {
-            Arrays.fill(theClientIV, (byte) 0);
-            theClientIV = null;
-        }
-        if (theServerIV != null) {
-            Arrays.fill(theServerIV, (byte) 0);
-            theServerIV = null;
-        }
+        theClientIV = null;
+        theServerIV = null;
     }
 
     /**

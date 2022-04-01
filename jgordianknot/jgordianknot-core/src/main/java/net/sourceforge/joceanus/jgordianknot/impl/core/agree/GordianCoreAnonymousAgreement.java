@@ -43,7 +43,8 @@ public abstract class GordianCoreAnonymousAgreement
     @Override
     public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
         /* Create the clientHello and extract the encoded bytes */
-        return createClientHelloASN1(pServer).getEncodedBytes();
+        final GordianAgreementMessageASN1 myHello = createClientHelloASN1(pServer);
+        return myHello.getEncodedBytes();
     }
 
     /**

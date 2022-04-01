@@ -100,6 +100,9 @@ public enum GordianAgreementType {
      * @return true/false
      */
     public boolean isSupported(final GordianKeyPairType pKeyPairType) {
+        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
+            return true;
+        }
         switch (this) {
             case KEM:
                 return hasKEM(pKeyPairType);

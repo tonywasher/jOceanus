@@ -37,6 +37,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -233,7 +234,8 @@ public final class GordianCompositeAgreement {
                 /* Create the subMsg for the subAgreement */
                 final GordianCoreAnonymousAgreement mySub = (GordianCoreAnonymousAgreement) myAgree;
                 mySub.storeClientIV(getClientIV());
-                mySubMsgs.add(mySub.createClientHelloASN1(pairIterator.next()));
+                final GordianAgreementMessageASN1 mySubMsg = mySub.createClientHelloASN1(pairIterator.next());
+                mySubMsgs.add(mySubMsg);
             }
 
             /* Build the composite clientHello */
@@ -400,7 +402,7 @@ public final class GordianCompositeAgreement {
             }
 
             /* Build the composite clientHello */
-            return createClientHelloASN1(pClient);
+            return super.createClientHelloASN1(pClient);
         }
 
         @Override
@@ -416,6 +418,9 @@ public final class GordianCompositeAgreement {
             final Iterator<GordianKeyPair> clientIterator = myClient.iterator();
             final GordianCompositeKeyPair myServer = (GordianCompositeKeyPair) pServer;
             final Iterator<GordianKeyPair> serverIterator = myServer.iterator();
+
+            /* Process the clientHello */
+            parseClientHelloASN1(pClientHello);
 
             /* Create a new serverIV */
             newServerIV();
@@ -528,7 +533,11 @@ public final class GordianCompositeAgreement {
             }
 
             /* Build the composite clientHello */
-            return buildClientHelloASN1(myKeySpec);
+            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
+
+            /* Set status */
+            setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+            return myClientHello;
         }
 
         @Override
@@ -540,6 +549,9 @@ public final class GordianCompositeAgreement {
             final GordianCompositeKeyPair myEphemeral = (GordianCompositeKeyPair) myGenerator.generateKeyPair();
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myEphemeral);
             final Iterator<GordianKeyPair> serverIterator = myEphemeral.iterator();
+
+            /* Process the clientHello */
+            parseClientHelloASN1(pClientHello);
 
             /* Store ephemeral keyPairs */
             storeClientEphemeral(myGenerator.derivePublicOnlyKeyPair(pClientHello.getEphemeral()));
@@ -656,7 +668,7 @@ public final class GordianCompositeAgreement {
             final List<GordianAgreementMessageASN1> mySubMsgs = new ArrayList<>();
             for (GordianAgreement myAgree : theAgreements) {
                 /* Create the subMsg for the subAgreement */
-                final GordianCoreBasicAgreement mySub = (GordianCoreBasicAgreement) myAgree;
+                final GordianCoreEphemeralAgreement mySub = (GordianCoreEphemeralAgreement) myAgree;
                 mySub.storeClientId(getClientId());
                 mySub.storeClientIV(getClientIV());
                 mySubMsgs.add(mySub.createClientHelloASN1(pairIterator.next()));
@@ -665,9 +677,14 @@ public final class GordianCompositeAgreement {
             /* Derive the ephemeral keySpec */
             final X509EncodedKeySpec myEphemeral = deriveCompositeEphemeral(mySubMsgs);
             storeClientEphemeral(myGenerator.derivePublicOnlyKeyPair(myEphemeral));
+            storeClient(pClient);
 
             /* Build the composite clientHello */
-            return super.createClientHelloASN1(pClient);
+            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myEphemeral);
+
+            /* Set status */
+            setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+            return myClientHello;
         }
 
         @Override
@@ -685,17 +702,22 @@ public final class GordianCompositeAgreement {
             final Iterator<GordianKeyPair> serverIterator = myServer.iterator();
             final Iterator<X509EncodedKeySpec> specIterator = splitCompositeEphemeral(pClientHello.getEphemeral()).iterator();
 
+            /* Process the clientHello */
+            parseClientHelloASN1(pClientHello);
+
             /* Create a new serverIV */
             newServerIV();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
             storeClientEphemeral(myGenerator.derivePublicOnlyKeyPair(pClientHello.getEphemeral()));
+            storeClient(pClient);
+            storeServer(pServer);
 
             /* Loop through the subAgreements */
             final List<GordianAgreementMessageASN1> mySubMsgs = new ArrayList<>();
             for (GordianAgreement myAgree : theAgreements) {
                 /* Create the subMsg for the subAgreement */
-                final GordianCoreBasicAgreement mySub = (GordianCoreBasicAgreement) myAgree;
+                final GordianCoreEphemeralAgreement mySub = (GordianCoreEphemeralAgreement) myAgree;
                 mySub.storeClientId(pClientHello.getClientId());
                 mySub.storeClientIV(pClientHello.getInitVector());
                 mySub.storeServerIV(getServerIV());
@@ -708,13 +730,12 @@ public final class GordianCompositeAgreement {
             /* Create the serverHello */
             final X509EncodedKeySpec myEphemeral = deriveCompositeEphemeral(mySubMsgs);
             storeServerEphemeral(myGenerator.derivePublicOnlyKeyPair(myEphemeral));
-            final GordianAgreementMessageASN1 myServerHello = buildServerHello();
 
             /* merge results and store the secret */
             storeSecret(mergeResults(theAgreements));
 
             /* return the server hello */
-            return myServerHello;
+            return buildServerHello();
         }
 
         @Override
@@ -727,6 +748,7 @@ public final class GordianCompositeAgreement {
             final GordianCompositeKeyPair myServer = (GordianCompositeKeyPair) pServer;
             final Iterator<GordianKeyPair> serverIterator = myServer.iterator();
             final Iterator<X509EncodedKeySpec> specIterator = splitCompositeEphemeral(pServerHello.getEphemeral()).iterator();
+            storeServer(pServer);
 
             /* process the serverHello */
             processServerHelloASN1(pServer, pServerHello);
@@ -734,11 +756,11 @@ public final class GordianCompositeAgreement {
             /* Loop through the subAgreements */
             for (GordianAgreement myAgree : theAgreements) {
                 /* Create the subMsg for the subAgreement */
-                final GordianCoreBasicAgreement mySub = (GordianCoreBasicAgreement) myAgree;
+                final GordianCoreEphemeralAgreement mySub = (GordianCoreEphemeralAgreement) myAgree;
                 mySub.storeClientId(pServerHello.getClientId());
                 mySub.storeClientIV(getClientIV());
                 mySub.storeServerIV(pServerHello.getInitVector());
-                final GordianAgreementMessageASN1 mySubMsg = mySub.buildServerHello().setEphemeral(specIterator.next());
+                final GordianAgreementMessageASN1 mySubMsg = mySub.buildServerHello(specIterator.next(), null);
 
                 /* process the subMsg */
                 mySub.acceptServerHelloASN1(serverIterator.next(), mySubMsg);
@@ -746,7 +768,7 @@ public final class GordianCompositeAgreement {
 
             /* merge results and store the secret */
             storeSecret(mergeResults(theAgreements));
-            return null;
+            return buildClientConfirmASN1();
         }
     }
 }
