@@ -16,7 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.digest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
@@ -110,5 +114,49 @@ public abstract class GordianCoreDigestFactory
      */
     public boolean validDigestType(final GordianDigestType pDigestType) {
         return true;
+    }
+
+
+    @Override
+    public List<GordianDigestSpec> listAllSupportedSpecs() {
+        return listAllPossibleSpecs()
+                .stream()
+                .filter(supportedDigestSpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianDigestType> listAllSupportedTypes() {
+        return Arrays.stream(GordianDigestType.values())
+                .filter(supportedDigestTypes())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianDigestType> listAllExternalTypes() {
+        return Arrays.stream(GordianDigestType.values())
+                .filter(supportedExternalDigestTypes())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianDigestSpec> listAllPossibleSpecs() {
+        /* Create the array list */
+        final List<GordianDigestSpec> myList = new ArrayList<>();
+
+        /* For each digest type */
+        for (final GordianDigestType myType : GordianDigestType.values()) {
+            /* For each length */
+            for (final GordianLength myLength : myType.getSupportedLengths()) {
+                myList.add(new GordianDigestSpec(myType, myLength));
+                final GordianLength myState = myType.getAlternateStateForLength(myLength);
+                if (myState != null) {
+                    myList.add(new GordianDigestSpec(myType, myState, myLength));
+                }
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }

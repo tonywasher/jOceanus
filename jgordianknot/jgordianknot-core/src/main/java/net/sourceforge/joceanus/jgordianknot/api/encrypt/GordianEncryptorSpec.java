@@ -16,16 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -151,38 +148,6 @@ public final class GordianEncryptorSpec {
      */
     public static GordianEncryptorSpec composite(final List<GordianEncryptorSpec> pSpecs) {
         return new GordianEncryptorSpec(GordianKeyPairType.COMPOSITE, pSpecs);
-    }
-
-    /**
-     * Create default signatureSpec for key.
-     * @param pKeySpec the keySpec
-     * @return the SignatureSpec
-     */
-    public static GordianEncryptorSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
-        switch (pKeySpec.getKeyPairType()) {
-            case RSA:
-                return GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case EC:
-            case SM2:
-            case GOST2012:
-                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sm3()));
-            case ELGAMAL:
-                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case MCELIECE:
-                return pKeySpec.getMcElieceKeySpec().isCCA2()
-                        ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
-                        : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
-            case COMPOSITE:
-                final List<GordianEncryptorSpec> mySpecs = new ArrayList<>();
-                final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
-                while (myIterator.hasNext()) {
-                    final GordianKeyPairSpec mySpec = myIterator.next();
-                    mySpecs.add(defaultForKey(mySpec));
-                }
-                return GordianEncryptorSpec.composite(mySpecs);
-            default:
-                return null;
-        }
     }
 
     /**
@@ -391,53 +356,5 @@ public final class GordianEncryptorSpec {
             hashCode += theEncryptorType.hashCode();
         }
         return hashCode;
-    }
-
-    /**
-     * Obtain a list of all possible encryptors for the keyType.
-     * @param pKeyPairType the keyPairType
-     * @return the list
-     */
-    public static List<GordianEncryptorSpec> listPossibleEncryptors(final GordianKeyPairType pKeyPairType) {
-        /* Create list */
-        final List<GordianEncryptorSpec> myEncryptors = new ArrayList<>();
-
-        /* Switch on keyPairType */
-        switch (pKeyPairType) {
-            case RSA:
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512)));
-                break;
-            case ELGAMAL:
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512)));
-                break;
-            case EC:
-            case SM2:
-            case GOST2012:
-                /* Add EC-ElGamal */
-                myEncryptors.add(GordianEncryptorSpec.ec());
-
-                /* Loop through the encryptionSpecs */
-                for (GordianSM2EncryptionSpec mySpec : GordianSM2EncryptionSpec.listPossibleSpecs()) {
-                    myEncryptors.add(GordianEncryptorSpec.sm2(mySpec));
-                }
-                break;
-            case MCELIECE:
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD));
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI));
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.KOBARAIMAI));
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.POINTCHEVAL));
-                break;
-            default:
-                break;
-        }
-
-        /* Return the list */
-        return myEncryptors;
     }
 }

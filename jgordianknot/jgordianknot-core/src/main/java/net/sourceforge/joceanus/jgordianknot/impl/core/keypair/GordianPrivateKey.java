@@ -42,4 +42,22 @@ public abstract class GordianPrivateKey {
     public GordianKeyPairSpec getKeySpec() {
         return theKeySpec;
     }
+
+    /**
+     * StateAware PrivateKey.
+     */
+    public interface GordianStateAwarePrivateKey {
+        /**
+         * Obtain number of signatures remaining.
+         * @return the number of signatures remaining
+         */
+        long getUsagesRemaining();
+
+        /**
+         * Obtain a keyShard from the number of usages.
+         * @param pNumUsages the number of usage for the shard
+         * @return the keyShard
+         */
+        GordianStateAwarePrivateKey getKeyShard(int pNumUsages);
+    }
 }

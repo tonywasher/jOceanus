@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -236,7 +237,8 @@ public class BouncyKeyPair
      * @param <T> parameter type
      */
     public abstract static class BouncyStateAwarePrivateKey<T extends AsymmetricKeyParameter>
-            extends BouncyPrivateKey<T> {
+            extends BouncyPrivateKey<T>
+            implements GordianStateAwarePrivateKey {
         /**
          * The private key.
          */
@@ -257,12 +259,6 @@ public class BouncyKeyPair
         public T getPrivateKey() {
             return thePrivateKey;
         }
-
-        /**
-         * Obtain number of signatures remaining.
-         * @return the number of signatures remaining
-         */
-        public abstract long getUsagesRemaining();
 
         /**
          * Obtain a keyShard from the number of usages.

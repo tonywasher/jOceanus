@@ -61,8 +61,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -395,7 +395,8 @@ public class GordianCoreCertificate
      * @return the publicOnly version
      */
     protected GordianKeyPair getPublicOnly(final GordianKeyPair pKeyPair) {
-        return ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
+        return pKeyPair instanceof GordianCompositeKeyPair ? ((GordianCompositeKeyPair) pKeyPair).getPublicOnly()
+                                                           : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
     }
 
     /**
@@ -405,7 +406,7 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     GordianSignatureSpec determineSignatureSpecForKeyPair(final GordianKeyPair pKeyPair) {
-        return GordianSignatureSpec.defaultForKey(pKeyPair.getKeyPairSpec());
+        return theFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());
     }
 
     /**
@@ -434,12 +435,12 @@ public class GordianCoreCertificate
 
     /**
      * Validate that the keyPair public Key matches.
-     * @param pPair the key pair
+     * @param pKeyPair the key pair
      * @return matches true/false
      */
-    boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
-        final GordianCoreKeyPair myPair = (GordianCoreKeyPair) pPair;
-        return myPair.getPublicKey().equals(((GordianCoreKeyPair) getKeyPair()).getPublicKey());
+    boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
+        return pKeyPair instanceof GordianCompositeKeyPair ? ((GordianCompositeKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair())
+                                                           : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
     }
 
     /**
@@ -452,7 +453,7 @@ public class GordianCoreCertificate
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509 = getX509KeySpec();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
-        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(myKeySpec);
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         return myGenerator.derivePublicOnlyKeyPair(myX509);
     }
 

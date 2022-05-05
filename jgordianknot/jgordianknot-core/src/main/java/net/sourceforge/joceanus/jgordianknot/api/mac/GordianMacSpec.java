@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -846,110 +844,5 @@ public final class GordianMacSpec implements GordianKeySpec {
             hashCode += theSubSpec.hashCode();
         }
         return hashCode;
-    }
-
-    /**
-     * List all possible macSpecs for a keyLength.
-     * @param pKeyLen the keyLength
-     * @return the list
-     */
-    public static List<GordianMacSpec> listAll(final GordianLength pKeyLen) {
-        /* Create the array list */
-        final List<GordianMacSpec> myList = new ArrayList<>();
-
-        /* For each digestSpec */
-        for (final GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
-            /* Add the hMacSpec */
-            myList.add(GordianMacSpec.hMac(mySpec, pKeyLen));
-
-            /* Add KMAC for digestType of SHAKE */
-            if (GordianDigestType.SHAKE == mySpec.getDigestType()) {
-                myList.add(GordianMacSpec.kMac(pKeyLen, mySpec));
-            }
-        }
-
-        /* For each SymKey */
-        for (final GordianSymKeySpec mySymKeySpec : GordianSymKeySpec.listAll(pKeyLen)) {
-            /* Add gMac/cMac/cfbMac/cbcMac */
-            myList.add(GordianMacSpec.gMac(mySymKeySpec));
-            myList.add(GordianMacSpec.cMac(mySymKeySpec));
-            myList.add(GordianMacSpec.cbcMac(mySymKeySpec));
-            myList.add(GordianMacSpec.cfbMac(mySymKeySpec));
-
-            /* Add kalynaMac for keyType of Kalyna */
-            if (GordianSymKeyType.KALYNA == mySymKeySpec.getSymKeyType()) {
-                myList.add(GordianMacSpec.kalynaMac(mySymKeySpec));
-            }
-        }
-
-        /* Only add poly1305 for 256bit keyLengths */
-        if (GordianLength.LEN_256 == pKeyLen) {
-            /* For each SymKey at 128 bits*/
-            for (final GordianSymKeySpec mySymKeySpec : GordianSymKeySpec.listAll(GordianLength.LEN_128)) {
-                myList.add(GordianMacSpec.poly1305Mac(mySymKeySpec));
-            }
-
-            /* Add raw poly1305 */
-            myList.add(GordianMacSpec.poly1305Mac());
-
-            /* Add Blake3 macs */
-            for (final GordianLength myLength : GordianDigestType.BLAKE3.getSupportedLengths()) {
-                myList.add(GordianMacSpec.blake3Mac(myLength));
-            }
-        }
-
-        /* Add kupynaMac */
-        for (final GordianLength myLength : GordianDigestType.KUPYNA.getSupportedLengths()) {
-            myList.add(GordianMacSpec.kupynaMac(pKeyLen, myLength));
-        }
-
-        /* Add SkeinMacs */
-        for (final GordianLength myLength : GordianDigestType.SKEIN.getSupportedLengths()) {
-            myList.add(GordianMacSpec.skeinMac(pKeyLen, myLength));
-            if (GordianDigestType.SKEIN.getAlternateStateForLength(myLength) != null) {
-                myList.add(GordianMacSpec.skeinMac(pKeyLen, GordianDigestSpec.skeinAlt(myLength)));
-            }
-        }
-
-        /* Add blakeMacs */
-        for (final GordianLength myLength : GordianDigestType.BLAKE2.getSupportedLengths()) {
-            GordianMacSpec mySpec = GordianMacSpec.blake2Mac(pKeyLen, myLength);
-            if (mySpec.isValid()) {
-                myList.add(mySpec);
-            }
-            if (GordianDigestType.BLAKE2.getAlternateStateForLength(myLength) != null) {
-                mySpec = GordianMacSpec.blake2Mac(pKeyLen, GordianDigestSpec.blake2Alt(myLength));
-                if (mySpec.isValid()) {
-                    myList.add(mySpec);
-                }
-            }
-        }
-
-        /* Add vmpcMac */
-        myList.add(GordianMacSpec.vmpcMac(pKeyLen));
-
-        /* Add sipHash for 128bit keys */
-        if (GordianLength.LEN_128 == pKeyLen) {
-            for (final GordianSipHashSpec mySpec : GordianSipHashSpec.values()) {
-                myList.add(GordianMacSpec.sipHash(mySpec));
-            }
-        }
-
-        /* Add gostHash for 256bit keys */
-        if (GordianLength.LEN_256 == pKeyLen) {
-            myList.add(GordianMacSpec.gostMac());
-        }
-
-        /* Add zucMac */
-        if (GordianLength.LEN_128 == pKeyLen) {
-            myList.add(GordianMacSpec.zucMac(pKeyLen, GordianLength.LEN_32));
-        } else if (GordianLength.LEN_256 == pKeyLen) {
-            myList.add(GordianMacSpec.zucMac(pKeyLen, GordianLength.LEN_32));
-            myList.add(GordianMacSpec.zucMac(pKeyLen, GordianLength.LEN_64));
-            myList.add(GordianMacSpec.zucMac(pKeyLen, GordianLength.LEN_128));
-        }
-
-        /* Return the list */
-        return myList;
     }
 }

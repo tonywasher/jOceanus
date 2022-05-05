@@ -162,9 +162,15 @@ public class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.rainbow()),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.lms(GordianLMSKeySpec.keySpec(GordianLMSSigType.H5, GordianLMSOtsType.W1))),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+                                                                           GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
+                                                                           GordianKeyPairSpec.ed25519())),
             encryptedKeyPairRequestTest(myState, GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard())),
             encryptedKeyPairRequestTest(myState, GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.cca2(GordianMcElieceDigestType.SHA512))),
             encryptedKeyPairRequestTest(myState, GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048)),
+            encryptedKeyPairRequestTest(myState, GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+                                                                              GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048),
+                                                                              GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1))),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.newHope()),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.x25519()),
@@ -172,6 +178,9 @@ public class KeyStoreTest {
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.frodo(GordianFRODOSpec.AES19888)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.composite(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488),
+                                                                           GordianKeyPairSpec.frodo(GordianFRODOSpec.AES19888),
+                                                                           GordianKeyPairSpec.saber(GordianSABERSpec.BASE128))),
             DynamicTest.dynamicTest("Cleanup", myState::cleanUp)
         ));
     }
@@ -359,7 +368,6 @@ public class KeyStoreTest {
         final GordianCoreKeyStoreManager myMgr = pState.getManager();
         final GordianCoreKeyStore myStore = pState.getStore();
         final GordianKeyStorePair myIntermediate = pState.getIntermediate();
-        final GordianKeyStorePair myCertifier = pState.getCertifier();
 
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
@@ -369,7 +377,7 @@ public class KeyStoreTest {
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
-        final GordianKeyStorePair mySigner = myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
+        myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
 
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
@@ -407,19 +415,17 @@ public class KeyStoreTest {
         final GordianCoreKeyStoreManager myMgr = pState.getManager();
         final GordianCoreKeyStore myStore = pState.getStore();
         final GordianKeyStorePair myIntermediate = pState.getIntermediate();
-        final GordianKeyStorePair myCertifier = pState.getCertifier();
 
         /* Create the keyPair */
         final KeyStoreAlias myAlias = pUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
                 ? KeyStoreAlias.ENCRYPT
                 : KeyStoreAlias.AGREE;
         final X500Name myCertName = buildX500Name(myAlias);
-        final GordianKeyStorePair myCert = myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), DEF_PASSWORD);
+        myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), DEF_PASSWORD);
 
         /* Create the target keyPair */
         final X500Name myTargetName = buildX500Name(KeyStoreAlias.TARGET);
         final GordianKeyStorePair myTarget = myMgr.createKeyPair(pKeyPairSpec, myTargetName, pUsage, myIntermediate, KeyStoreAlias.TARGET.getName(), DEF_PASSWORD);
-        final GordianCoreCertificate myTargetCert = (GordianCoreCertificate) myTarget.getCertificateChain().get(0);
 
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);

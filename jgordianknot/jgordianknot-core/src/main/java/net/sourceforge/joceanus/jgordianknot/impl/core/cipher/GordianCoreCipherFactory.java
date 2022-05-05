@@ -16,7 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -37,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -358,5 +363,111 @@ public abstract class GordianCoreCipherFactory
 
         /* OK */
         return true;
+    }
+
+    @Override
+    public List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec) {
+        return listAllSymCipherSpecs(pSpec)
+                .stream()
+                .filter(s -> supportedSymCipherSpecs().test(s))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianSymKeySpec> listAllSupportedSymKeySpecs(final GordianLength pKeyLen) {
+        return listAllSymKeySpecs(pKeyLen)
+                .stream()
+                .filter(supportedSymKeySpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianSymKeyType> listAllSupportedSymKeyTypes() {
+        return Arrays.stream(GordianSymKeyType.values())
+                .filter(supportedSymKeyTypes())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
+        final List<GordianStreamCipherSpec> myResult = new ArrayList<>();
+        for (GordianStreamKeySpec mySpec : listAllSupportedStreamKeySpecs(pKeyLen)) {
+            /* Add the standard cipher */
+            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
+            myResult.add(myCipherSpec);
+
+            /* Add the AAD Cipher if supported */
+            if (mySpec.supportsAAD()) {
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(mySpec, true);
+                if (supportedStreamCipherSpecs().test(myAADSpec)) {
+                    myResult.add(myAADSpec);
+                }
+            }
+        }
+        return myResult;
+    }
+
+    @Override
+    public List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
+        return GordianStreamKeySpec.listAll(pKeyLen)
+                .stream()
+                .filter(supportedStreamKeySpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianStreamKeyType> listAllSupportedStreamKeyTypes() {
+        return Arrays.stream(GordianStreamKeyType.values())
+                .filter(supportedStreamKeyTypes())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianSymKeySpec> listAllSymKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianSymKeySpec> myList = new ArrayList<>();
+
+        /* Check that the keyLength is supported */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return myList;
+        }
+
+        /* For each symKey type */
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+            /* For each supported block length */
+            for (final GordianLength myBlkLen : myType.getSupportedBlockLengths()) {
+                /* Add spec if valid for blkLen and keyLen */
+                if (myType.validBlockAndKeyLengths(myBlkLen, pKeyLen)) {
+                    myList.add(new GordianSymKeySpec(myType, myBlkLen, pKeyLen));
+                }
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    @Override
+    public List<GordianSymCipherSpec> listAllSymCipherSpecs(final GordianSymKeySpec pSpec) {
+        /* Create the array list */
+        final List<GordianSymCipherSpec> myList = new ArrayList<>();
+
+        /* Loop through the modes */
+        for (GordianCipherMode myMode : GordianCipherMode.values()) {
+            /* If the mode has padding */
+            if (myMode.hasPadding()) {
+                /* Loop through the paddings */
+                for (GordianPadding myPadding : GordianPadding.values()) {
+                    myList.add(new GordianSymCipherSpec(pSpec, myMode, myPadding));
+                }
+
+                /* else no padding */
+            } else {
+                myList.add(new GordianSymCipherSpec(pSpec, myMode, GordianPadding.NONE));
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }

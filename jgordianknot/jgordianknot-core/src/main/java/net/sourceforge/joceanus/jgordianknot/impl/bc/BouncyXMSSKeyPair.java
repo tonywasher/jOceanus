@@ -335,25 +335,6 @@ public final class BouncyXMSSKeyPair {
     }
 
     /**
-     * Obtain digest OID for XMSSKeyType.
-     * @param pKeyType the keyType
-     * @return the OIDt
-     */
-    static ASN1ObjectIdentifier getOID(final GordianXMSSDigestType pKeyType) {
-        switch (pKeyType) {
-            case SHAKE128:
-                return NISTObjectIdentifiers.id_shake128;
-            case SHAKE256:
-                return NISTObjectIdentifiers.id_shake256;
-            case SHA256:
-                return NISTObjectIdentifiers.id_sha256;
-            case SHA512:
-            default:
-                return NISTObjectIdentifiers.id_sha512;
-        }
-    }
-
-    /**
      * Bouncy XMSSMT PublicKey.
      */
     public static class BouncyXMSSMTPublicKey

@@ -16,11 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -102,81 +99,56 @@ public interface GordianCipherFactory {
     GordianWrapper createKeyWrapper(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
 
     /**
-     * Obtain a list of supported symKeySpecs for the keyLength.
-     * @param pKeyLen the keyLength
-     * @return the list of supported symKeySpecs.
-     */
-    default List<GordianSymKeySpec> listAllSupportedSymKeySpecs(final GordianLength pKeyLen) {
-        return GordianSymKeySpec.listAll(pKeyLen)
-                .stream()
-                .filter(supportedSymKeySpecs())
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Obtain a list of supported symCipherSpecs.
      * @param pSpec the symKeySpec
      * @return the list of supported symCipherSpecs.
      */
-    default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec) {
-        return GordianSymCipherSpec.listAll(pSpec)
-                .stream()
-                .filter(s -> supportedSymCipherSpecs().test(s))
-                .collect(Collectors.toList());
-    }
+    List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(GordianSymKeySpec pSpec);
+
+    /**
+     * Obtain a list of supported symKeySpecs for the keyLength.
+     * @param pKeyLen the keyLength
+     * @return the list of supported symKeySpecs.
+     */
+    List<GordianSymKeySpec> listAllSupportedSymKeySpecs(GordianLength pKeyLen);
+
+    /**
+     * List all possible symKeySpecs for the keyLength.
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    List<GordianSymKeySpec> listAllSymKeySpecs(GordianLength pKeyLen);
 
     /**
      * Obtain a list of supported symKeyTypes.
      * @return the list of supported symKeyTypes.
      */
-    default List<GordianSymKeyType> listAllSupportedSymKeyTypes() {
-        return Arrays.stream(GordianSymKeyType.values())
-                .filter(supportedSymKeyTypes())
-                .collect(Collectors.toList());
-    }
+    List<GordianSymKeyType> listAllSupportedSymKeyTypes();
 
     /**
      * Obtain a list of supported streamCipherSpecs for the keyLength.
      * @param pKeyLen the keyLength
      * @return the list of supported streamCipherSpecs.
      */
-    default List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
-        final List<GordianStreamCipherSpec> myResult = new ArrayList<>();
-        for (GordianStreamKeySpec mySpec : listAllSupportedStreamKeySpecs(pKeyLen)) {
-            /* Add the standard cipher */
-            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
-            myResult.add(myCipherSpec);
-
-            /* Add the AAD Cipher if supported */
-            if (mySpec.supportsAAD()) {
-                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(mySpec, true);
-                if (supportedStreamCipherSpecs().test(myAADSpec)) {
-                    myResult.add(myAADSpec);
-                }
-            }
-        }
-        return myResult;
-    }
+    List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(GordianLength pKeyLen);
 
     /**
      * Obtain a list of supported streamKeySpecs for the keyLength.
      * @param pKeyLen the keyLength
      * @return the list of supported streamKeySpecs.
      */
-    default List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
-        return GordianStreamKeySpec.listAll(pKeyLen)
-                .stream()
-                .filter(supportedStreamKeySpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(GordianLength pKeyLen);
 
     /**
      * Obtain a list of supported streamKeyTypes.
      * @return the list of supported streamKeyTypes.
      */
-    default List<GordianStreamKeyType> listAllSupportedStreamKeyTypes() {
-        return Arrays.stream(GordianStreamKeyType.values())
-                .filter(supportedStreamKeyTypes())
-                .collect(Collectors.toList());
-    }
+    List<GordianStreamKeyType> listAllSupportedStreamKeyTypes();
+
+    /**
+     * List all possible cipherSpecs for a SymKeySpec.
+     * @param pSpec the keySpec
+     * @return the list
+     */
+    List<GordianSymCipherSpec> listAllSymCipherSpecs(final GordianSymKeySpec pSpec);
 }

@@ -27,18 +27,20 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -898,7 +900,7 @@ class SymmetricStore {
                                                   final GordianFactory pPartner) {
         /* Loop through the possible digestSpecs */
         final List<FactoryDigestSpec> myResult = new ArrayList<>();
-        final GordianDigestFactory myDigestFactory = pFactory.getDigestFactory();
+        final GordianCoreDigestFactory myDigestFactory = (GordianCoreDigestFactory) pFactory.getDigestFactory();
         final Predicate<GordianDigestSpec> myPredicate = pPartner.getDigestFactory().supportedDigestSpecs();
         for (GordianDigestSpec mySpec : myDigestFactory.listAllSupportedSpecs()) {
             /* Determine whether the digestSpec is supported by the partner */
@@ -924,7 +926,7 @@ class SymmetricStore {
                                             final GordianLength pKeyLen) {
         /* Loop through the possible macSpecs */
         final List<FactoryMacSpec> myResult = new ArrayList<>();
-        final GordianMacFactory myMacFactory = pFactory.getMacFactory();
+        final GordianCoreMacFactory myMacFactory = (GordianCoreMacFactory) pFactory.getMacFactory();
         final Predicate<GordianMacSpec> myPredicate = pPartner.getMacFactory().supportedMacSpecs();
         for (GordianMacSpec mySpec : myMacFactory.listAllSupportedSpecs(pKeyLen)) {
             /* Determine whether the macSpec is supported by the partner */
@@ -950,7 +952,7 @@ class SymmetricStore {
                                                   final GordianLength pKeyLen) {
         /* Loop through the possible keySpecs */
         final List<FactorySymKeySpec> myResult = new ArrayList<>();
-        final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();
+        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
         final Predicate<GordianSymKeySpec> myPredicate = pPartner.getCipherFactory().supportedSymKeySpecs();
         for (GordianSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(pKeyLen)) {
             /* Determine whether the keySpec is supported by the partner */
@@ -973,7 +975,7 @@ class SymmetricStore {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianSymKeySpec mySpec = pKeySpec.getSpec();
-        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final List<FactorySymCipherSpec> myResult = new ArrayList<>();
         final GordianFactory myPartner = pKeySpec.getPartner();
         final Predicate<GordianSymCipherSpec> myPredicate
@@ -1026,7 +1028,7 @@ class SymmetricStore {
                                                         final GordianLength pKeyLen) {
         /* Loop through the possible keySpecs */
         final List<FactoryStreamKeySpec> myResult = new ArrayList<>();
-        final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();
+        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
         final Predicate<GordianStreamKeySpec> myPredicate = pPartner.getCipherFactory().supportedStreamKeySpecs();
         for (GordianStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(pKeyLen)) {
             /* Determine whether the keySpec is supported by the partner */
@@ -1075,7 +1077,7 @@ class SymmetricStore {
     static FactoryRandomType randomProvider(final GordianFactory pFactory,
                                             final GordianRandomType pType) {
         /* Create the random type */
-        final GordianRandomFactory myRandomFactory = pFactory.getRandomFactory();
+        final GordianCoreRandomFactory myRandomFactory = (GordianCoreRandomFactory) pFactory.getRandomFactory();
         final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, pType);
 
         /* Populate the list of specs */
@@ -1100,7 +1102,7 @@ class SymmetricStore {
                                             final GordianRandomType pType,
                                             final GordianLength pKeyLen) {
         /* Create the random type */
-        final GordianRandomFactory myRandomFactory = pFactory.getRandomFactory();
+        final GordianCoreRandomFactory myRandomFactory = (GordianCoreRandomFactory)  pFactory.getRandomFactory();
         final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, pType, pKeyLen);
 
         /* Populate the list of specs */

@@ -30,7 +30,6 @@ import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
@@ -73,7 +72,7 @@ public class GordianCipherAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the cipherFactory  */
-        final GordianCipherFactory myFactory = pFactory.getCipherFactory();
+        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
 
         /* Populate with the public standards */
         addWellKnownCiphers128();

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -74,6 +76,22 @@ public abstract class GordianCoreKeyPair
      * @return the public key
      */
     public abstract GordianCoreKeyPair getPublicOnly();
+
+    /**
+     * Validate that the keyPair public Key matches.
+     * @param pPair the key pair
+     * @return matches true/false
+     */
+    public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
+        /* Must be core and matching spec */
+        if (!(pPair instanceof GordianCoreKeyPair)
+                || !theKeySpec.equals(pPair.getKeyPairSpec())) {
+            return false;
+        }
+
+        /* Check matching public key */
+        return thePublicKey.equals(((GordianCoreKeyPair) pPair).getPublicKey());
+    }
 
     /**
      * Obtain the public key.

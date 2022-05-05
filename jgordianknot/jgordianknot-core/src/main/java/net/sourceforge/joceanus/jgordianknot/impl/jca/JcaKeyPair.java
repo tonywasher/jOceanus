@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -228,7 +229,8 @@ public class JcaKeyPair
      * Jca StateAware PrivateKey.
      */
     public static class JcaStateAwarePrivateKey
-            extends JcaPrivateKey {
+            extends JcaPrivateKey
+            implements GordianStateAwarePrivateKey {
         /**
          * The private key.
          */
@@ -250,10 +252,7 @@ public class JcaKeyPair
             return thePrivateKey;
         }
 
-        /**
-         * Obtain number of signatures remaining.
-         * @return the number of signatures remaining
-         */
+        @Override
         public long getUsagesRemaining() {
             if (thePrivateKey instanceof LMSPrivateKey) {
                 return ((LMSPrivateKey) getPrivateKey()).getUsagesRemaining();
@@ -266,11 +265,7 @@ public class JcaKeyPair
                     : 0;
         }
 
-        /**
-         * Obtain a keyShard from the number of usages.
-         * @param pNumUsages the number of usage for the shard
-         * @return the keyShard
-         */
+        @Override
         public JcaStateAwarePrivateKey getKeyShard(final int pNumUsages) {
             if (thePrivateKey instanceof LMSPrivateKey) {
                 return new JcaStateAwarePrivateKey(getKeySpec(), ((LMSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));

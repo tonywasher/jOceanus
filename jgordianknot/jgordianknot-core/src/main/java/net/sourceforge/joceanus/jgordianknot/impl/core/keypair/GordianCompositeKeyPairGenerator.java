@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -61,6 +62,11 @@ public class GordianCompositeKeyPairGenerator
     private final List<GordianKeyPairGenerator> theGenerators;
 
     /**
+     * is the composite keyPair stateAware?.
+     */
+    private final boolean isStateAware;
+
+    /**
      * Constructor.
      * @param pFactory the asymFactory.
      * @param pSpec the keyPairSetSpec.
@@ -72,6 +78,7 @@ public class GordianCompositeKeyPairGenerator
         theSpec = pSpec;
         theFactory = (GordianCoreKeyPairFactory) pFactory;
         theGenerators = new ArrayList<>();
+        boolean stateAware = false;
 
         /* Loop through the asymKeySpecs */
         final Iterator<GordianKeyPairSpec> myIterator = pSpec.keySpecIterator();
@@ -80,7 +87,11 @@ public class GordianCompositeKeyPairGenerator
 
             /* create generator and add it to list */
             theGenerators.add(pFactory.getKeyPairGenerator(mySpec));
+            stateAware = mySpec.isStateAware();
         }
+
+        /* Record stateAwareness */
+        isStateAware = stateAware;
     }
 
     @Override
@@ -91,7 +102,8 @@ public class GordianCompositeKeyPairGenerator
     @Override
     public GordianCompositeKeyPair generateKeyPair() {
         /* Create the new empty keyPairSet */
-        final GordianCompositeKeyPair myKeyPair = new GordianCompositeKeyPair(theSpec);
+        final GordianCompositeKeyPair myKeyPair = isStateAware ? new GordianStateAwareCompositeKeyPair(theSpec)
+                                                               : new GordianCompositeKeyPair(theSpec);
 
         /* Loop through the generators */
         for (GordianKeyPairGenerator myGenerator : theGenerators) {
@@ -170,7 +182,8 @@ public class GordianCompositeKeyPairGenerator
             final ASN1Sequence myPrivKeys = ASN1Sequence.getInstance(myPrivInfo.getPrivateKey().getOctets());
 
             /* Create the keySet */
-            final GordianCompositeKeyPair myPair = new GordianCompositeKeyPair(theSpec);
+            final GordianCompositeKeyPair myPair = isStateAware ? new GordianStateAwareCompositeKeyPair(theSpec)
+                                                                : new GordianCompositeKeyPair(theSpec);
 
             /* Build the list from the keys sequence */
             final Enumeration<?> enPub = myPubKeys.getObjects();

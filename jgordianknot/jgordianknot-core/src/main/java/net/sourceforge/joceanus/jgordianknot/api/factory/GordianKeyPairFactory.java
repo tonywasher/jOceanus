@@ -20,7 +20,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
@@ -99,23 +98,18 @@ public interface GordianKeyPairFactory {
      * Obtain a list of supported keyPairSpecs.
      * @return the list of supported keyPairSpecs.
      */
-    default List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs() {
-        return GordianKeyPairSpec.listPossibleKeySpecs()
-                .stream()
-                .filter(supportedKeyPairSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs();
 
     /**
      * Obtain a list of supported KeyPairSpecs for a KeyPairType.
      * @param pKeyPairType the keyPairType
      * @return the list of supported asymKeySpecs.
      */
-    default List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs(final GordianKeyPairType pKeyPairType) {
-        return GordianKeyPairSpec.listPossibleKeySpecs()
-                .stream()
-                .filter(s -> pKeyPairType.equals(s.getKeyPairType()))
-                .filter(supportedKeyPairSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs(GordianKeyPairType pKeyPairType);
+
+    /**
+     * Obtain a list of all possible keyPairSpecs.
+     * @return the list
+     */
+    List<GordianKeyPairSpec> listPossibleKeySpecs();
 }

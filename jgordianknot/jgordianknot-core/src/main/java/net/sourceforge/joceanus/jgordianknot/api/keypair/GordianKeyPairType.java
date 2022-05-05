@@ -171,18 +171,4 @@ public enum GordianKeyPairType {
                 return false;
         }
     }
-
-    /**
-     * is the use subType for signatures?
-     * @return true/false
-     */
-    public boolean isStateAware() {
-        switch (this) {
-            case XMSS:
-            case LMS:
-                return true;
-            default:
-                return false;
-        }
-    }
 }

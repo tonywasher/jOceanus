@@ -28,20 +28,20 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -174,7 +174,7 @@ public class RandomSpecTest {
     private void checkDigestSpecs(final GordianFactory pFactory) throws OceanusException {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
-        final GordianDigestFactory myDigests = pFactory.getDigestFactory();
+        final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
         final List<GordianDigestSpec> myValid = myDigests.listAllSupportedSpecs();
 
         /* Loop a large number of times to ensure that all digests are generated */
@@ -198,7 +198,7 @@ public class RandomSpecTest {
                                   final GordianLength pLength) throws OceanusException {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
-        final GordianCipherFactory myCiphers = pFactory.getCipherFactory();
+        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) pFactory.getCipherFactory();
         final List<GordianSymKeySpec> myValid = myCiphers.listAllSupportedSymKeySpecs(pLength);
 
         /* Loop a large number of times to ensure that all digests are generated */
@@ -222,7 +222,7 @@ public class RandomSpecTest {
                                      final GordianLength pLength) throws OceanusException {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
-        final GordianCipherFactory myCiphers = pFactory.getCipherFactory();
+        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) pFactory.getCipherFactory();
         final List<GordianStreamKeySpec> myValid = myCiphers.listAllSupportedStreamKeySpecs(pLength);
 
         /* Loop a large number of times to ensure that all digests are generated */
@@ -246,7 +246,7 @@ public class RandomSpecTest {
                                final GordianLength pLength) throws OceanusException {
         /* Generate macSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
-        final GordianMacFactory myMacs = pFactory.getMacFactory();
+        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) pFactory.getMacFactory();
         final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
         myValid.remove(GordianMacSpec.poly1305Mac());
 

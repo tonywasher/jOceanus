@@ -22,9 +22,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -42,7 +40,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -113,7 +110,7 @@ public class GordianCoreKeyStoreManager
                                                      final String pAlias,
                                                      final char[] pPassword) throws OceanusException {
         /* Check that the keySpec can provide a signature */
-        if (GordianSignatureSpec.defaultForKey(pKeySpec) == null) {
+        if (theFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(pKeySpec) == null) {
             throw new GordianDataException("Root keyPair must be capable of signing");
         }
 
@@ -143,7 +140,7 @@ public class GordianCoreKeyStoreManager
         checkKeyPairUsage(pKeySpec, pUsage);
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
-        final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
+        final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
 
         /* Create the certificate */
         final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, pSubject, pUsage);
@@ -211,8 +208,8 @@ public class GordianCoreKeyStoreManager
      * @param pUsage   the key usage
      * @throws OceanusException on error
      */
-    private static void checkKeyPairUsage(final GordianKeyPairSpec pKeyPairSpec,
-                                          final GordianKeyPairUsage pUsage) throws OceanusException {
+    private void checkKeyPairUsage(final GordianKeyPairSpec pKeyPairSpec,
+                                   final GordianKeyPairUsage pUsage) throws OceanusException {
         /* Determine the requirements */
         final boolean needsSign = pUsage.hasUse(GordianKeyPairUse.CERTIFICATE)
                 || pUsage.hasUse(GordianKeyPairUse.SIGNATURE);
@@ -221,9 +218,10 @@ public class GordianCoreKeyStoreManager
         final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
 
         /* Validate keyPairSpec against requirements */
-        final boolean bFail = (needsSign && GordianSignatureSpec.defaultForKey(pKeyPairSpec) == null)
-                || (needsEnc && GordianEncryptorSpec.defaultForKey(pKeyPairSpec) == null)
-                || (needsAgree && GordianAgreementSpec.defaultForKey(pKeyPairSpec) == null);
+        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
+        final boolean bFail = (needsSign && myKPFactory.getSignatureFactory().defaultForKeyPair(pKeyPairSpec) == null)
+                || (needsEnc && myKPFactory.getEncryptorFactory().defaultForKeyPair(pKeyPairSpec) == null)
+                || (needsAgree && myKPFactory.getAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
 
         /* Handle failure */
         if (bFail) {

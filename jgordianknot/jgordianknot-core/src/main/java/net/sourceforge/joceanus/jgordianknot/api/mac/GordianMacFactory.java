@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.mac;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -96,10 +95,5 @@ public interface GordianMacFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported macSpecs.
      */
-    default List<GordianMacSpec> listAllSupportedSpecs(final GordianLength pKeyLen) {
-        return GordianMacSpec.listAll(pKeyLen)
-                .stream()
-                .filter(supportedMacSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianMacSpec> listAllSupportedSpecs(GordianLength pKeyLen);
 }

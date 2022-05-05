@@ -16,8 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -285,5 +288,88 @@ public abstract class GordianCoreSignatureFactory
             theAlgIds = new GordianSignatureAlgId(theFactory);
         }
         return theAlgIds;
+    }
+
+    @Override
+    public List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
+        return listAllSupportedSignatures(pKeyPair.getKeyPairSpec());
+    }
+
+    @Override
+    public List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairSpec pKeySpec) {
+        return listPossibleSignatures(pKeySpec.getKeyPairType())
+                .stream()
+                .filter(s -> validSignatureSpecForKeyPairSpec(pKeySpec, s))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianSignatureSpec> listPossibleSignatures(final GordianKeyPairType pKeyType) {
+        /* Access the list of possible digests */
+        final List<GordianSignatureSpec> mySignatures = new ArrayList<>();
+        final List<GordianDigestSpec> myDigests = theFactory.getDigestFactory().listAllPossibleSpecs();
+
+        /* For each supported signature */
+        for (GordianSignatureType mySignType : GordianSignatureType.values()) {
+            /* Skip if the signatureType is not valid */
+            if (mySignType.isSupported(pKeyType)) {
+                /* If we need null-digestSpec */
+                if (pKeyType.nullDigestForSignatures()) {
+                    /* Add the signature */
+                    mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType));
+                    continue;
+                }
+
+                /* For each possible digestSpec */
+                for (GordianDigestSpec mySpec : myDigests) {
+                    /* Add the signature */
+                    mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
+                }
+            }
+        }
+
+        /* Return the list */
+        return mySignatures;
+    }
+
+    @Override
+    public GordianSignatureSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
+        switch (pKeySpec.getKeyPairType()) {
+            case RSA:
+                return GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpec.sha3(GordianLength.LEN_512));
+            case DSA:
+                return GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case EC:
+                return GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512));
+            case SM2:
+                return GordianSignatureSpec.sm2();
+            case DSTU4145:
+                return GordianSignatureSpec.dstu4145();
+            case GOST2012:
+                return GordianSignatureSpec.gost2012(GordianLength.LEN_512);
+            case EDDSA:
+                return GordianSignatureSpec.edDSA();
+            case RAINBOW:
+                return GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case SPHINCS:
+                return GordianSignatureSpec.sphincs();
+            case SPHINCSPLUS:
+                return GordianSignatureSpec.sphincsPlus();
+            case XMSS:
+                return GordianSignatureSpec.xmss();
+            case LMS:
+                return GordianSignatureSpec.lms();
+            case COMPOSITE:
+                final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
+                final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
+                while (myIterator.hasNext()) {
+                    final GordianKeyPairSpec mySpec = myIterator.next();
+                    mySpecs.add(defaultForKeyPair(mySpec));
+                }
+                final GordianSignatureSpec mySpec = GordianSignatureSpec.composite(mySpecs);
+                return mySpec.isValid() ? mySpec : null;
+            default:
+                return null;
+        }
     }
 }

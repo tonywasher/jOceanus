@@ -197,7 +197,7 @@ public abstract class GordianCoreSignedAgreement
         final X509EncodedKeySpec myServerKeySpec = myGenerator.getX509Encoding(theServerEphemeral);
 
         /* Create the signer */
-        final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pServer.getKeyPairSpec());
+        final GordianSignatureSpec mySpec = getFactory().getKeyPairFactory().getSignatureFactory().defaultForKeyPair(pServer.getKeyPairSpec());
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
         final GordianSignature mySigner = mySigns.createSigner(mySpec);

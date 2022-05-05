@@ -49,7 +49,7 @@ public interface GordianSignatureFactory {
      * @return the list of supported signatureSpecs.
      */
     default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairType pKeyPairType) {
-        return GordianSignatureSpec.listPossibleSignatures(pKeyPairType)
+        return listPossibleSignatures(pKeyPairType)
                 .stream()
                 .filter(supportedKeyPairSignatures())
                 .collect(Collectors.toList());
@@ -80,19 +80,26 @@ public interface GordianSignatureFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
-        return listAllSupportedSignatures(pKeyPair.getKeyPairSpec());
-    }
+    List<GordianSignatureSpec> listAllSupportedSignatures(GordianKeyPair pKeyPair);
 
     /**
      * Obtain a list of supported signatureSpecs.
      * @param pKeySpec the keySpec
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairSpec pKeySpec) {
-        return GordianSignatureSpec.listPossibleSignatures(pKeySpec.getKeyPairType())
-                .stream()
-                .filter(s -> validSignatureSpecForKeyPairSpec(pKeySpec, s))
-                .collect(Collectors.toList());
-    }
+    List<GordianSignatureSpec> listAllSupportedSignatures(GordianKeyPairSpec pKeySpec);
+
+    /**
+     * Obtain a list of all possible signatures for the keyType.
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    List<GordianSignatureSpec> listPossibleSignatures(GordianKeyPairType pKeyType);
+
+    /**
+     * Create default signatureSpec for keyPair.
+     * @param pKeySpec the keyPairSpec
+     * @return the SignatureSpec
+     */
+    GordianSignatureSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
 }
