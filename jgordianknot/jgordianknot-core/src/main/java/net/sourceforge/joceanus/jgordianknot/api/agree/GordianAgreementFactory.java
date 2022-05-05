@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.agree;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -75,20 +74,19 @@ public interface GordianAgreementFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported agreementSpecs.
      */
-    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPair pKeyPair) {
-        return listAllSupportedAgreements(pKeyPair.getKeyPairSpec());
-    }
+    List<GordianAgreementSpec> listAllSupportedAgreements(GordianKeyPair pKeyPair);
 
     /**
      * Obtain a list of supported agreementSpecs.
      * @param pKeyPairSpec the keySpec
      * @return the list of supported agreementSpecs.
      */
-    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPairSpec pKeyPairSpec) {
-        return GordianAgreementSpec.listPossibleAgreements(pKeyPairSpec)
-                .stream()
-                .filter(supportedAgreements())
-                .filter(s -> validAgreementSpecForKeyPairSpec(pKeyPairSpec, s))
-                .collect(Collectors.toList());
-    }
+    List<GordianAgreementSpec> listAllSupportedAgreements(GordianKeyPairSpec pKeyPairSpec);
+
+    /**
+     * Create default agreementSpec for key.
+     * @param pKeySpec the keySpec
+     * @return the AgreementSpec
+     */
+    GordianAgreementSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
 }

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -655,93 +654,50 @@ public class GordianKeyPairSpec {
      * @return valid true/false
      */
     private boolean checkComposite() {
+        Boolean stateAware = null;
         final List<GordianKeyPairType> myExisting = new ArrayList<>();
         final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
         while (myIterator.hasNext()) {
-            /* Check that we have not got a duplicate */
+            /* Check that we have not got a null */
             final GordianKeyPairSpec mySpec = myIterator.next();
             if (mySpec == null) {
                 return false;
             }
+
+            /* Check that we have not got a duplicate or COMPOSITE */
             final GordianKeyPairType myType = mySpec.getKeyPairType();
-            if (myExisting.contains(myType)) {
+            if (myExisting.contains(myType) || myType == GordianKeyPairType.COMPOSITE) {
                 return false;
             }
+
+            /* Check that stateAwareness is identical */
+            if (stateAware == null) {
+                stateAware = mySpec.isStateAware();
+            } else if (mySpec.isStateAware() != stateAware) {
+                return false;
+            }
+
+            /* Add to list */
             myExisting.add(myType);
         }
+
+        /* Make sure there are at least two */
         return myExisting.size() > 1;
     }
 
     /**
-     * Obtain a list of all possible keyPairSpecs.
-     * @return the list
+     * is the use subType for signatures?
+     * @return true/false
      */
-    public static List<GordianKeyPairSpec> listPossibleKeySpecs() {
-        /* Create the list */
-        final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
-
-        /* Add RSA */
-        EnumSet.allOf(GordianRSAModulus.class).forEach(m -> mySpecs.add(GordianKeyPairSpec.rsa(m)));
-
-        /* Add DSA */
-        EnumSet.allOf(GordianDSAKeyType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.dsa(t)));
-
-        /* Add DH  */
-        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianKeyPairSpec.dh(g)));
-
-        /* Add ElGamal  */
-        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianKeyPairSpec.elGamal(g)));
-
-        /* Add EC */
-        EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.ec(c)));
-
-        /* Add SM2 */
-        EnumSet.allOf(GordianSM2Elliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.sm2(c)));
-
-        /* Add GOST2012 */
-        EnumSet.allOf(GordianGOSTElliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.gost2012(c)));
-
-        /* Add DSTU4145 */
-        EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.dstu4145(c)));
-
-        /* Add Ed25519/Ed448 */
-        mySpecs.add(GordianKeyPairSpec.ed448());
-        mySpecs.add(GordianKeyPairSpec.ed25519());
-
-        /* Add X25519/X448 */
-        mySpecs.add(GordianKeyPairSpec.x448());
-        mySpecs.add(GordianKeyPairSpec.x25519());
-
-        /* Add Rainbow */
-        mySpecs.add(GordianKeyPairSpec.rainbow());
-
-        /* Add NewHope */
-        mySpecs.add(GordianKeyPairSpec.newHope());
-
-        /* Add SPHINCS */
-        EnumSet.allOf(GordianSPHINCSDigestType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincs(t)));
-
-        /* Add XMSS/XMSSMT */
-        GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianKeyPairSpec(GordianKeyPairType.XMSS, t)));
-
-        /* Add McEliece */
-        GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianKeyPairSpec.mcEliece(t)));
-
-        /* Add LMS */
-        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> {
-            mySpecs.add(GordianKeyPairSpec.lms(t));
-            for (int i = 2; i < GordianHSSKeySpec.MAX_DEPTH; i++) {
-                mySpecs.add(GordianKeyPairSpec.hss(t, i));
-            }
-        });
-
-        /* Add SPHINCSPlus/CMCE/Frodo/Saber */
-        EnumSet.allOf(GordianSPHINCSPlusSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincsPlus(t)));
-        EnumSet.allOf(GordianCMCESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.cmce(t)));
-        EnumSet.allOf(GordianFRODOSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.frodo(t)));
-        EnumSet.allOf(GordianSABERSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.saber(t)));
-
-        /* Return the list */
-        return mySpecs;
+    public boolean isStateAware() {
+        switch (theKeyPairType) {
+            case XMSS:
+            case LMS:
+                return true;
+            case COMPOSITE:
+                return keySpecIterator().next().isStateAware();
+            default:
+                return false;
+        }
     }
 }

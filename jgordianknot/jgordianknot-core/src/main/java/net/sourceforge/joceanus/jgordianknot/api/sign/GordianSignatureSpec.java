@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -232,51 +230,6 @@ public final class GordianSignatureSpec {
     public static GordianSignatureSpec composite(final List<GordianSignatureSpec> pSpecs) {
         return new GordianSignatureSpec(GordianKeyPairType.COMPOSITE, pSpecs);
     }
-
-    /**
-     * Create default signatureSpec for key.
-     * @param pKeySpec the keySpec
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
-        switch (pKeySpec.getKeyPairType()) {
-            case RSA:
-                return rsa(GordianSignatureType.PSSMGF1, GordianDigestSpec.sha3(GordianLength.LEN_512));
-            case DSA:
-                return dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case EC:
-                return ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512));
-            case SM2:
-                return sm2();
-            case DSTU4145:
-                return dstu4145();
-            case GOST2012:
-                return gost2012(GordianLength.LEN_512);
-            case EDDSA:
-                return edDSA();
-            case RAINBOW:
-                return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case SPHINCS:
-                return sphincs();
-            case SPHINCSPLUS:
-                return sphincsPlus();
-            case XMSS:
-                return xmss();
-            case LMS:
-                return lms();
-            case COMPOSITE:
-                final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
-                final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
-                while (myIterator.hasNext()) {
-                    final GordianKeyPairSpec mySpec = myIterator.next();
-                    mySpecs.add(defaultForKey(mySpec));
-                }
-                return GordianSignatureSpec.composite(mySpecs);
-            default:
-                return null;
-        }
-    }
-
     /**
      * Obtain the keyPairType.
      * @return the keyPairType.
@@ -445,38 +398,5 @@ public final class GordianSignatureSpec {
             hashCode += theSignatureSpec.hashCode();
         }
         return hashCode;
-    }
-
-    /**
-     * Obtain a list of all possible signatures for the keyType.
-     * @param pKeyType the keyType
-     * @return the list
-     */
-    public static List<GordianSignatureSpec> listPossibleSignatures(final GordianKeyPairType pKeyType) {
-        /* Access the list of possible digests */
-        final List<GordianSignatureSpec> mySignatures = new ArrayList<>();
-        final List<GordianDigestSpec> myDigests = GordianDigestSpec.listAll();
-
-        /* For each supported signature */
-        for (GordianSignatureType mySignType : GordianSignatureType.values()) {
-            /* Skip if the signatureType is not valid */
-            if (mySignType.isSupported(pKeyType)) {
-                /* If we need null-digestSpec */
-                if (pKeyType.nullDigestForSignatures()) {
-                    /* Add the signature */
-                    mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType));
-                    continue;
-                }
-
-                /* For each possible digestSpec */
-                for (GordianDigestSpec mySpec : myDigests) {
-                    /* Add the signature */
-                    mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
-                }
-            }
-        }
-
-        /* Return the list */
-        return mySignatures;
     }
 }

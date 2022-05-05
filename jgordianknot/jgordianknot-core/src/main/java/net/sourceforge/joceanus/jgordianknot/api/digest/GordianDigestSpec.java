@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -517,29 +514,5 @@ public class GordianDigestSpec
         }
         hashCode += theLength.ordinal() + 1;
         return hashCode;
-    }
-
-    /**
-     * List all possible digestSpecs.
-     * @return the list
-     */
-    public static List<GordianDigestSpec> listAll() {
-        /* Create the array list */
-        final List<GordianDigestSpec> myList = new ArrayList<>();
-
-        /* For each digest type */
-        for (final GordianDigestType myType : GordianDigestType.values()) {
-            /* For each length */
-            for (final GordianLength myLength : myType.getSupportedLengths()) {
-                myList.add(new GordianDigestSpec(myType, myLength));
-                final GordianLength myState = myType.getAlternateStateForLength(myLength);
-                if (myState != null) {
-                    myList.add(new GordianDigestSpec(myType, myState, myLength));
-                }
-            }
-        }
-
-        /* Return the list */
-        return myList;
     }
 }

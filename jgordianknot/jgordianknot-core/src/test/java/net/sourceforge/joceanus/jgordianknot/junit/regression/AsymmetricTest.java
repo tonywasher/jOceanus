@@ -281,7 +281,7 @@ public class AsymmetricTest {
     }
 
     /**
-     * Create the encryptor test suite for an encryptgorSpec.
+     * Create the encryptor test suite for an encryptorSpec.
      * @param pEncryptor the encryptor
      * @return the test stream or null
      */
@@ -348,7 +348,7 @@ public class AsymmetricTest {
         Assertions.assertEquals(myPair, myMirror, "Derived pair has wrong keySpec");
 
         /* If the keyPair is stateAware */
-        if (mySpec.getKeyPairType().isStateAware()) {
+        if (mySpec.isStateAware()) {
             /* Check for StateAware */
             Assertions.assertTrue(myPair instanceof GordianStateAwareKeyPair, "Pair");
             Assertions.assertTrue(myMirror instanceof GordianStateAwareKeyPair, "Mirror");

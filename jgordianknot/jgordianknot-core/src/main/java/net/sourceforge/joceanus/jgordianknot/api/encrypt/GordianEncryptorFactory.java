@@ -49,7 +49,7 @@ public interface GordianEncryptorFactory {
      * @return the list of supported encryptorSpecs.
      */
     default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairType pKeyType) {
-        return GordianEncryptorSpec.listPossibleEncryptors(pKeyType)
+        return listPossibleEncryptors(pKeyType)
                 .stream()
                 .filter(supportedEncryptors())
                 .collect(Collectors.toList());
@@ -80,19 +80,26 @@ public interface GordianEncryptorFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported encryptorSpecs.
      */
-    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPair pKeyPair) {
-        return listAllSupportedEncryptors(pKeyPair.getKeyPairSpec());
-    }
+    List<GordianEncryptorSpec> listAllSupportedEncryptors(GordianKeyPair pKeyPair);
 
     /**
      * Obtain a list of supported encryptorSpecs.
      * @param pKeyPairSpec the keySpec
      * @return the list of supported encryptorSpecs.
      */
-    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairSpec pKeyPairSpec) {
-        return GordianEncryptorSpec.listPossibleEncryptors(pKeyPairSpec.getKeyPairType())
-                .stream()
-                .filter(s -> validEncryptorSpecForKeyPairSpec(pKeyPairSpec, s))
-                .collect(Collectors.toList());
-    }
+    List<GordianEncryptorSpec> listAllSupportedEncryptors(GordianKeyPairSpec pKeyPairSpec);
+
+    /**
+     * Obtain a list of all possible encryptors for the keyType.
+     * @param pKeyPairType the keyPairType
+     * @return the list
+     */
+    List<GordianEncryptorSpec> listPossibleEncryptors(GordianKeyPairType pKeyPairType);
+
+    /**
+     * Create default signatureSpec for key.
+     * @param pKeySpec the keySpec
+     * @return the SignatureSpec
+     */
+    GordianEncryptorSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
 }

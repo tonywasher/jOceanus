@@ -18,15 +18,36 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -190,5 +211,92 @@ public abstract class GordianCoreKeyPairFactory
      */
     public boolean validAsymKeySpec(final GordianKeyPairSpec pKeySpec) {
         return pKeySpec != null && pKeySpec.isValid();
+    }
+
+    @Override
+    public List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs() {
+        return listPossibleKeySpecs()
+                .stream()
+                .filter(supportedKeyPairSpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs(final GordianKeyPairType pKeyPairType) {
+        return listPossibleKeySpecs()
+                .stream()
+                .filter(s -> pKeyPairType.equals(s.getKeyPairType()))
+                .filter(supportedKeyPairSpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianKeyPairSpec> listPossibleKeySpecs() {
+        /* Create the list */
+        final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
+
+        /* Add RSA */
+        EnumSet.allOf(GordianRSAModulus.class).forEach(m -> mySpecs.add(GordianKeyPairSpec.rsa(m)));
+
+        /* Add DSA */
+        EnumSet.allOf(GordianDSAKeyType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.dsa(t)));
+
+        /* Add DH  */
+        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianKeyPairSpec.dh(g)));
+
+        /* Add ElGamal  */
+        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianKeyPairSpec.elGamal(g)));
+
+        /* Add EC */
+        EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.ec(c)));
+
+        /* Add SM2 */
+        EnumSet.allOf(GordianSM2Elliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.sm2(c)));
+
+        /* Add GOST2012 */
+        EnumSet.allOf(GordianGOSTElliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.gost2012(c)));
+
+        /* Add DSTU4145 */
+        EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpec.dstu4145(c)));
+
+        /* Add Ed25519/Ed448 */
+        mySpecs.add(GordianKeyPairSpec.ed448());
+        mySpecs.add(GordianKeyPairSpec.ed25519());
+
+        /* Add X25519/X448 */
+        mySpecs.add(GordianKeyPairSpec.x448());
+        mySpecs.add(GordianKeyPairSpec.x25519());
+
+        /* Add Rainbow */
+        mySpecs.add(GordianKeyPairSpec.rainbow());
+
+        /* Add NewHope */
+        mySpecs.add(GordianKeyPairSpec.newHope());
+
+        /* Add SPHINCS */
+        EnumSet.allOf(GordianSPHINCSDigestType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincs(t)));
+
+        /* Add XMSS/XMSSMT */
+        GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianKeyPairSpec(GordianKeyPairType.XMSS, t)));
+
+        /* Add McEliece */
+        GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianKeyPairSpec.mcEliece(t)));
+
+        /* Add LMS */
+        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> {
+            mySpecs.add(GordianKeyPairSpec.lms(t));
+            for (int i = 2; i < GordianHSSKeySpec.MAX_DEPTH; i++) {
+                mySpecs.add(GordianKeyPairSpec.hss(t, i));
+            }
+        });
+
+        /* Add SPHINCSPlus/CMCE/Frodo/Saber */
+        EnumSet.allOf(GordianSPHINCSPlusSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincsPlus(t)));
+        EnumSet.allOf(GordianCMCESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.cmce(t)));
+        EnumSet.allOf(GordianFRODOSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.frodo(t)));
+        EnumSet.allOf(GordianSABERSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.saber(t)));
+
+        /* Return the list */
+        return mySpecs;
     }
 }

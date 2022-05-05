@@ -320,7 +320,7 @@ public final class MoneyWiseUKTaxYearFactory {
      */
     protected static final MoneyWiseUKTaxYear YEAR_2023 = new MoneyWiseUKTaxYear(2023,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2023, MoneyWiseUKTaxBandsFactory.BANDS_2022,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
+            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT1, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
 
     /**
      * Private Constructor.

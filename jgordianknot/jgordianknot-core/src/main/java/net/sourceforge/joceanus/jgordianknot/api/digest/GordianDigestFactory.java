@@ -16,10 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -57,30 +55,23 @@ public interface GordianDigestFactory {
      * Obtain a list of supported digestSpecs.
      * @return the list of supported digestSpecs.
      */
-    default List<GordianDigestSpec> listAllSupportedSpecs() {
-        return GordianDigestSpec.listAll()
-                .stream()
-                .filter(supportedDigestSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianDigestSpec> listAllSupportedSpecs();
 
     /**
      * Obtain a list of supported digestTypes.
      * @return the list of supported digestTypes.
      */
-    default List<GordianDigestType> listAllSupportedTypes() {
-        return Arrays.stream(GordianDigestType.values())
-                .filter(supportedDigestTypes())
-                .collect(Collectors.toList());
-    }
+    List<GordianDigestType> listAllSupportedTypes();
 
     /**
      * Obtain a list of external digestTypes.
      * @return the list of supported digestTypes.
      */
-    default List<GordianDigestType> listAllExternalTypes() {
-        return Arrays.stream(GordianDigestType.values())
-                .filter(supportedExternalDigestTypes())
-                .collect(Collectors.toList());
-    }
+    List<GordianDigestType> listAllExternalTypes();
+
+    /**
+     * List all possible digestSpecs.
+     * @return the list
+     */
+    List<GordianDigestSpec> listAllPossibleSpecs();
 }

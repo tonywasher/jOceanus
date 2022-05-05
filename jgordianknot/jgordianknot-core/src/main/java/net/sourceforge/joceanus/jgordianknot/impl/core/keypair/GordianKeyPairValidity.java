@@ -61,7 +61,7 @@ public final class GordianKeyPairValidity {
      */
     public static void checkValidity(final GordianCoreFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws OceanusException {
-        final Object myCheck = getValidityCheck(pKeyPair);
+        final Object myCheck = getValidityCheck(pFactory, pKeyPair);
         if (myCheck instanceof GordianSignatureSpec) {
             checkValidity(pFactory, pKeyPair, (GordianSignatureSpec) myCheck);
         } else if (myCheck instanceof GordianEncryptorSpec) {
@@ -165,10 +165,12 @@ public final class GordianKeyPairValidity {
 
     /**
      * Obtain validity check for keyPair.
+     * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @return the validity check
      */
-    private static Object getValidityCheck(final GordianKeyPair pKeyPair) {
+    private static Object getValidityCheck(final GordianCoreFactory pFactory,
+                                           final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         switch (mySpec.getKeyPairType()) {
@@ -184,7 +186,7 @@ public final class GordianKeyPairValidity {
             case SPHINCSPLUS:
             case XMSS:
             case LMS:
-                return GordianSignatureSpec.defaultForKey(mySpec);
+                return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
                 return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case MCELIECE:

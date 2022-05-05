@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 
 /**
  * CompositeKeyPair.
@@ -76,6 +77,34 @@ public class GordianCompositeKeyPair
     }
 
     /**
+     * Validate that the keyPair public Key matches.
+     * @param pPair the key pair
+     * @return matches true/false
+     */
+    public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
+        /* Must be composite and matching spec */
+        if (!(pPair instanceof GordianCompositeKeyPair)
+            || !theSpec.equals(pPair.getKeyPairSpec())) {
+            return false;
+        }
+
+        /* Loop through the keyPairs */
+        final Iterator<GordianKeyPair> mySrcIterator = iterator();
+        final Iterator<GordianKeyPair> myTgtIterator = ((GordianCompositeKeyPair) pPair).iterator();
+        while (mySrcIterator.hasNext()) {
+            /* Check that publicKey matches */
+            final GordianCoreKeyPair mySrcPair = (GordianCoreKeyPair) mySrcIterator.next();
+            final GordianCoreKeyPair myTgtPair = (GordianCoreKeyPair) myTgtIterator.next();
+            if (!mySrcPair.getPublicKey().equals(myTgtPair.getPublicKey())) {
+                return false;
+            }
+        }
+
+        /* All OK */
+        return true;
+    }
+
+    /**
      * Obtain an iterator for the keyPairs.
      * @return the iterator
      */
@@ -113,5 +142,48 @@ public class GordianCompositeKeyPair
     @Override
     public int hashCode() {
         return Objects.hashCode(theKeyPairs);
+    }
+
+    /**
+     * StateAware CompositeKeyPair.
+     */
+    public static class GordianStateAwareCompositeKeyPair
+            extends GordianCompositeKeyPair
+            implements GordianStateAwareKeyPair {
+        /**
+         * Constructor.
+         * @param pSpec the spec
+         */
+        GordianStateAwareCompositeKeyPair(final GordianKeyPairSpec pSpec) {
+            super(pSpec);
+        }
+
+        @Override
+        public long getUsagesRemaining() {
+            long myUsages = 0;
+            boolean myFirst = true;
+            final Iterator<GordianKeyPair> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();
+                if (myFirst) {
+                    myUsages = myKeyPair.getUsagesRemaining();
+                    myFirst = false;
+                } else {
+                    myUsages = Math.min(myUsages, myKeyPair.getUsagesRemaining());
+                }
+            }
+            return myUsages;
+        }
+
+        @Override
+        public GordianStateAwareCompositeKeyPair getKeyPairShard(final int pNumUsages) {
+            final GordianStateAwareCompositeKeyPair myCompositeShard = new GordianStateAwareCompositeKeyPair(getKeyPairSpec());
+            final Iterator<GordianKeyPair> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();
+                myCompositeShard.addKeyPair(myKeyPair.getKeyPairShard(pNumUsages));
+            }
+            return myCompositeShard;
+        }
     }
 }

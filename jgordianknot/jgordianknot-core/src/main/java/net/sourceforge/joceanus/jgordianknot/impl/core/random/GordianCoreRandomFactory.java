@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -41,6 +43,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
@@ -280,7 +283,7 @@ public class GordianCoreRandomFactory
      */
     private GordianSymKeySpec generateRandomSymKeySpec() {
         /* Access the list of symKeySpecs and unique symKeyTypes */
-        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
         final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(GordianLength.LEN_128);
 
         /* Remove the specs that are wrong block size and obtain keyTypes */
@@ -303,7 +306,7 @@ public class GordianCoreRandomFactory
      */
     private GordianDigestSpec generateRandomDigestSpec() {
         /* Access the list to select from */
-        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
         final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
         mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData()
                 || s.getDigestLength() != GordianLength.LEN_512);
@@ -460,5 +463,74 @@ public class GordianCoreRandomFactory
         final EntropySource myEntropy = theEntropyProvider.get(pCipher.getKeyType().getBlockLength().getLength());
         final GordianX931CipherDRBG myProvider = new GordianX931CipherDRBG(pCipher, myEntropy, theRandomSource.defaultPersonalisation());
         return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
+    }
+
+    @Override
+    public List<GordianRandomSpec> listAllSupportedRandomSpecs() {
+        return listAllPossibleSpecs()
+                .stream()
+                .filter(supportedRandomSpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType) {
+        return listAllPossibleSpecs()
+                .stream()
+                .filter(s -> s.getRandomType().equals(pType))
+                .filter(supportedRandomSpecs())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType,
+                                                               final GordianLength pKeyLen) {
+        return listAllPossibleSpecs()
+                .stream()
+                .filter(s -> s.getRandomType().equals(pType))
+                .filter(s -> s.getRandomType().hasSymKeySpec())
+                .filter(s -> s.getSymKeySpec().getKeyLength() == pKeyLen)
+                .filter(supportedRandomSpecs())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * List all possible randomSpecs.
+     * @return the list
+     */
+    private List<GordianRandomSpec> listAllPossibleSpecs() {
+        /* Create the array list */
+        final List<GordianRandomSpec> myList = new ArrayList<>();
+
+        /* For each digestSpec */
+        for (final GordianDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
+            /* Add a hash random */
+            myList.add(GordianRandomSpec.hash(mySpec));
+            myList.add(GordianRandomSpec.hashResist(mySpec));
+
+            /* Add an hMac random */
+            myList.add(GordianRandomSpec.hMac(mySpec));
+            myList.add(GordianRandomSpec.hMacResist(mySpec));
+        }
+
+        /* For each KeyLength */
+        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* For each symKeySpec */
+            for (final GordianSymKeySpec mySpec : theFactory.getCipherFactory().listAllSymKeySpecs(myKeyLen)) {
+                /* Add a CTR random */
+                myList.add(GordianRandomSpec.ctr(mySpec));
+                myList.add(GordianRandomSpec.ctrResist(mySpec));
+
+                /* Add an X931 random */
+                myList.add(GordianRandomSpec.x931(mySpec));
+                myList.add(GordianRandomSpec.x931Resist(mySpec));
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }

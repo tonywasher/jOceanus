@@ -16,15 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.random;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -282,45 +277,5 @@ public class GordianRandomSpec {
                     ? theSubSpec.hashCode()
                     : 0;
         return hashCode + (isPredictionResistant ? 1 : 0);
-    }
-
-    /**
-     * List all possible randomSpecs.
-     * @return the list
-     */
-    public static List<GordianRandomSpec> listAll() {
-        /* Create the array list */
-        final List<GordianRandomSpec> myList = new ArrayList<>();
-
-        /* For each digestSpec */
-        for (final GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
-            /* Add a hash random */
-            myList.add(GordianRandomSpec.hash(mySpec));
-            myList.add(GordianRandomSpec.hashResist(mySpec));
-
-            /* Add an hMac random */
-            myList.add(GordianRandomSpec.hMac(mySpec));
-            myList.add(GordianRandomSpec.hMacResist(mySpec));
-        }
-
-        /* For each KeyLength */
-        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
-        while (myIterator.hasNext()) {
-            final GordianLength myKeyLen = myIterator.next();
-
-            /* For each symKeySpec */
-            for (final GordianSymKeySpec mySpec : GordianSymKeySpec.listAll(myKeyLen)) {
-                /* Add a CTR random */
-                myList.add(GordianRandomSpec.ctr(mySpec));
-                myList.add(GordianRandomSpec.ctrResist(mySpec));
-
-                /* Add an X931 random */
-                myList.add(GordianRandomSpec.x931(mySpec));
-                myList.add(GordianRandomSpec.x931Resist(mySpec));
-            }
-        }
-
-        /* Return the list */
-        return myList;
     }
 }

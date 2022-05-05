@@ -191,7 +191,7 @@ public class GordianCRMBuilder {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianSignatureSpec mySignSpec = GordianSignatureSpec.defaultForKey(mySpec);
+        final GordianSignatureSpec mySignSpec = theFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
@@ -217,13 +217,13 @@ public class GordianCRMBuilder {
         /* Try to send an encrypted proof */
         final GordianKeyPair myKeyPair = theTarget.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianEncryptorSpec myEncSpec = GordianEncryptorSpec.defaultForKey(mySpec);
+        final GordianEncryptorSpec myEncSpec = theFactory.getKeyPairFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             return createKeyPairEncryptedProof(pPKCS8Encoding, myEncSpec, pCertificate, theTarget);
         }
 
         /* Try to send an agreed proof */
-        final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.defaultForKey(mySpec);
+        final GordianAgreementSpec myAgreeSpec = theFactory.getKeyPairFactory().getAgreementFactory().defaultForKeyPair(mySpec);
         if (myAgreeSpec != null) {
             return createKeyPairAgreedProof(pPKCS8Encoding, myAgreeSpec, pCertificate, myKeyPair);
         }

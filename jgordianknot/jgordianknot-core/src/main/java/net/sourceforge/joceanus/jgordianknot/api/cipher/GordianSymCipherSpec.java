@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -326,33 +323,5 @@ public class GordianSymCipherSpec
             hashCode += thePadding.ordinal() + 1;
         }
         return hashCode;
-    }
-
-    /**
-     * List all possible cipherSpecs for a SymKeySpec.
-     * @param pSpec the keySpec
-     * @return the list
-     */
-    public static List<GordianSymCipherSpec> listAll(final GordianSymKeySpec pSpec) {
-        /* Create the array list */
-        final List<GordianSymCipherSpec> myList = new ArrayList<>();
-
-        /* Loop through the modes */
-        for (GordianCipherMode myMode : GordianCipherMode.values()) {
-            /* If the mode has padding */
-            if (myMode.hasPadding()) {
-                /* Loop through the paddings */
-                for (GordianPadding myPadding : GordianPadding.values()) {
-                    myList.add(new GordianSymCipherSpec(pSpec, myMode, myPadding));
-                }
-
-                /* else no padding */
-            } else {
-                myList.add(new GordianSymCipherSpec(pSpec, myMode, GordianPadding.NONE));
-            }
-        }
-
-        /* Return the list */
-        return myList;
     }
 }

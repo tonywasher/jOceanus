@@ -20,7 +20,6 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
@@ -104,25 +103,14 @@ public interface GordianRandomFactory {
      * Obtain a list of supported randomSpecs.
      * @return the list of supported randomSpecs.
      */
-    default List<GordianRandomSpec> listAllSupportedRandomSpecs() {
-        return GordianRandomSpec.listAll()
-                .stream()
-                .filter(supportedRandomSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianRandomSpec> listAllSupportedRandomSpecs();
 
     /**
      * Obtain a list of supported randomSpecs of a given type.
      * @param pType the random type
      * @return the list of supported randomSpecs.
      */
-    default List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType) {
-        return GordianRandomSpec.listAll()
-                .stream()
-                .filter(s -> s.getRandomType().equals(pType))
-                .filter(supportedRandomSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianRandomSpec> listAllSupportedRandomSpecs(GordianRandomType pType);
 
     /**
      * Obtain a list of supported randomSpecs of a given type and keyLength.
@@ -131,14 +119,6 @@ public interface GordianRandomFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported randomSpecs.
      */
-    default List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType,
-                                                                final GordianLength pKeyLen) {
-        return GordianRandomSpec.listAll()
-                .stream()
-                .filter(s -> s.getRandomType().equals(pType))
-                .filter(s -> s.getRandomType().hasSymKeySpec())
-                .filter(s -> s.getSymKeySpec().getKeyLength() == pKeyLen)
-                .filter(supportedRandomSpecs())
-                .collect(Collectors.toList());
-    }
+    List<GordianRandomSpec> listAllSupportedRandomSpecs(GordianRandomType pType,
+                                                        GordianLength pKeyLen);
 }

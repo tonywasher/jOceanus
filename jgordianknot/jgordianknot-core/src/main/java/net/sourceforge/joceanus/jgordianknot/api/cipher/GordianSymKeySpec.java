@@ -16,12 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -453,34 +449,5 @@ public class GordianSymKeySpec
         hashCode += theBlockLength.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
         hashCode += theKeyLength.ordinal() + 1;
         return hashCode;
-    }
-
-    /**
-     * List all possible symKeySpecs for the keyLength.
-     * @param pKeyLen the keyLength
-     * @return the list
-     */
-    public static List<GordianSymKeySpec> listAll(final GordianLength pKeyLen) {
-        /* Create the array list */
-        final List<GordianSymKeySpec> myList = new ArrayList<>();
-
-        /* Check that the keyLength is supported */
-        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
-            return myList;
-        }
-
-        /* For each symKey type */
-        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-            /* For each supported block length */
-            for (final GordianLength myBlkLen : myType.getSupportedBlockLengths()) {
-                /* Add spec if valid for blkLen and keyLen */
-                if (myType.validBlockAndKeyLengths(myBlkLen, pKeyLen)) {
-                    myList.add(new GordianSymKeySpec(myType, myBlkLen, pKeyLen));
-                }
-            }
-        }
-
-        /* Return the list */
-        return myList;
     }
 }
