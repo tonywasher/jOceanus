@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIPasswordField;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIProgressBar;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISlider;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
@@ -70,6 +71,11 @@ public class TethysUISwingControlFactory
     @Override
     public TethysUITextArea newTextArea() {
         return new TethysUISwingTextArea(theFactory);
+    }
+
+    @Override
+    public TethysUIPasswordField newPasswordField() {
+        return new TethysUISwingPasswordField(theFactory);
     }
 
     @Override

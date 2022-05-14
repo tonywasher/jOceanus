@@ -53,6 +53,17 @@ public interface TethysUIFactory<C> {
     TethysUIIcon resolveIcon(TethysUIIconId pIconId, int pWidth);
 
     /**
+     * Obtain the logSink.
+     * @return the logSink
+     */
+    TethysUILogTextArea getLogSink();
+
+    /**
+     * Activate logSink.
+     */
+    void activateLogSink();
+
+    /**
      * Obtain the button factory.
      * @return the factory
      */

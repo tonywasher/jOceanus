@@ -1,0 +1,145 @@
+/*******************************************************************************
+ * Tethys: Java Utilities
+ * Copyright 2012,2022 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.ui.core.factory;
+
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITextArea;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
+
+/**
+ * Log text area.
+ */
+public class TethysUICoreLogTextArea
+        extends TethysUICoreComponent
+        implements TethysUILogTextArea {
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager<TethysUIXEvent> theEventManager;
+
+    /**
+     * Pane.
+     */
+    private final TethysUIBorderPaneManager thePane;
+
+    /**
+     * TextArea.
+     */
+    private final TethysUITextArea theTextArea;
+
+    /**
+     * Constructor.
+     * @param pFactory the guiFactory
+     */
+    TethysUICoreLogTextArea(final TethysUICoreFactory<?> pFactory) {
+        /* Create basics */
+        theEventManager = new TethysEventManager<>();
+        theTextArea = pFactory.controlFactory().newTextArea();
+
+        /* Create the clear button */
+        final TethysUIButton theClearButton = pFactory.buttonFactory().newButton();
+        theClearButton.setTextOnly();
+        theClearButton.setText("Cancel");
+
+        /* Create a new subPanel for the buttons */
+        final TethysUIPaneFactory myFactory = pFactory.paneFactory();
+        final TethysUIBoxPaneManager myButtonPanel = myFactory.newHBoxPane();
+        myButtonPanel.addNode(theClearButton);
+
+        /* Create a scroll manager */
+        final TethysUIScrollPaneManager myScroll = myFactory.newScrollPane();
+        myScroll.setContent(theTextArea);
+
+        /* Add the components */
+        thePane = myFactory.newBorderPane();
+        thePane.setCentre(myScroll);
+        thePane.setSouth(myButtonPanel);
+
+        /* Add button listener */
+        theClearButton.getEventRegistrar().addEventListener(e -> handleClear());
+    }
+
+    @Override
+    public TethysUINode getNode() {
+        return thePane.getNode();
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        thePane.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        thePane.setVisible(pVisible);
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        thePane.setPreferredWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        thePane.setPreferredHeight(pHeight);
+    }
+
+    @Override
+    public Integer getId() {
+        return thePane.getId();
+    }
+
+    @Override
+    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    @Override
+    public void writeLogMessage(final String pMessage) {
+        final int myPos = theTextArea.getTextLength();
+        theTextArea.appendText(pMessage);
+        theTextArea.appendText("\n");
+        theTextArea.setCaretPosition(myPos + 1);
+        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE);
+    }
+
+    /**
+     * is the logArea active?
+     * @return true/false
+     */
+    public boolean isActive() {
+        return theTextArea.getTextLength() > 0;
+    }
+
+    /**
+     * Handle clear request.
+     */
+    private void handleClear() {
+        /* Clear contents */
+        theTextArea.setText(null);
+        theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+    }
+}
