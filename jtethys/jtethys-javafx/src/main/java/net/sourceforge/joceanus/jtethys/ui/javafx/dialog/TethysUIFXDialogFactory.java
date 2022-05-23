@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * javaFX Dialog factory.
@@ -27,9 +28,23 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 public class TethysUIFXDialogFactory
         implements TethysUIDialogFactory<Color> {
     /**
+     * The Factory.
+     */
+    private final TethysUICoreFactory<?> theFactory;
+
+    /**
      * The stage.
      */
     private Stage theStage;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory.
+     */
+    public TethysUIFXDialogFactory(final TethysUICoreFactory<?> pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+    }
 
     /**
      * Set the stage.
@@ -52,5 +67,10 @@ public class TethysUIFXDialogFactory
     @Override
     public TethysUIFXDirectorySelector newDirectorySelector() {
         return new TethysUIFXDirectorySelector(theStage);
+    }
+
+    @Override
+    public TethysUIFXAboutBox newAboutBox() {
+        return new TethysUIFXAboutBox(theFactory, theStage);
     }
 }

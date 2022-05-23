@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.control;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Label.
@@ -46,4 +47,10 @@ public interface TethysUILabel
      * @param pAlign the alignment
      */
     void setAlignment(TethysUIAlignment pAlign);
+
+    /**
+     * Set context menu.
+     * @param pMenu the context menu.
+     */
+    void setContextMenu(TethysUIScrollMenu<?> pMenu);
 }

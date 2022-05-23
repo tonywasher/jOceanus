@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.factory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
@@ -62,6 +63,12 @@ public interface TethysUIFactory<C> {
      * Activate logSink.
      */
     void activateLogSink();
+
+    /**
+     * Obtain the program definition.
+     * @return the definition
+     */
+    TethysUIProgram getProgramDefinitions();
 
     /**
      * Obtain the button factory.

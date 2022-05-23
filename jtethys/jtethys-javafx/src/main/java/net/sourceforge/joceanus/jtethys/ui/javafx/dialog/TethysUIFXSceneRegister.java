@@ -14,34 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.dialog;
+package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
+
+import javafx.scene.Scene;
 
 /**
- * Dialog Factory.
- * @param <C> the color
+ * Scene Setter interface.
  */
-public interface TethysUIDialogFactory<C> {
+public interface TethysUIFXSceneRegister {
     /**
-     * Obtain a new colorPicker.
-     * @return the new picker
+     * Register scene.
+     * @param pScene the scene
      */
-    TethysUIColorPicker<C> newColorPicker();
-
-    /**
-     * Obtain a new fileSelector.
-     * @return the new selector
-     */
-    TethysUIFileSelector newFileSelector();
-
-    /**
-     * Obtain a new directorySelector.
-     * @return the new selector
-     */
-    TethysUIDirectorySelector newDirectorySelector();
-
-    /**
-     * Obtain a new aboutBox.
-     * @return the new box
-     */
-    TethysUIAboutBox newAboutBox();
+    void registerScene(Scene pScene);
 }

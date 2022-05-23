@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
@@ -73,13 +74,15 @@ public class TethysUISwingFactory
 
     /**
      * Constructor.
+     * @param pProgram the program definitions
      */
-    TethysUISwingFactory() {
+    TethysUISwingFactory(final TethysUIProgram pProgram) {
+        super(pProgram);
         theFieldAdjust = new TethysUISwingDataFieldAdjust(this);
         thePaneFactory = new TethysUISwingPaneFactory(this);
         theChartFactory = new TethysUISwingChartFactory(this);
         theControlFactory = new TethysUISwingControlFactory(this, theFieldAdjust);
-        theDialogFactory = new TethysUISwingDialogFactory();
+        theDialogFactory = new TethysUISwingDialogFactory(this);
         theMenuFactory = new TethysUISwingMenuFactory(this);
     }
 

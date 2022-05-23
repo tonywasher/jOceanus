@@ -16,11 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
@@ -29,11 +34,13 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.button.TethysUIFXButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.chart.TethysUIFXChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.control.TethysUIFXControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXSceneRegister;
 import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
 
@@ -41,7 +48,18 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
  * javafx Factory.
  */
 public class TethysUIFXFactory
-        extends TethysUICoreFactory<Color> {
+        extends TethysUICoreFactory<Color>
+        implements TethysUIFXSceneRegister {
+    /**
+     * StyleSheet Name.
+     */
+    private static final String CSS_STYLE_NAME = "jtethys-javafx-gui.css";
+
+    /**
+     * PreLoad StyleSheet.
+     */
+    private static final String CSS_STYLE = TethysFXGuiFactory.class.getResource(CSS_STYLE_NAME).toExternalForm();
+
     /**
      * The pane factory.
      */
@@ -73,15 +91,26 @@ public class TethysUIFXFactory
     private final TethysUIFXMenuFactory theMenuFactory;
 
     /**
-     * Constructor.
+     * Scenes.
      */
-    TethysUIFXFactory() {
+    private final List<Scene> theScenes;
+
+    /**
+     * Constructor.
+     * @param pProgram the program definitions
+     */
+    TethysUIFXFactory(final TethysUIProgram pProgram) {
+        super(pProgram);
         thePaneFactory = new TethysUIFXPaneFactory(this);
         theButtonFactory = new TethysUIFXButtonFactory(this);
         theChartFactory = new TethysUIFXChartFactory(this);
         theControlFactory = new TethysUIFXControlFactory(this);
-        theDialogFactory = new TethysUIFXDialogFactory();
+        theDialogFactory = new TethysUIFXDialogFactory(this);
         theMenuFactory = new TethysUIFXMenuFactory(this);
+
+        /* Handle scenes */
+        theScenes = new ArrayList<>();
+        getValueSet().getEventRegistrar().addEventListener(e -> applyValuesToScenes());
     }
 
     @Override
@@ -130,5 +159,61 @@ public class TethysUIFXFactory
         theControlFactory.setStage(pStage);
         theDialogFactory.setStage(pStage);
         fireEvent(TethysUIXEvent.NEWSTAGE);
+    }
+
+    @Override
+    public void registerScene(final Scene pScene) {
+        /* Configure the scene */
+        pScene.getStylesheets().add(CSS_STYLE);
+        pScene.getRoot().getStyleClass().add(TethysUIFXUtils.CSS_STYLE_BASE);
+
+        /* Add the scene to the list */
+        theScenes.add(pScene);
+
+        /* Apply the colourSet */
+        pScene.getRoot().setStyle(buildStandardColors());
+    }
+
+    /**
+     * Build standard colours.
+     * @return the standard colours
+     */
+    private String buildStandardColors() {
+        /* Allocate a string builder */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Create the default colour values */
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_STANDARD);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_ERROR);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_BACKGROUND);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_DISABLED);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_ZEBRA);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_CHANGED);
+        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_PROGRESS);
+
+        /* Return the string */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Add value to buffer.
+     * @param pBuffer the buffer
+     * @param pName the value name
+     */
+    private void addValueToBuffer(final StringBuilder pBuffer,
+                                  final String pName) {
+        /* Add the name */
+        pBuffer.append(pName).append(':').append(getValueSet().getValueForKey(pName)).append(';');
+    }
+
+    /**
+     * Register scene.
+     */
+    private void applyValuesToScenes() {
+        /* Loop through the scenes */
+        final String myValues = buildStandardColors();
+        for (Scene myScene : theScenes) {
+            myScene.getRoot().setStyle(myValues);
+        }
     }
 }

@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 /**
  * About Box.
  */
-public interface TethysUIAbout
+public interface TethysUIAboutBox
         extends TethysUIComponent {
     /**
      * Show dialog.

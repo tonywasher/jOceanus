@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
@@ -53,6 +53,11 @@ public abstract class TethysUICoreFactory<C>
         void setChildVisible(TethysUIComponent pChild,
                              boolean pVisible);
     }
+
+    /**
+     * Program Definition.
+     */
+    private final TethysUIProgram theProgram;
 
     /**
      * The Data Formatter.
@@ -86,8 +91,12 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * Constructor.
+     * @param pProgram the program definitions
      */
-    protected TethysUICoreFactory() {
+    protected TethysUICoreFactory(final TethysUIProgram pProgram) {
+        /* Store the program */
+        theProgram = pProgram;
+
         /* Create base items */
         theFormatter = new TethysUICoreDataFormatter();
         theNextNodeId = new AtomicInteger(1);
@@ -107,6 +116,11 @@ public abstract class TethysUICoreFactory<C>
     @Override
     public TethysUIDataFormatter getDataFormatter() {
         return theFormatter;
+    }
+
+    @Override
+    public TethysUIProgram getProgramDefinitions() {
+        return theProgram;
     }
 
     /**
