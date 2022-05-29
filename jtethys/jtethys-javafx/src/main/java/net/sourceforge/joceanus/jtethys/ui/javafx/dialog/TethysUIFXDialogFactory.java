@@ -19,7 +19,9 @@ package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
@@ -72,5 +74,16 @@ public class TethysUIFXDialogFactory
     @Override
     public TethysUIFXAboutBox newAboutBox() {
         return new TethysUIFXAboutBox(theFactory, theStage);
+    }
+
+    @Override
+    public TethysUIPasswordDialog newPasswordDialog(final String pTitle,
+                                                    final boolean pNeedConfirm) {
+        return new TethysUIFXPasswordDialog(theFactory, theStage, pTitle, pNeedConfirm);
+    }
+
+    @Override
+    public TethysUIAlert newAlert() {
+        return new TethysUIFXAlert(theStage);
     }
 }

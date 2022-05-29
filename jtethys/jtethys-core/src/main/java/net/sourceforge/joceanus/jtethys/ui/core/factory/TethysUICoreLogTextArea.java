@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIXResource;
 
 /**
  * Log text area.
@@ -35,6 +36,11 @@ import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 public class TethysUICoreLogTextArea
         extends TethysUICoreComponent
         implements TethysUILogTextArea {
+    /**
+     * Cancel Text.
+     */
+    private static final String TEXT_CANCEL = TethysUIXResource.BUTTON_CANCEL.getValue();
+
     /**
      * The Event Manager.
      */
@@ -62,7 +68,7 @@ public class TethysUICoreLogTextArea
         /* Create the clear button */
         final TethysUIButton theClearButton = pFactory.buttonFactory().newButton();
         theClearButton.setTextOnly();
-        theClearButton.setText("Cancel");
+        theClearButton.setText(TEXT_CANCEL);
 
         /* Create a new subPanel for the buttons */
         final TethysUIPaneFactory myFactory = pFactory.paneFactory();

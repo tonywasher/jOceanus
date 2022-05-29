@@ -19,7 +19,9 @@ package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
 import java.awt.Color;
 import javax.swing.JFrame;
 
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
@@ -72,5 +74,16 @@ public class TethysUISwingDialogFactory
     @Override
     public TethysUISwingAboutBox newAboutBox() {
         return new TethysUISwingAboutBox(theFactory, theFrame);
+    }
+
+    @Override
+    public TethysUIPasswordDialog newPasswordDialog(final String pTitle,
+                                                    final boolean pNeedConfirm) {
+        return new TethysUISwingPasswordDialog(theFactory, theFrame, pTitle, pNeedConfirm);
+    }
+
+    @Override
+    public TethysUIAlert newAlert() {
+        return new TethysUISwingAlert(theFrame);
     }
 }

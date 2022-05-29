@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.core.base;
 
 import java.util.ResourceBundle;
 
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 /**
  * Resource IDs for TethysUI package.
  */
-public enum TethysUIResource implements TethysBundleId {
+public enum TethysUIXResource implements TethysBundleId {
     /**
      * Bad value on parse.
      */
@@ -47,9 +47,59 @@ public enum TethysUIResource implements TethysBundleId {
     ABOUT_BUILTON("about.BuiltOn"),
 
     /**
-     * About OK.
+     * Button OK.
      */
-    ABOUT_OK("button.OK");
+    BUTTON_OK("button.OK"),
+
+    /**
+     * Button Cancel.
+     */
+    BUTTON_CANCEL("button.cancel"),
+
+    /**
+     * Label Password.
+     */
+    PASS_LABEL_PASSWORD("pass.label.password"),
+
+    /**
+     * Label Confirm.
+     */
+    PASS_LABEL_CONFIRM("pass.label.confirm"),
+
+    /**
+     * Title for password.
+     */
+    PASS_TITLE_PASSWORD("pass.title.password"),
+
+    /**
+     * Title for new password.
+     */
+    PASS_TITLE_NEWPASS("pass.title.newPassword"),
+
+    /**
+     * Title for error.
+     */
+    PASS_TITLE_ERROR("pass.title.error"),
+
+    /**
+     * Error Bad Password.
+     */
+    PASS_ERROR_BADPASS("pass.error.badPassword"),
+
+    /**
+     * Error Confirm.
+     */
+    PASS_ERROR_CONFIRM("pass.error.confirm"),
+
+    /**
+     * Error length 1.
+     */
+    PASS_ERROR_LENGTH1("pass.error.length1"),
+
+    /**
+     * Error length 2.
+     */
+    PASS_ERROR_LENGTH2("pass.error.length2");
 
     /**
      * The Resource Loader.
@@ -71,7 +121,7 @@ public enum TethysUIResource implements TethysBundleId {
      * Constructor.
      * @param pKeyName the key name
      */
-    TethysUIResource(final String pKeyName) {
+    TethysUIXResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

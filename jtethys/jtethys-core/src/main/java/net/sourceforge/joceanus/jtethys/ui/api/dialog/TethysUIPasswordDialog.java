@@ -17,46 +17,35 @@
 package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 /**
- * Dialog Factory.
- * @param <C> the color
+ * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public interface TethysUIDialogFactory<C> {
+public interface TethysUIPasswordDialog {
     /**
-     * Obtain a new colorPicker.
-     * @return the new picker
+     * Show the dialog under an invokeAndWait clause.
+     *
+     * @return successful dialog usage true/false
      */
-    TethysUIColorPicker<C> newColorPicker();
+    boolean showDialog();
 
     /**
-     * Obtain a new fileSelector.
-     * @return the new selector
+     * Obtain the password.
+     * @return the password
      */
-    TethysUIFileSelector newFileSelector();
+    char[] getPassword();
 
     /**
-     * Obtain a new directorySelector.
-     * @return the new selector
+     * Is the password set.
+     * @return true/false
      */
-    TethysUIDirectorySelector newDirectorySelector();
+    boolean isPasswordSet();
 
     /**
-     * Obtain a new aboutBox.
-     * @return the new box
+     * Release resources.
      */
-    TethysUIAboutBox newAboutBox();
+    void release();
 
     /**
-     * Obtain a new passwordDialog.
-     * @param pTitle       the title
-     * @param pNeedConfirm true/false
-     * @return the new dialog
+     * report a bad password.
      */
-    TethysUIPasswordDialog newPasswordDialog(final String pTitle,
-                                             final boolean pNeedConfirm);
-
-    /**
-     * Obtain a new alert.
-     * @return the new alert
-     */
-    TethysUIAlert newAlert();
+    void reportBadPassword();
 }

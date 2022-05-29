@@ -17,46 +17,49 @@
 package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 /**
- * Dialog Factory.
- * @param <C> the color
+ * Alert.
  */
-public interface TethysUIDialogFactory<C> {
+public interface TethysUIAlert {
     /**
-     * Obtain a new colorPicker.
-     * @return the new picker
+     * Set the title.
+     *
+     * @param pTitle the title
      */
-    TethysUIColorPicker<C> newColorPicker();
+    void setTitle(String pTitle);
 
     /**
-     * Obtain a new fileSelector.
-     * @return the new selector
+     * Set the message.
+     *
+     * @param pMessage the message
      */
-    TethysUIFileSelector newFileSelector();
+    void setMessage(String pMessage);
 
     /**
-     * Obtain a new directorySelector.
-     * @return the new selector
+     * Confirm with the user Yes/No.
+     *
+     * @return was Yes selected? true/false
      */
-    TethysUIDirectorySelector newDirectorySelector();
+    boolean confirmYesNo();
 
     /**
-     * Obtain a new aboutBox.
-     * @return the new box
+     * Confirm with the use OK/Cancel.
+     *
+     * @return was OK selected? true/false
      */
-    TethysUIAboutBox newAboutBox();
+    boolean confirmOKCancel();
 
     /**
-     * Obtain a new passwordDialog.
-     * @param pTitle       the title
-     * @param pNeedConfirm true/false
-     * @return the new dialog
+     * Show error.
      */
-    TethysUIPasswordDialog newPasswordDialog(final String pTitle,
-                                             final boolean pNeedConfirm);
+    void showError();
 
     /**
-     * Obtain a new alert.
-     * @return the new alert
+     * Show warning.
      */
-    TethysUIAlert newAlert();
+    void showWarning();
+
+    /**
+     * Show information.
+     */
+    void showInfo();
 }
