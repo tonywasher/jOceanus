@@ -59,4 +59,10 @@ public interface TethysUIDialogFactory<C> {
      * @return the new alert
      */
     TethysUIAlert newAlert();
+
+    /**
+     * Obtain a new child dialog.
+     * @return the new child dialog
+     */
+    TethysUIChildDialog newChildDialog();
 }

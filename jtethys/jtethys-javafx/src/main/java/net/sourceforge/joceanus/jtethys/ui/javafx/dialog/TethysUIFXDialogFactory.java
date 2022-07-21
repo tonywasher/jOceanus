@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -85,5 +86,10 @@ public class TethysUIFXDialogFactory
     @Override
     public TethysUIAlert newAlert() {
         return new TethysUIFXAlert(theStage);
+    }
+
+    @Override
+    public TethysUIChildDialog newChildDialog() {
+        return new TethysUIFXChildDialog(theStage);
     }
 }

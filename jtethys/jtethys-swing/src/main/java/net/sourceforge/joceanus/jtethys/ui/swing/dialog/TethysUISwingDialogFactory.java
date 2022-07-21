@@ -20,6 +20,7 @@ import java.awt.Color;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -85,5 +86,10 @@ public class TethysUISwingDialogFactory
     @Override
     public TethysUIAlert newAlert() {
         return new TethysUISwingAlert(theFrame);
+    }
+
+    @Override
+    public TethysUIChildDialog newChildDialog() {
+        return new TethysUISwingChildDialog(theFrame);
     }
 }
