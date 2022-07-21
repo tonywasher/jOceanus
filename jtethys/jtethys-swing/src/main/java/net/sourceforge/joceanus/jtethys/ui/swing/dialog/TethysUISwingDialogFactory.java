@@ -19,7 +19,11 @@ package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
 import java.awt.Color;
 import javax.swing.JFrame;
 
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * swing Dialog factory.
@@ -27,9 +31,23 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 public class TethysUISwingDialogFactory
         implements TethysUIDialogFactory<Color> {
     /**
+     * The Factory.
+     */
+    private final TethysUICoreFactory<?> theFactory;
+
+    /**
      * The frame.
      */
     private JFrame theFrame;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory.
+     */
+    public TethysUISwingDialogFactory(final TethysUICoreFactory<?> pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+    }
 
     /**
      * Set the frame.
@@ -52,5 +70,26 @@ public class TethysUISwingDialogFactory
     @Override
     public TethysUISwingDirectorySelector newDirectorySelector() {
         return new TethysUISwingDirectorySelector(theFrame);
+    }
+
+    @Override
+    public TethysUISwingAboutBox newAboutBox() {
+        return new TethysUISwingAboutBox(theFactory, theFrame);
+    }
+
+    @Override
+    public TethysUIPasswordDialog newPasswordDialog(final String pTitle,
+                                                    final boolean pNeedConfirm) {
+        return new TethysUISwingPasswordDialog(theFactory, theFrame, pTitle, pNeedConfirm);
+    }
+
+    @Override
+    public TethysUIAlert newAlert() {
+        return new TethysUISwingAlert(theFrame);
+    }
+
+    @Override
+    public TethysUIChildDialog newChildDialog() {
+        return new TethysUISwingChildDialog(theFrame);
     }
 }

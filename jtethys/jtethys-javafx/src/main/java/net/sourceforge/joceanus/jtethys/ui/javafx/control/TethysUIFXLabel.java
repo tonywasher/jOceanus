@@ -18,12 +18,15 @@ package net.sourceforge.joceanus.jtethys.ui.javafx.control;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.paint.Color;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreLabel;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
+import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXScrollMenu;
 
 /**
  * Tethys FX Label.
@@ -39,6 +42,16 @@ public final class TethysUIFXLabel
      * The Label.
      */
     private final Label theLabel;
+
+    /**
+     * The Context Menu.
+     */
+    private TethysUIFXScrollMenu<?> theContextMenu;
+
+    /**
+     * Has the context menu handler been set.
+     */
+    private boolean menuListenerSet;
 
     /**
      * Constructor.
@@ -81,6 +94,30 @@ public final class TethysUIFXLabel
     public void setVisible(final boolean pVisible) {
         theNode.setManaged(pVisible);
         theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public void setContextMenu(final TethysUIScrollMenu<?> pMenu) {
+        /* Record the menu */
+        theContextMenu = (TethysUIFXScrollMenu<?>) pMenu;
+
+        /* If the listener has not been set */
+        if (!menuListenerSet) {
+            /* Set the handler */
+            theLabel.setOnContextMenuRequested(this::handleContextMenu);
+            menuListenerSet = true;
+        }
+    }
+
+    /**
+     * handleContextMenu.
+     *
+     * @param pEvent the event
+     */
+    private void handleContextMenu(final ContextMenuEvent pEvent) {
+        if (theContextMenu != null) {
+            theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
+        }
     }
 
     /**

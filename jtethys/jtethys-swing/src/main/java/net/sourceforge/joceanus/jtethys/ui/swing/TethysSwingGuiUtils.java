@@ -129,16 +129,11 @@ public final class TethysSwingGuiUtils {
                                               : null;
 
         /* Create compound border */
-        final Border myBorder = hasPadding
-                                           ? hasTitle
-                                                      ? BorderFactory.createCompoundBorder(myPaddedBorder, myTitleBorder)
-                                                      : myPaddedBorder
-                                           : hasTitle
-                                                      ? myTitleBorder
-                                                      : BorderFactory.createEmptyBorder();
-
-        /* Set the border */
-        pNode.setBorder(myBorder);
+        if (hasPadding) {
+            pNode.setBorder(hasTitle ? BorderFactory.createCompoundBorder(myPaddedBorder, myTitleBorder) : myPaddedBorder);
+        } else {
+            pNode.setBorder(hasTitle ? myTitleBorder : BorderFactory.createEmptyBorder());
+        }
     }
 
     /**

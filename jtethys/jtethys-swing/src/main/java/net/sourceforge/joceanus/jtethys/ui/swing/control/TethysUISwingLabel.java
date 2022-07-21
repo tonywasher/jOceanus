@@ -17,14 +17,18 @@
 package net.sourceforge.joceanus.jtethys.ui.swing.control;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
+import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingScrollMenu;
 
 /**
  * Tethys Swing Label.
@@ -40,6 +44,16 @@ public final class TethysUISwingLabel
      * The Label.
      */
     private final JLabel theLabel;
+
+    /**
+     * The Context Menu.
+     */
+    private TethysUISwingScrollMenu<?> theContextMenu;
+
+    /**
+     * Has the context menu handler been set.
+     */
+    private boolean menuListenerSet;
 
     /**
      * Constructor.
@@ -81,6 +95,30 @@ public final class TethysUISwingLabel
     @Override
     public void setVisible(final boolean pVisible) {
         theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public void setContextMenu(final TethysUIScrollMenu<?> pMenu) {
+        /* Record the menu */
+        theContextMenu = (TethysUISwingScrollMenu<?>) pMenu;
+
+        /* If the listener has not been set */
+        if (!menuListenerSet) {
+            /* Set the handler */
+            theLabel.addMouseListener(new TethysLabelListener(this));
+            menuListenerSet = true;
+        }
+    }
+
+    /**
+     * Handle mouse event.
+     * @param pEvent the event
+     */
+    void handleContextMenu(final MouseEvent pEvent) {
+        if (theContextMenu != null
+                && pEvent.isPopupTrigger()) {
+            theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
+        }
     }
 
     /**
@@ -154,5 +192,34 @@ public final class TethysUISwingLabel
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
         theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
+    }
+
+    /**
+     * Context Menu Listener.
+     */
+    private class TethysLabelListener
+            extends MouseAdapter {
+        /**
+         * The label.
+         */
+        private final TethysUISwingLabel theLabel;
+
+        /**
+         * Constructor.
+         * @param pLabel the label
+         */
+        TethysLabelListener(final TethysUISwingLabel pLabel) {
+            theLabel = pLabel;
+        }
+
+        @Override
+        public void mousePressed(final MouseEvent pEvent) {
+            theLabel.handleContextMenu(pEvent);
+        }
+
+        @Override
+        public void mouseReleased(final MouseEvent pEvent) {
+            theLabel.handleContextMenu(pEvent);
+        }
     }
 }

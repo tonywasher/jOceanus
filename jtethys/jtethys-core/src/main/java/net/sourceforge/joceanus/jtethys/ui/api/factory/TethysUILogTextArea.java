@@ -14,43 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.control;
+package net.sourceforge.joceanus.jtethys.ui.api.factory;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogSink;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 
 /**
- * Label.
+ * Log text area.
  */
-public interface TethysUILabel
-        extends TethysUIComponent {
+public interface TethysUILogTextArea
+        extends TethysLogSink, TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
     /**
-     * Set Text.
-     * @param pText the text
+     * is the logArea active?
+     * @return true/false
      */
-    void setText(String pText);
-
-    /**
-     * Set error text colour.
-     */
-    void setErrorText();
-
-    /**
-     * Obtain the width.
-     * @return the width
-     */
-    Integer getWidth();
-
-    /**
-     * Set Alignment.
-     * @param pAlign the alignment
-     */
-    void setAlignment(TethysUIAlignment pAlign);
-
-    /**
-     * Set context menu.
-     * @param pMenu the context menu.
-     */
-    void setContextMenu(TethysUIScrollMenu<?> pMenu);
+    boolean isActive();
 }

@@ -38,4 +38,31 @@ public interface TethysUIDialogFactory<C> {
      * @return the new selector
      */
     TethysUIDirectorySelector newDirectorySelector();
+
+    /**
+     * Obtain a new aboutBox.
+     * @return the new box
+     */
+    TethysUIAboutBox newAboutBox();
+
+    /**
+     * Obtain a new passwordDialog.
+     * @param pTitle       the title
+     * @param pNeedConfirm true/false
+     * @return the new dialog
+     */
+    TethysUIPasswordDialog newPasswordDialog(final String pTitle,
+                                             final boolean pNeedConfirm);
+
+    /**
+     * Obtain a new alert.
+     * @return the new alert
+     */
+    TethysUIAlert newAlert();
+
+    /**
+     * Obtain a new child dialog.
+     * @return the new child dialog
+     */
+    TethysUIChildDialog newChildDialog();
 }

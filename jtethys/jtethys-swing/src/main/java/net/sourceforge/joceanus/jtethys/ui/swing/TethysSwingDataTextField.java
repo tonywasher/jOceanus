@@ -158,7 +158,7 @@ public abstract class TethysSwingDataTextField<T>
         theCmdButton.setFocusable(false);
 
         /* declare the command menu */
-        declareCmdMenu(new TethysSwingScrollContextMenu<String>());
+        declareCmdMenu(new TethysSwingScrollContextMenu<>());
 
         /* Build the edit node */
         theEditNode.setLayout(new BorderLayout());

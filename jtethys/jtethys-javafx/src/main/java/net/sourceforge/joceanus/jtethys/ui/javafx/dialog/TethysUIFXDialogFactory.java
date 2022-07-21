@@ -19,7 +19,11 @@ package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * javaFX Dialog factory.
@@ -27,9 +31,23 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 public class TethysUIFXDialogFactory
         implements TethysUIDialogFactory<Color> {
     /**
+     * The Factory.
+     */
+    private final TethysUICoreFactory<?> theFactory;
+
+    /**
      * The stage.
      */
     private Stage theStage;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory.
+     */
+    public TethysUIFXDialogFactory(final TethysUICoreFactory<?> pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+    }
 
     /**
      * Set the stage.
@@ -52,5 +70,26 @@ public class TethysUIFXDialogFactory
     @Override
     public TethysUIFXDirectorySelector newDirectorySelector() {
         return new TethysUIFXDirectorySelector(theStage);
+    }
+
+    @Override
+    public TethysUIFXAboutBox newAboutBox() {
+        return new TethysUIFXAboutBox(theFactory, theStage);
+    }
+
+    @Override
+    public TethysUIPasswordDialog newPasswordDialog(final String pTitle,
+                                                    final boolean pNeedConfirm) {
+        return new TethysUIFXPasswordDialog(theFactory, theStage, pTitle, pNeedConfirm);
+    }
+
+    @Override
+    public TethysUIAlert newAlert() {
+        return new TethysUIFXAlert(theStage);
+    }
+
+    @Override
+    public TethysUIChildDialog newChildDialog() {
+        return new TethysUIFXChildDialog(theStage);
     }
 }

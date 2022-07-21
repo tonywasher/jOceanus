@@ -14,43 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.control;
+package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 
 /**
- * Label.
+ * Child Dialog
  */
-public interface TethysUILabel
-        extends TethysUIComponent {
+public interface TethysUIChildDialog
+    extends TethysEventProvider<TethysUIXEvent> {
     /**
-     * Set Text.
-     * @param pText the text
+     * Set the title
+     * @param pTitle the title
      */
-    void setText(String pText);
+    void setTitle(String pTitle);
 
     /**
-     * Set error text colour.
+     * Set the contents
+     * @param pContent the dialog content
      */
-    void setErrorText();
+    void setContent(TethysUIComponent pContent);
 
     /**
-     * Obtain the width.
-     * @return the width
+     * Show the dialog.
      */
-    Integer getWidth();
+    void showDialog();
 
     /**
-     * Set Alignment.
-     * @param pAlign the alignment
+     * Hide the dialog.
      */
-    void setAlignment(TethysUIAlignment pAlign);
+    void hideDialog();
 
     /**
-     * Set context menu.
-     * @param pMenu the context menu.
+     * Close the dialog.
      */
-    void setContextMenu(TethysUIScrollMenu<?> pMenu);
+    void closeDialog();
 }

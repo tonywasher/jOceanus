@@ -14,43 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.control;
+package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
- * Label.
+ * About Box.
  */
-public interface TethysUILabel
+public interface TethysUIAboutBox
         extends TethysUIComponent {
     /**
-     * Set Text.
-     * @param pText the text
+     * Show dialog.
      */
-    void setText(String pText);
-
-    /**
-     * Set error text colour.
-     */
-    void setErrorText();
-
-    /**
-     * Obtain the width.
-     * @return the width
-     */
-    Integer getWidth();
-
-    /**
-     * Set Alignment.
-     * @param pAlign the alignment
-     */
-    void setAlignment(TethysUIAlignment pAlign);
-
-    /**
-     * Set context menu.
-     * @param pMenu the context menu.
-     */
-    void setContextMenu(TethysUIScrollMenu<?> pMenu);
+    void showDialog();
 }

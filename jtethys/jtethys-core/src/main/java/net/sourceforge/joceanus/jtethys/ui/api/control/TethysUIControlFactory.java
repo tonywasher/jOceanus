@@ -61,6 +61,12 @@ public interface TethysUIControlFactory {
     TethysUITextArea newTextArea();
 
     /**
+     * Obtain a new password field.
+     * @return the new password field
+     */
+    TethysUIPasswordField newPasswordField();
+
+    /**
      * Obtain a new progressBar.
      * @return the new progressBar
      */

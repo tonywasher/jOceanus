@@ -14,43 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.control;
-
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 /**
- * Label.
+ * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public interface TethysUILabel
-        extends TethysUIComponent {
+public interface TethysUIPasswordDialog {
     /**
-     * Set Text.
-     * @param pText the text
+     * Show the dialog under an invokeAndWait clause.
+     *
+     * @return successful dialog usage true/false
      */
-    void setText(String pText);
+    boolean showDialog();
 
     /**
-     * Set error text colour.
+     * Obtain the password.
+     * @return the password
      */
-    void setErrorText();
+    char[] getPassword();
 
     /**
-     * Obtain the width.
-     * @return the width
+     * Is the password set.
+     * @return true/false
      */
-    Integer getWidth();
+    boolean isPasswordSet();
 
     /**
-     * Set Alignment.
-     * @param pAlign the alignment
+     * Release resources.
      */
-    void setAlignment(TethysUIAlignment pAlign);
+    void release();
 
     /**
-     * Set context menu.
-     * @param pMenu the context menu.
+     * report a bad password.
      */
-    void setContextMenu(TethysUIScrollMenu<?> pMenu);
+    void reportBadPassword();
 }

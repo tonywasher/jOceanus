@@ -14,43 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.control;
-
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 /**
- * Label.
+ * Alert.
  */
-public interface TethysUILabel
-        extends TethysUIComponent {
+public interface TethysUIAlert {
     /**
-     * Set Text.
-     * @param pText the text
+     * Set the title.
+     *
+     * @param pTitle the title
      */
-    void setText(String pText);
+    void setTitle(String pTitle);
 
     /**
-     * Set error text colour.
+     * Set the message.
+     *
+     * @param pMessage the message
      */
-    void setErrorText();
+    void setMessage(String pMessage);
 
     /**
-     * Obtain the width.
-     * @return the width
+     * Confirm with the user Yes/No.
+     *
+     * @return was Yes selected? true/false
      */
-    Integer getWidth();
+    boolean confirmYesNo();
 
     /**
-     * Set Alignment.
-     * @param pAlign the alignment
+     * Confirm with the use OK/Cancel.
+     *
+     * @return was OK selected? true/false
      */
-    void setAlignment(TethysUIAlignment pAlign);
+    boolean confirmOKCancel();
 
     /**
-     * Set context menu.
-     * @param pMenu the context menu.
+     * Show error.
      */
-    void setContextMenu(TethysUIScrollMenu<?> pMenu);
+    void showError();
+
+    /**
+     * Show warning.
+     */
+    void showWarning();
+
+    /**
+     * Show information.
+     */
+    void showInfo();
 }

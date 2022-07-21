@@ -14,17 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.dialog;
+package net.sourceforge.joceanus.jtethys.ui.api.control;
 
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 
 /**
- * About Box.
+ * Password Field.
  */
-public interface TethysUIAbout
-        extends TethysUIComponent {
+public interface TethysUIPasswordField
+        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
     /**
-     * Show dialog.
+     * set password.
+     * @param pPassword the password.
      */
-    void showDialog();
+    void setPassword(char[] pPassword);
+
+    /**
+     * Obtain the password.
+     * @return the password
+     */
+    char[] getPassword();
 }

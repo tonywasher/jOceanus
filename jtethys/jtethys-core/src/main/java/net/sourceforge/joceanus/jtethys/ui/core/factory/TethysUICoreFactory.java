@@ -23,11 +23,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
 
@@ -52,6 +55,11 @@ public abstract class TethysUICoreFactory<C>
     }
 
     /**
+     * Program Definition.
+     */
+    private final TethysUIProgram theProgram;
+
+    /**
      * The Data Formatter.
      */
     private final TethysUIDataFormatter theFormatter;
@@ -72,19 +80,32 @@ public abstract class TethysUICoreFactory<C>
     private final TethysUIValueSet theValueSet;
 
     /**
+     * LogSink.
+     */
+    private final TethysUICoreLogTextArea theLogSink;
+
+    /**
      * The event manager.
      */
     private final TethysEventManager<TethysUIXEvent> theEventManager;
 
     /**
      * Constructor.
+     * @param pProgram the program definitions
      */
-    protected TethysUICoreFactory() {
+    protected TethysUICoreFactory(final TethysUIProgram pProgram) {
+        /* Store the program */
+        theProgram = pProgram;
+
+        /* Create base items */
         theFormatter = new TethysUICoreDataFormatter();
         theNextNodeId = new AtomicInteger(1);
         theParentMap = new HashMap<>();
         theValueSet = new TethysUICoreValueSet();
         theEventManager = new TethysEventManager<>();
+
+        /* Create logSink */
+        theLogSink = new TethysUICoreLogTextArea(this);
     }
 
     @Override
@@ -97,12 +118,27 @@ public abstract class TethysUICoreFactory<C>
         return theFormatter;
     }
 
+    @Override
+    public TethysUIProgram getProgramDefinitions() {
+        return theProgram;
+    }
+
     /**
      * Obtain the next id.
      * @return the next id
      */
     public Integer getNextId() {
         return theNextNodeId.getAndIncrement();
+    }
+
+    @Override
+    public TethysUILogTextArea getLogSink() {
+        return theLogSink;
+    }
+
+    @Override
+    public void activateLogSink() {
+        TethysLogManager.setSink(theLogSink);
     }
 
     /**
