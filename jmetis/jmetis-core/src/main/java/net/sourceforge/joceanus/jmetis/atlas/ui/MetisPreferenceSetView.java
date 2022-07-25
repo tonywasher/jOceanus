@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Panel for editing a preference Set.
@@ -507,7 +507,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
             theOptions.addNode(theCheckBox);
 
             /* Create listener */
-            theCheckBox.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            theCheckBox.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 pItem.setValue(theCheckBox.isSelected());
                 notifyChanges();
             });
@@ -581,7 +581,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
             theGrid.newRow();
 
             /* Create listener */
-            theField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            theField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 pItem.setValue(theField.getValue());
                 notifyChanges();
             });
@@ -647,8 +647,8 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
 
             /* Create listeners */
             theField.setMenuConfigurator(this::buildMenu);
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theField.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theField.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 pItem.setValue(theField.getValue());
                 notifyChanges();
             });

@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 
 /**
@@ -67,7 +67,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <T> the value type
  */
 public class TethysSwingScrollContextMenu<T>
-        implements TethysScrollMenu<T>, TethysEventProvider<TethysUIEvent> {
+        implements TethysScrollMenu<T>, TethysEventProvider<TethysXUIEvent> {
     /**
      * Background active colour.
      */
@@ -101,7 +101,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The ScrollUp Item.
@@ -231,7 +231,7 @@ public class TethysSwingScrollContextMenu<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -545,7 +545,7 @@ public class TethysSwingScrollContextMenu<T>
         if (theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
-                theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+                theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
             }
 
             /* Close the menu hierarchy if we are currently showing */
@@ -586,7 +586,7 @@ public class TethysSwingScrollContextMenu<T>
             }
 
             /* fire selection event */
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theSelectedItem);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, theSelectedItem);
         }
     }
 
@@ -602,7 +602,7 @@ public class TethysSwingScrollContextMenu<T>
             /* else we are top-level */
         } else {
             /* fire cancellation event */
-            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+            theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
 
             /* Notify the cancel */
             closeMenu();

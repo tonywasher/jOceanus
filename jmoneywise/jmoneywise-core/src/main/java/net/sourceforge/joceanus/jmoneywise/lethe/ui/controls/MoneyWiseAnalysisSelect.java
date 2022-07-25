@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Selection panel for Analysis Statement.
@@ -368,21 +368,21 @@ public class MoneyWiseAnalysisSelect
         theColumnMenu = theColumnButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theFilterTypeButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleFilterType());
+        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theFilterTypeButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleFilterType());
         theFilterTypeButton.setMenuConfigurator(e -> buildAnalysisTypeMenu());
         myRegistrar = theBucketButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBucket());
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewBucket());
         theBucketButton.setMenuConfigurator(e -> buildBucketMenu());
         myRegistrar = theColumnButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewColumns());
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewColumns());
         theColumnButton.setMenuConfigurator(e -> buildColumnsMenu());
         theAnalysisView.getEventRegistrar().addEventListener(e -> setAnalysisView());
 
         /* Handle buttons */
         theRangeButton.getEventRegistrar().addEventListener(e -> setRangeVisibility(!isRangeVisible));
         theFilterButton.getEventRegistrar().addEventListener(e -> setFilterVisibility(!isFilterVisible));
-        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
+        theRangeSelect.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewRange());
 
         /* handle sub-selections */
         theDepositSelect.getEventRegistrar().addEventListener(e -> buildDepositFilter());
@@ -480,7 +480,7 @@ public class MoneyWiseAnalysisSelect
         myPanel.addNode(pNewButton);
 
         /* Pass through the save event */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = mySave.getEventRegistrar();
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = mySave.getEventRegistrar();
         myRegistrar.addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
 
         /* Return the panel */

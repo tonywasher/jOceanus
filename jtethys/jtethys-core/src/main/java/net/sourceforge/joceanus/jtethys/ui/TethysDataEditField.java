@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <T> the data type
  */
 public interface TethysDataEditField<T>
-        extends TethysEventProvider<TethysUIEvent>, TethysComponent {
+        extends TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Set Editable state.
      * @param pEditable true/false.
@@ -133,7 +133,7 @@ public interface TethysDataEditField<T>
         /**
          * The Event Manager.
          */
-        private final TethysEventManager<TethysUIEvent> theEventManager;
+        private final TethysEventManager<TethysXUIEvent> theEventManager;
 
         /**
          * The Attributes.
@@ -249,7 +249,7 @@ public interface TethysDataEditField<T>
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -257,7 +257,7 @@ public interface TethysDataEditField<T>
          * Fire event.
          * @param pEventId the eventId
          */
-        protected void fireEvent(final TethysUIEvent pEventId) {
+        protected void fireEvent(final TethysXUIEvent pEventId) {
             theEventManager.fireEvent(pEventId);
         }
 
@@ -266,7 +266,7 @@ public interface TethysDataEditField<T>
          * @param pEventId the eventId
          * @param pValue the relevant value
          */
-        protected void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
+        protected void fireEvent(final TethysXUIEvent pEventId, final Object pValue) {
             theEventManager.fireEvent(pEventId, pValue);
         }
 
@@ -292,7 +292,7 @@ public interface TethysDataEditField<T>
             final TethysScrollMenuItem<String> mySelected = theCmdMenu.getSelectedItem();
             if (mySelected != null) {
                 /* fire new command Event */
-                theEventManager.fireEvent(TethysUIEvent.NEWCOMMAND, mySelected.getValue());
+                theEventManager.fireEvent(TethysXUIEvent.NEWCOMMAND, mySelected.getValue());
             }
         }
 
@@ -350,7 +350,7 @@ public interface TethysDataEditField<T>
         /**
          * The InvalidValue Error Text.
          */
-        private static final String ERROR_BADPARSE = TethysUIResource.PARSE_BADVALUE.getValue();
+        private static final String ERROR_BADPARSE = TethysXUIResource.PARSE_BADVALUE.getValue();
 
         /**
          * The Field.
@@ -482,7 +482,7 @@ public interface TethysDataEditField<T>
             /* NullOp if there are no changes */
             if (Objects.equals(pNewValue, theEdit)) {
                 /* Return success */
-                theField.fireEvent(TethysUIEvent.EDITFOCUSLOST, null);
+                theField.fireEvent(TethysXUIEvent.EDITFOCUSLOST, null);
                 return true;
             }
 
@@ -504,7 +504,7 @@ public interface TethysDataEditField<T>
 
                 /* set the value and fire Event */
                 setValue(myValue);
-                theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);
+                theField.fireEvent(TethysXUIEvent.NEWVALUE, myValue);
                 parsedNewValue = true;
                 return true;
 

@@ -24,22 +24,22 @@ public abstract class TethysAbout
     /**
      * Version Prompt.
      */
-    private static final String PROMPT_VERSION = TethysUIResource.ABOUT_VERSION.getValue();
+    private static final String PROMPT_VERSION = TethysXUIResource.ABOUT_VERSION.getValue();
 
     /**
      * Revision Prompt.
      */
-    private static final String PROMPT_REVISION = TethysUIResource.ABOUT_REVISION.getValue();
+    private static final String PROMPT_REVISION = TethysXUIResource.ABOUT_REVISION.getValue();
 
     /**
      * BuiltOn Prompt.
      */
-    private static final String PROMPT_BUILDDATE = TethysUIResource.ABOUT_BUILTON.getValue();
+    private static final String PROMPT_BUILDDATE = TethysXUIResource.ABOUT_BUILTON.getValue();
 
     /**
      * OK Text.
      */
-    private static final String TEXT_OK = TethysUIResource.ABOUT_OK.getValue();
+    private static final String TEXT_OK = TethysXUIResource.ABOUT_OK.getValue();
 
     /**
      * InSet size.

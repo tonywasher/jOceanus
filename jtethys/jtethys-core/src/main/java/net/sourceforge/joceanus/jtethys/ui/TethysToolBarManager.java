@@ -119,7 +119,7 @@ public abstract class TethysToolBarManager
      */
     public <K extends Enum<K> & TethysIconId> void newIcon(final K pId,
                                                            final String pText,
-                                                           final TethysEventListener<TethysUIEvent> pListener) {
+                                                           final TethysEventListener<TethysXUIEvent> pListener) {
         /* Create the new element with Icon and text */
         final TethysToolElement<K> myElement = newIcon(pId);
         myElement.setIcon(pId);
@@ -162,7 +162,7 @@ public abstract class TethysToolBarManager
      * @param <E> the id type
      */
     public abstract static class TethysToolElement<E>
-            implements TethysEventProvider<TethysUIEvent> {
+            implements TethysEventProvider<TethysXUIEvent> {
         /**
          * The Manager.
          */
@@ -176,7 +176,7 @@ public abstract class TethysToolBarManager
         /**
          * Event Manager.
          */
-        private final TethysEventManager<TethysUIEvent> theEventManager;
+        private final TethysEventManager<TethysXUIEvent> theEventManager;
 
         /**
          * Is the element enabled?
@@ -209,7 +209,7 @@ public abstract class TethysToolBarManager
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -308,7 +308,7 @@ public abstract class TethysToolBarManager
          * handle pressed.
          */
         protected void handlePressed() {
-            theEventManager.fireEvent(TethysUIEvent.PRESSED);
+            theEventManager.fireEvent(TethysXUIEvent.PRESSED);
         }
     }
 }

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * ToolBar Manager.
@@ -70,7 +70,7 @@ public interface TethysUIToolBarManager
      */
     void newIcon(TethysUIToolBarId pId,
                  String pText,
-                 TethysEventListener<TethysUIXEvent> pListener);
+                 TethysEventListener<TethysUIEvent> pListener);
 
     /**
      * Add a new Icon element.
@@ -95,7 +95,7 @@ public interface TethysUIToolBarManager
      * ToolElement.
      */
     interface TethysUIToolElement
-            extends TethysEventProvider<TethysUIXEvent> {
+            extends TethysEventProvider<TethysUIEvent> {
         /**
          * Set text for icon.
          * @param pText the text

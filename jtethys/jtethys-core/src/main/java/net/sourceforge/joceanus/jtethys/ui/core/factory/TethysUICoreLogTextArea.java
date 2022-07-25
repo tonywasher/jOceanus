@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITextArea;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
@@ -44,7 +44,7 @@ public class TethysUICoreLogTextArea
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Pane.
@@ -119,7 +119,7 @@ public class TethysUICoreLogTextArea
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -129,7 +129,7 @@ public class TethysUICoreLogTextArea
         theTextArea.appendText(pMessage);
         theTextArea.appendText("\n");
         theTextArea.setCaretPosition(myPos + 1);
-        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE);
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
     }
 
     /**
@@ -146,6 +146,6 @@ public class TethysUICoreLogTextArea
     private void handleClear() {
         /* Clear contents */
         theTextArea.setText(null);
-        theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
     }
 }

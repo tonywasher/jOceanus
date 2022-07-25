@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
@@ -384,7 +384,7 @@ public class TethysSwingDateExample {
         theLocaleList.setValue(ShortLocale.UK);
 
         /* Action selections */
-        theLocaleList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theLocaleList.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             /* Store the new locale */
             final ShortLocale myLocale = e.getDetails(ShortLocale.class);
             theLocale = myLocale.getLocale();
@@ -409,7 +409,7 @@ public class TethysSwingDateExample {
         theFormatList.setValue(theFormat);
 
         /* Action selections */
-        theFormatList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theFormatList.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             /* Store the new format */
             theFormat = e.getDetails(String.class);
             applyFormat();
@@ -448,7 +448,7 @@ public class TethysSwingDateExample {
 
         /* Create the range selection */
         theRangeSelect = theGuiFactory.newDateRangeSelector(true);
-        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
+        theRangeSelect.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewRange());
 
         /* Set the values */
         theStartDate.setSelectedDate(DATE_START);
@@ -458,8 +458,8 @@ public class TethysSwingDateExample {
         applyRange();
 
         /* Add Listener to buttons */
-        theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
-        theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
+        theStartDate.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> applyRange());
+        theEndDate.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> applyRange());
 
         /* Create the range report label */
         theSelectedRange = theGuiFactory.newLabel(theRangeSelect.getRange().toString());

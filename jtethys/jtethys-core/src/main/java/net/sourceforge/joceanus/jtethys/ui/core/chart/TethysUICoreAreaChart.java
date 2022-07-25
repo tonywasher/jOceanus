@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIAreaChart;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -60,7 +60,7 @@ public abstract class TethysUICoreAreaChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The sectionMap.
@@ -87,7 +87,7 @@ public abstract class TethysUICoreAreaChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -158,7 +158,7 @@ public abstract class TethysUICoreAreaChart
      */
     protected void selectSeries(final String pName) {
         final TethysUIAreaChartSeries mySeries = theSeriesMap.get(pName);
-        theEventManager.fireEvent(TethysUIXEvent.PRESSED, mySeries);
+        theEventManager.fireEvent(TethysUIEvent.PRESSED, mySeries);
     }
 
     /**

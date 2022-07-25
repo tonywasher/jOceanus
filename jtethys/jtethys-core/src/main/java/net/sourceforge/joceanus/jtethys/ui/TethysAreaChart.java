@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * </ul>
  */
 public abstract class TethysAreaChart
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The angle for labels.
      */
@@ -56,7 +56,7 @@ public abstract class TethysAreaChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The sectionMap.
@@ -83,7 +83,7 @@ public abstract class TethysAreaChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -154,7 +154,7 @@ public abstract class TethysAreaChart
      */
     protected void selectSeries(final String pName) {
         final TethysAreaChartSeries mySeries = theSeriesMap.get(pName);
-        theEventManager.fireEvent(TethysUIEvent.PRESSED, mySeries);
+        theEventManager.fireEvent(TethysXUIEvent.PRESSED, mySeries);
     }
 
     /**

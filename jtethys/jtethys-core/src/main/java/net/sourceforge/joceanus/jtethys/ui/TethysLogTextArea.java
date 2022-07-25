@@ -25,11 +25,11 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogSink;
  * Log text area.
  */
 public class TethysLogTextArea
-        implements TethysLogSink, TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysLogSink, TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * Pane.
@@ -93,7 +93,7 @@ public class TethysLogTextArea
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -103,7 +103,7 @@ public class TethysLogTextArea
         theTextArea.appendText(pMessage);
         theTextArea.appendText("\n");
         theTextArea.setCaretPosition(myPos + 1);
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
+        theEventManager.fireEvent(TethysXUIEvent.NEWVALUE);
     }
 
     /**
@@ -120,6 +120,6 @@ public class TethysLogTextArea
     private void handleClear() {
         /* Clear contents */
         theTextArea.setText(null);
-        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
     }
 }

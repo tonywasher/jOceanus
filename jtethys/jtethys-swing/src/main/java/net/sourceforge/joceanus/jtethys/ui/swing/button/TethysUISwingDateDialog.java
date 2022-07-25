@@ -56,14 +56,14 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingArrowIcon;
 
 /**
  * Swing Date Dialog.
  */
 public final class TethysUISwingDateDialog
-        implements TethysEventProvider<TethysUIXEvent> {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * Null Date selection text.
      */
@@ -82,7 +82,7 @@ public final class TethysUISwingDateDialog
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The month array.
@@ -171,7 +171,7 @@ public final class TethysUISwingDateDialog
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -222,7 +222,7 @@ public final class TethysUISwingDateDialog
         theDialog.setVisible(false);
 
         /* Note that selection has been made */
-        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, theConfig.getSelectedDate());
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theConfig.getSelectedDate());
     }
 
     /**
@@ -294,7 +294,7 @@ public final class TethysUISwingDateDialog
      */
     private void showDialog() {
         /* Allow configuration to be updated */
-        theEventManager.fireEvent(TethysUIXEvent.PREPAREDIALOG, theConfig);
+        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
 
         /* Note that we have not selected */
         haveSelected = false;
@@ -327,7 +327,7 @@ public final class TethysUISwingDateDialog
         theDialog.setVisible(false);
 
         /* Note that no selection has been made */
-        theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
     }
 
     /**

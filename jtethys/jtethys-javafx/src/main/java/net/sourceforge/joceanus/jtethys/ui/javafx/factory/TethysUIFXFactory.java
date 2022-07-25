@@ -26,21 +26,22 @@ import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.button.TethysUIFXButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.chart.TethysUIFXChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.control.TethysUIFXControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXSceneRegister;
+import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
 
@@ -58,7 +59,7 @@ public class TethysUIFXFactory
     /**
      * PreLoad StyleSheet.
      */
-    private static final String CSS_STYLE = TethysFXGuiFactory.class.getResource(CSS_STYLE_NAME).toExternalForm();
+    private static final String CSS_STYLE = TethysUIFXFactory.class.getResource(CSS_STYLE_NAME).toExternalForm();
 
     /**
      * The pane factory.
@@ -86,6 +87,11 @@ public class TethysUIFXFactory
     private final TethysUIFXDialogFactory theDialogFactory;
 
     /**
+     * The field factory.
+     */
+    private final TethysUIFXFieldFactory theFieldFactory;
+
+    /**
      * The menu factory.
      */
     private final TethysUIFXMenuFactory theMenuFactory;
@@ -106,6 +112,7 @@ public class TethysUIFXFactory
         theChartFactory = new TethysUIFXChartFactory(this);
         theControlFactory = new TethysUIFXControlFactory(this);
         theDialogFactory = new TethysUIFXDialogFactory(this);
+        theFieldFactory = new TethysUIFXFieldFactory(this);
         theMenuFactory = new TethysUIFXMenuFactory(this);
 
         /* Handle scenes */
@@ -139,6 +146,11 @@ public class TethysUIFXFactory
     }
 
     @Override
+    public TethysUIFieldFactory fieldFactory() {
+        return theFieldFactory;
+    }
+
+    @Override
     public TethysUIMenuFactory menuFactory() {
         return theMenuFactory;
     }
@@ -158,7 +170,7 @@ public class TethysUIFXFactory
     public void setStage(final Stage pStage) {
         theControlFactory.setStage(pStage);
         theDialogFactory.setStage(pStage);
-        fireEvent(TethysUIXEvent.NEWSTAGE);
+        fireEvent(TethysUIEvent.NEWSTAGE);
     }
 
     @Override

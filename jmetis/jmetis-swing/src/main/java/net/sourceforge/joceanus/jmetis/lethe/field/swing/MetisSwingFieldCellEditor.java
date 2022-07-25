@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
@@ -260,8 +260,8 @@ public final class MetisSwingFieldCellEditor {
             theMouseListener = new MouseListener();
 
             /* Set listeners */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
                 theValue = theButton.getValue();
                 stopCellEditing();
@@ -403,9 +403,9 @@ public final class MetisSwingFieldCellEditor {
             theMouseListener = new MouseListener();
 
             /* Set listeners */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
                 theValue = theButton.getValue();
                 stopCellEditing();
@@ -539,9 +539,9 @@ public final class MetisSwingFieldCellEditor {
             theMouseListener = new MouseListener();
 
             /* Set listeners */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
                 theValue = theButton.getValue();
                 stopCellEditing();
@@ -660,9 +660,9 @@ public final class MetisSwingFieldCellEditor {
             theButton = pButton;
 
             /* Set listeners */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
                 theValue = theButton.getSelectedDate();
                 stopCellEditing();

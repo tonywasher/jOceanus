@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
  * Tree Manager.
  */
 public abstract class TethysHTMLManager
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * StyleSheetId.
      */
@@ -54,7 +54,7 @@ public abstract class TethysHTMLManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The HTMLToFile Manager.
@@ -111,7 +111,7 @@ public abstract class TethysHTMLManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -252,6 +252,6 @@ public abstract class TethysHTMLManager
      * @return was new page loaded? true/false
      */
     private boolean loadNewPage(final String pPageRef) {
-        return !theEventManager.fireEvent(TethysUIEvent.BUILDPAGE, pPageRef);
+        return !theEventManager.fireEvent(TethysXUIEvent.BUILDPAGE, pPageRef);
     }
 }

@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
@@ -288,7 +288,7 @@ public class TethysFXTableCellFactory<C, R> {
      */
     public abstract static class TethysFXTableCell<T, C, R>
             extends TableCell<R, T>
-            implements TethysEventProvider<TethysUIEvent>, TethysTableCell<T, C, R> {
+            implements TethysEventProvider<TethysXUIEvent>, TethysTableCell<T, C, R> {
         /**
          * The dummy style.
          */
@@ -312,7 +312,7 @@ public class TethysFXTableCellFactory<C, R> {
         /**
          * The Event Manager.
          */
-        private final TethysEventManager<TethysUIEvent> theEventManager;
+        private final TethysEventManager<TethysXUIEvent> theEventManager;
 
         /**
          * Constructor.
@@ -349,9 +349,9 @@ public class TethysFXTableCellFactory<C, R> {
             setGraphic(TethysFXNode.getNode(theControl));
 
             /* Add listener to the edit field */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theControl.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::handleCommit);
-            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> handleCancel());
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theControl.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, this::handleCommit);
+            myRegistrar.addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> handleCancel());
 
             /* Apply validator to a text field */
             if (theControl instanceof TethysFXTextEditField
@@ -364,7 +364,7 @@ public class TethysFXTableCellFactory<C, R> {
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -505,7 +505,7 @@ public class TethysFXTableCellFactory<C, R> {
          *
          * @param pEvent the event
          */
-        protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
+        protected void handleCommit(final TethysEvent<TethysXUIEvent> pEvent) {
             commitEdit(pEvent.getDetails(theClass));
         }
 
@@ -980,7 +980,7 @@ public class TethysFXTableCellFactory<C, R> {
 
         @SuppressWarnings("unchecked")
         @Override
-        protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
+        protected void handleCommit(final TethysEvent<TethysXUIEvent> pEvent) {
             commitEdit(pEvent.getDetails(List.class));
         }
     }

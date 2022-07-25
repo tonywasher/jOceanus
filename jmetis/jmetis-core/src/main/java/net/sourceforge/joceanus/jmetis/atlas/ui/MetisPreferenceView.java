@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -199,8 +199,8 @@ public class MetisPreferenceView
         mySelection.addSpacer();
 
         /* Set listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePropertySetSelect());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handlePropertySetSelect());
         theSelectButton.setMenuConfigurator(c -> buildPreferenceMenu());
 
         /* Create a new Scroll Pane and add the card to it */

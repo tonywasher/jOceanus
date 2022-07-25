@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
@@ -56,7 +56,7 @@ public abstract class TethysUICoreScrollButtonManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Button.
@@ -158,7 +158,7 @@ public abstract class TethysUICoreScrollButtonManager<T>
     protected abstract void registerListeners();
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -272,7 +272,7 @@ public abstract class TethysUICoreScrollButtonManager<T>
             setValue(mySelected.getValue(), mySelected.getText());
 
             /* fire new value Event */
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, theValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
 
             /* Else if the menu was showing */
         } else if (menuShowing) {
@@ -298,6 +298,6 @@ public abstract class TethysUICoreScrollButtonManager<T>
      */
     private void notifyCancelled() {
         /* fire menu cancelled event */
-        theEventManager.fireEvent(TethysUIXEvent.EDITFOCUSLOST);
+        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
     }
 }

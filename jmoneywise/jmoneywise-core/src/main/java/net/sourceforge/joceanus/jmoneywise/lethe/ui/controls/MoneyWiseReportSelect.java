@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Report selection panel.
@@ -158,13 +158,13 @@ public class MoneyWiseReportSelect
         thePanel.addNode(theSaveButton);
 
         /* Add the listeners */
-        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
+        theReportButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewReport());
         theReportButton.setMenuConfigurator(e -> buildReportMenu());
-        theHoldingButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewSecurity());
+        theHoldingButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewSecurity());
         theHoldingButton.setMenuConfigurator(e -> buildHoldingMenu());
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
         theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
-        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
+        theRangeSelect.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewRange());
     }
 
     @Override

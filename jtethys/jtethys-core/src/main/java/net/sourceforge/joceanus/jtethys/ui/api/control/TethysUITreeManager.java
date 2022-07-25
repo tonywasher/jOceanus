@@ -20,14 +20,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Tree Manager.
  * @param <T> the item type
  */
 public interface TethysUITreeManager<T>
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain the selected item.
      * @return the item.

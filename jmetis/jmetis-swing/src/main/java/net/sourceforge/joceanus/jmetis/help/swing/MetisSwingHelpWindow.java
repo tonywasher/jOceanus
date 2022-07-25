@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpResource;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -204,7 +204,7 @@ public class MetisSwingHelpWindow
             private void handleWindowClosing() {
                 getTreeManager().setVisible(false);
                 theFrame.dispose();
-                fireEvent(TethysUIEvent.WINDOWCLOSED, null);
+                fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
             }
         }
     }

@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * MoneyWise Static Panel.
@@ -180,8 +180,8 @@ public class MoneyWiseStaticPanel
         theSelectButton = myGuiFactory.newScrollButton();
         theDataMenu = theSelectButton.getMenu();
         theSelectButton.setMenuConfigurator(e -> buildDataMenu());
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePanelSelection());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handlePanelSelection());
 
         /* Create the selection panel */
         theSelectionPanel = myGuiFactory.newBorderPane();

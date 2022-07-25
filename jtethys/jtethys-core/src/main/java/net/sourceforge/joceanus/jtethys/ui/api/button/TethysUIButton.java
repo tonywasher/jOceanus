@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Tethys Button.
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
  * </ul>
  */
 public interface TethysUIButton
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain width.
      * @return the width

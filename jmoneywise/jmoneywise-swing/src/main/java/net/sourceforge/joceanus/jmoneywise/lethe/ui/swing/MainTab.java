@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
@@ -183,8 +183,8 @@ public class MainTab
         /* Create the log tab */
         final TethysLogTextArea myLog = myFactory.getLogSink();
         final TethysTabItem myLogTab = theTabs.addTabItem(MoneyWiseUIResource.MAIN_LOG.getValue(), myLog);
-        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> myLogTab.setVisible(true));
-        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> myLogTab.setVisible(false));
+        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> myLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> myLogTab.setVisible(false));
         myLogTab.setVisible(myLog.isActive());
 
         /* Create listeners */

@@ -1,0 +1,104 @@
+/**
+ * Base values.
+ */
+.-jtethys {
+  /* Colours */
+  -jtethys-standard-color: black;
+  -jtethys-zebra-color: lavender;
+  -jtethys-changed-color: magenta;
+  -jtethys-disabled-color: darkgray;
+  -jtethys-background-color: whitesmoke;
+  -jtethys-error-color: #DC381F;
+  -jtethys-progress-color: limegreen;
+
+  /* Fonts */
+  -fx-font-family: Arial;
+  -fx-font-size: 12;
+  -fx-fill: -jtethys-standard-color;
+}
+
+/**
+ * Table values.
+ */
+.-jtethys .-jtethys-table .table-row-cell {
+  -fx-background-color:whitesmoke;
+}
+
+.-jtethys .-jtethys-table .table-row-cell .-jtethys-datafield-changed {
+  -fx-font-style: italic;
+  -fx-text-fill: -jtethys-changed-color;
+}
+
+.-jtethys .-jtethys-table .table-row-cell .-jtethys-datafield-disabled {
+  -fx-font-style: italic;
+  -fx-text-fill: -jtethys-disabled-color;
+}
+
+.-jtethys .-jtethys-table .table-row-cell:even:filled {
+  -fx-background-color: -jtethys-zebra-color;
+}
+
+.-jtethys .-jtethys-table .table-row-cell:selected {
+  -fx-font-size: 1.166667em;  /* 14pt - 2 more than the default font */
+  -fx-font-weight: bold;
+  -fx-text-background-color: -jtethys-standard-color;
+}
+
+/**
+ * Titled Pane values.
+ */
+.-jtethys .-jtethys-titled-title {
+  -fx-translate-x:  4;
+  -fx-translate-y: -8;
+  -fx-padding: 0 0 0 4;
+  -fx-background-color: -jtethys-background-color;
+}
+
+.-jtethys .-jtethys-titled-border {
+  -fx-content-display: top;
+  -fx-border-insets: 10 0 0 0;
+  -fx-border-color: black;
+  -fx-border-width: 1;
+}
+
+.-jtethys .-jtethys-titled-content {
+  -fx-padding: 18 5 5 5;
+}
+
+/**
+ * DataField Values
+ */
+.-jtethys .-jtethys-datafield .-jtethys-datafield-numeric {
+  -fx-font-family: Courier;
+  -fx-text-alignment: right;
+}
+
+.-jtethys .-jtethys-datafield .-jtethys-datafield-changed {
+  -fx-font-style: italic;
+  -fx-text-fill: -jtethys-changed-color;
+}
+
+.-jtethys .-jtethys-datafield:-jtethys-datafield-error {
+  -fx-focus-color: -jtethys-error-color;
+  -fx-text-fill: -jtethys-error-color;
+}
+
+/**
+ * ProgressBar values.
+ */
+.-jtethys .-jtethys-progressbar {
+  -fx-accent: -jtethys-progress-color;
+}
+
+/**
+ * CheckBox values.
+ */
+.-jtethys .-jtethys-checkbox .-jtethys-checkbox-changed {
+  -fx-font-style: italic;
+  -fx-text-fill: -jtethys-changed-color;
+}
+
+.-jtethys-about {
+	-fx-border-width:2;
+	-fx-border-color:Black;
+}

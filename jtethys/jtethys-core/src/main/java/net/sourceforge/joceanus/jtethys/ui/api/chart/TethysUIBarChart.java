@@ -21,7 +21,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Bar Chart.
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
  * </ul>
  */
 public interface TethysUIBarChart
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Update BarChart with data.
      * @param pData the data

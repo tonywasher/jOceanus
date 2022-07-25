@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jtethys.ui.api.control;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Password Field.
  */
 public interface TethysUIPasswordField
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * set password.
      * @param pPassword the password.

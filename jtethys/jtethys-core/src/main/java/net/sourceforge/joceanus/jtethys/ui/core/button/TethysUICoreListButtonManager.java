@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
@@ -65,7 +65,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Button.
@@ -146,7 +146,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -364,7 +364,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
         if (!theActiveValue.equals(theNewValue)) {
             /* Record the new value */
             setValue(theNewValue);
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, theValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
             theNewValue = null;
 
             /* else if the menu is showing */
@@ -382,7 +382,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
      */
     private void notifyCancelled() {
         /* fire menu cancelled event */
-        theEventManager.fireEvent(TethysUIXEvent.EDITFOCUSLOST);
+        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
     }
 
     /**

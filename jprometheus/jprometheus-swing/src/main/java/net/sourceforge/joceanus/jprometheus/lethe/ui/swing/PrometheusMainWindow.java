@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -240,7 +240,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
         /* Create the data window */
         theDataWdw = theToolkit.newViewerWindow();
-        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));
+        theDataWdw.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));
 
         /* Add a window listener */
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

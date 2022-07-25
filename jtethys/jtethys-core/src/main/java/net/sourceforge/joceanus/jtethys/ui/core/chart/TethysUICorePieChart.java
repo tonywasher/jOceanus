@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIPieChart;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -55,7 +55,7 @@ public abstract class TethysUICorePieChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The total.
@@ -82,7 +82,7 @@ public abstract class TethysUICorePieChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -146,7 +146,7 @@ public abstract class TethysUICorePieChart
      */
     protected void selectSection(final String pName) {
         final TethysUIPieChartSection mySection = theSectionMap.get(pName);
-        theEventManager.fireEvent(TethysUIXEvent.PRESSED, mySection);
+        theEventManager.fireEvent(TethysUIEvent.PRESSED, mySection);
     }
 
     /**

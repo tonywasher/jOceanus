@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueKey;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * A set of named colours.
@@ -118,7 +118,7 @@ public class TethysUICoreValueSet
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The map of the default values.
@@ -164,7 +164,7 @@ public class TethysUICoreValueSet
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -174,7 +174,7 @@ public class TethysUICoreValueSet
         theValueMap.putAll(pMappings);
 
         /* Notify of mapping changed */
-        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, this);
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, this);
     }
 
     @Override

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * TaxBasisAnalysis Selection.
@@ -139,11 +139,11 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theAccountMenu = theAccountButton.getMenu();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBasis());
+        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewBasis());
         theBasisButton.setMenuConfigurator(e -> buildBasisMenu());
         myRegistrar = theAccountButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewAccount());
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewAccount());
         theAccountButton.setMenuConfigurator(e -> buildAccountMenu());
     }
 

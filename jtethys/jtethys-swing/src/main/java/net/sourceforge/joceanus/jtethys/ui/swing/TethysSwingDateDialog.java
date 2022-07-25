@@ -56,13 +56,13 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Swing Date Dialog.
  */
 public final class TethysSwingDateDialog
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysXUIEvent> {
     /**
      * Null Date selection text.
      */
@@ -81,7 +81,7 @@ public final class TethysSwingDateDialog
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The month array.
@@ -170,7 +170,7 @@ public final class TethysSwingDateDialog
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -221,7 +221,7 @@ public final class TethysSwingDateDialog
         theDialog.setVisible(false);
 
         /* Note that selection has been made */
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theConfig.getSelectedDate());
+        theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, theConfig.getSelectedDate());
     }
 
     /**
@@ -293,7 +293,7 @@ public final class TethysSwingDateDialog
      */
     private void showDialog() {
         /* Allow configuration to be updated */
-        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
+        theEventManager.fireEvent(TethysXUIEvent.PREPAREDIALOG, theConfig);
 
         /* Note that we have not selected */
         haveSelected = false;
@@ -326,7 +326,7 @@ public final class TethysSwingDateDialog
         theDialog.setVisible(false);
 
         /* Note that no selection has been made */
-        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
     }
 
     /**

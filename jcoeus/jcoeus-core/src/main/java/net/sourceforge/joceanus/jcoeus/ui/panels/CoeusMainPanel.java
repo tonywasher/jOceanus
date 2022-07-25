@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Main Panel.
@@ -125,8 +125,8 @@ public class CoeusMainPanel
         /* Create the log tab */
         final TethysLogTextArea myLog = myFactory.getLogSink();
         theLogTab = theTabs.addTabItem(CoeusUIResource.TAB_LOG.getValue(), myLog);
-        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
-        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
+        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
         theLogTab.setVisible(myLog.isActive());
 
         /* Create the menu bar */
@@ -141,7 +141,7 @@ public class CoeusMainPanel
 
         /* Create the data window */
         theDataWdw = pToolkit.newViewerWindow();
-        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(CoeusMenuItem.DATAVIEWER, true));
+        theDataWdw.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(CoeusMenuItem.DATAVIEWER, true));
 
         /* Create the aboutBox */
         theAboutBox = myFactory.newAboutBox();

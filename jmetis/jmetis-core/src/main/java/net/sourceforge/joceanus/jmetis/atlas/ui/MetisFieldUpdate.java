@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Field Update.
@@ -200,7 +200,7 @@ public class MetisFieldUpdate {
      * @throws OceanusException on error
      */
     @SuppressWarnings("unchecked")
-    public TethysEvent<TethysUIEvent> getEvent() throws OceanusException {
-        return (TethysEvent<TethysUIEvent>) getValue(TethysEvent.class);
+    public TethysEvent<TethysXUIEvent> getEvent() throws OceanusException {
+        return (TethysEvent<TethysXUIEvent>) getValue(TethysEvent.class);
     }
 }

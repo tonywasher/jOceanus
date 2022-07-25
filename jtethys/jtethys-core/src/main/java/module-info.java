@@ -39,6 +39,7 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.ui.api.control;
     exports net.sourceforge.joceanus.jtethys.ui.api.dialog;
     exports net.sourceforge.joceanus.jtethys.ui.api.factory;
+    exports net.sourceforge.joceanus.jtethys.ui.api.field;
     exports net.sourceforge.joceanus.jtethys.ui.api.menu;
     exports net.sourceforge.joceanus.jtethys.ui.api.pane;
 
@@ -49,6 +50,7 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.ui.core.control to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.dialog to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.factory to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
+    exports net.sourceforge.joceanus.jtethys.ui.core.field to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.menu to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.pane to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
 }

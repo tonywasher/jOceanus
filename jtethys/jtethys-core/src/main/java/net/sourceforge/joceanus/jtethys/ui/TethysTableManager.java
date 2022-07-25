@@ -624,7 +624,7 @@ public abstract class TethysTableManager<C, R>
      * @param <R> the row type
      */
     public interface TethysTableColumn<T, C, R>
-            extends TethysEventProvider<TethysUIEvent> {
+            extends TethysEventProvider<TethysXUIEvent> {
         /**
          * Obtain the table manager.
          * @return the table manager
@@ -1069,7 +1069,7 @@ public abstract class TethysTableManager<C, R>
         /**
          * The event manager.
          */
-        private final TethysEventManager<TethysUIEvent> theEventManager;
+        private final TethysEventManager<TethysXUIEvent> theEventManager;
 
         /**
          * The id of the column.
@@ -1159,7 +1159,7 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 

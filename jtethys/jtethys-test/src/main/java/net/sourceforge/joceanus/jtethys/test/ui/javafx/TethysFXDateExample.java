@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
@@ -378,7 +378,7 @@ public final class TethysFXDateExample
         theLocaleList.setValue(ShortLocale.UK);
 
         /* Action selections */
-        theLocaleList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theLocaleList.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             /* Store the new locale */
             final ShortLocale myLocale = e.getDetails(ShortLocale.class);
             theLocale.setValue(myLocale.getLocale());
@@ -402,7 +402,7 @@ public final class TethysFXDateExample
         theFormatList.setValue(theFormat.getValue());
 
         /* Action selections */
-        theFormatList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theFormatList.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             /* Store the new format */
             theFormat.setValue(e.getDetails(String.class));
             theTable.repaintColumn(DateItem.PROP_DATE);
@@ -465,21 +465,21 @@ public final class TethysFXDateExample
         });
 
         /* Handle changes to startDate */
-        theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theStartDate.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             final TethysDate myDate = theStartDate.getSelectedDate();
             theEndDate.setEarliestDate(myDate);
             theRangeSelect.setOverallRange(new TethysDateRange(myDate, theEndDate.getSelectedDate()));
         });
 
         /* Handle changes to endDate */
-        theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theEndDate.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             final TethysDate myDate = theEndDate.getSelectedDate();
             theEndDate.setLatestDate(myDate);
             theRangeSelect.setOverallRange(new TethysDateRange(theStartDate.getEarliestDate(), myDate));
         });
 
         /* Handle changes to range */
-        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theRangeSelect.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             final TethysDateRange myRange = theRangeSelect.getRange();
             theSelectedRange.setText(theDateFormatter.formatDateRange(myRange));
         });

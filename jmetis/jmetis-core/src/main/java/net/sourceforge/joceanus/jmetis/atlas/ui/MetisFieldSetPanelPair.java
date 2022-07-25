@@ -36,13 +36,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * FieldSet Panel Pair.
  */
 public class MetisFieldSetPanelPair
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The GUI Factory.
      */
@@ -51,7 +51,7 @@ public class MetisFieldSetPanelPair
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The field map.
@@ -131,7 +131,7 @@ public class MetisFieldSetPanelPair
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -330,10 +330,10 @@ public class MetisFieldSetPanelPair
      * @param pPanel the panel
      */
     private void addListeners(final MetisFieldSetPanel pPanel) {
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = pPanel.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, theEventManager::cascadeEvent);
-        myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, theEventManager::cascadeEvent);
-        myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, theEventManager::cascadeEvent);
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = pPanel.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, theEventManager::cascadeEvent);
+        myRegistrar.addEventListener(TethysXUIEvent.PREPARECMDDIALOG, theEventManager::cascadeEvent);
+        myRegistrar.addEventListener(TethysXUIEvent.NEWCOMMAND, theEventManager::cascadeEvent);
     }
 
     /**

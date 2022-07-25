@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -70,7 +70,7 @@ public abstract class TethysUICoreTreeManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Is the tree visible (i.e. part of the actual tree)?
@@ -100,7 +100,7 @@ public abstract class TethysUICoreTreeManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -114,7 +114,7 @@ public abstract class TethysUICoreTreeManager<T>
      * @param pEventId the actionId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIXEvent pEventId,
+    protected void fireEvent(final TethysUIEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }

@@ -20,7 +20,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
@@ -50,9 +50,9 @@ public final class TethysSwingListButtonManager<T extends Comparable<T>>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
-        myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleToggleItem());
+        myRegistrar.addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }
 
     @Override

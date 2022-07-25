@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.pane;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -37,7 +37,7 @@ public abstract class TethysUICoreTabPaneManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The first child item.
@@ -70,7 +70,7 @@ public abstract class TethysUICoreTabPaneManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -134,7 +134,7 @@ public abstract class TethysUICoreTabPaneManager
      * @param pItem the item that has been selected
      */
     protected void notifySelection(final Object pItem) {
-        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, pItem);
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pItem);
     }
 
     @Override

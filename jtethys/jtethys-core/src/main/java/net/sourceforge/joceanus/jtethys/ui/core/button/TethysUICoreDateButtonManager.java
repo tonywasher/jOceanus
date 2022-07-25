@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
@@ -46,7 +46,7 @@ public abstract class TethysUICoreDateButtonManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The button.
@@ -143,7 +143,7 @@ public abstract class TethysUICoreDateButtonManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -262,10 +262,10 @@ public abstract class TethysUICoreDateButtonManager
         final TethysDate myNewValue = theConfig.getSelectedDate();
         if (valueChanged(myNewValue)) {
             theValue = myNewValue;
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, myNewValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNewValue);
             setButtonText();
         } else if (menuShowing) {
-            theEventManager.fireEvent(TethysUIXEvent.EDITFOCUSLOST, theConfig);
+            theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST, theConfig);
         }
         menuShowing = false;
     }

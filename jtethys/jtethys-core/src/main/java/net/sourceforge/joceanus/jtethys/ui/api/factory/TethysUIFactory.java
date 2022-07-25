@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
@@ -93,6 +94,12 @@ public interface TethysUIFactory<C> {
      * @return the factory
      */
     TethysUIDialogFactory<C> dialogFactory();
+
+    /**
+     * Obtain the field factory.
+     * @return the factory
+     */
+    TethysUIFieldFactory fieldFactory();
 
     /**
      * Obtain the menu factory.

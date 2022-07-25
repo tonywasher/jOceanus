@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreColorPicker;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingUtils;
 
@@ -68,8 +69,11 @@ public class TethysUISwingColorPicker
 
     /**
      * Constructor.
+     * @param pFactory the factory
      */
-    TethysUISwingColorPicker() {
+    TethysUISwingColorPicker(final TethysUICoreFactory<?> pFactory) {
+        super(pFactory);
+
         /* Create components */
         theButton = new JButton();
         theChooser = new JColorChooser();
@@ -84,6 +88,16 @@ public class TethysUISwingColorPicker
         /* Configure the button */
         theButton.addActionListener(e -> handleDialog());
         theButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+    }
+
+    @Override
+    public TethysUISwingNode getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        theButton.setEnabled(pEnabled);
     }
 
     @Override
@@ -120,6 +134,16 @@ public class TethysUISwingColorPicker
      */
     public Icon getSwatch() {
         return new TethysSwatch(theColour);
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        theNode.setPreferredWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        theNode.setPreferredHeight(pHeight);
     }
 
     /**

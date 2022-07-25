@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysStringE
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysUnitsEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -180,7 +180,7 @@ public abstract class TethysFXDataTextField<T>
         theCmdButton.setOnAction(e -> handleCmdMenuRequest());
 
         /* Set context menu listener */
-        getCmdMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
+        getCmdMenu().getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE,
                 e -> handleCmdMenuClosed());
     }
 
@@ -469,7 +469,7 @@ public abstract class TethysFXDataTextField<T>
             if (isCellEditing) {
                 setEditable(false);
                 if (!theControl.parsedNewValue()) {
-                    fireEvent(TethysUIEvent.EDITFOCUSLOST);
+                    fireEvent(TethysXUIEvent.EDITFOCUSLOST);
                 }
             }
             isCellEditing = false;

@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * TransactionTag Selection.
@@ -108,8 +108,8 @@ public class MoneyWiseTransactionTagSelect
         theState.applyState();
 
         /* Create the listener */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theTagButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewTag());
         theTagButton.setMenuConfigurator(e -> buildTagMenu());
         theTagMenu = theTagButton.getMenu();
     }

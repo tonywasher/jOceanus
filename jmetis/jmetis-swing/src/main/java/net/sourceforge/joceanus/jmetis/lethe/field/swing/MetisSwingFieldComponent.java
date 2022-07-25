@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel.TethysFi
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
@@ -697,8 +697,8 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
             theModel = pModel;
 
             /* Handle new Values */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theComponent.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.processValue(theComponent.getValue()));
+            final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theComponent.getEventRegistrar();
+            myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> theModel.processValue(theComponent.getValue()));
         }
 
         @Override
@@ -746,7 +746,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
             theModel = pModel;
 
             /* Handle new values */
-            theComponent.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, theModel::processValue);
+            theComponent.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, theModel::processValue);
         }
 
         @Override

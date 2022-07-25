@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Top-level panel for Accounts.
@@ -267,7 +267,7 @@ public class MoneyWiseAccountPanel
         theActionButtons.setVisible(false);
 
         /* Create the listeners */
-        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleSelection());
+        theSelectButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleSelection());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         setChildListeners(theDepositTable.getEventRegistrar());

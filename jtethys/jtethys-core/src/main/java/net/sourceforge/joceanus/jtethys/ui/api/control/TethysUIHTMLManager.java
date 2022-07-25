@@ -20,13 +20,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Tree Manager.
  */
 public interface TethysUIHTMLManager
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * StyleSheetId.
      */

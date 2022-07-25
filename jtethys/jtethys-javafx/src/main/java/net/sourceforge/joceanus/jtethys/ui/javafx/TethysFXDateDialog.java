@@ -45,13 +45,13 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * FX Date Dialog.
  */
 public final class TethysFXDateDialog
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysXUIEvent> {
     /**
      * StyleSheet Name.
      */
@@ -80,7 +80,7 @@ public final class TethysFXDateDialog
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The month array.
@@ -178,7 +178,7 @@ public final class TethysFXDateDialog
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -229,7 +229,7 @@ public final class TethysFXDateDialog
         theStage.close();
 
         /* Note that selection has been made */
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theConfig.getSelectedDate());
+        theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, theConfig.getSelectedDate());
     }
 
     /**
@@ -276,7 +276,7 @@ public final class TethysFXDateDialog
      */
     public void showDialogUnderNode(final Node pNode) {
         /* Allow configuration to be updated */
-        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
+        theEventManager.fireEvent(TethysXUIEvent.PREPAREDIALOG, theConfig);
 
         /* Determine the relevant bounds */
         final Bounds myBounds = pNode.localToScreen(pNode.getLayoutBounds());
@@ -301,7 +301,7 @@ public final class TethysFXDateDialog
         theStage.close();
 
         /* Note that no selection has been made */
-        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
     }
 
     /**

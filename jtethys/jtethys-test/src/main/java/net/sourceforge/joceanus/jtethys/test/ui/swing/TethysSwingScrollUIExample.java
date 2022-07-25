@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconSta
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingColorPicker;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
@@ -239,7 +239,7 @@ public class TethysSwingScrollUIExample {
         myContextArea.setContextMenu(theScrollMenu);
 
         /* Add listener */
-        theScrollMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theScrollMenu.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             /* If we selected a value */
             final TethysScrollMenuItem<String> mySelected = theScrollMenu.getSelectedItem();
             if (mySelected != null) {
@@ -259,7 +259,7 @@ public class TethysSwingScrollUIExample {
         setScrollValue(null);
 
         /* Add listener */
-        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
+        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE,
                 e -> setScrollValue(e.getDetails(String.class)));
         theScrollButtonMgr.setMenuConfigurator(theHelper::buildContextMenu);
 
@@ -278,7 +278,7 @@ public class TethysSwingScrollUIExample {
         theListButtonMgr.setText("Tag");
 
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setListValue());
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setListValue());
 
         /* Create date button line */
         theDateButtonMgr.setBorderTitle("DateButton");
@@ -291,7 +291,7 @@ public class TethysSwingScrollUIExample {
         myGrid.newRow();
 
         /* Add listener */
-        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(TethysDate.class)));
+        theDateButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(TethysDate.class)));
 
         /* Create simple icon button line */
         theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");
@@ -307,7 +307,7 @@ public class TethysSwingScrollUIExample {
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
-        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
+        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE,
                 e -> setSimpleIconValue(e.getDetails(Boolean.class)));
 
         /* Create state icon button line */
@@ -330,10 +330,10 @@ public class TethysSwingScrollUIExample {
         theStateIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
-        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setStateIconValue(e.getDetails(Boolean.class)));
+        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setStateIconValue(e.getDetails(Boolean.class)));
 
         /* Add listener */
-        theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theStateButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setStateIconValue(theStateIconButtonMgr.getValue());
             theStateIconButtonMgr.applyButtonState();
         });
@@ -349,7 +349,7 @@ public class TethysSwingScrollUIExample {
         myGrid.newRow();
 
         /* Add listener */
-        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setColorValue(e.getDetails(String.class)));
+        theColorPicker.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setColorValue(e.getDetails(String.class)));
 
         /* Configure the grid */
         myGrid.setBorderPadding(2);

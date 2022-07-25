@@ -18,14 +18,14 @@ package net.sourceforge.joceanus.jtethys.ui.api.control;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Split Manager, hosting a Tree and HTML in a split window.
  * @param <T> the item type
  */
 public interface TethysUISplitTreeManager<T>
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain the Tree Manager.
      * @return the tree manager

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.control;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Check Box.
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
  * </ul>
  */
 public interface TethysUICheckBox
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * handle selected.
      * @param pText the text.

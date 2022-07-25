@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
@@ -102,7 +102,7 @@ public class TethysUISwingScrollMenu<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The ScrollUp Item.
@@ -232,7 +232,7 @@ public class TethysUISwingScrollMenu<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -546,7 +546,7 @@ public class TethysUISwingScrollMenu<T>
         if (theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
-                theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+                theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
             }
 
             /* Close the menu hierarchy if we are currently showing */
@@ -587,7 +587,7 @@ public class TethysUISwingScrollMenu<T>
             }
 
             /* fire selection event */
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, theSelectedItem);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theSelectedItem);
         }
     }
 
@@ -603,7 +603,7 @@ public class TethysUISwingScrollMenu<T>
             /* else we are top-level */
         } else {
             /* fire cancellation event */
-            theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
 
             /* Notify the cancel */
             closeMenu();

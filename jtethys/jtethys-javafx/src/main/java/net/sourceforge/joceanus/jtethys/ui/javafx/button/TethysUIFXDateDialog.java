@@ -45,8 +45,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateDialog;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 
@@ -54,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
  * FX Date Dialog.
  */
 public final class TethysUIFXDateDialog
-        implements TethysEventProvider<TethysUIXEvent> {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * StyleSheet Name.
      */
@@ -63,7 +62,7 @@ public final class TethysUIFXDateDialog
     /**
      * StyleSheet.
      */
-    private static final String CSS_STYLE = TethysFXDateDialog.class.getResource(CSS_STYLE_NAME).toExternalForm();
+    private static final String CSS_STYLE = TethysUIFXDateDialog.class.getResource(CSS_STYLE_NAME).toExternalForm();
 
     /**
      * The dialog style.
@@ -83,7 +82,7 @@ public final class TethysUIFXDateDialog
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The month array.
@@ -181,7 +180,7 @@ public final class TethysUIFXDateDialog
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -232,7 +231,7 @@ public final class TethysUIFXDateDialog
         theStage.close();
 
         /* Note that selection has been made */
-        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, theConfig.getSelectedDate());
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theConfig.getSelectedDate());
     }
 
     /**
@@ -279,7 +278,7 @@ public final class TethysUIFXDateDialog
      */
     public void showDialogUnderNode(final Node pNode) {
         /* Allow configuration to be updated */
-        theEventManager.fireEvent(TethysUIXEvent.PREPAREDIALOG, theConfig);
+        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
 
         /* Determine the relevant bounds */
         final Bounds myBounds = pNode.localToScreen(pNode.getLayoutBounds());
@@ -304,7 +303,7 @@ public final class TethysUIFXDateDialog
         theStage.close();
 
         /* Note that no selection has been made */
-        theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
     }
 
     /**

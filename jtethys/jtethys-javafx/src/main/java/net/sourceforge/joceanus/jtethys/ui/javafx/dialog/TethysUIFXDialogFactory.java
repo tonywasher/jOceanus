@@ -59,7 +59,7 @@ public class TethysUIFXDialogFactory
 
     @Override
     public TethysUIFXColorPicker newColorPicker() {
-        return new TethysUIFXColorPicker();
+        return new TethysUIFXColorPicker(theFactory);
     }
 
     @Override
@@ -90,6 +90,6 @@ public class TethysUIFXDialogFactory
 
     @Override
     public TethysUIChildDialog newChildDialog() {
-        return new TethysUIFXChildDialog(theStage);
+        return new TethysUIFXChildDialog(theFactory, theStage);
     }
 }

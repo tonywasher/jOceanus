@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Pie Chart.
  */
 public abstract class TethysPieChart
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The formatter.
      */
@@ -51,7 +51,7 @@ public abstract class TethysPieChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The total.
@@ -78,7 +78,7 @@ public abstract class TethysPieChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -145,7 +145,7 @@ public abstract class TethysPieChart
      */
     protected void selectSection(final String pName) {
         final TethysPieChartSection mySection = theSectionMap.get(pName);
-        theEventManager.fireEvent(TethysUIEvent.PRESSED, mySection);
+        theEventManager.fireEvent(TethysXUIEvent.PRESSED, mySection);
     }
 
     /**

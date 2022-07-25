@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Child Dialog
  */
 public interface TethysUIChildDialog
-    extends TethysEventProvider<TethysUIXEvent> {
+    extends TethysEventProvider<TethysUIEvent> {
     /**
      * Set the title
      * @param pTitle the title

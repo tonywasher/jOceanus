@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
@@ -181,7 +181,7 @@ public class MetisFXViewerWindow
          */
         private void handleDialogClosing() {
             getTreeManager().setVisible(false);
-            fireEvent(TethysUIEvent.WINDOWCLOSED, null);
+            fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
         }
     }
 }

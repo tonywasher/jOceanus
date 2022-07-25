@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.button;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -37,7 +37,7 @@ public abstract class TethysUICoreButton
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The id.
@@ -65,7 +65,7 @@ public abstract class TethysUICoreButton
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -89,6 +89,6 @@ public abstract class TethysUICoreButton
      * handle pressed.
      */
     protected void handlePressed() {
-        theEventManager.fireEvent(TethysUIXEvent.PRESSED);
+        theEventManager.fireEvent(TethysUIEvent.PRESSED);
     }
 }

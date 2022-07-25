@@ -29,13 +29,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Help Manager class, responsible for displaying the help.
  */
 public abstract class MetisHelpWindow
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysXUIEvent> {
     /**
      * The Height of the window.
      */
@@ -49,7 +49,7 @@ public abstract class MetisHelpWindow
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The split tree.
@@ -84,7 +84,7 @@ public abstract class MetisHelpWindow
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -122,7 +122,7 @@ public abstract class MetisHelpWindow
      * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIEvent pEventId,
+    protected void fireEvent(final TethysXUIEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }
@@ -160,7 +160,7 @@ public abstract class MetisHelpWindow
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final TethysEvent<TethysXUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 handleNewTreeItem(pEvent.getDetails(MetisHelpEntry.class));

@@ -14,54 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.base;
 
 /**
- * Tethys User interface events.
+ * Field javaFX classes.
  */
-public enum TethysUIXEvent {
-    /**
-     * Button Pressed.
-     */
-    PRESSED,
-
-    /**
-     * New Value.
-     */
-    NEWVALUE,
-
-    /**
-     * New Command.
-     */
-    NEWCOMMAND,
-
-    /**
-     * Prepare Dialog.
-     */
-    PREPAREDIALOG,
-
-    /**
-     * Prepare Command Dialog.
-     */
-    PREPARECMDDIALOG,
-
-    /**
-     * Build Page.
-     */
-    BUILDPAGE,
-
-    /**
-     * Window Closed.
-     */
-    WINDOWCLOSED,
-
-    /**
-     * Edit Focus Lost.
-     */
-    EDITFOCUSLOST,
-
-    /**
-     * New Stage declared.
-     */
-    NEWSTAGE;
-}
+package net.sourceforge.joceanus.jtethys.ui.javafx.field;
