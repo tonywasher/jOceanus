@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.dialog;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 
 public abstract class TethysUICoreChildDialog
@@ -26,7 +26,7 @@ public abstract class TethysUICoreChildDialog
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Constructor.
@@ -37,7 +37,7 @@ public abstract class TethysUICoreChildDialog
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -46,7 +46,7 @@ public abstract class TethysUICoreChildDialog
      * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIXEvent pEventId,
+    protected void fireEvent(final TethysUIEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }

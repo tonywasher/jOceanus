@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.control;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISlider;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -42,7 +42,7 @@ public abstract class TethysUICoreSlider
     /**
      * The event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Constructor.
@@ -59,7 +59,7 @@ public abstract class TethysUICoreSlider
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -112,6 +112,6 @@ public abstract class TethysUICoreSlider
      * handleNewValue.
      */
     protected void handleNewValue() {
-        theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, getValue());
+        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, getValue());
     }
 }

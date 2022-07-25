@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
@@ -170,7 +170,7 @@ public class TethysUIFXFactory
     public void setStage(final Stage pStage) {
         theControlFactory.setStage(pStage);
         theDialogFactory.setStage(pStage);
-        fireEvent(TethysUIXEvent.NEWSTAGE);
+        fireEvent(TethysUIEvent.NEWSTAGE);
     }
 
     @Override

@@ -21,7 +21,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXIcon;
@@ -78,7 +78,7 @@ public class TethysUIFXTreeManager<T>
             final TethysUIFXTreeItem<T> myValue = n == null
                     ? null
                     : n.getValue();
-            fireEvent(TethysUIXEvent.NEWVALUE, myValue == null
+            fireEvent(TethysUIEvent.NEWVALUE, myValue == null
                     ? null
                     : myValue.getItem());
         });

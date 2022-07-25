@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -55,7 +55,7 @@ public abstract class TethysUICoreIconButtonManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The icon button.
@@ -129,7 +129,7 @@ public abstract class TethysUICoreIconButtonManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -243,7 +243,7 @@ public abstract class TethysUICoreIconButtonManager<T>
             setValue(myValue);
 
             /* fire new Event */
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, myValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myValue);
         } else {
             notifyCancelled();
         }
@@ -254,7 +254,7 @@ public abstract class TethysUICoreIconButtonManager<T>
      */
     private void notifyCancelled() {
         /* fire menu cancelled event */
-        theEventManager.fireEvent(TethysUIXEvent.EDITFOCUSLOST);
+        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
     }
 
     /**

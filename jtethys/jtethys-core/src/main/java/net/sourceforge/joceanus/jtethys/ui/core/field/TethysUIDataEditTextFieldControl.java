@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedField;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIXResource;
 
@@ -165,7 +165,7 @@ public class TethysUIDataEditTextFieldControl<T>
         /* NullOp if there are no changes */
         if (Objects.equals(pNewValue, theEdit)) {
             /* Return success */
-            theField.fireEvent(TethysUIXEvent.EDITFOCUSLOST, null);
+            theField.fireEvent(TethysUIEvent.EDITFOCUSLOST, null);
             return true;
         }
 
@@ -187,7 +187,7 @@ public class TethysUIDataEditTextFieldControl<T>
 
             /* set the value and fire Event */
             setValue(myValue);
-            theField.fireEvent(TethysUIXEvent.NEWVALUE, myValue);
+            theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);
             parsedNewValue = true;
             return true;
 

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.control;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -37,7 +37,7 @@ public abstract class TethysUICoreCheckBox
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The id.
@@ -64,7 +64,7 @@ public abstract class TethysUICoreCheckBox
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -93,7 +93,7 @@ public abstract class TethysUICoreCheckBox
         if (Boolean.TRUE.equals(pSelected) != isSelected) {
             /* record selection and fire event */
             isSelected = pSelected;
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, pSelected);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pSelected);
         }
     }
 }

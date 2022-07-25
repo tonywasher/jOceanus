@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIDateButton;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconButton;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIListButton;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * @param <T> the data type
  */
 public interface TethysUIDataEditField<T>
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Set Editable state.
      * @param pEditable true/false.

@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter;
@@ -186,7 +186,7 @@ public abstract class TethysUIFXDataTextField<T>
         theCmdButton.setOnAction(e -> handleCmdMenuRequest());
 
         /* Set context menu listener */
-        getCmdMenu().getEventRegistrar().addEventListener(TethysUIXEvent.NEWVALUE,
+        getCmdMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> handleCmdMenuClosed());
     }
 
@@ -475,7 +475,7 @@ public abstract class TethysUIFXDataTextField<T>
             if (isCellEditing) {
                 setEditable(false);
                 if (!theControl.parsedNewValue()) {
-                    fireEvent(TethysUIXEvent.EDITFOCUSLOST);
+                    fireEvent(TethysUIEvent.EDITFOCUSLOST);
                 }
             }
             isCellEditing = false;

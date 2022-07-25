@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
@@ -90,7 +90,7 @@ public abstract class TethysUICoreDateRangeSelector
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The formatter.
@@ -243,10 +243,10 @@ public abstract class TethysUICoreDateRangeSelector
         theControl.addNode(theCustomBox);
 
         /* Add the listeners */
-        theStartButton.getEventRegistrar().addEventListener(TethysUIXEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
-        theEndButton.getEventRegistrar().addEventListener(TethysUIXEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
-        theBaseButton.getEventRegistrar().addEventListener(TethysUIXEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
-        thePeriodButton.getEventRegistrar().addEventListener(TethysUIXEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
+        theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
+        theEndButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
+        theBaseButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
+        thePeriodButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
     }
 
     @Override
@@ -255,7 +255,7 @@ public abstract class TethysUICoreDateRangeSelector
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -461,7 +461,7 @@ public abstract class TethysUICoreDateRangeSelector
             myNew = new TethysDateRange(myNew);
 
             /* Fire the value change */
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, myNew);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNew);
         }
     }
 

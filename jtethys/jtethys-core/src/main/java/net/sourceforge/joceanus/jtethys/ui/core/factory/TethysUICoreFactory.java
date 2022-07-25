@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
  * @param <C> the color
  */
 public abstract class TethysUICoreFactory<C>
-        implements TethysUIFactory<C>, TethysEventProvider<TethysUIXEvent> {
+        implements TethysUIFactory<C>, TethysEventProvider<TethysUIEvent> {
     /**
      * Parent Component definition.
      */
@@ -87,7 +87,7 @@ public abstract class TethysUICoreFactory<C>
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Constructor.
@@ -109,7 +109,7 @@ public abstract class TethysUICoreFactory<C>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -182,7 +182,7 @@ public abstract class TethysUICoreFactory<C>
      * fire event.
      * @param pEvent the event
      */
-    protected void fireEvent(final TethysUIXEvent pEvent) {
+    protected void fireEvent(final TethysUIEvent pEvent) {
         theEventManager.fireEvent(pEvent);
     }
 }

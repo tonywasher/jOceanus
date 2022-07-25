@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * Colour Picker.
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
  * </ul>
  */
 public interface TethysUIColorPicker<C>
-        extends TethysUIComponent, TethysEventProvider<TethysUIXEvent> {
+        extends TethysUIComponent, TethysEventProvider<TethysUIEvent> {
     /**
      * Set the value.
      * @param pValue the value

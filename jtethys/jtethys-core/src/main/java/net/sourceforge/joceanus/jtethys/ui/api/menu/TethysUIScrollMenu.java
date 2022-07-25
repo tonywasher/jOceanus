@@ -18,14 +18,14 @@ package net.sourceforge.joceanus.jtethys.ui.api.menu;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
  * ScrollMenu.
  * @param <T> the value type
  */
 public interface TethysUIScrollMenu<T>
-        extends TethysEventProvider<TethysUIXEvent> {
+        extends TethysEventProvider<TethysUIEvent> {
     /**
      * Obtain the selected value.
      * @return the selected value

@@ -23,7 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 
@@ -119,7 +119,7 @@ public class TethysUISwingChildDialog
          */
         private void handleWindowClosing() {
             theFrame.dispose();
-            fireEvent(TethysUIXEvent.WINDOWCLOSED, null);
+            fireEvent(TethysUIEvent.WINDOWCLOSED, null);
         }
     }
 }

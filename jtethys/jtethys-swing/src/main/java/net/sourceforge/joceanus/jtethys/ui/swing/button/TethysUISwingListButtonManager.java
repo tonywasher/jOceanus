@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.button;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.button.TethysUICoreListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
@@ -53,9 +53,9 @@ public final class TethysUISwingListButtonManager<T extends Comparable<T>>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        final TethysEventRegistrar<TethysUIXEvent> myRegistrar = getMenu().getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIXEvent.NEWVALUE, e -> handleToggleItem());
-        myRegistrar.addEventListener(TethysUIXEvent.WINDOWCLOSED, e -> handleMenuClosed());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
+        myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }
 
     @Override

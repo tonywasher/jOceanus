@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
@@ -124,6 +124,6 @@ public class TethysUIFXChildDialog
      */
     private void handleDialogClosing() {
         theContainer.setVisible(false);
-        fireEvent(TethysUIXEvent.WINDOWCLOSED, null);
+        fireEvent(TethysUIEvent.WINDOWCLOSED, null);
     }
 }

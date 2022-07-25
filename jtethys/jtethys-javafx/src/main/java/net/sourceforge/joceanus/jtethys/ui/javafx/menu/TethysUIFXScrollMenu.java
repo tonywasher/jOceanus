@@ -49,7 +49,7 @@ import javafx.util.Duration;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
@@ -93,7 +93,7 @@ public class TethysUIFXScrollMenu<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * List of menu items.
@@ -247,7 +247,7 @@ public class TethysUIFXScrollMenu<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -486,7 +486,7 @@ public class TethysUIFXScrollMenu<T>
             }
 
             /* fire selection event */
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, theSelectedItem);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theSelectedItem);
         }
     }
 
@@ -502,7 +502,7 @@ public class TethysUIFXScrollMenu<T>
             /* else we are top-level */
         } else {
             /* fire cancellation event */
-            theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
 
             /* Notify the cancel */
             closeMenu();
@@ -531,7 +531,7 @@ public class TethysUIFXScrollMenu<T>
                 && theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
-                theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+                theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
             }
 
             /* Close the menu hierarchy if we are currently showing */

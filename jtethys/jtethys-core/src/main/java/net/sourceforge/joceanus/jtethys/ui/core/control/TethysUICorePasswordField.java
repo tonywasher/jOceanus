@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.control;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIPasswordField;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -37,7 +37,7 @@ public abstract class TethysUICorePasswordField
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The id.
@@ -59,7 +59,7 @@ public abstract class TethysUICorePasswordField
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -67,6 +67,6 @@ public abstract class TethysUICorePasswordField
      * fire Event.
      */
     protected void fireEvent() {
-        theEventManager.fireEvent(TethysUIXEvent.PRESSED);
+        theEventManager.fireEvent(TethysUIEvent.PRESSED);
     }
 }

@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 
 /**
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUII
  * @param <T> the object type
  */
 public interface TethysUIIconButtonManager<T>
-        extends TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain value.
      * @return the value

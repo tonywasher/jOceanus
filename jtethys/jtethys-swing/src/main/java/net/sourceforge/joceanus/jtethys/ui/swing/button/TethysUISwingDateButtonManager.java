@@ -21,7 +21,7 @@ import java.awt.Insets;
 import javax.swing.JButton;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.button.TethysUICoreDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
@@ -85,10 +85,10 @@ public final class TethysUISwingDateButtonManager
             theDialog = new TethysUISwingDateDialog(getConfig());
 
             /* Add listeners */
-            final TethysEventRegistrar<TethysUIXEvent> myRegistrar = theDialog.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIXEvent.PREPAREDIALOG, e -> handleDialogRequest());
-            myRegistrar.addEventListener(TethysUIXEvent.NEWVALUE, e -> handleNewValue());
-            myRegistrar.addEventListener(TethysUIXEvent.WINDOWCLOSED, e -> handleNewValue());
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleDialogRequest());
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewValue());
+            myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleNewValue());
         }
     }
 

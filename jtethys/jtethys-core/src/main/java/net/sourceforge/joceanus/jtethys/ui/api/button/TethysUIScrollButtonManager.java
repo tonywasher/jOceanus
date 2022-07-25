@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.button;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * @param <T> the object type
  */
 public interface TethysUIScrollButtonManager<T>
-        extends TethysUIScrollButton<T>, TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysUIScrollButton<T>, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain value.
      * @return the value

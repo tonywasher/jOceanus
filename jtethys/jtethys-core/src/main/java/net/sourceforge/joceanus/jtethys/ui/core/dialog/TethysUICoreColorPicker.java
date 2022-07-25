@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIColorPicker;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -40,7 +40,7 @@ public abstract class TethysUICoreColorPicker<C>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Value.
@@ -61,7 +61,7 @@ public abstract class TethysUICoreColorPicker<C>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -90,7 +90,7 @@ public abstract class TethysUICoreColorPicker<C>
         if (valueChanged(pValue)) {
             /* record selection and fire event */
             theValue = pValue;
-            theEventManager.fireEvent(TethysUIXEvent.NEWVALUE, pValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pValue);
         }
     }
 
@@ -107,6 +107,6 @@ public abstract class TethysUICoreColorPicker<C>
      * handle focus loss.
      */
     protected void handleFocusLoss() {
-        theEventManager.fireEvent(TethysUIXEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
     }
 }

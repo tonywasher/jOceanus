@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
@@ -40,7 +40,7 @@ public abstract class TethysUICoreDataEditField<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Attributes.
@@ -156,7 +156,7 @@ public abstract class TethysUICoreDataEditField<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -164,7 +164,7 @@ public abstract class TethysUICoreDataEditField<T>
      * Fire event.
      * @param pEventId the eventId
      */
-    protected void fireEvent(final TethysUIXEvent pEventId) {
+    protected void fireEvent(final TethysUIEvent pEventId) {
         theEventManager.fireEvent(pEventId);
     }
 
@@ -173,7 +173,7 @@ public abstract class TethysUICoreDataEditField<T>
      * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIXEvent pEventId, final Object pValue) {
+    protected void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }
 
@@ -199,7 +199,7 @@ public abstract class TethysUICoreDataEditField<T>
         final TethysUIScrollItem<String> mySelected = theCmdMenu.getSelectedItem();
         if (mySelected != null) {
             /* fire new command Event */
-            theEventManager.fireEvent(TethysUIXEvent.NEWCOMMAND, mySelected.getValue());
+            theEventManager.fireEvent(TethysUIEvent.NEWCOMMAND, mySelected.getValue());
         }
     }
 

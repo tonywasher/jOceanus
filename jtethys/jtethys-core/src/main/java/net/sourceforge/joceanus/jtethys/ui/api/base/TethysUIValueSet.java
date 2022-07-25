@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * A set of keyed values.
  */
 public interface TethysUIValueSet
-        extends TethysEventProvider<TethysUIXEvent> {
+        extends TethysEventProvider<TethysUIEvent> {
     /**
      * Apply new Mappings.
      * @param pMappings the colour mappings

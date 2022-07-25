@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIDateButton;
 
 /**
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUID
  * </ul>
  */
 public interface TethysUIDateButtonManager
-        extends TethysUIDateButton, TethysEventProvider<TethysUIXEvent>, TethysUIComponent {
+        extends TethysUIDateButton, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain the configuration.
      * @return the configuration

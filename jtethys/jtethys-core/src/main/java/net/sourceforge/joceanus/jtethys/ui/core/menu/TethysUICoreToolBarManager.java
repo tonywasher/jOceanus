@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIToolBarManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -97,7 +97,7 @@ public abstract class TethysUICoreToolBarManager
     @Override
     public void newIcon(final TethysUIToolBarId pId,
                         final String pText,
-                        final TethysEventListener<TethysUIXEvent> pListener) {
+                        final TethysEventListener<TethysUIEvent> pListener) {
         /* Create the new element with Icon and text */
         final TethysUIToolElement myElement = newIcon(pId);
         myElement.setText(pText);
@@ -120,7 +120,7 @@ public abstract class TethysUICoreToolBarManager
      * ToolElement.
      */
     public abstract static class TethysUICoreToolElement
-            implements TethysUIToolElement, TethysEventProvider<TethysUIXEvent> {
+            implements TethysUIToolElement, TethysEventProvider<TethysUIEvent> {
         /**
          * The Manager.
          */
@@ -134,7 +134,7 @@ public abstract class TethysUICoreToolBarManager
         /**
          * Event Manager.
          */
-        private final TethysEventManager<TethysUIXEvent> theEventManager;
+        private final TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * Is the element enabled?
@@ -167,7 +167,7 @@ public abstract class TethysUICoreToolBarManager
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -217,7 +217,7 @@ public abstract class TethysUICoreToolBarManager
          * handle pressed.
          */
         protected void handlePressed() {
-            theEventManager.fireEvent(TethysUIXEvent.PRESSED);
+            theEventManager.fireEvent(TethysUIEvent.PRESSED);
         }
     }
 }

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
@@ -48,7 +48,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The HTMLPane.
@@ -115,7 +115,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -138,7 +138,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
      * Handle HTML reference lookUp.
      * @param pEvent the action event
      */
-    private void handleReferenceLookup(final TethysEvent<TethysUIXEvent> pEvent) {
+    private void handleReferenceLookup(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the reference */
         final String myRef = pEvent.getDetails(String.class);
 

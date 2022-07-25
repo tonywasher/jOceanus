@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.base;
 /**
  * Tethys User interface events.
  */
-public enum TethysUIXEvent {
+public enum TethysUIEvent {
     /**
      * Button Pressed.
      */

@@ -25,7 +25,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingIcon;
@@ -88,7 +88,7 @@ public class TethysUISwingTreeManager<T>
         mySelectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         /* Create the listener */
-        mySelectionModel.addTreeSelectionListener(e -> fireEvent(TethysUIXEvent.NEWVALUE, getSelectedItemFromPath(e.getPath())));
+        mySelectionModel.addTreeSelectionListener(e -> fireEvent(TethysUIEvent.NEWVALUE, getSelectedItemFromPath(e.getPath())));
     }
 
     @Override

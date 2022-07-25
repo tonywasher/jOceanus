@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter;
@@ -187,7 +187,7 @@ public abstract class TethysUISwingDataTextField<T>
         theCmdButton.addActionListener(e -> handleCmdMenuRequest());
 
         /* Set command menu listener */
-        getCmdMenu().getEventRegistrar().addEventListener(TethysUIXEvent.NEWVALUE,
+        getCmdMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> handleCmdMenuClosed());
     }
 
@@ -565,7 +565,7 @@ public abstract class TethysUISwingDataTextField<T>
         private void handleEscapeKey() {
             resetEditText();
             clearError();
-            fireEvent(TethysUIXEvent.EDITFOCUSLOST);
+            fireEvent(TethysUIEvent.EDITFOCUSLOST);
             haltCellEditing();
         }
 

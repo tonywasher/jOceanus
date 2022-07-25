@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -52,7 +52,7 @@ public abstract class TethysUICoreHTMLManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIXEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The HTMLToFile Manager.
@@ -109,7 +109,7 @@ public abstract class TethysUICoreHTMLManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -233,6 +233,6 @@ public abstract class TethysUICoreHTMLManager
      * @return was new page loaded? true/false
      */
     private boolean loadNewPage(final String pPageRef) {
-        return !theEventManager.fireEvent(TethysUIXEvent.BUILDPAGE, pPageRef);
+        return !theEventManager.fireEvent(TethysUIEvent.BUILDPAGE, pPageRef);
     }
 }
