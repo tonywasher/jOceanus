@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysSlider;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Viewer Control bar.
@@ -126,7 +126,7 @@ public class MetisViewerControl
 
         /* Create the mode button */
         theModeButton = pFactory.newScrollButton();
-        theModeButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theViewer.handleMode(theModeButton.getValue()));
+        theModeButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theViewer.handleMode(theModeButton.getValue()));
 
         /* Create the next button */
         theNextButton = pFactory.newButton();

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
@@ -153,8 +153,8 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewClass());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theNewButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewClass());
         theNewButton.setMenuConfigurator(e -> buildNewMenu());
         setShowAll(false);
     }

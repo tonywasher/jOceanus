@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAreaChart.TethysAreaChartData;
  * </ul>
  */
 public abstract class TethysBarChart
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The formatter.
      */
@@ -51,7 +51,7 @@ public abstract class TethysBarChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The sectionMap.
@@ -78,7 +78,7 @@ public abstract class TethysBarChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -151,7 +151,7 @@ public abstract class TethysBarChart
      */
     protected void selectSection(final String pName) {
         final TethysBarChartDataSection mySection = theSectionMap.get(pName);
-        theEventManager.fireEvent(TethysUIEvent.PRESSED, mySection);
+        theEventManager.fireEvent(TethysXUIEvent.PRESSED, mySection);
     }
 
     /**

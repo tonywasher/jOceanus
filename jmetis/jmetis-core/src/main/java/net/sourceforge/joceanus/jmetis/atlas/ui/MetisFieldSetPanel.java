@@ -52,13 +52,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * FieldSet Panel.
  */
 public class MetisFieldSetPanel
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The GUI Factory.
      */
@@ -67,7 +67,7 @@ public class MetisFieldSetPanel
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The field map.
@@ -143,7 +143,7 @@ public class MetisFieldSetPanel
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -545,7 +545,7 @@ public class MetisFieldSetPanel
      * @param pEventId the event id
      * @param pDetails the details
      */
-    protected void fireEvent(final TethysUIEvent pEventId,
+    protected void fireEvent(final TethysXUIEvent pEventId,
                              final Object pDetails) {
         theEventManager.fireEvent(pEventId, pDetails);
     }

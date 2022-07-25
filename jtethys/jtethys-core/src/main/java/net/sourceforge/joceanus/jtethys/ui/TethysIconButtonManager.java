@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButton;
  * @param <T> the object type
  */
 public abstract class TethysIconButtonManager<T>
-        implements TethysIconButton<T>, TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysIconButton<T>, TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Default icon width.
      */
@@ -52,7 +52,7 @@ public abstract class TethysIconButtonManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The icon button.
@@ -136,7 +136,7 @@ public abstract class TethysIconButtonManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -294,7 +294,7 @@ public abstract class TethysIconButtonManager<T>
             setValue(myValue);
 
             /* fire new Event */
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myValue);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, myValue);
         } else {
             notifyCancelled();
         }
@@ -305,7 +305,7 @@ public abstract class TethysIconButtonManager<T>
      */
     private void notifyCancelled() {
         /* fire menu cancelled event */
-        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
+        theEventManager.fireEvent(TethysXUIEvent.EDITFOCUSLOST);
     }
 
     /**

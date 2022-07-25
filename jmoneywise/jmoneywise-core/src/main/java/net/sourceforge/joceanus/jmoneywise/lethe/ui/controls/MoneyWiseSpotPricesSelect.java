@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * SpotPrice selection panel.
@@ -221,11 +221,11 @@ public class MoneyWiseSpotPricesSelect
         thePortMenu = thePortButton.getMenu();
 
         /* Add the listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewPortfolio());
         thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
-        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
-        theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
+        theDownloadButton.getEventRegistrar().addEventListener(TethysXUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theDateButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewDate());
         theShowClosed.getEventRegistrar().addEventListener(e -> handleNewClosed());
         theNext.getEventRegistrar().addEventListener(e -> {
             theState.setNext();

@@ -36,11 +36,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButton;
  * </ul>
  */
 public abstract class TethysDateButtonManager
-        implements TethysDateButton, TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysDateButton, TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The button.
@@ -147,7 +147,7 @@ public abstract class TethysDateButtonManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -310,10 +310,10 @@ public abstract class TethysDateButtonManager
         final TethysDate myNewValue = theConfig.getSelectedDate();
         if (valueChanged(myNewValue)) {
             theValue = myNewValue;
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNewValue);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, myNewValue);
             setButtonText();
         } else if (menuShowing) {
-            theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST, theConfig);
+            theEventManager.fireEvent(TethysXUIEvent.EDITFOCUSLOST, theConfig);
         }
         menuShowing = false;
     }

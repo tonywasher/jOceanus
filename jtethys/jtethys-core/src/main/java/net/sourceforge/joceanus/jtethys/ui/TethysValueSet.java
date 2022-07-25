@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * A set of named colours.
  */
 public class TethysValueSet
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysXUIEvent> {
     /**
      * The Variable start.
      */
@@ -208,7 +208,7 @@ public class TethysValueSet
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The map of the default values.
@@ -254,7 +254,7 @@ public class TethysValueSet
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -271,7 +271,7 @@ public class TethysValueSet
         }
 
         /* Notify of mapping changed */
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, this);
+        theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, this);
     }
 
     /**

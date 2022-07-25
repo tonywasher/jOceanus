@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing
@@ -276,8 +276,8 @@ public abstract class MetisLetheFieldSetBase
          * @throws OceanusException on error
          */
         @SuppressWarnings("unchecked")
-        public TethysEvent<TethysUIEvent> getEvent() throws OceanusException {
-            return (TethysEvent<TethysUIEvent>) getValue(TethysEvent.class);
+        public TethysEvent<TethysXUIEvent> getEvent() throws OceanusException {
+            return (TethysEvent<TethysXUIEvent>) getValue(TethysEvent.class);
         }
     }
 }

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Item Action buttons.
@@ -104,9 +104,9 @@ public class PrometheusItemActions<G extends Enum<G>>
         thePanel.addNode(theDeleteButton);
 
         /* Add the listener for item changes */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
         theGoToButton.setMenuConfigurator(c -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue()));
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue()));
         theEditButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.EDIT));
         theDeleteButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.DELETE));
 

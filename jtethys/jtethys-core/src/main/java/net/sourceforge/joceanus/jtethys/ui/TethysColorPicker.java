@@ -30,11 +30,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * </ul>
  */
 public abstract class TethysColorPicker
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The Id.
@@ -71,7 +71,7 @@ public abstract class TethysColorPicker
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -144,7 +144,7 @@ public abstract class TethysColorPicker
         if (valueChanged(pValue)) {
             /* record selection and fire event */
             theValue = pValue;
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pValue);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, pValue);
         }
     }
 
@@ -163,6 +163,6 @@ public abstract class TethysColorPicker
      * handle focus loss.
      */
     protected void handleFocusLoss() {
-        theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+        theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
     }
 }

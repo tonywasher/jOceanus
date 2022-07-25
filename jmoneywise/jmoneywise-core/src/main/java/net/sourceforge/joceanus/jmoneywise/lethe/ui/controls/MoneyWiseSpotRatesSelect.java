@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * SpotRates selection panel.
@@ -178,8 +178,8 @@ public class MoneyWiseSpotRatesSelect
         theState.applyState();
 
         /* Add the listeners */
-        theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
-        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theDateButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewDate());
+        theDownloadButton.getEventRegistrar().addEventListener(TethysXUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
         theNext.getEventRegistrar().addEventListener(e -> {
             theState.setNext();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);

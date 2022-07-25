@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * DateRange Selector.
  */
 public abstract class TethysDateRangeSelector
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * ToolTip for Next Button.
      */
@@ -77,7 +77,7 @@ public abstract class TethysDateRangeSelector
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The formatter.
@@ -235,10 +235,10 @@ public abstract class TethysDateRangeSelector
         theControl.addNode(theCustomBox);
 
         /* Add the listeners */
-        theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
-        theEndButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
-        theBaseButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
-        thePeriodButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
+        theStartButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
+        theEndButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
+        theBaseButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
+        thePeriodButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
     }
 
     @Override
@@ -247,7 +247,7 @@ public abstract class TethysDateRangeSelector
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -503,7 +503,7 @@ public abstract class TethysDateRangeSelector
             myNew = new TethysDateRange(myNew);
 
             /* Fire the value change */
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNew);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, myNew);
         }
     }
 

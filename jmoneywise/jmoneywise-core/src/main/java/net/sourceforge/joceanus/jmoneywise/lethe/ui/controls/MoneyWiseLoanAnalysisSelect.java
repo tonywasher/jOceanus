@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Loan Analysis Selection.
@@ -146,11 +146,11 @@ public class MoneyWiseLoanAnalysisSelect
         theLoanMenu = theLoanButton.getMenu();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCategory());
         theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
         myRegistrar = theLoanButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewLoan());
         theLoanButton.setMenuConfigurator(e -> buildLoanMenu());
     }
 

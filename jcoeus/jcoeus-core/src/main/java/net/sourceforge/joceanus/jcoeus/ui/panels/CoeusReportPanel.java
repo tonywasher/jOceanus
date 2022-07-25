@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Report Panel.
@@ -162,7 +162,7 @@ public class CoeusReportPanel
         myRegistrar.addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(CoeusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(CoeusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
-        theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
+        theHTMLPane.getEventRegistrar().addEventListener(TethysXUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
         });

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
@@ -433,7 +433,7 @@ public class TethysFXEditUIExample
         myGrid.addCell(theScrollField);
         myGrid.allowCellGrowth(theScrollField);
         myGrid.newRow();
-        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
+        theScrollField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
         theScrollField.setMenuConfigurator(theHelper::buildContextMenu);
         theScrollField.setValue("First");
 
@@ -444,7 +444,7 @@ public class TethysFXEditUIExample
         myGrid.addCell(theDateField);
         myGrid.allowCellGrowth(theDateField);
         myGrid.newRow();
-        theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
+        theDateField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
         theDateField.setValue(new TethysDate());
 
         /* Create ListButton field line */
@@ -456,7 +456,7 @@ public class TethysFXEditUIExample
         myGrid.newRow();
         theListField.setValue(theHelper.buildSelectedList());
         theListField.setSelectables(theHelper::buildSelectableList);
-        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
+        theListField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Create IconButton field line */
         myLabel = theGuiFactory.newLabel("IconButton:");
@@ -467,7 +467,7 @@ public class TethysFXEditUIExample
         myGrid.newRow();
         final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theIconField.setIconMapSet(() -> myMapSet);
-        theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
+        theIconField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(Boolean.FALSE);
 
         /* Return the pane */
@@ -533,7 +533,7 @@ public class TethysFXEditUIExample
         myMenu.addItem(Currency.getInstance("JPY"), "Yen");
         myCurrencyMgr.setValue(myDefault, "Pounds");
         setCurrency(myDefault);
-        myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
+        myCurrencyMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
         /* Create an HBox for buttons */
         final TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
@@ -587,7 +587,7 @@ public class TethysFXEditUIExample
      * @param pEvent the event
      */
     private void processActionEvent(final TethysFXDataTextField<?> pField,
-                                    final TethysEvent<TethysUIEvent> pEvent) {
+                                    final TethysEvent<TethysXUIEvent> pEvent) {
         /* Determine source */
         final String mySource = pField.getClass().getSimpleName();
 

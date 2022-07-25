@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <T> the object type
  */
 public abstract class TethysListButtonManager<T extends Comparable<T>>
-        implements TethysListButton<T>, TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysListButton<T>, TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Item separator.
      */
@@ -59,7 +59,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The Button.
@@ -153,7 +153,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -428,7 +428,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>>
         if (!theActiveValue.equals(theNewValue)) {
             /* Record the new value */
             setValue(theNewValue);
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, theValue);
             theNewValue = null;
 
             /* else if the menu is showing */
@@ -446,7 +446,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>>
      */
     private void notifyCancelled() {
         /* fire menu cancelled event */
-        theEventManager.fireEvent(TethysUIEvent.EDITFOCUSLOST);
+        theEventManager.fireEvent(TethysXUIEvent.EDITFOCUSLOST);
     }
 
     /**

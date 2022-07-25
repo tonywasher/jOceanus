@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsBase;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsReport;
@@ -155,9 +155,9 @@ public class ThemisStatsPanel
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final TethysEvent<TethysXUIEvent> pEvent) {
         /* If this is a new value */
-        if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {
+        if (pEvent.getEventId() == TethysXUIEvent.NEWVALUE) {
             handleNewTreeItem(pEvent.getDetails(ThemisStatsEntry.class));
         }
     }

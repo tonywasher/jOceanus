@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
@@ -544,9 +544,9 @@ public class TethysSwingTableCellFactory<C, R> {
              */
             TethysSwingTableCellEditor() {
                 /* Add listeners */
-                final TethysEventRegistrar<TethysUIEvent> myRegistrar = getControl().getEventRegistrar();
-                myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> stopCellEditing());
-                myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
+                final TethysEventRegistrar<TethysXUIEvent> myRegistrar = getControl().getEventRegistrar();
+                myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> stopCellEditing());
+                myRegistrar.addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             }
 
             @Override
@@ -1070,7 +1070,7 @@ public class TethysSwingTableCellFactory<C, R> {
             super(pColumn, pFactory.newScrollField(), pClazz);
             useDialogForEdit();
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
-            getControl().getEventRegistrar().addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
+            getControl().getEventRegistrar().addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
         }
 
         @Override
@@ -1104,7 +1104,7 @@ public class TethysSwingTableCellFactory<C, R> {
             super(pColumn, pFactory.newListField());
             useDialogForEdit();
             getControl().setSelectables(() -> getColumn().getSelectables().apply(getActiveRow()));
-            getControl().getEventRegistrar().addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
+            getControl().getEventRegistrar().addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
        }
 
         @Override

@@ -31,13 +31,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Viewer Manager class, responsible for displaying the debug view.
  */
 public abstract class MetisViewerWindow
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysXUIEvent> {
     /**
      * The Name of the current page.
      */
@@ -61,7 +61,7 @@ public abstract class MetisViewerWindow
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The split tree.
@@ -138,7 +138,7 @@ public abstract class MetisViewerWindow
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -320,7 +320,7 @@ public abstract class MetisViewerWindow
      * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIEvent pEventId,
+    protected void fireEvent(final TethysXUIEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }
@@ -339,7 +339,7 @@ public abstract class MetisViewerWindow
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final TethysEvent<TethysXUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 handleNewTreeItem(pEvent.getDetails(MetisViewerEntry.class));

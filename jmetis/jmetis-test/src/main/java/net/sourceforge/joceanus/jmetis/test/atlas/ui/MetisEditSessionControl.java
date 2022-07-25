@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Edit Session Control.
@@ -187,7 +187,7 @@ public class MetisEditSessionControl
 
         /* Create the viewer window */
         theViewer = pToolkit.newViewerWindow();
-        theViewer.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> clearViewer());
+        theViewer.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> clearViewer());
     }
 
     @Override

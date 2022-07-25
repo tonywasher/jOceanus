@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Payee Analysis Selection.
@@ -111,8 +111,8 @@ public class MoneyWisePayeeAnalysisSelect
         thePayeeMenu = theButton.getMenu();
 
         /* Create the listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPayee());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewPayee());
         theButton.setMenuConfigurator(e -> buildPayeeMenu());
     }
 

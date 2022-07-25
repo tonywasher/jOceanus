@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuToggleItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Scroll-able version of ContextMenu.
@@ -67,7 +67,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <T> the value type
  */
 public class TethysFXScrollContextMenu<T>
-        implements TethysScrollMenu<T>, TethysEventProvider<TethysUIEvent> {
+        implements TethysScrollMenu<T>, TethysEventProvider<TethysXUIEvent> {
     /**
      * StyleSheet Name.
      */
@@ -91,7 +91,7 @@ public class TethysFXScrollContextMenu<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * List of menu items.
@@ -245,7 +245,7 @@ public class TethysFXScrollContextMenu<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -484,7 +484,7 @@ public class TethysFXScrollContextMenu<T>
             }
 
             /* fire selection event */
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theSelectedItem);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, theSelectedItem);
         }
     }
 
@@ -500,7 +500,7 @@ public class TethysFXScrollContextMenu<T>
             /* else we are top-level */
         } else {
             /* fire cancellation event */
-            theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+            theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
 
             /* Notify the cancel */
             closeMenu();
@@ -529,7 +529,7 @@ public class TethysFXScrollContextMenu<T>
                 && theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
-                theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+                theEventManager.fireEvent(TethysXUIEvent.WINDOWCLOSED);
             }
 
             /* Close the menu hierarchy if we are currently showing */

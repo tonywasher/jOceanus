@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
  * @param <T> the item type
  */
 public abstract class TethysTreeManager<T>
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Logger.
      */
@@ -64,7 +64,7 @@ public abstract class TethysTreeManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * Is the tree visible (i.e. part of the actual tree)?
@@ -94,7 +94,7 @@ public abstract class TethysTreeManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -119,7 +119,7 @@ public abstract class TethysTreeManager<T>
      * @param pEventId the actionId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysUIEvent pEventId,
+    protected void fireEvent(final TethysXUIEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
@@ -160,7 +160,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
 
         /* Add listeners */
         myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
-        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleParentSelection());
+        theSelectButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleParentSelection());
         theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
     }
 

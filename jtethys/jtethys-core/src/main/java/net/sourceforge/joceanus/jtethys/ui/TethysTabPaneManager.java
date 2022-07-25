@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Tab Manager.
  */
 public abstract class TethysTabPaneManager
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The Gui Manager.
      */
@@ -38,7 +38,7 @@ public abstract class TethysTabPaneManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The Padding.
@@ -82,7 +82,7 @@ public abstract class TethysTabPaneManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -204,7 +204,7 @@ public abstract class TethysTabPaneManager
      * @param pItem the item that has been selected
      */
     protected void notifySelection(final Object pItem) {
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pItem);
+        theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, pItem);
     }
 
     /**

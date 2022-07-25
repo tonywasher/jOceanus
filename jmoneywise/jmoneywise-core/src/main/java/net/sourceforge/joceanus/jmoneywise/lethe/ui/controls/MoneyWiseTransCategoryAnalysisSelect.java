@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Transaction Category Analysis Selection.
@@ -116,8 +116,8 @@ public class MoneyWiseTransCategoryAnalysisSelect
         theCategoryMenu = theButton.getMenu();
 
         /* Create the listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCategory());
         theButton.setMenuConfigurator(e -> buildCategoryMenu());
     }
 

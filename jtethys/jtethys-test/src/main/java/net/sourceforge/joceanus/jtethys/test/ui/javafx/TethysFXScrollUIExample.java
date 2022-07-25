@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconSta
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXColorPicker;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
@@ -192,7 +192,7 @@ public class TethysFXScrollUIExample
         myContextArea.setContextMenu(theContextMenu);
 
         /* Add listener */
-        theContextMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theContextMenu.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             /* If we selected a value */
             final TethysScrollMenuItem<String> mySelected = theContextMenu.getSelectedItem();
             if (mySelected != null) {
@@ -213,7 +213,7 @@ public class TethysFXScrollUIExample
         setScrollValue(null);
 
         /* Add listener */
-        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setScrollValue(e.getDetails(String.class));
             pStage.sizeToScene();
         });
@@ -234,7 +234,7 @@ public class TethysFXScrollUIExample
         theListButtonMgr.setText("Tag");
 
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setListValue();
             pStage.sizeToScene();
         });
@@ -250,7 +250,7 @@ public class TethysFXScrollUIExample
         myGrid.newRow();
 
         /* Add listener */
-        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theDateButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setDateValue(e.getDetails(TethysDate.class));
             pStage.sizeToScene();
         });
@@ -269,7 +269,7 @@ public class TethysFXScrollUIExample
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
-        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setSimpleIconValue(e.getDetails(Boolean.class));
             pStage.sizeToScene();
         });
@@ -293,13 +293,13 @@ public class TethysFXScrollUIExample
         theStateIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
-        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setStateIconValue(e.getDetails(Boolean.class));
             pStage.sizeToScene();
         });
 
         /* Add listener */
-        theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theStateButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setStateIconValue(theStateIconButtonMgr.getValue());
             theStateIconButtonMgr.applyButtonState();
             pStage.sizeToScene();
@@ -316,7 +316,7 @@ public class TethysFXScrollUIExample
         myGrid.newRow();
 
         /* Add listener */
-        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+        theColorPicker.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
             setColorValue(e.getDetails(String.class));
             pStage.sizeToScene();
         });

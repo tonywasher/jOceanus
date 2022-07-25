@@ -66,7 +66,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysStringE
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysUnitsEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -177,7 +177,7 @@ public abstract class TethysSwingDataTextField<T>
         theCmdButton.addActionListener(e -> handleCmdMenuRequest());
 
         /* Set command menu listener */
-        getCmdMenu().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
+        getCmdMenu().getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE,
                 e -> handleCmdMenuClosed());
     }
 
@@ -500,7 +500,7 @@ public abstract class TethysSwingDataTextField<T>
         private void handleEscapeKey() {
             resetEditText();
             clearError();
-            fireEvent(TethysUIEvent.EDITFOCUSLOST);
+            fireEvent(TethysXUIEvent.EDITFOCUSLOST);
             haltCellEditing();
         }
 

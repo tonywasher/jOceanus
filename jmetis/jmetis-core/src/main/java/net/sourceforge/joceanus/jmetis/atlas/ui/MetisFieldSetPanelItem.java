@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * FieldSet Panel Item.
@@ -152,10 +152,10 @@ public abstract class MetisFieldSetPanelItem<T>
         theNode.setCentre(pEdit);
 
         /* Add listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theEdit.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::cascadeEvent);
-        myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, this::cascadeEvent);
-        myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, this::cascadeEvent);
+        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theEdit.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, this::cascadeEvent);
+        myRegistrar.addEventListener(TethysXUIEvent.PREPARECMDDIALOG, this::cascadeEvent);
+        myRegistrar.addEventListener(TethysXUIEvent.NEWCOMMAND, this::cascadeEvent);
     }
 
     /**
@@ -343,7 +343,7 @@ public abstract class MetisFieldSetPanelItem<T>
      *
      * @param pEvent the event
      */
-    private void cascadeEvent(final TethysEvent<TethysUIEvent> pEvent) {
+    private void cascadeEvent(final TethysEvent<TethysXUIEvent> pEvent) {
         final MetisFieldUpdate myUpdate = new MetisFieldUpdate(theField, pEvent.getDetails());
         thePanel.fireEvent(pEvent.getEventId(), myUpdate);
     }

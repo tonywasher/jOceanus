@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * </ul>
  */
 public abstract class TethysButton
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Default icon width.
      */
@@ -38,7 +38,7 @@ public abstract class TethysButton
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The id.
@@ -76,7 +76,7 @@ public abstract class TethysButton
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -196,6 +196,6 @@ public abstract class TethysButton
      * handle pressed.
      */
     protected void handlePressed() {
-        theEventManager.fireEvent(TethysUIEvent.PRESSED);
+        theEventManager.fireEvent(TethysXUIEvent.PRESSED);
     }
 }

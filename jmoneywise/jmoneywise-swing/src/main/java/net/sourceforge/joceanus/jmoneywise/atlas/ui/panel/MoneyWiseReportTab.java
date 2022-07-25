@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Report panel.
@@ -176,7 +176,7 @@ public class MoneyWiseReportTab
         myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
-        theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
+        theHTMLPane.getEventRegistrar().addEventListener(TethysXUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
         });

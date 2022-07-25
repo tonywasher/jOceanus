@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Password Field.
  */
 public abstract class TethysPasswordField
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The Bullet character.
      */
@@ -33,7 +33,7 @@ public abstract class TethysPasswordField
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The id.
@@ -65,7 +65,7 @@ public abstract class TethysPasswordField
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -129,6 +129,6 @@ public abstract class TethysPasswordField
      * fire Event.
      */
     protected void fireEvent() {
-        theEventManager.fireEvent(TethysUIEvent.PRESSED);
+        theEventManager.fireEvent(TethysXUIEvent.PRESSED);
     }
 }

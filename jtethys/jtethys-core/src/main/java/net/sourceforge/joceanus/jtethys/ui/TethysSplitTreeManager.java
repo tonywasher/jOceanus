@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <T> the item type
  */
 public abstract class TethysSplitTreeManager<T>
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * The default Weight.
      */
@@ -40,7 +40,7 @@ public abstract class TethysSplitTreeManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The HTMLPane.
@@ -113,7 +113,7 @@ public abstract class TethysSplitTreeManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -145,7 +145,7 @@ public abstract class TethysSplitTreeManager<T>
      * Handle HTML reference lookUp.
      * @param pEvent the action event
      */
-    private void handleReferenceLookup(final TethysEvent<TethysUIEvent> pEvent) {
+    private void handleReferenceLookup(final TethysEvent<TethysXUIEvent> pEvent) {
         /* Obtain the reference */
         final String myRef = pEvent.getDetails(String.class);
 

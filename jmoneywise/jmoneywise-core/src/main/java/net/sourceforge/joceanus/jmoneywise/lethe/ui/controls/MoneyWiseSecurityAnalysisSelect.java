@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Security Analysis Selection.
@@ -135,11 +135,11 @@ public class MoneyWiseSecurityAnalysisSelect
         theSecurityMenu = theSecButton.getMenu();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
+        TethysEventRegistrar<TethysXUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewPortfolio());
         thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
         myRegistrar = theSecButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewSecurity());
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewSecurity());
         theSecButton.setMenuConfigurator(e -> buildSecurityMenu());
     }
 

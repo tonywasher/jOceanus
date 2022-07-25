@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButto
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Generic class for displaying and editing a button data field.
@@ -105,7 +105,7 @@ public final class TethysFXDataButtonField {
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(e -> {
                 setValue(theManager.getValue());
-                fireEvent(TethysUIEvent.NEWVALUE, e.getDetails());
+                fireEvent(TethysXUIEvent.NEWVALUE, e.getDetails());
             });
         }
 
@@ -233,11 +233,11 @@ public final class TethysFXDataButtonField {
          *
          * @param pEvent the even
          */
-        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+        private void handleEvent(final TethysEvent<TethysXUIEvent> pEvent) {
             switch (pEvent.getEventId()) {
                 case NEWVALUE:
                     setValue(theManager.getValue());
-                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    fireEvent(TethysXUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
@@ -285,7 +285,7 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+                fireEvent(TethysXUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
         }
@@ -342,11 +342,11 @@ public final class TethysFXDataButtonField {
          *
          * @param pEvent the even
          */
-        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+        private void handleEvent(final TethysEvent<TethysXUIEvent> pEvent) {
             switch (pEvent.getEventId()) {
                 case NEWVALUE:
                     setValue(theManager.getSelectedDate());
-                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    fireEvent(TethysXUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
@@ -391,7 +391,7 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+                fireEvent(TethysXUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
         }
@@ -450,11 +450,11 @@ public final class TethysFXDataButtonField {
          *
          * @param pEvent the even
          */
-        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+        private void handleEvent(final TethysEvent<TethysXUIEvent> pEvent) {
             switch (pEvent.getEventId()) {
                 case NEWVALUE:
                     setValue(thePicker.getValue());
-                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    fireEvent(TethysXUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
@@ -494,7 +494,7 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+                fireEvent(TethysXUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
         }
@@ -553,11 +553,11 @@ public final class TethysFXDataButtonField {
          *
          * @param pEvent the even
          */
-        private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+        private void handleEvent(final TethysEvent<TethysXUIEvent> pEvent) {
             switch (pEvent.getEventId()) {
                 case NEWVALUE:
                     setValue(theManager.getValue());
-                    fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
+                    fireEvent(TethysXUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
@@ -599,7 +599,7 @@ public final class TethysFXDataButtonField {
          */
         private void haltCellEditing() {
             if (isCellEditing) {
-                fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
+                fireEvent(TethysXUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
         }

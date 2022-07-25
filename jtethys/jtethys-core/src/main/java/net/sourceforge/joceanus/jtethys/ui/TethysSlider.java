@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Slider.
  */
 public abstract class TethysSlider
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Tick factor.
      */
@@ -38,7 +38,7 @@ public abstract class TethysSlider
     /**
      * The event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The Padding.
@@ -65,7 +65,7 @@ public abstract class TethysSlider
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -180,6 +180,6 @@ public abstract class TethysSlider
      * handleNewValue.
      */
     protected void handleNewValue() {
-        theEventManager.fireEvent(TethysUIEvent.NEWVALUE, getValue());
+        theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, getValue());
     }
 }

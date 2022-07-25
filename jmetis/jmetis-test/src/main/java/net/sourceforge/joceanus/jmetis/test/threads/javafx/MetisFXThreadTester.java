@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
@@ -195,7 +195,7 @@ public class MetisFXThreadTester
         try {
             final MetisFXViewerWindow myWindow = theToolkit.newViewerWindow();
             theDebugButton.setEnabled(false);
-            myWindow.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theDebugButton.setEnabled(true));
+            myWindow.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theDebugButton.setEnabled(true));
             myWindow.showDialog();
         } catch (OceanusException e) {
             LOGGER.error("Failed to show debug", e);

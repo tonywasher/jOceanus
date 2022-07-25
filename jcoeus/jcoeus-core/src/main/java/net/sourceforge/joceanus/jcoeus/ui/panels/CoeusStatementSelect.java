@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * Filter Select.
@@ -234,15 +234,15 @@ public final class CoeusStatementSelect
         applyState();
 
         /* Add the listeners */
-        theTotalsButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTotalSet());
+        theTotalsButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewTotalSet());
         theTotalsButton.setMenuConfigurator(this::handleTotalSetMenu);
-        theMarketButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMarket());
-        theMarketTypeButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMarketType());
-        theMonthButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMonth());
+        theMarketButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewMarket());
+        theMarketTypeButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewMarketType());
+        theMonthButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewMonth());
         theMonthButton.setMenuConfigurator(this::handleMonthMenu);
-        theLoanButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
+        theLoanButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewLoan());
         theLoanButton.setMenuConfigurator(this::handleLoanMenu);
-        theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
+        theDateButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewDate());
         theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(CoeusDataEvent.SAVETOFILE));
 
         /* Add the cache listener */

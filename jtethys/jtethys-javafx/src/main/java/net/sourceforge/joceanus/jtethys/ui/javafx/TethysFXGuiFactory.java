@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
  */
 public class TethysFXGuiFactory
         extends TethysGuiFactory
-        implements TethysEventProvider<TethysUIEvent> {
+        implements TethysEventProvider<TethysXUIEvent> {
     /**
      * Base StyleSheet Class.
      */
@@ -75,7 +75,7 @@ public class TethysFXGuiFactory
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * Scenes.
@@ -121,7 +121,7 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -192,7 +192,7 @@ public class TethysFXGuiFactory
      */
     public void setStage(final Stage pStage) {
         theStage = pStage;
-        theEventManager.fireEvent(TethysUIEvent.NEWSTAGE);
+        theEventManager.fireEvent(TethysXUIEvent.NEWSTAGE);
     }
 
     /**

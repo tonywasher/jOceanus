@@ -29,11 +29,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * </ul>
  */
 public abstract class TethysCheckBox
-        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
+        implements TethysEventProvider<TethysXUIEvent>, TethysComponent {
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final TethysEventManager<TethysXUIEvent> theEventManager;
 
     /**
      * The id.
@@ -70,7 +70,7 @@ public abstract class TethysCheckBox
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -155,7 +155,7 @@ public abstract class TethysCheckBox
         if (pSelected != isSelected) {
             /* record selection and fire event */
             isSelected = pSelected;
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, pSelected);
+            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, pSelected);
         }
     }
 }
