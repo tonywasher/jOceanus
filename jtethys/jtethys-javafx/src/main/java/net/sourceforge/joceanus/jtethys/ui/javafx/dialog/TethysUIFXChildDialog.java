@@ -25,6 +25,7 @@ import javafx.stage.StageStyle;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreChildDialog;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 
 /**
@@ -49,9 +50,11 @@ public class TethysUIFXChildDialog
 
     /**
      * Constructor.
+     * @pFactory the factory
      * @param pParent the parent stage
      */
-    TethysUIFXChildDialog(final Stage pParent) {
+    TethysUIFXChildDialog(final TethysUICoreFactory<?> pFactory,
+                          final Stage pParent) {
         /* Store parameter */
         theParent = pParent;
 
@@ -65,6 +68,7 @@ public class TethysUIFXChildDialog
         /* Create the scene */
         theContainer = new BorderPane();
         final Scene myScene = new Scene(theContainer);
+        ((TethysUIFXSceneRegister) pFactory).registerScene(myScene);
         theStage.setScene(myScene);
 
         /* Change visibility of tree when hiding */

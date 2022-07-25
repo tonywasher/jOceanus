@@ -26,14 +26,17 @@ import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
+import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust.TethysUISwingFieldAdjustSupplier;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingUtils;
 import net.sourceforge.joceanus.jtethys.ui.swing.chart.TethysUISwingChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.control.TethysUISwingControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.pane.TethysUISwingPaneFactory;
 
@@ -41,7 +44,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.pane.TethysUISwingPaneFactory;
  * javafx Factory.
  */
 public class TethysUISwingFactory
-        extends TethysUICoreFactory<Color> {
+        extends TethysUICoreFactory<Color>
+        implements TethysUISwingFieldAdjustSupplier {
     /**
      * The field adjust.
      */
@@ -68,6 +72,11 @@ public class TethysUISwingFactory
     private final TethysUISwingDialogFactory theDialogFactory;
 
     /**
+     * The field factory.
+     */
+    private final TethysUISwingFieldFactory theFieldFactory;
+
+    /**
      * The menu factory.
      */
     private final TethysUISwingMenuFactory theMenuFactory;
@@ -83,6 +92,7 @@ public class TethysUISwingFactory
         theChartFactory = new TethysUISwingChartFactory(this);
         theControlFactory = new TethysUISwingControlFactory(this, theFieldAdjust);
         theDialogFactory = new TethysUISwingDialogFactory(this);
+        theFieldFactory = new TethysUISwingFieldFactory(this);
         theMenuFactory = new TethysUISwingMenuFactory(this);
     }
 
@@ -128,7 +138,17 @@ public class TethysUISwingFactory
     }
 
     @Override
+    public TethysUIFieldFactory fieldFactory() {
+        return theFieldFactory;
+    }
+
+    @Override
     public TethysUIMenuFactory menuFactory() {
         return theMenuFactory;
+    }
+
+    @Override
+    public TethysUISwingDataFieldAdjust getFieldAdjuster() {
+        return theFieldAdjust;
     }
 }

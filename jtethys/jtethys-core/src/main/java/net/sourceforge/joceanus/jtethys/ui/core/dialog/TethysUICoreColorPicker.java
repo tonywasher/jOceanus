@@ -22,13 +22,21 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIColorPicker;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Colour Picker Core.
  * @param <C> the color type
  */
 public abstract class TethysUICoreColorPicker<C>
+        extends TethysUICoreComponent
         implements TethysUIColorPicker<C> {
+    /**
+     * The id.
+     */
+    private final Integer theId;
+
     /**
      * The Event Manager.
      */
@@ -42,8 +50,14 @@ public abstract class TethysUICoreColorPicker<C>
     /**
      * Constructor.
      */
-    protected TethysUICoreColorPicker() {
+    protected TethysUICoreColorPicker(final TethysUICoreFactory<?> pFactory) {
+        theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
+    }
+
+    @Override
+    public Integer getId() {
+        return theId;
     }
 
     @Override

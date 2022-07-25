@@ -59,7 +59,7 @@ public class TethysUISwingDialogFactory
 
     @Override
     public TethysUISwingColorPicker newColorPicker() {
-        return new TethysUISwingColorPicker();
+        return new TethysUISwingColorPicker(theFactory);
     }
 
     @Override

@@ -1,0 +1,59 @@
+.-jtethys-datedialog {
+	-fx-font-family:Courier;
+	-fx-font-size:10;
+	-fx-fill:Black;
+	-fx-alignment:Center;
+}
+
+.-jtethys-datedialog-button {
+	-fx-padding: 2 2 2 2;
+}
+
+.-jtethys-datedialog-title {
+	-fx-font-weight:bold;
+}
+
+.-jtethys-datedialog-month {
+	-fx-border-width:1;
+	-fx-border-color:Black;
+	-fx-background-color:whitesmoke;
+}
+
+.-jtethys-datedialog-day {
+	-fx-alignment:Center;
+	-fx-border-width:1;
+	-fx-background-color:whitesmoke;
+	-fx-border-color:whitesmoke;
+}
+
+.-jtethys-datedialog-month .-jtethys-datedialog-weekend {
+	-fx-text-fill:Red;
+}
+
+.-jtethys-datedialog-month .-jtethys-datedialog-inactive {
+	-fx-text-fill:grey;
+	-fx-font-style:Italic;
+}
+
+.-jtethys-datedialog-month .-jtethys-datedialog-selected {
+	-fx-font-weight:Bold;
+	-fx-text-fill:darkgreen;
+	-fx-background-color:lightgreen;
+	-fx-border-color:darkgreen;
+}
+
+.-jtethys-datedialog-month .-jtethys-datedialog-current {
+	-fx-text-fill:blue;
+	-fx-background-color:grey;
+}
+
+.-jtethys-datedialog-month .-jtethys-datedialog-hdr {
+	-fx-font-weight:bold;
+	-fx-alignment:Center;
+	-fx-background-color:lightgray;
+}
+
+.-jtethys-datedialog-month .-jtethys-datedialog-day:hover {
+	-fx-border-width:1;
+	-fx-border-color:orange;
+}

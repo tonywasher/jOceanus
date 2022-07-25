@@ -31,6 +31,17 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  */
 public class TethysUISwingDataFieldAdjust {
     /**
+     * AdjusterSupplier interface.
+     */
+    public interface TethysUISwingFieldAdjustSupplier {
+        /**
+         * Obtain adjuster.
+         * @return the adjuster
+         */
+        TethysUISwingDataFieldAdjust getFieldAdjuster();
+    }
+
+    /**
      * The valueSet.
      */
     private final TethysUIValueSet theValueSet;
@@ -56,6 +67,22 @@ public class TethysUISwingDataFieldAdjust {
 
         /* build the initial sets */
         buildSets();
+    }
+
+    /**
+     * Obtain the fontSet.
+     * @return the fontSet
+     */
+    public TethysUISwingFontSet getFontSet() {
+        return theFontSet;
+    }
+
+    /**
+     * Obtain the colorSet.
+     * @return the colorSet
+     */
+    public TethysUISwingColorSet getColorSet() {
+        return theColorSet;
     }
 
     /**
@@ -108,7 +135,7 @@ public class TethysUISwingDataFieldAdjust {
     /**
      * Font Set.
      */
-    private static final class TethysUISwingFontSet {
+    public static final class TethysUISwingFontSet {
         /**
          * The standard font.
          */
@@ -178,7 +205,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Standard font.
          * @return the font
          */
-        Font getStandard() {
+        public Font getStandard() {
             return theStandard;
         }
 
@@ -186,7 +213,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Changed font.
          * @return the font
          */
-        Font getChanged() {
+        public Font getChanged() {
             return theChanged;
         }
 
@@ -194,7 +221,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Numeric font.
          * @return the font
          */
-        Font getNumeric() {
+        public Font getNumeric() {
             return theNumeric;
         }
 
@@ -202,7 +229,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the ChangedNumeric font.
          * @return the font
          */
-        Font getChangedNumeric() {
+        public Font getChangedNumeric() {
             return theChangedNumeric;
         }
 
@@ -210,7 +237,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Bold font.
          * @return the font
          */
-        Font getBoldStandard() {
+        public Font getBoldStandard() {
             return theBoldStandard;
         }
 
@@ -218,7 +245,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the BoldChanged font.
          * @return the font
          */
-        Font getBoldChanged() {
+        public Font getBoldChanged() {
             return theBoldChanged;
         }
 
@@ -226,7 +253,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the BoldNumeric font.
          * @return the font
          */
-        Font getBoldNumeric() {
+        public Font getBoldNumeric() {
             return theBoldNumeric;
         }
 
@@ -234,7 +261,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the BoldChangedNumeric font.
          * @return the font
          */
-        Font getBoldChangedNumeric() {
+        public Font getBoldChangedNumeric() {
             return theBoldChangedNumeric;
         }
     }
@@ -242,7 +269,7 @@ public class TethysUISwingDataFieldAdjust {
     /**
      * Colour Set.
      */
-    private static final class TethysUISwingColorSet {
+    public static final class TethysUISwingColorSet {
         /**
          * The standard colour.
          */
@@ -296,7 +323,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Standard colour.
          * @return the colour
          */
-        Color getStandard() {
+        public Color getStandard() {
             return theStandard;
         }
 
@@ -304,7 +331,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Changed colour.
          * @return the colour
          */
-        Color getChanged() {
+        public Color getChanged() {
             return theChanged;
         }
 
@@ -312,7 +339,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Error colour.
          * @return the colour
          */
-        Color getError() {
+        public Color getError() {
             return theError;
         }
 
@@ -320,7 +347,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Zebra colour.
          * @return the colour
          */
-        Color getZebra() {
+        public Color getZebra() {
             return theZebra;
         }
 
@@ -328,7 +355,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Disabled colour.
          * @return the colour
          */
-        Color getDisabled() {
+        public Color getDisabled() {
             return theDisabled;
         }
 
@@ -336,7 +363,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Background colour.
          * @return the colour
          */
-        Color getBackground() {
+        public Color getBackground() {
             return theBackground;
         }
 
@@ -344,7 +371,7 @@ public class TethysUISwingDataFieldAdjust {
          * Obtain the Standard colour.
          * @return the colour
          */
-        Color getProgress() {
+        public Color getProgress() {
             return theProgress;
         }
     }

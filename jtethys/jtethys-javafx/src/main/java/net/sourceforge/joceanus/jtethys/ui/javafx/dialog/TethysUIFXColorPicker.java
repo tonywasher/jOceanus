@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreColorPicker;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 
@@ -46,8 +47,11 @@ public class TethysUIFXColorPicker
 
     /**
      * Constructor.
+     * @param pFactory the factory
      */
-    TethysUIFXColorPicker() {
+    TethysUIFXColorPicker(final TethysUICoreFactory<?> pFactory) {
+        super(pFactory);
+
         /* Initialise class */
         thePicker = new ColorPicker();
         theNode = new TethysUIFXNode(thePicker);
@@ -57,6 +61,16 @@ public class TethysUIFXColorPicker
 
         /* Set as button */
         thePicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
+    }
+
+    @Override
+    public TethysUIFXNode getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        thePicker.setDisable(!pEnabled);
     }
 
     @Override
@@ -70,6 +84,15 @@ public class TethysUIFXColorPicker
         super.setValue(pValue);
         theColour = Color.web(pValue);
         thePicker.setValue(theColour);
+    }
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        thePicker.setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        thePicker.setPrefHeight(pHeight);
     }
 
     @Override

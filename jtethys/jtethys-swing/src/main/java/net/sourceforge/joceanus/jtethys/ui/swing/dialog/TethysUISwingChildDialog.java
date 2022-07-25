@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -26,7 +25,6 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreChildDialog;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 
 public class TethysUISwingChildDialog

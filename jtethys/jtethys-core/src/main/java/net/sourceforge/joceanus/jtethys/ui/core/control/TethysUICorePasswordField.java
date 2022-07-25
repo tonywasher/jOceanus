@@ -32,7 +32,7 @@ public abstract class TethysUICorePasswordField
     /**
      * The Bullet character.
      */
-    protected static final char BULLET = '\u2022';
+    public static final char BULLET = '\u2022';
 
     /**
      * Event Manager.

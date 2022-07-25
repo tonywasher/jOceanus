@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateDialog;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 
@@ -63,7 +62,7 @@ public final class TethysUIFXDateDialog
     /**
      * StyleSheet.
      */
-    private static final String CSS_STYLE = TethysFXDateDialog.class.getResource(CSS_STYLE_NAME).toExternalForm();
+    private static final String CSS_STYLE = TethysUIFXDateDialog.class.getResource(CSS_STYLE_NAME).toExternalForm();
 
     /**
      * The dialog style.
