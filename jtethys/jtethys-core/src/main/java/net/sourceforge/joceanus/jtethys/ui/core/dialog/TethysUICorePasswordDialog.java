@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIXResource;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIResource;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
@@ -55,57 +55,57 @@ public abstract class TethysUICorePasswordDialog
     /**
      * Text for Password title.
      */
-    protected static final String NLS_TITLEPASS = TethysUIXResource.PASS_TITLE_PASSWORD.getValue();
+    protected static final String NLS_TITLEPASS = TethysUIResource.PASS_TITLE_PASSWORD.getValue();
 
     /**
      * Text for New Password title.
      */
-    protected static final String NLS_TITLENEWPASS = TethysUIXResource.PASS_TITLE_NEWPASS.getValue();
+    protected static final String NLS_TITLENEWPASS = TethysUIResource.PASS_TITLE_NEWPASS.getValue();
 
     /**
      * Text for Password Label.
      */
-    private static final String NLS_PASSWORD = TethysUIXResource.PASS_LABEL_PASSWORD.getValue();
+    private static final String NLS_PASSWORD = TethysUIResource.PASS_LABEL_PASSWORD.getValue();
 
     /**
      * Text for Confirm Label.
      */
-    private static final String NLS_CONFIRM = TethysUIXResource.PASS_LABEL_CONFIRM.getValue();
+    private static final String NLS_CONFIRM = TethysUIResource.PASS_LABEL_CONFIRM.getValue();
 
     /**
      * Text for OK Button.
      */
-    private static final String NLS_OK = TethysUIXResource.BUTTON_OK.getValue();
+    private static final String NLS_OK = TethysUIResource.BUTTON_OK.getValue();
 
     /**
      * Text for Cancel Button.
      */
-    private static final String NLS_CANCEL = TethysUIXResource.BUTTON_CANCEL.getValue();
+    private static final String NLS_CANCEL = TethysUIResource.BUTTON_CANCEL.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_ERROR = TethysUIXResource.PASS_TITLE_ERROR.getValue();
+    private static final String NLS_ERROR = TethysUIResource.PASS_TITLE_ERROR.getValue();
 
     /**
      * Text for Bad Password Error.
      */
-    private static final String NLS_ERRORPASS = TethysUIXResource.PASS_ERROR_BADPASS.getValue();
+    private static final String NLS_ERRORPASS = TethysUIResource.PASS_ERROR_BADPASS.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_CONFIRMERROR = TethysUIXResource.PASS_ERROR_CONFIRM.getValue();
+    private static final String NLS_CONFIRMERROR = TethysUIResource.PASS_ERROR_CONFIRM.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR1 = TethysUIXResource.PASS_ERROR_LENGTH1.getValue();
+    private static final String NLS_LENGTHERR1 = TethysUIResource.PASS_ERROR_LENGTH1.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR2 = TethysUIXResource.PASS_ERROR_LENGTH2.getValue();
+    private static final String NLS_LENGTHERR2 = TethysUIResource.PASS_ERROR_LENGTH2.getValue();
 
     /**
      * The GUI factory.

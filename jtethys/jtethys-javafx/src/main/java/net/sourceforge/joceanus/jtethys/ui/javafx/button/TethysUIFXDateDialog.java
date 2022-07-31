@@ -150,7 +150,7 @@ public final class TethysUIFXDateDialog
 
         /* Add listener to shut dialog on loss of focus */
         theStage.focusedProperty().addListener((v, o, n) -> {
-            if (!n) {
+            if (Boolean.FALSE.equals(n)) {
                 closeNonModal();
             }
         });

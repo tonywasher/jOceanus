@@ -200,7 +200,7 @@ public abstract class TethysUIFXDataTextField<T>
      *
      * @return the label
      */
-    Label getLabel() {
+    public Label getLabel() {
         return theLabel;
     }
 

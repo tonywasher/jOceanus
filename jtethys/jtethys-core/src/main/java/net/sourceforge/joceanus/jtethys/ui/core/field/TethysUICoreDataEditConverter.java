@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICorePasswordField;
 
 /**

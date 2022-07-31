@@ -221,12 +221,7 @@ public abstract class TethysUICoreTreeManager<T>
      * @return the icon
      */
     public TethysUIIcon getIcon(final TethysUIIconId pIconId) {
-        TethysUIIcon myIcon = theIconMap.get(pIconId);
-        if (myIcon == null) {
-            myIcon = theFactory.resolveIcon(pIconId, ICONWIDTH);
-            theIconMap.put(pIconId, myIcon);
-        }
-        return myIcon;
+        return theIconMap.computeIfAbsent(pIconId, i -> theFactory.resolveIcon(i, ICONWIDTH));
     }
 
     /**

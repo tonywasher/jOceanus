@@ -348,7 +348,7 @@ public abstract class TethysUISwingDataTextField<T>
     /**
      * parse the data.
      */
-    protected void parseData() {
+    public void parseData() {
         /* NoOp */
     }
 
@@ -357,7 +357,7 @@ public abstract class TethysUISwingDataTextField<T>
      * @param pLabel the label
      * @return the cloned data field
      */
-    protected abstract TethysUISwingDataTextField<T> cloneField(JLabel pLabel);
+    public abstract TethysUISwingDataTextField<T> cloneField(JLabel pLabel);
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
@@ -476,7 +476,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected void parseData() {
+        public void parseData() {
             processValue();
         }
 
@@ -663,7 +663,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingStringTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingStringTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingStringTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -692,7 +692,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingCharArrayTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingCharArrayTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingCharArrayTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -721,7 +721,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingShortTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingShortTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingShortTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -750,7 +750,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingIntegerTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingIntegerTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingIntegerTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -779,7 +779,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingLongTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingLongTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingLongTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -809,7 +809,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingRawDecimalTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingRawDecimalTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingRawDecimalTextField(super.getGuiFactory(), pLabel);
         }
 
@@ -878,7 +878,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingMoneyTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingMoneyTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingMoneyTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -907,7 +907,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingPriceTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingPriceTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingPriceTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -936,7 +936,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingDilutedPriceTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingDilutedPriceTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingDilutedPriceTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -965,7 +965,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingRateTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingRateTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingRateTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -994,7 +994,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingUnitsTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingUnitsTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingUnitsTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -1023,7 +1023,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingDilutionTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingDilutionTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingDilutionTextField(super.getGuiFactory(), pLabel);
         }
     }
@@ -1052,7 +1052,7 @@ public abstract class TethysUISwingDataTextField<T>
         }
 
         @Override
-        protected TethysUISwingRatioTextField cloneField(final JLabel pLabel) {
+        public TethysUISwingRatioTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingRatioTextField(super.getGuiFactory(), pLabel);
         }
     }

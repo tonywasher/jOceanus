@@ -177,7 +177,7 @@ public final class TethysUISwingDataButtonField {
         }
 
         @Override
-        protected TethysUISwingIconButtonField<T> cloneField(final JLabel pLabel) {
+        public TethysUISwingIconButtonField<T> cloneField(final JLabel pLabel) {
             final TethysUIIconButtonManager<T> myClone = getGuiFactory().buttonFactory().newIconButton();
             return new TethysUISwingIconButtonField<>(getGuiFactory(), myClone, pLabel);
         }
@@ -315,7 +315,7 @@ public final class TethysUISwingDataButtonField {
         }
 
         @Override
-        protected TethysUISwingScrollButtonField<T> cloneField(final JLabel pLabel) {
+        public TethysUISwingScrollButtonField<T> cloneField(final JLabel pLabel) {
             return new TethysUISwingScrollButtonField<>(getGuiFactory(), pLabel);
         }
     }
@@ -431,7 +431,7 @@ public final class TethysUISwingDataButtonField {
         }
 
         @Override
-        protected TethysUISwingDateButtonField cloneField(final JLabel pLabel) {
+        public TethysUISwingDateButtonField cloneField(final JLabel pLabel) {
             return new TethysUISwingDateButtonField(getGuiFactory(), pLabel);
         }
     }
@@ -544,7 +544,7 @@ public final class TethysUISwingDataButtonField {
         }
 
         @Override
-        protected TethysUISwingColorButtonField cloneField(final JLabel pLabel) {
+        public TethysUISwingColorButtonField cloneField(final JLabel pLabel) {
             return new TethysUISwingColorButtonField(getGuiFactory(), pLabel);
         }
     }
@@ -660,7 +660,7 @@ public final class TethysUISwingDataButtonField {
         }
 
         @Override
-        protected TethysUISwingListButtonField<T> cloneField(final JLabel pLabel) {
+        public TethysUISwingListButtonField<T> cloneField(final JLabel pLabel) {
             return new TethysUISwingListButtonField<>(getGuiFactory(), pLabel);
         }
 

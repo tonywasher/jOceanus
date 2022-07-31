@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 /**
  * Resource IDs for TethysUI package.
  */
-public enum TethysUIXResource implements TethysBundleId {
+public enum TethysUIResource implements TethysBundleId {
     /**
      * Bad value on parse.
      */
@@ -121,7 +121,7 @@ public enum TethysUIXResource implements TethysBundleId {
      * Constructor.
      * @param pKeyName the key name
      */
-    TethysUIXResource(final String pKeyName) {
+    TethysUIResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

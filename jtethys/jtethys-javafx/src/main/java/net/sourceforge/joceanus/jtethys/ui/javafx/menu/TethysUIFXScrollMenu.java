@@ -527,7 +527,7 @@ public class TethysUIFXScrollMenu<T>
      */
     private void handleFocusChange(final Boolean pState) {
         /* If we've lost focus to other than the active subMenu */
-        if (!pState
+        if (Boolean.TRUE.equals(!pState)
                 && theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
