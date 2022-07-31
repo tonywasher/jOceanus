@@ -33,11 +33,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataButtonField.TethysUIFXColorButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataButtonField.TethysUIFXDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataButtonField.TethysUIFXIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataButtonField.TethysUIFXListButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataButtonField.TethysUIFXScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutionTextField;
