@@ -34,7 +34,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.button.TethysUIFXButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.chart.TethysUIFXChartFactory;
@@ -44,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXSceneRegister
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableManager;
 
 /**
  * javafx Factory.
@@ -205,6 +208,11 @@ public class TethysUIFXFactory
 
         /* Return the string */
         return myBuilder.toString();
+    }
+
+    @Override
+    public <C, R> TethysUITableManager<C, R> newTable() {
+        return new TethysUIFXTableManager<>(this);
     }
 
     /**

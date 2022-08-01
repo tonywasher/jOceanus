@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust.TethysUISwingFieldAdjustSupplier;
@@ -39,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingDialogFacto
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.pane.TethysUISwingPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableManager;
 
 /**
  * javafx Factory.
@@ -150,5 +152,10 @@ public class TethysUISwingFactory
     @Override
     public TethysUISwingDataFieldAdjust getFieldAdjuster() {
         return theFieldAdjust;
+    }
+
+    @Override
+    public <C, R> TethysUITableManager<C, R> newTable() {
+        return new TethysUISwingTableManager<>(this);
     }
 }
