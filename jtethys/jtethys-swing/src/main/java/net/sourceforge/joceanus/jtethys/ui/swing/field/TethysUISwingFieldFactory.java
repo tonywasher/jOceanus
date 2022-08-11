@@ -33,11 +33,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataButtonField.TethysUISwingColorButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataButtonField.TethysUISwingDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataButtonField.TethysUISwingIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataButtonField.TethysUISwingListButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataButtonField.TethysUISwingScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutionTextField;

@@ -29,6 +29,7 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.event;
     exports net.sourceforge.joceanus.jtethys.jar;
     exports net.sourceforge.joceanus.jtethys.logger;
+    exports net.sourceforge.joceanus.jtethys.profile;
     exports net.sourceforge.joceanus.jtethys.resource;
     exports net.sourceforge.joceanus.jtethys.ui;
 
@@ -42,6 +43,8 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.ui.api.field;
     exports net.sourceforge.joceanus.jtethys.ui.api.menu;
     exports net.sourceforge.joceanus.jtethys.ui.api.pane;
+    exports net.sourceforge.joceanus.jtethys.ui.api.table;
+    exports net.sourceforge.joceanus.jtethys.ui.api.thread;
 
     /* Restricted exports */
     exports net.sourceforge.joceanus.jtethys.ui.core.base to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
@@ -53,4 +56,6 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.ui.core.field to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.menu to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.pane to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
+    exports net.sourceforge.joceanus.jtethys.ui.core.table to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
+    exports net.sourceforge.joceanus.jtethys.ui.core.thread;
 }

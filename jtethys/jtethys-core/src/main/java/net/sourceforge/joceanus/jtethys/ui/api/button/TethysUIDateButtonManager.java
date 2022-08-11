@@ -100,9 +100,4 @@ public interface TethysUIDateButtonManager
      * @param pShowNarrowDays true/false
      */
     void setShowNarrowDays(boolean pShowNarrowDays);
-
-    //@Override
-    //public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
-    //    theDateConfigurator = pConfigurator;
-    //}
 }

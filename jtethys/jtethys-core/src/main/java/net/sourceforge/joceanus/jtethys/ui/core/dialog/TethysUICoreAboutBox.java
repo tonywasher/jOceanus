@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAboutBox;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIXResource;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIResource;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
@@ -36,22 +36,22 @@ public abstract class TethysUICoreAboutBox
     /**
      * Version Prompt.
      */
-    private static final String PROMPT_VERSION = TethysUIXResource.ABOUT_VERSION.getValue();
+    private static final String PROMPT_VERSION = TethysUIResource.ABOUT_VERSION.getValue();
 
     /**
      * Revision Prompt.
      */
-    private static final String PROMPT_REVISION = TethysUIXResource.ABOUT_REVISION.getValue();
+    private static final String PROMPT_REVISION = TethysUIResource.ABOUT_REVISION.getValue();
 
     /**
      * BuiltOn Prompt.
      */
-    private static final String PROMPT_BUILDDATE = TethysUIXResource.ABOUT_BUILTON.getValue();
+    private static final String PROMPT_BUILDDATE = TethysUIResource.ABOUT_BUILTON.getValue();
 
     /**
      * OK Text.
      */
-    private static final String TEXT_OK = TethysUIXResource.BUTTON_OK.getValue();
+    private static final String TEXT_OK = TethysUIResource.BUTTON_OK.getValue();
 
     /**
      * InSet size.

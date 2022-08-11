@@ -145,7 +145,7 @@ public class TethysUICoreDataFormatter
             return (String) pValue;
         }
         if (pValue instanceof Boolean) {
-            return ((Boolean) pValue)
+            return Boolean.TRUE.equals(pValue)
                     ? "true"
                     : "false";
         }

@@ -29,6 +29,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust.TethysUISwingFieldAdjustSupplier;
@@ -39,6 +41,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingDialogFacto
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.pane.TethysUISwingPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.thread.TethysUISwingThreadFactory;
 
 /**
  * javafx Factory.
@@ -82,6 +86,11 @@ public class TethysUISwingFactory
     private final TethysUISwingMenuFactory theMenuFactory;
 
     /**
+     * The thread factory.
+     */
+    private final TethysUISwingThreadFactory theThreadFactory;
+
+    /**
      * Constructor.
      * @param pProgram the program definitions
      */
@@ -94,6 +103,7 @@ public class TethysUISwingFactory
         theDialogFactory = new TethysUISwingDialogFactory(this);
         theFieldFactory = new TethysUISwingFieldFactory(this);
         theMenuFactory = new TethysUISwingMenuFactory(this);
+        theThreadFactory = new TethysUISwingThreadFactory(this);
     }
 
     /**
@@ -148,7 +158,17 @@ public class TethysUISwingFactory
     }
 
     @Override
+    public TethysUIThreadFactory threadFactory() {
+        return theThreadFactory;
+    }
+
+    @Override
     public TethysUISwingDataFieldAdjust getFieldAdjuster() {
         return theFieldAdjust;
+    }
+
+    @Override
+    public <R> TethysUITableManager<Color, R> newTable() {
+        return new TethysUISwingTableManager<>(this);
     }
 }

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIXResource;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIResource;
 
 /**
  * Log text area.
@@ -39,7 +39,7 @@ public class TethysUICoreLogTextArea
     /**
      * Cancel Text.
      */
-    private static final String TEXT_CANCEL = TethysUIXResource.BUTTON_CANCEL.getValue();
+    private static final String TEXT_CANCEL = TethysUIResource.BUTTON_CANCEL.getValue();
 
     /**
      * The Event Manager.

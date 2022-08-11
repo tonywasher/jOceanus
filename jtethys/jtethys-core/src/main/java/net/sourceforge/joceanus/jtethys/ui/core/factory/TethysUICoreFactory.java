@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
 
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
  * @param <C> the color
  */
 public abstract class TethysUICoreFactory<C>
-        implements TethysUIFactory<C>, TethysEventProvider<TethysUIEvent> {
+        implements TethysUIFactory<C>, TethysEventProvider<TethysUIEvent>, TethysUIThreadData {
     /**
      * Parent Component definition.
      */

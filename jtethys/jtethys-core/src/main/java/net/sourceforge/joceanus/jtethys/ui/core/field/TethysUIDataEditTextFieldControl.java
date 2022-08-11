@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedField;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIXResource;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIResource;
 
 /**
  * DataEditTextField base class.
@@ -33,7 +33,7 @@ public class TethysUIDataEditTextFieldControl<T>
     /**
      * The InvalidValue Error Text.
      */
-    private static final String ERROR_BADPARSE = TethysUIXResource.PARSE_BADVALUE.getValue();
+    private static final String ERROR_BADPARSE = TethysUIResource.PARSE_BADVALUE.getValue();
 
     /**
      * The Field.
