@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.button.TethysUIFXButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.chart.TethysUIFXChartFactory;
@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.thread.TethysUIFXThreadFactory;
 
 /**
  * javafx Factory.
@@ -100,6 +101,11 @@ public class TethysUIFXFactory
     private final TethysUIFXMenuFactory theMenuFactory;
 
     /**
+     * The thread factory.
+     */
+    private final TethysUIFXThreadFactory theThreadFactory;
+
+    /**
      * Scenes.
      */
     private final List<Scene> theScenes;
@@ -117,6 +123,7 @@ public class TethysUIFXFactory
         theDialogFactory = new TethysUIFXDialogFactory(this);
         theFieldFactory = new TethysUIFXFieldFactory(this);
         theMenuFactory = new TethysUIFXMenuFactory(this);
+        theThreadFactory = new TethysUIFXThreadFactory(this);
 
         /* Handle scenes */
         theScenes = new ArrayList<>();
@@ -156,6 +163,11 @@ public class TethysUIFXFactory
     @Override
     public TethysUIMenuFactory menuFactory() {
         return theMenuFactory;
+    }
+
+    @Override
+    public TethysUIThreadFactory threadFactory() {
+        return theThreadFactory;
     }
 
     @Override
@@ -211,7 +223,7 @@ public class TethysUIFXFactory
     }
 
     @Override
-    public <C, R> TethysUITableManager<C, R> newTable() {
+    public <R> TethysUITableManager<Color, R> newTable() {
         return new TethysUIFXTableManager<>(this);
     }
 
