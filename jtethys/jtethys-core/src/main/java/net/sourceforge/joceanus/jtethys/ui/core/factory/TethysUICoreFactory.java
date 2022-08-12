@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -91,12 +92,18 @@ public abstract class TethysUICoreFactory<C>
     private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
+     * The Active Profile.
+     */
+    private TethysProfile theProfile;
+
+    /**
      * Constructor.
      * @param pProgram the program definitions
      */
     protected TethysUICoreFactory(final TethysUIProgram pProgram) {
         /* Store the program */
         theProgram = pProgram;
+        theProfile = new TethysProfile("StartUp");
 
         /* Create base items */
         theFormatter = new TethysUICoreDataFormatter();
@@ -140,6 +147,31 @@ public abstract class TethysUICoreFactory<C>
     @Override
     public void activateLogSink() {
         TethysLogManager.setSink(theLogSink);
+    }
+
+    @Override
+    public TethysProfile getNewProfile(final String pTask) {
+        /* Create a new profile */
+        theProfile = new TethysProfile(pTask);
+
+        /* Return the new profile */
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    public TethysProfile getActiveProfile() {
+        return theProfile;
+    }
+
+    @Override
+    public TethysProfile getActiveTask() {
+        /* Create a new profile */
+        return theProfile == null
+                ? null
+                : theProfile.getActiveTask();
     }
 
     /**

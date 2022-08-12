@@ -15,22 +15,10 @@
  * limitations under the License.
  ******************************************************************************/
 /**
- * Tethys javaFX.
+ * javaFX launch.
  */
-module net.sourceforge.joceanus.jtethys.javafx {
-    /* Java runTime */
-    requires java.xml;
-    requires jdk.jsobject;
 
-    /* JavaFX runTime */
-    requires javafx.controls;
-    requires javafx.graphics;
-    requires javafx.web;
-
-    /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jtethys.ui.javafx;
-    exports net.sourceforge.joceanus.jtethys.ui.javafx.launch;
-}
+/**
+ * javaFX launch classes.
+ */
+package net.sourceforge.joceanus.jtethys.ui.javafx.launch;

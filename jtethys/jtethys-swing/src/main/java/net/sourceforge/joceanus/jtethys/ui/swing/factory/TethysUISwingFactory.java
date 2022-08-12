@@ -94,7 +94,7 @@ public class TethysUISwingFactory
      * Constructor.
      * @param pProgram the program definitions
      */
-    TethysUISwingFactory(final TethysUIProgram pProgram) {
+    public TethysUISwingFactory(final TethysUIProgram pProgram) {
         super(pProgram);
         theFieldAdjust = new TethysUISwingDataFieldAdjust(this);
         thePaneFactory = new TethysUISwingPaneFactory(this);

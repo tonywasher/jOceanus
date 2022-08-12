@@ -14,23 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.ui.api.factory;
+
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
+
 /**
- * Tethys javaFX.
+ * Main GUI program class interface.
  */
-module net.sourceforge.joceanus.jtethys.javafx {
-    /* Java runTime */
-    requires java.xml;
-    requires jdk.jsobject;
+public interface TethysUIMainPanel {
+    /**
+     * Obtain the main component.
+     * @return the component
+     */
+    TethysUIComponent getComponent();
 
-    /* JavaFX runTime */
-    requires javafx.controls;
-    requires javafx.graphics;
-    requires javafx.web;
+    /**
+     * Obtain menuBar.
+     * @return the menuBar (or null)
+     */
+    default TethysUIMenuBarManager getMenuBar() {
+        return null;
+    }
 
-    /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jtethys.ui.javafx;
-    exports net.sourceforge.joceanus.jtethys.ui.javafx.launch;
+    /**
+     * Handle application close.
+     * @return allow close (true/false)
+     */
+    default boolean handleAppClose() {
+        return true;
+    }
 }
+

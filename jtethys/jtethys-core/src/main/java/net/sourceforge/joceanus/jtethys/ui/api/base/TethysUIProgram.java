@@ -124,6 +124,22 @@ public abstract class TethysUIProgram {
     }
 
     /**
+     * Obtain the dimensions (width, height) of the panel.
+     * @return the width/height (or null for default)
+     */
+    public int[] getPanelDimensions() {
+        return null;
+    }
+
+    /**
+     * Does the panel use a slider status?
+     * @return true/false
+     */
+    public boolean useSliderStatus() {
+        return false;
+    }
+
+    /**
      * Obtain the program iconIds.
      * @return the icon Ids.
      */

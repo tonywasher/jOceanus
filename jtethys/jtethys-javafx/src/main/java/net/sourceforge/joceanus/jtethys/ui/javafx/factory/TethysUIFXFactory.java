@@ -114,7 +114,7 @@ public class TethysUIFXFactory
      * Constructor.
      * @param pProgram the program definitions
      */
-    TethysUIFXFactory(final TethysUIProgram pProgram) {
+    public TethysUIFXFactory(final TethysUIProgram pProgram) {
         super(pProgram);
         thePaneFactory = new TethysUIFXPaneFactory(this);
         theButtonFactory = new TethysUIFXButtonFactory(this);

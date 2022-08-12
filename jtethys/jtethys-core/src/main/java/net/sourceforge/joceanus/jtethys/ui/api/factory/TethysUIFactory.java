@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api.factory;
 
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
@@ -72,6 +73,25 @@ public interface TethysUIFactory<C> {
      * @return the definition
      */
     TethysUIProgram getProgramDefinitions();
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    TethysProfile getNewProfile(String pTask);
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    TethysProfile getActiveProfile();
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    TethysProfile getActiveTask();
 
     /**
      * Obtain the button factory.
