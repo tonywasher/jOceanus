@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx.launch;
+package net.sourceforge.joceanus.jtethys.ui.javafx.launch.util;
 
 import java.util.Arrays;
 import javafx.application.Platform;
@@ -39,6 +39,17 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuBarManager;
  * State for javaFX program.
  */
 public class TethysUIFXLaunchState {
+    /**
+     *
+     */
+    public interface TethysUIFXSetState {
+        /**
+         * Set program state
+         * @param pState the state
+         */
+        void setProgramState(TethysUIFXLaunchState pState);
+    }
+
     /**
      * The Program definition.
      */
@@ -69,7 +80,7 @@ public class TethysUIFXLaunchState {
      * @param pProgram the program
      * @throws OceanusException on error
      */
-    TethysUIFXLaunchState(final TethysUILaunchProgram pProgram) throws OceanusException {
+    public TethysUIFXLaunchState(final TethysUILaunchProgram pProgram) throws OceanusException {
         /* Create the program class. */
         theApp = pProgram;
         theFactory = new TethysUIFXFactory(pProgram);

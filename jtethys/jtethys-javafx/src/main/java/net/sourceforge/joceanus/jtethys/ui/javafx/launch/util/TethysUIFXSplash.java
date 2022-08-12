@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx.launch;
+package net.sourceforge.joceanus.jtethys.ui.javafx.launch.util;
 
 import javafx.application.Application;
 import javafx.application.Preloader.StateChangeNotification;
@@ -35,6 +35,7 @@ import javafx.stage.StageStyle;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXIcon;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.util.TethysUIFXLaunchState.TethysUIFXSetState;
 
 /**
  * javaFX Splash Panel.
@@ -94,7 +95,7 @@ public class TethysUIFXSplash {
      *
      * @param pStage the stage
      */
-    public void attachToStage(final Stage pStage) {
+    void attachToStage(final Stage pStage) {
         /* Store the stage */
         theStage = pStage;
 
@@ -116,7 +117,7 @@ public class TethysUIFXSplash {
      *
      * @param pEvent the event
      */
-    public void handleStateChange(final StateChangeNotification pEvent) {
+    void handleStateChange(final StateChangeNotification pEvent) {
         /* If we are just before application start */
         if (pEvent.getType() == StateChangeNotification.Type.BEFORE_START) {
             /* Hide any visible stage */
@@ -128,8 +129,8 @@ public class TethysUIFXSplash {
         } else if (pEvent.getType() == StateChangeNotification.Type.BEFORE_INIT) {
             /* Pass on info to application if possible */
             final Application myApp = pEvent.getApplication();
-            if (myApp instanceof TethysUIFXLaunch) {
-                ((TethysUIFXLaunch) myApp).setProgramInfo(theState);
+            if (myApp instanceof TethysUIFXSetState) {
+                ((TethysUIFXSetState) myApp).setProgramState(theState);
             }
         }
     }

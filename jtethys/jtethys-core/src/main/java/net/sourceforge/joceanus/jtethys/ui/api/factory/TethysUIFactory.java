@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadFactory;
 
 /**
@@ -139,12 +139,11 @@ public interface TethysUIFactory<C> {
      * Obtain the thread factory.
      * @return the factory
      */
-    TethysUIThreadFactory threadFactory();
+    TethysUITableFactory tableFactory();
 
     /**
-     * Obtain a new table.
-     * @param <R> the row type
-     * @return the new field
+     * Obtain the thread factory.
+     * @return the factory
      */
-    <R> TethysUITableManager<C, R> newTable();
+    TethysUIThreadFactory threadFactory();
 }

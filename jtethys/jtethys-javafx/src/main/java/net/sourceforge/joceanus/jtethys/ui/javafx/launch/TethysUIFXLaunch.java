@@ -23,12 +23,15 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.util.TethysUIFXLaunchState;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.util.TethysUIFXLaunchState.TethysUIFXSetState;
 
 /**
  * javaFX StartUp.
  */
 public abstract class TethysUIFXLaunch
-        extends Application {
+        extends Application
+        implements TethysUIFXSetState {
     /**
      * Logger.
      */
@@ -45,11 +48,8 @@ public abstract class TethysUIFXLaunch
      */
     protected abstract TethysUILaunchProgram getProgramInfo();
 
-    /**
-     * Set program information
-     * @param pState the state
-     */
-    void setProgramInfo(final TethysUIFXLaunchState pState) {
+    @Override
+    public void setProgramState(final TethysUIFXLaunchState pState) {
         theState = pState;
     }
 

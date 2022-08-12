@@ -32,16 +32,24 @@ public class TethysUISwingThreadFactory
     private final TethysUICoreFactory<?> theFactory;
 
     /**
+     * use slider.
+     */
+    private final boolean useSlider;
+
+    /**
      * Constructor.
      * @param pFactory the factory
+     * @param pSlider use slider
      */
-   public TethysUISwingThreadFactory(final TethysUICoreFactory<?> pFactory) {
+   public TethysUISwingThreadFactory(final TethysUICoreFactory<?> pFactory,
+                                     final boolean pSlider) {
         theFactory = pFactory;
+       useSlider = pSlider;
     }
 
     @Override
-    public TethysUIThreadManager newThreadManager(boolean pSlider) {
-        return new TethysUISwingThreadManager(theFactory, pSlider);
+    public TethysUIThreadManager newThreadManager() {
+        return new TethysUISwingThreadManager(theFactory, useSlider);
     }
 
     @Override

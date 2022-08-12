@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXSceneRegister
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.thread.TethysUIFXThreadFactory;
 
 /**
@@ -101,6 +101,11 @@ public class TethysUIFXFactory
     private final TethysUIFXMenuFactory theMenuFactory;
 
     /**
+     * The table factory.
+     */
+    private final TethysUIFXTableFactory theTableFactory;
+
+    /**
      * The thread factory.
      */
     private final TethysUIFXThreadFactory theThreadFactory;
@@ -123,7 +128,8 @@ public class TethysUIFXFactory
         theDialogFactory = new TethysUIFXDialogFactory(this);
         theFieldFactory = new TethysUIFXFieldFactory(this);
         theMenuFactory = new TethysUIFXMenuFactory(this);
-        theThreadFactory = new TethysUIFXThreadFactory(this);
+        theTableFactory = new TethysUIFXTableFactory(this);
+        theThreadFactory = new TethysUIFXThreadFactory(this, pProgram.useSliderStatus());
 
         /* Handle scenes */
         theScenes = new ArrayList<>();
@@ -163,6 +169,11 @@ public class TethysUIFXFactory
     @Override
     public TethysUIMenuFactory menuFactory() {
         return theMenuFactory;
+    }
+
+    @Override
+    public TethysUITableFactory tableFactory() {
+        return theTableFactory;
     }
 
     @Override
@@ -220,11 +231,6 @@ public class TethysUIFXFactory
 
         /* Return the string */
         return myBuilder.toString();
-    }
-
-    @Override
-    public <R> TethysUITableManager<Color, R> newTable() {
-        return new TethysUIFXTableManager<>(this);
     }
 
     /**
