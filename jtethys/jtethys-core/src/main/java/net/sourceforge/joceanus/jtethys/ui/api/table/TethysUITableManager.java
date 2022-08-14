@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.api.table;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -191,6 +192,13 @@ public interface TethysUITableManager<C, R>
      * Cancel editing.
      */
     void cancelEditing();
+
+    /**
+     * Set the table items.
+     *
+     * @param pItems the items
+     */
+    void setItems(final List<R> pItems);
 
     /**
      * Obtain an iterator over the unsorted items.
