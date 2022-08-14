@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.SelectionMode;
@@ -209,13 +210,10 @@ public class TethysUIFXTableManager<C, R>
         return theCellFactory;
     }
 
-    /**
-     * Set the table items.
-     *
-     * @param pItems the items
-     */
-    public void setItems(final ObservableList<R> pItems) {
-        theItems = pItems;
+    @Override
+    public void setItems(final List<R> pItems) {
+        super.setItems(pItems);
+        theItems = FXCollections.observableArrayList(pItems);
         setTheItems();
     }
 

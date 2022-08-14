@@ -14,15 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
+package net.sourceforge.joceanus.jtethys.ui.api.factory;
+
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
 
 /**
- * Thread Factory API.
+ * Main GUI program class interface.
  */
-public interface TethysUIThreadFactory {
+public interface TethysUIMainPanel {
     /**
-     * Create a Thread Manager.
-     * @return the thread manager
+     * Obtain the main component.
+     * @return the component
      */
-    TethysUIThreadManager newThreadManager();
+    TethysUIComponent getComponent();
+
+    /**
+     * Obtain menuBar.
+     * @return the menuBar (or null)
+     */
+    default TethysUIMenuBarManager getMenuBar() {
+        return null;
+    }
+
+    /**
+     * Handle application close.
+     * @return allow close (true/false)
+     */
+    default boolean handleAppClose() {
+        return true;
+    }
 }
+

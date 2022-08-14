@@ -115,6 +115,14 @@ public interface TethysUITableColumn<T, C, R>
     TethysUITableColumn<T, C, R> setEditable(boolean pEditable);
 
     /**
+     * Set cell value Factory.
+     *
+     * @param pFactory the cell factory
+     * @return the column
+     */
+    TethysUITableColumn<T, C, R> setCellValueFactory(Function<R, T> pFactory);
+
+    /**
      * Set the cell-editable tester.
      * @param pEditable the editable tester
      * @return the column

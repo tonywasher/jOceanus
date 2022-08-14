@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.core.table;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -89,6 +90,11 @@ public abstract class TethysUICoreTableColumn<T, C, R>
     private boolean doRePaintColOnCommit;
 
     /**
+     * Cell value factory.
+     */
+    private Function<R, T> theValueFactory;
+
+    /**
      * The column that when updated, will force this column to update.
      */
     private C theRePaintId;
@@ -128,6 +134,9 @@ public abstract class TethysUICoreTableColumn<T, C, R>
 
         /* Initialise editable */
         isCellEditable = p -> true;
+
+        /* Set default value factory */
+        theValueFactory = e -> null;
     }
 
     @Override
@@ -211,6 +220,26 @@ public abstract class TethysUICoreTableColumn<T, C, R>
             }
         }
         return this;
+    }
+
+    /**
+     * Set cell value Factory.
+     *
+     * @param pFactory the cell factory
+     * @return the column
+     */
+    public TethysUICoreTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
+        theValueFactory = pFactory;
+        return this;
+    }
+
+    /**
+     * Get cell value Factory.
+     *
+     * @return the cell factory
+     */
+    public Function<R, T> getCellValueFactory() {
+        return theValueFactory;
     }
 
     @Override

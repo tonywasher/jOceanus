@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -92,13 +93,11 @@ public class TethysUIFXTableColumn<T, C, R>
         return getTable().getCellFactory();
     }
 
-    /**
-     * Set cell value Factory.
-     *
-     * @param pFactory the cell factory
-     */
-    public void setCellValueFactory(final Callback<CellDataFeatures<R, T>, ObservableValue<T>> pFactory) {
-        theColumn.setCellValueFactory(pFactory);
+    @Override
+    public TethysUICoreTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
+        super.setCellValueFactory(pFactory);
+        theColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(pFactory.apply(p.getValue())));
+        return this;
     }
 
     /**

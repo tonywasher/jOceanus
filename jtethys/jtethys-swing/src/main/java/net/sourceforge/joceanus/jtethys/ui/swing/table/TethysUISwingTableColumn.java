@@ -64,11 +64,6 @@ public abstract class TethysUISwingTableColumn<T, C, R>
     private TethysUISwingTableCell<T, C, R> theCell;
 
     /**
-     * Cell value factory.
-     */
-    private Function<R, T> theValueFactory;
-
-    /**
      * Constructor.
      *
      * @param pTable the owning table
@@ -92,20 +87,6 @@ public abstract class TethysUISwingTableColumn<T, C, R>
 
         /* Configure the column */
         setColumnWidth(getCellType().getDefaultWidth());
-
-        /* Set default value factory */
-        theValueFactory = e -> null;
-    }
-
-    /**
-     * Set cell value Factory.
-     *
-     * @param pFactory the cell factory
-     * @return the column
-     */
-    public TethysUISwingTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
-        theValueFactory = pFactory;
-        return this;
     }
 
     /**
@@ -163,7 +144,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      */
     T getCellValue(final int pIndex) {
         theCell.setActiveRow(pIndex);
-        return theValueFactory.apply(theCell.getActiveRow());
+        return getCellValueFactory().apply(theCell.getActiveRow());
     }
 
     /**

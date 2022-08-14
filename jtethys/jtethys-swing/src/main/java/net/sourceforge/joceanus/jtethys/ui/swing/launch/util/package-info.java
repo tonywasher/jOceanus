@@ -14,15 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
-
 /**
- * Thread Factory API.
+ * Swng Launch utilities.
  */
-public interface TethysUIThreadFactory {
-    /**
-     * Create a Thread Manager.
-     * @return the thread manager
-     */
-    TethysUIThreadManager newThreadManager();
-}
+package net.sourceforge.joceanus.jtethys.ui.swing.launch.util;

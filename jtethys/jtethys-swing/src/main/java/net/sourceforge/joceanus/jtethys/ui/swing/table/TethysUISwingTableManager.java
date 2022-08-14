@@ -104,11 +104,6 @@ public class TethysUISwingTableManager<C, R>
     private final TethysUISwingTableSorter<R> theSorter;
 
     /**
-     * The item list.
-     */
-    private List<R> theItems;
-
-    /**
      * Constructor.
      *
      * @param pFactory the GUI factory
@@ -171,22 +166,15 @@ public class TethysUISwingTableManager<C, R>
     }
 
     @Override
-    public Iterator<R> itemIterator() {
-        return theItems == null
-                ? Collections.emptyIterator()
-                : theItems.iterator();
-    }
-
-    @Override
     public Iterator<R> sortedIterator() {
-        return theItems == null
+        return getItems() == null
                 ? Collections.emptyIterator()
                 : theSorter.sortIterator();
     }
 
     @Override
     public Iterator<R> viewIterator() {
-        return theItems == null
+        return getItems() == null
                 ? Collections.emptyIterator()
                 : theSorter.viewIterator();
     }
@@ -223,15 +211,6 @@ public class TethysUISwingTableManager<C, R>
      */
     TethysUISwingTableModel getTableModel() {
         return theModel;
-    }
-
-    /**
-     * Obtain the columnList.
-     *
-     * @return the columnModel
-     */
-    List<R> getItems() {
-        return theItems;
     }
 
     /**
@@ -291,14 +270,15 @@ public class TethysUISwingTableManager<C, R>
      * @return the table column
      */
     R getIndexedRow(final int pIndex) {
-        if (theItems == null) {
+        final List<R> myItems = getItems();
+        if (myItems == null) {
             return null;
         }
         if (pIndex < 0
-                || pIndex > theItems.size()) {
+                || pIndex > myItems.size()) {
             throw new IllegalArgumentException();
         }
-        return theItems.get(pIndex);
+        return myItems.get(pIndex);
     }
 
     @Override
@@ -308,13 +288,9 @@ public class TethysUISwingTableManager<C, R>
         }
     }
 
-    /**
-     * Set the table items.
-     *
-     * @param pItems the items
-     */
+    @Override
     public void setItems(final List<R> pItems) {
-        theItems = pItems;
+        super.setItems(pItems);
         theModel.fireTableDataChanged();
     }
 
@@ -472,7 +448,7 @@ public class TethysUISwingTableManager<C, R>
     @Override
     public void selectRowWithScroll(final R pItem) {
         /* Determine the index of the item */
-        final int iModel = theItems.indexOf(pItem);
+        final int iModel = getItems().indexOf(pItem);
         final int iView = iModel == -1 ? -1 : theTable.convertRowIndexToView(iModel);
 
         /* If we have a row to display */

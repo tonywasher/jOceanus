@@ -32,5 +32,5 @@ module net.sourceforge.joceanus.jtethys.javafx {
 
     /* Exports */
     exports net.sourceforge.joceanus.jtethys.ui.javafx;
-    exports net.sourceforge.joceanus.jtethys.ui.javafx.factory;
+    exports net.sourceforge.joceanus.jtethys.ui.javafx.launch;
 }

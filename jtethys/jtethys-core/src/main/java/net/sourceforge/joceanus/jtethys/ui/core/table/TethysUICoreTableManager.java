@@ -16,8 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.core.table;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -104,6 +107,11 @@ public abstract class TethysUICoreTableManager<C, R>
     private Predicate<R> theFilter;
 
     /**
+     * The item list.
+     */
+    private List<R> theItems;
+
+    /**
      * Is the table editable?
      */
     private boolean isEditable;
@@ -186,6 +194,26 @@ public abstract class TethysUICoreTableManager<C, R>
     public boolean isDisabled(final R pRow) {
         return theDisabled != null
                 && theDisabled.test(pRow);
+    }
+
+    @Override
+    public void setItems(final List<R> pItems) {
+        theItems = pItems;
+    }
+
+    @Override
+    public Iterator<R> itemIterator() {
+        return theItems == null
+                ? Collections.emptyIterator()
+                : theItems.iterator();
+    }
+
+    /**
+     * Obtain items.
+     * @return the items
+     */
+    public List<R> getItems() {
+        return theItems;
     }
 
     @Override

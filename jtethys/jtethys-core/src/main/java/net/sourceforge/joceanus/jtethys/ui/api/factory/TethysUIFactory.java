@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api.factory;
 
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
@@ -28,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadFactory;
 
 /**
@@ -72,6 +73,25 @@ public interface TethysUIFactory<C> {
      * @return the definition
      */
     TethysUIProgram getProgramDefinitions();
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    TethysProfile getNewProfile(String pTask);
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    TethysProfile getActiveProfile();
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    TethysProfile getActiveTask();
 
     /**
      * Obtain the button factory.
@@ -119,12 +139,11 @@ public interface TethysUIFactory<C> {
      * Obtain the thread factory.
      * @return the factory
      */
-    TethysUIThreadFactory threadFactory();
+    TethysUITableFactory tableFactory();
 
     /**
-     * Obtain a new table.
-     * @param <R> the row type
-     * @return the new field
+     * Obtain the thread factory.
+     * @return the factory
      */
-    <R> TethysUITableManager<C, R> newTable();
+    TethysUIThreadFactory threadFactory();
 }

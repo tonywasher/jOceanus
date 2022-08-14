@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
+package net.sourceforge.joceanus.jtethys.ui.api.table;
 
 /**
- * Thread Factory API.
+ * Table Factory.
  */
-public interface TethysUIThreadFactory {
+public interface TethysUITableFactory {
     /**
-     * Create a Thread Manager.
-     * @return the thread manager
+     * Obtain a new table.
+     * @param <C> the column type.
+     * @param <R> the row type
+     * @return the new field
      */
-    TethysUIThreadManager newThreadManager();
+    <C, R> TethysUITableManager<C, R> newTable();
 }

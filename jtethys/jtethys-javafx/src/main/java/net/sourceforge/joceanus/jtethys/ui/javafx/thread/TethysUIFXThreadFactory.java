@@ -32,16 +32,24 @@ public class TethysUIFXThreadFactory
     private final TethysUICoreFactory<?> theFactory;
 
     /**
+     * use slider.
+     */
+    private final boolean useSlider;
+
+    /**
      * Constructor.
      * @param pFactory the factory
+     * @param pSlider use slider
      */
-    public TethysUIFXThreadFactory(final TethysUICoreFactory<?> pFactory) {
+    public TethysUIFXThreadFactory(final TethysUICoreFactory<?> pFactory,
+                                   final boolean pSlider) {
         theFactory = pFactory;
+        useSlider = pSlider;
     }
 
     @Override
-    public TethysUIThreadManager newThreadManager(boolean pSlider) {
-        return new TethysUIFXThreadManager(theFactory, pSlider);
+    public TethysUIThreadManager newThreadManager() {
+        return new TethysUIFXThreadManager(theFactory, useSlider);
     }
 
     @Override

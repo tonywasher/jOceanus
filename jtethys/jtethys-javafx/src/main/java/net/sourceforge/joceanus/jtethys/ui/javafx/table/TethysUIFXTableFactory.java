@@ -14,15 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
+package net.sourceforge.joceanus.jtethys.ui.javafx.table;
+
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
- * Thread Factory API.
+ * javaFX table Factory.
  */
-public interface TethysUIThreadFactory {
+public class TethysUIFXTableFactory
+    implements TethysUITableFactory {
     /**
-     * Create a Thread Manager.
-     * @return the thread manager
+     * The factory.
      */
-    TethysUIThreadManager newThreadManager();
+    private final TethysUICoreFactory<?> theFactory;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     */
+    public TethysUIFXTableFactory(final TethysUICoreFactory<?> pFactory) {
+        theFactory = pFactory;
+    }
+
+    @Override
+    public <C, R> TethysUITableManager<C, R> newTable() {
+        return new TethysUIFXTableManager<>(theFactory);
+    }
 }
