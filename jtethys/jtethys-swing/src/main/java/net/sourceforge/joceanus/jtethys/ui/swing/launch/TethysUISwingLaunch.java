@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.launch.util.TethysUISwingLaunch
 /**
  * Swing StartUp.
  */
-public final class TethysUISwingLaunch {
+public class TethysUISwingLaunch {
     /**
      * Logger.
      */
@@ -36,7 +36,7 @@ public final class TethysUISwingLaunch {
     /**
      * Private constructor.
      */
-    private TethysUISwingLaunch() {
+    protected TethysUISwingLaunch() {
     }
 
     /**

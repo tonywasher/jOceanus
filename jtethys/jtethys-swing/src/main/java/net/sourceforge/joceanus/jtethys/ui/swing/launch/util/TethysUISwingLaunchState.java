@@ -94,7 +94,10 @@ public class TethysUISwingLaunchState {
         theMain = createMain(theApp, theFactory);
 
         /* Add the Menu bar */
-        theFrame.setJMenuBar(((TethysUISwingMenuBarManager) theMain.getMenuBar()).getNode());
+        final TethysUISwingMenuBarManager myMenuBar = (TethysUISwingMenuBarManager) theMain.getMenuBar();
+        if (myMenuBar != null) {
+            theFrame.setJMenuBar(((TethysUISwingMenuBarManager) theMain.getMenuBar()).getNode());
+        }
 
         /* Create a new pane */
         final JPanel myPane = new JPanel();

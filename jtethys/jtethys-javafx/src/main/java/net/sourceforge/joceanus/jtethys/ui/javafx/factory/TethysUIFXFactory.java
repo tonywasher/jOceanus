@@ -130,6 +130,7 @@ public class TethysUIFXFactory
         theMenuFactory = new TethysUIFXMenuFactory(this);
         theTableFactory = new TethysUIFXTableFactory(this);
         theThreadFactory = new TethysUIFXThreadFactory(this, pProgram.useSliderStatus());
+        establishLogSink();
 
         /* Handle scenes */
         theScenes = new ArrayList<>();

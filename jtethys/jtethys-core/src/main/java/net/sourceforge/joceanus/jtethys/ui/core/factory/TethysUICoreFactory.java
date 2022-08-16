@@ -82,14 +82,14 @@ public abstract class TethysUICoreFactory<C>
     private final TethysUIValueSet theValueSet;
 
     /**
-     * LogSink.
-     */
-    private final TethysUICoreLogTextArea theLogSink;
-
-    /**
      * The event manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
+
+    /**
+     * LogSink.
+     */
+    private TethysUICoreLogTextArea theLogSink;
 
     /**
      * The Active Profile.
@@ -111,8 +111,12 @@ public abstract class TethysUICoreFactory<C>
         theParentMap = new HashMap<>();
         theValueSet = new TethysUICoreValueSet();
         theEventManager = new TethysEventManager<>();
+    }
 
-        /* Create logSink */
+    /**
+     * Establish logSink.
+     */
+    protected void establishLogSink() {
         theLogSink = new TethysUICoreLogTextArea(this);
     }
 

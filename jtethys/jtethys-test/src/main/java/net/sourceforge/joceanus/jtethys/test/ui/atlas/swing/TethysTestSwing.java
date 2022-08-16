@@ -14,30 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.test.ui.atlas.swing;
+
+import net.sourceforge.joceanus.jtethys.test.ui.atlas.TethysTest;
+import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
 
 /**
- * Tethys Test.
+ * Tethys Swing Test main.
  */
-module net.sourceforge.joceanus.jtethys.test.core {
-    /* Java runTime */
-    requires java.desktop;
-
-    /* javaFX runTime */
-    requires javafx.controls;
-    requires javafx.graphics;
-
-    /* External libraries */
-    requires org.jfree.jfreechart;
-
-    /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
-    requires net.sourceforge.joceanus.jtethys.swing;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jtethys.test.ui;
-
-    /* Main classes */
-    exports net.sourceforge.joceanus.jtethys.test.ui.javafx to javafx.graphics;
-    exports net.sourceforge.joceanus.jtethys.test.ui.atlas.javafx to javafx.graphics;
+public class TethysTestSwing
+        extends TethysUISwingLaunch {
+    /**
+     * launch program.
+     *
+     * @param pArgs the arguments
+     */
+    public static void main(final String[] pArgs) {
+        launch(new TethysTest());
+    }
 }
