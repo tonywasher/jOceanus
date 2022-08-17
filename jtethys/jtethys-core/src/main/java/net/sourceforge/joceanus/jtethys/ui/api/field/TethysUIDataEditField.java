@@ -25,7 +25,13 @@ import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
@@ -189,6 +195,90 @@ public interface TethysUIDataEditField<T>
     }
 
     /**
+     * StringTextFieldControl.
+     */
+    interface TethysUIStringEditField
+            extends TethysUIDataEditField<String>, TethysUIValidatedEditField<String> {
+    }
+
+    /**
+     * CharArrayTextFieldControl.
+     */
+    interface TethysUICharArrayEditField
+            extends TethysUIDataEditField<char[]>, TethysUIValidatedEditField<char[]> {
+    }
+
+    /**
+     * ShortTextFieldControl.
+     */
+    interface TethysUIShortEditField
+            extends TethysUIDataEditField<Short>, TethysUIValidatedEditField<Short> {
+    }
+
+    /**
+     * IntegerTextFieldControl.
+     */
+    interface TethysUIIntegerEditField
+            extends TethysUIDataEditField<Integer>, TethysUIValidatedEditField<Integer> {
+    }
+
+    /**
+     * LongTextFieldControl.
+     */
+    interface TethysUILongEditField
+            extends TethysUIDataEditField<Long>, TethysUIValidatedEditField<Long> {
+    }
+
+    /**
+     * MoneyTextFieldControl.
+     */
+    interface TethysUIMoneyEditField
+            extends TethysUIDataEditField<TethysMoney>, TethysUICurrencyEditField<TethysMoney> {
+    }
+
+    /**
+     * PriceTextFieldControl.
+     */
+    interface TethysUIPriceEditField
+            extends TethysUIDataEditField<TethysPrice>, TethysUICurrencyEditField<TethysPrice> {
+    }
+
+    /**
+     * UnitsTextFieldControl.
+     */
+    interface TethysUIUnitsEditField
+            extends TethysUIDataEditField<TethysUnits>, TethysUIValidatedEditField<TethysUnits> {
+    }
+
+    /**
+     * RateTextFieldControl.
+     */
+    interface TethysUIRateEditField
+            extends TethysUIDataEditField<TethysRate>, TethysUIValidatedEditField<TethysRate> {
+    }
+
+    /**
+     * DilutionTextFieldControl.
+     */
+    interface TethysUIDilutionEditField
+            extends TethysUIDataEditField<TethysDilution>, TethysUIValidatedEditField<TethysDilution> {
+    }
+
+    /**
+     * DilutedPriceTextFieldControl.
+     */
+    interface TethysUIDilutedPriceEditField
+            extends TethysUIDataEditField<TethysDilutedPrice>, TethysUICurrencyEditField<TethysDilutedPrice> {
+    }
+
+    /**
+     * RatioTextFieldControl.
+     */
+    interface TethysUIRatioEditField
+            extends TethysUIDataEditField<TethysRatio>, TethysUIValidatedEditField<TethysRatio> {
+    }
+
+    /**
      * IconButtonFieldControl.
      * @param <T> the data type
      */
@@ -201,6 +291,13 @@ public interface TethysUIDataEditField<T>
      */
     interface TethysUIDateButtonField
             extends TethysUIDataEditField<TethysDate>, TethysUIDateButton {
+    }
+
+    /**
+     * ColorButton Field.
+     */
+    interface TethysUIColorButtonField
+            extends TethysUIDataEditField<String> {
     }
 
     /**

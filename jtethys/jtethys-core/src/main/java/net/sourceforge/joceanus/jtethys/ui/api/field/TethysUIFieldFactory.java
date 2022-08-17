@@ -23,12 +23,25 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutedPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUILongEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRateEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRatioEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRawDecimalEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIShortEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedEditField;
 
 /**
@@ -39,31 +52,31 @@ public interface TethysUIFieldFactory {
      * Obtain a new string data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<String> newStringField();
+    TethysUIStringEditField newStringField();
 
     /**
      * Obtain a new charArray data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<char[]> newCharArrayField();
+    TethysUICharArrayEditField newCharArrayField();
 
     /**
      * Obtain a new short data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<Short> newShortField();
+    TethysUIShortEditField newShortField();
 
     /**
      * Obtain a new integer data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<Integer> newIntegerField();
+    TethysUIIntegerEditField newIntegerField();
 
     /**
      * Obtain a new long data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<Long> newLongField();
+    TethysUILongEditField newLongField();
 
     /**
      * Obtain a new raw decimal data field.
@@ -75,43 +88,43 @@ public interface TethysUIFieldFactory {
      * Obtain a new money data field.
      * @return the new field
      */
-    TethysUICurrencyEditField<TethysMoney> newMoneyField();
+    TethysUIMoneyEditField newMoneyField();
 
     /**
      * Obtain a new price data field.
      * @return the new field
      */
-    TethysUICurrencyEditField<TethysPrice> newPriceField();
+    TethysUIPriceEditField newPriceField();
 
     /**
      * Obtain a new dilutedPrice data field.
      * @return the new field
      */
-    TethysUICurrencyEditField<TethysDilutedPrice> newDilutedPriceField();
+    TethysUIDilutedPriceEditField newDilutedPriceField();
 
     /**
      * Obtain a new rate data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<TethysRate> newRateField();
+    TethysUIRateEditField newRateField();
 
     /**
      * Obtain a new units data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<TethysUnits> newUnitsField();
+    TethysUIUnitsEditField newUnitsField();
 
     /**
      * Obtain a new dilution data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<TethysDilution> newDilutionField();
+    TethysUIDilutionEditField newDilutionField();
 
     /**
      * Obtain a new ratio data field.
      * @return the new field
      */
-    TethysUIValidatedEditField<TethysRatio> newRatioField();
+    TethysUIRatioEditField newRatioField();
 
     /**
      * Obtain a new date data field.
@@ -144,5 +157,5 @@ public interface TethysUIFieldFactory {
      * Obtain a new colour data field.
      * @return the new field
      */
-    TethysUIDataEditField<String> newColorField();
+    TethysUIColorButtonField newColorField();
 }

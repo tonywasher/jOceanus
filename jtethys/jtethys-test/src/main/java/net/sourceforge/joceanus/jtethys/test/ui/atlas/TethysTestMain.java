@@ -39,9 +39,11 @@ public class TethysTestMain
     TethysTestMain(final TethysUIFactory<?> pFactory) {
         final TethysTestChart myCharts = new TethysTestChart(pFactory);
         final TethysTestButtons myButtons = new TethysTestButtons(pFactory);
+        final TethysTestFields myFields = new TethysTestFields(pFactory);
         theMain = pFactory.paneFactory().newTabPane();
         theMain.addTabItem("Charts", myCharts.getComponent());
         theMain.addTabItem("Buttons", myButtons.getComponent());
+        theMain.addTabItem("Fields", myFields.getComponent());
     }
 
     @Override
