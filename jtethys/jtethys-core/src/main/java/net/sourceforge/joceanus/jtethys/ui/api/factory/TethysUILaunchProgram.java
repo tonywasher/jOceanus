@@ -21,5 +21,5 @@ public abstract class TethysUILaunchProgram
      * @return the main panel
      * @throws OceanusException on error
      */
-    public abstract TethysUIMainPanel createMainPanel(TethysUIFactory pFactory) throws OceanusException;
+    public abstract TethysUIMainPanel createMainPanel(TethysUIFactory<?> pFactory) throws OceanusException;
 }

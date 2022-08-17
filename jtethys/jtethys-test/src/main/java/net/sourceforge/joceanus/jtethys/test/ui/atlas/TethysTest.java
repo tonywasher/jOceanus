@@ -53,7 +53,7 @@ public class TethysTest
     }
 
     @Override
-    public TethysUIMainPanel createMainPanel(final TethysUIFactory pFactory) throws OceanusException {
+    public TethysUIMainPanel createMainPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         return new TethysTestMain(pFactory);
     }
 }

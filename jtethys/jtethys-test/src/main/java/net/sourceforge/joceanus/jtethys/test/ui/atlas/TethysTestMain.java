@@ -16,12 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 
 /**
  * Test Main.
@@ -31,21 +28,18 @@ public class TethysTestMain
     /**
      * The main panel.
      */
-    private final TethysUIBorderPaneManager theMain;
+    private final TethysTestChart theMain;
 
     /**
      * Constructor.
      * @param pFactory the factory
      */
-    TethysTestMain(final TethysUIFactory pFactory) {
-        theMain = pFactory.paneFactory().newBorderPane();
-        final TethysUILabel myHello = pFactory.controlFactory().newLabel("Hello");
-        myHello.setAlignment(TethysUIAlignment.CENTRE);
-        theMain.setCentre(myHello);
+    TethysTestMain(final TethysUIFactory<?> pFactory) {
+        theMain = new TethysTestChart(pFactory);
     }
 
     @Override
     public TethysUIComponent getComponent() {
-        return theMain;
+        return theMain.getComponent();
     }
 }

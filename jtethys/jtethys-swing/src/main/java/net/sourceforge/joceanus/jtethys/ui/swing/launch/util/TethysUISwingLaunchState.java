@@ -99,21 +99,16 @@ public class TethysUISwingLaunchState {
             theFrame.setJMenuBar(((TethysUISwingMenuBarManager) theMain.getMenuBar()).getNode());
         }
 
-        /* Create a new pane */
-        final JPanel myPane = new JPanel();
-        myPane.setLayout(new BorderLayout());
-        myPane.add(TethysUISwingNode.getComponent(theMain.getComponent()), BorderLayout.CENTER);
+        /* Attach the panel to the frame */
+        theFrame.getContentPane().add(TethysUISwingNode.getComponent(theMain.getComponent()), BorderLayout.CENTER);
+        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        theFrame.addWindowListener(new WindowClose());
 
         /* Set preferred size if specified */
         final int[] myDim = theApp.getPanelDimensions();
         if (myDim != null) {
-            myPane.setPreferredSize(new Dimension(myDim[0], myDim[1]));
+            theFrame.setPreferredSize(new Dimension(myDim[0], myDim[1]));
         }
-
-        /* Attach the panel to the frame */
-        theFrame.setContentPane(myPane);
-        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        theFrame.addWindowListener(new WindowClose());
 
         /* Add the icons to the frame */
         final TethysUIIconId[] myIds = theApp.getIcons();
