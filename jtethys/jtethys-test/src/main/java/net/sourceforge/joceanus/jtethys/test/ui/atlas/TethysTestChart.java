@@ -17,12 +17,15 @@
 package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITextArea;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
 
 /**
  * Chart test panel.
@@ -50,12 +53,31 @@ public class TethysTestChart {
         final TethysTestBarChart myBar = new TethysTestBarChart(pFactory, myTextArea);
         final TethysTestPieChart myPie = new TethysTestPieChart(pFactory, myTextArea);
 
-        /* Create the cardPane */
+         /* Create the cardPane */
         final TethysUIPaneFactory myPanes = pFactory.paneFactory();
-        final TethysUITabPaneManager myTabs = myPanes.newTabPane();
-        myTabs.addTabItem(TethysChartType.AREA.toString(), myArea.getComponent());
-        myTabs.addTabItem(TethysChartType.BAR.toString(), myBar.getComponent());
-        myTabs.addTabItem(TethysChartType.PIE.toString(), myPie.getComponent());
+        final TethysUICardPaneManager<TethysUIComponent> myCards = myPanes.newCardPane();
+        myCards.addCard(TethysChartType.AREA.toString(), myArea.getComponent());
+        myCards.addCard(TethysChartType.BAR.toString(), myBar.getComponent());
+        myCards.addCard(TethysChartType.PIE.toString(), myPie.getComponent());
+
+        /* Create the button */
+        final TethysUIScrollButtonManager<TethysChartType> myButton = pFactory.buttonFactory().newScrollButton();
+        myButton.setMenuConfigurator(c -> {
+            c.removeAllItems();
+            for (TethysChartType myType : TethysChartType.values()) {
+                c.addItem(myType);
+            }
+        });
+        myButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
+            myCards.selectCard(e.getDetails(TethysChartType.class).toString());
+        });
+        myButton.setValue(TethysChartType.AREA);
+
+        /* Create the button pane */
+        final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();
+        mySelect.addSpacer();
+        mySelect.addNode(myButton);
+        mySelect.addSpacer();
 
         /* Create the scroll pane */
         final TethysUIScrollPaneManager myScroll = myPanes.newScrollPane();
@@ -64,7 +86,8 @@ public class TethysTestChart {
 
         /* Create the pane */
         thePane = myPanes.newBorderPane();
-        thePane.setCentre(myTabs);
+        thePane.setNorth(mySelect);
+        thePane.setCentre(myCards);
         thePane.setSouth(myScroll);
     }
 
