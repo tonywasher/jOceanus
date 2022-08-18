@@ -149,7 +149,9 @@ public abstract class TethysUIProgram {
      * Obtain the splash iconId.
      * @return the iconId.
      */
-    public abstract TethysUIIconId getSplash();
+    public TethysUIIconId getSplash() {
+        return null;
+    }
 
     /**
      * Obtain program name.

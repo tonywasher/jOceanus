@@ -643,7 +643,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingStringTextField class.
      */
     public static class TethysUISwingStringTextField
-            extends TethysUISwingTextEditField<String> {
+            extends TethysUISwingTextEditField<String>
+            implements TethysUIStringEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -672,7 +673,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingCharArrayTextField class.
      */
     public static class TethysUISwingCharArrayTextField
-            extends TethysUISwingTextEditField<char[]> {
+            extends TethysUISwingTextEditField<char[]>
+            implements TethysUICharArrayEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -701,7 +703,8 @@ public abstract class TethysUISwingDataTextField<T>
      * ShortSwingTextField class.
      */
     public static class TethysUISwingShortTextField
-            extends TethysUISwingTextEditField<Short> {
+            extends TethysUISwingTextEditField<Short>
+            implements TethysUIShortEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -730,7 +733,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingIntegerTextField class.
      */
     public static class TethysUISwingIntegerTextField
-            extends TethysUISwingTextEditField<Integer> {
+            extends TethysUISwingTextEditField<Integer>
+            implements TethysUIIntegerEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -759,7 +763,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingLongTextField class.
      */
     public static class TethysUISwingLongTextField
-            extends TethysUISwingTextEditField<Long> {
+            extends TethysUISwingTextEditField<Long>
+            implements TethysUILongEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -858,7 +863,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingMoneyTextField class.
      */
     public static class TethysUISwingMoneyTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysMoney> {
+            extends TethysUISwingCurrencyTextFieldBase<TethysMoney>
+            implements TethysUIMoneyEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -887,7 +893,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingPriceTextField class.
      */
     public static class TethysUISwingPriceTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysPrice> {
+            extends TethysUISwingCurrencyTextFieldBase<TethysPrice>
+            implements TethysUIPriceEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -916,7 +923,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingDilutedPriceTextField class.
      */
     public static class TethysUISwingDilutedPriceTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysDilutedPrice> {
+            extends TethysUISwingCurrencyTextFieldBase<TethysDilutedPrice>
+            implements TethysUIDilutedPriceEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -945,7 +953,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingRateTextField class.
      */
     public static class TethysUISwingRateTextField
-            extends TethysUISwingTextEditField<TethysRate> {
+            extends TethysUISwingTextEditField<TethysRate>
+            implements TethysUIRateEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -974,7 +983,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingUnitsTextField class.
      */
     public static class TethysUISwingUnitsTextField
-            extends TethysUISwingTextEditField<TethysUnits> {
+            extends TethysUISwingTextEditField<TethysUnits>
+            implements TethysUIUnitsEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -1003,7 +1013,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingDilutionTextField class.
      */
     public static class TethysUISwingDilutionTextField
-            extends TethysUISwingTextEditField<TethysDilution> {
+            extends TethysUISwingTextEditField<TethysDilution>
+            implements TethysUIDilutionEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
@@ -1032,7 +1043,8 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingRatioTextField class.
      */
     public static class TethysUISwingRatioTextField
-            extends TethysUISwingTextEditField<TethysRatio> {
+            extends TethysUISwingTextEditField<TethysRatio>
+            implements TethysUIRatioEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory

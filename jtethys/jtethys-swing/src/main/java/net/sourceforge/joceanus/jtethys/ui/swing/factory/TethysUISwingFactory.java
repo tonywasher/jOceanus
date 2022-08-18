@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust.TethysUISwingFieldAdjustSupplier;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingUtils;
+import net.sourceforge.joceanus.jtethys.ui.swing.button.TethysUISwingButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.chart.TethysUISwingChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.control.TethysUISwingControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingDialogFactory;
@@ -59,6 +60,11 @@ public class TethysUISwingFactory
      * The pane factory.
      */
     private final TethysUISwingPaneFactory thePaneFactory;
+
+    /**
+     * The button factory.
+     */
+    private final TethysUISwingButtonFactory theButtonFactory;
 
     /**
      * The chart factory.
@@ -103,6 +109,7 @@ public class TethysUISwingFactory
         super(pProgram);
         theFieldAdjust = new TethysUISwingDataFieldAdjust(this);
         thePaneFactory = new TethysUISwingPaneFactory(this);
+        theButtonFactory = new TethysUISwingButtonFactory(this);
         theChartFactory = new TethysUISwingChartFactory(this);
         theControlFactory = new TethysUISwingControlFactory(this, theFieldAdjust);
         theDialogFactory = new TethysUISwingDialogFactory(this);
@@ -110,6 +117,7 @@ public class TethysUISwingFactory
         theMenuFactory = new TethysUISwingMenuFactory(this);
         theTableFactory = new TethysUISwingTableFactory(this);
         theThreadFactory = new TethysUISwingThreadFactory(this, pProgram.useSliderStatus());
+        establishLogSink();
     }
 
     /**
@@ -135,7 +143,7 @@ public class TethysUISwingFactory
 
     @Override
     public TethysUIButtonFactory buttonFactory() {
-        return null;
+        return theButtonFactory;
     }
 
     @Override

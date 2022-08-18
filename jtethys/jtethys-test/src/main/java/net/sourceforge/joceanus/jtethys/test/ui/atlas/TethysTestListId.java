@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
@@ -14,7 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.test.ui.atlas;
+
 /**
- * Swing Tethys UI test classes.
+ * List Ids.
  */
-package net.sourceforge.joceanus.jtethys.test.ui.swing;
+public enum TethysTestListId {
+    /**
+     * Work.
+     */
+    WORK("Work"),
+
+    /**
+     * Important.
+     */
+    IMPORTANT("Important"),
+
+    /**
+     * Personal.
+     */
+    PERSONAL("Personal");
+
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     * @param pName the name
+     */
+    TethysTestListId(final String pName) {
+        theName = pName;
+    }
+
+    @Override
+    public String toString() {
+        return theName;
+    }
+}

@@ -16,21 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.field;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRawDecimalEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextField;
@@ -67,27 +58,27 @@ public class TethysUIFXFieldFactory
     }
 
     @Override
-    public TethysUIValidatedEditField<String> newStringField() {
+    public TethysUIFXStringTextField newStringField() {
         return new TethysUIFXStringTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<char[]> newCharArrayField() {
+    public TethysUIFXCharArrayTextField newCharArrayField() {
         return new TethysUIFXCharArrayTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<Short> newShortField() {
+    public TethysUIFXShortTextField newShortField() {
         return new TethysUIFXShortTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<Integer> newIntegerField() {
+    public TethysUIFXIntegerTextField newIntegerField() {
         return new TethysUIFXIntegerTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<Long> newLongField() {
+    public TethysUIFXLongTextField newLongField() {
         return new TethysUIFXLongTextField(theFactory);
     }
 
@@ -97,37 +88,37 @@ public class TethysUIFXFieldFactory
     }
 
     @Override
-    public TethysUICurrencyEditField<TethysMoney> newMoneyField() {
+    public TethysUIFXMoneyTextField newMoneyField() {
         return new TethysUIFXMoneyTextField(theFactory);
     }
 
     @Override
-    public TethysUICurrencyEditField<TethysPrice> newPriceField() {
+    public TethysUIFXPriceTextField newPriceField() {
         return new TethysUIFXPriceTextField(theFactory);
     }
 
     @Override
-    public TethysUICurrencyEditField<TethysDilutedPrice> newDilutedPriceField() {
+    public TethysUIFXDilutedPriceTextField newDilutedPriceField() {
         return new TethysUIFXDilutedPriceTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<TethysRate> newRateField() {
+    public TethysUIFXRateTextField newRateField() {
         return new TethysUIFXRateTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<TethysUnits> newUnitsField() {
+    public TethysUIFXUnitsTextField newUnitsField() {
         return new TethysUIFXUnitsTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<TethysDilution> newDilutionField() {
+    public TethysUIFXDilutionTextField newDilutionField() {
         return new TethysUIFXDilutionTextField(theFactory);
     }
 
     @Override
-    public TethysUIValidatedEditField<TethysRatio> newRatioField() {
+    public TethysUIFXRatioTextField newRatioField() {
         return new TethysUIFXRatioTextField(theFactory);
     }
 
@@ -152,7 +143,7 @@ public class TethysUIFXFieldFactory
     }
 
     @Override
-    public TethysUIDataEditField<String> newColorField() {
+    public TethysUIFXColorButtonField newColorField() {
         return new TethysUIFXColorButtonField(theFactory);
     }
 }

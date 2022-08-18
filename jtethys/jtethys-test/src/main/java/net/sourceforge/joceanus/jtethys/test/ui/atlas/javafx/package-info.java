@@ -16,28 +16,6 @@
  ******************************************************************************/
 
 /**
- * Tethys Test.
+ * Tethys JavaFX test.
  */
-module net.sourceforge.joceanus.jtethys.test.core {
-    /* Java runTime */
-    requires java.desktop;
-
-    /* javaFX runTime */
-    requires javafx.controls;
-    requires javafx.graphics;
-
-    /* External libraries */
-    requires org.jfree.jfreechart;
-
-    /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
-    requires net.sourceforge.joceanus.jtethys.swing;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jtethys.test.ui;
-
-    /* Main classes */
-    exports net.sourceforge.joceanus.jtethys.test.ui.javafx to javafx.graphics;
-    exports net.sourceforge.joceanus.jtethys.test.ui.atlas.javafx to javafx.graphics;
-}
+package net.sourceforge.joceanus.jtethys.test.ui.atlas.javafx;

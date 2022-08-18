@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.ui.swing;
+package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.HeadlessException;
 import java.util.Currency;
 import java.util.List;
 
@@ -29,51 +24,45 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
-import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingCharArrayTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutedPriceTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingIntegerTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingLongTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingMoneyTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingPriceTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRateTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingRatioTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingShortTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutedPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUILongEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRateEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRatioEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIShortEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
 
 /**
  * Scroll utilities examples.
  */
-public class TethysSwingEditUIExample {
-    /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingEditUIExample.class);
-
+public class TethysTestFields {
     /**
      * The padding.
      */
@@ -87,112 +76,112 @@ public class TethysSwingEditUIExample {
     /**
      * The GuiFactory.
      */
-    private final TethysSwingGuiFactory theGuiFactory;
+    private final TethysUIFactory<?> theGuiFactory;
 
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper theHelper;
+    private final TethysTestHelper theHelper;
 
     /**
      * The string edit field.
      */
-    private final TethysSwingStringTextField theStringField;
+    private final TethysUIStringEditField theStringField;
 
     /**
      * The password edit field.
      */
-    private final TethysSwingCharArrayTextField thePassField;
+    private final TethysUICharArrayEditField thePassField;
 
     /**
      * The short edit field.
      */
-    private final TethysSwingShortTextField theShortField;
+    private final TethysUIShortEditField theShortField;
 
     /**
      * The integer edit field.
      */
-    private final TethysSwingIntegerTextField theIntegerField;
+    private final TethysUIIntegerEditField theIntegerField;
 
     /**
      * The long edit field.
      */
-    private final TethysSwingLongTextField theLongField;
+    private final TethysUILongEditField theLongField;
 
     /**
      * The money edit field.
      */
-    private final TethysSwingMoneyTextField theMoneyField;
+    private final TethysUIMoneyEditField theMoneyField;
 
     /**
      * The price edit field.
      */
-    private final TethysSwingPriceTextField thePriceField;
+    private final TethysUIPriceEditField thePriceField;
 
     /**
      * The diluted price edit field.
      */
-    private final TethysSwingDilutedPriceTextField theDilutedPriceField;
+    private final TethysUIDilutedPriceEditField theDilutedPriceField;
 
     /**
      * The dilution edit field.
      */
-    private final TethysSwingDilutionTextField theDilutionField;
+    private final TethysUIDilutionEditField theDilutionField;
 
     /**
      * The units edit field.
      */
-    private final TethysSwingUnitsTextField theUnitsField;
+    private final TethysUIUnitsEditField theUnitsField;
 
     /**
      * The rate edit field.
      */
-    private final TethysSwingRateTextField theRateField;
+    private final TethysUIRateEditField theRateField;
 
     /**
      * The ratio edit field.
      */
-    private final TethysSwingRatioTextField theRatioField;
+    private final TethysUIRatioEditField theRatioField;
 
     /**
      * The colour edit field.
      */
-    private final TethysSwingColorButtonField theColorField;
+    private final TethysUIColorButtonField theColorField;
 
     /**
      * The icon button field.
      */
-    private final TethysSwingIconButtonField<Boolean> theIconField;
+    private final TethysUIIconButtonField<Boolean> theIconField;
 
     /**
      * The scroll button field.
      */
-    private final TethysSwingScrollButtonField<String> theScrollField;
+    private final TethysUIScrollButtonField<String> theScrollField;
 
     /**
      * The date button field.
      */
-    private final TethysSwingDateButtonField theDateField;
+    private final TethysUIDateButtonField theDateField;
 
     /**
      * The list button field.
      */
-    private final TethysSwingListButtonField<TethysListId> theListField;
+    private final TethysUIListButtonField<TethysTestListId> theListField;
 
     /**
      * The source.
      */
-    private final TethysSwingLabel theSource;
+    private final TethysUILabel theSource;
 
     /**
      * The result.
      */
-    private final TethysSwingLabel theClass;
+    private final TethysUILabel theClass;
 
     /**
      * The result.
      */
-    private final TethysSwingLabel theValue;
+    private final TethysUILabel theValue;
 
     /**
      * The Date formatter.
@@ -205,128 +194,112 @@ public class TethysSwingEditUIExample {
     private final TethysDecimalFormatter theDecimalFormatter;
 
     /**
+     * The Panel.
+     */
+    private final TethysUIComponent thePane;
+
+    /**
      * The edit mode.
      */
     private boolean isEditing;
 
     /**
      * Constructor.
+     * @param pFactory the factory
      */
-    public TethysSwingEditUIExample() {
-        /* Create helper */
-        theHelper = new TethysScrollUITestHelper();
-
+    TethysTestFields(final TethysUIFactory<?> pFactory) {
         /* Create GUI Factory */
-        theGuiFactory = new TethysSwingGuiFactory();
+        theGuiFactory = pFactory;
+
+        /* Create helper */
+        theHelper = new TethysTestHelper(theGuiFactory);
 
         /* Access formatters */
-        final TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = theGuiFactory.getDataFormatter();
         theDecimalFormatter = myFormatter.getDecimalFormatter();
         theDateFormatter = myFormatter.getDateFormatter();
 
         /* Create resources */
-        theStringField = theGuiFactory.newStringField();
+        final TethysUIFieldFactory myFields = theGuiFactory.fieldFactory();
+        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
+        theStringField = myFields.newStringField();
         configureCmdMenu(theStringField);
-        thePassField = theGuiFactory.newCharArrayField();
-        theShortField = theGuiFactory.newShortField();
-        theIntegerField = theGuiFactory.newIntegerField();
-        theLongField = theGuiFactory.newLongField();
-        theMoneyField = theGuiFactory.newMoneyField();
-        thePriceField = theGuiFactory.newPriceField();
-        theDilutedPriceField = theGuiFactory.newDilutedPriceField();
-        theDilutionField = theGuiFactory.newDilutionField();
-        theUnitsField = theGuiFactory.newUnitsField();
-        theRateField = theGuiFactory.newRateField();
-        theRatioField = theGuiFactory.newRatioField();
-        theSource = theGuiFactory.newLabel();
-        theClass = theGuiFactory.newLabel();
-        theValue = theGuiFactory.newLabel();
+        thePassField = myFields.newCharArrayField();
+        theShortField = myFields.newShortField();
+        theIntegerField = myFields.newIntegerField();
+        theLongField = myFields.newLongField();
+        theMoneyField = myFields.newMoneyField();
+        thePriceField = myFields.newPriceField();
+        theDilutedPriceField = myFields.newDilutedPriceField();
+        theDilutionField = myFields.newDilutionField();
+        theUnitsField = myFields.newUnitsField();
+        theRateField = myFields.newRateField();
+        theRatioField = myFields.newRatioField();
+        theSource = myControls.newLabel();
+        theClass = myControls.newLabel();
+        theValue = myControls.newLabel();
 
         /* Create button fields */
-        theColorField = theGuiFactory.newColorField();
-        theScrollField = theGuiFactory.newScrollField();
-        theDateField = theGuiFactory.newDateField();
-        theIconField = theGuiFactory.newIconField();
-        theListField = theGuiFactory.newListField();
+        theColorField = myFields.newColorField();
+        theScrollField = myFields.newScrollField();
+        theDateField = myFields.newDateField();
+        theIconField = myFields.newIconField();
+        theListField = myFields.newListField();
+
+        /* Create the main panel */
+        thePane = buildPanel();
     }
 
     /**
-     * Main function.
-     * @param args the arguments
+     * Obtain the component.
+     * @return the component
      */
-    public static void main(final String[] args) {
-        SwingUtilities.invokeLater(TethysSwingEditUIExample::createAndShowGUI);
-    }
-
-    /**
-     * Create and show the GUI.
-     */
-    static void createAndShowGUI() {
-        try {
-            /* Create the frame */
-            final JFrame myFrame = new JFrame("SwingEdit Demo");
-
-            /* Create the UI */
-            final TethysSwingEditUIExample myExample = new TethysSwingEditUIExample();
-
-            /* Build the panel */
-            final JComponent myPanel = myExample.buildPanel();
-
-            /* Attach the panel to the frame */
-            myPanel.setOpaque(true);
-            myFrame.setContentPane(myPanel);
-            myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-            /* Show the frame */
-            myFrame.pack();
-            myFrame.setLocationRelativeTo(null);
-            myFrame.setVisible(true);
-        } catch (HeadlessException e) {
-            LOGGER.error("createGUI didn't complete successfully", e);
-        }
+    public TethysUIComponent getComponent() {
+        return thePane;
     }
 
     /**
      * Build the panel.
      * @return the panel
      */
-    private JComponent buildPanel() {
+    private TethysUIComponent buildPanel() {
         /* Create a GridPane for the fields */
-        final TethysSwingGridPaneManager myFields = buildFieldPane();
+        final TethysUIGridPaneManager myPane = buildFieldPane();
 
-        /* Create a ControlPane for the buttons */
-        final TethysSwingBoxPaneManager myControls = buildControlPane();
+        /* Create a BoxPane for the buttons */
+        final TethysUIBoxPaneManager myControls = buildControlPane();
 
         /* Create a GridPane for the results */
-        final TethysSwingGridPaneManager myResults = buildResultsPane();
+        final TethysUIGridPaneManager myResults = buildResultsPane();
 
         /* Create borderPane for the window */
-        final TethysSwingBoxPaneManager myMain = theGuiFactory.newVBoxPane();
+        final TethysUIBoxPaneManager myMain = theGuiFactory.paneFactory().newVBoxPane();
         myControls.setBorderTitle("Controls");
         myMain.addNode(myControls);
-        myFields.setBorderTitle("FieldArea");
-        myMain.addNode(myFields);
+        myPane.setBorderTitle("FieldArea");
+        myMain.addNode(myPane);
         myResults.setBorderTitle("Results");
         myMain.addNode(myResults);
         myMain.setBorderPadding(PADDING);
         myMain.setPreferredWidth(VALUE_WIDTH);
 
         /* Return the panel */
-        return TethysSwingNode.getComponent(myMain);
+        return myMain;
     }
 
     /**
      * Build field pane.
      * @return the field pane
      */
-    private TethysSwingGridPaneManager buildFieldPane() {
+    private TethysUIGridPaneManager buildFieldPane() {
         /* Create a GridPane for the fields */
-        final TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysUIGridPaneManager myGrid = theGuiFactory.paneFactory().newGridPane();
+        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
 
         /* Create String field line */
-        TethysSwingLabel myLabel = theGuiFactory.newLabel("String:");
+        TethysUILabel myLabel = myControls.newLabel("String:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theStringField);
         myGrid.allowCellGrowth(theStringField);
         myGrid.newRow();
@@ -334,9 +307,9 @@ public class TethysSwingEditUIExample {
         theStringField.setValue("Test");
 
         /* Create Password field line */
-        myLabel = theGuiFactory.newLabel("Password:");
+        myLabel = myControls.newLabel("Password:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(thePassField);
         myGrid.allowCellGrowth(thePassField);
         myGrid.newRow();
@@ -344,9 +317,9 @@ public class TethysSwingEditUIExample {
         thePassField.setValue(TethysScrollUITestHelper.getPassword());
 
         /* Create Short field line */
-        myLabel = theGuiFactory.newLabel("Short:");
+        myLabel = myControls.newLabel("Short:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theShortField);
         myGrid.allowCellGrowth(theShortField);
         myGrid.newRow();
@@ -354,9 +327,9 @@ public class TethysSwingEditUIExample {
         theShortField.setValue(TethysScrollUITestHelper.SHORT_DEF);
 
         /* Create Integer field line */
-        myLabel = theGuiFactory.newLabel("Integer:");
+        myLabel = myControls.newLabel("Integer:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theIntegerField);
         myGrid.allowCellGrowth(theIntegerField);
         myGrid.newRow();
@@ -364,9 +337,9 @@ public class TethysSwingEditUIExample {
         theIntegerField.setValue(TethysScrollUITestHelper.INT_DEF);
 
         /* Create Long field line */
-        myLabel = theGuiFactory.newLabel("Long:");
+        myLabel = myControls.newLabel("Long:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theLongField);
         myGrid.allowCellGrowth(theLongField);
         myGrid.newRow();
@@ -374,9 +347,9 @@ public class TethysSwingEditUIExample {
         theLongField.setValue(TethysScrollUITestHelper.LONG_DEF);
 
         /* Create Money field line */
-        myLabel = theGuiFactory.newLabel("Money:");
+        myLabel = myControls.newLabel("Money:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theMoneyField);
         myGrid.allowCellGrowth(theMoneyField);
         myGrid.newRow();
@@ -384,9 +357,9 @@ public class TethysSwingEditUIExample {
         theMoneyField.setValue(TethysScrollUITestHelper.MONEY_DEF);
 
         /* Create Price field line */
-        myLabel = theGuiFactory.newLabel("Price:");
+        myLabel = myControls.newLabel("Price:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(thePriceField);
         myGrid.allowCellGrowth(thePriceField);
         myGrid.newRow();
@@ -394,9 +367,9 @@ public class TethysSwingEditUIExample {
         thePriceField.setValue(TethysScrollUITestHelper.PRICE_DEF);
 
         /* Create Units field line */
-        myLabel = theGuiFactory.newLabel("Units:");
+        myLabel = myControls.newLabel("Units:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theUnitsField);
         myGrid.allowCellGrowth(theUnitsField);
         myGrid.newRow();
@@ -404,9 +377,9 @@ public class TethysSwingEditUIExample {
         theUnitsField.setValue(TethysScrollUITestHelper.UNITS_DEF);
 
         /* Create Rate field line */
-        myLabel = theGuiFactory.newLabel("Rate:");
+        myLabel = myControls.newLabel("Rate:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theRateField);
         myGrid.allowCellGrowth(theRateField);
         myGrid.newRow();
@@ -414,9 +387,9 @@ public class TethysSwingEditUIExample {
         theRateField.setValue(TethysScrollUITestHelper.RATE_DEF);
 
         /* Create Ratio field line */
-        myLabel = theGuiFactory.newLabel("Ratio:");
+        myLabel = myControls.newLabel("Ratio:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theRatioField);
         myGrid.allowCellGrowth(theRatioField);
         myGrid.newRow();
@@ -424,9 +397,9 @@ public class TethysSwingEditUIExample {
         theRatioField.setValue(TethysScrollUITestHelper.RATIO_DEF);
 
         /* Create Dilution field line */
-        myLabel = theGuiFactory.newLabel("Dilution:");
+        myLabel = myControls.newLabel("Dilution:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theDilutionField);
         myGrid.allowCellGrowth(theDilutionField);
         myGrid.newRow();
@@ -435,18 +408,18 @@ public class TethysSwingEditUIExample {
         theDilutionField.setValidator(TethysScrollUITestHelper::validateDilution);
 
         /* Create DilutedPrice field line */
-        myLabel = theGuiFactory.newLabel("DilutedPrice:");
+        myLabel = myControls.newLabel("DilutedPrice:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theDilutedPriceField);
         myGrid.allowCellGrowth(theDilutedPriceField);
         myGrid.newRow();
         theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
 
         /* Create ColorButton field line */
-        myLabel = theGuiFactory.newLabel("ColorButton:");
+        myLabel = myControls.newLabel("ColorButton:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theColorField);
         myGrid.allowCellGrowth(theColorField);
         myGrid.newRow();
@@ -454,47 +427,47 @@ public class TethysSwingEditUIExample {
         theColorField.setValue("#000000");
 
         /* Create ScrollButton field line */
-        myLabel = theGuiFactory.newLabel("ScrollButton:");
+        myLabel = myControls.newLabel("ScrollButton:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theScrollField);
         myGrid.allowCellGrowth(theScrollField);
         myGrid.newRow();
-        theScrollField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
+        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
         theScrollField.setMenuConfigurator(theHelper::buildContextMenu);
         theScrollField.setValue("First");
 
         /* Create DateButton field line */
-        myLabel = theGuiFactory.newLabel("DateButton:");
+        myLabel = myControls.newLabel("DateButton:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theDateField);
         myGrid.allowCellGrowth(theDateField);
         myGrid.newRow();
-        theDateField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
+        theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
         theDateField.setValue(new TethysDate());
 
         /* Create ListButton field line */
-        myLabel = theGuiFactory.newLabel("ListButton:");
+        myLabel = myControls.newLabel("ListButton:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theListField);
         myGrid.allowCellGrowth(theListField);
         myGrid.newRow();
         theListField.setValue(theHelper.buildSelectedList());
         theListField.setSelectables(theHelper::buildSelectableList);
-        theListField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
+        theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Create IconButton field line */
-        myLabel = theGuiFactory.newLabel("IconButton:");
+        myLabel = myControls.newLabel("IconButton:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theIconField);
         myGrid.allowCellGrowth(theIconField);
         myGrid.newRow();
-        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysUIIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE);
         theIconField.setIconMapSet(() -> myMapSet);
-        theIconField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
+        theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(Boolean.FALSE);
 
         /* Return the pane */
@@ -505,30 +478,31 @@ public class TethysSwingEditUIExample {
      * Build Result pane.
      * @return the result pane
      */
-    private TethysSwingGridPaneManager buildResultsPane() {
+    private TethysUIGridPaneManager buildResultsPane() {
         /* Create a GridPane for the results */
-        final TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysUIGridPaneManager myGrid = theGuiFactory.paneFactory().newGridPane();
+        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
 
         /* Build the grid */
-        TethysSwingLabel myLabel = theGuiFactory.newLabel("Source:");
+        TethysUILabel myLabel = myControls.newLabel("Source:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theSource);
         myGrid.allowCellGrowth(theSource);
         myGrid.newRow();
-        myLabel = theGuiFactory.newLabel("Class:");
+        myLabel = myControls.newLabel("Class:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theClass);
         myGrid.allowCellGrowth(theClass);
         myGrid.newRow();
-        myLabel = theGuiFactory.newLabel("Value:");
+        myLabel = myControls.newLabel("Value:");
         myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysAlignment.EAST);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
         myGrid.addCell(theValue);
         myGrid.allowCellGrowth(theValue);
 
-        /* Return the panel */
+        /* Return the pane */
         return myGrid;
     }
 
@@ -536,9 +510,10 @@ public class TethysSwingEditUIExample {
      * Build Control pane.
      * @return the control pane
      */
-    private TethysSwingBoxPaneManager buildControlPane() {
+    private TethysUIBoxPaneManager buildControlPane() {
         /* Create Toggle button for edit mode */
-        final TethysSwingButton myEditButton = theGuiFactory.newButton();
+        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButton myEditButton = myButtons.newButton();
         myEditButton.setText("Edit");
         myEditButton.getEventRegistrar().addEventListener(e -> {
             if (!isEditing) {
@@ -552,18 +527,18 @@ public class TethysSwingEditUIExample {
         });
 
         /* Create ScrollButton button for currency */
-        final TethysSwingScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
-        final TethysSwingScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
+        final TethysUIScrollButtonManager<Currency> myCurrencyMgr = myButtons.newScrollButton();
+        final TethysUIScrollMenu<Currency> myMenu = myCurrencyMgr.getMenu();
         final Currency myDefault = Currency.getInstance("GBP");
         myMenu.addItem(myDefault, "Pounds");
         myMenu.addItem(Currency.getInstance("USD"), "Dollars");
         myMenu.addItem(Currency.getInstance("JPY"), "Yen");
         myCurrencyMgr.setValue(myDefault, "Pounds");
         setCurrency(myDefault);
-        myCurrencyMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
+        myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
         /* Create an HBox for buttons */
-        final TethysSwingBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager myBox = theGuiFactory.paneFactory().newHBoxPane();
         myBox.addNode(myEditButton);
         myBox.addSpacer();
         myBox.addNode(myCurrencyMgr);
@@ -593,8 +568,8 @@ public class TethysSwingEditUIExample {
         theColorField.setEditable(pDoEdit);
         theScrollField.setEditable(pDoEdit);
         theDateField.setEditable(pDoEdit);
-        theListField.setEditable(pDoEdit);
         theIconField.setEditable(pDoEdit);
+        theListField.setEditable(pDoEdit);
     }
 
     /**
@@ -613,8 +588,8 @@ public class TethysSwingEditUIExample {
      * @param pField the source of the action
      * @param pEvent the event
      */
-    private void processActionEvent(final TethysSwingDataTextField<?> pField,
-                                    final TethysEvent<TethysXUIEvent> pEvent) {
+    private void processActionEvent(final TethysUIDataEditField<?> pField,
+                                    final TethysEvent<TethysUIEvent> pEvent) {
         /* Determine source */
         final String mySource = pField.getClass().getSimpleName();
 
@@ -635,7 +610,7 @@ public class TethysSwingEditUIExample {
      * Configure a cmdMenu.
      * @param pField the command menu to configure
      */
-    private static void configureCmdMenu(final TethysSwingDataTextField<?> pField) {
+    private static void configureCmdMenu(final TethysUIDataEditField<?> pField) {
         /* Configure the command menu */
         pField.showCmdButton(true);
         pField.setCmdMenuConfigurator(c -> {
@@ -656,8 +631,8 @@ public class TethysSwingEditUIExample {
 
         /* Record class of results */
         theClass.setText(pResults == null
-                                          ? "Null"
-                                          : pResults.getClass().getSimpleName());
+                ? "Null"
+                : pResults.getClass().getSimpleName());
 
         /* Record results */
         if (pResults instanceof String) {

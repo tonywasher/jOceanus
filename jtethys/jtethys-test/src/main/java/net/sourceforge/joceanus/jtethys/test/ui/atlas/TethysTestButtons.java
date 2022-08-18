@@ -14,41 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.ui.javafx;
-
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
+package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconState;
-import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXColorPicker;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXLabel;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
+import net.sourceforge.joceanus.jtethys.test.ui.atlas.TethysTestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIColorPicker;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 import java.util.Map;
 
 /**
- * Scroll utilities examples.
+ * Buttons Test examples.
  */
-public class TethysFXScrollUIExample
-        extends Application {
+public class TethysTestButtons {
     /**
      * Value width.
      */
@@ -57,127 +53,152 @@ public class TethysFXScrollUIExample
     /**
      * The GuiFactory.
      */
-    private final TethysFXGuiFactory theGuiFactory;
+    private final TethysUIFactory<?> theGuiFactory;
 
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper theHelper;
+    private final TethysTestHelper theHelper;
 
     /**
      * The context menu.
      */
-    private final TethysFXScrollContextMenu<String> theContextMenu;
+    private final TethysUIScrollMenu<String> theContextMenu;
 
     /**
      * The scroll button manager.
      */
-    private final TethysFXScrollButtonManager<String> theScrollButtonMgr;
+    private final TethysUIScrollButtonManager<String> theScrollButtonMgr;
 
     /**
      * The simple icon button manager.
      */
-    private final TethysFXIconButtonManager<Boolean> theSimpleIconButtonMgr;
+    private final TethysUIIconButtonManager<Boolean> theSimpleIconButtonMgr;
 
     /**
      * The state icon button manager.
      */
-    private final TethysFXIconButtonManager<Boolean> theStateIconButtonMgr;
+    private final TethysUIIconButtonManager<Boolean> theStateIconButtonMgr;
 
     /**
      * The state scroll manager.
      */
-    private final TethysFXScrollButtonManager<IconState> theStateButtonMgr;
+    private final TethysUIScrollButtonManager<IconState> theStateButtonMgr;
 
     /**
      * The list button manager.
      */
-    private final TethysFXListButtonManager<TethysListId> theListButtonMgr;
+    private final TethysUIListButtonManager<TethysTestListId> theListButtonMgr;
 
     /**
      * The date button manager.
      */
-    private final TethysFXDateButtonManager theDateButtonMgr;
+    private final TethysUIDateButtonManager theDateButtonMgr;
 
     /**
      * The colour picker.
      */
-    private final TethysFXColorPicker theColorPicker;
+    private final TethysUIColorPicker<?> theColorPicker;
 
     /**
      * The selected context value.
      */
-    private final TethysFXLabel theContextValue;
+    private final TethysUILabel theContextValue;
 
     /**
      * The selected scroll value.
      */
-    private final TethysFXLabel theScrollValue;
+    private final TethysUILabel theScrollValue;
 
     /**
      * The selected date value.
      */
-    private final TethysFXLabel theDateValue;
+    private final TethysUILabel theDateValue;
 
     /**
      * The selected simple icon value.
      */
-    private final TethysFXLabel theSimpleIconValue;
+    private final TethysUILabel theSimpleIconValue;
 
     /**
      * The selected state icon values.
      */
-    private final TethysFXLabel theStateIconValue;
+    private final TethysUILabel theStateIconValue;
 
     /**
      * The selected list values.
      */
-    private final TethysFXLabel theListValues;
+    private final TethysUILabel theListValues;
 
     /**
      * The colour value.
      */
-    private final TethysFXLabel theColorValue;
+    private final TethysUILabel theColorValue;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIComponent thePanel;
 
     /**
      * Constructor.
+     * @param pFactory the factory
      */
-    public TethysFXScrollUIExample() {
-        /* Create helper */
-        theHelper = new TethysScrollUITestHelper();
+    public TethysTestButtons(final TethysUIFactory<?> pFactory) {
+        /* Store GUI Factory */
+        theGuiFactory = pFactory;
 
-        /* Create GUI Factory */
-        theGuiFactory = new TethysFXGuiFactory();
+        /* Create helper */
+        theHelper = new TethysTestHelper(theGuiFactory);
 
         /* Create resources */
-        theContextMenu = theGuiFactory.newContextMenu();
-        theScrollButtonMgr = theGuiFactory.newScrollButton();
-        theSimpleIconButtonMgr = theGuiFactory.newIconButton();
-        theStateIconButtonMgr = theGuiFactory.newIconButton();
-        theStateButtonMgr = theGuiFactory.newScrollButton();
-        theListButtonMgr = theGuiFactory.newListButton();
-        theDateButtonMgr = theGuiFactory.newDateButton();
-        theColorPicker = theGuiFactory.newColorPicker();
-        theContextValue = theGuiFactory.newLabel();
-        theScrollValue = theGuiFactory.newLabel();
-        theDateValue = theGuiFactory.newLabel();
-        theSimpleIconValue = theGuiFactory.newLabel();
-        theStateIconValue = theGuiFactory.newLabel();
-        theListValues = theGuiFactory.newLabel();
-        theColorValue = theGuiFactory.newLabel();
+        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        final TethysUIMenuFactory myMenus = theGuiFactory.menuFactory();
+        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
+        final TethysUIDialogFactory<?> myDialogs = theGuiFactory.dialogFactory();
+        theContextMenu = myMenus.newContextMenu();
+        theScrollButtonMgr = myButtons.newScrollButton();
+        theSimpleIconButtonMgr = myButtons.newIconButton();
+        theStateIconButtonMgr = myButtons.newIconButton();
+        theStateButtonMgr = myButtons.newScrollButton();
+        theListButtonMgr = myButtons.newListButton();
+        theDateButtonMgr = myButtons.newDateButton();
+        theColorPicker = myDialogs.newColorPicker();
+        theContextValue = myControls.newLabel();
+        theScrollValue = myControls.newLabel();
+        theDateValue = myControls.newLabel();
+        theSimpleIconValue = myControls.newLabel();
+        theStateIconValue = myControls.newLabel();
+        theListValues = myControls.newLabel();
+        theColorValue = myControls.newLabel();
+
+        /* Create the panel */
+        thePanel = buildPanel();
     }
 
-    @Override
-    public void start(final Stage pStage) {
+    /**
+     * Obtain the component.
+     * @return the component
+     */
+    TethysUIComponent getComponent() {
+        return thePanel;
+    }
+
+    /**
+     * Build panel.
+     */
+    private TethysUIComponent buildPanel() {
         /* Create a GridPane */
-        final TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
+        final TethysUIGridPaneManager myGrid = myPanes.newGridPane();
 
         /* Create context menu line */
-        final TethysFXLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
+        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
+        final TethysUILabel myContextArea = myControls.newLabel("Right-click for Menu");
         myContextArea.setBorderTitle("ContextArea");
-        myContextArea.setAlignment(TethysAlignment.CENTRE);
+        myContextArea.setAlignment(TethysUIAlignment.CENTRE);
         theContextValue.setBorderTitle("ContextValue");
-        theContextValue.setAlignment(TethysAlignment.CENTRE);
+        theContextValue.setAlignment(TethysUIAlignment.CENTRE);
         theContextValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(myContextArea);
         myGrid.addCell(theContextValue);
@@ -192,57 +213,52 @@ public class TethysFXScrollUIExample
         myContextArea.setContextMenu(theContextMenu);
 
         /* Add listener */
-        theContextMenu.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theContextMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* If we selected a value */
-            final TethysScrollMenuItem<String> mySelected = theContextMenu.getSelectedItem();
+            final TethysUIScrollItem<String> mySelected = theContextMenu.getSelectedItem();
             if (mySelected != null) {
                 setContextValue(mySelected.getValue());
-                pStage.sizeToScene();
             }
         });
 
         /* Create scroll button line */
         theScrollButtonMgr.setBorderTitle("ScrollButton");
         theScrollValue.setBorderTitle("ScrollValue");
-        theScrollValue.setAlignment(TethysAlignment.CENTRE);
+        theScrollValue.setAlignment(TethysUIAlignment.CENTRE);
         theScrollValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(theScrollButtonMgr);
         myGrid.addCell(theScrollValue);
         myGrid.allowCellGrowth(theScrollValue);
         myGrid.newRow();
-        setScrollValue(null);
 
         /* Add listener */
-        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setScrollValue(e.getDetails(String.class));
-            pStage.sizeToScene();
         });
         theScrollButtonMgr.setMenuConfigurator(theHelper::buildContextMenu);
+        theScrollButtonMgr.setValue("First");
 
         /* Create list button line */
         theListButtonMgr.setBorderTitle("ListButton");
         theListValues.setBorderTitle("ListValues");
-        theListValues.setAlignment(TethysAlignment.CENTRE);
+        theListValues.setAlignment(TethysUIAlignment.CENTRE);
         theListValues.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(theListButtonMgr);
         myGrid.addCell(theListValues);
         myGrid.allowCellGrowth(theListValues);
         myGrid.newRow();
 
-        theListButtonMgr.setValue(theHelper.buildSelectedList());
-        theListButtonMgr.setSelectables(theHelper::buildSelectableList);
-        theListButtonMgr.setText("Tag");
-
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setListValue();
-            pStage.sizeToScene();
         });
+        theListButtonMgr.setSelectables(theHelper::buildSelectableList);
+        theListButtonMgr.setValue(theHelper.buildSelectedList());
 
         /* Create date button line */
         theDateButtonMgr.setBorderTitle("DateButton");
         theDateValue.setBorderTitle("DateValue");
-        theDateValue.setAlignment(TethysAlignment.CENTRE);
+        theDateValue.setAlignment(TethysUIAlignment.CENTRE);
         theDateValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(theDateButtonMgr);
         myGrid.addCell(theDateValue);
@@ -250,65 +266,65 @@ public class TethysFXScrollUIExample
         myGrid.newRow();
 
         /* Add listener */
-        theDateButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setDateValue(e.getDetails(TethysDate.class));
-            pStage.sizeToScene();
         });
+        theDateButtonMgr.setSelectedDate(new TethysDate());
 
         /* Create simple icon button line */
         theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");
         theSimpleIconValue.setBorderTitle("IconValue");
-        theSimpleIconValue.setAlignment(TethysAlignment.CENTRE);
+        theSimpleIconValue.setAlignment(TethysUIAlignment.CENTRE);
         theSimpleIconValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(theSimpleIconButtonMgr);
         myGrid.addCell(theSimpleIconValue);
         myGrid.allowCellGrowth(theSimpleIconValue);
         myGrid.newRow();
-        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysUIIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE);
         theSimpleIconButtonMgr.setIconMapSet(() -> myMapSet);
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
-        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setSimpleIconValue(e.getDetails(Boolean.class));
-            pStage.sizeToScene();
         });
 
         /* Create state icon button line */
-        final TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager myBox = myPanes.newHBoxPane();
         myBox.addNode(theStateButtonMgr);
         myBox.addNode(theStateIconButtonMgr);
         myBox.setBorderTitle("StateIconButton");
         theStateIconValue.setBorderTitle("StateIconValue");
-        theStateIconValue.setAlignment(TethysAlignment.CENTRE);
+        theStateIconValue.setAlignment(TethysUIAlignment.CENTRE);
         theStateIconValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(myBox);
         myGrid.addCell(theStateIconValue);
         myGrid.allowCellGrowth(theStateIconValue);
         myGrid.newRow();
         theHelper.buildStateButton(theStateButtonMgr);
-        final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        final Map<IconState, TethysUIIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE, TethysTestIcon.CLOSEDTRUE);
         theStateIconButtonMgr.setIconMapSet(() -> myMap.get(theStateButtonMgr.getValue()));
         theStateIconButtonMgr.setNullMargins();
         theStateIconButtonMgr.setValue(Boolean.FALSE);
+        theStateIconButtonMgr.setVisible(false);
 
         /* Add listener */
-        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setStateIconValue(e.getDetails(Boolean.class));
-            pStage.sizeToScene();
         });
 
         /* Add listener */
-        theStateButtonMgr.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setStateIconValue(theStateIconButtonMgr.getValue());
             theStateIconButtonMgr.applyButtonState();
-            pStage.sizeToScene();
+            theStateIconButtonMgr.setVisible(theStateButtonMgr.getValue() == IconState.OPEN);
         });
 
         /* Create colour picker line */
         theColorPicker.setBorderTitle("ColorPicker");
+        theColorPicker.setValue("#000000");
         theColorValue.setBorderTitle("ColorValue");
-        theColorValue.setAlignment(TethysAlignment.CENTRE);
+        theColorValue.setAlignment(TethysUIAlignment.CENTRE);
         theColorValue.setPreferredWidth(DEFAULT_VALUEWIDTH);
         myGrid.addCell(theColorPicker);
         myGrid.addCell(theColorValue);
@@ -316,20 +332,13 @@ public class TethysFXScrollUIExample
         myGrid.newRow();
 
         /* Add listener */
-        theColorPicker.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setColorValue(e.getDetails(String.class));
-            pStage.sizeToScene();
         });
 
         /* Configure the grid */
         myGrid.setBorderPadding(2);
-
-        /* Create scene */
-        final Scene myScene = new Scene((Region) TethysFXNode.getNode(myGrid));
-        theGuiFactory.registerScene(myScene);
-        pStage.setTitle("JavaFXScroll Demo");
-        pStage.setScene(myScene);
-        pStage.show();
+        return myGrid;
     }
 
     /**
@@ -357,8 +366,8 @@ public class TethysFXScrollUIExample
     private void setDateValue(final TethysDate pValue) {
         /* Record the value */
         theDateValue.setText(pValue == null
-                             ? null
-                             : pValue.toString());
+                ? null
+                : pValue.toString());
     }
 
     /**

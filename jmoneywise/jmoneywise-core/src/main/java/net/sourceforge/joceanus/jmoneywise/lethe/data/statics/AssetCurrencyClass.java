@@ -833,9 +833,14 @@ public enum AssetCurrencyClass implements StaticInterface {
     VES(161, 160),
 
     /**
+     * Venezualan Bolivar.
+     */
+    VED(162, 161),
+
+    /**
      * Zimbabwe Dollar.
      */
-    ZWL(162, 161);
+    ZWL(163, 162);
 
     /**
      * Class Id.

@@ -556,7 +556,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXStringTextField class.
      */
     public static class TethysUIFXStringTextField
-            extends TethysUIFXTextEditField<String> {
+            extends TethysUIFXTextEditField<String>
+            implements TethysUIStringEditField {
         /**
          * Constructor.
          *
@@ -571,7 +572,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXCharArrayTextField class.
      */
     public static class TethysUIFXCharArrayTextField
-            extends TethysUIFXTextEditField<char[]> {
+            extends TethysUIFXTextEditField<char[]>
+            implements TethysUICharArrayEditField {
         /**
          * Constructor.
          *
@@ -586,7 +588,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXShortTextField class.
      */
     public static class TethysUIFXShortTextField
-            extends TethysUIFXTextEditField<Short> {
+            extends TethysUIFXTextEditField<Short>
+            implements TethysUIShortEditField {
         /**
          * Constructor.
          *
@@ -602,7 +605,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXIntegerTextField class.
      */
     public static class TethysUIFXIntegerTextField
-            extends TethysUIFXTextEditField<Integer> {
+            extends TethysUIFXTextEditField<Integer>
+            implements TethysUIIntegerEditField {
         /**
          * Constructor.
          *
@@ -618,7 +622,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXLongTextField class.
      */
     public static class TethysUIFXLongTextField
-            extends TethysUIFXTextEditField<Long> {
+            extends TethysUIFXTextEditField<Long>
+            implements TethysUILongEditField {
         /**
          * Constructor.
          *
@@ -692,7 +697,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXMoneyTextField class.
      */
     public static class TethysUIFXMoneyTextField
-            extends TethysUIFXCurrencyTextFieldBase<TethysMoney> {
+            extends TethysUIFXCurrencyTextFieldBase<TethysMoney>
+            implements TethysUIMoneyEditField {
         /**
          * Constructor.
          *
@@ -707,7 +713,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXPriceTextField class.
      */
     public static class TethysUIFXPriceTextField
-            extends TethysUIFXCurrencyTextFieldBase<TethysPrice> {
+            extends TethysUIFXCurrencyTextFieldBase<TethysPrice>
+            implements TethysUIPriceEditField {
         /**
          * Constructor.
          *
@@ -722,7 +729,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXDilutedPriceTextField class.
      */
     public static class TethysUIFXDilutedPriceTextField
-            extends TethysUIFXCurrencyTextFieldBase<TethysDilutedPrice> {
+            extends TethysUIFXCurrencyTextFieldBase<TethysDilutedPrice>
+            implements TethysUIDilutedPriceEditField {
         /**
          * Constructor.
          *
@@ -737,7 +745,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRateTextField class.
      */
     public static class TethysUIFXRateTextField
-            extends TethysUIFXTextEditField<TethysRate> {
+            extends TethysUIFXTextEditField<TethysRate>
+            implements TethysUIRateEditField {
         /**
          * Constructor.
          *
@@ -753,7 +762,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXUnitsTextField class.
      */
     public static class TethysUIFXUnitsTextField
-            extends TethysUIFXTextEditField<TethysUnits> {
+            extends TethysUIFXTextEditField<TethysUnits>
+            implements TethysUIUnitsEditField {
         /**
          * Constructor.
          *
@@ -769,7 +779,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXDilutionTextField class.
      */
     public static class TethysUIFXDilutionTextField
-            extends TethysUIFXTextEditField<TethysDilution> {
+            extends TethysUIFXTextEditField<TethysDilution>
+            implements TethysUIDilutionEditField {
         /**
          * Constructor.
          *
@@ -785,7 +796,8 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRatioTextField class.
      */
     public static class TethysUIFXRatioTextField
-            extends TethysUIFXTextEditField<TethysRatio> {
+            extends TethysUIFXTextEditField<TethysRatio>
+            implements TethysUIRatioEditField {
         /**
          * Constructor.
          *

@@ -14,47 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.ui.swing;
+package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
-import java.awt.HeadlessException;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableDateColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableStringColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * <p>
- * Provides a simple application that illustrates the features of JDateDay.
+ * Provides a simple application that illustrates the features of TethysDate.
  * @author Tony Washer
  */
-public class TethysSwingDateExample {
+public class TethysTestDate {
     /**
      * Inset depth.
      */
@@ -111,11 +106,6 @@ public class TethysSwingDateExample {
     private static final TethysDate DATE_FIFTH = makeDate(2018, Month.FEBRUARY, 28);
 
     /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingDateExample.class);
-
-    /**
      * The first date format.
      */
     private static final String DATEFORMAT_1 = "dd-MMM-yyyy";
@@ -133,47 +123,47 @@ public class TethysSwingDateExample {
     /**
      * The GUI Factory.
      */
-    private final TethysSwingGuiFactory theGuiFactory = new TethysSwingGuiFactory();
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * The table.
      */
-    private TethysSwingTableManager<String, DateItem> theTable;
+    private TethysUITableManager<String, DateItem> theTable;
 
     /**
      * The list of locales.
      */
-    private TethysSwingScrollButtonManager<ShortLocale> theLocaleList;
+    private TethysUIScrollButtonManager<ShortLocale> theLocaleList;
 
     /**
      * The list of formats.
      */
-    private TethysSwingScrollButtonManager<String> theFormatList;
+    private TethysUIScrollButtonManager<String> theFormatList;
 
     /**
      * The start date.
      */
-    private TethysSwingDateButtonManager theStartDate;
+    private TethysUIDateButtonManager theStartDate;
 
     /**
      * The end date.
      */
-    private TethysSwingDateButtonManager theEndDate;
+    private TethysUIDateButtonManager theEndDate;
 
     /**
      * The Null Select checkBox.
      */
-    private TethysSwingCheckBox theNullSelect;
+    private TethysUICheckBox theNullSelect;
 
     /**
      * The ShowNarrow checkBox.
      */
-    private TethysSwingCheckBox theNarrowSelect;
+    private TethysUICheckBox theNarrowSelect;
 
     /**
      * The selected range.
      */
-    private TethysSwingLabel theSelectedRange;
+    private TethysUILabel theSelectedRange;
 
     /**
      * The selected locale.
@@ -188,60 +178,47 @@ public class TethysSwingDateExample {
     /**
      * The range selection.
      */
-    private TethysSwingDateRangeSelector theRangeSelect;
+    private TethysUIDateRangeSelector theRangeSelect;
 
     /**
      * The formatter.
      */
-    private final TethysDataFormatter theFormatter = theGuiFactory.getDataFormatter();
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * The formatter.
      */
-    private final TethysDateFormatter theDateFormatter = theFormatter.getDateFormatter();
+    private final TethysDateFormatter theDateFormatter;
 
     /**
-     * Create and show the GUI.
+     * The factory.
      */
-    static void createAndShowGUI() {
-        try {
-            /* Create the frame */
-            final JFrame myFrame = new JFrame("TethysDate Swing Demo");
+    private final TethysUIComponent thePane;
 
-            /* Create the Example program */
-            final TethysSwingDateExample myProgram = new TethysSwingDateExample();
-
-            /* Create the panel */
-            final TethysSwingGridPaneManager myPanel = myProgram.makePanel();
-            final JComponent myNode = TethysSwingNode.getComponent(myPanel);
-
-            /* Attach the panel to the frame */
-            myNode.setOpaque(true);
-            myFrame.setContentPane(myNode);
-            myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-            /* Show the frame */
-            myFrame.pack();
-            myFrame.setLocationRelativeTo(null);
-            myFrame.setVisible(true);
-        } catch (HeadlessException e) {
-            LOGGER.error("createGUI didn't complete successfully", e);
-        }
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     */
+    TethysTestDate(final TethysUIFactory<?> pFactory) {
+        theFactory = pFactory;
+        theFormatter = theFactory.getDataFormatter();
+        theDateFormatter = theFormatter.getDateFormatter();
+        thePane = makePanel();
     }
 
     /**
-     * Main function.
-     * @param args the arguments
+     * Obtain the component.
+     * @return the component
      */
-    public static void main(final String[] args) {
-        SwingUtilities.invokeLater(TethysSwingDateExample::createAndShowGUI);
+    public TethysUIComponent getComponent() {
+        return thePane;
     }
 
     /**
      * Create the panel.
      * @return the panel
      */
-    private TethysSwingGridPaneManager makePanel() {
+    private TethysUIComponent makePanel() {
         /* Create the table */
         makeTable();
 
@@ -255,14 +232,16 @@ public class TethysSwingDateExample {
         makeFormatList();
 
         /* Create the additional labels */
-        final TethysSwingLabel myFormat = theGuiFactory.newLabel("Format:");
-        final TethysSwingLabel myLocale = theGuiFactory.newLabel("Locale:");
-        final TethysSwingLabel myStart = theGuiFactory.newLabel("Start:");
-        final TethysSwingLabel myEnd = theGuiFactory.newLabel("End:");
-        final TethysSwingLabel mySelRange = theGuiFactory.newLabel("SelectedRange:");
+        final TethysUIControlFactory myControls = theFactory.controlFactory();
+        final TethysUILabel myFormat = myControls.newLabel("Format:");
+        final TethysUILabel myLocale = myControls.newLabel("Locale:");
+        final TethysUILabel myStart = myControls.newLabel("Start:");
+        final TethysUILabel myEnd = myControls.newLabel("End:");
+        final TethysUILabel mySelRange = myControls.newLabel("SelectedRange:");
 
         /* Create a Range sub-panel */
-        final TethysSwingGridPaneManager myRange = theGuiFactory.newGridPane();
+        final TethysUIPaneFactory myPanes = theFactory.paneFactory();
+        final TethysUIGridPaneManager myRange = myPanes.newGridPane();
         myRange.setHGap(GRID_GAP);
         myRange.setVGap(GRID_GAP);
         myRange.setBorderPadding(INSET_DEPTH);
@@ -270,17 +249,17 @@ public class TethysSwingDateExample {
 
         /* Position the contents */
         myRange.addCell(myStart);
-        myRange.setCellAlignment(myStart, TethysAlignment.EAST);
+        myRange.setCellAlignment(myStart, TethysUIAlignment.EAST);
         myRange.addCell(theStartDate);
         myRange.allowCellGrowth(theStartDate);
         myRange.newRow();
         myRange.addCell(myEnd);
-        myRange.setCellAlignment(myEnd, TethysAlignment.EAST);
+        myRange.setCellAlignment(myEnd, TethysUIAlignment.EAST);
         myRange.addCell(theEndDate);
         myRange.allowCellGrowth(theEndDate);
 
         /* Create a Style sub-panel */
-        final TethysSwingGridPaneManager myStyle = theGuiFactory.newGridPane();
+        final TethysUIGridPaneManager myStyle = myPanes.newGridPane();
         myStyle.setHGap(GRID_GAP);
         myStyle.setVGap(GRID_GAP);
         myStyle.setBorderPadding(INSET_DEPTH);
@@ -288,20 +267,20 @@ public class TethysSwingDateExample {
 
         /* Position the contents */
         myStyle.addCell(myLocale);
-        myStyle.setCellAlignment(myLocale, TethysAlignment.EAST);
+        myStyle.setCellAlignment(myLocale, TethysUIAlignment.EAST);
         myStyle.addCell(theLocaleList);
         myStyle.allowCellGrowth(theLocaleList);
         myStyle.newRow();
         myStyle.addCell(myFormat);
-        myStyle.setCellAlignment(myFormat, TethysAlignment.EAST);
+        myStyle.setCellAlignment(myFormat, TethysUIAlignment.EAST);
         myStyle.addCell(theFormatList);
         myStyle.allowCellGrowth(theFormatList);
 
         /* Create the options panel */
-        final TethysSwingBoxPaneManager myOptions = makeOptionsPanel();
+        final TethysUIBoxPaneManager myOptions = makeOptionsPanel();
 
         /* Create the panel */
-        final TethysSwingGridPaneManager myPanel = theGuiFactory.newGridPane();
+        final TethysUIGridPaneManager myPanel = myPanes.newGridPane();
         myPanel.setHGap(GRID_GAP);
         myPanel.setVGap(GRID_GAP);
         myPanel.setBorderPadding(INSET_DEPTH);
@@ -312,16 +291,16 @@ public class TethysSwingDateExample {
         myPanel.allowCellGrowth(myStyle);
         myPanel.newRow();
         myPanel.addCell(myOptions, 2);
-        myPanel.setCellAlignment(myOptions, TethysAlignment.CENTRE);
+        myPanel.setCellAlignment(myOptions, TethysUIAlignment.CENTRE);
         myPanel.allowCellGrowth(myOptions);
         myPanel.newRow();
         myPanel.addCell(theTable, 2);
-        myPanel.setCellAlignment(theTable, TethysAlignment.CENTRE);
+        myPanel.setCellAlignment(theTable, TethysUIAlignment.CENTRE);
         myPanel.allowCellGrowth(theTable);
         myPanel.newRow();
         theRangeSelect.setBorderTitle("Explicit Range Selection");
         myPanel.addCell(theRangeSelect, 2);
-        myPanel.setCellAlignment(theRangeSelect, TethysAlignment.CENTRE);
+        myPanel.setCellAlignment(theRangeSelect, TethysUIAlignment.CENTRE);
         myPanel.allowCellGrowth(theRangeSelect);
         myPanel.newRow();
         myPanel.addCell(mySelRange);
@@ -337,7 +316,7 @@ public class TethysSwingDateExample {
      */
     private void makeTable() {
         /* Create the table */
-        theTable = theGuiFactory.newTable();
+        theTable = theFactory.tableFactory().newTable();
 
         /* Create the list */
         final List<DateItem> myList = new ArrayList<>();
@@ -351,7 +330,7 @@ public class TethysSwingDateExample {
         theTable.setItems(myList);
 
         /* Create the date column */
-        final TethysSwingTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
+        final TethysUITableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(DateItem::getDate);
         myDateColumn.setOnCommit(DateItem::setDate);
         myDateColumn.setColumnWidth(COL_1_WIDTH);
@@ -362,7 +341,7 @@ public class TethysSwingDateExample {
         });
 
         /* Create the comments column */
-        final TethysSwingTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
+        final TethysUITableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(DateItem::getComments);
         myCommentsColumn.setOnCommit(DateItem::setComments);
         myCommentsColumn.setColumnWidth(COL_2_WIDTH);
@@ -373,8 +352,8 @@ public class TethysSwingDateExample {
      */
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
-        theLocaleList = theGuiFactory.newScrollButton();
-        final TethysSwingScrollContextMenu<ShortLocale> myMenu = theLocaleList.getMenu();
+        theLocaleList = theFactory.buttonFactory().newScrollButton();
+        final TethysUIScrollMenu<ShortLocale> myMenu = theLocaleList.getMenu();
         for (final ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
             myMenu.addItem(myLocale);
@@ -384,7 +363,7 @@ public class TethysSwingDateExample {
         theLocaleList.setValue(ShortLocale.UK);
 
         /* Action selections */
-        theLocaleList.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theLocaleList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* Store the new locale */
             final ShortLocale myLocale = e.getDetails(ShortLocale.class);
             theLocale = myLocale.getLocale();
@@ -399,8 +378,8 @@ public class TethysSwingDateExample {
      */
     private void makeFormatList() {
         /* Create the Combo box and populate it */
-        theFormatList = theGuiFactory.newScrollButton();
-        final TethysSwingScrollContextMenu<String> myMenu = theFormatList.getMenu();
+        theFormatList = theFactory.buttonFactory().newScrollButton();
+        final TethysUIScrollMenu<String> myMenu = theFormatList.getMenu();
         myMenu.addItem(DATEFORMAT_1);
         myMenu.addItem(DATEFORMAT_2);
         myMenu.addItem(DATEFORMAT_3);
@@ -409,7 +388,7 @@ public class TethysSwingDateExample {
         theFormatList.setValue(theFormat);
 
         /* Action selections */
-        theFormatList.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> {
+        theFormatList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* Store the new format */
             theFormat = e.getDetails(String.class);
             applyFormat();
@@ -421,12 +400,12 @@ public class TethysSwingDateExample {
      * Create the options panel.
      * @return the panel
      */
-    private TethysSwingBoxPaneManager makeOptionsPanel() {
+    private TethysUIBoxPaneManager makeOptionsPanel() {
         /* Create the checkBoxes */
         makeCheckBoxes();
 
         /* Create an options sub-panel */
-        final TethysSwingBoxPaneManager myOptions = theGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager myOptions = theFactory.paneFactory().newHBoxPane();
         myOptions.addSpacer();
         myOptions.addNode(theNullSelect);
         myOptions.addSpacer();
@@ -443,12 +422,13 @@ public class TethysSwingDateExample {
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        theStartDate = theGuiFactory.newDateButton();
-        theEndDate = theGuiFactory.newDateButton();
+        final TethysUIButtonFactory myButtons = theFactory.buttonFactory();
+        theStartDate = myButtons.newDateButton();
+        theEndDate = myButtons.newDateButton();
 
         /* Create the range selection */
-        theRangeSelect = theGuiFactory.newDateRangeSelector(true);
-        theRangeSelect.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewRange());
+        theRangeSelect = myButtons.newDateRangeSelector(true);
+        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
 
         /* Set the values */
         theStartDate.setSelectedDate(DATE_START);
@@ -458,11 +438,11 @@ public class TethysSwingDateExample {
         applyRange();
 
         /* Add Listener to buttons */
-        theStartDate.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> applyRange());
-        theEndDate.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> applyRange());
+        theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
+        theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> applyRange());
 
         /* Create the range report label */
-        theSelectedRange = theGuiFactory.newLabel(theRangeSelect.getRange().toString());
+        theSelectedRange = theFactory.controlFactory().newLabel(theRangeSelect.getRange().toString());
     }
 
     /**
@@ -483,8 +463,9 @@ public class TethysSwingDateExample {
      */
     private void makeCheckBoxes() {
         /* Create the check boxes */
-        theNullSelect = theGuiFactory.newCheckBox("Null Date Select");
-        theNarrowSelect = theGuiFactory.newCheckBox("Show Narrow Days");
+        final TethysUIControlFactory myControls = theFactory.controlFactory();
+        theNullSelect = myControls.newCheckBox("Null Date Select");
+        theNarrowSelect = myControls.newCheckBox("Show Narrow Days");
 
         /* Action selections */
         theNullSelect.getEventRegistrar().addEventListener(e -> applyNullOption());

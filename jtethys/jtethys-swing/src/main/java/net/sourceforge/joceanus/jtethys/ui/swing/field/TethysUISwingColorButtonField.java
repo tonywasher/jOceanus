@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingColorPicker;
@@ -31,7 +32,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingColorPicker
  * ColorButtonField class.
  */
 public class TethysUISwingColorButtonField
-        extends TethysUISwingDataTextField<String> {
+        extends TethysUISwingDataTextField<String>
+        implements TethysUIColorButtonField {
     /**
      * The colour picker.
      */

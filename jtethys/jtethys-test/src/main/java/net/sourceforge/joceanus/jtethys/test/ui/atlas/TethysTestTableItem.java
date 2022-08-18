@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.ui.swing;
+package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import java.util.List;
 
@@ -26,13 +26,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
 
 /**
  * Tethys Table item.
  */
-public class TethysSwingTableItem {
+public class TethysTestTableItem {
     /**
      * Name property.
      */
@@ -116,7 +114,7 @@ public class TethysSwingTableItem {
     /**
      * List property.
      */
-    private List<TethysListId> theList;
+    private List<TethysTestListId> theList;
 
     /**
      * Updates property.
@@ -128,21 +126,21 @@ public class TethysSwingTableItem {
      * @param pHelper the Helper
      * @param pName the Name
      */
-    protected TethysSwingTableItem(final TethysScrollUITestHelper pHelper,
-                                   final String pName) {
+    TethysTestTableItem(final TethysTestHelper pHelper,
+                        final String pName) {
         theName = pName;
         theDate = new TethysDate();
         theBoolean = Boolean.FALSE;
         theXtraBoolean = Boolean.FALSE;
-        theShort = TethysScrollUITestHelper.SHORT_DEF;
-        theInteger = TethysScrollUITestHelper.INT_DEF;
-        theLong = TethysScrollUITestHelper.LONG_DEF;
-        theMoney = TethysScrollUITestHelper.MONEY_DEF;
-        thePrice = TethysScrollUITestHelper.PRICE_DEF;
-        theUnits = TethysScrollUITestHelper.UNITS_DEF;
-        theRate = TethysScrollUITestHelper.RATE_DEF;
-        theRatio = TethysScrollUITestHelper.RATIO_DEF;
-        theDilution = TethysScrollUITestHelper.DILUTION_DEF;
+        theShort = TethysTestHelper.SHORT_DEF;
+        theInteger = TethysTestHelper.INT_DEF;
+        theLong = TethysTestHelper.LONG_DEF;
+        theMoney = TethysTestHelper.MONEY_DEF;
+        thePrice = TethysTestHelper.PRICE_DEF;
+        theUnits = TethysTestHelper.UNITS_DEF;
+        theRate = TethysTestHelper.RATE_DEF;
+        theRatio = TethysTestHelper.RATIO_DEF;
+        theDilution = TethysTestHelper.DILUTION_DEF;
         theList = pHelper.buildSelectedList();
         theUpdates = 0;
     }
@@ -407,7 +405,7 @@ public class TethysSwingTableItem {
      * Obtain the list property.
      * @return the list property
      */
-    public List<TethysListId> getList() {
+    public List<TethysTestListId> getList() {
         return theList;
     }
 
@@ -415,7 +413,7 @@ public class TethysSwingTableItem {
      * Set the list property.
      * @param pValue the new value
      */
-    public void setList(final List<TethysListId> pValue) {
+    public void setList(final List<TethysTestListId> pValue) {
         theList = pValue;
     }
 
@@ -434,3 +432,4 @@ public class TethysSwingTableItem {
         theUpdates = theUpdates + 1;
     }
 }
+
