@@ -41,11 +41,13 @@ public class TethysTestMain
         final TethysTestButtons myButtons = new TethysTestButtons(pFactory);
         final TethysTestFields myFields = new TethysTestFields(pFactory);
         final TethysTestTable myTable = new TethysTestTable(pFactory);
+        final TethysTestDate myDates = new TethysTestDate(pFactory);
         theMain = pFactory.paneFactory().newTabPane();
         theMain.addTabItem("Charts", myCharts.getComponent());
         theMain.addTabItem("Buttons", myButtons.getComponent());
         theMain.addTabItem("Fields", myFields.getComponent());
         theMain.addTabItem("Table", myTable.getComponent());
+        theMain.addTabItem("Dates", myDates.getComponent());
     }
 
     @Override
