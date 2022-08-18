@@ -36,9 +36,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * Deposit Rate Table.
@@ -73,8 +72,7 @@ public class MoneyWiseDepositRateTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITRATE);
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, DepositRate> myTable = getTable();
+        final TethysTableManager<MetisLetheField, DepositRate> myTable = getTable();
 
         /* Set table configuration */
         myTable.setDisabled(DepositRate::isDisabled)

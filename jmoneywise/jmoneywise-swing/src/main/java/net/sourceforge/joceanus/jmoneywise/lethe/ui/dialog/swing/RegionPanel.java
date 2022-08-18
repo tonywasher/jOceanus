@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -43,19 +44,20 @@ public class RegionPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public RegionPanel(final TethysSwingGuiFactory pFactory,
+    public RegionPanel(final TethysGuiFactory pFactory,
                        final MetisSwingFieldManager pFieldMgr,
                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
                        final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
 
         /* Create a new panel */
         final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Region.NAMELEN);
 
         /* Create the text fields */
-        final TethysSwingStringTextField myName = pFactory.newStringField();
-        final TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = myFactory.newStringField();
+        final TethysSwingStringTextField myDesc = myFactory.newStringField();
 
         /* Assign the fields to the panel */
         myPanel.addField(Region.FIELD_NAME, MetisDataType.STRING, myName);

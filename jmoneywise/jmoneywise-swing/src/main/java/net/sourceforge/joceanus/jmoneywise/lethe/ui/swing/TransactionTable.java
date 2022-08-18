@@ -840,7 +840,7 @@ public class TransactionTable
         /**
          * Description column id.
          */
-        private static final int COLUMN_DESC = 6;
+        private static final int COLUMN_DESC = 6;//
 
         /**
          * Debited column id.
@@ -860,72 +860,72 @@ public class TransactionTable
         /**
          * Amount column id.
          */
-        private static final int COLUMN_AMOUNT = 10;
+        private static final int COLUMN_AMOUNT = 10;//
 
         /**
          * Tags column id.
          */
-        private static final int COLUMN_TAGS = 11;
+        private static final int COLUMN_TAGS = 11; //
 
         /**
          * Reference column id.
          */
-        private static final int COLUMN_REF = 12;
+        private static final int COLUMN_REF = 12;//
 
         /**
          * AccountUnits column id.
          */
-        private static final int COLUMN_ACCOUNTUNITS = 13;
+        private static final int COLUMN_ACCOUNTUNITS = 13;//
 
         /**
          * PartnerUnits column id.
          */
-        private static final int COLUMN_PARTNERUNITS = 14;
+        private static final int COLUMN_PARTNERUNITS = 14;//
 
         /**
          * PartnerAmount column id.
          */
-        private static final int COLUMN_PARTNERAMOUNT = 15;
+        private static final int COLUMN_PARTNERAMOUNT = 15;//
 
         /**
          * Dilution column id.
          */
-        private static final int COLUMN_DILUTION = 16;
+        private static final int COLUMN_DILUTION = 16;//
 
         /**
          * QualifyYears column id.
          */
-        private static final int COLUMN_QUALYEARS = 17;
+        private static final int COLUMN_QUALYEARS = 17;//
 
         /**
          * ReturnedAccount column id.
          */
-        private static final int COLUMN_RETURNEDACCOUNT = 18;
+        private static final int COLUMN_RETURNEDACCOUNT = 18;//
 
         /**
          * ReturnedCash column id.
          */
-        private static final int COLUMN_RETURNEDCASH = 19;
+        private static final int COLUMN_RETURNEDCASH = 19;//
 
         /**
          * TaxCredit column id.
          */
-        private static final int COLUMN_TAXCREDIT = 20;
+        private static final int COLUMN_TAXCREDIT = 20;//
 
         /**
          * NatInsurance column id.
          */
-        private static final int COLUMN_NATINS = 21;
+        private static final int COLUMN_NATINS = 21;//
 
         /**
          * DeemedBenefit column id.
          */
-        private static final int COLUMN_BENEFIT = 22;
+        private static final int COLUMN_BENEFIT = 22;//
 
         /**
          * Withheld column id.
          */
-        private static final int COLUMN_WITHHELD = 23;
+        private static final int COLUMN_WITHHELD = 23;//
 
         /**
          * Action column id.

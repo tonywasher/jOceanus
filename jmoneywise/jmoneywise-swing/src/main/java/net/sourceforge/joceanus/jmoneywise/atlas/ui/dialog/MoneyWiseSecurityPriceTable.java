@@ -36,9 +36,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * Security Price Table.
@@ -73,8 +72,7 @@ public class MoneyWiseSecurityPriceTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITYPRICE);
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, SecurityPrice> myTable = getTable();
+        final TethysTableManager<MetisLetheField, SecurityPrice> myTable = getTable();
 
         /* Set table configuration */
         myTable.setDisabled(SecurityPrice::isDisabled)

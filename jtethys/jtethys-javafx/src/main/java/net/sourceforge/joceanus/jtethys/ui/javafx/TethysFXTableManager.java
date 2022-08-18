@@ -268,10 +268,8 @@ public class TethysFXTableManager<C, R>
         theTable.setItems(myItems);
     }
 
-    /**
-     * Force a sort operation.
-     */
-    public void forceSort() {
+    @Override
+    public void fireTableDataChanged() {
         /* Apply sort if specified */
         final Comparator<R> myComparator = getComparator();
         if (myComparator != null) {

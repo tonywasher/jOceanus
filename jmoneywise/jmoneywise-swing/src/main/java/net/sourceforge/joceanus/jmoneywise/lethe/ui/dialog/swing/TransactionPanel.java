@@ -68,6 +68,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -133,7 +134,7 @@ public class TransactionPanel
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
-    public TransactionPanel(final TethysSwingGuiFactory pFactory,
+    public TransactionPanel(final TethysGuiFactory pFactory,
                             final MetisSwingFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
@@ -141,20 +142,21 @@ public class TransactionPanel
                             final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        final MoneyWiseDataPanel myPanel = buildMainPanel(myFactory);
 
         /* Build the info panel */
-        buildInfoPanel(pFactory);
+        buildInfoPanel(myFactory);
 
         /* Build the tax panel */
-        buildTaxPanel(pFactory);
+        buildTaxPanel(myFactory);
 
         /* Build the securities panel */
-        buildSecuritiesPanel(pFactory);
+        buildSecuritiesPanel(myFactory);
 
         /* Define the panel */
         defineMainPanel(myPanel);

@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.Port
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -67,21 +68,22 @@ public class PortfolioPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public PortfolioPanel(final TethysSwingGuiFactory pFactory,
+    public PortfolioPanel(final TethysGuiFactory pFactory,
                           final MetisSwingFieldManager pFieldMgr,
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
                           final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        final MoneyWiseDataPanel myPanel = buildMainPanel(myFactory);
 
         /* Build the detail panel */
-        buildXtrasPanel(pFactory);
+        buildXtrasPanel(myFactory);
 
         /* Build the notes panel */
-        buildNotesPanel(pFactory);
+        buildNotesPanel(myFactory);
 
         /* Define the panel */
         defineMainPanel(myPanel);

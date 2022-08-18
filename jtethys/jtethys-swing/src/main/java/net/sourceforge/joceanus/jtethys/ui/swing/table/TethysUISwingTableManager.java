@@ -382,9 +382,7 @@ public class TethysUISwingTableManager<C, R>
         return new TethysUISwingTableIconColumn<>(this, pId, pClazz);
     }
 
-    /**
-     * Fire TableData changed.
-     */
+    @Override
     public void fireTableDataChanged() {
         theModel.fireTableDataChanged();
     }

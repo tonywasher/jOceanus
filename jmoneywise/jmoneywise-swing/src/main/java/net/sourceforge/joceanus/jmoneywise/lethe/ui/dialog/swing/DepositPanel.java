@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -90,22 +91,23 @@ public class DepositPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositPanel(final TethysSwingGuiFactory pFactory,
+    public DepositPanel(final TethysGuiFactory pFactory,
                         final MoneyWiseView pView,
                         final MetisSwingFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
                         final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        final MoneyWiseDataPanel myPanel = buildMainPanel(myFactory);
 
         /* Build the detail panel */
-        buildXtrasPanel(pFactory);
+        buildXtrasPanel(myFactory);
 
         /* Build the notes panel */
-        buildNotesPanel(pFactory);
+        buildNotesPanel(myFactory);
 
         /* Create the DepositRates table */
         theRates = new MoneyWiseDepositRateTable(pView, getUpdateSet(), pError);

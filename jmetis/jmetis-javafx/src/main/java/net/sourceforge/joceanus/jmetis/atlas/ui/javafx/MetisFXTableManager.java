@@ -149,7 +149,7 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * Force a sort operation.
      */
     void forceSort() {
-        getTable().forceSort();
+        getTable().fireTableDataChanged();
     }
 
     @Override
@@ -253,7 +253,7 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      */
     void configureColumn(final TethysFXTableColumn<?, MetisDataFieldId, R> pColumn,
                          final MetisFieldDef pField) {
-        pColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pField));
+        //pColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pField));
         if (theSession != null && pField instanceof MetisFieldVersionedDef) {
             pColumn.setOnCommit((r, v) -> theSession.setFieldForItem(r, (MetisFieldVersionedDef) pField, v));
         }

@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
@@ -51,24 +52,25 @@ public class DepositCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositCategoryPanel(final TethysSwingGuiFactory pFactory,
+    public DepositCategoryPanel(final TethysGuiFactory pFactory,
                                 final MetisSwingFieldManager pFieldMgr,
                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                 final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
 
         /* Create a new panel */
         final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DepositCategory.NAMELEN);
 
         /* Create the text fields */
-        final TethysSwingStringTextField myName = pFactory.newStringField();
-        final TethysSwingStringTextField mySubName = pFactory.newStringField();
-        final TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = myFactory.newStringField();
+        final TethysSwingStringTextField mySubName = myFactory.newStringField();
+        final TethysSwingStringTextField myDesc = myFactory.newStringField();
 
         /* Create the buttons */
-        final TethysSwingScrollButtonManager<DepositCategoryType> myTypeButton = pFactory.newScrollButton();
-        final TethysSwingScrollButtonManager<DepositCategory> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<DepositCategoryType> myTypeButton = myFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<DepositCategory> myParentButton = myFactory.newScrollButton();
 
         /* Assign the fields to the panel */
         myPanel.addField(DepositCategory.FIELD_NAME, MetisDataType.STRING, myName);

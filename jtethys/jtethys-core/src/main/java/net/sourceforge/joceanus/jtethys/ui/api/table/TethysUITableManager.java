@@ -201,6 +201,11 @@ public interface TethysUITableManager<C, R>
     void setItems(final List<R> pItems);
 
     /**
+     * fire TableDataChanged.
+     */
+    void fireTableDataChanged();
+
+    /**
      * Obtain an iterator over the unsorted items.
      * @return the iterator.
      */

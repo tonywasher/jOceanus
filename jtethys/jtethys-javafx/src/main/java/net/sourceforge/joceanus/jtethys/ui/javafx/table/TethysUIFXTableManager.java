@@ -270,18 +270,18 @@ public class TethysUIFXTableManager<C, R>
     @Override
     protected void processOnCommit(final R pRow) throws OceanusException {
         super.processOnCommit(pRow);
-        forceSort();
+        fireTableDataChanged();
     }
 
-    /**
-     * Force a sort operation.
-     */
-    public void forceSort() {
+    @Override
+    public void fireTableDataChanged() {
         /* Apply sort if specified */
         final Comparator<R> myComparator = getComparator();
         if (myComparator != null) {
             theCompValue.setValue(null);
             theCompValue.setValue(myComparator);
+        } else {
+            setTheItems();
         }
     }
 

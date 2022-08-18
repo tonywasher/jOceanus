@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Currency;
 import java.util.HashMap;
@@ -118,6 +119,11 @@ public abstract class TethysTableManager<C, R>
      * The Filter.
      */
     private Predicate<R> theFilter;
+
+    /**
+     * The item list.
+     */
+    private List<R> theItems;
 
     /**
      * Is the table editable?
@@ -412,10 +418,35 @@ public abstract class TethysTableManager<C, R>
     public abstract void cancelEditing();
 
     /**
+     * Set the items
+     * @param pItems the items
+     */
+    public void setItems(final List<R> pItems) {
+        theItems = pItems;
+    }
+
+    /**
+     * fire TableDataChanged.
+     */
+    public abstract void fireTableDataChanged();
+
+    /**
      * Obtain an iterator over the unsorted items.
      * @return the iterator.
      */
-    public abstract Iterator<R> itemIterator();
+    public Iterator<R> itemIterator() {
+        return theItems == null
+                ? Collections.emptyIterator()
+                : theItems.iterator();
+    }
+
+    /**
+     * Obtain items.
+     * @return the items
+     */
+    public List<R> getItems() {
+        return theItems;
+    }
 
     /**
      * Obtain an iterator over the sorted items.
@@ -688,6 +719,14 @@ public abstract class TethysTableManager<C, R>
          * @return the column
          */
         TethysTableColumn<T, C, R> setEditable(boolean pEditable);
+
+        /**
+         * Set cell value Factory.
+         *
+         * @param pFactory the cell factory
+         * @return the column
+         */
+        TethysTableColumn<T, C, R> setCellValueFactory(Function<R, T> pFactory);
 
         /**
          * Set the cell-editable tester.
@@ -1112,6 +1151,11 @@ public abstract class TethysTableManager<C, R>
         private TethysOnCellCommit<R, T> theOnCommit;
 
         /**
+         * Cell value factory.
+         */
+        private Function<R, T> theValueFactory;
+
+        /**
          * Repaint the column on commit?
          */
         private boolean doRePaintColOnCommit;
@@ -1156,6 +1200,9 @@ public abstract class TethysTableManager<C, R>
 
             /* Initialise editable */
             isCellEditable = p -> true;
+
+            /* Set default value factory */
+            theValueFactory = e -> null;
         }
 
         @Override
@@ -1239,6 +1286,26 @@ public abstract class TethysTableManager<C, R>
                 }
             }
             return this;
+        }
+
+        /**
+         * Set cell value Factory.
+         *
+         * @param pFactory the cell factory
+         * @return the column
+         */
+        public TethysTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
+            theValueFactory = pFactory;
+            return this;
+        }
+
+        /**
+         * Get cell value Factory.
+         *
+         * @return the cell factory
+         */
+        public Function<R, T> getCellValueFactory() {
+            return theValueFactory;
         }
 
         @Override
