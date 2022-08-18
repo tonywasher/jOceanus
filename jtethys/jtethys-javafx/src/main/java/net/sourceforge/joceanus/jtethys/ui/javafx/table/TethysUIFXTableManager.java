@@ -31,6 +31,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.table.TethysUICoreTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
@@ -246,6 +247,12 @@ public class TethysUIFXTableManager<C, R>
 
         /* If we have any items */
         if (myItems != null) {
+            /* Apply filter if specified */
+            final Predicate<R> myFilter = getFilter();
+            if (myFilter != null) {
+                myItems = myItems.filtered(myFilter);
+            }
+
             /* Apply sort if specified */
             final Comparator<R> myComparator = getComparator();
             if (myComparator != null) {
@@ -254,16 +261,16 @@ public class TethysUIFXTableManager<C, R>
                 theCompValue.setValue(myComparator);
                 ((SortedList<R>) theSorted).comparatorProperty().bind(theCompValue);
             }
-
-            /* Apply filter if specified */
-            final Predicate<R> myFilter = getFilter();
-            if (myFilter != null) {
-                myItems = myItems.filtered(myFilter);
-            }
         }
 
         /* Declare the items */
         theTable.setItems(myItems);
+    }
+
+    @Override
+    protected void processOnCommit(final R pRow) throws OceanusException {
+        super.processOnCommit(pRow);
+        forceSort();
     }
 
     /**

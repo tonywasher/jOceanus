@@ -230,13 +230,13 @@ public class TethysTestButtons {
         myGrid.addCell(theScrollValue);
         myGrid.allowCellGrowth(theScrollValue);
         myGrid.newRow();
-        setScrollValue(null);
 
         /* Add listener */
         theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setScrollValue(e.getDetails(String.class));
         });
         theScrollButtonMgr.setMenuConfigurator(theHelper::buildContextMenu);
+        theScrollButtonMgr.setValue("First");
 
         /* Create list button line */
         theListButtonMgr.setBorderTitle("ListButton");
@@ -248,14 +248,12 @@ public class TethysTestButtons {
         myGrid.allowCellGrowth(theListValues);
         myGrid.newRow();
 
-        theListButtonMgr.setValue(theHelper.buildSelectedList());
-        theListButtonMgr.setSelectables(theHelper::buildSelectableList);
-        theListButtonMgr.setText("Tag");
-
         /* Add listener */
         theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setListValue();
         });
+        theListButtonMgr.setSelectables(theHelper::buildSelectableList);
+        theListButtonMgr.setValue(theHelper.buildSelectedList());
 
         /* Create date button line */
         theDateButtonMgr.setBorderTitle("DateButton");
@@ -271,6 +269,7 @@ public class TethysTestButtons {
         theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setDateValue(e.getDetails(TethysDate.class));
         });
+        theDateButtonMgr.setSelectedDate(new TethysDate());
 
         /* Create simple icon button line */
         theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");

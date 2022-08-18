@@ -40,10 +40,12 @@ public class TethysTestMain
         final TethysTestChart myCharts = new TethysTestChart(pFactory);
         final TethysTestButtons myButtons = new TethysTestButtons(pFactory);
         final TethysTestFields myFields = new TethysTestFields(pFactory);
+        final TethysTestTable myTable = new TethysTestTable(pFactory);
         theMain = pFactory.paneFactory().newTabPane();
         theMain.addTabItem("Charts", myCharts.getComponent());
         theMain.addTabItem("Buttons", myButtons.getComponent());
         theMain.addTabItem("Fields", myFields.getComponent());
+        theMain.addTabItem("Table", myTable.getComponent());
     }
 
     @Override

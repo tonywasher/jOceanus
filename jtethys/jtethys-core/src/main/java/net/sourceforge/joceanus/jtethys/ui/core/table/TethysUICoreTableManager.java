@@ -255,7 +255,7 @@ public abstract class TethysUICoreTableManager<C, R>
      * @param pRow the row
      * @throws OceanusException on error
      */
-    void processOnCommit(final R pRow) throws OceanusException {
+    protected void processOnCommit(final R pRow) throws OceanusException {
         /* If we have an onCommit consumer */
         if (theOnCommit != null) {
             /* call it */

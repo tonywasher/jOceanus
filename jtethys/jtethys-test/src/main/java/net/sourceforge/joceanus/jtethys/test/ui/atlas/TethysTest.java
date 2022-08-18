@@ -27,7 +27,7 @@ public class TethysTest
     /**
      * Width for main panel.
      */
-    private static final int WIDTH_SCENE = 1300;
+    private static final int WIDTH_SCENE = 1720;
 
     /**
      * Height for main panel.
