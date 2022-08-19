@@ -16,58 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui.javafx;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-
-import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXMain;
-import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXLaunch;
 import net.sourceforge.joceanus.jthemis.ui.launch.ThemisApp;
 
 /**
  * ThemisDSM javaFX entryPoint.
  */
 public class Themis4FX
-        extends Application
-        implements MetisFXMain {
-    /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Themis4FX.class);
-
-    /**
-     * javaFXState.
-     */
-    private MetisFXState theState;
-
+        extends TethysUIFXLaunch {
     @Override
-    public void setProgramInfo(final MetisFXState pState) {
-        theState = pState;
-    }
-
-    @Override
-    public void init() {
-        /* Protect against exceptions */
-        try {
-            /* Create a timer */
-            if (theState == null) {
-                theState = new MetisFXState(ThemisApp.class);
-            }
-
-            /* Create the main panel */
-            theState.createMain();
-
-            /* Handle Exceptions */
-        } catch (OceanusException e) {
-            LOGGER.error("createPanel didn't complete successfully", e);
-        }
-    }
-
-    @Override
-    public void start(final Stage pStage) {
-        /* Start the program */
-        theState.startMain(pStage);
+    protected TethysUILaunchProgram getProgramInfo() {
+        return new ThemisApp();
     }
 }

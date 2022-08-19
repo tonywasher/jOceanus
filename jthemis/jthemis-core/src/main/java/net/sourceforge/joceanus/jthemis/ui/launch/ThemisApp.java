@@ -22,6 +22,10 @@ import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
 import net.sourceforge.joceanus.jthemis.ui.ThemisDSMPanel;
 import net.sourceforge.joceanus.jthemis.ui.ThemisIcon;
 
@@ -29,8 +33,17 @@ import net.sourceforge.joceanus.jthemis.ui.ThemisIcon;
  * Themis Application definition.
  */
 public class ThemisApp
-        extends TethysProgram
-        implements MetisProgram {
+        extends TethysUILaunchProgram {
+    /**
+     * Width for main panel.
+     */
+    private static final int WIDTH_SCENE = 1600;
+
+    /**
+     * Height for main panel.
+     */
+    private static final int HEIGHT_SCENE = 800;
+
     /**
      * Constructor.
      */
@@ -39,18 +52,23 @@ public class ThemisApp
     }
 
     @Override
-    public TethysIconId[] getIcons() {
-        return new TethysIconId[]
+    public TethysUIIconId[] getIcons() {
+        return new TethysUIIconId[]
                 { ThemisIcon.SMALL, ThemisIcon.BIG };
     }
 
     @Override
-    public TethysIconId getSplash() {
+    public TethysUIIconId getSplash() {
         return ThemisIcon.SPLASH;
     }
 
     @Override
-    public MetisMainPanel createMainPanel(final MetisToolkit pToolkit) throws OceanusException {
-        return new ThemisDSMPanel(pToolkit.getGuiFactory());
+    public int[] getPanelDimensions() {
+        return new int[] { WIDTH_SCENE, HEIGHT_SCENE };
+    }
+
+    @Override
+    public TethysUIMainPanel createMainPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
+        return new ThemisDSMPanel(pFactory);
     }
 }
