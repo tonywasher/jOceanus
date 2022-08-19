@@ -27,28 +27,24 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseDepositRateTable;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfoSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -60,25 +56,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
- * Panel to display/edit/create a Deposit.
+ * Panel to display/edit/create a Loan.
  */
-public class DepositPanel
-        extends MoneyWiseItemPanel<Deposit> {
-    /**
-     * Rates Tab Title.
-     */
-    private static final String TAB_RATES = MoneyWiseUIResource.DEPOSITPANEL_TAB_RATES.getValue();
-
-    /**
-     * DepositRate Table.
-     */
-    private final MoneyWiseDepositRateTable theRates;
-
-    /**
-     * Table tab item.
-     */
-    private final MoneyWiseDataTabTable theRatesTab;
-
+public class MoneyWiseLoanPanel
+        extends MoneyWiseItemPanel<Loan> {
     /**
      * The Closed State.
      */
@@ -87,16 +68,14 @@ public class DepositPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pView the data view
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositPanel(final TethysGuiFactory pFactory,
-                        final MoneyWiseView pView,
-                        final MetisSwingFieldManager pFieldMgr,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final MetisErrorPanel pError) {
+    public MoneyWiseLoanPanel(final TethysGuiFactory pFactory,
+                              final MetisSwingFieldManager pFieldMgr,
+                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                              final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -109,18 +88,8 @@ public class DepositPanel
         /* Build the notes panel */
         buildNotesPanel(pFactory);
 
-        /* Create the DepositRates table */
-        theRates = new MoneyWiseDepositRateTable(pView, getUpdateSet(), pError);
-        theRatesTab = new MoneyWiseDataTabTable(TAB_RATES, theRates);
-
         /* Define the panel */
         defineMainPanel(myPanel);
-
-        /* Create the listeners */
-        theRates.getEventRegistrar().addEventListener(e -> {
-            updateActions();
-            fireStateChanged();
-        });
     }
 
     /**
@@ -130,14 +99,14 @@ public class DepositPanel
      */
     private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Deposit.NAMELEN);
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<DepositCategory> myCategoryButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<LoanCategory> myCategoryButton = pFactory.newScrollButton();
         final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
         final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
@@ -145,7 +114,7 @@ public class DepositPanel
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
         myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, DepositCategory.class, myCategoryButton);
+        myPanel.addField(AssetBase.FIELD_CATEGORY, LoanCategory.class, myCategoryButton);
         myPanel.addField(AssetBase.FIELD_PARENT, Payee.class, myParentButton);
         myPanel.addField(AssetBase.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -173,18 +142,16 @@ public class DepositPanel
         final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, DataItem.NAMELEN >> 1);
 
         /* Allocate fields */
-        final TethysDateButtonManager myMaturity = pFactory.newDateButton();
         final TethysStringEditField mySortCode = pFactory.newStringField();
         final TethysStringEditField myAccount = pFactory.newStringField();
         final TethysStringEditField myReference = pFactory.newStringField();
         final TethysStringEditField myOpening = pFactory.newStringField();
 
         /* Assign the fields to the panel */
-        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myMaturity);
-        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
-        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
-        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
-        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
+        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Layout the panel */
         myTab.compactPanel();
@@ -204,7 +171,7 @@ public class DepositPanel
         myScroll.setContent(myNotes);
 
         /* Assign the fields to the panel */
-        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Layout the panel */
         myTab.compactPanel();
@@ -213,14 +180,11 @@ public class DepositPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Deposit myItem = getItem();
+        final Loan myItem = getItem();
         if (myItem != null) {
-            final DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-            setItem(myDeposits.findItemById(myItem.getId()));
+            final LoanList myLoans = getDataList(MoneyWiseDataType.LOAN, LoanList.class);
+            setItem(myLoans.findItemById(myItem.getId()));
         }
-
-        /* Refresh the rates */
-        theRates.refreshData();
 
         /* Make sure that the item is not editable */
         setEditable(false);
@@ -229,13 +193,13 @@ public class DepositPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<Deposit> myFieldSet = getFieldSet();
+        final MetisSwingFieldSet<Loan> myFieldSet = getFieldSet();
 
         /* Access the item */
-        final Deposit myDeposit = getItem();
-        final boolean bIsClosed = myDeposit.isClosed();
-        final boolean bIsActive = myDeposit.isActive();
-        final boolean bIsRelevant = myDeposit.isRelevant();
+        final Loan myLoan = getItem();
+        final boolean bIsClosed = myLoan.isClosed();
+        final boolean bIsActive = myLoan.isActive();
+        final boolean bIsRelevant = myLoan.isRelevant();
         final boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
@@ -244,96 +208,84 @@ public class DepositPanel
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed
-                                              ? !myDeposit.getParent().isClosed()
+                                              ? !myLoan.getParent().isClosed()
                                               : !bIsRelevant;
         myFieldSet.setEditable(AssetBase.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        final boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
+        final boolean bShowDesc = isEditable || myLoan.getDesc() != null;
         myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        final boolean bShowSortCode = isEditable || myDeposit.getSortCode() != null;
-        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
-        final boolean bShowAccount = isEditable || myDeposit.getAccount() != null;
-        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
-        final boolean bShowReference = isEditable || myDeposit.getReference() != null;
-        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
-        final boolean bHasOpening = myDeposit.getOpeningBalance() != null;
+        final boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
+        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        final boolean bShowAccount = isEditable || myLoan.getAccount() != null;
+        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        final boolean bShowReference = isEditable || myLoan.getReference() != null;
+        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        final boolean bHasOpening = myLoan.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        final MetisLetheField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        final MetisLetheField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         myFieldSet.setVisibility(myOpeningField, bShowOpening);
-        final boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
-        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
+        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* Maturity is only visible if the item is a bond */
-        final boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
-        final MetisLetheField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
-        myFieldSet.setVisibility(myMaturityField, bShowMaturity);
-        myFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
-
-        /* Category, Currency, and OpeningBalance cannot be changed if the item is active */
+        /* Category/Currency cannot be changed if the item is active */
         myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, bIsChangeable);
         myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
         myFieldSet.setEditable(myOpeningField, bIsChangeable);
 
-        /* Set currency for opening balance */
-        myFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getCurrency());
-
         /* Set editable value for parent */
         myFieldSet.setEditable(AssetBase.FIELD_PARENT, isEditable && !bIsClosed);
 
-        /* Set the table visibility */
-        theRatesTab.setRequireVisible(isEditable || !theRates.isViewEmpty());
+        /* Set currency for opening balance */
+        myFieldSet.setAssumedCurrency(myOpeningField, myLoan.getCurrency());
     }
 
     @Override
     protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         final MetisLetheField myField = pUpdate.getField();
-        final Deposit myDeposit = getItem();
+        final Loan myLoan = getItem();
 
         /* Process updates */
         if (myField.equals(AssetBase.FIELD_NAME)) {
             /* Update the Name */
-            myDeposit.setName(pUpdate.getString());
+            myLoan.setName(pUpdate.getString());
         } else if (myField.equals(AssetBase.FIELD_DESC)) {
             /* Update the Description */
-            myDeposit.setDescription(pUpdate.getString());
+            myLoan.setDescription(pUpdate.getString());
         } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
             /* Update the Category */
-            myDeposit.setCategory(pUpdate.getValue(DepositCategory.class));
-            myDeposit.autoCorrect(getUpdateSet());
+            myLoan.setCategory(pUpdate.getValue(LoanCategory.class));
+            myLoan.autoCorrect(getUpdateSet());
         } else if (myField.equals(AssetBase.FIELD_PARENT)) {
             /* Update the Parent */
-            myDeposit.setParent(pUpdate.getValue(Payee.class));
+            myLoan.setParent(pUpdate.getValue(Payee.class));
         } else if (myField.equals(AssetBase.FIELD_CURRENCY)) {
             /* Update the Currency */
-            myDeposit.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
+            myLoan.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myDeposit.setClosed(pUpdate.getBoolean());
+            myLoan.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
-            switch (DepositInfoSet.getClassForField(myField)) {
-                case MATURITY:
-                    myDeposit.setMaturity(pUpdate.getDate());
-                    break;
+            switch (LoanInfoSet.getClassForField(myField)) {
                 case OPENINGBALANCE:
-                    myDeposit.setOpeningBalance(pUpdate.getMoney());
+                    myLoan.setOpeningBalance(pUpdate.getMoney());
                     break;
                 case SORTCODE:
-                    myDeposit.setSortCode(pUpdate.getCharArray());
+                    myLoan.setSortCode(pUpdate.getCharArray());
                     break;
                 case ACCOUNT:
-                    myDeposit.setAccount(pUpdate.getCharArray());
+                    myLoan.setAccount(pUpdate.getCharArray());
                     break;
                 case REFERENCE:
-                    myDeposit.setReference(pUpdate.getCharArray());
+                    myLoan.setReference(pUpdate.getCharArray());
                     break;
                 case NOTES:
-                    myDeposit.setNotes(pUpdate.getCharArray());
+                    myLoan.setNotes(pUpdate.getCharArray());
                     break;
                 default:
                     break;
@@ -343,10 +295,10 @@ public class DepositPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final Deposit myItem = getItem();
+        final Loan myItem = getItem();
         final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            final DepositCategory myCategory = myItem.getCategory();
+            final LoanCategory myCategory = myItem.getCategory();
             final AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
@@ -354,77 +306,41 @@ public class DepositPanel
         declareGoToItem(myParent);
     }
 
-    @Override
-    public void setItem(final Deposit pItem) {
-        /* Update the rates */
-        theRates.setDeposit(pItem);
-
-        /* Pass call onwards */
-        super.setItem(pItem);
-    }
-
-    @Override
-    public void setNewItem(final Deposit pItem) {
-        /* Update the rates */
-        theRates.setDeposit(pItem);
-
-        /* Pass call onwards */
-        super.setNewItem(pItem);
-    }
-
-    @Override
-    public void setEditable(final boolean isEditable) {
-        /* Update the rates */
-        theRates.setEditable(isEditable);
-
-        /* Pass call onwards */
-        super.setEditable(isEditable);
-    }
-
-    @Override
-    protected void refreshAfterUpdate() {
-        /* Pass call onwards */
-        super.refreshAfterUpdate();
-
-        /* Refresh the rates */
-        theRates.refreshAfterUpdate();
-    }
-
     /**
-     * Build the category type menu for an item.
+     * Build the category menu for an item.
      * @param pMenu the menu
-     * @param pDeposit the deposit to build for
+     * @param pLoan the loan to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<DepositCategory> pMenu,
-                                  final Deposit pDeposit) {
+    public void buildCategoryMenu(final TethysScrollMenu<LoanCategory> pMenu,
+                                  final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final DepositCategory myCurr = pDeposit.getCategory();
-        TethysScrollMenuItem<DepositCategory> myActive = null;
+        final LoanCategory myCurr = pLoan.getCategory();
+        TethysScrollMenuItem<LoanCategory> myActive = null;
 
-        /* Access Deposit Categories */
-        final DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
+        /* Access Loan Categories */
+        final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
-        final Iterator<DepositCategory> myIterator = myCategories.iterator();
+        final Iterator<LoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final DepositCategory myCategory = myIterator.next();
+            final LoanCategory myCategory = myIterator.next();
 
             /* Ignore deleted or parent */
-            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(DepositCategoryClass.PARENT);
+            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(LoanCategoryClass.PARENT);
             if (bIgnore) {
                 continue;
             }
 
             /* Determine menu to add to */
-            final DepositCategory myParent = myCategory.getParentCategory();
+            final LoanCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<DepositCategory> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<LoanCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new subMenu */
             if (myMenu == null) {
@@ -434,7 +350,7 @@ public class DepositPanel
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -451,16 +367,16 @@ public class DepositPanel
     /**
      * Build the parent menu for an item.
      * @param pMenu the menu
-     * @param pDeposit the deposit to build for
+     * @param pLoan the loan to build for
      */
     public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
-                                final Deposit pDeposit) {
+                                final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final DepositCategoryClass myType = pDeposit.getCategoryClass();
-        final Payee myCurr = pDeposit.getParent();
+        final LoanCategoryClass myType = pLoan.getCategoryClass();
+        final Payee myCurr = pLoan.getParent();
         TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
@@ -472,7 +388,7 @@ public class DepositPanel
             final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentDeposit(myType);
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentLoan(myType);
             bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;
@@ -497,15 +413,15 @@ public class DepositPanel
     /**
      * Build the currency menu for an item.
      * @param pMenu the menu
-     * @param pDeposit the deposit to build for
+     * @param pLoan the loan to build for
      */
     public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
-                                  final Deposit pDeposit) {
+                                  final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final AssetCurrency myCurr = pDeposit.getAssetCurrency();
+        final AssetCurrency myCurr = pLoan.getAssetCurrency();
         TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */

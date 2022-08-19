@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -29,20 +28,16 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -54,15 +49,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
- * Panel to display/edit/create a Cash.
+ * Panel to display/edit/create a Portfolio.
  */
-public class CashPanel
-        extends MoneyWiseItemPanel<Cash> {
+public class MoneyWisePortfolioPanel
+        extends MoneyWiseItemPanel<Portfolio> {
     /**
      * The Closed State.
      */
@@ -75,10 +69,10 @@ public class CashPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public CashPanel(final TethysGuiFactory pFactory,
-                     final MetisSwingFieldManager pFieldMgr,
-                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel pError) {
+    public MoneyWisePortfolioPanel(final TethysGuiFactory pFactory,
+                                   final MetisSwingFieldManager pFieldMgr,
+                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                   final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -102,21 +96,23 @@ public class CashPanel
      */
     private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Portfolio.NAMELEN);
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<CashCategory> myCategoryButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<PortfolioType> myTypeButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
         final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
         myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, CashCategory.class, myCategoryButton);
+        myPanel.addField(AssetBase.FIELD_CATEGORY, PortfolioType.class, myTypeButton);
+        myPanel.addField(AssetBase.FIELD_PARENT, Payee.class, myParentButton);
         myPanel.addField(AssetBase.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
 
@@ -124,7 +120,8 @@ public class CashPanel
         myPanel.compactPanel();
 
         /* Configure the menuBuilders */
-        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
+        myTypeButton.setMenuConfigurator(c -> buildTypeMenu(c, getItem()));
+        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
@@ -142,23 +139,25 @@ public class CashPanel
         final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, DataItem.NAMELEN >> 1);
 
         /* Allocate fields */
-        final TethysStringEditField myOpening = pFactory.newStringField();
-
-        /* Create the buttons */
-        final TethysScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton();
+        final TethysStringEditField mySortCode = pFactory.newStringField();
+        final TethysStringEditField myAccount = pFactory.newStringField();
+        final TethysStringEditField myReference = pFactory.newStringField();
+        final TethysStringEditField myWebSite = pFactory.newStringField();
+        final TethysStringEditField myCustNo = pFactory.newStringField();
+        final TethysStringEditField myUserId = pFactory.newStringField();
+        final TethysStringEditField myPassWord = pFactory.newStringField();
 
         /* Assign the fields to the panel */
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, myAutoPayeeButton);
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), MetisDataType.CHARARRAY, myWebSite);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), MetisDataType.CHARARRAY, myCustNo);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), MetisDataType.CHARARRAY, myUserId);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
 
         /* Layout the panel */
         myTab.compactPanel();
-
-        /* Configure the menuBuilders */
-        myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
-        myAutoPayeeButton.setMenuConfigurator(c -> buildAutoPayeeMenu(c, getItem()));
     }
 
     /**
@@ -175,7 +174,7 @@ public class CashPanel
         myScroll.setContent(myNotes);
 
         /* Assign the fields to the panel */
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Layout the panel */
         myTab.compactPanel();
@@ -184,10 +183,10 @@ public class CashPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Cash myItem = getItem();
+        final Portfolio myItem = getItem();
         if (myItem != null) {
-            final CashList myCash = getDataList(MoneyWiseDataType.CASH, CashList.class);
-            setItem(myCash.findItemById(myItem.getId()));
+            final PortfolioList myPortfolios = getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+            setItem(myPortfolios.findItemById(myItem.getId()));
         }
 
         /* Make sure that the item is not editable */
@@ -197,14 +196,13 @@ public class CashPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<Cash> myFieldSet = getFieldSet();
+        final MetisSwingFieldSet<Portfolio> myFieldSet = getFieldSet();
 
         /* Access the item */
-        final Cash myCash = getItem();
-        final boolean bIsClosed = myCash.isClosed();
-        final boolean bIsActive = myCash.isActive();
-        final boolean bIsRelevant = myCash.isRelevant();
-        final boolean isAutoExpense = myCash.isAutoExpense();
+        final Portfolio myPortfolio = getItem();
+        final boolean bIsClosed = myPortfolio.isClosed();
+        final boolean bIsActive = myPortfolio.isActive();
+        final boolean bIsRelevant = myPortfolio.isRelevant();
         final boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
@@ -217,77 +215,87 @@ public class CashPanel
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        final boolean bShowDesc = isEditable || myCash.getDesc() != null;
+        final boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
         myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
 
-        /* AutoExpense/Payee is hidden unless we are autoExpense */
-        final MetisLetheField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
-        final MetisLetheField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
-        myFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
-        myFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
+        /* Determine whether the account details should be visible */
+        final boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        final boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        final boolean bShowReference = isEditable || myPortfolio.getReference() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        final boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
+        final boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
+        final boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
+        final boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
+        final boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
-        /* OpeningBalance is hidden if we are autoExpense */
-        final MetisLetheField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
-        final boolean bHasOpening = myCash.getOpeningBalance() != null;
-        final boolean bShowOpening = bIsChangeable || bHasOpening;
-        myFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
-
-        /* Determine whether to show notes */
-        final boolean bShowNotes = isEditable || myCash.getNotes() != null;
-        myFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
-
-        /* Category/Currency cannot be changed if the item is active */
+        /* Type, Parent and Currency status cannot be changed if the item is active */
         myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, bIsChangeable);
-        myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
+        myFieldSet.setEditable(AssetBase.FIELD_PARENT, bIsChangeable);
+        myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, bIsChangeable);
 
-        /* AutoExpense/Payee cannot be changed for closed item */
-        final boolean canEdit = isEditable && !bIsClosed;
-        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
-        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
-
-        /* Set currency for opening balance */
-        if (!isAutoExpense) {
-            myFieldSet.setAssumedCurrency(myOpeningField, myCash.getCurrency());
-        }
+        /* Set editable value for parent */
+        myFieldSet.setEditable(AssetBase.FIELD_PARENT, isEditable && !bIsClosed);
     }
 
     @Override
     protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         final MetisLetheField myField = pUpdate.getField();
-        final Cash myCash = getItem();
+        final Portfolio myPortfolio = getItem();
 
         /* Process updates */
         if (myField.equals(AssetBase.FIELD_NAME)) {
             /* Update the Name */
-            myCash.setName(pUpdate.getString());
+            myPortfolio.setName(pUpdate.getString());
         } else if (myField.equals(AssetBase.FIELD_DESC)) {
             /* Update the Description */
-            myCash.setDescription(pUpdate.getString());
+            myPortfolio.setDescription(pUpdate.getString());
         } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
-            /* Update the Category */
-            myCash.setCategory(pUpdate.getValue(CashCategory.class));
-            myCash.autoCorrect(getUpdateSet());
+            /* Update the portfolioType */
+            myPortfolio.setCategory(pUpdate.getValue(PortfolioType.class));
+        } else if (myField.equals(AssetBase.FIELD_PARENT)) {
+            /* Update the Parent */
+            myPortfolio.setParent(pUpdate.getValue(Payee.class));
         } else if (myField.equals(AssetBase.FIELD_CURRENCY)) {
             /* Update the Currency */
-            myCash.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
+            myPortfolio.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myCash.setClosed(pUpdate.getBoolean());
+            myPortfolio.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
-            switch (CashInfoSet.getClassForField(myField)) {
-                case AUTOEXPENSE:
-                    myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
+            switch (PortfolioInfoSet.getClassForField(myField)) {
+                case SORTCODE:
+                    myPortfolio.setSortCode(pUpdate.getCharArray());
                     break;
-                case AUTOPAYEE:
-                    myCash.setAutoPayee(pUpdate.getValue(Payee.class));
+                case ACCOUNT:
+                    myPortfolio.setAccount(pUpdate.getCharArray());
                     break;
-                case OPENINGBALANCE:
-                    myCash.setOpeningBalance(pUpdate.getMoney());
+                case REFERENCE:
+                    myPortfolio.setReference(pUpdate.getCharArray());
+                    break;
+                case WEBSITE:
+                    myPortfolio.setWebSite(pUpdate.getCharArray());
+                    break;
+                case CUSTOMERNO:
+                    myPortfolio.setCustNo(pUpdate.getCharArray());
+                    break;
+                case USERID:
+                    myPortfolio.setUserId(pUpdate.getCharArray());
+                    break;
+                case PASSWORD:
+                    myPortfolio.setPassword(pUpdate.getCharArray());
                     break;
                 case NOTES:
-                    myCash.setNotes(pUpdate.getCharArray());
+                    myPortfolio.setNotes(pUpdate.getCharArray());
                     break;
                 default:
                     break;
@@ -297,67 +305,45 @@ public class CashPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final Cash myItem = getItem();
-        final Payee myAutoPayee = myItem.getAutoPayee();
+        final Portfolio myItem = getItem();
+        final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            final CashCategory myCategory = myItem.getCategory();
-            final TransactionCategory myAutoExpense = myItem.getAutoExpense();
+            final PortfolioType myType = myItem.getCategory();
+            declareGoToItem(myType);
             final AssetCurrency myCurrency = myItem.getAssetCurrency();
-            declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
-            declareGoToItem(myAutoExpense);
         }
-        declareGoToItem(myAutoPayee);
+        declareGoToItem(myParent);
     }
 
     /**
-     * Build the category menu for an item.
+     * Build the portfolioType menu for an item.
      * @param pMenu the menu
-     * @param pCash the cash to build for
+     * @param pPortfolio the portfolio to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<CashCategory> pMenu,
-                                  final Cash pCash) {
+    public void buildTypeMenu(final TethysScrollMenu<PortfolioType> pMenu,
+                              final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final CashCategory myCurr = pCash.getCategory();
-        TethysScrollMenuItem<CashCategory> myActive = null;
+        final PortfolioType myCurr = pPortfolio.getCategory();
+        TethysScrollMenuItem<PortfolioType> myActive = null;
 
-        /* Access Cash Categories */
-        final CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+        /* Access PortfolioTypes */
+        final PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
 
-        /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<CashCategory>> myMap = new HashMap<>();
-
-        /* Loop through the available category values */
-        final Iterator<CashCategory> myIterator = myCategories.iterator();
+        /* Loop through the Types */
+        final Iterator<PortfolioType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            final CashCategory myCategory = myIterator.next();
+            final PortfolioType myType = myIterator.next();
 
-            /* Ignore deleted or parent */
-            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(CashCategoryClass.PARENT);
-            if (bIgnore) {
-                continue;
-            }
+            /* Create a new action for the type */
+            final TethysScrollMenuItem<PortfolioType> myItem = pMenu.addItem(myType);
 
-            /* Determine menu to add to */
-            final CashCategory myParent = myCategory.getParentCategory();
-            final String myParentName = myParent.getName();
-            TethysScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
-
-            /* If this is a new subMenu */
-            if (myMenu == null) {
-                /* Create a new subMenu and add it to the popUp */
-                myMenu = pMenu.addSubMenu(myParentName);
-                myMap.put(myParentName, myMenu);
-            }
-
-            /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
-
-            /* Note active category */
-            if (myCategory.equals(myCurr)) {
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
                 myActive = myItem;
             }
         }
@@ -369,77 +355,17 @@ public class CashPanel
     }
 
     /**
-     * Build the autoExpense menu for an item.
+     * Build the parent menu for an item.
      * @param pMenu the menu
-     * @param pCash the cash to build for
+     * @param pPortfolio the portfolio to build for
      */
-    private void buildAutoExpenseMenu(final TethysScrollMenu<TransactionCategory> pMenu,
-                                      final Cash pCash) {
+    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
+                                final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionCategory myCurr = pCash.getAutoExpense();
-        TethysScrollMenuItem<TransactionCategory> myActive = null;
-
-        /* Access Transaction Categories */
-        final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
-
-        /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
-
-        /* Loop through the available category values */
-        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            final TransactionCategory myCategory = myIterator.next();
-
-            /* Ignore deleted or non-expense-subTotal items */
-            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
-            boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
-            bIgnore |= !myClass.isExpense();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Determine menu to add to */
-            final TransactionCategory myParent = myCategory.getParentCategory();
-            final String myParentName = myParent.getName();
-            TethysScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
-
-            /* If this is a new subMenu */
-            if (myMenu == null) {
-                /* Create a new subMMenu and add it to the popUp */
-                myMenu = pMenu.addSubMenu(myParentName);
-                myMap.put(myParentName, myMenu);
-            }
-
-            /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<TransactionCategory> myItem = myMenu.getSubMenu().addItem(myCategory);
-
-            /* Note active category */
-            if (myCategory.equals(myCurr)) {
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        if (myActive != null) {
-            myActive.scrollToItem();
-        }
-    }
-
-    /**
-     * Build the autoPayee menu for an item.
-     * @param pMenu the menu
-     * @param pCash the cash to build for
-     */
-    private void buildAutoPayeeMenu(final TethysScrollMenu<Payee> pMenu,
-                                    final Cash pCash) {
-        /* Clear the menu */
-        pMenu.removeAllItems();
-
-        /* Record active item */
-        final Payee myCurr = pCash.getAutoPayee();
+        final Payee myCurr = pPortfolio.getParent();
         TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
@@ -450,8 +376,10 @@ public class CashPanel
         while (myIterator.hasNext()) {
             final Payee myPayee = myIterator.next();
 
-            /* Ignore deleted */
-            if (myPayee.isDeleted()) {
+            /* Ignore deleted/closed and ones that cannot own this portfolio */
+            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
+            bIgnore |= !myPayee.getCategoryClass().canParentPortfolio();
+            if (bIgnore) {
                 continue;
             }
 
@@ -474,15 +402,15 @@ public class CashPanel
     /**
      * Build the currency menu for an item.
      * @param pMenu the menu
-     * @param pCash the cash to build for
+     * @param pPortfolio the portfolio to build for
      */
     public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
-                                  final Cash pCash) {
+                                  final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final AssetCurrency myCurr = pCash.getAssetCurrency();
+        final AssetCurrency myCurr = pPortfolio.getAssetCurrency();
         TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */

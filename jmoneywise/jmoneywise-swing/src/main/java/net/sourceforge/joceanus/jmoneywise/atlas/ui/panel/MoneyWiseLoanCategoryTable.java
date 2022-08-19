@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseLoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -49,7 +49,7 @@ public class MoneyWiseLoanCategoryTable
     /**
      * The Category dialog.
      */
-    private final LoanCategoryPanel theActiveCategory;
+    private final MoneyWiseLoanCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -76,7 +76,7 @@ public class MoneyWiseLoanCategoryTable
         final TethysTableManager<MetisLetheField, LoanCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new LoanCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new MoneyWiseLoanCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */

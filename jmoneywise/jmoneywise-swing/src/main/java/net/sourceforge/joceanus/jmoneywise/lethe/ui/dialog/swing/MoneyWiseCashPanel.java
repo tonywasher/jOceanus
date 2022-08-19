@@ -29,17 +29,20 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfoSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -56,10 +59,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
- * Panel to display/edit/create a Loan.
+ * Panel to display/edit/create a Cash.
  */
-public class LoanPanel
-        extends MoneyWiseItemPanel<Loan> {
+public class MoneyWiseCashPanel
+        extends MoneyWiseItemPanel<Cash> {
     /**
      * The Closed State.
      */
@@ -72,10 +75,10 @@ public class LoanPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanPanel(final TethysGuiFactory pFactory,
-                     final MetisSwingFieldManager pFieldMgr,
-                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel pError) {
+    public MoneyWiseCashPanel(final TethysGuiFactory pFactory,
+                              final MetisSwingFieldManager pFieldMgr,
+                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                              final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -106,16 +109,14 @@ public class LoanPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<LoanCategory> myCategoryButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<CashCategory> myCategoryButton = pFactory.newScrollButton();
         final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
         myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, LoanCategory.class, myCategoryButton);
-        myPanel.addField(AssetBase.FIELD_PARENT, Payee.class, myParentButton);
+        myPanel.addField(AssetBase.FIELD_CATEGORY, CashCategory.class, myCategoryButton);
         myPanel.addField(AssetBase.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
 
@@ -124,7 +125,6 @@ public class LoanPanel
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
-        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
@@ -142,19 +142,23 @@ public class LoanPanel
         final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, DataItem.NAMELEN >> 1);
 
         /* Allocate fields */
-        final TethysStringEditField mySortCode = pFactory.newStringField();
-        final TethysStringEditField myAccount = pFactory.newStringField();
-        final TethysStringEditField myReference = pFactory.newStringField();
         final TethysStringEditField myOpening = pFactory.newStringField();
 
+        /* Create the buttons */
+        final TethysScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton();
+
         /* Assign the fields to the panel */
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, myAutoPayeeButton);
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Layout the panel */
         myTab.compactPanel();
+
+        /* Configure the menuBuilders */
+        myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
+        myAutoPayeeButton.setMenuConfigurator(c -> buildAutoPayeeMenu(c, getItem()));
     }
 
     /**
@@ -171,7 +175,7 @@ public class LoanPanel
         myScroll.setContent(myNotes);
 
         /* Assign the fields to the panel */
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Layout the panel */
         myTab.compactPanel();
@@ -180,10 +184,10 @@ public class LoanPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Loan myItem = getItem();
+        final Cash myItem = getItem();
         if (myItem != null) {
-            final LoanList myLoans = getDataList(MoneyWiseDataType.LOAN, LoanList.class);
-            setItem(myLoans.findItemById(myItem.getId()));
+            final CashList myCash = getDataList(MoneyWiseDataType.CASH, CashList.class);
+            setItem(myCash.findItemById(myItem.getId()));
         }
 
         /* Make sure that the item is not editable */
@@ -193,13 +197,14 @@ public class LoanPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<Loan> myFieldSet = getFieldSet();
+        final MetisSwingFieldSet<Cash> myFieldSet = getFieldSet();
 
         /* Access the item */
-        final Loan myLoan = getItem();
-        final boolean bIsClosed = myLoan.isClosed();
-        final boolean bIsActive = myLoan.isActive();
-        final boolean bIsRelevant = myLoan.isRelevant();
+        final Cash myCash = getItem();
+        final boolean bIsClosed = myCash.isClosed();
+        final boolean bIsActive = myCash.isActive();
+        final boolean bIsRelevant = myCash.isRelevant();
+        final boolean isAutoExpense = myCash.isAutoExpense();
         final boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
@@ -207,85 +212,82 @@ public class LoanPanel
         myFieldSet.setVisibility(AssetBase.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        final boolean bEditClosed = bIsClosed
-                                              ? !myLoan.getParent().isClosed()
-                                              : !bIsRelevant;
+        final boolean bEditClosed = bIsClosed || !bIsRelevant;
         myFieldSet.setEditable(AssetBase.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        final boolean bShowDesc = isEditable || myLoan.getDesc() != null;
+        final boolean bShowDesc = isEditable || myCash.getDesc() != null;
         myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
 
-        /* Determine whether the account details should be visible */
-        final boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
-        final boolean bShowAccount = isEditable || myLoan.getAccount() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
-        final boolean bShowReference = isEditable || myLoan.getReference() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
-        final boolean bHasOpening = myLoan.getOpeningBalance() != null;
+        /* AutoExpense/Payee is hidden unless we are autoExpense */
+        final MetisLetheField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
+        final MetisLetheField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
+        myFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
+        myFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
+
+        /* OpeningBalance is hidden if we are autoExpense */
+        final MetisLetheField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        final boolean bHasOpening = myCash.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        final MetisLetheField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
-        myFieldSet.setVisibility(myOpeningField, bShowOpening);
-        final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        myFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
+
+        /* Determine whether to show notes */
+        final boolean bShowNotes = isEditable || myCash.getNotes() != null;
+        myFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
         myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, bIsChangeable);
         myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
-        myFieldSet.setEditable(myOpeningField, bIsChangeable);
 
-        /* Set editable value for parent */
-        myFieldSet.setEditable(AssetBase.FIELD_PARENT, isEditable && !bIsClosed);
+        /* AutoExpense/Payee cannot be changed for closed item */
+        final boolean canEdit = isEditable && !bIsClosed;
+        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
+        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
 
         /* Set currency for opening balance */
-        myFieldSet.setAssumedCurrency(myOpeningField, myLoan.getCurrency());
+        if (!isAutoExpense) {
+            myFieldSet.setAssumedCurrency(myOpeningField, myCash.getCurrency());
+        }
     }
 
     @Override
     protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         final MetisLetheField myField = pUpdate.getField();
-        final Loan myLoan = getItem();
+        final Cash myCash = getItem();
 
         /* Process updates */
         if (myField.equals(AssetBase.FIELD_NAME)) {
             /* Update the Name */
-            myLoan.setName(pUpdate.getString());
+            myCash.setName(pUpdate.getString());
         } else if (myField.equals(AssetBase.FIELD_DESC)) {
             /* Update the Description */
-            myLoan.setDescription(pUpdate.getString());
+            myCash.setDescription(pUpdate.getString());
         } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
             /* Update the Category */
-            myLoan.setCategory(pUpdate.getValue(LoanCategory.class));
-            myLoan.autoCorrect(getUpdateSet());
-        } else if (myField.equals(AssetBase.FIELD_PARENT)) {
-            /* Update the Parent */
-            myLoan.setParent(pUpdate.getValue(Payee.class));
+            myCash.setCategory(pUpdate.getValue(CashCategory.class));
+            myCash.autoCorrect(getUpdateSet());
         } else if (myField.equals(AssetBase.FIELD_CURRENCY)) {
             /* Update the Currency */
-            myLoan.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
+            myCash.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myLoan.setClosed(pUpdate.getBoolean());
+            myCash.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
-            switch (LoanInfoSet.getClassForField(myField)) {
+            switch (CashInfoSet.getClassForField(myField)) {
+                case AUTOEXPENSE:
+                    myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
+                    break;
+                case AUTOPAYEE:
+                    myCash.setAutoPayee(pUpdate.getValue(Payee.class));
+                    break;
                 case OPENINGBALANCE:
-                    myLoan.setOpeningBalance(pUpdate.getMoney());
-                    break;
-                case SORTCODE:
-                    myLoan.setSortCode(pUpdate.getCharArray());
-                    break;
-                case ACCOUNT:
-                    myLoan.setAccount(pUpdate.getCharArray());
-                    break;
-                case REFERENCE:
-                    myLoan.setReference(pUpdate.getCharArray());
+                    myCash.setOpeningBalance(pUpdate.getMoney());
                     break;
                 case NOTES:
-                    myLoan.setNotes(pUpdate.getCharArray());
+                    myCash.setNotes(pUpdate.getCharArray());
                     break;
                 default:
                     break;
@@ -295,52 +297,54 @@ public class LoanPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final Loan myItem = getItem();
-        final Payee myParent = myItem.getParent();
+        final Cash myItem = getItem();
+        final Payee myAutoPayee = myItem.getAutoPayee();
         if (!pUpdates) {
-            final LoanCategory myCategory = myItem.getCategory();
+            final CashCategory myCategory = myItem.getCategory();
+            final TransactionCategory myAutoExpense = myItem.getAutoExpense();
             final AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
+            declareGoToItem(myAutoExpense);
         }
-        declareGoToItem(myParent);
+        declareGoToItem(myAutoPayee);
     }
 
     /**
      * Build the category menu for an item.
      * @param pMenu the menu
-     * @param pLoan the loan to build for
+     * @param pCash the cash to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<LoanCategory> pMenu,
-                                  final Loan pLoan) {
+    public void buildCategoryMenu(final TethysScrollMenu<CashCategory> pMenu,
+                                  final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final LoanCategory myCurr = pLoan.getCategory();
-        TethysScrollMenuItem<LoanCategory> myActive = null;
+        final CashCategory myCurr = pCash.getCategory();
+        TethysScrollMenuItem<CashCategory> myActive = null;
 
-        /* Access Loan Categories */
-        final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+        /* Access Cash Categories */
+        final CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<CashCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
-        final Iterator<LoanCategory> myIterator = myCategories.iterator();
+        final Iterator<CashCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final LoanCategory myCategory = myIterator.next();
+            final CashCategory myCategory = myIterator.next();
 
             /* Ignore deleted or parent */
-            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(LoanCategoryClass.PARENT);
+            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(CashCategoryClass.PARENT);
             if (bIgnore) {
                 continue;
             }
 
             /* Determine menu to add to */
-            final LoanCategory myParent = myCategory.getParentCategory();
+            final CashCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<LoanCategory> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new subMenu */
             if (myMenu == null) {
@@ -350,7 +354,7 @@ public class LoanPanel
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -365,18 +369,77 @@ public class LoanPanel
     }
 
     /**
-     * Build the parent menu for an item.
+     * Build the autoExpense menu for an item.
      * @param pMenu the menu
-     * @param pLoan the loan to build for
+     * @param pCash the cash to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
-                                final Loan pLoan) {
+    private void buildAutoExpenseMenu(final TethysScrollMenu<TransactionCategory> pMenu,
+                                      final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final LoanCategoryClass myType = pLoan.getCategoryClass();
-        final Payee myCurr = pLoan.getParent();
+        final TransactionCategory myCurr = pCash.getAutoExpense();
+        TethysScrollMenuItem<TransactionCategory> myActive = null;
+
+        /* Access Transaction Categories */
+        final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+
+        /* Create a simple map for top-level categories */
+        final Map<String, TethysScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
+
+        /* Loop through the available category values */
+        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            final TransactionCategory myCategory = myIterator.next();
+
+            /* Ignore deleted or non-expense-subTotal items */
+            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
+            bIgnore |= !myClass.isExpense();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            final TransactionCategory myParent = myCategory.getParentCategory();
+            final String myParentName = myParent.getName();
+            TethysScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
+
+            /* If this is a new subMenu */
+            if (myMenu == null) {
+                /* Create a new subMMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
+
+            /* Create a new MenuItem and add it to the popUp */
+            final TethysScrollMenuItem<TransactionCategory> myItem = myMenu.getSubMenu().addItem(myCategory);
+
+            /* Note active category */
+            if (myCategory.equals(myCurr)) {
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
+    }
+
+    /**
+     * Build the autoPayee menu for an item.
+     * @param pMenu the menu
+     * @param pCash the cash to build for
+     */
+    private void buildAutoPayeeMenu(final TethysScrollMenu<Payee> pMenu,
+                                    final Cash pCash) {
+        /* Clear the menu */
+        pMenu.removeAllItems();
+
+        /* Record active item */
+        final Payee myCurr = pCash.getAutoPayee();
         TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
@@ -387,10 +450,8 @@ public class LoanPanel
         while (myIterator.hasNext()) {
             final Payee myPayee = myIterator.next();
 
-            /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentLoan(myType);
-            bIgnore |= myPayee.isClosed();
-            if (bIgnore) {
+            /* Ignore deleted */
+            if (myPayee.isDeleted()) {
                 continue;
             }
 
@@ -413,15 +474,15 @@ public class LoanPanel
     /**
      * Build the currency menu for an item.
      * @param pMenu the menu
-     * @param pLoan the loan to build for
+     * @param pCash the cash to build for
      */
     public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
-                                  final Loan pLoan) {
+                                  final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final AssetCurrency myCurr = pLoan.getAssetCurrency();
+        final AssetCurrency myCurr = pCash.getAssetCurrency();
         TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */

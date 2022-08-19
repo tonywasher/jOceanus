@@ -84,7 +84,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollS
 /**
  * Panel to display/edit/create a Transaction.
  */
-public class TransactionPanel
+public class MoneyWiseTransactionPanel
         extends MoneyWiseItemPanel<Transaction> {
     /**
      * Info Tab Title.
@@ -135,12 +135,12 @@ public class TransactionPanel
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
-    public TransactionPanel(final TethysGuiFactory pFactory,
-                            final MetisSwingFieldManager pFieldMgr,
-                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                            final TransactionBuilder pBuilder,
-                            final MoneyWiseAnalysisSelect pAnalysisSelect,
-                            final MetisErrorPanel pError) {
+    public MoneyWiseTransactionPanel(final TethysGuiFactory pFactory,
+                                     final MetisSwingFieldManager pFieldMgr,
+                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                     final TransactionBuilder pBuilder,
+                                     final MoneyWiseAnalysisSelect pAnalysisSelect,
+                                     final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
         theAnalysisSelect = pAnalysisSelect;

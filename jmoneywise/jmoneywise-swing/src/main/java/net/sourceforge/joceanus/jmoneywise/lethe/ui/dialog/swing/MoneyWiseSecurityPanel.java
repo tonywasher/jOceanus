@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 /**
  * Panel to display/edit/create a Security.
  */
-public class SecurityPanel
+public class MoneyWiseSecurityPanel
         extends MoneyWiseItemPanel<Security> {
     /**
      * Prices Tab Title.
@@ -93,11 +93,11 @@ public class SecurityPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public SecurityPanel(final TethysGuiFactory pFactory,
-                         final MoneyWiseView pView,
-                         final MetisSwingFieldManager pFieldMgr,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final MetisErrorPanel pError) {
+    public MoneyWiseSecurityPanel(final TethysGuiFactory pFactory,
+                                  final MoneyWiseView pView,
+                                  final MetisSwingFieldManager pFieldMgr,
+                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                  final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
