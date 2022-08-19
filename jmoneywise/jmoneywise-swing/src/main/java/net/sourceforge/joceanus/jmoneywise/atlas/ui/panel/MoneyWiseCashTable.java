@@ -31,16 +31,16 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseCashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise Cash Table.
@@ -55,7 +55,7 @@ public class MoneyWiseCashTable
     /**
      * The Cash dialog.
      */
-    private final CashPanel theActiveCash;
+    private final MoneyWiseCashPanel theActiveCash;
 
     /**
      * The edit list.
@@ -81,11 +81,11 @@ public class MoneyWiseCashTable
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Cash> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, Cash> myTable = getTable();
 
         /* Create a Cash panel */
-        theActiveCash = new CashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCash = new MoneyWiseCashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCash);
 
         /* Set table configuration */

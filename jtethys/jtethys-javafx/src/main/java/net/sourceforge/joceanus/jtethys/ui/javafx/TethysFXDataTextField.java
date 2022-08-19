@@ -558,7 +558,8 @@ public abstract class TethysFXDataTextField<T>
      * FXStringTextField class.
      */
     public static class TethysFXStringTextField
-            extends TethysFXTextEditField<String> {
+            extends TethysFXTextEditField<String>
+            implements TethysStringEditField {
         /**
          * Constructor.
          *
@@ -573,7 +574,8 @@ public abstract class TethysFXDataTextField<T>
      * FXCharArrayTextField class.
      */
     public static class TethysFXCharArrayTextField
-            extends TethysFXTextEditField<char[]> {
+            extends TethysFXTextEditField<char[]>
+            implements TethysCharArrayEditField {
         /**
          * Constructor.
          *
@@ -588,7 +590,8 @@ public abstract class TethysFXDataTextField<T>
      * FXShortTextField class.
      */
     public static class TethysFXShortTextField
-            extends TethysFXTextEditField<Short> {
+            extends TethysFXTextEditField<Short>
+            implements TethysShortEditField {
         /**
          * Constructor.
          *
@@ -604,7 +607,8 @@ public abstract class TethysFXDataTextField<T>
      * FXIntegerTextField class.
      */
     public static class TethysFXIntegerTextField
-            extends TethysFXTextEditField<Integer> {
+            extends TethysFXTextEditField<Integer>
+            implements TethysIntegerEditField {
         /**
          * Constructor.
          *
@@ -620,7 +624,8 @@ public abstract class TethysFXDataTextField<T>
      * FXLongTextField class.
      */
     public static class TethysFXLongTextField
-            extends TethysFXTextEditField<Long> {
+            extends TethysFXTextEditField<Long>
+            implements TethysLongEditField {
         /**
          * Constructor.
          *
@@ -694,7 +699,8 @@ public abstract class TethysFXDataTextField<T>
      * FXMoneyTextField class.
      */
     public static class TethysFXMoneyTextField
-            extends TethysFXCurrencyTextFieldBase<TethysMoney> {
+            extends TethysFXCurrencyTextFieldBase<TethysMoney>
+            implements TethysMoneyEditField {
         /**
          * Constructor.
          *
@@ -709,7 +715,8 @@ public abstract class TethysFXDataTextField<T>
      * FXPriceTextField class.
      */
     public static class TethysFXPriceTextField
-            extends TethysFXCurrencyTextFieldBase<TethysPrice> {
+            extends TethysFXCurrencyTextFieldBase<TethysPrice>
+            implements TethysPriceEditField {
         /**
          * Constructor.
          *
@@ -724,7 +731,8 @@ public abstract class TethysFXDataTextField<T>
      * FXDilutedPriceTextField class.
      */
     public static class TethysFXDilutedPriceTextField
-            extends TethysFXCurrencyTextFieldBase<TethysDilutedPrice> {
+            extends TethysFXCurrencyTextFieldBase<TethysDilutedPrice>
+            implements TethysDilutedPriceEditField {
         /**
          * Constructor.
          *
@@ -739,7 +747,8 @@ public abstract class TethysFXDataTextField<T>
      * FXRateTextField class.
      */
     public static class TethysFXRateTextField
-            extends TethysFXTextEditField<TethysRate> {
+            extends TethysFXTextEditField<TethysRate>
+            implements TethysRateEditField {
         /**
          * Constructor.
          *
@@ -755,7 +764,8 @@ public abstract class TethysFXDataTextField<T>
      * FXUnitsTextField class.
      */
     public static class TethysFXUnitsTextField
-            extends TethysFXTextEditField<TethysUnits> {
+            extends TethysFXTextEditField<TethysUnits>
+            implements TethysUnitsEditField {
         /**
          * Constructor.
          *
@@ -771,7 +781,8 @@ public abstract class TethysFXDataTextField<T>
      * FXDilutionTextField class.
      */
     public static class TethysFXDilutionTextField
-            extends TethysFXTextEditField<TethysDilution> {
+            extends TethysFXTextEditField<TethysDilution>
+            implements TethysDilutionEditField {
         /**
          * Constructor.
          *
@@ -787,7 +798,8 @@ public abstract class TethysFXDataTextField<T>
      * FXRatioTextField class.
      */
     public static class TethysFXRatioTextField
-            extends TethysFXTextEditField<TethysRatio> {
+            extends TethysFXTextEditField<TethysRatio>
+            implements TethysRatioEditField {
         /**
          * Constructor.
          *

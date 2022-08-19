@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * MoneyWise Asset Table.
@@ -91,7 +91,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
 
         /* Access Gui factory and table */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<MetisLetheField, T> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -151,7 +151,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                                final boolean pCurrency,
                                final boolean pEvent) {
         /* Access Table */
-        final TethysSwingTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<MetisLetheField, T> myTable = getTable();
 
         /* Create the parent column */
         if (pParent) {

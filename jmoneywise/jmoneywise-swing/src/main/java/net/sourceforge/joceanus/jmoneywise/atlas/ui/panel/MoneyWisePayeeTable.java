@@ -30,16 +30,16 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWisePayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise Payee Table.
@@ -54,7 +54,7 @@ public class MoneyWisePayeeTable
     /**
      * The Payee dialog.
      */
-    private final PayeePanel theActivePayee;
+    private final MoneyWisePayeePanel theActivePayee;
 
     /**
      * The edit list.
@@ -80,11 +80,11 @@ public class MoneyWisePayeeTable
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Payee> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, Payee> myTable = getTable();
 
         /* Create a payee panel */
-        theActivePayee = new PayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActivePayee = new MoneyWisePayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActivePayee);
 
         /* Set table configuration */

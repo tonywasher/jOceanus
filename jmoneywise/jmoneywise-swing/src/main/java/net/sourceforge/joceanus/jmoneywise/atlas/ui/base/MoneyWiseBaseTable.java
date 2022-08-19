@@ -37,12 +37,12 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * MoneyWise Base Table.
@@ -153,7 +153,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     /**
      * The underlying table.
      */
-    private final TethysSwingTableManager<MetisLetheField, T> theTable;
+    private final TethysTableManager<MetisLetheField, T> theTable;
 
     /**
      * is the table editing?
@@ -184,7 +184,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         theUpdateEntry = theUpdateSet.registerType(pDataType);
 
         /* Create the panel */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         thePanel = myGuiFactory.newBorderPane();
 
         /* Create the table */
@@ -265,7 +265,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the table.
      * @return the table
      */
-    protected TethysSwingTableManager<MetisLetheField, T> getTable() {
+    protected TethysTableManager<MetisLetheField, T> getTable() {
         return theTable;
     }
 

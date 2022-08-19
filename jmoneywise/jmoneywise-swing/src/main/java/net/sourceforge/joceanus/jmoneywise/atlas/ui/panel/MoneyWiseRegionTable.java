@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.RegionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseRegionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise Region Table.
@@ -54,7 +54,7 @@ public class MoneyWiseRegionTable
     /**
      * The Region dialog.
      */
-    private final RegionPanel theActiveRegion;
+    private final MoneyWiseRegionPanel theActiveRegion;
 
     /**
      * The edit list.
@@ -77,8 +77,8 @@ public class MoneyWiseRegionTable
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access the GUI factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Region> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, Region> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -90,7 +90,7 @@ public class MoneyWiseRegionTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a region panel */
-        theActiveRegion = new RegionPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveRegion = new MoneyWiseRegionPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveRegion);
 
         /* Set table configuration */

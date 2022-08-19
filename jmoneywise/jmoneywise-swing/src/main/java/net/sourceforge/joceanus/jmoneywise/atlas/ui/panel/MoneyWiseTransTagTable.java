@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise Tag Table.
@@ -54,7 +54,7 @@ public class MoneyWiseTransTagTable
     /**
      * The tag dialog.
      */
-    private final TransactionTagPanel theActiveTag;
+    private final MoneyWiseTransactionTagPanel theActiveTag;
 
     /**
      * The edit list.
@@ -77,8 +77,8 @@ public class MoneyWiseTransTagTable
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, TransactionTag> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, TransactionTag> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -90,7 +90,7 @@ public class MoneyWiseTransTagTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a tag panel */
-        theActiveTag = new TransactionTagPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveTag = new MoneyWiseTransactionTagPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveTag);
 
         /* Set table configuration */

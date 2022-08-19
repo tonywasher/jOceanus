@@ -26,15 +26,16 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * Panel to display/edit/create a TransactionTag.
  */
-public class TransactionTagPanel
+public class MoneyWiseTransactionTagPanel
         extends MoneyWiseItemPanel<TransactionTag> {
     /**
      * Constructor.
@@ -43,19 +44,19 @@ public class TransactionTagPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public TransactionTagPanel(final TethysSwingGuiFactory pFactory,
-                               final MetisSwingFieldManager pFieldMgr,
-                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final MetisErrorPanel pError) {
+    public MoneyWiseTransactionTagPanel(final TethysGuiFactory pFactory,
+                                        final MetisSwingFieldManager pFieldMgr,
+                                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                        final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(TransactionTag.NAMELEN);
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
 
         /* Create the text fields */
-        final TethysSwingStringTextField myName = pFactory.newStringField();
-        final TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysStringEditField myName = pFactory.newStringField();
+        final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Assign the fields to the panel */
         myPanel.addField(TransactionTag.FIELD_NAME, MetisDataType.STRING, myName);

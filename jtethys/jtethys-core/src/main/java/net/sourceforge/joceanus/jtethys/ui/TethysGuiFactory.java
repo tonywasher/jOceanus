@@ -28,12 +28,24 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutedPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutionEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIntegerEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysLongEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRateEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRatioEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysShortEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysUnitsEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysValidatedEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 
@@ -395,31 +407,31 @@ public abstract class TethysGuiFactory {
      * Obtain a new string data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<String> newStringField();
+    public abstract TethysStringEditField newStringField();
 
     /**
      * Obtain a new charArray data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<char[]> newCharArrayField();
+    public abstract TethysCharArrayEditField newCharArrayField();
 
     /**
      * Obtain a new short data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<Short> newShortField();
+    public abstract TethysShortEditField newShortField();
 
     /**
      * Obtain a new integer data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<Integer> newIntegerField();
+    public abstract TethysIntegerEditField newIntegerField();
 
     /**
      * Obtain a new long data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<Long> newLongField();
+    public abstract TethysLongEditField newLongField();
 
     /**
      * Obtain a new raw decimal data field.
@@ -431,43 +443,43 @@ public abstract class TethysGuiFactory {
      * Obtain a new money data field.
      * @return the new field
      */
-    public abstract TethysCurrencyEditField<TethysMoney> newMoneyField();
+    public abstract TethysMoneyEditField newMoneyField();
 
     /**
      * Obtain a new price data field.
      * @return the new field
      */
-    public abstract TethysCurrencyEditField<TethysPrice> newPriceField();
+    public abstract TethysPriceEditField newPriceField();
 
     /**
      * Obtain a new dilutedPrice data field.
      * @return the new field
      */
-    public abstract TethysCurrencyEditField<TethysDilutedPrice> newDilutedPriceField();
+    public abstract TethysDilutedPriceEditField newDilutedPriceField();
 
     /**
      * Obtain a new rate data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysRate> newRateField();
+    public abstract TethysRateEditField newRateField();
 
     /**
      * Obtain a new units data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysUnits> newUnitsField();
+    public abstract TethysUnitsEditField newUnitsField();
 
     /**
      * Obtain a new dilution data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysDilution> newDilutionField();
+    public abstract TethysDilutionEditField newDilutionField();
 
     /**
      * Obtain a new ratio data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysRatio> newRatioField();
+    public abstract TethysRatioEditField newRatioField();
 
     /**
      * Obtain a new date data field.

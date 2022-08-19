@@ -28,6 +28,12 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
@@ -75,9 +81,9 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      */
     public void addFieldElement(final MetisLetheField pField,
                                 final MetisDataType pClass,
-                                final TethysSwingStringTextField pTextField) {
+                                final TethysStringEditField pTextField) {
         /* Create the field */
-        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pTextField);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, (TethysSwingStringTextField) pTextField);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -91,9 +97,9 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      */
     public void addFieldElement(final MetisLetheField pField,
                                 final MetisDataType pClass,
-                                final TethysSwingScrollPaneManager pScrollPane) {
+                                final TethysScrollPaneManager pScrollPane) {
         /* Create the field */
-        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pScrollPane);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, (TethysSwingScrollPaneManager) pScrollPane);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -105,9 +111,9 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pButton the button
      */
     public void addFieldElement(final MetisLetheField pField,
-                                final TethysSwingDateButtonManager pButton) {
+                                final TethysDateButtonManager pButton) {
         /* Create the field */
-        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, (TethysSwingDateButtonManager) pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -122,9 +128,9 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      */
     public <I> void addFieldElement(final MetisLetheField pField,
                                     final Class<I> pClass,
-                                    final TethysSwingScrollButtonManager<I> pButton) {
+                                    final TethysScrollButtonManager<I> pButton) {
         /* Create the field */
-        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, (TethysSwingScrollButtonManager<I>) pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -137,9 +143,9 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pButton the button
      */
     public <I extends Comparable<I>> void addFieldElement(final MetisLetheField pField,
-                                                          final TethysSwingListButtonManager<I> pButton) {
+                                                          final TethysListButtonManager<I> pButton) {
         /* Create the field */
-        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, (TethysSwingListButtonManager<I>) pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -154,9 +160,9 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      */
     public <I> void addFieldElement(final MetisLetheField pField,
                                     final Class<I> pClass,
-                                    final TethysSwingIconButtonManager<I> pButton) {
+                                    final TethysIconButtonManager<I> pButton) {
         /* Create the field */
-        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, (TethysSwingIconButtonManager<I>) pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);

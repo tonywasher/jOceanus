@@ -31,15 +31,15 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseCashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise CashCategory Table.
@@ -49,7 +49,7 @@ public class MoneyWiseCashCategoryTable
     /**
      * The Category dialog.
      */
-    private final CashCategoryPanel theActiveCategory;
+    private final MoneyWiseCashCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -72,11 +72,11 @@ public class MoneyWiseCashCategoryTable
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, CashCategory> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, CashCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new CashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new MoneyWiseCashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */

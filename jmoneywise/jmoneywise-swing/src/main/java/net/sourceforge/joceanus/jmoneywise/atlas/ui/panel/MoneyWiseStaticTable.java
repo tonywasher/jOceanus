@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * MoneyWise Static Table.
@@ -98,7 +98,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Access the gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<MetisLetheField, T> myTable = getTable();
 
         /* Create new button */
         theNewButton = myGuiFactory.newScrollButton();

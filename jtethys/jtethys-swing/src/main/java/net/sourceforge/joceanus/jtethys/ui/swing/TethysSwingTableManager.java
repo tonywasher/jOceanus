@@ -107,11 +107,6 @@ public class TethysSwingTableManager<C, R>
     private final TethysSwingTableSorter<R> theSorter;
 
     /**
-     * The item list.
-     */
-    private List<R> theItems;
-
-    /**
      * Constructor.
      *
      * @param pFactory the GUI factory
@@ -166,22 +161,15 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
-    public Iterator<R> itemIterator() {
-        return theItems == null
-               ? Collections.emptyIterator()
-               : theItems.iterator();
-    }
-
-    @Override
     public Iterator<R> sortedIterator() {
-        return theItems == null
+        return getItems() == null
                ? Collections.emptyIterator()
                : theSorter.sortIterator();
     }
 
     @Override
     public Iterator<R> viewIterator() {
-        return theItems == null
+        return getItems() == null
                ? Collections.emptyIterator()
                : theSorter.viewIterator();
     }
@@ -218,15 +206,6 @@ public class TethysSwingTableManager<C, R>
      */
     TethysSwingTableModel getTableModel() {
         return theModel;
-    }
-
-    /**
-     * Obtain the columnList.
-     *
-     * @return the columnModel
-     */
-    List<R> getItems() {
-        return theItems;
     }
 
     /**
@@ -286,14 +265,15 @@ public class TethysSwingTableManager<C, R>
      * @return the table column
      */
     R getIndexedRow(final int pIndex) {
-        if (theItems == null) {
+        final List<R> myItems = getItems();
+        if (myItems == null) {
             return null;
         }
         if (pIndex < 0
-                || pIndex > theItems.size()) {
+                || pIndex > myItems.size()) {
             throw new IllegalArgumentException();
         }
-        return theItems.get(pIndex);
+        return myItems.get(pIndex);
     }
 
     @Override
@@ -309,7 +289,7 @@ public class TethysSwingTableManager<C, R>
      * @param pItems the items
      */
     public void setItems(final List<R> pItems) {
-        theItems = pItems;
+        super.setItems(pItems);
         theModel.fireTableDataChanged();
     }
 
@@ -401,9 +381,7 @@ public class TethysSwingTableManager<C, R>
         return new TethysSwingTableIconColumn<>(this, pId, pClazz);
     }
 
-    /**
-     * Fire TableData changed.
-     */
+    @Override
     public void fireTableDataChanged() {
         theModel.fireTableDataChanged();
     }
@@ -467,7 +445,7 @@ public class TethysSwingTableManager<C, R>
     @Override
     public void selectRowWithScroll(final R pItem) {
         /* Determine the index of the item */
-        final int iModel = theItems.indexOf(pItem);
+        final int iModel = getItems().indexOf(pItem);
         final int iView = iModel == -1 ? -1 : theTable.convertRowIndexToView(iModel);
 
         /* If we have a row to display */
@@ -573,11 +551,6 @@ public class TethysSwingTableManager<C, R>
         private TethysSwingTableCell<T, C, R> theCell;
 
         /**
-         * Cell value factory.
-         */
-        private Function<R, T> theValueFactory;
-
-        /**
          * Constructor.
          *
          * @param pTable the owning table
@@ -601,20 +574,6 @@ public class TethysSwingTableManager<C, R>
 
             /* Configure the column */
             setColumnWidth(getCellType().getDefaultWidth());
-
-            /* Set default value factory */
-            theValueFactory = e -> null;
-        }
-
-        /**
-         * Set cell value Factory.
-         *
-         * @param pFactory the cell factory
-         * @return the column
-         */
-        public TethysSwingTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
-            theValueFactory = pFactory;
-            return this;
         }
 
         /**
@@ -672,7 +631,7 @@ public class TethysSwingTableManager<C, R>
          */
         T getCellValue(final int pIndex) {
             theCell.setActiveRow(pIndex);
-            return theValueFactory.apply(theCell.getActiveRow());
+            return getCellValueFactory().apply(theCell.getActiveRow());
         }
 
         /**

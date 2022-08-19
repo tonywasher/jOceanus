@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -66,8 +65,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise Transaction Table.
@@ -87,7 +85,7 @@ public class MoneyWiseTransactionTable
     /**
      * The transaction dialog.
      */
-    private final TransactionPanel theActiveTran;
+    private final net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionPanel theActiveTran;
 
     /**
      * The new button.
@@ -151,8 +149,8 @@ public class MoneyWiseTransactionTable
 
         /* Access field manager and gui factory */
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Transaction> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, Transaction> myTable = getTable();
 
         /* Create new button */
         theNewButton = myGuiFactory.newButton();
@@ -163,6 +161,7 @@ public class MoneyWiseTransactionTable
 
         /* Create the Analysis Selection */
         theSelect = new MoneyWiseAnalysisSelect(myGuiFactory, pView, theAnalysisView, theNewButton);
+        theFilter = theSelect.getFilter();
 
         /* Create the action buttons */
         theActionButtons = new PrometheusActionButtons(myGuiFactory, getUpdateSet());
@@ -171,7 +170,7 @@ public class MoneyWiseTransactionTable
         theBuilder = new TransactionBuilder(getUpdateSet());
 
         /* Create a tag panel */
-        theActiveTran = new TransactionPanel(myGuiFactory, myFieldMgr, pUpdateSet, theBuilder, theSelect, pError);
+        theActiveTran = new net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionPanel(myGuiFactory, myFieldMgr, pUpdateSet, theBuilder, theSelect, pError);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */
@@ -475,7 +474,6 @@ public class MoneyWiseTransactionTable
 
         /* Update the lists */
         updateList();
-        //theSelectionModel.handleNewFilter();
     }
 
     @Override
@@ -537,14 +535,10 @@ public class MoneyWiseTransactionTable
         getTable().setItems(theTransactions.getUnderlyingList());
         theActionButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
-        //fireStateChanged();
 
         /* Touch the filter and updateSet */
         theViewerFilter.setObject(theFilter);
         theViewerAnalysis.setTreeObject(getUpdateSet());
-
-        /* Adjust the filter */
-        //theSelectionModel.handleNewFilter();
     }
 
     @Override

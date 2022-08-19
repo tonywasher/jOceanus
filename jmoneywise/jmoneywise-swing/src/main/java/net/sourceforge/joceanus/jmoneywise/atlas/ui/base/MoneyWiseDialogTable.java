@@ -26,9 +26,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 
 /**
  * MoneyWise Dialog Base Table.
@@ -61,8 +61,8 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
         super(pView, pUpdateSet, pError, pDataType);
 
         /* Access Gui factory */
-        final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysTableManager<MetisLetheField, T> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -127,7 +127,6 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
     public void setEditable(final boolean pEditable) {
         /* Show/Hide columns/panels */
         theAddPanel.setVisible(pEditable);
-        //theActiveColumn.setVisible(pEditable);
     }
 
     /**

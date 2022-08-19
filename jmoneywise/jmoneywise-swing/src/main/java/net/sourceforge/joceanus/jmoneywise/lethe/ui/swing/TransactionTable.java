@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -309,7 +309,7 @@ public class TransactionTable
     /**
      * The Transaction dialog.
      */
-    private final TransactionPanel theActiveTrans;
+    private final MoneyWiseTransactionPanel theActiveTrans;
 
     /**
      * The List Selection Model.
@@ -408,7 +408,7 @@ public class TransactionTable
         thePanel.add(((TethysSwingNode) super.getNode()).getNode(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
-        theActiveTrans = new TransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
+        theActiveTrans = new MoneyWiseTransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
         thePanel.add(TethysSwingNode.getComponent(theActiveTrans), BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -840,7 +840,7 @@ public class TransactionTable
         /**
          * Description column id.
          */
-        private static final int COLUMN_DESC = 6;
+        private static final int COLUMN_DESC = 6;//
 
         /**
          * Debited column id.
@@ -860,72 +860,72 @@ public class TransactionTable
         /**
          * Amount column id.
          */
-        private static final int COLUMN_AMOUNT = 10;
+        private static final int COLUMN_AMOUNT = 10;//
 
         /**
          * Tags column id.
          */
-        private static final int COLUMN_TAGS = 11;
+        private static final int COLUMN_TAGS = 11; //
 
         /**
          * Reference column id.
          */
-        private static final int COLUMN_REF = 12;
+        private static final int COLUMN_REF = 12;//
 
         /**
          * AccountUnits column id.
          */
-        private static final int COLUMN_ACCOUNTUNITS = 13;
+        private static final int COLUMN_ACCOUNTUNITS = 13;//
 
         /**
          * PartnerUnits column id.
          */
-        private static final int COLUMN_PARTNERUNITS = 14;
+        private static final int COLUMN_PARTNERUNITS = 14;//
 
         /**
          * PartnerAmount column id.
          */
-        private static final int COLUMN_PARTNERAMOUNT = 15;
+        private static final int COLUMN_PARTNERAMOUNT = 15;//
 
         /**
          * Dilution column id.
          */
-        private static final int COLUMN_DILUTION = 16;
+        private static final int COLUMN_DILUTION = 16;//
 
         /**
          * QualifyYears column id.
          */
-        private static final int COLUMN_QUALYEARS = 17;
+        private static final int COLUMN_QUALYEARS = 17;//
 
         /**
          * ReturnedAccount column id.
          */
-        private static final int COLUMN_RETURNEDACCOUNT = 18;
+        private static final int COLUMN_RETURNEDACCOUNT = 18;//
 
         /**
          * ReturnedCash column id.
          */
-        private static final int COLUMN_RETURNEDCASH = 19;
+        private static final int COLUMN_RETURNEDCASH = 19;//
 
         /**
          * TaxCredit column id.
          */
-        private static final int COLUMN_TAXCREDIT = 20;
+        private static final int COLUMN_TAXCREDIT = 20;//
 
         /**
          * NatInsurance column id.
          */
-        private static final int COLUMN_NATINS = 21;
+        private static final int COLUMN_NATINS = 21;//
 
         /**
          * DeemedBenefit column id.
          */
-        private static final int COLUMN_BENEFIT = 22;
+        private static final int COLUMN_BENEFIT = 22;//
 
         /**
          * Withheld column id.
          */
-        private static final int COLUMN_WITHHELD = 23;
+        private static final int COLUMN_WITHHELD = 23;//
 
         /**
          * Action column id.
@@ -1337,7 +1337,7 @@ public class TransactionTable
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_ACCOUNT:
-                    pItem.setAccount(TransactionPanel.resolveAsset((TransactionAsset) pValue));
+                    pItem.setAccount(MoneyWiseTransactionPanel.resolveAsset((TransactionAsset) pValue));
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_DIRECTION:
@@ -1345,7 +1345,7 @@ public class TransactionTable
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_PARTNER:
-                    pItem.setPartner(TransactionPanel.resolveAsset((TransactionAsset) pValue));
+                    pItem.setPartner(MoneyWiseTransactionPanel.resolveAsset((TransactionAsset) pValue));
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_DESC:
@@ -1432,27 +1432,27 @@ public class TransactionTable
                     // case COLUMN_TAGS:
                     return true;
                 case COLUMN_TAXCREDIT:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
                 case COLUMN_NATINS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.EMPLOYEENATINS);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.EMPLOYEENATINS);
                 case COLUMN_BENEFIT:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
                 case COLUMN_WITHHELD:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.WITHHELD);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.WITHHELD);
                 case COLUMN_ACCOUNTUNITS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.ACCOUNTDELTAUNITS);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.ACCOUNTDELTAUNITS);
                 case COLUMN_PARTNERUNITS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERDELTAUNITS);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERDELTAUNITS);
                 case COLUMN_PARTNERAMOUNT:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERAMOUNT);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERAMOUNT);
                 case COLUMN_DILUTION:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
                 case COLUMN_RETURNEDACCOUNT:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASHACCOUNT);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASHACCOUNT);
                 case COLUMN_RETURNEDCASH:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASH);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASH);
                 case COLUMN_QUALYEARS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.QUALIFYYEARS);
+                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.QUALIFYYEARS);
                 default:
                     return false;
             }
