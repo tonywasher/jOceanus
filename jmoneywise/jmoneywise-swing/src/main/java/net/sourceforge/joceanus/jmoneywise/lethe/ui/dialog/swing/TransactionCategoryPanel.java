@@ -26,19 +26,20 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
@@ -58,26 +59,25 @@ public class TransactionCategoryPanel
                                     final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
-        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
 
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(TransactionCategory.NAMELEN);
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
 
         /* Create the text fields */
-        final TethysSwingStringTextField myName = myFactory.newStringField();
-        final TethysSwingStringTextField mySubName = myFactory.newStringField();
-        final TethysSwingStringTextField myDesc = myFactory.newStringField();
+        final TethysStringEditField myName = pFactory.newStringField();
+        final TethysStringEditField mySubName = pFactory.newStringField();
+        final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysSwingScrollButtonManager<TransactionCategoryType> myTypeButton = myFactory.newScrollButton();
-        final TethysSwingScrollButtonManager<TransactionCategory> myParentButton = myFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionCategoryType> myTypeButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionCategory> myParentButton = pFactory.newScrollButton();
 
         /* Assign the fields to the panel */
-        myPanel.addField(TransactionCategory.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(TransactionCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        myPanel.addField(TransactionCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(CategoryBase.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(CategoryBase.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        myPanel.addField(CategoryBase.FIELD_DESC, MetisDataType.STRING, myDesc);
         myPanel.addField(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, myTypeButton);
-        myPanel.addField(TransactionCategory.FIELD_PARENT, TransactionCategory.class, myParentButton);
+        myPanel.addField(CategoryBase.FIELD_PARENT, TransactionCategory.class, myParentButton);
 
         /* Define the panel */
         defineMainPanel(myPanel);
@@ -113,18 +113,18 @@ public class TransactionCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        myFieldSet.setVisibility(TransactionCategory.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(CategoryBase.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        myFieldSet.setVisibility(TransactionCategory.FIELD_PARENT, showParent);
-        myFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
+        myFieldSet.setVisibility(CategoryBase.FIELD_PARENT, showParent);
+        myFieldSet.setVisibility(CategoryBase.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
         final boolean canEdit = isEditable && !myCategory.isActive() && myCurrType.isChangeable();
         myFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        myFieldSet.setEditable(TransactionCategory.FIELD_NAME, isEditable && !showParent);
+        myFieldSet.setEditable(CategoryBase.FIELD_NAME, isEditable && !showParent);
     }
 
     @Override
@@ -134,16 +134,16 @@ public class TransactionCategoryPanel
         final TransactionCategory myCategory = getItem();
 
         /* Process updates */
-        if (myField.equals(TransactionCategory.FIELD_NAME)) {
+        if (myField.equals(CategoryBase.FIELD_NAME)) {
             /* Update the SUBCATEGORY(!!) Name */
             myCategory.setSubCategoryName(pUpdate.getString());
-        } else if (myField.equals(TransactionCategory.FIELD_SUBCAT)) {
+        } else if (myField.equals(CategoryBase.FIELD_SUBCAT)) {
             /* Update the SubCategory */
             myCategory.setSubCategoryName(pUpdate.getString());
-        } else if (myField.equals(TransactionCategory.FIELD_PARENT)) {
+        } else if (myField.equals(CategoryBase.FIELD_PARENT)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(TransactionCategory.class));
-        } else if (myField.equals(TransactionCategory.FIELD_DESC)) {
+        } else if (myField.equals(CategoryBase.FIELD_DESC)) {
             /* Update the Description */
             myCategory.setDescription(pUpdate.getString());
         } else if (myField.equals(TransactionCategory.FIELD_CATTYPE)) {

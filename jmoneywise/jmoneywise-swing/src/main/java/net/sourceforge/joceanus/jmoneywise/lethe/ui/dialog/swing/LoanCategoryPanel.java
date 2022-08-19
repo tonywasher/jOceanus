@@ -26,19 +26,20 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Panel to display/edit/create a LoanCategory.
@@ -58,26 +59,25 @@ public class LoanCategoryPanel
                              final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
-        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
 
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(LoanCategory.NAMELEN);
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
 
         /* Create the text fields */
-        final TethysSwingStringTextField myName = myFactory.newStringField();
-        final TethysSwingStringTextField mySubName = myFactory.newStringField();
-        final TethysSwingStringTextField myDesc = myFactory.newStringField();
+        final TethysStringEditField myName = pFactory.newStringField();
+        final TethysStringEditField mySubName = pFactory.newStringField();
+        final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysSwingScrollButtonManager<LoanCategoryType> myTypeButton = myFactory.newScrollButton();
-        final TethysSwingScrollButtonManager<LoanCategory> myParentButton = myFactory.newScrollButton();
+        final TethysScrollButtonManager<LoanCategoryType> myTypeButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<LoanCategory> myParentButton = pFactory.newScrollButton();
 
         /* Assign the fields to the panel */
-        myPanel.addField(LoanCategory.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(LoanCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        myPanel.addField(LoanCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(CategoryBase.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(CategoryBase.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        myPanel.addField(CategoryBase.FIELD_DESC, MetisDataType.STRING, myDesc);
         myPanel.addField(LoanCategory.FIELD_CATTYPE, LoanCategoryType.class, myTypeButton);
-        myPanel.addField(LoanCategory.FIELD_PARENT, LoanCategory.class, myParentButton);
+        myPanel.addField(CategoryBase.FIELD_PARENT, LoanCategory.class, myParentButton);
 
         /* Define the panel */
         defineMainPanel(myPanel);
@@ -112,11 +112,11 @@ public class LoanCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        myFieldSet.setVisibility(LoanCategory.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(CategoryBase.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        myFieldSet.setVisibility(LoanCategory.FIELD_PARENT, !isParent);
-        myFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, !isParent);
+        myFieldSet.setVisibility(CategoryBase.FIELD_PARENT, !isParent);
+        myFieldSet.setVisibility(CategoryBase.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
@@ -126,7 +126,7 @@ public class LoanCategoryPanel
         myFieldSet.setEditable(LoanCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        myFieldSet.setEditable(LoanCategory.FIELD_NAME, isEditable && isParent);
+        myFieldSet.setEditable(CategoryBase.FIELD_NAME, isEditable && isParent);
     }
 
     @Override
@@ -136,16 +136,16 @@ public class LoanCategoryPanel
         final LoanCategory myCategory = getItem();
 
         /* Process updates */
-        if (myField.equals(LoanCategory.FIELD_NAME)) {
+        if (myField.equals(CategoryBase.FIELD_NAME)) {
             /* Update the SUBCATEGORY(!!) Name */
             myCategory.setSubCategoryName(pUpdate.getString());
-        } else if (myField.equals(LoanCategory.FIELD_SUBCAT)) {
+        } else if (myField.equals(CategoryBase.FIELD_SUBCAT)) {
             /* Update the SubCategory */
             myCategory.setSubCategoryName(pUpdate.getString());
-        } else if (myField.equals(LoanCategory.FIELD_PARENT)) {
+        } else if (myField.equals(CategoryBase.FIELD_PARENT)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(LoanCategory.class));
-        } else if (myField.equals(LoanCategory.FIELD_DESC)) {
+        } else if (myField.equals(CategoryBase.FIELD_DESC)) {
             /* Update the Description */
             myCategory.setDescription(pUpdate.getString());
         } else if (myField.equals(LoanCategory.FIELD_CATTYPE)) {

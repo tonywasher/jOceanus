@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHo
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
@@ -64,21 +65,21 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.TransactionFilters;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Panel to display/edit/create a Transaction.
@@ -142,21 +143,20 @@ public class TransactionPanel
                             final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
-        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pFactory;
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(myFactory);
+        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
 
         /* Build the info panel */
-        buildInfoPanel(myFactory);
+        buildInfoPanel(pFactory);
 
         /* Build the tax panel */
-        buildTaxPanel(myFactory);
+        buildTaxPanel(pFactory);
 
         /* Build the securities panel */
-        buildSecuritiesPanel(myFactory);
+        buildSecuritiesPanel(pFactory);
 
         /* Define the panel */
         defineMainPanel(myPanel);
@@ -167,29 +167,29 @@ public class TransactionPanel
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private MoneyWiseDataPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+    private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Transaction.DESCLEN);
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.DESCLEN);
 
         /* Allocate fields */
-        final TethysSwingStringTextField myAmount = pFactory.newStringField();
+        final TethysStringEditField myAmount = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysSwingDateButtonManager myDateButton = pFactory.newDateButton();
-        final TethysSwingScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton();
-        final TethysSwingScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton();
-        final TethysSwingScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton();
-        final TethysSwingIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
-        final TethysSwingIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
+        final TethysDateButtonManager myDateButton = pFactory.newDateButton();
+        final TethysScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton();
+        final TethysIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
+        final TethysIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
 
         /* Assign the fields to the panel */
         myPanel.addField(Transaction.FIELD_DATE, myDateButton);
-        myPanel.addField(Transaction.FIELD_ACCOUNT, TransactionAsset.class, myAccountButton);
-        myPanel.addField(Transaction.FIELD_CATEGORY, TransactionCategory.class, myCategoryButton);
-        myPanel.addField(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
-        myPanel.addField(Transaction.FIELD_PARTNER, TransactionAsset.class, myPartnerButton);
-        myPanel.addField(Transaction.FIELD_AMOUNT, MetisDataType.MONEY, myAmount);
-        myPanel.addField(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
+        myPanel.addField(TransactionBase.FIELD_ACCOUNT, TransactionAsset.class, myAccountButton);
+        myPanel.addField(TransactionBase.FIELD_CATEGORY, TransactionCategory.class, myCategoryButton);
+        myPanel.addField(TransactionBase.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
+        myPanel.addField(TransactionBase.FIELD_PARTNER, TransactionAsset.class, myPartnerButton);
+        myPanel.addField(TransactionBase.FIELD_AMOUNT, MetisDataType.MONEY, myAmount);
+        myPanel.addField(TransactionBase.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
         /* Layout the panel */
         myPanel.compactPanel();
@@ -212,18 +212,18 @@ public class TransactionPanel
      * Build info subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildInfoPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildInfoPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_INFO, Transaction.DESCLEN >> 1);
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_INFO, DataItem.DESCLEN >> 1);
 
         /* Allocate fields */
-        final TethysSwingStringTextField myAmount = pFactory.newStringField();
-        final TethysSwingStringTextField myComments = pFactory.newStringField();
-        final TethysSwingStringTextField myReference = pFactory.newStringField();
-        final TethysSwingStringTextField myRate = pFactory.newStringField();
+        final TethysStringEditField myAmount = pFactory.newStringField();
+        final TethysStringEditField myComments = pFactory.newStringField();
+        final TethysStringEditField myReference = pFactory.newStringField();
+        final TethysStringEditField myRate = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
+        final TethysListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
@@ -243,17 +243,17 @@ public class TransactionPanel
      * Build tax subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildTaxPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildTaxPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_TAXES, Transaction.DESCLEN >> 1);
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_TAXES, DataItem.DESCLEN >> 1);
 
         /* Allocate fields */
-        final TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
-        final TethysSwingStringTextField myEeNatIns = pFactory.newStringField();
-        final TethysSwingStringTextField myErNatIns = pFactory.newStringField();
-        final TethysSwingStringTextField myBenefit = pFactory.newStringField();
-        final TethysSwingStringTextField myWithheld = pFactory.newStringField();
-        final TethysSwingStringTextField myYears = pFactory.newStringField();
+        final TethysStringEditField myTaxCredit = pFactory.newStringField();
+        final TethysStringEditField myEeNatIns = pFactory.newStringField();
+        final TethysStringEditField myErNatIns = pFactory.newStringField();
+        final TethysStringEditField myBenefit = pFactory.newStringField();
+        final TethysStringEditField myWithheld = pFactory.newStringField();
+        final TethysStringEditField myYears = pFactory.newStringField();
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
@@ -271,20 +271,20 @@ public class TransactionPanel
      * Build securities subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildSecuritiesPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildSecuritiesPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_SECURITIES, Transaction.DESCLEN >> 1);
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_SECURITIES, DataItem.DESCLEN >> 1);
 
         /* Allocate fields */
-        final TethysSwingStringTextField myAccountUnits = pFactory.newStringField();
-        final TethysSwingStringTextField myPartnerUnits = pFactory.newStringField();
-        final TethysSwingStringTextField myCommission = pFactory.newStringField();
-        final TethysSwingStringTextField myPrice = pFactory.newStringField();
-        final TethysSwingStringTextField myDilution = pFactory.newStringField();
-        final TethysSwingStringTextField myReturnedCash = pFactory.newStringField();
+        final TethysStringEditField myAccountUnits = pFactory.newStringField();
+        final TethysStringEditField myPartnerUnits = pFactory.newStringField();
+        final TethysStringEditField myCommission = pFactory.newStringField();
+        final TethysStringEditField myPrice = pFactory.newStringField();
+        final TethysStringEditField myDilution = pFactory.newStringField();
+        final TethysStringEditField myReturnedCash = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysSwingScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
@@ -482,20 +482,20 @@ public class TransactionPanel
         final boolean bShowReconciled = isEditable || bIsReconciled;
         theReconciledState = bIsLocked;
         theDirectionState = bIsReconciled;
-        myFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
-        myFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
+        myFieldSet.setVisibility(TransactionBase.FIELD_RECONCILED, bShowReconciled);
+        myFieldSet.setEditable(TransactionBase.FIELD_RECONCILED, isEditable && !bIsLocked);
 
         /* Determine basic editing */
         final boolean canEdit = isEditable && !bIsReconciled;
         final boolean needsNullAmount = myTrans.needsNullAmount();
-        myFieldSet.setEditable(Transaction.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
-        myFieldSet.setEditable(Transaction.FIELD_ACCOUNT, canEdit);
-        myFieldSet.setEditable(Transaction.FIELD_PARTNER, canEdit);
-        myFieldSet.setEditable(Transaction.FIELD_CATEGORY, canEdit);
+        myFieldSet.setEditable(TransactionBase.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
+        myFieldSet.setEditable(TransactionBase.FIELD_ACCOUNT, canEdit);
+        myFieldSet.setEditable(TransactionBase.FIELD_PARTNER, canEdit);
+        myFieldSet.setEditable(TransactionBase.FIELD_CATEGORY, canEdit);
         myFieldSet.setEditable(Transaction.FIELD_DATE, canEdit);
-        myFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !needsNullAmount);
-        myFieldSet.setVisibility(Transaction.FIELD_AMOUNT, !needsNullAmount);
-        myFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
+        myFieldSet.setEditable(TransactionBase.FIELD_AMOUNT, canEdit && !needsNullAmount);
+        myFieldSet.setVisibility(TransactionBase.FIELD_AMOUNT, !needsNullAmount);
+        myFieldSet.setAssumedCurrency(TransactionBase.FIELD_AMOUNT, myCurrency);
 
         /* Set the range for the dateButton */
         theRange = theBuilder.getRange();
@@ -534,27 +534,27 @@ public class TransactionPanel
         if (myField.equals(Transaction.FIELD_DATE)) {
             /* Update the Date */
             myTrans.setDate(pUpdate.getDate());
-        } else if (myField.equals(Transaction.FIELD_AMOUNT)) {
+        } else if (myField.equals(TransactionBase.FIELD_AMOUNT)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getMoney());
             theBuilder.autoCorrect(myTrans);
-        } else if (myField.equals(Transaction.FIELD_ACCOUNT)) {
+        } else if (myField.equals(TransactionBase.FIELD_ACCOUNT)) {
             /* Update the Account */
             myTrans.setAccount(resolveAsset(pUpdate.getValue(TransactionAsset.class)));
             theBuilder.autoCorrect(myTrans);
-        } else if (myField.equals(Transaction.FIELD_DIRECTION)) {
+        } else if (myField.equals(TransactionBase.FIELD_DIRECTION)) {
             /* Update the Direction */
             myTrans.switchDirection();
             theBuilder.autoCorrect(myTrans);
-        } else if (myField.equals(Transaction.FIELD_PARTNER)) {
+        } else if (myField.equals(TransactionBase.FIELD_PARTNER)) {
             /* Update the Partner */
             myTrans.setPartner(resolveAsset(pUpdate.getValue(TransactionAsset.class)));
             theBuilder.autoCorrect(myTrans);
-        } else if (myField.equals(Transaction.FIELD_CATEGORY)) {
+        } else if (myField.equals(TransactionBase.FIELD_CATEGORY)) {
             /* Update the Category */
             myTrans.setCategory(pUpdate.getValue(TransactionCategory.class));
             theBuilder.autoCorrect(myTrans);
-        } else if (myField.equals(Transaction.FIELD_RECONCILED)) {
+        } else if (myField.equals(TransactionBase.FIELD_RECONCILED)) {
             /* Update the Reconciled indication */
             myTrans.setReconciled(pUpdate.getBoolean());
         } else {
@@ -567,7 +567,7 @@ public class TransactionPanel
                     myTrans.setReference(pUpdate.getString());
                     break;
                 case TRANSTAG:
-                    myTrans.setTransactionTags((List<TransactionTag>) pUpdate.getValue(List.class));
+                    myTrans.setTransactionTags(pUpdate.getValue(List.class));
                     break;
                 case PARTNERAMOUNT:
                     myTrans.setPartnerAmount(pUpdate.getMoney());

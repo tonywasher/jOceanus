@@ -48,9 +48,15 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -429,7 +435,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          */
         public void addField(final MetisLetheField pField,
                              final MetisDataType pType,
-                             final TethysSwingStringTextField pControl) {
+                             final TethysStringEditField pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pType, pControl);
 
@@ -448,7 +454,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          */
         public void addField(final MetisLetheField pField,
                              final MetisDataType pType,
-                             final TethysSwingScrollPaneManager pControl) {
+                             final TethysScrollPaneManager pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pType, pControl);
 
@@ -465,7 +471,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pControl the control
          */
         public void addField(final MetisLetheField pField,
-                             final TethysSwingDateButtonManager pControl) {
+                             final TethysDateButtonManager pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pControl);
 
@@ -485,7 +491,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          */
         public <I> void addField(final MetisLetheField pField,
                                  final Class<I> pClazz,
-                                 final TethysSwingScrollButtonManager<I> pControl) {
+                                 final TethysScrollButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pClazz, pControl);
 
@@ -505,7 +511,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          */
         public <I> void addField(final MetisLetheField pField,
                                  final Class<I> pClazz,
-                                 final TethysSwingIconButtonManager<I> pControl) {
+                                 final TethysIconButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pClazz, pControl);
 
@@ -523,7 +529,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pControl the control
          */
         public <I extends Comparable<I>> void addField(final MetisLetheField pField,
-                                                       final TethysSwingListButtonManager<I> pControl) {
+                                                       final TethysListButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pControl);
 

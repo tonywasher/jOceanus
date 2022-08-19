@@ -30,7 +30,13 @@ import java.util.function.Supplier;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -569,6 +575,90 @@ public interface TethysDataEditField<T>
      */
     interface TethysCurrencyEditField<T extends TethysMoney>
             extends TethysValidatedEditField<T>, TethysCurrencyField {
+    }
+
+    /**
+     * StringTextFieldControl.
+     */
+    interface TethysStringEditField
+            extends TethysDataEditField<String>, TethysValidatedEditField<String> {
+    }
+
+    /**
+     * CharArrayTextFieldControl.
+     */
+    interface TethysCharArrayEditField
+            extends TethysDataEditField<char[]>, TethysValidatedEditField<char[]> {
+    }
+
+    /**
+     * ShortTextFieldControl.
+     */
+    interface TethysShortEditField
+            extends TethysDataEditField<Short>, TethysValidatedEditField<Short> {
+    }
+
+    /**
+     * IntegerTextFieldControl.
+     */
+    interface TethysIntegerEditField
+            extends TethysDataEditField<Integer>, TethysValidatedEditField<Integer> {
+    }
+
+    /**
+     * LongTextFieldControl.
+     */
+    interface TethysLongEditField
+            extends TethysDataEditField<Long>, TethysValidatedEditField<Long> {
+    }
+
+    /**
+     * MoneyTextFieldControl.
+     */
+    interface TethysMoneyEditField
+            extends TethysDataEditField<TethysMoney>, TethysCurrencyEditField<TethysMoney> {
+    }
+
+    /**
+     * PriceTextFieldControl.
+     */
+    interface TethysPriceEditField
+            extends TethysDataEditField<TethysPrice>, TethysCurrencyEditField<TethysPrice> {
+    }
+
+    /**
+     * DilutedPriceTextFieldControl.
+     */
+    interface TethysDilutedPriceEditField
+            extends TethysDataEditField<TethysDilutedPrice>, TethysCurrencyEditField<TethysDilutedPrice> {
+    }
+
+    /**
+     * UnitsTextFieldControl.
+     */
+    interface TethysUnitsEditField
+            extends TethysDataEditField<TethysUnits>, TethysValidatedEditField<TethysUnits> {
+    }
+
+    /**
+     * DilutionTextFieldControl.
+     */
+    interface TethysDilutionEditField
+            extends TethysDataEditField<TethysDilution>, TethysValidatedEditField<TethysDilution> {
+    }
+
+    /**
+     * RateTextFieldControl.
+     */
+    interface TethysRateEditField
+            extends TethysDataEditField<TethysRate>, TethysValidatedEditField<TethysRate> {
+    }
+
+    /**
+     * RatioTextFieldControl.
+     */
+    interface TethysRatioEditField
+            extends TethysDataEditField<TethysRatio>, TethysValidatedEditField<TethysRatio> {
     }
 
     /**
