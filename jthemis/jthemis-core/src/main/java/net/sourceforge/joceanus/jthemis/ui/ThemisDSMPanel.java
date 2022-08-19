@@ -21,21 +21,25 @@ import java.nio.file.Path;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDirectorySelector;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMModule;
@@ -50,31 +54,31 @@ import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
  * DSMPanel.
  */
 public class ThemisDSMPanel
-    implements MetisMainPanel {
+    implements TethysUIMainPanel {
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory theGuiFactory;
+    private final TethysUIFactory<?> theGuiFactory;
 
     /**
      * The Tab Manager Pane.
      */
-    private final TethysTabPaneManager theTabPane;
+    private final TethysUITabPaneManager theTabPane;
 
     /**
      * The Matrix HTML Pane.
      */
-    private final TethysHTMLManager theMatrixHTML;
+    private final TethysUIHTMLManager theMatrixHTML;
 
     /**
      * The Dependency HTML Pane.
      */
-    private final TethysHTMLManager theDependencyHTML;
+    private final TethysUIHTMLManager theDependencyHTML;
 
     /**
      * The Dependency Tab.
      */
-    private final TethysTabItem theDependencyTab;
+    private final TethysUITabItem theDependencyTab;
 
     /**
      * The Statistics Panel.
@@ -89,27 +93,27 @@ public class ThemisDSMPanel
     /**
      * The Log Tab.
      */
-    private final TethysTabItem theLogTab;
+    private final TethysUITabItem theLogTab;
 
     /**
      * The ProjectButton.
      */
-    private final TethysButton theProjectButton;
+    private final TethysUIButton theProjectButton;
 
     /**
      * The ModuleButton.
      */
-    private final TethysScrollButtonManager<ThemisDSMModule> theModuleButton;
+    private final TethysUIScrollButtonManager<ThemisDSMModule> theModuleButton;
 
     /**
      * The FromButton.
      */
-    private final TethysScrollButtonManager<ThemisDSMPackage> theFromButton;
+    private final TethysUIScrollButtonManager<ThemisDSMPackage> theFromButton;
 
     /**
      * The ToButton.
      */
-    private final TethysScrollButtonManager<ThemisDSMPackage> theToButton;
+    private final TethysUIScrollButtonManager<ThemisDSMPackage> theToButton;
 
     /**
      * The current project.
@@ -136,38 +140,41 @@ public class ThemisDSMPanel
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
-    public ThemisDSMPanel(final TethysGuiFactory pFactory) throws OceanusException {
+    public ThemisDSMPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Access GuiFactory */
         theGuiFactory = pFactory;
 
         /* Create the HTML Panes */
-        theDependencyHTML = theGuiFactory.newHTMLManager();
+        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
+        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        theDependencyHTML = myControls.newHTMLManager();
         theDependencyHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);
-        theMatrixHTML = theGuiFactory.newHTMLManager();
+        theMatrixHTML = myControls.newHTMLManager();
         theMatrixHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);
-        theMatrixHTML.getEventRegistrar().addEventListener(TethysXUIEvent.BUILDPAGE, e -> {
+        theMatrixHTML.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             processReference(e.getDetails(String.class));
             e.consume();
         });
 
         /* Create the module selection panel */
-        final TethysBoxPaneManager myModuleSelect = theGuiFactory.newHBoxPane();
-        myModuleSelect.addNode(theGuiFactory.newLabel("Module:"));
-        theModuleButton = theGuiFactory.newScrollButton();
+        final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
+        final TethysUIBoxPaneManager myModuleSelect = myPanes.newHBoxPane();
+        myModuleSelect.addNode(myControls.newLabel("Module:"));
+        theModuleButton = myButtons.newScrollButton();
         myModuleSelect.addNode(theModuleButton);
-        theModuleButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewModule());
+        theModuleButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewModule());
         theModuleButton.setMenuConfigurator(e -> buildModuleMenu());
 
         /* Create the project selection panel */
-        final TethysBoxPaneManager myProjectSelect = theGuiFactory.newHBoxPane();
-        myProjectSelect.addNode(theGuiFactory.newLabel("Project:"));
-        theProjectButton = theGuiFactory.newButton();
+        final TethysUIBoxPaneManager myProjectSelect = myPanes.newHBoxPane();
+        myProjectSelect.addNode(myControls.newLabel("Project:"));
+        theProjectButton = myButtons.newButton();
         theProjectButton.setTextOnly();
         myProjectSelect.addNode(theProjectButton);
         theProjectButton.getEventRegistrar().addEventListener(e -> selectProject());
 
         /* create the overall matrix status panel */
-        final TethysBoxPaneManager myMatrixControl = theGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager myMatrixControl = myPanes.newHBoxPane();
         myMatrixControl.addSpacer();
         myMatrixControl.addNode(myProjectSelect);
         myMatrixControl.addSpacer();
@@ -175,28 +182,28 @@ public class ThemisDSMPanel
         myMatrixControl.addSpacer();
 
         /* create the matrix panel */
-        final TethysBorderPaneManager myMatrixPanel = theGuiFactory.newBorderPane();
+        final TethysUIBorderPaneManager myMatrixPanel = myPanes.newBorderPane();
         myMatrixPanel.setCentre(theMatrixHTML);
         myMatrixPanel.setNorth(myMatrixControl);
 
         /* Create the from selection panel */
-        final TethysBoxPaneManager myFromSelect = theGuiFactory.newHBoxPane();
-        myFromSelect.addNode(theGuiFactory.newLabel("From:"));
-        theFromButton = theGuiFactory.newScrollButton();
+        final TethysUIBoxPaneManager myFromSelect = myPanes.newHBoxPane();
+        myFromSelect.addNode(myControls.newLabel("From:"));
+        theFromButton = myButtons.newScrollButton();
         myFromSelect.addNode(theFromButton);
-        theFromButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewFrom());
+        theFromButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewFrom());
         theFromButton.setMenuConfigurator(e -> buildFromMenu());
 
         /* Create the project selection panel */
-        final TethysBoxPaneManager myToSelect = theGuiFactory.newHBoxPane();
-        myToSelect.addNode(theGuiFactory.newLabel("To:"));
-        theToButton = theGuiFactory.newScrollButton();
+        final TethysUIBoxPaneManager myToSelect = myPanes.newHBoxPane();
+        myToSelect.addNode(myControls.newLabel("To:"));
+        theToButton = myButtons.newScrollButton();
         myToSelect.addNode(theToButton);
-        theToButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewTo());
+        theToButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTo());
         theToButton.setMenuConfigurator(e -> buildToMenu());
 
         /* create the overall matrix status panel */
-        final TethysBoxPaneManager myDependencyControl = theGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager myDependencyControl = myPanes.newHBoxPane();
         myDependencyControl.addSpacer();
         myDependencyControl.addNode(myFromSelect);
         myDependencyControl.addSpacer();
@@ -204,28 +211,28 @@ public class ThemisDSMPanel
         myDependencyControl.addSpacer();
 
         /* create the matrix panel */
-        final TethysBorderPaneManager myDependencyPanel = theGuiFactory.newBorderPane();
+        final TethysUIBorderPaneManager myDependencyPanel = myPanes.newBorderPane();
         myDependencyPanel.setCentre(theDependencyHTML);
         myDependencyPanel.setNorth(myDependencyControl);
 
         /* Create the TabPane */
-        theTabPane = theGuiFactory.newTabPane();
+        theTabPane = myPanes.newTabPane();
         theTabPane.addTabItem("Matrix", myMatrixPanel);
         theDependencyTab = theTabPane.addTabItem("Dependencies", myDependencyPanel);
 
         /* Create the Stats panel */
         theStatsPanel = new ThemisStatsPanel(theGuiFactory);
-        theTabPane.addTabItem("Stats", theStatsPanel);
+        theTabPane.addTabItem("Stats", theStatsPanel.getComponent());
 
         /* Create the Source panel */
         theSourcePanel = new ThemisSourcePanel(theGuiFactory);
-        theTabPane.addTabItem("Source", theSourcePanel);
+        theTabPane.addTabItem("Source", theSourcePanel.getComponent());
 
         /* Create the log tab */
-        final TethysLogTextArea myLog = theGuiFactory.getLogSink();
+        final TethysUILogTextArea myLog = theGuiFactory.getLogSink();
         theLogTab = theTabPane.addTabItem("Log", myLog);
-        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
-        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
         theLogTab.setVisible(myLog.isActive());
 
         /* Initialise status */
@@ -243,7 +250,7 @@ public class ThemisDSMPanel
     }
 
     @Override
-    public TethysTabPaneManager getComponent() {
+    public TethysUITabPaneManager getComponent() {
         return theTabPane;
     }
 
@@ -258,7 +265,8 @@ public class ThemisDSMPanel
         }
 
         /* Determine the name of the directory to load */
-        final TethysDirectorySelector myDialog = theGuiFactory.newDirectorySelector();
+        final TethysUIDialogFactory<?> myDialogs = theGuiFactory.dialogFactory();
+        final TethysUIDirectorySelector myDialog = myDialogs.newDirectorySelector();
         myDialog.setTitle("Select Project");
         myDialog.setInitialDirectory(myInit);
         final File myFile = myDialog.selectDirectory();
@@ -349,7 +357,7 @@ public class ThemisDSMPanel
      */
     private void buildModuleMenu() {
         /* Access builder */
-        final TethysScrollMenu<ThemisDSMModule> myBuilder = theModuleButton.getMenu();
+        final TethysUIScrollMenu<ThemisDSMModule> myBuilder = theModuleButton.getMenu();
         myBuilder.removeAllItems();
 
         /* Loop through to add each module */
@@ -385,7 +393,7 @@ public class ThemisDSMPanel
      */
     private void buildFromMenu() {
         /* Access builder */
-        final TethysScrollMenu<ThemisDSMPackage> myBuilder = theFromButton.getMenu();
+        final TethysUIScrollMenu<ThemisDSMPackage> myBuilder = theFromButton.getMenu();
         myBuilder.removeAllItems();
 
         /* Loop through to add each package */
@@ -422,7 +430,7 @@ public class ThemisDSMPanel
      */
     private void buildToMenu() {
         /* Access builder */
-        final TethysScrollMenu<ThemisDSMPackage> myBuilder = theToButton.getMenu();
+        final TethysUIScrollMenu<ThemisDSMPackage> myBuilder = theToButton.getMenu();
         myBuilder.removeAllItems();
 
         /* Loop through to add each package */

@@ -21,14 +21,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager.TethysUITreeItem;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsBase;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsReport;
@@ -36,8 +36,7 @@ import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsReport;
 /**
  * Statistics Panel.
  */
-public class ThemisStatsPanel
-        implements TethysComponent {
+public class ThemisStatsPanel {
     /**
      * The Next entryId.
      */
@@ -46,22 +45,22 @@ public class ThemisStatsPanel
     /**
      * The SplitTree Manager.
      */
-    private final TethysSplitTreeManager<ThemisStatsEntry> theSplitTree;
+    private final TethysUISplitTreeManager<ThemisStatsEntry> theSplitTree;
 
     /**
      * The Tree Manager.
      */
-    private final TethysTreeManager<ThemisStatsEntry> theTree;
+    private final TethysUITreeManager<ThemisStatsEntry> theTree;
 
     /**
      * The HTML Manager.
      */
-    private final TethysHTMLManager theHTML;
+    private final TethysUIHTMLManager theHTML;
 
     /**
      * The Current root.
      */
-    private TethysTreeItem<ThemisStatsEntry> theRoot;
+    private TethysUITreeItem<ThemisStatsEntry> theRoot;
 
     /**
      * Constructor.
@@ -69,9 +68,9 @@ public class ThemisStatsPanel
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
-    public ThemisStatsPanel(final TethysGuiFactory pFactory) throws OceanusException {
+    public ThemisStatsPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create the splitTree Manager */
-        theSplitTree = pFactory.newSplitTreeManager();
+        theSplitTree = pFactory.controlFactory().newSplitTreeManager();
         theTree = theSplitTree.getTreeManager();
         theHTML = theSplitTree.getHTMLManager();
         theHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);
@@ -81,24 +80,12 @@ public class ThemisStatsPanel
         theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
     }
 
-    @Override
-    public TethysNode getNode() {
-        return theSplitTree.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        theSplitTree.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        theSplitTree.setVisible(pVisible);
-    }
-
-    @Override
-    public Integer getId() {
-        return theSplitTree.getId();
+    /**
+     * Obtain the component.
+     * @return the component
+     */
+    public TethysUIComponent getComponent() {
+        return theSplitTree;
     }
 
     /**
@@ -134,7 +121,7 @@ public class ThemisStatsPanel
      * @param pParent the parent
      * @param pChild the child
      */
-    void createChildEntries(final TethysTreeItem<ThemisStatsEntry> pParent,
+    void createChildEntries(final TethysUITreeItem<ThemisStatsEntry> pParent,
                             final ThemisStatsBase pChild) {
         /* Loop through the root children */
         final Iterator<ThemisStatsBase> myIterator = pChild.childIterator();
@@ -143,7 +130,7 @@ public class ThemisStatsPanel
 
             /* Create a new root entry */
             final ThemisStatsEntry myEntry = new ThemisStatsEntry(pParent.getItem(), myChild);
-            final TethysTreeItem<ThemisStatsEntry> myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);
+            final TethysUITreeItem<ThemisStatsEntry> myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(true);
 
             /* Create child entries */
@@ -155,9 +142,9 @@ public class ThemisStatsPanel
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysXUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
         /* If this is a new value */
-        if (pEvent.getEventId() == TethysXUIEvent.NEWVALUE) {
+        if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {
             handleNewTreeItem(pEvent.getDetails(ThemisStatsEntry.class));
         }
     }

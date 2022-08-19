@@ -21,13 +21,13 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager.TethysUITreeItem;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisBlock;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisCase;
@@ -60,8 +60,7 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisWhile;
 /**
  * Source Panel.
  */
-public class ThemisSourcePanel
-        implements TethysComponent {
+public class ThemisSourcePanel {
     /**
      * The Next entryId.
      */
@@ -116,22 +115,22 @@ public class ThemisSourcePanel
     /**
      * The SplitTree Manager.
      */
-    private final TethysSplitTreeManager<ThemisSourceEntry> theSplitTree;
+    private final TethysUISplitTreeManager<ThemisSourceEntry> theSplitTree;
 
     /**
      * The Tree Manager.
      */
-    private final TethysTreeManager<ThemisSourceEntry> theTree;
+    private final TethysUITreeManager<ThemisSourceEntry> theTree;
 
     /**
      * The HTML Manager.
      */
-    private final TethysHTMLManager theHTML;
+    private final TethysUIHTMLManager theHTML;
 
     /**
      * The Current root.
      */
-    private TethysTreeItem<ThemisSourceEntry> theRoot;
+    private TethysUITreeItem<ThemisSourceEntry> theRoot;
 
     /**
      * Constructor.
@@ -139,33 +138,21 @@ public class ThemisSourcePanel
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
-    public ThemisSourcePanel(final TethysGuiFactory pFactory) throws OceanusException {
+    public ThemisSourcePanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create the splitTree Manager */
-        theSplitTree = pFactory.newSplitTreeManager();
+        theSplitTree = pFactory.controlFactory().newSplitTreeManager();
         theTree = theSplitTree.getTreeManager();
         theHTML = theSplitTree.getHTMLManager();
         theHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);
         theTree.setVisible(true);
     }
 
-    @Override
-    public TethysNode getNode() {
-        return theSplitTree.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        theSplitTree.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        theSplitTree.setVisible(pVisible);
-    }
-
-    @Override
-    public Integer getId() {
-        return theSplitTree.getId();
+    /**
+     * Obtain the component.
+     * @return the component
+     */
+    public TethysUIComponent getComponent() {
+        return theSplitTree;
     }
 
     /**
@@ -202,7 +189,7 @@ public class ThemisSourcePanel
      * @param pParent the parent
      * @param pChild the child
      */
-    void createChildEntries(final TethysTreeItem<ThemisSourceEntry> pParent,
+    void createChildEntries(final TethysUITreeItem<ThemisSourceEntry> pParent,
                             final ThemisAnalysisElement pChild) {
         /* Loop through the root children */
         final Iterator<? extends ThemisAnalysisElement> myIterator = childIterator(pChild);
@@ -211,7 +198,7 @@ public class ThemisSourcePanel
 
             /* Create a new root entry */
             final ThemisSourceEntry myEntry = new ThemisSourceEntry(pParent.getItem(), myChild);
-            final TethysTreeItem<ThemisSourceEntry> myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);
+            final TethysUITreeItem<ThemisSourceEntry> myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);
             myTreeItem.setIcon(ThemisSourceIcon.getElementIcon(myChild));
             myTreeItem.setVisible(true);
 

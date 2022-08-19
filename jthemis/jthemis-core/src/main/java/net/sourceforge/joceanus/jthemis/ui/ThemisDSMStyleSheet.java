@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Report StyleSheets.
  */
-public enum ThemisDSMStyleSheet implements TethysStyleSheetId {
+public enum ThemisDSMStyleSheet
+        implements TethysUIStyleSheetId {
     /**
      * DSM StyleSheet.
      */

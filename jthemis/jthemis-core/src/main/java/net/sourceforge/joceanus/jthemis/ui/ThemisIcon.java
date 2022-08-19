@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 
 /**
  * Themis Icon IDs.
  */
-public enum ThemisIcon implements TethysIconId {
+public enum ThemisIcon implements TethysUIIconId {
     /**
      * The small program icon.
      */

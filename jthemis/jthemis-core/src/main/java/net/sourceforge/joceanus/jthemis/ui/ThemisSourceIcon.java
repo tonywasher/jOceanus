@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisAnnotation;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisArrayInit;
@@ -50,7 +50,8 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisWhile;
 /**
  * Source Icon Ids.
  */
-public enum ThemisSourceIcon implements TethysIconId {
+public enum ThemisSourceIcon
+        implements TethysUIIconId {
     /**
      * The project icon.
      */
@@ -305,7 +306,7 @@ public enum ThemisSourceIcon implements TethysIconId {
      * @param pElement the element
      * @return the icon
      */
-    static TethysIconId getElementIcon(final ThemisAnalysisElement pElement) {
+    static TethysUIIconId getElementIcon(final ThemisAnalysisElement pElement) {
         /* Determine the element colour */
         final String myColour = getElementColour(pElement);
         if (myColour == null) {
@@ -332,7 +333,7 @@ public enum ThemisSourceIcon implements TethysIconId {
      * @param pElement the element
      * @return the icon
      */
-    private static TethysIconId getBlueElementIcon(final ThemisAnalysisElement pElement) {
+    private static TethysUIIconId getBlueElementIcon(final ThemisAnalysisElement pElement) {
         /* Handle statement */
         if (pElement instanceof ThemisAnalysisStatement) {
             return STATEMENT;
@@ -367,7 +368,7 @@ public enum ThemisSourceIcon implements TethysIconId {
      * @param pElement the element
      * @return the iconId
      */
-    private static TethysIconId getGreenElementIcon(final ThemisAnalysisElement pElement) {
+    private static TethysUIIconId getGreenElementIcon(final ThemisAnalysisElement pElement) {
         /* Handle for/do/while */
         if (pElement instanceof ThemisAnalysisFor) {
             return FOR;
@@ -427,7 +428,7 @@ public enum ThemisSourceIcon implements TethysIconId {
      * @param pElement the element
      * @return the iconId
      */
-    private static TethysIconId getOrangeElementIcon(final ThemisAnalysisElement pElement) {
+    private static TethysUIIconId getOrangeElementIcon(final ThemisAnalysisElement pElement) {
         /* Handle project/module/package */
         if (pElement instanceof ThemisAnalysisProject) {
             return PROJECT;
@@ -473,7 +474,7 @@ public enum ThemisSourceIcon implements TethysIconId {
      * @param pElement the element
      * @return the iconId
      */
-    private static TethysIconId getPinkElementIcon(final ThemisAnalysisElement pElement) {
+    private static TethysUIIconId getPinkElementIcon(final ThemisAnalysisElement pElement) {
         /* Handle comment */
         if (pElement instanceof ThemisAnalysisComment) {
             return ((ThemisAnalysisComment) pElement).isJavaDoc() ? JAVADOC : COMMENT;
