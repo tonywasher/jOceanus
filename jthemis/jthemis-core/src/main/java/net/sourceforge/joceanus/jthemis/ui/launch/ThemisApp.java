@@ -16,12 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui.launch;
 
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;

@@ -29,13 +29,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -51,11 +45,6 @@ public class TethysTestHelper {
      * The max items.
      */
     private static final int MAX_ITEMS = 4;
-
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 24;
 
     /**
      * The default short value.
@@ -230,24 +219,24 @@ public class TethysTestHelper {
      * @param pAltTrueIcon the icon for the true closed state
      * @return the map
      */
-    public <K extends TethysUIIconId> Map<IconState, TethysUIIconMapSet<Boolean>> buildStateIconState(final K pFalseIcon,
-                                                                                                      final K pTrueIcon,
-                                                                                                      final K pAltTrueIcon) {
+    public <K extends TethysUIIconId> Map<TethysIconState, TethysUIIconMapSet<Boolean>> buildStateIconState(final K pFalseIcon,
+                                                                                                            final K pTrueIcon,
+                                                                                                            final K pAltTrueIcon) {
         /* Create the map */
-        final Map<IconState, TethysUIIconMapSet<Boolean>> myMap = new EnumMap<>(IconState.class);
+        final Map<TethysIconState, TethysUIIconMapSet<Boolean>> myMap = new EnumMap<>(TethysIconState.class);
         final TethysUIButtonFactory myButtons = theFactory.buttonFactory();
 
         /* Create the CLOSED state */
         TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, "False");
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, pAltTrueIcon, "True");
-        myMap.put(IconState.CLOSED, myMapSet);
+        myMap.put(TethysIconState.CLOSED, myMapSet);
 
         /* Create the OPEN state */
         myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
-        myMap.put(IconState.OPEN, myMapSet);
+        myMap.put(TethysIconState.OPEN, myMapSet);
 
         /* Return the map */
         return myMap;
@@ -257,11 +246,11 @@ public class TethysTestHelper {
      * build State button.
      * @param pManager the button manager
      */
-    public void buildStateButton(final TethysUIScrollButtonManager<IconState> pManager) {
-        final TethysUIScrollMenu<IconState> myMenu = pManager.getMenu();
-        myMenu.addItem(IconState.OPEN);
-        myMenu.addItem(IconState.CLOSED);
-        pManager.setValue(IconState.CLOSED);
+    public void buildStateButton(final TethysUIScrollButtonManager<TethysIconState> pManager) {
+        final TethysUIScrollMenu<TethysIconState> myMenu = pManager.getMenu();
+        myMenu.addItem(TethysIconState.OPEN);
+        myMenu.addItem(TethysIconState.CLOSED);
+        pManager.setValue(TethysIconState.CLOSED);
     }
 
     /**
@@ -285,7 +274,7 @@ public class TethysTestHelper {
     /**
      * ENum for state.
      */
-    public enum IconState {
+    public enum TethysIconState {
         /**
          * Open.
          */
@@ -305,7 +294,7 @@ public class TethysTestHelper {
          * Constructor.
          * @param pDisplay the display string
          */
-        IconState(final String pDisplay) {
+        TethysIconState(final String pDisplay) {
             theDisplay = pDisplay;
         }
 

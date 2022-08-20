@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -309,7 +309,7 @@ public class TransactionTable
     /**
      * The Transaction dialog.
      */
-    private final MoneyWiseTransactionPanel theActiveTrans;
+    private final TransactionPanel theActiveTrans;
 
     /**
      * The List Selection Model.
@@ -408,7 +408,7 @@ public class TransactionTable
         thePanel.add(((TethysSwingNode) super.getNode()).getNode(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
-        theActiveTrans = new MoneyWiseTransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
+        theActiveTrans = new TransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
         thePanel.add(TethysSwingNode.getComponent(theActiveTrans), BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -1337,7 +1337,7 @@ public class TransactionTable
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_ACCOUNT:
-                    pItem.setAccount(MoneyWiseTransactionPanel.resolveAsset((TransactionAsset) pValue));
+                    pItem.setAccount(TransactionPanel.resolveAsset((TransactionAsset) pValue));
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_DIRECTION:
@@ -1345,7 +1345,7 @@ public class TransactionTable
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_PARTNER:
-                    pItem.setPartner(MoneyWiseTransactionPanel.resolveAsset((TransactionAsset) pValue));
+                    pItem.setPartner(TransactionPanel.resolveAsset((TransactionAsset) pValue));
                     theBuilder.autoCorrect(pItem);
                     break;
                 case COLUMN_DESC:
@@ -1432,27 +1432,27 @@ public class TransactionTable
                     // case COLUMN_TAGS:
                     return true;
                 case COLUMN_TAXCREDIT:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
                 case COLUMN_NATINS:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.EMPLOYEENATINS);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.EMPLOYEENATINS);
                 case COLUMN_BENEFIT:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
                 case COLUMN_WITHHELD:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.WITHHELD);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.WITHHELD);
                 case COLUMN_ACCOUNTUNITS:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.ACCOUNTDELTAUNITS);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.ACCOUNTDELTAUNITS);
                 case COLUMN_PARTNERUNITS:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERDELTAUNITS);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERDELTAUNITS);
                 case COLUMN_PARTNERAMOUNT:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERAMOUNT);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.PARTNERAMOUNT);
                 case COLUMN_DILUTION:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DILUTION);
                 case COLUMN_RETURNEDACCOUNT:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASHACCOUNT);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASHACCOUNT);
                 case COLUMN_RETURNEDCASH:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASH);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.RETURNEDCASH);
                 case COLUMN_QUALYEARS:
-                    return MoneyWiseTransactionPanel.isEditableField(pItem, TransactionInfoClass.QUALIFYYEARS);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.QUALIFYYEARS);
                 default:
                     return false;
             }

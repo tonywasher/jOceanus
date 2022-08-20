@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWisePayeePanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -54,7 +54,7 @@ public class MoneyWisePayeeTable
     /**
      * The Payee dialog.
      */
-    private final MoneyWisePayeePanel theActivePayee;
+    private final PayeePanel theActivePayee;
 
     /**
      * The edit list.
@@ -84,7 +84,7 @@ public class MoneyWisePayeeTable
         final TethysTableManager<MetisLetheField, Payee> myTable = getTable();
 
         /* Create a payee panel */
-        theActivePayee = new MoneyWisePayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActivePayee = new PayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActivePayee);
 
         /* Set table configuration */

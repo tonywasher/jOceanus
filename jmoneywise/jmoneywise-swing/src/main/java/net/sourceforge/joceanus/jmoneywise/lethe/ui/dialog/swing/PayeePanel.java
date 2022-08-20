@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 /**
  * Panel to display/edit/create a Payee.
  */
-public class MoneyWisePayeePanel
+public class PayeePanel
         extends MoneyWiseItemPanel<Payee> {
     /**
      * The Closed State.
@@ -66,10 +66,10 @@ public class MoneyWisePayeePanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWisePayeePanel(final TethysGuiFactory pFactory,
-                               final MetisSwingFieldManager pFieldMgr,
-                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final MetisErrorPanel pError) {
+    public PayeePanel(final TethysGuiFactory pFactory,
+                      final MetisSwingFieldManager pFieldMgr,
+                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                      final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

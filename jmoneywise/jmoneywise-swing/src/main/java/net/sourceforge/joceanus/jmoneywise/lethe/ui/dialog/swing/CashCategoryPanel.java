@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * Panel to display/edit/create a CashCategory.
  */
-public class MoneyWiseCashCategoryPanel
+public class CashCategoryPanel
         extends MoneyWiseItemPanel<CashCategory> {
     /**
      * Constructor.
@@ -53,10 +53,10 @@ public class MoneyWiseCashCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseCashCategoryPanel(final TethysGuiFactory pFactory,
-                                      final MetisSwingFieldManager pFieldMgr,
-                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                      final MetisErrorPanel pError) {
+    public CashCategoryPanel(final TethysGuiFactory pFactory,
+                             final MetisSwingFieldManager pFieldMgr,
+                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseCashCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -49,7 +49,7 @@ public class MoneyWiseCashCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseCashCategoryPanel theActiveCategory;
+    private final CashCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -76,7 +76,7 @@ public class MoneyWiseCashCategoryTable
         final TethysTableManager<MetisLetheField, CashCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseCashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new CashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */

@@ -126,10 +126,10 @@ public class ThemisStatsParser {
      */
     public ThemisStatsPackage parsePackage(final ThemisAnalysisPackage pPackage) {
         /* Locate the matching sourceMeter stats */
-        final ThemisSMPackage mySMPackage = theSourceMeter.findPackage(pPackage);
+        //final ThemisSMPackage mySMPackage = theSourceMeter.findPackage(pPackage);
 
         /* Create the stats */
-        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage, mySMPackage);
+        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage, null);
 
         /* Loop through the files */
         for (ThemisAnalysisFile myFile : pPackage.getFiles()) {
@@ -150,10 +150,10 @@ public class ThemisStatsParser {
     public ThemisStatsFile parseFile(final ThemisStatsPackage pPackage,
                                      final ThemisAnalysisFile pFile) {
         /* Locate the matching sourceMeter stats */
-        final ThemisSMFile mySMFile = theSourceMeter.findFile(pPackage.getSourceMeter(), pFile);
+        //final ThemisSMFile mySMFile = theSourceMeter.findFile(pPackage.getSourceMeter(), pFile);
 
         /* Create the stats */
-        final ThemisStatsFile myStats = new ThemisStatsFile(pFile, mySMFile);
+        final ThemisStatsFile myStats = new ThemisStatsFile(pFile, null);
 
         /* process the container */
         processContainer(myStats, pFile);
@@ -171,10 +171,10 @@ public class ThemisStatsParser {
     public ThemisStatsClass parseClass(final ThemisStatsBase pOwner,
                                        final ThemisAnalysisObject pClass) {
         /* Locate the matching sourceMeter stats */
-        final ThemisSMClass mySMClass = theSourceMeter.findClass(pOwner.getSourceMeter(), pClass);
+        //final ThemisSMClass mySMClass = theSourceMeter.findClass(pOwner.getSourceMeter(), pClass);
 
         /* Create the stats */
-        final ThemisStatsClass myStats = new ThemisStatsClass(pClass, mySMClass);
+        final ThemisStatsClass myStats = new ThemisStatsClass(pClass, null);
 
         /* process the container */
         processCachedItems(pOwner, myStats);
@@ -193,10 +193,10 @@ public class ThemisStatsParser {
     public ThemisStatsMethod parseMethod(final ThemisStatsBase pOwner,
                                          final ThemisAnalysisMethod pMethod) {
         /* Locate the matching sourceMeter stats */
-        final ThemisSMMethod mySMMethod = theSourceMeter.findMethod(pOwner.getSourceMeter(), pMethod);
+        //final ThemisSMMethod mySMMethod = theSourceMeter.findMethod(pOwner.getSourceMeter(), pMethod);
 
         /* Create the stats */
-        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod, mySMMethod);
+        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod, null);
 
         /* process the container */
         processCachedItems(pOwner, myStats);

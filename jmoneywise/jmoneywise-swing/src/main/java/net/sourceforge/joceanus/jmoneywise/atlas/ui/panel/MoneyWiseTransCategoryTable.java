@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -49,7 +49,7 @@ public class MoneyWiseTransCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseTransactionCategoryPanel theActiveCategory;
+    private final TransactionCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -76,7 +76,7 @@ public class MoneyWiseTransCategoryTable
         final TethysTableManager<MetisLetheField, TransactionCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseTransactionCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new TransactionCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */

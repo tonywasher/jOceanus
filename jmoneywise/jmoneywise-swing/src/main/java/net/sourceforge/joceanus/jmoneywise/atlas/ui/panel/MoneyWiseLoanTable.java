@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseLoanPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -56,7 +56,7 @@ public class MoneyWiseLoanTable
     /**
      * The Loan dialog.
      */
-    private final MoneyWiseLoanPanel theActiveLoan;
+    private final LoanPanel theActiveLoan;
 
     /**
      * The edit list.
@@ -86,7 +86,7 @@ public class MoneyWiseLoanTable
         final TethysTableManager<MetisLetheField, Loan> myTable = getTable();
 
         /* Create a Loan panel */
-        theActiveLoan = new MoneyWiseLoanPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveLoan = new LoanPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveLoan);
 
         /* Set table configuration */

@@ -306,25 +306,19 @@ public class ThemisDSMPanel
      * @param pProjectDir the new project directory
      */
     private void handleNewStats(final File pProjectDir) {
-        try {
-            /* Analyse source of project */
-            final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);
+        /* Analyse source of project */
+        final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);
 
-            /* Parse sourceMeter statistics */
-            final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-            final Path myPath = ThemisSMStatistics.getRecentStats(theProject.toString());
-            myStats.parseStatistics(myPath, theProject.toString());
+        /* Parse sourceMeter statistics */
+        //final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
+        //final Path myPath = ThemisSMStatistics.getRecentStats(theProject.toString());
+        //myStats.parseStatistics(myPath, theProject.toString());
 
-            /* Parse the base project */
-            final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
-            final ThemisStatsProject myProject = myParser.parseProject(myProj);
-            theStatsPanel.initialiseTree(myProject);
-            theSourcePanel.initialiseTree(myProj);
-
-            /* Catch exceptions */
-        } catch (OceanusException e) {
-            theError = e;
-        }
+        /* Parse the base project */
+        final ThemisStatsParser myParser = new ThemisStatsParser(null);
+        final ThemisStatsProject myProject = myParser.parseProject(myProj);
+        theStatsPanel.initialiseTree(myProject);
+        theSourcePanel.initialiseTree(myProj);
     }
 
     /**
