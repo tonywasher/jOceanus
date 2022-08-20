@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
@@ -57,11 +56,6 @@ public class ThemisStatsProject
      */
     public ThemisAnalysisProject getProject() {
         return theProject;
-    }
-
-    @Override
-    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return null;
     }
 
     /**

@@ -79,13 +79,8 @@ public class TestAnalysis {
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
 
-        /* Parse sourceMeter statistics */
-        final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-        final Path myPath = ThemisSMStatistics.getRecentStats(PROJECT);
-        myStats.parseStatistics(myPath, PROJECT);
-
         /* Parse the base project */
-        final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
+        final ThemisStatsParser myParser = new ThemisStatsParser();
         final ThemisStatsProject myProject = myParser.parseProject(myProj);
     }
 

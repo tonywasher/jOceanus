@@ -17,12 +17,10 @@
 package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
@@ -46,7 +44,6 @@ import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMModule;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMPackage;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsParser;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 
@@ -309,13 +306,8 @@ public class ThemisDSMPanel
         /* Analyse source of project */
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);
 
-        /* Parse sourceMeter statistics */
-        //final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-        //final Path myPath = ThemisSMStatistics.getRecentStats(theProject.toString());
-        //myStats.parseStatistics(myPath, theProject.toString());
-
         /* Parse the base project */
-        final ThemisStatsParser myParser = new ThemisStatsParser(null);
+        final ThemisStatsParser myParser = new ThemisStatsParser();
         final ThemisStatsProject myProject = myParser.parseProject(myProj);
         theStatsPanel.initialiseTree(myProject);
         theSourcePanel.initialiseTree(myProj);

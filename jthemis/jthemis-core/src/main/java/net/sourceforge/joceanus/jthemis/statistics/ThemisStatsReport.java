@@ -62,26 +62,18 @@ public final class ThemisStatsReport {
         addStartElement(myBuilder, Tag.HR);
         addEndElement(myBuilder, Tag.HR);
 
-        /* Determine whether we need a sourceMeter element */
-        final boolean needSM = pStats instanceof ThemisStatsClass
-                                || pStats instanceof  ThemisStatsMethod;
-
         /* Build stats table */
         addStartElement(myBuilder, Tag.TABLE);
-        buildStatsTableHeader(myBuilder, needSM);
+        buildStatsTableHeader(myBuilder);
 
         /* If we have statistics */
         if (pStats != null) {
-            /* Access the sourceMeter statistics */
-            final Map<ThemisSMStat, Integer> myMap = pStats.getSourceMeterStats();
-
             /* Loop through the statistics */
             myRowNo = 0;
             for (ThemisSMStat myStat : ThemisSMStat.values()) {
                 final Integer myValue = pStats.getStat(myStat);
-                final Integer mySMValue = myMap != null ? myMap.computeIfAbsent(myStat, s -> 0) : null;
-                if (myValue != 0 || mySMValue != null && mySMValue != 0) {
-                    buildStatsTableRow(myBuilder, myStat, myValue, needSM, mySMValue, myRowNo++);
+                 if (myValue != 0) {
+                    buildStatsTableRow(myBuilder, myStat, myValue, myRowNo++);
                 }
             }
         }
@@ -189,10 +181,8 @@ public final class ThemisStatsReport {
     /**
      * build the stats table header.
      * @param pBuilder the builder
-     * @param pNeedSM do we need an SM column?
      */
-    private static void buildStatsTableHeader(final StringBuilder pBuilder,
-                                              final boolean pNeedSM) {
+    private static void buildStatsTableHeader(final StringBuilder pBuilder) {
         /* Start the row */
         addStartElementWithClass(pBuilder, Tag.TR, "dsm-row-header");
 
@@ -200,9 +190,6 @@ public final class ThemisStatsReport {
         addTextElementWithClass(pBuilder, Tag.TH, "stats-desc", "Statistic");
         addTextElementWithClass(pBuilder, Tag.TH, "stats-name", "Key");
         addTextElementWithClass(pBuilder, Tag.TH, "stats-count", "Value");
-        if (pNeedSM) {
-            addTextElementWithClass(pBuilder, Tag.TH, "stats-count", "SourceMeter");
-        }
 
         /* Complete the row */
         addEndElement(pBuilder, Tag.TR);
@@ -213,15 +200,11 @@ public final class ThemisStatsReport {
      * @param pBuilder the builder
      * @param pStat the statistic to report on
      * @param pValue the value
-     * @param pNeedSM do we need an SM column?
-     * @param pSMValue the sourceMeter value
      * @param pRowNo the row number
      */
     private static void buildStatsTableRow(final StringBuilder pBuilder,
                                            final ThemisSMStat pStat,
                                            final Integer pValue,
-                                           final boolean pNeedSM,
-                                           final Integer pSMValue,
                                            final int pRowNo) {
         /* Start the row */
         final String myClass = (pRowNo % 2 == 0) ? "dsm-row-even" : "dsm-row-odd";
@@ -231,9 +214,6 @@ public final class ThemisStatsReport {
         addTextElementWithClass(pBuilder, Tag.TD, "dsm-cell-name-left", pStat.getDesc());
         addTextElement(pBuilder, Tag.TD, pStat.toString());
         addTextElement(pBuilder, Tag.TD, Integer.toString(pValue));
-        if (pNeedSM) {
-            addTextElement(pBuilder, Tag.TD, pSMValue == null ? "" : Integer.toString(pSMValue));
-        }
 
         /* Complete the row */
         addEndElement(pBuilder, Tag.TR);

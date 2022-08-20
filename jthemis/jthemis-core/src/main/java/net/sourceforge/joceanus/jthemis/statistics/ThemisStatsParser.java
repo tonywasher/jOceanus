@@ -47,22 +47,12 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisSwitch;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisTry;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisWhile;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMFile;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMMethod;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMPackage;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
 
 /**
  * Package Parser.
  */
 public class ThemisStatsParser {
-    /**
-     * The base statistics.
-     */
-    private final ThemisSMStatistics theSourceMeter;
-
     /**
      * The cached documentation comment.
      */
@@ -75,10 +65,8 @@ public class ThemisStatsParser {
 
     /**
      * Private constructor.
-     * @param pBase the sourceMeter stats
      */
-    public ThemisStatsParser(final ThemisSMStatistics pBase) {
-        theSourceMeter = pBase;
+    public ThemisStatsParser() {
     }
 
     /**
@@ -125,11 +113,8 @@ public class ThemisStatsParser {
      * @return the stats
      */
     public ThemisStatsPackage parsePackage(final ThemisAnalysisPackage pPackage) {
-        /* Locate the matching sourceMeter stats */
-        //final ThemisSMPackage mySMPackage = theSourceMeter.findPackage(pPackage);
-
         /* Create the stats */
-        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage, null);
+        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage);
 
         /* Loop through the files */
         for (ThemisAnalysisFile myFile : pPackage.getFiles()) {
@@ -149,11 +134,8 @@ public class ThemisStatsParser {
      */
     public ThemisStatsFile parseFile(final ThemisStatsPackage pPackage,
                                      final ThemisAnalysisFile pFile) {
-        /* Locate the matching sourceMeter stats */
-        //final ThemisSMFile mySMFile = theSourceMeter.findFile(pPackage.getSourceMeter(), pFile);
-
         /* Create the stats */
-        final ThemisStatsFile myStats = new ThemisStatsFile(pFile, null);
+        final ThemisStatsFile myStats = new ThemisStatsFile(pFile);
 
         /* process the container */
         processContainer(myStats, pFile);
@@ -170,11 +152,8 @@ public class ThemisStatsParser {
      */
     public ThemisStatsClass parseClass(final ThemisStatsBase pOwner,
                                        final ThemisAnalysisObject pClass) {
-        /* Locate the matching sourceMeter stats */
-        //final ThemisSMClass mySMClass = theSourceMeter.findClass(pOwner.getSourceMeter(), pClass);
-
         /* Create the stats */
-        final ThemisStatsClass myStats = new ThemisStatsClass(pClass, null);
+        final ThemisStatsClass myStats = new ThemisStatsClass(pClass);
 
         /* process the container */
         processCachedItems(pOwner, myStats);
@@ -192,11 +171,8 @@ public class ThemisStatsParser {
      */
     public ThemisStatsMethod parseMethod(final ThemisStatsBase pOwner,
                                          final ThemisAnalysisMethod pMethod) {
-        /* Locate the matching sourceMeter stats */
-        //final ThemisSMMethod mySMMethod = theSourceMeter.findMethod(pOwner.getSourceMeter(), pMethod);
-
         /* Create the stats */
-        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod, null);
+        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod);
 
         /* process the container */
         processCachedItems(pOwner, myStats);

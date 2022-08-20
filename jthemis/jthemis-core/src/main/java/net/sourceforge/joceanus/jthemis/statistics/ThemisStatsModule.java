@@ -70,11 +70,6 @@ public class ThemisStatsModule
         return theModule.getName();
     }
 
-    @Override
-    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return null;
-    }
-
     /**
      * Obtain package iterator.
      * @return the iterator

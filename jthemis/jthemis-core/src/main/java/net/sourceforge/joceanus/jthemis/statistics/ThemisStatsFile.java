@@ -19,12 +19,9 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMFile;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * File statistics.
@@ -37,11 +34,6 @@ public class ThemisStatsFile
     private final ThemisAnalysisFile theFile;
 
     /**
-     * The sourceMeter file Stats.
-     */
-    private final ThemisSMFile theSMFile;
-
-    /**
      * The child list.
      */
     private final List<ThemisStatsBase> theChildren;
@@ -49,13 +41,10 @@ public class ThemisStatsFile
     /**
      * Constructor.
      * @param pFile the file
-     * @param pSourceMeter the sourceMeter stats
      */
-    ThemisStatsFile(final ThemisAnalysisFile pFile,
-                    final ThemisSMFile pSourceMeter) {
+    ThemisStatsFile(final ThemisAnalysisFile pFile) {
         /* Store parameters */
         theFile = pFile;
-        theSMFile = pSourceMeter;
 
         /* Create lists */
         theChildren = new ArrayList<>();
@@ -67,16 +56,6 @@ public class ThemisStatsFile
      */
     public ThemisAnalysisFile getFile() {
         return theFile;
-    }
-
-    @Override
-    public ThemisSMFile getSourceMeter() {
-        return theSMFile;
-    }
-
-    @Override
-    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMFile == null ? null : theSMFile.getStatistics();
     }
 
     @Override

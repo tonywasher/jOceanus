@@ -19,13 +19,10 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassType;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Class statistics.
@@ -36,11 +33,6 @@ public class ThemisStatsClass
      * The class.
      */
     private final ThemisAnalysisObject theClass;
-
-    /**
-     * The sourceMeter class Stats.
-     */
-    private final ThemisSMClass theSMClass;
 
     /**
      * The class list.
@@ -55,13 +47,10 @@ public class ThemisStatsClass
     /**
      * Constructor.
      * @param pClass the class
-     * @param pSourceMeter the sourceMeter stats
      */
-    ThemisStatsClass(final ThemisAnalysisObject pClass,
-                     final ThemisSMClass pSourceMeter) {
+    ThemisStatsClass(final ThemisAnalysisObject pClass) {
         /* Store parameters */
         theClass = pClass;
-        theSMClass = pSourceMeter;
 
         /* Create lists */
         theClasses = new ArrayList<>();
@@ -81,17 +70,7 @@ public class ThemisStatsClass
      * @return the classType
      */
     public ThemisSMClassType getClassType() {
-        return theSMClass != null ? theSMClass.getClassType() : ThemisSMClassType.CLASS;
-    }
-
-    @Override
-    public ThemisSMClass getSourceMeter() {
-        return theSMClass;
-    }
-
-    @Override
-    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMClass == null ? null : theSMClass.getStatistics();
+        return ThemisSMClassType.CLASS;
     }
 
     @Override

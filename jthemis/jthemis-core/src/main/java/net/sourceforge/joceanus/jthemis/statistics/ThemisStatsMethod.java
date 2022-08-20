@@ -19,12 +19,9 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisKeyWord;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisMethod;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMMethod;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Method statistics.
@@ -37,11 +34,6 @@ public class ThemisStatsMethod
     private final ThemisAnalysisMethod theMethod;
 
     /**
-     * The sourceMeter class Stats.
-     */
-    private final ThemisSMMethod theSMMethod;
-
-    /**
      * The child list.
      */
     private final List<ThemisStatsBase> theChildren;
@@ -49,13 +41,10 @@ public class ThemisStatsMethod
     /**
      * Constructor.
      * @param pMethod the method
-     * @param pSourceMeter the sourceMeter stats
      */
-    ThemisStatsMethod(final ThemisAnalysisMethod pMethod,
-                      final ThemisSMMethod pSourceMeter) {
+    ThemisStatsMethod(final ThemisAnalysisMethod pMethod) {
         /* Store parameters */
         theMethod = pMethod;
-        theSMMethod = pSourceMeter;
 
         /* Create lists */
         theChildren = new ArrayList<>();
@@ -67,16 +56,6 @@ public class ThemisStatsMethod
      */
     public ThemisAnalysisMethod getMethod() {
         return theMethod;
-    }
-
-    @Override
-    public ThemisSMMethod getSourceMeter() {
-        return theSMMethod;
-    }
-
-    @Override
-    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMMethod == null ? null : theSMMethod.getStatistics();
     }
 
     @Override

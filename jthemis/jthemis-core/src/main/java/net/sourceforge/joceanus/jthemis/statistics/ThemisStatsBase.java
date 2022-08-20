@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatHolder;
 
 /**
  * Statistics Base.
@@ -99,48 +98,48 @@ public abstract class ThemisStatsBase {
         setStat(pStat, myCurr + pAdjust);
     }
 
-    /**
-     * Adjust statistic.
-     * @param pStat the statistic
-     * @param pAdjust the adjustment value
-     */
-    private void adjustSMStat(final ThemisSMStat pStat,
-                              final Integer pAdjust) {
-        /* Adjust the value */
-        final Map<ThemisSMStat, Integer> myMap = getSourceMeterStats();
-        final Integer myAdjust = pAdjust == null ? 0 : pAdjust;
-        final Integer myCurr = myMap.computeIfAbsent(pStat, s -> 0);
-        myMap.put(pStat, myCurr + myAdjust);
-    }
+    ///**
+    // * Adjust statistic.
+    // * @param pStat the statistic
+    // * @param pAdjust the adjustment value
+    // */
+    //private void adjustSMStat(final ThemisSMStat pStat,
+    //                          final Integer pAdjust) {
+    //    /* Adjust the value */
+    //    final Map<ThemisSMStat, Integer> myMap = getSourceMeterStats();
+    //    final Integer myAdjust = pAdjust == null ? 0 : pAdjust;
+    //    final Integer myCurr = myMap.computeIfAbsent(pStat, s -> 0);
+    //    myMap.put(pStat, myCurr + myAdjust);
+    //}
 
-    /**
-     * Adjust statistic.
-     * @param pStat the statistic
-     * @param pChild the child statistics
-     * @param pBaseStat the child stat
-     */
-    void adjustSMStat(final ThemisSMStat pStat,
-                      final ThemisStatsBase pChild,
-                      final ThemisSMStat pBaseStat) {
-        /* Adjust the value */
-        final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
-        final Integer myCurr = myMap.computeIfAbsent(pBaseStat, s -> 0);
-        adjustSMStat(pStat, -myCurr);
-    }
+    ///**
+    // * Adjust statistic.
+    // * @param pStat the statistic
+    // * @param pChild the child statistics
+    // * @param pBaseStat the child stat
+    // */
+    //void adjustSMStat(final ThemisSMStat pStat,
+    //                  final ThemisStatsBase pChild,
+    //                  final ThemisSMStat pBaseStat) {
+    //    /* Adjust the value */
+    //    final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
+    //    final Integer myCurr = myMap.computeIfAbsent(pBaseStat, s -> 0);
+    //    adjustSMStat(pStat, -myCurr);
+    //}
 
-    /**
-     * Obtain the sourceMeter stats.
-     * @return the stats
-     */
-    public ThemisSMStatHolder getSourceMeter() {
-        return null;
-    }
+    ///**
+    // * Obtain the sourceMeter stats.
+    // * @return the stats
+    // */
+    //public ThemisSMStatHolder getSourceMeter() {
+    //    return null;
+    //}
 
-    /**
-     * Obtain the sourceMeter stats.
-     * @return the stats
-     */
-    public abstract Map<ThemisSMStat, Integer> getSourceMeterStats();
+    ///**
+    // * Obtain the sourceMeter stats.
+    // * @return the stats
+    // */
+    //public abstract Map<ThemisSMStat, Integer> getSourceMeterStats();
 
     /**
      * Obtain class iterator.
@@ -256,11 +255,11 @@ public abstract class ThemisStatsBase {
                          final ThemisSMStat pChildStat) {
         /* Adjust counts */
         adjustStat(pStat, pChild.getStat(pChildStat));
-        if (getSourceMeter() == null) {
-            final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
-            if (myMap != null) {
-                adjustSMStat(pStat, myMap.get(pChildStat));
-            }
-        }
+        //if (getSourceMeter() == null) {
+        //    final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
+        //    if (myMap != null) {
+        //        adjustSMStat(pStat, myMap.get(pChildStat));
+        //    }
+        //}
     }
 }
