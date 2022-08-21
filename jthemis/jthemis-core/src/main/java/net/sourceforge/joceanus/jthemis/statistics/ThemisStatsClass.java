@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisEnum;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisInterface;
 
 /**
  * Class statistics.
@@ -45,6 +46,11 @@ public class ThemisStatsClass
     private final List<ThemisStatsBase> theMethods;
 
     /**
+     * The class type.
+     */
+    private final ThemisStatsClassType theType;
+
+    /**
      * Constructor.
      * @param pClass the class
      */
@@ -55,6 +61,17 @@ public class ThemisStatsClass
         /* Create lists */
         theClasses = new ArrayList<>();
         theMethods = new ArrayList<>();
+
+        /* Determine class type */
+        if (pClass instanceof ThemisAnalysisInterface) {
+            theType = ((ThemisAnalysisInterface) pClass).isAnnotation()
+                    ? ThemisStatsClassType.ANNOTATION
+                    : ThemisStatsClassType.INTERFACE;
+        } else if (pClass instanceof ThemisAnalysisEnum) {
+            theType = ThemisStatsClassType.ENUM;
+        } else {
+            theType = ThemisStatsClassType.CLASS;
+        }
     }
 
     /**
@@ -69,8 +86,8 @@ public class ThemisStatsClass
      * Obtain the classType.
      * @return the classType
      */
-    public ThemisSMClassType getClassType() {
-        return ThemisSMClassType.CLASS;
+    public ThemisStatsClassType getClassType() {
+        return theType;
     }
 
     @Override

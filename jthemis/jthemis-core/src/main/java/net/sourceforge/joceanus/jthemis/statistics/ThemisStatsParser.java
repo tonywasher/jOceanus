@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisSwitch;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisTry;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisWhile;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Package Parser.
@@ -62,12 +61,6 @@ public class ThemisStatsParser {
      * The cached annotation.
      */
     private ThemisAnalysisAnnotation theCachedAnnotation;
-
-    /**
-     * Private constructor.
-     */
-    public ThemisStatsParser() {
-    }
 
     /**
      * parse a project.
@@ -312,7 +305,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myClass = parseClass(pOwner, pAnon);
 
         /* Adjust statistics */
-        pOwner.incrementStat(ThemisSMStat.NCL);
+        pOwner.incrementStat(ThemisStat.NCL);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myClass, pAnon.getNumLines());
@@ -328,7 +321,7 @@ public class ThemisStatsParser {
                                      final ThemisAnalysisBlank pBlank) {
         /* Adjust statistics */
         final int myBlanks = pBlank.getNumLines();
-        pOwner.adjustStat(ThemisSMStat.LOC, myBlanks);
+        pOwner.adjustStat(ThemisStat.LOC, myBlanks);
     }
 
     /**
@@ -359,7 +352,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myClass = parseClass(pOwner, pClass);
 
         /* Adjust statistics */
-        pOwner.incrementStat(ThemisSMStat.NCL);
+        pOwner.incrementStat(ThemisStat.NCL);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myClass, pClass.getNumLines());
@@ -380,10 +373,10 @@ public class ThemisStatsParser {
         final int myAdjust = pAddToStats
                                  ? pComment.getNumLines()
                                  : -pComment.getNumLines();
-        pOwner.adjustStat(ThemisSMStat.LOC, myAdjust);
-        pOwner.adjustStat(ThemisSMStat.CLOC, myAdjust);
+        pOwner.adjustStat(ThemisStat.LOC, myAdjust);
+        pOwner.adjustStat(ThemisStat.CLOC, myAdjust);
         if (pComment.isJavaDoc()) {
-            pOwner.adjustStat(ThemisSMStat.DLOC, myAdjust);
+            pOwner.adjustStat(ThemisStat.DLOC, myAdjust);
         }
     }
 
@@ -428,7 +421,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myEnum = parseClass(pOwner, pEnum);
 
         /* Adjust owner statistics */
-        pOwner.incrementStat(ThemisSMStat.NEN);
+        pOwner.incrementStat(ThemisStat.NEN);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myEnum, pEnum.getNumLines());
@@ -538,7 +531,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myIFace = parseClass(pOwner, pInterface);
 
         /* Adjust owner statistics */
-        pOwner.incrementStat(ThemisSMStat.NIN);
+        pOwner.incrementStat(ThemisStat.NIN);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myIFace, pInterface.getNumLines());
@@ -571,7 +564,7 @@ public class ThemisStatsParser {
         final ThemisStatsMethod myMethod = parseMethod(pOwner, pMethod);
 
         /* Adjust owner statistics */
-        pOwner.incrementStat(ThemisSMStat.NM);
+        pOwner.incrementStat(ThemisStat.NM);
 
         /* Adjust the lines of code and add to owner */
         adjustLinesOfCode(myMethod, pMethod.getNumLines());
@@ -714,8 +707,8 @@ public class ThemisStatsParser {
     private static void adjustLinesOfCode(final ThemisStatsBase pOwner,
                                           final int pCount) {
         /* Adjust the stats */
-        pOwner.adjustStat(ThemisSMStat.LOC, pCount);
-        pOwner.adjustStat(ThemisSMStat.LLOC, pCount);
+        pOwner.adjustStat(ThemisStat.LOC, pCount);
+        pOwner.adjustStat(ThemisStat.LLOC, pCount);
     }
 
     /**
@@ -726,7 +719,7 @@ public class ThemisStatsParser {
     private static void adjustNumberOfStatements(final ThemisStatsBase pOwner,
                                                  final int pCount) {
         /* Adjust the stats */
-        pOwner.adjustStat(ThemisSMStat.NOS, pCount);
+        pOwner.adjustStat(ThemisStat.NOS, pCount);
     }
 
     /**
@@ -737,7 +730,7 @@ public class ThemisStatsParser {
     private static void adjustNumberOfAttributes(final ThemisStatsBase pOwner,
                                                  final int pCount) {
         /* Adjust the stats */
-        pOwner.adjustStat(ThemisSMStat.NA, pCount);
+        pOwner.adjustStat(ThemisStat.NA, pCount);
         adjustNumberOfStatements(pOwner, pCount);
     }
 

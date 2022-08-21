@@ -16,10 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statistics;
 
-import java.util.Map;
 import javax.swing.text.html.HTML.Tag;
-
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * DSM report.
@@ -70,7 +67,7 @@ public final class ThemisStatsReport {
         if (pStats != null) {
             /* Loop through the statistics */
             myRowNo = 0;
-            for (ThemisSMStat myStat : ThemisSMStat.values()) {
+            for (ThemisStat myStat : ThemisStat.values()) {
                 final Integer myValue = pStats.getStat(myStat);
                  if (myValue != 0) {
                     buildStatsTableRow(myBuilder, myStat, myValue, myRowNo++);
@@ -203,7 +200,7 @@ public final class ThemisStatsReport {
      * @param pRowNo the row number
      */
     private static void buildStatsTableRow(final StringBuilder pBuilder,
-                                           final ThemisSMStat pStat,
+                                           final ThemisStat pStat,
                                            final Integer pValue,
                                            final int pRowNo) {
         /* Start the row */

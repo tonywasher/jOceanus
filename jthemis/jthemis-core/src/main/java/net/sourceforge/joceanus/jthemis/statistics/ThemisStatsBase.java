@@ -20,8 +20,6 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
-
 /**
  * Statistics Base.
  */
@@ -34,13 +32,13 @@ public abstract class ThemisStatsBase {
     /**
      * The stats.
      */
-    private final Map<ThemisSMStat, Integer> theStats;
+    private final Map<ThemisStat, Integer> theStats;
 
     /**
      * Constructor.
      */
     protected ThemisStatsBase() {
-        theStats = new EnumMap<>(ThemisSMStat.class);
+        theStats = new EnumMap<>(ThemisStat.class);
     }
 
     /**
@@ -64,7 +62,7 @@ public abstract class ThemisStatsBase {
      * @param pStat the statistic
      * @return the value
      */
-    public Integer getStat(final ThemisSMStat pStat) {
+    public Integer getStat(final ThemisStat pStat) {
         return theStats.computeIfAbsent(pStat, s -> 0);
     }
 
@@ -73,7 +71,7 @@ public abstract class ThemisStatsBase {
      * @param pStat the statistic
      * @param pValue the value
      */
-    private void setStat(final ThemisSMStat pStat,
+    private void setStat(final ThemisStat pStat,
                          final Integer pValue) {
         theStats.put(pStat, pValue);
     }
@@ -82,7 +80,7 @@ public abstract class ThemisStatsBase {
      * Increment statistic.
      * @param pStat the statistic
      */
-    void incrementStat(final ThemisSMStat pStat) {
+    void incrementStat(final ThemisStat pStat) {
         adjustStat(pStat, 1);
     }
 
@@ -91,55 +89,12 @@ public abstract class ThemisStatsBase {
      * @param pStat the statistic
      * @param pAdjust the adjustment value
      */
-    void adjustStat(final ThemisSMStat pStat,
+    void adjustStat(final ThemisStat pStat,
                     final Integer pAdjust) {
         /* Adjust the value */
         final Integer myCurr = getStat(pStat);
         setStat(pStat, myCurr + pAdjust);
     }
-
-    ///**
-    // * Adjust statistic.
-    // * @param pStat the statistic
-    // * @param pAdjust the adjustment value
-    // */
-    //private void adjustSMStat(final ThemisSMStat pStat,
-    //                          final Integer pAdjust) {
-    //    /* Adjust the value */
-    //    final Map<ThemisSMStat, Integer> myMap = getSourceMeterStats();
-    //    final Integer myAdjust = pAdjust == null ? 0 : pAdjust;
-    //    final Integer myCurr = myMap.computeIfAbsent(pStat, s -> 0);
-    //    myMap.put(pStat, myCurr + myAdjust);
-    //}
-
-    ///**
-    // * Adjust statistic.
-    // * @param pStat the statistic
-    // * @param pChild the child statistics
-    // * @param pBaseStat the child stat
-    // */
-    //void adjustSMStat(final ThemisSMStat pStat,
-    //                  final ThemisStatsBase pChild,
-    //                  final ThemisSMStat pBaseStat) {
-    //    /* Adjust the value */
-    //    final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
-    //    final Integer myCurr = myMap.computeIfAbsent(pBaseStat, s -> 0);
-    //    adjustSMStat(pStat, -myCurr);
-    //}
-
-    ///**
-    // * Obtain the sourceMeter stats.
-    // * @return the stats
-    // */
-    //public ThemisSMStatHolder getSourceMeter() {
-    //    return null;
-    //}
-
-    ///**
-    // * Obtain the sourceMeter stats.
-    // * @return the stats
-    // */
-    //public abstract Map<ThemisSMStat, Integer> getSourceMeterStats();
 
     /**
      * Obtain class iterator.
@@ -168,16 +123,16 @@ public abstract class ThemisStatsBase {
      */
     void addStatsToTotals() {
         /* Adjust counts */
-        adjustTotals(ThemisSMStat.LOC, ThemisSMStat.TLOC);
-        adjustTotals(ThemisSMStat.LLOC, ThemisSMStat.TLLOC);
-        adjustTotals(ThemisSMStat.NOS, ThemisSMStat.TNOS);
-        adjustTotals(ThemisSMStat.CLOC, ThemisSMStat.TCLOC);
-        adjustTotals(ThemisSMStat.DLOC, ThemisSMStat.TDLOC);
-        adjustTotals(ThemisSMStat.NCL, ThemisSMStat.TNCL);
-        adjustTotals(ThemisSMStat.NIN, ThemisSMStat.TNIN);
-        adjustTotals(ThemisSMStat.NEN, ThemisSMStat.TNEN);
-        adjustTotals(ThemisSMStat.NM, ThemisSMStat.TNM);
-        adjustTotals(ThemisSMStat.NA, ThemisSMStat.TNA);
+        adjustTotals(ThemisStat.LOC, ThemisStat.TLOC);
+        adjustTotals(ThemisStat.LLOC, ThemisStat.TLLOC);
+        adjustTotals(ThemisStat.NOS, ThemisStat.TNOS);
+        adjustTotals(ThemisStat.CLOC, ThemisStat.TCLOC);
+        adjustTotals(ThemisStat.DLOC, ThemisStat.TDLOC);
+        adjustTotals(ThemisStat.NCL, ThemisStat.TNCL);
+        adjustTotals(ThemisStat.NIN, ThemisStat.TNIN);
+        adjustTotals(ThemisStat.NEN, ThemisStat.TNEN);
+        adjustTotals(ThemisStat.NM, ThemisStat.TNM);
+        adjustTotals(ThemisStat.NA, ThemisStat.TNA);
     }
 
     /**
@@ -185,11 +140,11 @@ public abstract class ThemisStatsBase {
      */
     void addMethodStatsToTotals() {
         /* Adjust counts */
-        adjustTotals(ThemisSMStat.NCL, ThemisSMStat.TNCL);
-        adjustTotals(ThemisSMStat.NIN, ThemisSMStat.TNIN);
-        adjustTotals(ThemisSMStat.NEN, ThemisSMStat.TNEN);
-        adjustTotals(ThemisSMStat.NM, ThemisSMStat.TNM);
-        adjustTotals(ThemisSMStat.NA, ThemisSMStat.TNA);
+        adjustTotals(ThemisStat.NCL, ThemisStat.TNCL);
+        adjustTotals(ThemisStat.NIN, ThemisStat.TNIN);
+        adjustTotals(ThemisStat.NEN, ThemisStat.TNEN);
+        adjustTotals(ThemisStat.NM, ThemisStat.TNM);
+        adjustTotals(ThemisStat.NA, ThemisStat.TNA);
     }
 
     /**
@@ -198,11 +153,11 @@ public abstract class ThemisStatsBase {
      */
     void addMethodStatsToClass(final ThemisStatsMethod pMethod) {
         /* Adjust counts */
-        adjustChildStat(pMethod, ThemisSMStat.LOC);
-        adjustChildStat(pMethod, ThemisSMStat.LLOC);
-        adjustChildStat(pMethod, ThemisSMStat.NOS);
-        adjustChildStat(pMethod, ThemisSMStat.CLOC);
-        adjustChildStat(pMethod, ThemisSMStat.DLOC);
+        adjustChildStat(pMethod, ThemisStat.LOC);
+        adjustChildStat(pMethod, ThemisStat.LLOC);
+        adjustChildStat(pMethod, ThemisStat.NOS);
+        adjustChildStat(pMethod, ThemisStat.CLOC);
+        adjustChildStat(pMethod, ThemisStat.DLOC);
     }
 
     /**
@@ -210,8 +165,8 @@ public abstract class ThemisStatsBase {
      * @param pItem the item stat
      * @param pTotal the total stat
      */
-    void adjustTotals(final ThemisSMStat pItem,
-                      final ThemisSMStat pTotal) {
+    void adjustTotals(final ThemisStat pItem,
+                      final ThemisStat pTotal) {
         /* Adjust counts */
         adjustStat(pTotal, getStat(pItem));
     }
@@ -222,16 +177,16 @@ public abstract class ThemisStatsBase {
      */
     void addChildTotals(final ThemisStatsBase pChild) {
         /* Adjust counts */
-        adjustChildStat(pChild, ThemisSMStat.TLOC);
-        adjustChildStat(pChild, ThemisSMStat.TLLOC);
-        adjustChildStat(pChild, ThemisSMStat.TNCL);
-        adjustChildStat(pChild, ThemisSMStat.TNIN);
-        adjustChildStat(pChild, ThemisSMStat.TNEN);
-        adjustChildStat(pChild, ThemisSMStat.TNM);
-        adjustChildStat(pChild, ThemisSMStat.TNA);
-        adjustChildStat(pChild, ThemisSMStat.TNOS);
-        adjustChildStat(pChild, ThemisSMStat.TCLOC);
-        adjustChildStat(pChild, ThemisSMStat.TDLOC);
+        adjustChildStat(pChild, ThemisStat.TLOC);
+        adjustChildStat(pChild, ThemisStat.TLLOC);
+        adjustChildStat(pChild, ThemisStat.TNCL);
+        adjustChildStat(pChild, ThemisStat.TNIN);
+        adjustChildStat(pChild, ThemisStat.TNEN);
+        adjustChildStat(pChild, ThemisStat.TNM);
+        adjustChildStat(pChild, ThemisStat.TNA);
+        adjustChildStat(pChild, ThemisStat.TNOS);
+        adjustChildStat(pChild, ThemisStat.TCLOC);
+        adjustChildStat(pChild, ThemisStat.TDLOC);
     }
 
     /**
@@ -240,7 +195,7 @@ public abstract class ThemisStatsBase {
      * @param pStat the stat
      */
     void adjustChildStat(final ThemisStatsBase pChild,
-                         final ThemisSMStat pStat) {
+                         final ThemisStat pStat) {
         adjustChildStat(pChild, pStat, pStat);
     }
 
@@ -251,15 +206,9 @@ public abstract class ThemisStatsBase {
      * @param pChildStat the child stat
      */
     void adjustChildStat(final ThemisStatsBase pChild,
-                         final ThemisSMStat pStat,
-                         final ThemisSMStat pChildStat) {
+                         final ThemisStat pStat,
+                         final ThemisStat pChildStat) {
         /* Adjust counts */
         adjustStat(pStat, pChild.getStat(pChildStat));
-        //if (getSourceMeter() == null) {
-        //    final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
-        //    if (myMap != null) {
-        //        adjustSMStat(pStat, myMap.get(pChildStat));
-        //    }
-        //}
     }
 }

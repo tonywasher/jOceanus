@@ -115,7 +115,7 @@ public class ThemisAnalysisProject
      * Obtain the error.
      * @return the error
      */
-    OceanusException getError() {
+    public OceanusException getError() {
         return theError;
     }
 

@@ -19,11 +19,9 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisModule;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Module statistics.
@@ -95,10 +93,10 @@ public class ThemisStatsModule
         pPackage.setParent(this);
 
         /* Increment # of packages */
-        incrementStat(ThemisSMStat.TNPKG);
+        incrementStat(ThemisStat.TNPKG);
 
         /* Adjust count of files */
-        adjustChildStat(pPackage, ThemisSMStat.TNFI);
+        adjustChildStat(pPackage, ThemisStat.TNFI);
 
         /* Adjust counts */
         addChildTotals(pPackage);

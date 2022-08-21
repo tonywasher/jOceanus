@@ -22,7 +22,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Package statistics.
@@ -95,7 +94,7 @@ public class ThemisStatsPackage
         pFile.setParent(this);
 
         /* Increment # of files */
-        incrementStat(ThemisSMStat.TNFI);
+        incrementStat(ThemisStat.TNFI);
 
         /* Adjust counts */
         pFile.addStatsToTotals();

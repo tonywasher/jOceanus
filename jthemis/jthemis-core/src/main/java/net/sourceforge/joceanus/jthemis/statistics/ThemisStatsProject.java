@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisProject;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Project statistics.
@@ -81,8 +80,8 @@ public class ThemisStatsProject
         pModule.setParent(this);
 
         /* Adjust count of files and packages */
-        adjustChildStat(pModule, ThemisSMStat.TNPKG);
-        adjustChildStat(pModule, ThemisSMStat.TNFI);
+        adjustChildStat(pModule, ThemisStat.TNPKG);
+        adjustChildStat(pModule, ThemisStat.TNFI);
 
         /* Adjust counts */
         addChildTotals(pModule);

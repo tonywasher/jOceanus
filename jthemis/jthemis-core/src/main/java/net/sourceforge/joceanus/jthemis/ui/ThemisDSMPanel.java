@@ -93,6 +93,11 @@ public class ThemisDSMPanel
     private final TethysUITabItem theLogTab;
 
     /**
+     * The log sink.
+     */
+    private final TethysUILogTextArea theLogSink;
+
+    /**
      * The ProjectButton.
      */
     private final TethysUIButton theProjectButton;
@@ -226,11 +231,11 @@ public class ThemisDSMPanel
         theTabPane.addTabItem("Source", theSourcePanel.getComponent());
 
         /* Create the log tab */
-        final TethysUILogTextArea myLog = theGuiFactory.getLogSink();
-        theLogTab = theTabPane.addTabItem("Log", myLog);
-        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
-        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
-        theLogTab.setVisible(myLog.isActive());
+        theLogSink = theGuiFactory.getLogSink();
+        theLogTab = theTabPane.addTabItem("Log", theLogSink);
+        theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
+        theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
+        theLogTab.setVisible(theLogSink.isActive());
 
         /* Initialise status */
         theProjectButton.setText("None");
@@ -281,8 +286,12 @@ public class ThemisDSMPanel
      */
     private void handleNewProject(final File pProjectDir) {
         /* Parse the project*/
+        theError = null;
         final ThemisDSMProject myProject  = new ThemisDSMProject(pProjectDir);
-        if (myProject.hasModules()) {
+        if (myProject.getError()  != null) {
+            theError = myProject.getError();
+
+        } else if (myProject.hasModules()) {
             /* Save details */
             storeDefaultLocation(pProjectDir);
 
@@ -296,6 +305,12 @@ public class ThemisDSMPanel
             /* Load statistics */
             handleNewStats(pProjectDir);
         }
+
+        /* Display the error */
+        if (theError != null) {
+            theLogSink.writeLogMessage(theError.getMessage());
+            theLogTab.setVisible(true);
+        }
     }
 
     /**
@@ -305,12 +320,15 @@ public class ThemisDSMPanel
     private void handleNewStats(final File pProjectDir) {
         /* Analyse source of project */
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);
-
-        /* Parse the base project */
-        final ThemisStatsParser myParser = new ThemisStatsParser();
-        final ThemisStatsProject myProject = myParser.parseProject(myProj);
-        theStatsPanel.initialiseTree(myProject);
-        theSourcePanel.initialiseTree(myProj);
+        if (myProj.getError() != null) {
+            theError = myProj.getError();
+        } else {
+            /* Parse the base project */
+            final ThemisStatsParser myParser = new ThemisStatsParser();
+            final ThemisStatsProject myProject = myParser.parseProject(myProj);
+            theStatsPanel.initialiseTree(myProject);
+            theSourcePanel.initialiseTree(myProj);
+        }
     }
 
     /**
