@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import net.sourceforge.joceanus.jtethys.test.ui.TethysDataId;
-import net.sourceforge.joceanus.jtethys.test.ui.atlas.TethysTestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.test.ui.atlas.TethysTestHelper.TethysIconState;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -169,10 +169,10 @@ public class TethysTestTable {
         myXtraBoolColumn.setOnCommit(TethysTestTableItem::setXtraBoolean);
         myXtraBoolColumn.setName("X");
         myXtraBoolColumn.setCellEditable(TethysTestTableItem::getBoolean);
-        final Map<IconState, TethysUIIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE, TethysTestIcon.CLOSEDTRUE);
+        final Map<TethysIconState, TethysUIIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE, TethysTestIcon.CLOSEDTRUE);
         myXtraBoolColumn.setIconMapSet(p -> myMap.get(Boolean.TRUE.equals(p.getBoolean())
-                ? IconState.OPEN
-                : IconState.CLOSED));
+                ? TethysIconState.OPEN
+                : TethysIconState.CLOSED));
         myXtraBoolColumn.setRepaintColumnId(TethysDataId.BOOLEAN);
 
         /* Create the scroll column */

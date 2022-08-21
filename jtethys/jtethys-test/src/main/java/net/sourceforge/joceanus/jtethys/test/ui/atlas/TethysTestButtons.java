@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.test.ui.atlas.TethysTestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.test.ui.atlas.TethysTestHelper.TethysIconState;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
@@ -83,7 +83,7 @@ public class TethysTestButtons {
     /**
      * The state scroll manager.
      */
-    private final TethysUIScrollButtonManager<IconState> theStateButtonMgr;
+    private final TethysUIScrollButtonManager<TethysIconState> theStateButtonMgr;
 
     /**
      * The list button manager.
@@ -302,7 +302,7 @@ public class TethysTestButtons {
         myGrid.allowCellGrowth(theStateIconValue);
         myGrid.newRow();
         theHelper.buildStateButton(theStateButtonMgr);
-        final Map<IconState, TethysUIIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE, TethysTestIcon.CLOSEDTRUE);
+        final Map<TethysIconState, TethysUIIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysTestIcon.OPENFALSE, TethysTestIcon.OPENTRUE, TethysTestIcon.CLOSEDTRUE);
         theStateIconButtonMgr.setIconMapSet(() -> myMap.get(theStateButtonMgr.getValue()));
         theStateIconButtonMgr.setNullMargins();
         theStateIconButtonMgr.setValue(Boolean.FALSE);
@@ -317,7 +317,7 @@ public class TethysTestButtons {
         theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             setStateIconValue(theStateIconButtonMgr.getValue());
             theStateIconButtonMgr.applyButtonState();
-            theStateIconButtonMgr.setVisible(theStateButtonMgr.getValue() == IconState.OPEN);
+            theStateIconButtonMgr.setVisible(theStateButtonMgr.getValue() == TethysIconState.OPEN);
         });
 
         /* Create colour picker line */

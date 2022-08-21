@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPric
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseSecurityPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -65,7 +65,7 @@ public class MoneyWiseSecurityTable
     /**
      * The Security dialog.
      */
-    private final MoneyWiseSecurityPanel theActiveSecurity;
+    private final SecurityPanel theActiveSecurity;
 
     /**
      * The edit list.
@@ -96,7 +96,7 @@ public class MoneyWiseSecurityTable
         final TethysTableManager<MetisLetheField, Security> myTable = getTable();
 
         /* Create a security panel */
-        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
+        theActiveSecurity = new SecurityPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveSecurity);
 
         /* Set table configuration */

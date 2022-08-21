@@ -19,13 +19,11 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisEnum;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassType;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisInterface;
 
 /**
  * Class statistics.
@@ -38,11 +36,6 @@ public class ThemisStatsClass
     private final ThemisAnalysisObject theClass;
 
     /**
-     * The sourceMeter class Stats.
-     */
-    private final ThemisSMClass theSMClass;
-
-    /**
      * The class list.
      */
     private final List<ThemisStatsBase> theClasses;
@@ -53,19 +46,32 @@ public class ThemisStatsClass
     private final List<ThemisStatsBase> theMethods;
 
     /**
+     * The class type.
+     */
+    private final ThemisStatsClassType theType;
+
+    /**
      * Constructor.
      * @param pClass the class
-     * @param pSourceMeter the sourceMeter stats
      */
-    ThemisStatsClass(final ThemisAnalysisObject pClass,
-                     final ThemisSMClass pSourceMeter) {
+    ThemisStatsClass(final ThemisAnalysisObject pClass) {
         /* Store parameters */
         theClass = pClass;
-        theSMClass = pSourceMeter;
 
         /* Create lists */
         theClasses = new ArrayList<>();
         theMethods = new ArrayList<>();
+
+        /* Determine class type */
+        if (pClass instanceof ThemisAnalysisInterface) {
+            theType = ((ThemisAnalysisInterface) pClass).isAnnotation()
+                    ? ThemisStatsClassType.ANNOTATION
+                    : ThemisStatsClassType.INTERFACE;
+        } else if (pClass instanceof ThemisAnalysisEnum) {
+            theType = ThemisStatsClassType.ENUM;
+        } else {
+            theType = ThemisStatsClassType.CLASS;
+        }
     }
 
     /**
@@ -80,18 +86,8 @@ public class ThemisStatsClass
      * Obtain the classType.
      * @return the classType
      */
-    public ThemisSMClassType getClassType() {
-        return theSMClass != null ? theSMClass.getClassType() : ThemisSMClassType.CLASS;
-    }
-
-    @Override
-    public ThemisSMClass getSourceMeter() {
-        return theSMClass;
-    }
-
-    @Override
-    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMClass == null ? null : theSMClass.getStatistics();
+    public ThemisStatsClassType getClassType() {
+        return theType;
     }
 
     @Override

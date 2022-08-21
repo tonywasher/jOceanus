@@ -14,8 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jthemis.statistics;
 
 /**
- * Statistics.
+ * ClassType.
  */
-package net.sourceforge.joceanus.jthemis.sourcemeter;
+public enum ThemisStatsClassType {
+    /**
+     * Class.
+     */
+    CLASS("Class"),
+
+    /**
+     * Interface.
+     */
+    INTERFACE("Interface"),
+
+    /**
+     * Enum.
+     */
+    ENUM("Enum"),
+
+    /**
+     * Annotation.
+     */
+    ANNOTATION("Annotation");
+
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     * @param pName the name
+     */
+    ThemisStatsClassType(final String pName) {
+        theName = pName;
+    }
+
+    @Override
+    public String toString() {
+        return theName;
+    }
+}
+

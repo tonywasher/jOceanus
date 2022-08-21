@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -33,10 +33,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditF
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
- * Panel to display/edit/create a TransactionTag.
+ * Panel to display/edit/create a Region.
  */
-public class MoneyWiseTransactionTagPanel
-        extends MoneyWiseItemPanel<TransactionTag> {
+public class RegionPanel
+        extends MoneyWiseItemPanel<Region> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -44,10 +44,10 @@ public class MoneyWiseTransactionTagPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseTransactionTagPanel(final TethysGuiFactory pFactory,
-                                        final MetisSwingFieldManager pFieldMgr,
-                                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                        final MetisErrorPanel pError) {
+    public RegionPanel(final TethysGuiFactory pFactory,
+                       final MetisSwingFieldManager pFieldMgr,
+                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                       final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -59,8 +59,8 @@ public class MoneyWiseTransactionTagPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Assign the fields to the panel */
-        myPanel.addField(TransactionTag.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(TransactionTag.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(Region.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(Region.FIELD_DESC, MetisDataType.STRING, myDesc);
 
         /* Define the panel */
         defineMainPanel(myPanel);
@@ -69,10 +69,10 @@ public class MoneyWiseTransactionTagPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final TransactionTag myItem = getItem();
+        final Region myItem = getItem();
         if (myItem != null) {
-            final TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
-            setItem(myTags.findItemById(myItem.getId()));
+            final RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
+            setItem(myRegions.findItemById(myItem.getId()));
         }
 
         /* Make sure that the item is not editable */
@@ -82,26 +82,26 @@ public class MoneyWiseTransactionTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final MetisSwingFieldSet<Region> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
-        myFieldSet.setVisibility(TransactionTag.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(Region.FIELD_DESC, bShowDesc);
     }
 
     @Override
     protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
         final MetisLetheField myField = pUpdate.getField();
-        final TransactionTag myTag = getItem();
+        final Region myRegion = getItem();
 
         /* Process updates */
-        if (myField.equals(TransactionTag.FIELD_NAME)) {
+        if (myField.equals(Region.FIELD_NAME)) {
             /* Update the Name */
-            myTag.setName(pUpdate.getString());
-        } else if (myField.equals(TransactionTag.FIELD_DESC)) {
+            myRegion.setName(pUpdate.getString());
+        } else if (myField.equals(Region.FIELD_DESC)) {
             /* Update the Description */
-            myTag.setDescription(pUpdate.getString());
+            myRegion.setDescription(pUpdate.getString());
         }
     }
 

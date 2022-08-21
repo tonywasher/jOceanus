@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseCashPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -55,7 +55,7 @@ public class MoneyWiseCashTable
     /**
      * The Cash dialog.
      */
-    private final MoneyWiseCashPanel theActiveCash;
+    private final CashPanel theActiveCash;
 
     /**
      * The edit list.
@@ -85,7 +85,7 @@ public class MoneyWiseCashTable
         final TethysTableManager<MetisLetheField, Cash> myTable = getTable();
 
         /* Create a Cash panel */
-        theActiveCash = new MoneyWiseCashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCash = new CashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCash);
 
         /* Set table configuration */

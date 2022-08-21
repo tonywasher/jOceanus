@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.sourcemeter;
+package net.sourceforge.joceanus.jthemis.statistics;
 
 /**
  * Statistics.
  */
-public enum ThemisSMStat {
+public enum ThemisStat {
     /**
      * LOC.
      */
@@ -139,7 +139,7 @@ public enum ThemisSMStat {
      * Constructor.
      * @param pDesc the description
      */
-    ThemisSMStat(final String pDesc) {
+    ThemisStat(final String pDesc) {
         theDesc = pDesc;
     }
 
@@ -156,8 +156,8 @@ public enum ThemisSMStat {
      * @param pName the name of the stat
      * @return the supported stat (or null)
      */
-    public static ThemisSMStat determineStat(final String pName) {
-        for (ThemisSMStat myStat : values()) {
+    public static ThemisStat determineStat(final String pName) {
+        for (ThemisStat myStat : values()) {
             if (pName.equals(myStat.name())) {
                 return myStat;
             }

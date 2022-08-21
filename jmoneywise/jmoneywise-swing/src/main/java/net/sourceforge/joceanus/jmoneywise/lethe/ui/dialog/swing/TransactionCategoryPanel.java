@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * Dialog to display/edit/create a TransactionCategory.
  */
-public class MoneyWiseTransactionCategoryPanel
+public class TransactionCategoryPanel
         extends MoneyWiseItemPanel<TransactionCategory> {
     /**
      * Constructor.
@@ -53,10 +53,10 @@ public class MoneyWiseTransactionCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseTransactionCategoryPanel(final TethysGuiFactory pFactory,
-                                             final MetisSwingFieldManager pFieldMgr,
-                                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                             final MetisErrorPanel pError) {
+    public TransactionCategoryPanel(final TethysGuiFactory pFactory,
+                                    final MetisSwingFieldManager pFieldMgr,
+                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                    final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

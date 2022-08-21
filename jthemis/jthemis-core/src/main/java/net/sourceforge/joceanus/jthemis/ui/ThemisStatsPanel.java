@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;

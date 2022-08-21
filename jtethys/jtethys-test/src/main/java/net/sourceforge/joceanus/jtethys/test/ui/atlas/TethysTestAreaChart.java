@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 /**
  * AreaChart Test Example.
  */
-public class TethysTestAreaChart{
+public class TethysTestAreaChart {
     /**
      * 2010 Year.
      */
@@ -60,7 +60,9 @@ public class TethysTestAreaChart{
     /**
      * Area Values.
      */
-    private static final int[] AREA_VALUES = { 567, 612, 800, 780, 167, 212, 100, 280 };
+    private static final int[] AREA_VALUES = {
+        567, 612, 800, 780, 167, 212, 100, 280
+    };
 
     /**
      * The chart.

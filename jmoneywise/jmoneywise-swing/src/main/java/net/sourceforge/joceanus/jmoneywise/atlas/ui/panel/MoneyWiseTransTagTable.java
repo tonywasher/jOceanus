@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseTransactionTagPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -54,7 +54,7 @@ public class MoneyWiseTransTagTable
     /**
      * The tag dialog.
      */
-    private final MoneyWiseTransactionTagPanel theActiveTag;
+    private final TransactionTagPanel theActiveTag;
 
     /**
      * The edit list.
@@ -90,7 +90,7 @@ public class MoneyWiseTransTagTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a tag panel */
-        theActiveTag = new MoneyWiseTransactionTagPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveTag = new TransactionTagPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveTag);
 
         /* Set table configuration */

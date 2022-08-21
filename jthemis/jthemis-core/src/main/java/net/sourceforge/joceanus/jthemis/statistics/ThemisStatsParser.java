@@ -47,22 +47,11 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisSwitch;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisTry;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisWhile;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMFile;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMMethod;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMPackage;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
 
 /**
  * Package Parser.
  */
 public class ThemisStatsParser {
-    /**
-     * The base statistics.
-     */
-    private final ThemisSMStatistics theSourceMeter;
-
     /**
      * The cached documentation comment.
      */
@@ -72,14 +61,6 @@ public class ThemisStatsParser {
      * The cached annotation.
      */
     private ThemisAnalysisAnnotation theCachedAnnotation;
-
-    /**
-     * Private constructor.
-     * @param pBase the sourceMeter stats
-     */
-    public ThemisStatsParser(final ThemisSMStatistics pBase) {
-        theSourceMeter = pBase;
-    }
 
     /**
      * parse a project.
@@ -125,11 +106,8 @@ public class ThemisStatsParser {
      * @return the stats
      */
     public ThemisStatsPackage parsePackage(final ThemisAnalysisPackage pPackage) {
-        /* Locate the matching sourceMeter stats */
-        final ThemisSMPackage mySMPackage = theSourceMeter.findPackage(pPackage);
-
         /* Create the stats */
-        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage, mySMPackage);
+        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage);
 
         /* Loop through the files */
         for (ThemisAnalysisFile myFile : pPackage.getFiles()) {
@@ -149,11 +127,8 @@ public class ThemisStatsParser {
      */
     public ThemisStatsFile parseFile(final ThemisStatsPackage pPackage,
                                      final ThemisAnalysisFile pFile) {
-        /* Locate the matching sourceMeter stats */
-        final ThemisSMFile mySMFile = theSourceMeter.findFile(pPackage.getSourceMeter(), pFile);
-
         /* Create the stats */
-        final ThemisStatsFile myStats = new ThemisStatsFile(pFile, mySMFile);
+        final ThemisStatsFile myStats = new ThemisStatsFile(pFile);
 
         /* process the container */
         processContainer(myStats, pFile);
@@ -170,11 +145,8 @@ public class ThemisStatsParser {
      */
     public ThemisStatsClass parseClass(final ThemisStatsBase pOwner,
                                        final ThemisAnalysisObject pClass) {
-        /* Locate the matching sourceMeter stats */
-        final ThemisSMClass mySMClass = theSourceMeter.findClass(pOwner.getSourceMeter(), pClass);
-
         /* Create the stats */
-        final ThemisStatsClass myStats = new ThemisStatsClass(pClass, mySMClass);
+        final ThemisStatsClass myStats = new ThemisStatsClass(pClass);
 
         /* process the container */
         processCachedItems(pOwner, myStats);
@@ -192,11 +164,8 @@ public class ThemisStatsParser {
      */
     public ThemisStatsMethod parseMethod(final ThemisStatsBase pOwner,
                                          final ThemisAnalysisMethod pMethod) {
-        /* Locate the matching sourceMeter stats */
-        final ThemisSMMethod mySMMethod = theSourceMeter.findMethod(pOwner.getSourceMeter(), pMethod);
-
         /* Create the stats */
-        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod, mySMMethod);
+        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod);
 
         /* process the container */
         processCachedItems(pOwner, myStats);
@@ -336,7 +305,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myClass = parseClass(pOwner, pAnon);
 
         /* Adjust statistics */
-        pOwner.incrementStat(ThemisSMStat.NCL);
+        pOwner.incrementStat(ThemisStat.NCL);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myClass, pAnon.getNumLines());
@@ -352,7 +321,7 @@ public class ThemisStatsParser {
                                      final ThemisAnalysisBlank pBlank) {
         /* Adjust statistics */
         final int myBlanks = pBlank.getNumLines();
-        pOwner.adjustStat(ThemisSMStat.LOC, myBlanks);
+        pOwner.adjustStat(ThemisStat.LOC, myBlanks);
     }
 
     /**
@@ -383,7 +352,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myClass = parseClass(pOwner, pClass);
 
         /* Adjust statistics */
-        pOwner.incrementStat(ThemisSMStat.NCL);
+        pOwner.incrementStat(ThemisStat.NCL);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myClass, pClass.getNumLines());
@@ -404,10 +373,10 @@ public class ThemisStatsParser {
         final int myAdjust = pAddToStats
                                  ? pComment.getNumLines()
                                  : -pComment.getNumLines();
-        pOwner.adjustStat(ThemisSMStat.LOC, myAdjust);
-        pOwner.adjustStat(ThemisSMStat.CLOC, myAdjust);
+        pOwner.adjustStat(ThemisStat.LOC, myAdjust);
+        pOwner.adjustStat(ThemisStat.CLOC, myAdjust);
         if (pComment.isJavaDoc()) {
-            pOwner.adjustStat(ThemisSMStat.DLOC, myAdjust);
+            pOwner.adjustStat(ThemisStat.DLOC, myAdjust);
         }
     }
 
@@ -452,7 +421,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myEnum = parseClass(pOwner, pEnum);
 
         /* Adjust owner statistics */
-        pOwner.incrementStat(ThemisSMStat.NEN);
+        pOwner.incrementStat(ThemisStat.NEN);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myEnum, pEnum.getNumLines());
@@ -562,7 +531,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myIFace = parseClass(pOwner, pInterface);
 
         /* Adjust owner statistics */
-        pOwner.incrementStat(ThemisSMStat.NIN);
+        pOwner.incrementStat(ThemisStat.NIN);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myIFace, pInterface.getNumLines());
@@ -595,7 +564,7 @@ public class ThemisStatsParser {
         final ThemisStatsMethod myMethod = parseMethod(pOwner, pMethod);
 
         /* Adjust owner statistics */
-        pOwner.incrementStat(ThemisSMStat.NM);
+        pOwner.incrementStat(ThemisStat.NM);
 
         /* Adjust the lines of code and add to owner */
         adjustLinesOfCode(myMethod, pMethod.getNumLines());
@@ -738,8 +707,8 @@ public class ThemisStatsParser {
     private static void adjustLinesOfCode(final ThemisStatsBase pOwner,
                                           final int pCount) {
         /* Adjust the stats */
-        pOwner.adjustStat(ThemisSMStat.LOC, pCount);
-        pOwner.adjustStat(ThemisSMStat.LLOC, pCount);
+        pOwner.adjustStat(ThemisStat.LOC, pCount);
+        pOwner.adjustStat(ThemisStat.LLOC, pCount);
     }
 
     /**
@@ -750,7 +719,7 @@ public class ThemisStatsParser {
     private static void adjustNumberOfStatements(final ThemisStatsBase pOwner,
                                                  final int pCount) {
         /* Adjust the stats */
-        pOwner.adjustStat(ThemisSMStat.NOS, pCount);
+        pOwner.adjustStat(ThemisStat.NOS, pCount);
     }
 
     /**
@@ -761,7 +730,7 @@ public class ThemisStatsParser {
     private static void adjustNumberOfAttributes(final ThemisStatsBase pOwner,
                                                  final int pCount) {
         /* Adjust the stats */
-        pOwner.adjustStat(ThemisSMStat.NA, pCount);
+        pOwner.adjustStat(ThemisStat.NA, pCount);
         adjustNumberOfStatements(pOwner, pCount);
     }
 

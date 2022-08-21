@@ -572,9 +572,8 @@ public class ThemisAnalysisParser
      * Process a statement.
      * @param pLine the line
      * @return the statement
-     * @throws OceanusException on error
      */
-    private ThemisAnalysisKeyWord determineStatementKeyWord(final ThemisAnalysisLine pLine) throws OceanusException {
+    private ThemisAnalysisKeyWord determineStatementKeyWord(final ThemisAnalysisLine pLine) {
         /* Look for a control keyWord */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);

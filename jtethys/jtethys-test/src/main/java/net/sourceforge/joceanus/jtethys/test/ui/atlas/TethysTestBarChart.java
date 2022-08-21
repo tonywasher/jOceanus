@@ -63,7 +63,9 @@ public class TethysTestBarChart {
     /**
      * Bar Values.
      */
-    private static final int[] BAR_VALUES = { 567, 612, 800, 780, 167, 212, 100, 280 };
+    private static final int[] BAR_VALUES = {
+        567, 612, 800, 780, 167, 212, 100, 280
+    };
 
     /**
      * The chart.

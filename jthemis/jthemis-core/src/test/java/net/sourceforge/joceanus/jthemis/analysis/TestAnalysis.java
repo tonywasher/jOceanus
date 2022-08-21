@@ -26,10 +26,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsParser;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 
@@ -79,13 +77,8 @@ public class TestAnalysis {
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
 
-        /* Parse sourceMeter statistics */
-        final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-        final Path myPath = ThemisSMStatistics.getRecentStats(PROJECT);
-        myStats.parseStatistics(myPath, PROJECT);
-
         /* Parse the base project */
-        final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
+        final ThemisStatsParser myParser = new ThemisStatsParser();
         final ThemisStatsProject myProject = myParser.parseProject(myProj);
     }
 

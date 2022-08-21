@@ -18,18 +18,10 @@ package net.sourceforge.joceanus.jthemis.statistics;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatHolder;
-
 /**
  * Statistics owner.
  */
 public interface ThemisStatsOwner {
-    /**
-     * Obtain the sourceMeter stats.
-     * @return the stats
-     */
-    ThemisSMStatHolder getSourceMeter();
-
     /**
      * Obtain class iterator.
      * @return the iterator

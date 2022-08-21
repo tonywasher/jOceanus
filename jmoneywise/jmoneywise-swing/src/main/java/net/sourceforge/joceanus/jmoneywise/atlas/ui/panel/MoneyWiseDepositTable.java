@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateLis
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseDepositPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -63,7 +63,7 @@ public class MoneyWiseDepositTable
     /**
      * The Deposit dialog.
      */
-    private final MoneyWiseDepositPanel theActiveDeposit;
+    private final DepositPanel theActiveDeposit;
 
     /**
      * The edit list.
@@ -94,7 +94,7 @@ public class MoneyWiseDepositTable
         final TethysTableManager<MetisLetheField, Deposit> myTable = getTable();
 
         /* Create a Deposit panel */
-        theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
+        theActiveDeposit = new DepositPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveDeposit);
 
         /* Set table configuration */

@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWisePortfolioPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -56,7 +56,7 @@ public class MoneyWisePortfolioTable
     /**
      * The Portfolio dialog.
      */
-    private final MoneyWisePortfolioPanel theActivePortfolio;
+    private final PortfolioPanel theActivePortfolio;
 
     /**
      * The edit list.
@@ -86,7 +86,7 @@ public class MoneyWisePortfolioTable
         final TethysTableManager<MetisLetheField, Portfolio> myTable = getTable();
 
         /* Create a portfolio panel */
-        theActivePortfolio = new MoneyWisePortfolioPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActivePortfolio = new PortfolioPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActivePortfolio);
 
         /* Set table configuration */
