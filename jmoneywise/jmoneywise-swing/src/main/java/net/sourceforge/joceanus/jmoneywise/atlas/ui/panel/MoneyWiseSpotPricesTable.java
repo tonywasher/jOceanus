@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWisePriceDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
  * MoneyWise SpotPrices Table.
  */
 public class MoneyWiseSpotPricesTable
-        extends MoneyWiseNewBaseTable<SpotSecurityPrice> {
+        extends MoneyWiseBaseTable<SpotSecurityPrice> {
     /**
      * The SpotPrices selection panel.
      */

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
@@ -27,17 +26,15 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTransDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
@@ -46,6 +43,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPane
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -151,7 +150,7 @@ public class MoneyWiseTransactionTable
         /* Access field manager and gui factory */
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, Transaction> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
 
         /* Create new button */
         theNewButton = myGuiFactory.newButton();
@@ -180,7 +179,7 @@ public class MoneyWiseTransactionTable
                .setOnSelect(theActiveTran::setItem);
 
         /* Create the date column */
-        myTable.declareDateColumn(Transaction.FIELD_DATE)
+        myTable.declareDateColumn(MoneyWiseTransDataId.DATE)
                .setDateConfigurator((r, c) -> handleDateEvent(c))
                .setCellValueFactory(Transaction::getDate)
                .setEditable(true)
@@ -189,7 +188,7 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setDate, r, v));
 
         /* Create the account column */
-        myTable.declareScrollColumn(TransactionBase.FIELD_ACCOUNT, TransactionAsset.class)
+        myTable.declareScrollColumn(MoneyWiseTransDataId.ACCOUNT, TransactionAsset.class)
                .setMenuConfigurator(this::buildAccountMenu)
                .setCellValueFactory(Transaction::getAccount)
                .setEditable(true)
@@ -198,7 +197,7 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setAccount, r, v));
 
         /* Create the category column */
-        myTable.declareScrollColumn(TransactionBase.FIELD_CATEGORY, TransactionCategory.class)
+        myTable.declareScrollColumn(MoneyWiseTransDataId.CATEGORY, TransactionCategory.class)
                .setMenuConfigurator(this::buildCategoryMenu)
                .setCellValueFactory(Transaction::getCategory)
                .setEditable(true)
@@ -208,7 +207,7 @@ public class MoneyWiseTransactionTable
 
         /* Create the direction column */
         final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
-        myTable.declareIconColumn(TransactionBase.FIELD_DIRECTION, AssetDirection.class)
+        myTable.declareIconColumn(MoneyWiseTransDataId.DIRECTION, AssetDirection.class)
                .setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)))
                .setCellValueFactory(Transaction::getDirection)
                .setEditable(true)
@@ -217,7 +216,7 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(this::setDirection, r, v));
 
         /* Create the partner column */
-        myTable.declareScrollColumn(TransactionBase.FIELD_PARTNER, TransactionAsset.class)
+        myTable.declareScrollColumn(MoneyWiseTransDataId.PARTNER, TransactionAsset.class)
                .setMenuConfigurator(this::buildPartnerMenu)
                .setCellValueFactory(Transaction::getPartner)
                .setEditable(true)
@@ -227,7 +226,7 @@ public class MoneyWiseTransactionTable
 
         /* Create the reconciled column */
         final Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
-        myTable.declareIconColumn(TransactionBase.FIELD_RECONCILED, Boolean.class)
+        myTable.declareIconColumn(MoneyWiseTransDataId.RECONCILED, Boolean.class)
                .setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)))
                .setCellValueFactory(Transaction::isReconciled)
                .setEditable(true)
@@ -236,91 +235,91 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setReconciled, r, v));
 
         /* Create the comments column */
-        myTable.declareStringColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS))
+        myTable.declareStringColumn(MoneyWiseTransDataId.COMMENTS)
                .setCellValueFactory(Transaction::getComments)
                .setEditable(true)
                .setColumnWidth(WIDTH_DESC)
                .setOnCommit((r, v) -> updateField(Transaction::setComments, r, v));
 
         /* Create the amount column */
-        myTable.declareMoneyColumn(TransactionBase.FIELD_AMOUNT)
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.AMOUNT)
                .setCellValueFactory(Transaction::getAmount)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setAmount, r, v));
 
         /* Create the reference column */
-        myTable.declareStringColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE))
+        myTable.declareStringColumn(MoneyWiseTransDataId.REFERENCE)
                .setCellValueFactory(Transaction::getReference)
                .setEditable(true)
                .setColumnWidth(WIDTH_DESC)
                .setOnCommit((r, v) -> updateField(Transaction::setReference, r, v));
 
         /* Create the taxCredit column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.TAXCREDIT)
                .setCellValueFactory(Transaction::getTaxCredit)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setTaxCredit, r, v));
 
         /* Create the EeNatIns column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.EMPLOYEENATINS)
                .setCellValueFactory(Transaction::getEmployeeNatIns)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setEmployeeNatIns, r, v));
 
         /* Create the ErNatIns column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYERNATINS))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.EMPLOYERNATINS)
                .setCellValueFactory(Transaction::getEmployerNatIns)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setEmployerNatIns, r, v));
 
         /* Create the Benefit column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.DEEMEDBENEFIT)
                .setCellValueFactory(Transaction::getDeemedBenefit)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setBenefit, r, v));
 
         /* Create the Withheld column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.WITHHELD)
                .setCellValueFactory(Transaction::getWithheld)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setWithheld, r, v));
 
         /* Create the AccountUnits column */
-        myTable.declareUnitsColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS))
+        myTable.declareUnitsColumn(MoneyWiseTransDataId.ACCOUNTDELTAUNITS)
                .setCellValueFactory(Transaction::getAccountDeltaUnits)
                .setEditable(true)
                .setColumnWidth(WIDTH_UNITS)
                .setOnCommit((r, v) -> updateField(Transaction::setAccountDeltaUnits, r, v));
 
         /* Create the PartnerUnits column */
-        myTable.declareUnitsColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS))
+        myTable.declareUnitsColumn(MoneyWiseTransDataId.PARTNERDELTAUNITS)
                .setCellValueFactory(Transaction::getAccountDeltaUnits)
                .setEditable(true)
                .setColumnWidth(WIDTH_UNITS)
                .setOnCommit((r, v) -> updateField(Transaction::setPartnerDeltaUnits, r, v));
 
         /* Create the Dilution column */
-        myTable.declareDilutionColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION))
+        myTable.declareDilutionColumn(MoneyWiseTransDataId.DILUTION)
                .setCellValueFactory(Transaction::getDilution)
                .setEditable(true)
                .setColumnWidth(WIDTH_UNITS)
                .setOnCommit((r, v) -> updateField(Transaction::setDilution, r, v));
 
         /* Create the QualifyYears column */
-        myTable.declareIntegerColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS))
+        myTable.declareIntegerColumn(MoneyWiseTransDataId.QUALIFYYEARS)
                .setCellValueFactory(Transaction::getYears)
                .setEditable(true)
                .setColumnWidth(WIDTH_UNITS)
                .setOnCommit((r, v) -> updateField(Transaction::setYears, r, v));
 
         /* Create the returned cash account column */
-        myTable.declareScrollColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class)
+        myTable.declareScrollColumn(MoneyWiseTransDataId.RETURNEDCASHACCOUNT, TransactionAsset.class)
                .setMenuConfigurator(this::buildReturnedMenu)
                .setCellValueFactory(Transaction::getReturnedCashAccount)
                .setEditable(true)
@@ -329,28 +328,28 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setReturnedCashAccount, r, v));
 
         /* Create the returned cash column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.RETURNEDCASH)
                .setCellValueFactory(Transaction::getReturnedCash)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setReturnedCash, r, v));
 
         /* Create the partner amount column */
-        myTable.declareMoneyColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT))
+        myTable.declareMoneyColumn(MoneyWiseTransDataId.PARTNERAMOUNT)
                .setCellValueFactory(Transaction::getPartnerAmount)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setPartnerAmount, r, v));
 
         /* Create the exchangeRate column */
-        myTable.declareRatioColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE))
+        myTable.declareRatioColumn(MoneyWiseTransDataId.XCHANGERATE)
                .setCellValueFactory(Transaction::getExchangeRate)
                .setEditable(true)
                .setColumnWidth(WIDTH_MONEY)
                .setOnCommit((r, v) -> updateField(Transaction::setExchangeRate, r, v));
 
         /* Create the tag column */
-        myTable.declareListColumn(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), TransactionTag.class)
+        myTable.declareListColumn(MoneyWiseTransDataId.TAG, TransactionTag.class)
                .setSelectables(c -> theActiveTran.buildTransactionTags())
                .setCellValueFactory(Transaction::getTransactionTags)
                .setEditable(true)
@@ -358,26 +357,26 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setTransactionTags, r, v));
 
         /* Create the debit column */
-        myTable.declareRawDecimalColumn(Transaction.FIELD_TOUCH)
+        myTable.declareRawDecimalColumn(MoneyWiseTransDataId.DEBIT)
                .setCellValueFactory(theFilter::getDebitForTransaction)
                .setEditable(false)
                .setColumnWidth(WIDTH_MONEY);
 
         /* Create the credit column */
-        myTable.declareRawDecimalColumn(Transaction.FIELD_TOUCH)
+        myTable.declareRawDecimalColumn(MoneyWiseTransDataId.CREDIT)
                .setCellValueFactory(theFilter::getCreditForTransaction)
                .setEditable(false)
                .setColumnWidth(WIDTH_MONEY);
 
         /* Create the balance column */
-        myTable.declareRawDecimalColumn(Transaction.FIELD_TOUCH)
+        myTable.declareRawDecimalColumn(MoneyWiseTransDataId.BALANCE)
                .setCellValueFactory(theFilter::getBalanceForTransaction)
                .setEditable(false)
                .setColumnWidth(WIDTH_MONEY);
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Transaction.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isReconciled() ? MetisAction.DO : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

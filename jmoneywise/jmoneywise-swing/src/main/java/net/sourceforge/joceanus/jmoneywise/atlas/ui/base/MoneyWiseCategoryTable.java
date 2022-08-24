@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
  * @param <C> the Static Data class
  */
 public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
-        extends MoneyWiseNewBaseTable<T> {
+        extends MoneyWiseBaseTable<T> {
     /**
      * Filter Prompt.
      */

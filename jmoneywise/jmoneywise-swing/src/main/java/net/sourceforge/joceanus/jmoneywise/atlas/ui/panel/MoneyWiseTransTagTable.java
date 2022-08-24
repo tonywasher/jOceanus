@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTagDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
  * MoneyWise Tag Table.
  */
 public class MoneyWiseTransTagTable
-        extends MoneyWiseNewBaseTable<TransactionTag> {
+        extends MoneyWiseBaseTable<TransactionTag> {
     /**
      * The filter panel.
      */

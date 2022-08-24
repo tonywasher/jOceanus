@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseRegionDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
  * MoneyWise Region Table.
  */
 public class MoneyWiseRegionTable
-        extends MoneyWiseNewBaseTable<Region> {
+        extends MoneyWiseBaseTable<Region> {
     /**
      * The filter panel.
      */

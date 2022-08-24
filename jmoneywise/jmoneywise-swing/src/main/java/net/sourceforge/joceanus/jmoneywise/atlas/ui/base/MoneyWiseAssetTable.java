@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
  * @param <C> the Category Data type
  */
 public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
-        extends MoneyWiseNewBaseTable<T> {
+        extends MoneyWiseBaseTable<T> {
     /**
      * ShowClosed prompt.
      */

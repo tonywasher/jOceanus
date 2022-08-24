@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
@@ -153,7 +154,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     /**
      * The underlying table.
      */
-    private final TethysTableManager<MetisLetheField, T> theTable;
+    private final TethysTableManager<PrometheusDataFieldId, T> theTable;
 
     /**
      * is the table editing?
@@ -265,7 +266,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the table.
      * @return the table
      */
-    protected TethysTableManager<MetisLetheField, T> getTable() {
+    protected TethysTableManager<PrometheusDataFieldId, T> getTable() {
         return theTable;
     }
 
@@ -430,9 +431,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pItem  the item
      * @return true/false
      */
-    private boolean isFieldInError(final MetisLetheField pField,
+    private boolean isFieldInError(final PrometheusDataFieldId pField,
                                    final T pItem) {
-        return pItem.getFieldErrors(pField) != null;
+        final MetisLetheField myField = pField.getLetheField();
+        return myField != null && pItem.getFieldErrors(myField) != null;
     }
 
     /**
@@ -442,9 +444,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pItem  the item
      * @return true/false
      */
-    private boolean isFieldChanged(final MetisLetheField pField,
+    private boolean isFieldChanged(final PrometheusDataFieldId pField,
                                    final T pItem) {
-        return pItem.fieldChanged(pField).isDifferent();
+        final MetisLetheField myField = pField.getLetheField();
+        return myField != null && pItem.fieldChanged(myField).isDifferent();
     }
 
     /**
@@ -486,8 +489,8 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
 
             /* Ignore self and deleted */
             if (!(myValue instanceof MetisDataNamedItem)
-                || myValue.isDeleted()
-                || myValue.equals(pRow)) {
+                    || myValue.isDeleted()
+                    || myValue.equals(pRow)) {
                 continue;
             }
 
@@ -545,4 +548,3 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         notifyChanges();
     }
 }
-

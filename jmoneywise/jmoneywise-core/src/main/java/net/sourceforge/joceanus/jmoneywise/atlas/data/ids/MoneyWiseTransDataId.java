@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 
 /**
@@ -165,7 +166,22 @@ public enum MoneyWiseTransDataId
     /**
      * Commission.
      */
-    COMMISSION(StaticDataResource.getKeyForTransInfo(TransactionInfoClass.COMMISSION), TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION));
+    COMMISSION(StaticDataResource.getKeyForTransInfo(TransactionInfoClass.COMMISSION), TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION)),
+
+    /**
+     * Debit.
+     */
+    DEBIT(MoneyWiseUIResource.STATEMENT_COLUMN_DEBIT, null),
+
+    /**
+     * Credit.
+     */
+    CREDIT(MoneyWiseUIResource.STATEMENT_COLUMN_CREDIT, null),
+
+    /**
+     * Balance.
+     */
+    BALANCE(MoneyWiseUIResource.STATEMENT_COLUMN_BALANCE, null);
 
     /**
      * The Value.

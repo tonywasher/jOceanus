@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -36,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
  * @param <T> the data type
  */
 public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
-        extends MoneyWiseNewBaseTable<T> {
+        extends MoneyWiseBaseTable<T> {
     /**
      * The panel.
      */

@@ -20,13 +20,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise UI Fields.
  */
-public enum MoneyWiseUIResource implements TethysBundleId {
+public enum MoneyWiseUIResource
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * Frozen ToolTip.
      */
@@ -498,6 +500,11 @@ public enum MoneyWiseUIResource implements TethysBundleId {
         return theValue;
     }
 
+    @Override
+    public String getId() {
+        return getValue();
+    }
+
     /**
      * Build column map.
      * @return the map
@@ -520,7 +527,7 @@ public enum MoneyWiseUIResource implements TethysBundleId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForColumnSet(final AnalysisColumnSet pValue) {
+    static TethysBundleId getKeyForColumnSet(final AnalysisColumnSet pValue) {
         return TethysBundleLoader.getKeyForEnum(COLUMN_MAP, pValue);
     }
 }
