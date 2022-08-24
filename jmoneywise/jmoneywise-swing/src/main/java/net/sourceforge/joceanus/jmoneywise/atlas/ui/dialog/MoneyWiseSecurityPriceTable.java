@@ -20,17 +20,19 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWisePriceDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -57,7 +59,7 @@ public class MoneyWiseSecurityPriceTable
     /**
      * The active column.
      */
-    private final TethysTableColumn<MetisAction, MetisLetheField, SecurityPrice> theActiveColumn;
+    private final TethysTableColumn<MetisAction, PrometheusDataFieldId, SecurityPrice> theActiveColumn;
 
     /**
      * Constructor.
@@ -72,21 +74,21 @@ public class MoneyWiseSecurityPriceTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITYPRICE);
 
         /* Access Gui factory */
-        final TethysTableManager<MetisLetheField, SecurityPrice> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, SecurityPrice> myTable = getTable();
 
         /* Set table configuration */
         myTable.setDisabled(SecurityPrice::isDisabled)
                .setComparator(SecurityPrice::compareTo);
 
         /* Create the date column */
-        myTable.declareDateColumn(SecurityPrice.FIELD_DATE)
+        myTable.declareDateColumn(MoneyWisePriceDataId.DATE)
                .setCellValueFactory(SecurityPrice::getDate)
                .setEditable(true)
                .setColumnWidth(WIDTH_DATE)
                .setOnCommit((r, v) -> updateField(SecurityPrice::setDate, r, v));
 
         /* Create the price column */
-        myTable.declarePriceColumn(SecurityPrice.FIELD_PRICE)
+        myTable.declarePriceColumn(MoneyWisePriceDataId.PRICE)
                .setCellValueFactory(SecurityPrice::getPrice)
                .setEditable(true)
                .setColumnWidth(WIDTH_PRICE)
@@ -94,7 +96,7 @@ public class MoneyWiseSecurityPriceTable
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theActiveColumn = myTable.declareIconColumn(SecurityPrice.FIELD_TOUCH, MetisAction.class)
+        theActiveColumn = myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

@@ -21,6 +21,8 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseViewResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 
 /**
@@ -41,7 +43,17 @@ public enum MoneyWisePriceDataId
     /**
      * Price.
      */
-    PRICE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE, SecurityPrice.FIELD_PRICE);
+    PRICE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE, SecurityPrice.FIELD_PRICE),
+
+    /**
+     * PreviousDate.
+     */
+    PREVDATE(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotSecurityPrice.FIELD_PREVDATE),
+
+    /**
+     * PreviousPrice.
+     */
+    PREVPRICE(MoneyWiseViewResource.SPOTPRICE_PREVPRICE, SpotSecurityPrice.FIELD_PREVPRICE);
 
     /**
      * The Value.

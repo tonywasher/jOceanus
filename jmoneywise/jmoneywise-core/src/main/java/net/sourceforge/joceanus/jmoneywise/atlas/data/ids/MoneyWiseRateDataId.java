@@ -20,7 +20,11 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseViewResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 
 /**
@@ -46,7 +50,37 @@ public enum MoneyWiseRateDataId
     /**
      * EndDate.
      */
-    ENDDATE(MoneyWiseDataResource.DEPOSITRATE_ENDDATE, DepositRate.FIELD_ENDDATE);
+    ENDDATE(MoneyWiseDataResource.DEPOSITRATE_ENDDATE, DepositRate.FIELD_ENDDATE),
+
+    /**
+     * Date.
+     */
+    DATE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, ExchangeRate.FIELD_DATE),
+
+    /**
+     * From.
+     */
+    FROM(MoneyWiseDataResource.XCHGRATE_FROM, ExchangeRate.FIELD_FROM),
+
+    /**
+     * To.
+     */
+    TO(MoneyWiseDataResource.XCHGRATE_TO, ExchangeRate.FIELD_TO),
+
+    /**
+     * ExchangeRate.
+     */
+    XCHGRATE(MoneyWiseDataResource.XCHGRATE_RATE, ExchangeRate.FIELD_RATE),
+
+    /**
+     * PreviousDate.
+     */
+    PREVDATE(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotExchangeRate.FIELD_PREVDATE),
+
+    /**
+     * PreviousRate.
+     */
+    PREVRATE(MoneyWiseViewResource.SPOTPRICE_PREVPRICE, SpotExchangeRate.FIELD_PREVRATE);
 
     /**
      * The Value.
