@@ -18,8 +18,13 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.ids;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 
@@ -44,9 +49,29 @@ public enum MoneyWiseCategoryDataId
     PARENT(PrometheusDataResource.DATAGROUP_PARENT, CategoryBase.FIELD_PARENT),
 
     /**
-     * Category.
+     * SubCategory.
      */
-    SUBCAT(MoneyWiseDataResource.CATEGORY_SUBCAT, CategoryBase.FIELD_SUBCAT);
+    SUBCAT(MoneyWiseDataResource.CATEGORY_SUBCAT, CategoryBase.FIELD_SUBCAT),
+
+    /**
+     * DepositCategoryType.
+     */
+    DEPOSITCATTYPE(MoneyWiseDataType.TRANSTYPE, DepositCategory.FIELD_CATTYPE),
+
+    /**
+     * CashCategoryType.
+     */
+    CASHCATTYPE(MoneyWiseDataType.TRANSTYPE, CashCategory.FIELD_CATTYPE),
+
+    /**
+     * LoanCategoryType.
+     */
+    LOANCATTYPE(MoneyWiseDataType.TRANSTYPE, LoanCategory.FIELD_CATTYPE),
+
+    /**
+     * TransactionCategoryType.
+     */
+    TRANSCATTYPE(MoneyWiseDataType.TRANSTYPE, TransactionCategory.FIELD_CATTYPE);
 
     /**
      * The Value.

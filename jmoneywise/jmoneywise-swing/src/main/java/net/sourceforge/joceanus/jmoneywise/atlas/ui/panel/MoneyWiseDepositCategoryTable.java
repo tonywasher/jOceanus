@@ -20,12 +20,13 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -33,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryCla
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -66,14 +68,14 @@ public class MoneyWiseDepositCategoryTable
                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY);
 
         /* Access field manager */
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, DepositCategory> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
 
         /* Create a category panel */
         theActiveCategory = new DepositCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
@@ -84,6 +86,18 @@ public class MoneyWiseDepositCategoryTable
 
         /* Add listeners */
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+    }
+
+    @Override
+    protected void addCategoryTypeColumn() {
+        final TethysTableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
+        myTable.declareScrollColumn(MoneyWiseCategoryDataId.DEPOSITCATTYPE, DepositCategoryType.class)
+                .setMenuConfigurator(this::buildCategoryTypeMenu)
+                .setCellValueFactory(CategoryBase::getCategoryType)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_NAME)
+                .setOnCommit((r, v) -> updateField(CategoryBase::setCategoryType, r, v));
     }
 
     @Override

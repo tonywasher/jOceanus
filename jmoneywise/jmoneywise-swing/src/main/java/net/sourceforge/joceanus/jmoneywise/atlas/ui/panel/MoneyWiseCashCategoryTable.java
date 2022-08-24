@@ -20,19 +20,21 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -66,14 +68,14 @@ public class MoneyWiseCashCategoryTable
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASHCATEGORY, CashCategoryType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASHCATEGORY);
 
         /* Access field manager */
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, CashCategory> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, CashCategory> myTable = getTable();
 
         /* Create a category panel */
         theActiveCategory = new CashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
@@ -84,6 +86,18 @@ public class MoneyWiseCashCategoryTable
 
         /* Add listeners */
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+    }
+
+    @Override
+    protected void addCategoryTypeColumn() {
+        final TethysTableManager<PrometheusDataFieldId, CashCategory> myTable = getTable();
+        myTable.declareScrollColumn(MoneyWiseCategoryDataId.CASHCATTYPE, CashCategoryType.class)
+                .setMenuConfigurator(this::buildCategoryTypeMenu)
+                .setCellValueFactory(CategoryBase::getCategoryType)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_NAME)
+                .setOnCommit((r, v) -> updateField(CategoryBase::setCategoryType, r, v));
     }
 
     @Override

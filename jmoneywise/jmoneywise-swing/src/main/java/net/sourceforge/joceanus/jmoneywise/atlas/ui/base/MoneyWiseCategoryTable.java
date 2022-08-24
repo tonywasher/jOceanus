@@ -20,15 +20,16 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CategoryInterface;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
@@ -49,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
  * @param <C> the Static Data class
  */
 public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
-        extends MoneyWiseBaseTable<T> {
+        extends MoneyWiseNewBaseTable<T> {
     /**
      * Filter Prompt.
      */
@@ -81,19 +82,17 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      * @param pDataType the dataType
-     * @param pTypeClass the class of the category type
      */
     protected MoneyWiseCategoryTable(final MoneyWiseView pView,
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final MetisErrorPanel pError,
-                                     final MoneyWiseDataType pDataType,
-                                     final Class<S> pTypeClass) {
+                                     final MoneyWiseDataType pDataType) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, pDataType);
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -117,7 +116,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                .setComparator(CategoryBase::compareTo);
 
         /* Create the short name column */
-        myTable.declareStringColumn(TransactionCategory.FIELD_SUBCAT)
+        myTable.declareStringColumn(MoneyWiseCategoryDataId.SUBCAT)
                 .setValidator(this::isValidName)
                 .setCellValueFactory(this::getShortName)
                 .setEditable(true)
@@ -125,22 +124,16 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                 .setOnCommit((r, v) -> updateField(CategoryBase::setSubCategoryName, r, v));
 
         /* Create the full name column */
-        myTable.declareStringColumn(TransactionCategory.FIELD_NAME)
+        myTable.declareStringColumn(MoneyWiseCategoryDataId.NAME)
                 .setCellValueFactory(CategoryBase::getName)
                 .setEditable(false)
                 .setColumnWidth(WIDTH_NAME);
 
         /* Create the category type column */
-        myTable.declareScrollColumn(TransactionCategory.FIELD_CATTYPE, pTypeClass)
-                .setMenuConfigurator(this::buildCategoryTypeMenu)
-                .setCellValueFactory(CategoryBase::getCategoryType)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setColumnWidth(WIDTH_NAME)
-                .setOnCommit((r, v) -> updateField(CategoryBase::setCategoryType, r, v));
+        addCategoryTypeColumn();
 
         /* Create the description column */
-        myTable.declareStringColumn(TransactionCategory.FIELD_DESC)
+        myTable.declareStringColumn(MoneyWiseCategoryDataId.DESC)
                 .setValidator(this::isValidDesc)
                 .setCellValueFactory(CategoryBase::getDesc)
                 .setEditable(true)
@@ -149,7 +142,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(TransactionCategory.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -163,6 +156,11 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
         theSelectButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleParentSelection());
         theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
     }
+
+    /**
+     * Add categoryType column.
+     */
+    protected abstract void addCategoryTypeColumn();
 
     /**
      * Obtain the filter panel.

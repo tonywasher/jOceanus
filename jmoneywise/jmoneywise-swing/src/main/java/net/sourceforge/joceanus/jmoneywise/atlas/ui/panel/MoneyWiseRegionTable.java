@@ -17,20 +17,22 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseRegionDataId;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.RegionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -45,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
  * MoneyWise Region Table.
  */
 public class MoneyWiseRegionTable
-        extends MoneyWiseBaseTable<Region> {
+        extends MoneyWiseNewBaseTable<Region> {
     /**
      * The filter panel.
      */
@@ -78,7 +80,7 @@ public class MoneyWiseRegionTable
 
         /* Access the GUI factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, Region> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, Region> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -99,7 +101,7 @@ public class MoneyWiseRegionTable
                .setOnSelect(theActiveRegion::setItem);
 
         /* Create the name column */
-        myTable.declareStringColumn(Region.FIELD_NAME)
+        myTable.declareStringColumn(MoneyWiseRegionDataId.NAME)
                .setValidator(this::isValidName)
                .setCellValueFactory(Region::getName)
                .setEditable(true)
@@ -107,7 +109,7 @@ public class MoneyWiseRegionTable
                .setOnCommit((r, v) -> updateField(Region::setName, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(Region.FIELD_DESC)
+        myTable.declareStringColumn(MoneyWiseRegionDataId.DESC)
                .setValidator(this::isValidDesc)
                .setCellValueFactory(Region::getDesc)
                .setEditable(true)
@@ -116,7 +118,7 @@ public class MoneyWiseRegionTable
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Region.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
