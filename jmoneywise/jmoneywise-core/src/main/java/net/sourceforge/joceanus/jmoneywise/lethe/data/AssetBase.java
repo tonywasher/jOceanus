@@ -89,12 +89,12 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
     /**
      * CloseDate Field Id.
      */
-    private static final MetisLetheField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_CLOSEDATE.getValue());
+    public static final MetisLetheField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_CLOSEDATE.getValue());
 
     /**
      * firstEvent Field Id.
      */
-    private static final MetisLetheField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_FIRSTEVENT.getValue());
+    public static final MetisLetheField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_FIRSTEVENT.getValue());
 
     /**
      * lastEvent Field Id.
@@ -104,7 +104,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
     /**
      * isRelevant Field Id.
      */
-    private static final MetisLetheField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_RELEVANT.getValue());
+    public static final MetisLetheField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_RELEVANT.getValue());
 
     /**
      * Bad category error.
