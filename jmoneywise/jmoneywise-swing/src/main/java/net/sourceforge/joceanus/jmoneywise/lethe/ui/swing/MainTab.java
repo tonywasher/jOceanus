@@ -205,6 +205,7 @@ public class MainTab
         theSpotPrices.getEventRegistrar().addEventListener(e -> setVisibility());
         theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
         setChildListeners(theRegister.getEventRegistrar());
+        setChildListeners(theNewRegister.getEventRegistrar());
         setChildListeners(theMaint.getEventRegistrar());
 
         /* Create the aboutBox */

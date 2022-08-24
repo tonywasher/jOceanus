@@ -56,17 +56,17 @@ public enum MoneyWiseCategoryDataId
     /**
      * DepositCategoryType.
      */
-    DEPOSITCATTYPE(MoneyWiseDataType.TRANSTYPE, DepositCategory.FIELD_CATTYPE),
+    DEPOSITCATTYPE(MoneyWiseDataType.DEPOSITTYPE, DepositCategory.FIELD_CATTYPE),
 
     /**
      * CashCategoryType.
      */
-    CASHCATTYPE(MoneyWiseDataType.TRANSTYPE, CashCategory.FIELD_CATTYPE),
+    CASHCATTYPE(MoneyWiseDataType.CASHTYPE, CashCategory.FIELD_CATTYPE),
 
     /**
      * LoanCategoryType.
      */
-    LOANCATTYPE(MoneyWiseDataType.TRANSTYPE, LoanCategory.FIELD_CATTYPE),
+    LOANCATTYPE(MoneyWiseDataType.LOANTYPE, LoanCategory.FIELD_CATTYPE),
 
     /**
      * TransactionCategoryType.
