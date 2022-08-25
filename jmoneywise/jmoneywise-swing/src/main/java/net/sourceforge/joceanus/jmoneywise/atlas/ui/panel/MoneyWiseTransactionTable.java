@@ -408,6 +408,7 @@ public class MoneyWiseTransactionTable
         theNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
         theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleFilterSelection());
+        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SAVETOFILE, e -> writeCSVToFile(pView.getGuiFactory()));
         theActiveTran.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
 
         /* Hide the action buttons initially */
@@ -567,7 +568,7 @@ public class MoneyWiseTransactionTable
      * Select Statement.
      * @param pSelect the selection
      */
-    protected void selectStatement(final StatementSelect pSelect) {
+    void selectStatement(final StatementSelect pSelect) {
         /* Update selection */
         theSelect.selectStatement(pSelect);
 
@@ -604,7 +605,7 @@ public class MoneyWiseTransactionTable
     protected void refreshData() {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("StatementX");
+        myTask = myTask.startTask("Statement");
 
         /* Update the selection */
         theSelect.refreshData();
@@ -1093,6 +1094,14 @@ public class MoneyWiseTransactionTable
         @Override
         public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
+        }
+
+        /**
+         * Select Statement.
+         * @param pSelect the selection
+         */
+        public void selectStatement(final StatementSelect pSelect) {
+            theTable.selectStatement(pSelect);
         }
 
         /**

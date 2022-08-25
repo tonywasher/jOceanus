@@ -224,6 +224,12 @@ public interface TethysUITableManager<C, R>
     Iterator<R> viewIterator();
 
     /**
+     * Obtain an iterator over the column ids.
+     * @return the iterator.
+     */
+    Iterator<C> columnIterator();
+
+    /**
      * Obtain the column for the id.
      * @param pId the id of the column
      * @return the table column

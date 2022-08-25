@@ -97,12 +97,7 @@ public class MainTab
     /**
      * The register panel.
      */
-    private TransactionTable theRegister;
-
-    /**
-     * The new register panel.
-     */
-    private MoneyWiseTransactionPanel theNewRegister;
+    private MoneyWiseTransactionPanel theRegister;
 
     /**
      * The SpotPricesPanel.
@@ -168,13 +163,8 @@ public class MainTab
 
         /* Create the Register Tab */
         myTask.startTask("Register");
-        theRegister = new TransactionTable(theView);
+        theRegister = new MoneyWiseTransactionPanel(theView);
         theTabs.addTabItem(TITLE_REGISTER, theRegister);
-
-        /* Create the NewRegister Tab */
-        myTask.startTask("newRegister");
-        theNewRegister = new MoneyWiseTransactionPanel(theView);
-        theTabs.addTabItem(TITLE_REGISTER + "X", theNewRegister);
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
@@ -205,7 +195,6 @@ public class MainTab
         theSpotPrices.getEventRegistrar().addEventListener(e -> setVisibility());
         theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
         setChildListeners(theRegister.getEventRegistrar());
-        setChildListeners(theNewRegister.getEventRegistrar());
         setChildListeners(theMaint.getEventRegistrar());
 
         /* Create the aboutBox */

@@ -222,15 +222,15 @@ public abstract class TethysUICoreTableColumn<T, C, R>
         return this;
     }
 
-    /**
-     * Set cell value Factory.
-     *
-     * @param pFactory the cell factory
-     * @return the column
-     */
+    @Override
     public TethysUICoreTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
         theValueFactory = pFactory;
         return this;
+    }
+
+    @Override
+    public T getValueForRow(final R pRow) {
+        return theValueFactory.apply(pRow);
     }
 
     /**

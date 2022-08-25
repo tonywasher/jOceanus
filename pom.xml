@@ -89,21 +89,21 @@
     <CheckStyleVersion>10.3.2</CheckStyleVersion>
     <PMDVersion>6.48.0</PMDVersion>
     <CleanPluginVersion>3.2.0</CleanPluginVersion>
-    <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
-    <InstallPluginVersion>3.0.0</InstallPluginVersion>
-    <SitePluginVersion>4.0.0-M2</SitePluginVersion>
+    <ResourcesPluginVersion>3.3.0</ResourcesPluginVersion>
+    <InstallPluginVersion>3.0.1</InstallPluginVersion>
+    <SitePluginVersion>4.0.0-M3</SitePluginVersion>
     <DeployPluginVersion>3.0.0</DeployPluginVersion>
     <EnforcerPluginVersion>3.1.0</EnforcerPluginVersion>
     <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
     <ShadePluginVersion>3.3.0</ShadePluginVersion>
     <DependencyPluginVersion>3.3.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M7</SurefirePluginVersion>
-    <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
+    <BuildNumberPluginVersion>3.0.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.2.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.2.2</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.4.0</ProjectInfoPluginVersion>
-    <JxrPluginVersion>3.2.0</JxrPluginVersion>
-    <JavaDocPluginVersion>3.4.0</JavaDocPluginVersion>
+    <ProjectInfoPluginVersion>3.4.1</ProjectInfoPluginVersion>
+    <JxrPluginVersion>3.3.0</JxrPluginVersion>
+    <JavaDocPluginVersion>3.4.1</JavaDocPluginVersion>
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
@@ -112,7 +112,7 @@
     <JacocoPluginVersion>0.8.8</JacocoPluginVersion>
     <GPGPluginVersion>3.0.1</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>23.0.0</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.10.0</VersionsPluginVersion>
+    <VersionsPluginVersion>2.11.0</VersionsPluginVersion>
   </properties>
   <build>
     <resources>
