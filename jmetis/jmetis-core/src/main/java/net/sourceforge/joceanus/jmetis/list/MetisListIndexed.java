@@ -60,7 +60,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
     /**
      * The First Id.
      */
-    private static final Integer ID_FIRST = 1;
+    private static final Integer ID_FIRST = 2;
 
     /**
      * The underlying list.
@@ -91,7 +91,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
      * Constructor.
      */
     public MetisListIndexed() {
-        /* Create the list and map map */
+        /* Create the list and map */
         theList = new ArrayList<>();
         theIdMap = new HashMap<>();
     }

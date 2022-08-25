@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -116,11 +117,6 @@ public class MoneyWiseTransactionTable
     private final TransactionBuilder theBuilder;
 
     /**
-     * The Data View.
-     */
-    private final MoneyWiseView theView;
-
-    /**
      * The UpdateSet.
      */
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
@@ -167,7 +163,6 @@ public class MoneyWiseTransactionTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.TRANSACTION);
 
         /* store parameters */
-        theView = pView;
         theUpdateSet = pUpdateSet;
         theError = pError;
 
@@ -196,21 +191,21 @@ public class MoneyWiseTransactionTable
         /* Create the builder */
         theBuilder = new TransactionBuilder(getUpdateSet());
 
-        /* Create a tag panel */
+        /* Create a transaction panel */
         theActiveTran = new TransactionPanel(myGuiFactory, myFieldMgr, pUpdateSet, theBuilder, theSelect, pError);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */
         myTable.setDisabled(Transaction::isDisabled)
                .setComparator(Transaction::compareTo)
-               .setOnSelect(theActiveTran::setItem);
+               .setOnSelect(this::selectItem);
 
         /* Create the date column */
         myTable.declareDateColumn(MoneyWiseTransDataId.DATE)
                .setDateConfigurator((r, c) -> handleDateEvent(c))
-               .setCellValueFactory(Transaction::getDate)
+               .setCellValueFactory(this::getFilteredDate)
                .setEditable(true)
-               .setCellEditable(r -> !r.isReconciled())
+               .setCellEditable(r -> !r.isHeader() && !r.isReconciled())
                .setColumnWidth(WIDTH_DATE)
                .setOnCommit((r, v) -> updateField(Transaction::setDate, r, v));
 
@@ -219,7 +214,7 @@ public class MoneyWiseTransactionTable
                .setMenuConfigurator(this::buildAccountMenu)
                .setCellValueFactory(Transaction::getAccount)
                .setEditable(true)
-               .setCellEditable(r -> !r.isReconciled())
+               .setCellEditable(r -> !r.isHeader() && !r.isReconciled())
                .setColumnWidth(WIDTH_NAME)
                .setOnCommit((r, v) -> updateField(Transaction::setAccount, r, v));
 
@@ -228,7 +223,7 @@ public class MoneyWiseTransactionTable
                .setMenuConfigurator(this::buildCategoryMenu)
                .setCellValueFactory(Transaction::getCategory)
                .setEditable(true)
-               .setCellEditable(r -> !r.isReconciled())
+               .setCellEditable(r -> !r.isHeader() && !r.isReconciled())
                .setColumnWidth(WIDTH_NAME)
                .setOnCommit((r, v) -> updateField(Transaction::setCategory, r, v));
 
@@ -236,9 +231,9 @@ public class MoneyWiseTransactionTable
         final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
         myTable.declareIconColumn(MoneyWiseTransDataId.DIRECTION, AssetDirection.class)
                .setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)))
-               .setCellValueFactory(Transaction::getDirection)
+               .setCellValueFactory(this::getFilteredDirection)
                .setEditable(true)
-               .setCellEditable(r -> !r.isReconciled() && r.canSwitchDirection())
+               .setCellEditable(r -> !r.isHeader() && !r.isReconciled() && r.canSwitchDirection())
                .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(this::setDirection, r, v));
 
@@ -247,7 +242,7 @@ public class MoneyWiseTransactionTable
                .setMenuConfigurator(this::buildPartnerMenu)
                .setCellValueFactory(Transaction::getPartner)
                .setEditable(true)
-               .setCellEditable(r -> !r.isReconciled())
+               .setCellEditable(r -> !r.isHeader() && !r.isReconciled())
                .setColumnWidth(WIDTH_NAME)
                .setOnCommit((r, v) -> updateField(Transaction::setPartner, r, v));
 
@@ -257,14 +252,15 @@ public class MoneyWiseTransactionTable
                .setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)))
                .setCellValueFactory(Transaction::isReconciled)
                .setEditable(true)
-               .setCellEditable(r -> !r.isLocked())
+               .setCellEditable(r -> !r.isHeader() && !r.isLocked())
                .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(Transaction::setReconciled, r, v));
 
         /* Create the comments column */
         myTable.declareStringColumn(MoneyWiseTransDataId.COMMENTS)
-               .setCellValueFactory(Transaction::getComments)
+               .setCellValueFactory(this::getFilteredComments)
                .setEditable(true)
+               .setCellEditable(r -> !r.isHeader())
                .setColumnWidth(WIDTH_DESC)
                .setOnCommit((r, v) -> updateField(Transaction::setComments, r, v));
 
@@ -398,16 +394,16 @@ public class MoneyWiseTransactionTable
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
-               .setCellValueFactory(r -> r.isReconciled() ? MetisAction.DO : MetisAction.DELETE)
+               .setCellValueFactory(this::getFilteredAction)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                .setEditable(true)
-               .setCellEditable(r -> !r.isReconciled())
+               .setCellEditable(r -> !r.isHeader() && !r.isReconciled())
                .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
-        theView.getEventRegistrar().addEventListener(e -> refreshData());
+        pView.getEventRegistrar().addEventListener(e -> refreshData());
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         theNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
@@ -519,7 +515,52 @@ public class MoneyWiseTransactionTable
      * @return the debit
      */
     private TethysDecimal getFilteredBalance(final Transaction pTrans) {
-        return theFilter.getBalanceForTransaction(pTrans);
+        return pTrans.isHeader() ? theFilter.getStartingBalance() : theFilter.getBalanceForTransaction(pTrans);
+    }
+
+    /**
+     * Obtain date value.
+     * @param pTrans the transaction
+     * @return the date value
+     */
+    private TethysDate getFilteredDate(final Transaction pTrans) {
+        return pTrans.isHeader() ? theRange.getStart() : pTrans.getDate();
+    }
+
+    /**
+     * Obtain date value.
+     * @param pTrans the transaction
+     * @return the date value
+     */
+    private String getFilteredComments(final Transaction pTrans) {
+        return pTrans.isHeader() ? MoneyWiseUIResource.STATEMENT_OPENINGBALANCE.getValue() : pTrans.getComments();
+    }
+
+    /**
+     * Obtain direction value.
+     * @param pTrans the transaction
+     * @return the direction value
+     */
+    private AssetDirection getFilteredDirection(final Transaction pTrans) {
+        return pTrans.isHeader() ? null : pTrans.getDirection();
+    }
+
+    /**
+     * Obtain date value.
+     * @param pTrans the transaction
+     * @return the date value
+     */
+    private MetisAction getFilteredAction(final Transaction pTrans) {
+        return (pTrans.isHeader() || pTrans.isReconciled()) ? MetisAction.DO : MetisAction.DELETE;
+    }
+
+    /**
+     * Select item.
+     * @param pTrans the transaction
+     */
+    private void selectItem(final Transaction pTrans) {
+        final Transaction myTrans = pTrans != null && !pTrans.isHeader() ? pTrans : null;
+        theActiveTran.setItem(myTrans);
     }
 
     /**
@@ -610,6 +651,11 @@ public class MoneyWiseTransactionTable
             return false;
         }
 
+        /* Handle header visibility */
+        if (pRow.isHeader()) {
+            return AnalysisColumnSet.BALANCE.equals(theColumnSet);
+        }
+
         /* Return visibility of row */
         return super.isFiltered(pRow) && !theFilter.filterTransaction(pRow);
     }
@@ -641,7 +687,15 @@ public class MoneyWiseTransactionTable
         theTransactions = theAnalysisView.getTransactions();
         theRange = theAnalysisView.getRange();
 
+        /* If we have data */
         if (theTransactions != null) {
+            Transaction myHeader = theTransactions.findItemById(AnalysisHeader.ID_VALUE);
+            if (myHeader == null) {
+                /* Create the header */
+                myHeader = new AnalysisHeader(theTransactions);
+                theTransactions.add(myHeader);
+            }
+
             /* Notify panel of refresh */
             theActiveTran.refreshData();
             theActiveTran.updateEditors(theRange);
@@ -895,6 +949,28 @@ public class MoneyWiseTransactionTable
         myTable.getColumn(MoneyWiseTransDataId.RETURNEDCASHACCOUNT).setVisible(false);
         myTable.getColumn(MoneyWiseTransDataId.RETURNEDCASH).setVisible(false);
         myTable.getColumn(MoneyWiseTransDataId.QUALIFYYEARS).setVisible(false);
+    }
+
+
+    /**
+     * Analysis Header class.
+     */
+    private static class AnalysisHeader
+            extends Transaction {
+        /**
+         * Analysis Header Id.
+         */
+        static final int ID_VALUE = 1;
+
+        /**
+         * Constructor.
+         * @param pList the Transaction list
+         */
+        protected AnalysisHeader(final TransactionList pList) {
+            super(pList);
+            setHeader(true);
+            setId(ID_VALUE);
+        }
     }
 
     /**

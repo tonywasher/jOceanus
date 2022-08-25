@@ -447,7 +447,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     private boolean isFieldChanged(final PrometheusDataFieldId pField,
                                    final T pItem) {
         final MetisLetheField myField = pField.getLetheField();
-        return myField != null && pItem.fieldChanged(myField).isDifferent();
+        return myField != null && !pItem.isHeader() && pItem.fieldChanged(myField).isDifferent();
     }
 
     /**
