@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -30,6 +30,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
@@ -66,7 +68,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
     /**
      * The closed column.
      */
-    private TethysTableColumn<Boolean, MetisLetheField, T> theClosedColumn;
+    private TethysTableColumn<Boolean, PrometheusDataFieldId, T> theClosedColumn;
 
     /**
      * Are we showing closed accounts?
@@ -91,7 +93,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
 
         /* Access Gui factory and table */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -112,7 +114,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                .setComparator(AssetBase::compareTo);
 
         /* Create the name column */
-        myTable.declareStringColumn(AssetBase.FIELD_NAME)
+        myTable.declareStringColumn(MoneyWiseAssetDataId.NAME)
                 .setValidator(this::isValidName)
                 .setCellValueFactory(AssetBase::getName)
                 .setEditable(true)
@@ -120,7 +122,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setOnCommit((r, v) -> updateField(AssetBase::setName, r, v));
 
         /* Create the Category column */
-        myTable.declareScrollColumn(AssetBase.FIELD_CATEGORY, pCategoryClass)
+        myTable.declareScrollColumn(MoneyWiseAssetDataId.CATEGORY, pCategoryClass)
                 .setMenuConfigurator(this::buildCategoryMenu)
                 .setCellValueFactory(AssetBase::getCategory)
                 .setEditable(true)
@@ -129,7 +131,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setOnCommit((r, v) -> updateField(AssetBase::setCategory, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(AssetBase.FIELD_DESC)
+        myTable.declareStringColumn(MoneyWiseAssetDataId.DESC)
                 .setValidator(this::isValidDesc)
                 .setCellValueFactory(AssetBase::getDesc)
                 .setEditable(true)
@@ -151,11 +153,11 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                                final boolean pCurrency,
                                final boolean pEvent) {
         /* Access Table */
-        final TethysTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create the parent column */
         if (pParent) {
-            myTable.declareScrollColumn(AssetBase.FIELD_PARENT, Payee.class)
+            myTable.declareScrollColumn(MoneyWiseAssetDataId.PARENT, Payee.class)
                     .setMenuConfigurator(this::buildParentMenu)
                     .setCellValueFactory(AssetBase::getParent)
                     .setEditable(true)
@@ -166,7 +168,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
 
         /* Create the currency column */
         if (pCurrency) {
-            myTable.declareScrollColumn(AssetBase.FIELD_CURRENCY, AssetCurrency.class)
+            myTable.declareScrollColumn(MoneyWiseAssetDataId.CURRENCY, AssetCurrency.class)
                     .setMenuConfigurator(this::buildCurrencyMenu)
                     .setCellValueFactory(AssetBase::getAssetCurrency)
                     .setEditable(true)
@@ -177,8 +179,8 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
 
         /* Create the Closed column */
         final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, T> myClosedColumn
-                = myTable.declareIconColumn(AssetBase.FIELD_CLOSED, Boolean.class)
+        final TethysTableColumn<Boolean, PrometheusDataFieldId, T> myClosedColumn
+                = myTable.declareIconColumn(MoneyWiseAssetDataId.CLOSED, Boolean.class)
                 .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
                 .setCellValueFactory(AssetBase::isClosed)
                 .setEditable(true)
@@ -190,7 +192,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(AssetBase.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -201,7 +203,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
 
         /* Create the latest event column */
         if (pEvent) {
-            myTable.declareDateColumn(AssetBase.FIELD_EVTLAST)
+            myTable.declareDateColumn(MoneyWiseAssetDataId.EVTLAST)
                     .setCellValueFactory(this::getLatestTranDate)
                     .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
                     .setEditable(false);
@@ -220,7 +222,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * Declare the closed column.
      * @param pColumn the column
      */
-    protected void declareClosedColumn(final TethysTableColumn<Boolean, MetisLetheField, T> pColumn) {
+    protected void declareClosedColumn(final TethysTableColumn<Boolean, PrometheusDataFieldId, T> pColumn) {
         theClosedColumn = pColumn;
     }
 

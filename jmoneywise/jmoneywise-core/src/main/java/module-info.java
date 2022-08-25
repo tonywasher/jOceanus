@@ -30,6 +30,7 @@ module net.sourceforge.joceanus.jmoneywise.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jmoneywise;
+    exports net.sourceforge.joceanus.jmoneywise.atlas.data.ids;
     exports net.sourceforge.joceanus.jmoneywise.help;
     exports net.sourceforge.joceanus.jmoneywise.lethe.analysis;
     exports net.sourceforge.joceanus.jmoneywise.lethe.data;

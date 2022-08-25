@@ -20,17 +20,19 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseRateDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -57,7 +59,7 @@ public class MoneyWiseDepositRateTable
     /**
      * The active column.
      */
-    private final TethysTableColumn<MetisAction, MetisLetheField, DepositRate> theActiveColumn;
+    private final TethysTableColumn<MetisAction, PrometheusDataFieldId, DepositRate> theActiveColumn;
 
     /**
      * Constructor.
@@ -72,28 +74,28 @@ public class MoneyWiseDepositRateTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITRATE);
 
         /* Access Gui factory */
-        final TethysTableManager<MetisLetheField, DepositRate> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, DepositRate> myTable = getTable();
 
         /* Set table configuration */
         myTable.setDisabled(DepositRate::isDisabled)
                .setComparator(DepositRate::compareTo);
 
         /* Create the rate column */
-        myTable.declareRateColumn(DepositRate.FIELD_RATE)
+        myTable.declareRateColumn(MoneyWiseRateDataId.RATE)
                .setCellValueFactory(DepositRate::getRate)
                .setEditable(true)
                .setColumnWidth(WIDTH_RATE)
                .setOnCommit((r, v) -> updateField(DepositRate::setRate, r, v));
 
         /* Create the bonus column */
-        myTable.declareRateColumn(DepositRate.FIELD_BONUS)
+        myTable.declareRateColumn(MoneyWiseRateDataId.BONUS)
                .setCellValueFactory(DepositRate::getBonus)
                .setEditable(true)
                .setColumnWidth(WIDTH_RATE)
                .setOnCommit((r, v) -> updateField(DepositRate::setBonus, r, v));
 
         /* Create the endDate column */
-        myTable.declareDateColumn(DepositRate.FIELD_ENDDATE)
+        myTable.declareDateColumn(MoneyWiseRateDataId.ENDDATE)
                 .setCellValueFactory(DepositRate::getEndDate)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_DATE)
@@ -101,7 +103,7 @@ public class MoneyWiseDepositRateTable
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theActiveColumn = myTable.declareIconColumn(DepositRate.FIELD_TOUCH, MetisAction.class)
+        theActiveColumn = myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

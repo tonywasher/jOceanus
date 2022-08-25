@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -25,6 +24,8 @@ import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
@@ -62,7 +63,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * The enabled column.
      */
-    private final TethysTableColumn<Boolean, MetisLetheField, T> theEnabledColumn;
+    private final TethysTableColumn<Boolean, PrometheusDataFieldId, T> theEnabledColumn;
 
     /**
      * The new button.
@@ -98,7 +99,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Access the gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
         theNewButton = myGuiFactory.newScrollButton();
@@ -109,13 +110,13 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setComparator(StaticData::compareTo);
 
         /* Create the class column */
-        myTable.declareStringColumn(StaticData.FIELD_CLASS)
+        myTable.declareStringColumn(PrometheusDataId.CLASS)
                .setCellValueFactory(r -> r.getStaticClass().toString())
                .setEditable(false)
                .setColumnWidth(WIDTH_CLASS);
 
         /* Create the name column */
-        myTable.declareStringColumn(StaticData.FIELD_NAME)
+        myTable.declareStringColumn(PrometheusDataId.NAME)
                .setValidator(this::isValidName)
                .setCellValueFactory(StaticData::getName)
                .setEditable(true)
@@ -123,7 +124,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setOnCommit((r, v) -> updateField(StaticData::setName, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(StaticData.FIELD_DESC)
+        myTable.declareStringColumn(PrometheusDataId.DESC)
                .setValidator(this::isValidDesc)
                .setCellValueFactory(StaticData::getDesc)
                .setEditable(true)
@@ -132,7 +133,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Create the enabled column */
         final TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
-        theEnabledColumn = myTable.declareIconColumn(StaticData.FIELD_ENABLED, Boolean.class)
+        theEnabledColumn = myTable.declareIconColumn(PrometheusDataId.ENABLED, Boolean.class)
                .setIconMapSet(r -> myEnabledMapSet)
                .setCellValueFactory(StaticData::getEnabled)
                .setVisible(false)
@@ -143,7 +144,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(StaticData.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

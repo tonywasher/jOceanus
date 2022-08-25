@@ -274,6 +274,6 @@ public enum MoneyWiseDataType
 
     @Override
     public String getId() {
-        return getFieldName();
+        return getItemName();
     }
 }

@@ -123,6 +123,14 @@ public interface TethysUITableColumn<T, C, R>
     TethysUITableColumn<T, C, R> setCellValueFactory(Function<R, T> pFactory);
 
     /**
+     * Obtain value for row.
+     *
+     * @param pRow the row
+     * @return the value
+     */
+    T getValueForRow(R pRow);
+
+    /**
      * Set the cell-editable tester.
      * @param pEditable the editable tester
      * @return the column

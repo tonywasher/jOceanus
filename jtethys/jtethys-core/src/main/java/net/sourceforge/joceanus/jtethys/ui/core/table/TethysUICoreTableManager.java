@@ -329,6 +329,11 @@ public abstract class TethysUICoreTableManager<C, R>
     }
 
     @Override
+    public Iterator<C> columnIterator() {
+        return theColumnMap.keySet().iterator();
+    }
+
+    @Override
     public TethysUITableColumn<?, C, R> getColumn(final C pId) {
         return theColumnMap.get(pId);
     }

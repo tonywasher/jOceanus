@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
@@ -82,7 +82,7 @@ public class MoneyWiseCashTable
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, Cash> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, Cash> myTable = getTable();
 
         /* Create a Cash panel */
         theActiveCash = new CashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);

@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
@@ -62,7 +62,7 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, T> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();

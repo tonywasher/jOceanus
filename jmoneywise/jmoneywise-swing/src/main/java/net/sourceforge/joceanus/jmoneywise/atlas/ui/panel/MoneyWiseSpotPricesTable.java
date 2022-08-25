@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWisePriceDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
@@ -92,7 +94,7 @@ public class MoneyWiseSpotPricesTable
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, SpotSecurityPrice> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, SpotSecurityPrice> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -106,13 +108,13 @@ public class MoneyWiseSpotPricesTable
                .setComparator(SpotSecurityPrice::compareTo);
 
         /* Create the asset column */
-        myTable.declareStringColumn(SecurityPrice.FIELD_SECURITY)
+        myTable.declareStringColumn(MoneyWisePriceDataId.SECURITY)
                .setCellValueFactory(SpotSecurityPrice::getSecurityName)
                .setEditable(false)
                .setColumnWidth(WIDTH_NAME);
 
         /* Create the price column */
-        myTable.declarePriceColumn(SecurityPrice.FIELD_PRICE)
+        myTable.declarePriceColumn(MoneyWisePriceDataId.PRICE)
                .setCellValueFactory(SecurityPrice::getPrice)
                .setEditable(true)
                .setCellEditable(r -> !r.isDisabled())
@@ -120,20 +122,20 @@ public class MoneyWiseSpotPricesTable
                .setOnCommit((r, v) -> updateField(SpotSecurityPrice::setPrice, r, v));
 
         /* Create the previous price column */
-        myTable.declarePriceColumn(SpotSecurityPrice.FIELD_PREVPRICE)
+        myTable.declarePriceColumn(MoneyWisePriceDataId.PREVPRICE)
                .setCellValueFactory(SpotSecurityPrice::getPrevPrice)
                .setEditable(false)
                .setColumnWidth(WIDTH_PRICE);
 
         /* Create the previous date column */
-        myTable.declareDateColumn(SpotSecurityPrice.FIELD_PREVDATE)
+        myTable.declareDateColumn(MoneyWisePriceDataId.PREVDATE)
                .setCellValueFactory(SpotSecurityPrice::getPrevDate)
                .setEditable(false)
                .setColumnWidth(WIDTH_DATE);
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(SecurityPrice.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.getPrice() != null && !r.isDisabled() ? MetisAction.DELETE : MetisAction.DO)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

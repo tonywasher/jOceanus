@@ -997,7 +997,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDepositType(final DepositCategoryClass pValue) {
+    static TethysBundleId getKeyForDepositType(final DepositCategoryClass pValue) {
         return TethysBundleLoader.getKeyForEnum(DEPOSIT_MAP, pValue);
     }
 
@@ -1019,7 +1019,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForCashType(final CashCategoryClass pValue) {
+    static TethysBundleId getKeyForCashType(final CashCategoryClass pValue) {
         return TethysBundleLoader.getKeyForEnum(CASH_MAP, pValue);
     }
 
@@ -1042,7 +1042,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForLoanType(final LoanCategoryClass pValue) {
+    static TethysBundleId getKeyForLoanType(final LoanCategoryClass pValue) {
         return TethysBundleLoader.getKeyForEnum(LOAN_MAP, pValue);
     }
 
@@ -1065,7 +1065,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForPortfolioType(final PortfolioTypeClass pValue) {
+    static TethysBundleId getKeyForPortfolioType(final PortfolioTypeClass pValue) {
         return TethysBundleLoader.getKeyForEnum(PORTFOLIO_MAP, pValue);
     }
 
@@ -1096,7 +1096,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForSecurityType(final SecurityTypeClass pValue) {
+    static TethysBundleId getKeyForSecurityType(final SecurityTypeClass pValue) {
         return TethysBundleLoader.getKeyForEnum(SECURITY_MAP, pValue);
     }
 
@@ -1123,7 +1123,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForPayeeType(final PayeeTypeClass pValue) {
+    static TethysBundleId getKeyForPayeeType(final PayeeTypeClass pValue) {
         return TethysBundleLoader.getKeyForEnum(PAYEE_MAP, pValue);
     }
 
@@ -1207,7 +1207,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForTransType(final TransactionCategoryClass pValue) {
+    static TethysBundleId getKeyForTransType(final TransactionCategoryClass pValue) {
         return TethysBundleLoader.getKeyForEnum(TRANSACTION_MAP, pValue);
     }
 
@@ -1244,7 +1244,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForTaxBasis(final TaxBasisClass pValue) {
+    static TethysBundleId getKeyForTaxBasis(final TaxBasisClass pValue) {
         return TethysBundleLoader.getKeyForEnum(TAXBASIS_MAP, pValue);
     }
 
@@ -1278,7 +1278,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForFrequency(final FrequencyClass pValue) {
+    static TethysBundleId getKeyForFrequency(final FrequencyClass pValue) {
         return TethysBundleLoader.getKeyForEnum(FREQUENCY_MAP, pValue);
     }
 
@@ -1313,8 +1313,8 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForAccountInfo(final AccountInfoClass pValue) {
-        return TethysBundleLoader.getKeyForEnum(ACCOUNTINFO_MAP, pValue);
+    public static StaticDataResource getKeyForAccountInfo(final AccountInfoClass pValue) {
+        return (StaticDataResource) TethysBundleLoader.getKeyForEnum(ACCOUNTINFO_MAP, pValue);
     }
 
     /**
@@ -1350,7 +1350,7 @@ public enum StaticDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForTransInfo(final TransactionInfoClass pValue) {
-        return TethysBundleLoader.getKeyForEnum(TRANSINFO_MAP, pValue);
+    public static StaticDataResource getKeyForTransInfo(final TransactionInfoClass pValue) {
+        return (StaticDataResource) TethysBundleLoader.getKeyForEnum(TRANSINFO_MAP, pValue);
     }
 }

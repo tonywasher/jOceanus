@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseRateDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotRatesSelect;
@@ -32,6 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
@@ -85,7 +87,7 @@ public class MoneyWiseSpotRatesTable
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<MetisLetheField, SpotExchangeRate> myTable = getTable();
+        final TethysTableManager<PrometheusDataFieldId, SpotExchangeRate> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -99,20 +101,20 @@ public class MoneyWiseSpotRatesTable
                .setComparator(SpotExchangeRate::compareTo);
 
         /* Create the description column */
-        myTable.declareStringColumn(SpotExchangeRate.FIELD_FROM)
+        myTable.declareStringColumn(MoneyWiseRateDataId.FROM)
                 .setCellValueFactory(r -> r.getToCurrency().getDesc())
                 .setEditable(false)
                 .setColumnWidth(WIDTH_NAME);
 
         /* Create the symbol column */
-        myTable.declareStringColumn(SpotExchangeRate.FIELD_TO)
+        myTable.declareStringColumn(MoneyWiseRateDataId.TO)
                 .setCellValueFactory(r -> r.getToCurrency().getName())
                 .setName(MoneyWiseUIResource.SPOTRATE_COLUMN_SYMBOL.getValue())
                 .setEditable(false)
                 .setColumnWidth(WIDTH_NAME);
 
         /* Create the price column */
-        myTable.declareRatioColumn(SpotExchangeRate.FIELD_RATE)
+        myTable.declareRatioColumn(MoneyWiseRateDataId.XCHGRATE)
                .setCellValueFactory(SpotExchangeRate::getExchangeRate)
                .setEditable(true)
                .setCellEditable(r -> !r.isDisabled())
@@ -120,20 +122,20 @@ public class MoneyWiseSpotRatesTable
                .setOnCommit((r, v) -> updateField(SpotExchangeRate::setExchangeRate, r, v));
 
         /* Create the previous ratio column */
-        myTable.declareRatioColumn(SpotExchangeRate.FIELD_PREVRATE)
+        myTable.declareRatioColumn(MoneyWiseRateDataId.PREVRATE)
                .setCellValueFactory(SpotExchangeRate::getPrevRate)
                .setEditable(false)
                .setColumnWidth(WIDTH_PRICE);
 
         /* Create the previous date column */
-        myTable.declareDateColumn(SpotExchangeRate.FIELD_PREVDATE)
+        myTable.declareDateColumn(MoneyWiseRateDataId.PREVDATE)
                .setCellValueFactory(SpotExchangeRate::getPrevDate)
                .setEditable(false)
                .setColumnWidth(WIDTH_DATE);
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(SpotExchangeRate.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.getExchangeRate() != null && !r.isDisabled() ? MetisAction.DELETE : MetisAction.DO)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

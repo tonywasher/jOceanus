@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jtethys.ui;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -141,7 +141,7 @@ public abstract class TethysTableManager<C, R>
      */
     protected TethysTableManager(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
-        theColumnMap = new HashMap<>();
+        theColumnMap = new LinkedHashMap<>();
         isEditable = true;
     }
 
@@ -461,6 +461,14 @@ public abstract class TethysTableManager<C, R>
     public abstract Iterator<R> viewIterator();
 
     /**
+     * Obtain an iterator over the column ids.
+     * @return the iterator.
+     */
+    public Iterator<C> columnIterator() {
+        return theColumnMap.keySet().iterator();
+    }
+
+    /**
      * Obtain the column for the id.
      * @param pId the id of the column
      * @return the table column
@@ -727,6 +735,14 @@ public abstract class TethysTableManager<C, R>
          * @return the column
          */
         TethysTableColumn<T, C, R> setCellValueFactory(Function<R, T> pFactory);
+
+        /**
+         * Obtain value for row.
+         *
+         * @param pRow the row
+         * @return the value
+         */
+        T getValueForRow(R pRow);
 
         /**
          * Set the cell-editable tester.
@@ -1297,6 +1313,11 @@ public abstract class TethysTableManager<C, R>
         public TethysTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
             theValueFactory = pFactory;
             return this;
+        }
+
+        @Override
+        public T getValueForRow(final R pRow) {
+            return theValueFactory.apply(pRow);
         }
 
         /**

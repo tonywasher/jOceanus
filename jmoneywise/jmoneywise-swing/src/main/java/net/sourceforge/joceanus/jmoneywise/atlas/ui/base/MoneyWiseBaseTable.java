@@ -17,6 +17,10 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.awt.BorderLayout;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -27,20 +31,26 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
@@ -50,6 +60,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
  */
 public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+    /**
+     * The logger.
+     */
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseBaseTable.class);
+
     /**
      * Panel height.
      */
@@ -153,7 +168,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     /**
      * The underlying table.
      */
-    private final TethysTableManager<MetisLetheField, T> theTable;
+    private final TethysTableManager<PrometheusDataFieldId, T> theTable;
 
     /**
      * is the table editing?
@@ -265,7 +280,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the table.
      * @return the table
      */
-    protected TethysTableManager<MetisLetheField, T> getTable() {
+    protected TethysTableManager<PrometheusDataFieldId, T> getTable() {
         return theTable;
     }
 
@@ -430,9 +445,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pItem  the item
      * @return true/false
      */
-    private boolean isFieldInError(final MetisLetheField pField,
+    private boolean isFieldInError(final PrometheusDataFieldId pField,
                                    final T pItem) {
-        return pItem.getFieldErrors(pField) != null;
+        final MetisLetheField myField = pField.getLetheField();
+        return myField != null && pItem.getFieldErrors(myField) != null;
     }
 
     /**
@@ -442,9 +458,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pItem  the item
      * @return true/false
      */
-    private boolean isFieldChanged(final MetisLetheField pField,
+    private boolean isFieldChanged(final PrometheusDataFieldId pField,
                                    final T pItem) {
-        return pItem.fieldChanged(pField).isDifferent();
+        final MetisLetheField myField = pField.getLetheField();
+        return myField != null && !pItem.isHeader() && pItem.fieldChanged(myField).isDifferent();
     }
 
     /**
@@ -486,8 +503,8 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
 
             /* Ignore self and deleted */
             if (!(myValue instanceof MetisDataNamedItem)
-                || myValue.isDeleted()
-                || myValue.equals(pRow)) {
+                    || myValue.isDeleted()
+                    || myValue.equals(pRow)) {
                 continue;
             }
 
@@ -544,5 +561,98 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         isEditing = pState;
         notifyChanges();
     }
-}
 
+    /**
+     * build CSV representation of Model.
+     * @return the CSV text
+     */
+    private String createCSV() {
+        /* Create the stringBuilder */
+        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Loop through the columns */
+        Iterator<PrometheusDataFieldId> myColIterator = myTable.columnIterator();
+        boolean bDoneFirst = false;
+        while (myColIterator.hasNext()) {
+            final PrometheusDataFieldId myColId = myColIterator.next();
+            final TethysTableColumn<?, PrometheusDataFieldId, T> myCol = myTable.getColumn(myColId);
+
+            /* Add the column name */
+            if (bDoneFirst) {
+                myBuilder.append(",");
+            }
+            bDoneFirst = true;
+            myBuilder.append(myCol.getName());
+        }
+        myBuilder.append("\n");
+
+        /* Loop through the rows */
+        final Iterator<T> myRowIterator = myTable.viewIterator();
+        while (myRowIterator.hasNext()) {
+            final T myRow = myRowIterator.next();
+
+            /* Loop through the columns */
+            myColIterator = myTable.columnIterator();
+            bDoneFirst = false;
+            while (myColIterator.hasNext()) {
+                final PrometheusDataFieldId myColId = myColIterator.next();
+                final TethysTableColumn<?, PrometheusDataFieldId, T> myCol = myTable.getColumn(myColId);
+
+                /* Output the column value */
+                final Object myVar = myCol.getValueForRow(myRow);
+                if (bDoneFirst) {
+                    myBuilder.append(",");
+                }
+                bDoneFirst = true;
+                if (myVar != null) {
+                    myBuilder.append(myVar);
+                }
+            }
+            myBuilder.append("\n");
+        }
+
+        /* Return the CSV file */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Write CSV to file.
+     * @param pFactory the gui factory
+     */
+    public void writeCSVToFile(final TethysGuiFactory pFactory) {
+        try {
+            /* Create a file selector */
+            final TethysFileSelector mySelector = pFactory.newFileSelector();
+
+            /* Select File */
+            mySelector.setUseSave(true);
+            final File myFile = mySelector.selectFile();
+            if (myFile != null) {
+                final String myCSV = createCSV();
+                writeToFile(myFile, myCSV);
+            }
+
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to write to file", e);
+        }
+    }
+
+    /**
+     * Write CSV to file.
+     * @param pFile the file to write to
+     * @param pData the data to write
+     * @throws OceanusException on error
+     */
+    private static void writeToFile(final File pFile,
+                                    final String pData) throws OceanusException {
+        /* Protect the writeToFile */
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8)) {
+            /* Write data to file */
+            myWriter.print(pData);
+
+        } catch (IOException e) {
+            throw new TethysDataException("Failed to output CSV", e);
+        }
+    }
+}
