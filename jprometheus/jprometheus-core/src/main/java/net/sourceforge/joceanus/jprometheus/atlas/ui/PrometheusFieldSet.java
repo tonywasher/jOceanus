@@ -20,14 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldEvent;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
@@ -37,6 +38,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
  */
 public class PrometheusFieldSet<T, F>
         implements TethysEventProvider<TethysXUIEvent> {
+    /**
+     * The gui factory.
+     */
+    private final TethysGuiFactory theFactory;
+
     /**
      * The Event Manager.
      */
@@ -50,7 +56,22 @@ public class PrometheusFieldSet<T, F>
     /**
      * The list of panels.
      */
-    private final List<PrometheusFieldSetPanel<T, F>> thePanelList;
+    private final List<PrometheusFieldSetPanel<T, F>> thePanels;
+
+    /**
+     * The panel.
+     */
+    private TethysGridPaneManager thePanel;
+
+    /**
+     * The currently active panel.
+     */
+    private PrometheusFieldSetPanel<T, F> theCurrentPanel;
+
+    /**
+     * The tabPanel.
+     */
+    private PrometheusFieldSetTabs theTabs;
 
     /**
      * Is the data being refreshed?
@@ -59,16 +80,36 @@ public class PrometheusFieldSet<T, F>
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      */
-    public PrometheusFieldSet() {
+    public PrometheusFieldSet(final TethysGuiFactory pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+
         /* Create event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create maps and lists */
         theFieldMap = new HashMap<>();
-        thePanelList = new ArrayList<>();
+        thePanels = new ArrayList<>();
+
+        /* Create the initial panel */
+        theCurrentPanel = new PrometheusFieldSetPanel<>(pFactory, this);
+        thePanels.add(theCurrentPanel);
+
+        /* Create the main panel */
+        thePanel = theFactory.newGridPane();
+        thePanel.addCell(theCurrentPanel);
+        thePanel.allowCellGrowth(theCurrentPanel);
     }
 
+    /**
+     * Obtain the component.
+     * @return the component
+     */
+    TethysComponent getComponent() {
+        return thePanel;
+    }
 
     @Override
     public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
@@ -76,11 +117,34 @@ public class PrometheusFieldSet<T, F>
     }
 
     /**
-     * Add a fieldSet panel.
-     * @param pPanel the fieldSetPanel.
+     * Switch to subsidiary panel.
+     * @param pName the name of the tab.
      */
-    public void addFieldSetPanel(final PrometheusFieldSetPanel<T, F> pPanel) {
-        thePanelList.add(pPanel);
+    public void newPanel(final String pName) {
+        /* If we do not currently have any tabs */
+        if (theTabs == null) {
+            /* Create the tab pane and add to main panel */
+            theTabs = new PrometheusFieldSetTabs(theFactory);
+            thePanel.addCell(theTabs.getComponent());
+            thePanel.allowCellGrowth(theTabs.getComponent());
+        }
+
+        /* Create the new panel and add as tab */
+        theCurrentPanel = new PrometheusFieldSetPanel<>(theFactory, this);
+        thePanels.add(theCurrentPanel);
+        theTabs.addPanel(pName, theCurrentPanel);
+    }
+
+    /**
+     * Add field to current panel.
+     * @param pFieldId the fieldId
+     * @param pField the edit field
+     * @param pValueFactory the valueFactory
+     */
+    public void addField(final F pFieldId,
+                         final TethysDataEditField<?> pField,
+                         final Function<T, Object> pValueFactory) {
+        theCurrentPanel.addField(pFieldId, pField, pValueFactory);
     }
 
     /**
@@ -92,7 +156,7 @@ public class PrometheusFieldSet<T, F>
         isRefreshing = true;
 
         /* Update all the panels */
-        for (PrometheusFieldSetPanel<T, F> myPanel : thePanelList) {
+        for (PrometheusFieldSetPanel<T, F> myPanel : thePanels) {
             myPanel.setItem(pItem);
         }
 
@@ -117,8 +181,14 @@ public class PrometheusFieldSet<T, F>
      */
     public void setFieldVisible(final F pFieldId,
                                 final boolean pVisible) {
+        /* Adjust visibility of field */
         final PrometheusFieldSetPanel<T, F> myPanel = theFieldMap.get(pFieldId);
         myPanel.setVisible(pFieldId, pVisible);
+
+        /* Adjust visibility of tabs if present */
+        if (theTabs != null) {
+            theTabs.adjustVisibilty();
+        }
     }
 
     /**
@@ -128,6 +198,7 @@ public class PrometheusFieldSet<T, F>
      */
     public void setFieldEditable(final F pFieldId,
                                  final boolean pEditable) {
+        /* Adjust edit-ability of field */
         final PrometheusFieldSetPanel<T, F> myPanel = theFieldMap.get(pFieldId);
         myPanel.setEditable(pFieldId, pEditable);
     }
@@ -146,63 +217,6 @@ public class PrometheusFieldSet<T, F>
 
             /* Fire the notification */
             theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, myUpdate);
-        }
-    }
-
-    /**
-     * FieldSetEvent.
-     */
-    public static class PrometheusFieldSetEvent<F> {
-        /**
-         * The field.
-         */
-        private final F theFieldId;
-
-        /**
-         * The new value.
-         */
-        private final Object theValue;
-
-        /**
-         * Constructor.
-         * @param pFieldId the source fieldId
-         * @param pNewValue the new Value
-         */
-        public PrometheusFieldSetEvent(final F pFieldId,
-                                       final Object pNewValue) {
-            theFieldId = pFieldId;
-            theValue = pNewValue;
-        }
-
-        /**
-         * Obtain the source field.
-         * @return the field
-         */
-        public F getFieldId() {
-            return theFieldId;
-        }
-
-        /**
-         * Obtain the value.
-         * @return the value
-         */
-        public Object getValue() {
-            return theValue;
-        }
-
-        /**
-         * Obtain the value as specific type.
-         * @param <T> the value class
-         * @param pClass the required class
-         * @return the value
-         * @throws OceanusException on error
-         */
-        public <T> T getValue(final Class<T> pClass) throws OceanusException {
-            try {
-                return pClass.cast(theValue);
-            } catch (ClassCastException e) {
-                throw new PrometheusDataException("Invalid dataType", e);
-            }
         }
     }
 }

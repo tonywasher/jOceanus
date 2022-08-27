@@ -18,7 +18,7 @@
 package net.sourceforge.joceanus.jprometheus.atlas.ui;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -48,7 +48,7 @@ public class PrometheusFieldSetElement<F, V> {
     /**
      * The element.
      */
-    private final TethysBoxPaneManager theElement;
+    private final TethysBorderPaneManager theElement;
 
     /**
      * Is the panel visible?.
@@ -73,9 +73,9 @@ public class PrometheusFieldSetElement<F, V> {
         theLabel.setAlignment(TethysAlignment.WEST);
 
         /* Create the element */
-        theElement = pFactory.newHBoxPane();
-        theElement.addNode(theLabel);
-        theElement.addNode(theField);
+        theElement = pFactory.newBorderPane();
+        theElement.setWest(theLabel);
+        theElement.setCentre(theField);
         isVisible = true;
     }
 

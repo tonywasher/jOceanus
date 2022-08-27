@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
@@ -31,7 +32,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
  * @param <T> the item type
  * @param <F> the fieldId type.
  */
-public class PrometheusFieldSetPanel<T, F> {
+public class PrometheusFieldSetPanel<T, F>
+    implements TethysComponent {
     /**
      * The gui factory.
      */
@@ -76,12 +78,25 @@ public class PrometheusFieldSetPanel<T, F> {
         theValues = new HashMap<>();
     }
 
-    /**
-     * Obtain the component.
-     * @return the component
-     */
-    TethysComponent getComponent() {
-        return thePanel;
+
+    @Override
+    public TethysNode getNode() {
+        return thePanel.getNode();
+    }
+
+    @Override
+    public void setEnabled(boolean pEnabled) {
+        thePanel.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(boolean pVisible) {
+        thePanel.setVisible(pVisible);
+    }
+
+    @Override
+    public Integer getId() {
+        return thePanel.getId();
     }
 
     /**

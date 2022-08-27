@@ -329,7 +329,7 @@ public class MoneyWiseMaintenance
             case STATIC:
                 /* Select the requested tag */
                 @SuppressWarnings("unchecked")
-                final StaticData<?, ?, MoneyWiseDataType> myData = (StaticData<?, ?, MoneyWiseDataType>) pEvent.getDetails(StaticData.class);
+                final StaticData<?, ?, MoneyWiseDataType> myData = pEvent.getDetails(StaticData.class);
                 theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */
@@ -415,10 +415,10 @@ public class MoneyWiseMaintenance
      * handle GoTo Event.
      * @param pEvent the event
      */
+    @SuppressWarnings("unchecked")
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
-        @SuppressWarnings("unchecked")
-        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
+         final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {
