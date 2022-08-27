@@ -352,7 +352,7 @@ public class TethysTestDate {
      */
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
-        theLocaleList = theFactory.buttonFactory().newScrollButton();
+        theLocaleList = theFactory.buttonFactory().newScrollButton(ShortLocale.class);
         final TethysUIScrollMenu<ShortLocale> myMenu = theLocaleList.getMenu();
         for (final ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
@@ -378,7 +378,7 @@ public class TethysTestDate {
      */
     private void makeFormatList() {
         /* Create the Combo box and populate it */
-        theFormatList = theFactory.buttonFactory().newScrollButton();
+        theFormatList = theFactory.buttonFactory().newScrollButton(String.class);
         final TethysUIScrollMenu<String> myMenu = theFormatList.getMenu();
         myMenu.addItem(DATEFORMAT_1);
         myMenu.addItem(DATEFORMAT_2);

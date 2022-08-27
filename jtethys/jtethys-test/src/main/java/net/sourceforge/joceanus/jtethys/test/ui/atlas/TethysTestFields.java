@@ -241,9 +241,9 @@ public class TethysTestFields {
 
         /* Create button fields */
         theColorField = myFields.newColorField();
-        theScrollField = myFields.newScrollField();
+        theScrollField = myFields.newScrollField(String.class);
         theDateField = myFields.newDateField();
-        theIconField = myFields.newIconField();
+        theIconField = myFields.newIconField(Boolean.class);
         theListField = myFields.newListField();
 
         /* Create the main panel */
@@ -527,7 +527,7 @@ public class TethysTestFields {
         });
 
         /* Create ScrollButton button for currency */
-        final TethysUIScrollButtonManager<Currency> myCurrencyMgr = myButtons.newScrollButton();
+        final TethysUIScrollButtonManager<Currency> myCurrencyMgr = myButtons.newScrollButton(Currency.class);
         final TethysUIScrollMenu<Currency> myMenu = myCurrencyMgr.getMenu();
         final Currency myDefault = Currency.getInstance("GBP");
         myMenu.addItem(myDefault, "Pounds");

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.api.base;
 
 /**
  * Scroll Wrapper class.
+ * <p>Used to wrap a generic class for IconButton/ScrollButton</p>
  */
-public class TethysScrollWrapper {
+public class TethysUIGenericWrapper {
     /**
      * The wrapped data.
      */
@@ -29,7 +30,7 @@ public class TethysScrollWrapper {
      * Constructor.
      * @param pData th data
      */
-    public TethysScrollWrapper(final Object pData) {
+    public TethysUIGenericWrapper(final Object pData) {
         theData = pData;
     }
 

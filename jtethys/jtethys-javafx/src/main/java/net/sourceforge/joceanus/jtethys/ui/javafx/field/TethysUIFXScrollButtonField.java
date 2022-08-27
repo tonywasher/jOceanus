@@ -64,9 +64,11 @@ public final class TethysUIFXScrollButtonField<T>
      * Constructor.
      *
      * @param pFactory the GUI factory
+     * @param  pClazz the value class
      */
-    TethysUIFXScrollButtonField(final TethysUICoreFactory<?> pFactory) {
-        this(pFactory, pFactory.buttonFactory().newScrollButton());
+    TethysUIFXScrollButtonField(final TethysUICoreFactory<?> pFactory,
+                                final Class<T> pClazz) {
+        this(pFactory, pFactory.buttonFactory().newScrollButton(pClazz));
     }
 
     /**
@@ -93,6 +95,11 @@ public final class TethysUIFXScrollButtonField<T>
         /* Set configurator */
         theConfigurator = p -> {
         };
+    }
+
+    @Override
+    public T getCastValue(final Object pValue) {
+        return theManager.getValueClass().cast(pValue);
     }
 
     /**

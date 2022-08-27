@@ -81,6 +81,12 @@ public class TethysUIFXListButtonField<T extends Comparable<T>>
         pManager.getEventRegistrar().addEventListener(this::handleEvent);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<T> getCastValue(final Object pValue) {
+        return (List<T>) pValue;
+    }
+
     /**
      * handle List Button event.
      *

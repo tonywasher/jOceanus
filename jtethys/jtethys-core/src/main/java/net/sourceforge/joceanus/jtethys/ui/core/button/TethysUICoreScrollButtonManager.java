@@ -64,6 +64,11 @@ public abstract class TethysUICoreScrollButtonManager<T>
     private final TethysUIButton theButton;
 
     /**
+     * The value class.
+     */
+    private final Class<T> theClazz;
+
+    /**
      * The MenuConfigurator.
      */
     private Consumer<TethysUIScrollMenu<T>> theMenuConfigurator = p -> {
@@ -92,10 +97,13 @@ public abstract class TethysUICoreScrollButtonManager<T>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    protected TethysUICoreScrollButtonManager(final TethysUICoreFactory<?> pFactory) {
+    protected TethysUICoreScrollButtonManager(final TethysUICoreFactory<?> pFactory,
+                                              final Class<T> pClazz) {
         /* Allocate resources */
         theGuiFactory = pFactory;
+        theClazz = pClazz;
         theEventManager = new TethysEventManager<>();
         theButton = pFactory.buttonFactory().newButton();
         isFixedText = false;
@@ -116,6 +124,11 @@ public abstract class TethysUICoreScrollButtonManager<T>
     @Override
     public T getValue() {
         return theValue;
+    }
+
+    @Override
+    public Class<T> getValueClass() {
+        return theClazz;
     }
 
     @Override

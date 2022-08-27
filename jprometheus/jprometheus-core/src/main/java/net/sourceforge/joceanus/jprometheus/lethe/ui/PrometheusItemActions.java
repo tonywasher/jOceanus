@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
@@ -60,7 +60,7 @@ public class PrometheusItemActions<G extends Enum<G>>
     /**
      * The GoTo button.
      */
-    private final TethysScrollButtonManager<TethysScrollWrapper> theGoToButton;
+    private final TethysScrollButtonManager<TethysGenericWrapper> theGoToButton;
 
     /**
      * The Edit button.
@@ -86,7 +86,7 @@ public class PrometheusItemActions<G extends Enum<G>>
         theEventManager = new TethysEventManager<>();
 
         /* Create the buttons */
-        theGoToButton = pFactory.newScrollButton(TethysScrollWrapper.class);
+        theGoToButton = pFactory.newScrollButton(TethysGenericWrapper.class);
         theEditButton = pFactory.newButton();
         theDeleteButton = pFactory.newButton();
 

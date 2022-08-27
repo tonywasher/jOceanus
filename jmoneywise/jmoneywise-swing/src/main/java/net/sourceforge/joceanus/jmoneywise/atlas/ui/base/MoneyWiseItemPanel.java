@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataItemPan
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
@@ -57,7 +58,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollWrapper;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
@@ -110,7 +110,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     }
 
     @Override
-    protected void buildGoToMenu(final TethysScrollMenu<TethysScrollWrapper> pMenu) {
+    protected void buildGoToMenu(final TethysScrollMenu<TethysGenericWrapper> pMenu) {
         /* Clear the goTo lists */
         theGoToFilterList.clear();
         theGoToItemList.clear();
@@ -171,12 +171,12 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * Process goTo items.
      * @param pMenu the menu
      */
-    private void processGoToItems(final TethysScrollMenu<TethysScrollWrapper> pMenu) {
+    private void processGoToItems(final TethysScrollMenu<TethysGenericWrapper> pMenu) {
         /* Process goTo filters */
         processGoToFilters(pMenu);
 
         /* Create a simple map for top-level categories */
-        final Map<MoneyWiseDataType, TethysScrollSubMenu<TethysScrollWrapper>> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysScrollSubMenu<TethysGenericWrapper>> myMap = new EnumMap<>(MoneyWiseDataType.class);
 
         /* Loop through the items */
         final Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
@@ -185,7 +185,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
             /* Determine DataType and obtain parent menu */
             final MoneyWiseDataType myType = myItem.getItemType();
-            TethysScrollSubMenu<TethysScrollWrapper> myMenu = myMap.get(myType);
+            TethysScrollSubMenu<TethysGenericWrapper> myMenu = myMap.get(myType);
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -223,7 +223,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
             /* Build the item */
             final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myItem);
-            myMenu.getSubMenu().addItem(new TethysScrollWrapper(myEvent), myName);
+            myMenu.getSubMenu().addItem(new TethysGenericWrapper(myEvent), myName);
         }
     }
 
@@ -231,9 +231,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * Process goTo filters.
      * @param pMenu the menu
      */
-    private void processGoToFilters(final TethysScrollMenu<TethysScrollWrapper> pMenu) {
+    private void processGoToFilters(final TethysScrollMenu<TethysGenericWrapper> pMenu) {
         /* Create a simple map for top-level categories */
-        TethysScrollSubMenu<TethysScrollWrapper> myMenu = null;
+        TethysScrollSubMenu<TethysGenericWrapper> myMenu = null;
 
         /* Loop through the items */
         final Iterator<AnalysisFilter<?, ?>> myIterator = theGoToFilterList.iterator();
@@ -252,7 +252,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
             /* Build the item */
             final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myStatement);
-            myMenu.getSubMenu().addItem(new TethysScrollWrapper(myEvent), myFilter.getName());
+            myMenu.getSubMenu().addItem(new TethysGenericWrapper(myEvent), myFilter.getName());
         }
     }
 

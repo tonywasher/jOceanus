@@ -60,13 +60,13 @@ public class TethysUISwingButtonFactory
     }
 
     @Override
-    public <T> TethysUIIconButtonManager<T> newIconButton() {
-        return new TethysUISwingIconButtonManager<>(theFactory);
+    public <T> TethysUIIconButtonManager<T> newIconButton(final Class<T> pClazz) {
+        return new TethysUISwingIconButtonManager<>(theFactory, pClazz);
     }
 
     @Override
-    public <T> TethysUIScrollButtonManager<T> newScrollButton() {
-        return new TethysUISwingScrollButtonManager<>(theFactory);
+    public <T> TethysUIScrollButtonManager<T> newScrollButton(final Class<T> pClazz) {
+        return new TethysUISwingScrollButtonManager<>(theFactory, pClazz);
     }
 
     @Override

@@ -157,10 +157,10 @@ public class TethysTestButtons {
         final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
         final TethysUIDialogFactory<?> myDialogs = theGuiFactory.dialogFactory();
         theContextMenu = myMenus.newContextMenu();
-        theScrollButtonMgr = myButtons.newScrollButton();
-        theSimpleIconButtonMgr = myButtons.newIconButton();
-        theStateIconButtonMgr = myButtons.newIconButton();
-        theStateButtonMgr = myButtons.newScrollButton();
+        theScrollButtonMgr = myButtons.newScrollButton(String.class);
+        theSimpleIconButtonMgr = myButtons.newIconButton(Boolean.class);
+        theStateIconButtonMgr = myButtons.newIconButton(Boolean.class);
+        theStateButtonMgr = myButtons.newScrollButton(TethysIconState.class);
         theListButtonMgr = myButtons.newListButton();
         theDateButtonMgr = myButtons.newDateButton();
         theColorPicker = myDialogs.newColorPicker();

@@ -162,7 +162,7 @@ public class ThemisDSMPanel
         final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
         final TethysUIBoxPaneManager myModuleSelect = myPanes.newHBoxPane();
         myModuleSelect.addNode(myControls.newLabel("Module:"));
-        theModuleButton = myButtons.newScrollButton();
+        theModuleButton = myButtons.newScrollButton(ThemisDSMModule.class);
         myModuleSelect.addNode(theModuleButton);
         theModuleButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewModule());
         theModuleButton.setMenuConfigurator(e -> buildModuleMenu());
@@ -191,7 +191,7 @@ public class ThemisDSMPanel
         /* Create the from selection panel */
         final TethysUIBoxPaneManager myFromSelect = myPanes.newHBoxPane();
         myFromSelect.addNode(myControls.newLabel("From:"));
-        theFromButton = myButtons.newScrollButton();
+        theFromButton = myButtons.newScrollButton(ThemisDSMPackage.class);
         myFromSelect.addNode(theFromButton);
         theFromButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewFrom());
         theFromButton.setMenuConfigurator(e -> buildFromMenu());
@@ -199,7 +199,7 @@ public class ThemisDSMPanel
         /* Create the project selection panel */
         final TethysUIBoxPaneManager myToSelect = myPanes.newHBoxPane();
         myToSelect.addNode(myControls.newLabel("To:"));
-        theToButton = myButtons.newScrollButton();
+        theToButton = myButtons.newScrollButton(ThemisDSMPackage.class);
         myToSelect.addNode(theToButton);
         theToButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTo());
         theToButton.setMenuConfigurator(e -> buildToMenu());
