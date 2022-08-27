@@ -74,8 +74,8 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * @param pReport the report
      * @param pPasswordMgr the password manager
      */
-    public PrometheusSheetReader(final MetisThreadStatusReport pReport,
-                                 final GordianPasswordManager pPasswordMgr) {
+    protected PrometheusSheetReader(final MetisThreadStatusReport pReport,
+                                    final GordianPasswordManager pPasswordMgr) {
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
     }

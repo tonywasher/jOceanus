@@ -111,8 +111,8 @@ public class MoneyWiseTaxBasisAnalysisSelect
      */
     protected MoneyWiseTaxBasisAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the buttons */
-        theBasisButton = pFactory.newScrollButton();
-        theAccountButton = pFactory.newScrollButton();
+        theBasisButton = pFactory.newScrollButton(TaxBasisBucket.class);
+        theAccountButton = pFactory.newScrollButton(TaxBasisAccountBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

@@ -109,9 +109,9 @@ public class CashPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<CashCategory> myCategoryButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysScrollButtonManager<CashCategory> myCategoryButton = pFactory.newScrollButton(CashCategory.class);
+        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton(AssetCurrency.class);
+        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
@@ -145,8 +145,8 @@ public class CashPanel
         final TethysStringEditField myOpening = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton(TransactionCategory.class);
+        final TethysScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton(Payee.class);
 
         /* Assign the fields to the panel */
         myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);

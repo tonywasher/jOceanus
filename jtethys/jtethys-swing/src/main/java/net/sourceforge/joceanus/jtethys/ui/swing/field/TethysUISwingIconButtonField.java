@@ -57,19 +57,23 @@ public final class TethysUISwingIconButtonField<T>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    TethysUISwingIconButtonField(final TethysUICoreFactory<?> pFactory) {
-        this(pFactory, new JLabel());
+    TethysUISwingIconButtonField(final TethysUICoreFactory<?> pFactory,
+                                 final Class<T> pClazz) {
+        this(pFactory, pClazz, new JLabel());
     }
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      * @param pLabel the label
      */
     private TethysUISwingIconButtonField(final TethysUICoreFactory<?> pFactory,
+                                         final Class<T> pClazz,
                                          final JLabel pLabel) {
-        this(pFactory, pFactory.buttonFactory().newIconButton(), pLabel);
+        this(pFactory, pFactory.buttonFactory().newIconButton(pClazz), pLabel);
     }
 
     /**
@@ -92,6 +96,11 @@ public final class TethysUISwingIconButtonField<T>
         /* Set listener on manager */
         final TethysEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();
         myRegistrar.addEventListener(this::handleEvent);
+    }
+
+    @Override
+    public T getCastValue(final Object pValue) {
+        return theManager.getValueClass().cast(pValue);
     }
 
     /**
@@ -150,7 +159,7 @@ public final class TethysUISwingIconButtonField<T>
 
     @Override
     public TethysUISwingIconButtonField<T> cloneField(final JLabel pLabel) {
-        final TethysUIIconButtonManager<T> myClone = getGuiFactory().buttonFactory().newIconButton();
+        final TethysUIIconButtonManager<T> myClone = getGuiFactory().buttonFactory().newIconButton(theManager.getValueClass());
         return new TethysUISwingIconButtonField<>(getGuiFactory(), myClone, pLabel);
     }
 }

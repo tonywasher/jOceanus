@@ -94,7 +94,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
      */
     protected MoneyWiseTransCategoryAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the button */
-        theButton = pFactory.newScrollButton();
+        theButton = pFactory.newScrollButton(TransactionCategoryBucket.class);
 
         /* Create the label */
         final TethysLabel myLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);

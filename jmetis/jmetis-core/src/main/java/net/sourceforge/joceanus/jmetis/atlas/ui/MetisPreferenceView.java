@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -103,12 +104,12 @@ public class MetisPreferenceView
     /**
      * The selection button.
      */
-    private final TethysScrollButtonManager<MetisPreferenceSetView<?>> theSelectButton;
+    private final TethysScrollButtonManager<TethysGenericWrapper> theSelectButton;
 
     /**
      * Preference menu.
      */
-    private final TethysScrollMenu<MetisPreferenceSetView<?>> thePrefMenu;
+    private final TethysScrollMenu<TethysGenericWrapper> thePrefMenu;
 
     /**
      * The Properties Pane.
@@ -186,7 +187,7 @@ public class MetisPreferenceView
 
         /* Create selection button and label */
         final TethysLabel myLabel = theGuiFactory.newLabel(NLS_SET);
-        theSelectButton = pFactory.newScrollButton();
+        theSelectButton = pFactory.newScrollButton(TethysGenericWrapper.class);
         thePrefMenu = theSelectButton.getMenu();
 
         /* Create the selection panel */
@@ -247,7 +248,7 @@ public class MetisPreferenceView
      * handle propertySetSelect event.
      */
     private void handlePropertySetSelect() {
-        final MetisPreferenceSetView<?> myView = theSelectButton.getValue();
+        final MetisPreferenceSetView<?> myView = (MetisPreferenceSetView<?>) theSelectButton.getValue().getData();
         theProperties.selectCard(myView.toString());
     }
 
@@ -369,7 +370,7 @@ public class MetisPreferenceView
      */
     private void setSelectText() {
         /* Show selection text */
-        theSelectButton.setValue(theProperties.getActiveCard());
+        theSelectButton.setValue(new TethysGenericWrapper(theProperties.getActiveCard()));
     }
 
     /**
@@ -389,7 +390,7 @@ public class MetisPreferenceView
             final MetisPreferenceSetView<?> myView = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(myView);
+            final TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(new TethysGenericWrapper(myView));
 
             /* If this is the active panel */
             if (myView.toString().equals(myActiveName)) {

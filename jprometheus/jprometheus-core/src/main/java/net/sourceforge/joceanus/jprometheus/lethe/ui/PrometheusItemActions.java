@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
@@ -59,7 +60,7 @@ public class PrometheusItemActions<G extends Enum<G>>
     /**
      * The GoTo button.
      */
-    private final TethysScrollButtonManager<PrometheusGoToEvent<G>> theGoToButton;
+    private final TethysScrollButtonManager<TethysGenericWrapper> theGoToButton;
 
     /**
      * The Edit button.
@@ -85,7 +86,7 @@ public class PrometheusItemActions<G extends Enum<G>>
         theEventManager = new TethysEventManager<>();
 
         /* Create the buttons */
-        theGoToButton = pFactory.newScrollButton();
+        theGoToButton = pFactory.newScrollButton(TethysGenericWrapper.class);
         theEditButton = pFactory.newButton();
         theDeleteButton = pFactory.newButton();
 
@@ -106,7 +107,7 @@ public class PrometheusItemActions<G extends Enum<G>>
         /* Add the listener for item changes */
         final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
         theGoToButton.setMenuConfigurator(c -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue()));
+        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue().getData()));
         theEditButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.EDIT));
         theDeleteButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.DELETE));
 

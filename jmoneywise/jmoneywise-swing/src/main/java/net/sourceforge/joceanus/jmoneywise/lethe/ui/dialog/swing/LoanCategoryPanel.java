@@ -69,8 +69,8 @@ public class LoanCategoryPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<LoanCategoryType> myTypeButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<LoanCategory> myParentButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<LoanCategoryType> myTypeButton = pFactory.newScrollButton(LoanCategoryType.class);
+        final TethysScrollButtonManager<LoanCategory> myParentButton = pFactory.newScrollButton(LoanCategory.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(CategoryBase.FIELD_NAME, MetisDataType.STRING, myName);

@@ -730,10 +730,11 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUIFXTableScrollCell(final TethysUIFXTableScrollColumn<T, C, R> pColumn,
                                   final TethysUICoreFactory<?> pFactory,
                                   final Class<T> pClazz) {
-            super(pColumn, (TethysUIFXScrollButtonField<T>) pFactory.fieldFactory().newScrollField(), pClazz);
+            super(pColumn, (TethysUIFXScrollButtonField<T>) pFactory.fieldFactory().newScrollField(pClazz), pClazz);
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
 
@@ -763,6 +764,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
+        @SuppressWarnings("unchecked")
         TethysUIFXTableListCell(final TethysUIFXTableListColumn<T, C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXListButtonField<T>) pFactory.fieldFactory().newListField());
@@ -802,10 +804,11 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUIFXTableIconCell(final TethysUIFXTableIconColumn<T, C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory,
                                 final Class<T> pClazz) {
-            super(pColumn, (TethysUIFXIconButtonField<T>) pFactory.fieldFactory().newIconField(), pClazz);
+            super(pColumn, (TethysUIFXIconButtonField<T>) pFactory.fieldFactory().newIconField(pClazz), pClazz);
             getControl().setIconMapSet(this::determineMapSet);
         }
 

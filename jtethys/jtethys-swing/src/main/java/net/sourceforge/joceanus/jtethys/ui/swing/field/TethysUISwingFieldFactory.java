@@ -129,8 +129,8 @@ public class TethysUISwingFieldFactory
     }
 
     @Override
-    public <T> TethysUIScrollButtonField<T> newScrollField() {
-        return new TethysUISwingScrollButtonField<>(theFactory);
+    public <T> TethysUIScrollButtonField<T> newScrollField(final Class<T> pClazz) {
+        return new TethysUISwingScrollButtonField<>(theFactory, pClazz);
     }
 
     @Override
@@ -139,8 +139,8 @@ public class TethysUISwingFieldFactory
     }
 
     @Override
-    public <T> TethysUIIconButtonField<T> newIconField() {
-        return new TethysUISwingIconButtonField<>(theFactory);
+    public <T> TethysUIIconButtonField<T> newIconField(final Class<T> pClazz) {
+        return new TethysUISwingIconButtonField<>(theFactory, pClazz);
     }
 
     @Override

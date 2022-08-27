@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
@@ -74,9 +75,11 @@ public final class TethysSwingDataButtonField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
+         * @param pClazz the value class
          */
-        protected TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory) {
-            this(pFactory, new JLabel());
+        TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
+                                   final Class<T> pClazz) {
+            this(pFactory, pClazz, new JLabel());
         }
 
         /**
@@ -85,8 +88,9 @@ public final class TethysSwingDataButtonField {
          * @param pLabel the label
          */
         private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
+                                           final Class<T> pClazz,
                                            final JLabel pLabel) {
-            this(pFactory, pFactory.newIconButton(), pLabel);
+            this(pFactory, pFactory.newIconButton(pClazz), pLabel);
         }
 
         /**
@@ -109,6 +113,11 @@ public final class TethysSwingDataButtonField {
             /* Set listener on manager */
             final TethysEventRegistrar<TethysXUIEvent> myRegistrar = pManager.getEventRegistrar();
             myRegistrar.addEventListener(this::handleEvent);
+        }
+
+        @Override
+        public T getCastValue(final Object pValue) {
+            return theManager.getValueClass().cast(pValue);
         }
 
         /**
@@ -167,7 +176,7 @@ public final class TethysSwingDataButtonField {
 
         @Override
         protected TethysSwingIconButtonField<T> cloneField(final JLabel pLabel) {
-            final TethysSwingIconButtonManager<T> myClone = new TethysSwingIconButtonManager<>(getGuiFactory());
+            final TethysSwingIconButtonManager<T> myClone = new TethysSwingIconButtonManager<>(getGuiFactory(), theManager.getValueClass());
             return new TethysSwingIconButtonField<>(getGuiFactory(), myClone, pLabel);
         }
     }
@@ -202,19 +211,23 @@ public final class TethysSwingDataButtonField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
+         * @param pClazz the value class
          */
-        TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory) {
-            this(pFactory, new JLabel());
+        TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory,
+                                     final Class<T> pClazz) {
+            this(pFactory, pClazz, new JLabel());
         }
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
+         * @param pClazz the value class
          * @param pLabel the label
          */
         private TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory,
+                                             final Class<T> pClazz,
                                              final JLabel pLabel) {
-            this(pFactory, pFactory.newScrollButton(), pLabel);
+            this(pFactory, pFactory.newScrollButton(pClazz), pLabel);
         }
 
         /**
@@ -240,6 +253,11 @@ public final class TethysSwingDataButtonField {
             /* Set configurator */
             theConfigurator = p -> {
             };
+        }
+
+        @Override
+         public T getCastValue(final Object pValue) {
+            return theManager.getValueClass().cast(pValue);
         }
 
         /**
@@ -305,7 +323,7 @@ public final class TethysSwingDataButtonField {
 
         @Override
         protected TethysSwingScrollButtonField<T> cloneField(final JLabel pLabel) {
-            return new TethysSwingScrollButtonField<>(getGuiFactory(), pLabel);
+            return new TethysSwingScrollButtonField<>(getGuiFactory(), theManager.getValueClass(), pLabel);
         }
     }
 
@@ -480,6 +498,11 @@ public final class TethysSwingDataButtonField {
             getLabel().setHorizontalTextPosition(SwingConstants.RIGHT);
         }
 
+        @Override
+        public String getCastValue(final Object pValue) {
+            return (String) pValue;
+        }
+
         /**
          * handle Date Button event.
          * @param pEvent the even
@@ -591,6 +614,12 @@ public final class TethysSwingDataButtonField {
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
             theManager.getMenu().getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> haltCellEditing());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public List<T> getCastValue(final Object pValue) {
+            return (List<T>) pValue;
         }
 
         /**

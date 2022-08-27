@@ -250,8 +250,8 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public DataItem(final DataList<?, E> pList,
-                    final Integer uId) {
+    protected DataItem(final DataList<?, E> pList,
+                       final Integer uId) {
         /* Record list and item references */
         theId = uId;
         theList = pList;
@@ -287,8 +287,8 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pValues the data values
      */
-    public DataItem(final DataList<?, E> pList,
-                    final DataValues<E> pValues) {
+    protected DataItem(final DataList<?, E> pList,
+                       final DataValues<E> pValues) {
         /* Record list and item references */
         this(pList, pValues.getValue(FIELD_ID, Integer.class));
     }

@@ -45,6 +45,12 @@ public interface TethysUIScrollButtonManager<T>
     T getValue();
 
     /**
+     * Obtain value class.
+     * @return the class
+     */
+    Class<T> getValueClass();
+
+    /**
      * Obtain menu.
      * @return the menu
      */

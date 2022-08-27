@@ -34,10 +34,12 @@ public final class TethysFXScrollButtonManager<T>
      * Constructor.
      *
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    TethysFXScrollButtonManager(final TethysFXGuiFactory pFactory) {
+    TethysFXScrollButtonManager(final TethysFXGuiFactory pFactory,
+                                final Class<T> pClazz) {
         /* Initialise the underlying class */
-        super(pFactory);
+        super(pFactory, pClazz);
     }
 
     @Override

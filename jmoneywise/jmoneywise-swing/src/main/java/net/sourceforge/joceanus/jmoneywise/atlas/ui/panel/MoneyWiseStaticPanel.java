@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -116,12 +117,12 @@ public class MoneyWiseStaticPanel
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<MoneyWiseStaticTable<?, ?, ?>> theSelectButton;
+    private final TethysScrollButtonManager<TethysGenericWrapper> theSelectButton;
 
     /**
      * Data menu builder.
      */
-    private final TethysScrollMenu<MoneyWiseStaticTable<?, ?, ?>> theDataMenu;
+    private final TethysScrollMenu<TethysGenericWrapper> theDataMenu;
 
     /**
      * The table card panel.
@@ -177,7 +178,7 @@ public class MoneyWiseStaticPanel
 
         /* Create the select button */
         final TethysLabel myLabel = myGuiFactory.newLabel(MoneyWiseUIResource.STATICDATA_SELECT.getValue());
-        theSelectButton = myGuiFactory.newScrollButton();
+        theSelectButton = myGuiFactory.newScrollButton(TethysGenericWrapper.class);
         theDataMenu = theSelectButton.getMenu();
         theSelectButton.setMenuConfigurator(e -> buildDataMenu());
         final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
@@ -323,14 +324,14 @@ public class MoneyWiseStaticPanel
         theDataMenu.removeAllItems();
 
         /* Record active item */
-        TethysScrollMenuItem<MoneyWiseStaticTable<?, ?, ?>> myActive = null;
+        TethysScrollMenuItem<TethysGenericWrapper> myActive = null;
         final String myActiveName = theTableCard.getActiveName();
 
         /* Loop through the panels */
         for (MoneyWiseStaticTable<?, ?, ?> myTable : thePanels) {
             /* Create a new MenuItem and add it to the popUp */
             final String myName = myTable.getItemType().getFieldName();
-            final TethysScrollMenuItem<MoneyWiseStaticTable<?, ?, ?>> myItem = theDataMenu.addItem(myTable, myName);
+            final TethysScrollMenuItem<TethysGenericWrapper> myItem = theDataMenu.addItem(new TethysGenericWrapper(myTable), myName);
 
             /* If this is the active panel */
             if (myName.equals(myActiveName)) {
@@ -369,7 +370,7 @@ public class MoneyWiseStaticPanel
         theNewCard.addCard(myName, myPanel.getNewButton());
 
         /* Make sure that the active set is displayed */
-        theSelectButton.setValue(theTableCard.getActiveCard(), theTableCard.getActiveName());
+        theSelectButton.setValue(new TethysGenericWrapper(theTableCard.getActiveCard()), theTableCard.getActiveName());
 
         /* Add to the List */
         thePanels.add(myPanel);
@@ -388,7 +389,7 @@ public class MoneyWiseStaticPanel
         if (theTableCard.selectCard(myName)) {
             /* Update selection */
             final MoneyWiseStaticTable<?, ?, ?> myPanel = theTableCard.getActiveCard();
-            theSelectButton.setValue(myPanel, myName);
+            theSelectButton.setValue(new TethysGenericWrapper(myPanel), myName);
             myPanel.selectStatic(pStatic);
             setSelection(myName);
         }
@@ -421,7 +422,7 @@ public class MoneyWiseStaticPanel
      */
     private void showNewButton() {
         /* Set visibility of New Button */
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = theSelectButton.getValue();
+        final MoneyWiseStaticTable<?, ?, ?> myPanel = (MoneyWiseStaticTable<?, ?, ?>) theSelectButton.getValue().getData();
         final boolean showNew = myPanel != null
                 && !myPanel.isFull();
         theNewCard.setVisible(showNew);
@@ -481,7 +482,7 @@ public class MoneyWiseStaticPanel
      * Handle panel selection.
      */
     private void handlePanelSelection() {
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = theSelectButton.getValue();
+        final MoneyWiseStaticTable<?, ?, ?> myPanel = (MoneyWiseStaticTable<?, ?, ?>) theSelectButton.getValue().getData();
         final String myName = myPanel.getItemType().getFieldName();
         theTableCard.selectCard(myName);
         theNewCard.selectCard(myName);
@@ -515,7 +516,7 @@ public class MoneyWiseStaticPanel
      * @return true/false
      */
     private boolean isEditing() {
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = theSelectButton.getValue();
+        final MoneyWiseStaticTable<?, ?, ?> myPanel = (MoneyWiseStaticTable<?, ?, ?>) theSelectButton.getValue().getData();
         return myPanel.isEditing();
     }
 }

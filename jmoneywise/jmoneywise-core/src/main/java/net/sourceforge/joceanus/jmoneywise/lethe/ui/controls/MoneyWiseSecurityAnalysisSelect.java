@@ -105,10 +105,10 @@ public class MoneyWiseSecurityAnalysisSelect
      */
     protected MoneyWiseSecurityAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the security button */
-        theSecButton = pFactory.newScrollButton();
+        theSecButton = pFactory.newScrollButton(SecurityBucket.class);
 
         /* Create the portfolio button */
-        thePortButton = pFactory.newScrollButton();
+        thePortButton = pFactory.newScrollButton(PortfolioBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

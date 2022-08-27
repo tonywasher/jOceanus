@@ -91,7 +91,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @param pPreferences the preferences
      * @throws OceanusException on error
      */
-    public PrometheusDataStore(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
+    protected PrometheusDataStore(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
         /* Create the connection */
         try {
             /* Access the batch size */

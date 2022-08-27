@@ -250,7 +250,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
      * Edit Constructor.
      * @param pList the list
      */
-    public AssetBase(final AssetBaseList<T, C> pList) {
+    protected AssetBase(final AssetBaseList<T, C> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }

@@ -81,11 +81,13 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pView the view
      * @param pUpdateSet the updateSet
      * @param pError the error panel
+     * @param pClazz the dataType class
      * @param pDataType the dataType
      */
     protected MoneyWiseCategoryTable(final MoneyWiseView pView,
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final MetisErrorPanel pError,
+                                     final Class<T> pClazz,
                                      final MoneyWiseDataType pDataType) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, pDataType);
@@ -100,7 +102,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
 
         /* Create the filter components */
         final TethysLabel myPrompt = myGuiFactory.newLabel(TITLE_FILTER);
-        theSelectButton = myGuiFactory.newScrollButton();
+        theSelectButton = myGuiFactory.newScrollButton(pClazz);
         theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create a filter panel */

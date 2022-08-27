@@ -305,15 +305,15 @@ public class MoneyWiseAnalysisSelect
         theFilterButton.setTextAndIcon();
 
         /* Create the filter type button */
-        theFilterTypeButton = pFactory.newScrollButton();
+        theFilterTypeButton = pFactory.newScrollButton(AnalysisType.class);
 
         /* Create the columnSet button */
         theColumnLabel = pFactory.newLabel(NLS_COLUMNS);
-        theColumnButton = pFactory.newScrollButton();
+        theColumnButton = pFactory.newScrollButton(AnalysisColumnSet.class);
 
         /* Create the bucket button */
         theBucketLabel = pFactory.newLabel(NLS_BUCKET);
-        theBucketButton = pFactory.newScrollButton();
+        theBucketButton = pFactory.newScrollButton(BucketAttribute.class);
 
         /* Create the Range Select panel */
         theRangeSelect = pFactory.newDateRangeSelector();

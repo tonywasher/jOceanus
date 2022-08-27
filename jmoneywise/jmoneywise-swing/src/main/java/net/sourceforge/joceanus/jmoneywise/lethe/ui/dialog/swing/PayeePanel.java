@@ -100,8 +100,8 @@ public class PayeePanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<PayeeType> myTypeButton = pFactory.newScrollButton();
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysScrollButtonManager<PayeeType> myTypeButton = pFactory.newScrollButton(PayeeType.class);
+        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);

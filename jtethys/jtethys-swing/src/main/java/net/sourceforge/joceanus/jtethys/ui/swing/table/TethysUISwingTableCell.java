@@ -866,10 +866,11 @@ public abstract class TethysUISwingTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUISwingTableScrollCell(final TethysUISwingTableScrollColumn<T, C, R> pColumn,
                                      final TethysUICoreFactory<?> pFactory,
                                      final Class<T> pClazz) {
-            super(pColumn, (TethysUISwingScrollButtonField<T>) pFactory.fieldFactory().newScrollField(), pClazz);
+            super(pColumn, (TethysUISwingScrollButtonField<T>) pFactory.fieldFactory().newScrollField(pClazz), pClazz);
             useDialogForEdit();
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
             getControl().getEventRegistrar().addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
@@ -901,6 +902,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
+        @SuppressWarnings("unchecked")
         TethysUISwingTableListCell(final TethysUISwingTableListColumn<T, C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUISwingListButtonField<T>) pFactory.fieldFactory().newListField());
@@ -942,10 +944,11 @@ public abstract class TethysUISwingTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUISwingTableIconCell(final TethysUISwingTableIconColumn<T, C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory,
                                    final Class<T> pClazz) {
-            super(pColumn, (TethysUISwingIconButtonField<T>) pFactory.fieldFactory().newIconField(), pClazz);
+            super(pColumn, (TethysUISwingIconButtonField<T>) pFactory.fieldFactory().newIconField(pClazz), pClazz);
             final Supplier<TethysUIIconMapSet<T>> mySupplier = () -> getColumn().getIconMapSet().apply(getActiveRow());
             getControl().setIconMapSet(mySupplier);
             getRenderControl().setIconMapSet(mySupplier);

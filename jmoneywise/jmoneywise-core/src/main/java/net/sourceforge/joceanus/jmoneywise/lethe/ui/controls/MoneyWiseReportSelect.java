@@ -117,8 +117,8 @@ public class MoneyWiseReportSelect
      */
     public MoneyWiseReportSelect(final TethysGuiFactory pFactory) {
         /* Create the buttons */
-        theReportButton = pFactory.newScrollButton();
-        theHoldingButton = pFactory.newScrollButton();
+        theReportButton = pFactory.newScrollButton(MoneyWiseReportType.class);
+        theHoldingButton = pFactory.newScrollButton(SecurityBucket.class);
 
         /* Create the Range Select and disable its border */
         theRangeSelect = pFactory.newDateRangeSelector();

@@ -135,9 +135,10 @@ public interface TethysUIFieldFactory {
     /**
      * Obtain a new scroll data field.
      * @param <T> the item type
+     * @param pClazz the value class
      * @return the new field
      */
-    <T> TethysUIScrollButtonField<T> newScrollField();
+    <T> TethysUIScrollButtonField<T> newScrollField(Class<T> pClazz);
 
     /**
      * Obtain a new list data field.
@@ -149,9 +150,10 @@ public interface TethysUIFieldFactory {
     /**
      * Obtain a new simple icon data field.
      * @param <T> the item type
+     * @param pClazz the value class
      * @return the new field
      */
-    <T> TethysUIIconButtonField<T> newIconField();
+    <T> TethysUIIconButtonField<T> newIconField(Class<T> pClazz);
 
     /**
      * Obtain a new colour data field.

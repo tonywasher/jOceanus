@@ -967,10 +967,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
          * @param pItemType the list type
          * @param pStyle the style of the list
          */
-        public DataInfoList(final Class<T> pBaseClass,
-                            final DataSet<?, ?> pData,
-                            final E pItemType,
-                            final ListStyle pStyle) {
+        protected DataInfoList(final Class<T> pBaseClass,
+                               final DataSet<?, ?> pData,
+                               final E pItemType,
+                               final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }
 

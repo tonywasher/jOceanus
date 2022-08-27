@@ -116,10 +116,10 @@ public class MoneyWiseCashAnalysisSelect
      */
     protected MoneyWiseCashAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the cash button */
-        theCashButton = pFactory.newScrollButton();
+        theCashButton = pFactory.newScrollButton(CashBucket.class);
 
         /* Create the category button */
-        theCatButton = pFactory.newScrollButton();
+        theCatButton = pFactory.newScrollButton(CashCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

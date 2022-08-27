@@ -89,7 +89,7 @@ public class MoneyWisePayeeAnalysisSelect
      */
     protected MoneyWisePayeeAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the button */
-        theButton = pFactory.newScrollButton();
+        theButton = pFactory.newScrollButton(PayeeBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

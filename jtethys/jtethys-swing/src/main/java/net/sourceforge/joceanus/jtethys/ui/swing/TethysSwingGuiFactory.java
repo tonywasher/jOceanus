@@ -160,8 +160,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingScrollButtonManager<T> newScrollButton() {
-        return new TethysSwingScrollButtonManager<>(this);
+    public <T> TethysSwingScrollButtonManager<T> newScrollButton(final Class<T> pClazz) {
+        return new TethysSwingScrollButtonManager<>(this, pClazz);
     }
 
     @Override
@@ -170,8 +170,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingIconButtonManager<T> newIconButton() {
-        return new TethysSwingIconButtonManager<>(this);
+    public <T> TethysSwingIconButtonManager<T> newIconButton(final Class<T> pClazz) {
+        return new TethysSwingIconButtonManager<>(this, pClazz);
     }
 
     @Override
@@ -350,8 +350,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingScrollButtonField<T> newScrollField() {
-        return new TethysSwingScrollButtonField<>(this);
+    public <T> TethysSwingScrollButtonField<T> newScrollField(final Class<T> pClazz) {
+        return new TethysSwingScrollButtonField<>(this, pClazz);
     }
 
     @Override
@@ -360,8 +360,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingIconButtonField<T> newIconField() {
-        return new TethysSwingIconButtonField<>(this);
+    public <T> TethysSwingIconButtonField<T> newIconField(final Class<T> pClazz) {
+        return new TethysSwingIconButtonField<>(this, pClazz);
     }
 
     @Override

@@ -61,7 +61,7 @@ public class TethysTestChart {
         myCards.addCard(TethysChartType.PIE.toString(), myPie.getComponent());
 
         /* Create the button */
-        final TethysUIScrollButtonManager<TethysChartType> myButton = pFactory.buttonFactory().newScrollButton();
+        final TethysUIScrollButtonManager<TethysChartType> myButton = pFactory.buttonFactory().newScrollButton(TethysChartType.class);
         myButton.setMenuConfigurator(c -> {
             c.removeAllItems();
             for (TethysChartType myType : TethysChartType.values()) {

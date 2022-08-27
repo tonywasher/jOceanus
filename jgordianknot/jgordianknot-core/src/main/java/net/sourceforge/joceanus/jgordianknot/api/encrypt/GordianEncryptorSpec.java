@@ -203,6 +203,7 @@ public final class GordianEncryptorSpec {
      * Obtain the composite encryptorSpec iterator.
      * @return the encryptorSpec iterator.
      */
+    @SuppressWarnings("unchecked")
     public Iterator<GordianEncryptorSpec> encryptorSpecIterator() {
         if (!(theEncryptorType instanceof List)) {
             throw new IllegalArgumentException();

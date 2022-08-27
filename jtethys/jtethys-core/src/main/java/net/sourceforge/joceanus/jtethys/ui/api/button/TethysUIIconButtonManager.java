@@ -43,6 +43,12 @@ public interface TethysUIIconButtonManager<T>
     T getValue();
 
     /**
+     * Obtain value class.
+     * @return the class
+     */
+    Class<T> getValueClass();
+
+    /**
      * Set the value.
      * @param pValue the value to set
      */

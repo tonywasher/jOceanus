@@ -256,8 +256,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXScrollButtonManager<T> newScrollButton() {
-        return new TethysFXScrollButtonManager<>(this);
+    public <T> TethysFXScrollButtonManager<T> newScrollButton(final Class<T> pClazz) {
+        return new TethysFXScrollButtonManager<>(this, pClazz);
     }
 
     @Override
@@ -266,8 +266,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXIconButtonManager<T> newIconButton() {
-        return new TethysFXIconButtonManager<>(this);
+    public <T> TethysFXIconButtonManager<T> newIconButton(final Class<T> pClazz) {
+        return new TethysFXIconButtonManager<>(this, pClazz);
     }
 
     @Override
@@ -446,8 +446,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXScrollButtonField<T> newScrollField() {
-        return new TethysFXScrollButtonField<>(this);
+    public <T> TethysFXScrollButtonField<T> newScrollField(final Class<T> pClazz) {
+        return new TethysFXScrollButtonField<>(this, pClazz);
     }
 
     @Override
@@ -456,8 +456,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXIconButtonField<T> newIconField() {
-        return new TethysFXIconButtonField<>(this);
+    public <T> TethysFXIconButtonField<T> newIconField(final Class<T> pClazz) {
+        return new TethysFXIconButtonField<>(this, pClazz);
     }
 
     @Override

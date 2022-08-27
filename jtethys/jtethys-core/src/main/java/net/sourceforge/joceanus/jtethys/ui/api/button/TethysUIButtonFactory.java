@@ -52,9 +52,10 @@ public interface TethysUIButtonFactory {
     /**
      * Obtain a new icon button manager.
      * @param <T> the item type
+     * @param pClazz the item class
      * @return the new manager
      */
-    <T> TethysUIIconButtonManager<T> newIconButton();
+    <T> TethysUIIconButtonManager<T> newIconButton(Class<T> pClazz);
 
     /**
      * Obtain a new icon MapSet.
@@ -66,9 +67,10 @@ public interface TethysUIButtonFactory {
     /**
      * Obtain a new scroll button manager.
      * @param <T> the item type
+     * @param pClazz the item class
      * @return the new manager
      */
-    <T> TethysUIScrollButtonManager<T> newScrollButton();
+    <T> TethysUIScrollButtonManager<T> newScrollButton(Class<T> pClazz);
 
     /**
      * Obtain a new list button manager.

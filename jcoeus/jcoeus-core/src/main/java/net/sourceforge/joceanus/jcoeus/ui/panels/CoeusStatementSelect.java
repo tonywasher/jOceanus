@@ -159,21 +159,21 @@ public final class CoeusStatementSelect
         theCache = pCache;
 
         /* Create the totals button */
-        theTotalsButton = pFactory.newScrollButton();
+        theTotalsButton = pFactory.newScrollButton(CoeusTotalSet.class);
 
         /* Create the market button */
-        theMarketButton = pFactory.newScrollButton();
+        theMarketButton = pFactory.newScrollButton(CoeusMarketProvider.class);
         buildMarketMenu();
 
         /* Create the market type button */
-        theMarketTypeButton = pFactory.newScrollButton();
+        theMarketTypeButton = pFactory.newScrollButton(CoeusMarketType.class);
         buildMarketTypeMenu();
 
         /* Create the loan button */
-        theLoanButton = pFactory.newScrollButton();
+        theLoanButton = pFactory.newScrollButton(CoeusLoan.class);
 
         /* Create the month button */
-        theMonthButton = pFactory.newScrollButton();
+        theMonthButton = pFactory.newScrollButton(Month.class);
 
         /* Create the DateButton */
         theDateButton = pFactory.newDateButton();

@@ -57,9 +57,11 @@ public final class TethysUIFXIconButtonField<T>
      * Constructor.
      *
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    TethysUIFXIconButtonField(final TethysUICoreFactory<?> pFactory) {
-        this(pFactory, pFactory.buttonFactory().newIconButton());
+    TethysUIFXIconButtonField(final TethysUICoreFactory<?> pFactory,
+                              final Class<T> pClazz) {
+        this(pFactory, pFactory.buttonFactory().newIconButton(pClazz));
     }
 
     /**
@@ -86,6 +88,11 @@ public final class TethysUIFXIconButtonField<T>
             setValue(theManager.getValue());
             fireEvent(TethysUIEvent.NEWVALUE, e.getDetails());
         });
+    }
+
+    @Override
+    public T getCastValue(final Object pValue) {
+        return theManager.getValueClass().cast(pValue);
     }
 
     @Override

@@ -62,19 +62,23 @@ public final class TethysUISwingScrollButtonField<T>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    TethysUISwingScrollButtonField(final TethysUICoreFactory<?> pFactory) {
-        this(pFactory, new JLabel());
+    TethysUISwingScrollButtonField(final TethysUICoreFactory<?> pFactory,
+                                   final Class<T> pClazz) {
+        this(pFactory, pClazz, new JLabel());
     }
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      * @param pLabel the label
      */
     private TethysUISwingScrollButtonField(final TethysUICoreFactory<?> pFactory,
+                                           final Class<T> pClazz,
                                            final JLabel pLabel) {
-        this(pFactory, pFactory.buttonFactory().newScrollButton(), pLabel);
+        this(pFactory, pFactory.buttonFactory().newScrollButton(pClazz), pLabel);
     }
 
     /**
@@ -100,6 +104,11 @@ public final class TethysUISwingScrollButtonField<T>
         /* Set configurator */
         theConfigurator = p -> {
         };
+    }
+
+    @Override
+    public T getCastValue(final Object pValue) {
+        return theManager.getValueClass().cast(pValue);
     }
 
     /**
@@ -165,6 +174,6 @@ public final class TethysUISwingScrollButtonField<T>
 
     @Override
     public TethysUISwingScrollButtonField<T> cloneField(final JLabel pLabel) {
-        return new TethysUISwingScrollButtonField<>(getGuiFactory(), pLabel);
+        return new TethysUISwingScrollButtonField<>(getGuiFactory(), theManager.getValueClass(), pLabel);
     }
 }

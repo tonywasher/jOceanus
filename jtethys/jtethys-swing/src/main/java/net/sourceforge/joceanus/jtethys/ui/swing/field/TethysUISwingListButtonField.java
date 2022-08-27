@@ -88,6 +88,12 @@ public class TethysUISwingListButtonField<T extends Comparable<T>>
         theManager.getMenu().getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> haltCellEditing());
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<T> getCastValue(final Object pValue) {
+        return (List<T>) pValue;
+    }
+
     /**
      * handle List Button event.
      * @param pEvent the even

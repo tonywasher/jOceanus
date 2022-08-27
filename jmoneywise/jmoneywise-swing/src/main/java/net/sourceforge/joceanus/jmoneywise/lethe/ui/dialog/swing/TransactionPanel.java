@@ -176,11 +176,11 @@ public class TransactionPanel
 
         /* Create the buttons */
         final TethysDateButtonManager myDateButton = pFactory.newDateButton();
-        final TethysScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton();
-        final TethysIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
-        final TethysIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
+        final TethysScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton(TransactionAsset.class);
+        final TethysScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton(TransactionAsset.class);
+        final TethysScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton(TransactionCategory.class);
+        final TethysIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton(Boolean.class);
+        final TethysIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton(AssetDirection.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(Transaction.FIELD_DATE, myDateButton);
@@ -284,7 +284,7 @@ public class TransactionPanel
         final TethysStringEditField myReturnedCash = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton(TransactionAsset.class);
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
