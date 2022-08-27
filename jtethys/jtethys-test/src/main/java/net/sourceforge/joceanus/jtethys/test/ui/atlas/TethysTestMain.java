@@ -42,12 +42,14 @@ public class TethysTestMain
         final TethysTestFields myFields = new TethysTestFields(pFactory);
         final TethysTestTable myTable = new TethysTestTable(pFactory);
         final TethysTestDate myDates = new TethysTestDate(pFactory);
+        final TethysTestDialog myDialogs = new TethysTestDialog(pFactory);
         theMain = pFactory.paneFactory().newTabPane();
         theMain.addTabItem("Charts", myCharts.getComponent());
         theMain.addTabItem("Buttons", myButtons.getComponent());
         theMain.addTabItem("Fields", myFields.getComponent());
         theMain.addTabItem("Table", myTable.getComponent());
         theMain.addTabItem("Dates", myDates.getComponent());
+        theMain.addTabItem("Dialogs", myDialogs.getComponent());
     }
 
     @Override

@@ -43,7 +43,8 @@ public class PrometheusFieldSetTabs {
      * @param pFactory the gui factory.
      */
     PrometheusFieldSetTabs(final TethysGuiFactory pFactory) {
-        theTabs = pFactory.newTabPane();thePanels = new HashMap<>();
+        theTabs = pFactory.newTabPane();
+        thePanels = new HashMap<>();
     }
 
     /**

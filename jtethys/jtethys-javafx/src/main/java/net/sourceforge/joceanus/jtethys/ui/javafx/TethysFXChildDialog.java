@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -22,17 +22,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreChildDialog;
-import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * javaFX Child Dialog.
  */
-public class TethysUIFXChildDialog
-    extends TethysUICoreChildDialog {
+public class TethysFXChildDialog
+        extends TethysChildDialog {
     /**
      * The Stage.
      */
@@ -53,12 +51,9 @@ public class TethysUIFXChildDialog
      * @param pFactory the factory
      * @param pParent the parent stage
      */
-    TethysUIFXChildDialog(final TethysUICoreFactory<?> pFactory,
-                          final Stage pParent) {
+    TethysFXChildDialog(final TethysFXGuiFactory pFactory,
+                        final Stage pParent) {
         /* Store parameter */
-        if (pParent == null) {
-            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
-        }
         theParent = pParent;
 
         /* Create the stage */
@@ -71,7 +66,7 @@ public class TethysUIFXChildDialog
         /* Create the scene */
         theContainer = new BorderPane();
         final Scene myScene = new Scene(theContainer);
-        ((TethysUIFXSceneRegister) pFactory).registerScene(myScene);
+        pFactory.registerScene(myScene);
         theStage.setScene(myScene);
 
         /* Change visibility of tree when hiding */
@@ -84,8 +79,8 @@ public class TethysUIFXChildDialog
     }
 
     @Override
-    public void setContent(final TethysUIComponent pContent) {
-        theContainer.setCenter(TethysUIFXNode.getNode(pContent));
+    public void setContent(final TethysComponent pContent) {
+        theContainer.setCenter(TethysFXNode.getNode(pContent));
     }
 
     @Override
@@ -132,6 +127,6 @@ public class TethysUIFXChildDialog
      */
     private void handleDialogClosing() {
         theContainer.setVisible(false);
-        fireEvent(TethysUIEvent.WINDOWCLOSED, null);
+        fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
     }
 }

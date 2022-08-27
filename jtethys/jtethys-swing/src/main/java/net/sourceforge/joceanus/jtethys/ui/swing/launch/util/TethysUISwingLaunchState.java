@@ -86,12 +86,12 @@ public class TethysUISwingLaunchState {
      * @throws OceanusException on error
      */
     public void createMain() throws OceanusException {
+        /* Create the main panel */
+        theMain = createMain(theApp, theFactory);
+
         /* Create the frame and declare it */
         theFrame = new JFrame(theApp.getName());
         theFactory.setFrame(theFrame);
-
-        /* Create the main panel */
-        theMain = createMain(theApp, theFactory);
 
         /* Add the Menu bar */
         final TethysUISwingMenuBarManager myMenuBar = (TethysUISwingMenuBarManager) theMain.getMenuBar();

@@ -59,6 +59,9 @@ public class TethysUIFXAboutBox
                        final Stage pStage) {
         /* Initialise underlying class */
         super(pFactory);
+        if (pStage == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
 
         /* Store parameters */
         theSceneRegister = (TethysUIFXSceneRegister) pFactory;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Optional;
 import javafx.scene.control.Alert;
@@ -23,15 +23,13 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 
 /**
  * javaFX Alert.
  */
-public class TethysUIFXAlert
-        implements TethysUIAlert {
+public class TethysFXAlert
+        implements TethysAlert {
     /**
      * The Alert.
      */
@@ -41,10 +39,7 @@ public class TethysUIFXAlert
      * Constructor.
      * @param pStage the Stage
      */
-    TethysUIFXAlert(final Stage pStage) {
-        if (pStage == null) {
-            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
-        }
+    TethysFXAlert(final Stage pStage) {
         theAlert = new Alert(AlertType.CONFIRMATION);
         theAlert.initStyle(StageStyle.UTILITY);
         theAlert.initOwner(pStage);

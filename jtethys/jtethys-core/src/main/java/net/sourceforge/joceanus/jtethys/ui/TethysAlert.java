@@ -14,46 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.dialog;
-
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Child Dialog
+ * Alert.
  */
-public interface TethysUIChildDialog
-    extends TethysEventProvider<TethysUIEvent> {
+public interface TethysAlert {
     /**
-     * Set the title
+     * Set the title.
+     *
      * @param pTitle the title
      */
     void setTitle(String pTitle);
 
     /**
-     * Set the contents
-     * @param pContent the dialog content
+     * Set the message.
+     *
+     * @param pMessage the message
      */
-    void setContent(TethysUIComponent pContent);
+    void setMessage(String pMessage);
 
     /**
-     * Show the dialog.
+     * Confirm with the user Yes/No.
+     *
+     * @return was Yes selected? true/false
      */
-    void showDialog();
+    boolean confirmYesNo();
 
     /**
-     * Is the dialog showing?
+     * Confirm with the use OK/Cancel.
+     *
+     * @return was OK selected? true/false
      */
-    boolean isShowing();
+    boolean confirmOKCancel();
 
     /**
-     * Hide the dialog.
+     * Show error.
      */
-    void hideDialog();
+    void showError();
 
     /**
-     * Close the dialog.
+     * Show warning.
      */
-    void closeDialog();
+    void showWarning();
+
+    /**
+     * Show information.
+     */
+    void showInfo();
 }

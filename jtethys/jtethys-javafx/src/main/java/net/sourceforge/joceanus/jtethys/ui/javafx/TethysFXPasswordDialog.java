@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -29,16 +29,13 @@ import javafx.stage.Window;
 
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICorePasswordDialog;
-import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
-import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public class TethysUIFXPasswordDialog
-        extends TethysUICorePasswordDialog {
+public class TethysFXPasswordDialog
+        extends TethysPasswordDialog {
     /**
      * approximate width.
      */
@@ -52,7 +49,7 @@ public class TethysUIFXPasswordDialog
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUIFXPasswordDialog.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXPasswordDialog.class);
 
     /**
      * The stage.
@@ -67,16 +64,12 @@ public class TethysUIFXPasswordDialog
      * @param pTitle       the title
      * @param pNeedConfirm true/false
      */
-    TethysUIFXPasswordDialog(final TethysUICoreFactory<?> pFactory,
-                             final Stage pStage,
-                             final String pTitle,
-                             final boolean pNeedConfirm) {
+    TethysFXPasswordDialog(final TethysFXGuiFactory pFactory,
+                           final Stage pStage,
+                           final String pTitle,
+                           final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
-        final TethysUIFXSceneRegister mySceneRegister = (TethysUIFXSceneRegister) pFactory;
-        if (pStage == null) {
-            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
-        }
 
         /* Determine title */
         final String myTitle = pNeedConfirm
@@ -91,16 +84,16 @@ public class TethysUIFXPasswordDialog
         theStage.setTitle(myTitle);
 
         /* Create the scene */
-        final Scene myScene = new Scene((Region) TethysUIFXNode.getNode(getContainer()));
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(getContainer()));
         theStage.setScene(myScene);
 
         /* Sort out factory */
-        mySceneRegister.registerScene(myScene);
+        pFactory.registerScene(myScene);
     }
 
     @Override
-    protected TethysUIFXBorderPaneManager getContainer() {
-        return (TethysUIFXBorderPaneManager) super.getContainer();
+    protected TethysFXBorderPaneManager getContainer() {
+        return (TethysFXBorderPaneManager) super.getContainer();
     }
 
     @Override
@@ -140,19 +133,19 @@ public class TethysUIFXPasswordDialog
      * @param pNeedConfirm true/false
      * @return the new dialog
      */
-    static TethysUIFXPasswordDialog createTheDialog(final TethysUICoreFactory<?> pFactory,
-                                                    final Stage pStage,
-                                                    final String pTitle,
-                                                    final boolean pNeedConfirm) {
+    static TethysFXPasswordDialog createTheDialog(final TethysFXGuiFactory pFactory,
+                                                  final Stage pStage,
+                                                  final String pTitle,
+                                                  final boolean pNeedConfirm) {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
             /* invoke the dialog directly */
-            return new TethysUIFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm);
+            return new TethysFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm);
 
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            final FutureTask<TethysUIFXPasswordDialog> myTask = new FutureTask<>(() -> new TethysUIFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm));
+            final FutureTask<TethysFXPasswordDialog> myTask = new FutureTask<>(() -> new TethysFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm));
 
             /* Protect against exceptions */
             try {

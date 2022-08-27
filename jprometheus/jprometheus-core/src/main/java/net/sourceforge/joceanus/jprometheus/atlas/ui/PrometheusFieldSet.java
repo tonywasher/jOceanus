@@ -61,7 +61,7 @@ public class PrometheusFieldSet<T, F>
     /**
      * The panel.
      */
-    private TethysGridPaneManager thePanel;
+    private final TethysGridPaneManager thePanel;
 
     /**
      * The currently active panel.

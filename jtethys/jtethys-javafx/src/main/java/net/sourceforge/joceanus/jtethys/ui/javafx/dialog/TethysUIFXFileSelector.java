@@ -59,6 +59,9 @@ public class TethysUIFXFileSelector
      * @param pParent the parent
      */
     TethysUIFXFileSelector(final Stage pParent) {
+        if (pParent == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
         theStage = pParent;
         theChooser = new FileChooser();
     }

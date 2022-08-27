@@ -25,10 +25,13 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
+import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
@@ -488,5 +491,21 @@ public class TethysFXGuiFactory
     @Override
     public TethysFXAbout newAboutBox() {
         return new TethysFXAbout(this);
+    }
+
+    @Override
+    public TethysPasswordDialog newPasswordDialog(final String pTitle,
+                                                  final boolean pNeedConfirm) {
+        return new TethysFXPasswordDialog(this, theStage, pTitle, pNeedConfirm);
+    }
+
+    @Override
+    public TethysAlert newAlert() {
+        return new TethysFXAlert(theStage);
+    }
+
+    @Override
+    public TethysChildDialog newChildDialog() {
+        return new TethysFXChildDialog(this, theStage);
     }
 }

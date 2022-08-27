@@ -63,6 +63,11 @@ public class TethysHTMLToFile {
     private static final String ELEMENT_STYLE = "style";
 
     /**
+     * The Gui Factory.
+     */
+    private final TethysGuiFactory theFactory;
+
+    /**
      * The HTML Manager.
      */
     private final TethysHTMLManager theHTMLManager;
@@ -70,7 +75,7 @@ public class TethysHTMLToFile {
     /**
      * The File Selector.
      */
-    private final TethysFileSelector theFileSelector;
+    private TethysFileSelector theFileSelector;
 
     /**
      * Constructor.
@@ -80,10 +85,19 @@ public class TethysHTMLToFile {
     public TethysHTMLToFile(final TethysGuiFactory pFactory,
                             final TethysHTMLManager pHTMLManager) {
         /* Store parameters */
+        theFactory = pFactory;
         theHTMLManager = pHTMLManager;
-        theFileSelector = pFactory.newFileSelector();
-        theFileSelector.setUseSave(true);
-        theFileSelector.setExtension(".html");
+    }
+
+    /**
+     * Initialise file selector.
+     * @return the file selector
+     */
+    private TethysFileSelector initFileSelector() {
+        final TethysFileSelector myFileSelector = theFactory.newFileSelector();
+        myFileSelector.setUseSave(true);
+        myFileSelector.setExtension(".html");
+        return myFileSelector;
     }
 
     /**
@@ -91,6 +105,11 @@ public class TethysHTMLToFile {
      */
     public void writeToFile() {
         try {
+            /* Make sure that the file Selector is initialised */
+            if (theFileSelector == null) {
+                theFileSelector = initFileSelector();
+            }
+
             /* Select File */
             final File myFile = theFileSelector.selectFile();
             if (myFile != null) {
@@ -160,7 +179,7 @@ public class TethysHTMLToFile {
     private static void writeDocumentToFile(final Document pDoc,
                                             final File pFile) throws OceanusException {
         /* Protect the write */
-        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8)) {
             /* Format the XML and write to stream */
             final String myHTML = pDoc.outerHtml();
             myWriter.print(myHTML);

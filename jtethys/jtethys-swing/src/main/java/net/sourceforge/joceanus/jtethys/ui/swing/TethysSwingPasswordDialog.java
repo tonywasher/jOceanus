@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -28,20 +28,17 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICorePasswordDialog;
-import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.pane.TethysUISwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public class TethysUISwingPasswordDialog
-        extends TethysUICorePasswordDialog {
+public class TethysSwingPasswordDialog
+        extends TethysPasswordDialog {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUISwingPasswordDialog.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingPasswordDialog.class);
 
     /**
      * Dialog.
@@ -56,15 +53,12 @@ public class TethysUISwingPasswordDialog
      * @param pTitle       the title
      * @param pNeedConfirm true/false
      */
-    TethysUISwingPasswordDialog(final TethysUICoreFactory<?> pFactory,
-                                final JFrame pFrame,
-                                final String pTitle,
-                                final boolean pNeedConfirm) {
+    TethysSwingPasswordDialog(final TethysSwingGuiFactory pFactory,
+                              final JFrame pFrame,
+                              final String pTitle,
+                              final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
-        if (pFrame == null) {
-            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
-        }
 
         /* Initialise the dialog */
         theDialog = new JDialog(pFrame, pTitle, true);
@@ -72,13 +66,13 @@ public class TethysUISwingPasswordDialog
         /* If we are confirming */
         if (pNeedConfirm) {
             /* Set a focus traversal policy */
-            final JComponent myNode = TethysUISwingNode.getComponent(getContainer());
+            final JComponent myNode = TethysSwingNode.getComponent(getContainer());
             myNode.setFocusTraversalPolicy(new TraversalPolicy());
             myNode.setFocusTraversalPolicyProvider(true);
         }
 
         /* Set this to be the main panel */
-        theDialog.add(TethysUISwingNode.getComponent(getContainer()));
+        theDialog.add(TethysSwingNode.getComponent(getContainer()));
         theDialog.pack();
 
         /* Set the relative location */
@@ -86,8 +80,8 @@ public class TethysUISwingPasswordDialog
     }
 
     @Override
-    protected TethysUISwingBorderPaneManager getContainer() {
-        return (TethysUISwingBorderPaneManager) super.getContainer();
+    protected TethysSwingBorderPaneManager getContainer() {
+        return (TethysSwingBorderPaneManager) super.getContainer();
     }
 
     @Override
@@ -140,17 +134,17 @@ public class TethysUISwingPasswordDialog
         public Component getComponentAfter(final Container pRoot,
                                            final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getPasswordNode()))) {
-                return TethysUISwingNode.getComponent(getConfirmNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getPasswordNode()))) {
+                return TethysSwingNode.getComponent(getConfirmNode());
             }
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getConfirmNode()))) {
-                return TethysUISwingNode.getComponent(getOKButtonNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getConfirmNode()))) {
+                return TethysSwingNode.getComponent(getOKButtonNode());
             }
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getOKButtonNode()))) {
-                return TethysUISwingNode.getComponent(getCancelButtonNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getOKButtonNode()))) {
+                return TethysSwingNode.getComponent(getCancelButtonNode());
             }
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getCancelButtonNode()))) {
-                return TethysUISwingNode.getComponent(getPasswordNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getCancelButtonNode()))) {
+                return TethysSwingNode.getComponent(getPasswordNode());
             }
 
             /* Return a default value */
@@ -161,17 +155,17 @@ public class TethysUISwingPasswordDialog
         public Component getComponentBefore(final Container pRoot,
                                             final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getPasswordNode()))) {
-                return TethysUISwingNode.getComponent(getCancelButtonNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getPasswordNode()))) {
+                return TethysSwingNode.getComponent(getCancelButtonNode());
             }
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getConfirmNode()))) {
-                return TethysUISwingNode.getComponent(getPasswordNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getConfirmNode()))) {
+                return TethysSwingNode.getComponent(getPasswordNode());
             }
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getOKButtonNode()))) {
-                return TethysUISwingNode.getComponent(getConfirmNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getOKButtonNode()))) {
+                return TethysSwingNode.getComponent(getConfirmNode());
             }
-            if (pCurrent.equals(TethysUISwingNode.getComponent(getCancelButtonNode()))) {
-                return TethysUISwingNode.getComponent(getOKButtonNode());
+            if (pCurrent.equals(TethysSwingNode.getComponent(getCancelButtonNode()))) {
+                return TethysSwingNode.getComponent(getOKButtonNode());
             }
 
             /* Return a default value */
@@ -185,12 +179,12 @@ public class TethysUISwingPasswordDialog
 
         @Override
         public Component getFirstComponent(final Container pRoot) {
-            return TethysUISwingNode.getComponent(getPasswordNode());
+            return TethysSwingNode.getComponent(getPasswordNode());
         }
 
         @Override
         public Component getLastComponent(final Container pRoot) {
-            return TethysUISwingNode.getComponent(getCancelButtonNode());
+            return TethysSwingNode.getComponent(getCancelButtonNode());
         }
     }
 }
