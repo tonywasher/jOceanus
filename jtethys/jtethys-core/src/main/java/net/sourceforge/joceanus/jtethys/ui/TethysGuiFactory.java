@@ -255,9 +255,10 @@ public abstract class TethysGuiFactory {
     /**
      * Obtain a new scroll button manager.
      * @param <T> the item type
+     * @param pClazz the value class
      * @return the new manager
      */
-    public abstract <T> TethysScrollButtonManager<T> newScrollButton();
+    public abstract <T> TethysScrollButtonManager<T> newScrollButton(Class<T> pClazz);
 
     /**
      * Obtain a new list button manager.
@@ -269,9 +270,10 @@ public abstract class TethysGuiFactory {
     /**
      * Obtain a new icon button manager.
      * @param <T> the item type
+     * @param pClazz the value class
      * @return the new manager
      */
-    public abstract <T> TethysIconButtonManager<T> newIconButton();
+    public abstract <T> TethysIconButtonManager<T> newIconButton(Class<T> pClazz);
 
     /**
      * Obtain a new dateRange selector.
@@ -490,9 +492,10 @@ public abstract class TethysGuiFactory {
     /**
      * Obtain a new scroll data field.
      * @param <T> the item type
+     * @param pClazz the value class
      * @return the new field
      */
-    public abstract <T> TethysScrollButtonField<T> newScrollField();
+    public abstract <T> TethysScrollButtonField<T> newScrollField(Class<T> pClazz);
 
     /**
      * Obtain a new list data field.
@@ -504,9 +507,10 @@ public abstract class TethysGuiFactory {
     /**
      * Obtain a new simple icon data field.
      * @param <T> the item type
+     * @param pClazz the value class
      * @return the new field
      */
-    public abstract <T> TethysIconButtonField<T> newIconField();
+    public abstract <T> TethysIconButtonField<T> newIconField(Class<T> pClazz);
 
     /**
      * Obtain a new colour data field.

@@ -269,6 +269,7 @@ public final class GordianSignatureSpec {
      * Obtain the composite signatureSpec iterator.
      * @return the signatureeSpec iterator.
      */
+    @SuppressWarnings("unchecked")
     public Iterator<GordianSignatureSpec> signatureSpecIterator() {
         if (!(theSignatureSpec instanceof List)) {
             throw new IllegalArgumentException();

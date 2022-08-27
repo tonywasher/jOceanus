@@ -63,8 +63,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pId the Id of the new item (or 0 if not yet known)
      */
-    public EncryptedItem(final EncryptedList<?, E> pList,
-                         final Integer pId) {
+    protected EncryptedItem(final EncryptedList<?, E> pList,
+                            final Integer pId) {
         super(pList, pId);
         theGenerator = new MetisEncryptionGenerator(null);
     }
@@ -74,8 +74,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    public EncryptedItem(final EncryptedList<?, E> pList,
-                         final EncryptedItem<E> pSource) {
+    protected EncryptedItem(final EncryptedList<?, E> pList,
+                            final EncryptedItem<E> pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
@@ -87,8 +87,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValues the data values
      * @throws OceanusException on error
      */
-    public EncryptedItem(final EncryptedList<?, E> pList,
-                         final DataValues<E> pValues) throws OceanusException {
+    protected EncryptedItem(final EncryptedList<?, E> pList,
+                            final DataValues<E> pValues) throws OceanusException {
         super(pList, pValues);
 
         /* Access dataKeySet id */
@@ -350,10 +350,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pItemType the list type
          * @param pStyle the style of the list
          */
-        public EncryptedList(final Class<T> pBaseClass,
-                             final DataSet<?, ?> pData,
-                             final E pItemType,
-                             final ListStyle pStyle) {
+        protected EncryptedList(final Class<T> pBaseClass,
+                                final DataSet<?, ?> pData,
+                                final E pItemType,
+                                final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }
 

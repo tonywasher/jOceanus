@@ -89,7 +89,7 @@ public class MoneyWiseTransactionTagSelect
      */
     protected MoneyWiseTransactionTagSelect(final TethysGuiFactory pFactory) {
         /* Create the tags button */
-        theTagButton = pFactory.newScrollButton();
+        theTagButton = pFactory.newScrollButton(TransactionTagBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

@@ -105,11 +105,11 @@ public class CoeusReportSelect
     public CoeusReportSelect(final TethysGuiFactory pFactory,
                              final CoeusCalendar pCalendar) {
         /* Create the report button */
-        theReportButton = pFactory.newScrollButton();
+        theReportButton = pFactory.newScrollButton(CoeusReportType.class);
         buildReportMenu();
 
         /* Create the market button */
-        theMarketButton = pFactory.newScrollButton();
+        theMarketButton = pFactory.newScrollButton(CoeusMarketProvider.class);
         buildMarketMenu();
 
         /* Create the DateButton */

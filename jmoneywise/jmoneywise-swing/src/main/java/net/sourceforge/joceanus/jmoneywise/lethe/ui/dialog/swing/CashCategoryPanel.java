@@ -69,8 +69,8 @@ public class CashCategoryPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton(CashCategoryType.class);
+        final TethysScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton(CashCategory.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(CategoryBase.FIELD_NAME, MetisDataType.STRING, myName);

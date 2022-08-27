@@ -495,6 +495,7 @@ public class GordianKeyPairSpec {
      * Obtain the composite keySpec iterator.
      * @return the keySpec iterator.
      */
+    @SuppressWarnings("unchecked")
     public Iterator<GordianKeyPairSpec> keySpecIterator() {
         if (!(theSubKeyType instanceof List)) {
             throw new IllegalArgumentException();

@@ -31,6 +31,7 @@ import javafx.scene.control.Label;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
@@ -78,9 +79,11 @@ public final class TethysFXDataButtonField {
          * Constructor.
          *
          * @param pFactory the GUI factory
+         * @param pClazz the value class
          */
-        TethysFXIconButtonField(final TethysFXGuiFactory pFactory) {
-            this(pFactory, pFactory.newIconButton());
+        TethysFXIconButtonField(final TethysFXGuiFactory pFactory,
+                                final Class<T> pClazz) {
+            this(pFactory, pFactory.newIconButton(pClazz));
         }
 
         /**
@@ -107,6 +110,11 @@ public final class TethysFXDataButtonField {
                 setValue(theManager.getValue());
                 fireEvent(TethysXUIEvent.NEWVALUE, e.getDetails());
             });
+        }
+
+        @Override
+        public T getCastValue(final Object pValue) {
+            return theManager.getValueClass().cast(pValue);
         }
 
         @Override
@@ -197,9 +205,11 @@ public final class TethysFXDataButtonField {
          * Constructor.
          *
          * @param pFactory the GUI factory
+         * @param pClazz the value class
          */
-        TethysFXScrollButtonField(final TethysFXGuiFactory pFactory) {
-            this(pFactory, pFactory.newScrollButton());
+        TethysFXScrollButtonField(final TethysFXGuiFactory pFactory,
+                                  final Class<T> pClazz) {
+            this(pFactory, pFactory.newScrollButton(pClazz));
         }
 
         /**
@@ -226,6 +236,11 @@ public final class TethysFXDataButtonField {
             /* Set configurator */
             theConfigurator = p -> {
             };
+        }
+
+        @Override
+        public T getCastValue(final Object pValue) {
+            return theManager.getValueClass().cast(pValue);
         }
 
         /**
@@ -445,6 +460,11 @@ public final class TethysFXDataButtonField {
             getLabel().setContentDisplay(ContentDisplay.LEFT);
         }
 
+        @Override
+        public String getCastValue(final Object pValue) {
+            return (String) pValue;
+        }
+
         /**
          * handle Date Button event.
          *
@@ -546,6 +566,12 @@ public final class TethysFXDataButtonField {
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public List<T> getCastValue(final Object pValue) {
+            return (List<T>) pValue;
         }
 
         /**

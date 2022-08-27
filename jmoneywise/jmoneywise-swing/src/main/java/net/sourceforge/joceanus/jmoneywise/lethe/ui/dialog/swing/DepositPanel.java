@@ -137,10 +137,10 @@ public class DepositPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<DepositCategory> myCategoryButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysScrollButtonManager<DepositCategory> myCategoryButton = pFactory.newScrollButton(DepositCategory.class);
+        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton(Payee.class);
+        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton(AssetCurrency.class);
+        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);

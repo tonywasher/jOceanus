@@ -89,7 +89,7 @@ public class MoneyWisePortfolioAnalysisSelect
      */
     protected MoneyWisePortfolioAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the portfolio button */
-        thePortButton = pFactory.newScrollButton();
+        thePortButton = pFactory.newScrollButton(PortfolioBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

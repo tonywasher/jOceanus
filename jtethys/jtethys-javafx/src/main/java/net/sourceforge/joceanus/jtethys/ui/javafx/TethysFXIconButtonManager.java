@@ -29,10 +29,12 @@ public final class TethysFXIconButtonManager<T>
      * Constructor.
      *
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    TethysFXIconButtonManager(final TethysFXGuiFactory pFactory) {
+    TethysFXIconButtonManager(final TethysFXGuiFactory pFactory,
+                              final Class<T> pClazz) {
         /* Initialise underlying class */
-        super(pFactory);
+        super(pFactory, pClazz);
     }
 
     @Override

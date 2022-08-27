@@ -866,6 +866,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUISwingTableScrollCell(final TethysUISwingTableScrollColumn<T, C, R> pColumn,
                                      final TethysUICoreFactory<?> pFactory,
                                      final Class<T> pClazz) {
@@ -901,6 +902,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
+        @SuppressWarnings("unchecked")
         TethysUISwingTableListCell(final TethysUISwingTableListColumn<T, C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUISwingListButtonField<T>) pFactory.fieldFactory().newListField());
@@ -942,6 +944,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUISwingTableIconCell(final TethysUISwingTableIconColumn<T, C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory,
                                    final Class<T> pClazz) {

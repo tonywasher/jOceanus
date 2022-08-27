@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
@@ -68,7 +69,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * The new button.
      */
-    private final TethysScrollButtonManager<S> theNewButton;
+    private final TethysScrollButtonManager<TethysScrollWrapper> theNewButton;
 
     /**
      * The edit list.
@@ -102,7 +103,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
-        theNewButton = myGuiFactory.newScrollButton();
+        theNewButton = myGuiFactory.newScrollButton(TethysScrollWrapper.class);
         MetisIcon.configureNewScrollButton(theNewButton);
 
         /* Set table configuration */
@@ -164,7 +165,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * Obtain the new button.
      * @return the new Button
      */
-    TethysScrollButtonManager<S> getNewButton() {
+    TethysScrollButtonManager<TethysScrollWrapper> getNewButton() {
         return theNewButton;
     }
 
@@ -181,10 +182,11 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * handle new static class.
      */
+    @SuppressWarnings("unchecked")
     private void handleNewClass() {
         /* Access the new class */
         cancelEditing();
-        final S myClass = theNewButton.getValue();
+        final S myClass = (S) theNewButton.getValue().getData();
 
         /* Protect the action */
         try {
@@ -220,13 +222,13 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      */
     private void buildNewMenu() {
         /* Reset the menu popUp */
-        final TethysScrollMenu<S> myMenu = theNewButton.getMenu();
+        final TethysScrollMenu<TethysScrollWrapper> myMenu = theNewButton.getMenu();
         myMenu.removeAllItems();
 
         /* Loop through the missing classes */
         for (S myValue : theStatic.getMissingClasses()) {
             /* Create a new MenuItem and add it to the popUp */
-            myMenu.addItem(myValue);
+            myMenu.addItem(new TethysScrollWrapper(myValue));
         }
     }
 

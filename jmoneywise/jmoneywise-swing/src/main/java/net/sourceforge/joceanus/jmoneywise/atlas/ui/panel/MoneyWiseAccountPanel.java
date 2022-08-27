@@ -215,7 +215,7 @@ public class MoneyWiseAccountPanel
 
         /* Create selection button and label */
         final TethysLabel myLabel = myFactory.newLabel(NLS_DATA);
-        theSelectButton = myFactory.newScrollButton();
+        theSelectButton = myFactory.newScrollButton(PanelName.class);
         buildSelectMenu();
 
         /* Create the card panel */

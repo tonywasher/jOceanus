@@ -294,7 +294,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
          * Constructor.
          * @param pAccount the account bucket
          */
-        public AccountFilter(final B pAccount) {
+        protected AccountFilter(final B pAccount) {
             /* Store parameter */
             super(pAccount, AccountAttribute.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());

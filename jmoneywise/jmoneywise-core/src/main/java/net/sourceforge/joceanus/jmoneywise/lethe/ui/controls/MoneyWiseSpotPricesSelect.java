@@ -189,7 +189,7 @@ public class MoneyWiseSpotPricesSelect
         thePrev.setToolTip(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = pFactory.newScrollButton();
+        thePortButton = pFactory.newScrollButton(PortfolioBucket.class);
 
         /* Create initial state */
         theState = new SpotPricesState();

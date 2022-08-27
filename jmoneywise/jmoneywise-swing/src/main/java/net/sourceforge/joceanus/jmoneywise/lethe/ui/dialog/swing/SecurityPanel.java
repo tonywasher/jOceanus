@@ -138,10 +138,10 @@ public class SecurityPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton(SecurityType.class);
+        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton(Payee.class);
+        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton(AssetCurrency.class);
+        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
@@ -178,8 +178,8 @@ public class SecurityPanel
         final TethysStringEditField myPrice = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<Security> myStockButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton(Region.class);
+        final TethysScrollButtonManager<Security> myStockButton = pFactory.newScrollButton(Security.class);
 
         /* Assign the fields to the panel */
         myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);

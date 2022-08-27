@@ -595,7 +595,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         /**
          * Constructor.
          */
-        protected MetisInfoSetValueList() {
+        MetisInfoSetValueList() {
             theList = new ArrayList<>();
         }
 

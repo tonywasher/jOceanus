@@ -65,6 +65,11 @@ public abstract class TethysIconButtonManager<T>
     private final Map<TethysIconId, TethysIcon> theIconMap;
 
     /**
+     * The value class.
+     */
+    private final Class<T> theClazz;
+
+    /**
      * The icon Width.
      */
     private int theWidth;
@@ -92,10 +97,13 @@ public abstract class TethysIconButtonManager<T>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    protected TethysIconButtonManager(final TethysGuiFactory pFactory) {
+    protected TethysIconButtonManager(final TethysGuiFactory pFactory,
+                                      final Class<T> pClazz) {
         /* Store parameters */
         theFactory = pFactory;
+        theClazz = pClazz;
 
         /* Allocate resources */
         theEventManager = new TethysEventManager<>();
@@ -112,6 +120,14 @@ public abstract class TethysIconButtonManager<T>
     @Override
     public Integer getId() {
         return theButton.getId();
+    }
+
+    /**
+     * Obtain value class.
+     * @return the class
+     */
+    public Class<T> getValueClass() {
+        return theClazz;
     }
 
     /**

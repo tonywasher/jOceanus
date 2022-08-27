@@ -187,7 +187,7 @@ public abstract class TethysDateRangeSelector
         theStartButton = theGuiFactory.newDateButton();
         theEndButton = theGuiFactory.newDateButton();
         theBaseButton = theGuiFactory.newDateButton();
-        thePeriodButton = theGuiFactory.newScrollButton();
+        thePeriodButton = theGuiFactory.newScrollButton(TethysDatePeriod.class);
         buildPeriodMenu(thePeriodButton.getMenu());
 
         /* Create the period box */

@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollWrapper;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -200,7 +201,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         /* Listen to the Actions */
         myRegistrar = theItemActions.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusUIEvent.BUILDGOTO,
-                e -> buildGoToMenu((TethysScrollMenu<PrometheusGoToEvent<G>>) e.getDetails(TethysScrollMenu.class)));
+                e -> buildGoToMenu((TethysScrollMenu<TethysScrollWrapper>) e.getDetails(TethysScrollMenu.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.GOTO, e -> processGoToRequest(e.getDetails(PrometheusGoToEvent.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.EDIT, e -> requestEdit());
         myRegistrar.addEventListener(PrometheusUIEvent.DELETE, e -> requestDelete());
@@ -615,7 +616,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Build goTo menu.
      * @param pMenu the menu to build
      */
-    protected abstract void buildGoToMenu(TethysScrollMenu<PrometheusGoToEvent<G>> pMenu);
+    protected abstract void buildGoToMenu(TethysScrollMenu<TethysScrollWrapper> pMenu);
 
     /**
      * Create a GoTo event.

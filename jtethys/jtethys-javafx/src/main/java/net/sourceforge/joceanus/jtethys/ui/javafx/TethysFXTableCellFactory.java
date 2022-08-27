@@ -932,7 +932,7 @@ public class TethysFXTableCellFactory<C, R> {
         TethysFXTableScrollCell(final TethysFXTableScrollColumn<T, C, R> pColumn,
                                 final TethysFXGuiFactory pFactory,
                                 final Class<T> pClazz) {
-            super(pColumn, pFactory.newScrollField(), pClazz);
+            super(pColumn, pFactory.newScrollField(pClazz), pClazz);
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
 
@@ -1004,7 +1004,7 @@ public class TethysFXTableCellFactory<C, R> {
         TethysFXTableIconCell(final TethysFXTableIconColumn<T, C, R> pColumn,
                               final TethysFXGuiFactory pFactory,
                               final Class<T> pClazz) {
-            super(pColumn, pFactory.newIconField(), pClazz);
+            super(pColumn, pFactory.newIconField(pClazz), pClazz);
             getControl().setIconMapSet(this::determineMapSet);
         }
 

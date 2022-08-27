@@ -32,10 +32,12 @@ public final class TethysSwingScrollButtonManager<T>
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pClazz the value class
      */
-    public TethysSwingScrollButtonManager(final TethysSwingGuiFactory pFactory) {
+    public TethysSwingScrollButtonManager(final TethysSwingGuiFactory pFactory,
+                                          final Class<T> pClazz) {
         /* Initialise the underlying class */
-        super(pFactory);
+        super(pFactory, pClazz);
     }
 
     @Override

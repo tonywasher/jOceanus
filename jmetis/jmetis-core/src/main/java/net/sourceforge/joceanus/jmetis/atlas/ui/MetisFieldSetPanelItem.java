@@ -648,13 +648,13 @@ public abstract class MetisFieldSetPanelItem<T>
          *
          * @param pPanel the panel
          * @param pField the field
-         * @param pClass the item class
+         * @param pClazz the item class
          */
         MetisFieldSetScrollItem(final MetisFieldSetPanel pPanel,
                                 final MetisDataFieldId pField,
-                                final Class<T> pClass) {
+                                final Class<T> pClazz) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, pPanel.getGuiFactory().newScrollField());
+            super(pPanel, pField, pClazz, pPanel.getGuiFactory().newScrollField(pClazz));
         }
 
         @Override
@@ -713,13 +713,13 @@ public abstract class MetisFieldSetPanelItem<T>
          *
          * @param pPanel the panel
          * @param pField the field
-         * @param pClass the item class
+         * @param pClazz the item class
          */
         MetisFieldSetIconItem(final MetisFieldSetPanel pPanel,
                               final MetisDataFieldId pField,
-                              final Class<T> pClass) {
+                              final Class<T> pClazz) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, pPanel.getGuiFactory().newIconField());
+            super(pPanel, pField, pClazz, pPanel.getGuiFactory().newIconField(pClazz));
         }
 
         @Override

@@ -505,7 +505,7 @@ public class TethysSwingTableCellFactory<C, R> {
 
         @Override
         public void repaintColumnCell(final C pId) {
-            /* Note the the cell has been updated */
+            /* Note the cell has been updated */
             final TethysSwingTableManager<C, R> myTable = theColumn.getTable();
             final TethysSwingTableColumn<?, C, R> myCol = myTable.getColumn(pId);
             myTable.getTableModel().fireTableCellUpdated(theRowIndex, myCol.getColumnIndex());
@@ -1067,7 +1067,7 @@ public class TethysSwingTableCellFactory<C, R> {
         TethysSwingTableScrollCell(final TethysSwingTableScrollColumn<T, C, R> pColumn,
                                    final TethysSwingGuiFactory pFactory,
                                    final Class<T> pClazz) {
-            super(pColumn, pFactory.newScrollField(), pClazz);
+            super(pColumn, pFactory.newScrollField(pClazz), pClazz);
             useDialogForEdit();
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
             getControl().getEventRegistrar().addEventListener(TethysXUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
@@ -1143,7 +1143,7 @@ public class TethysSwingTableCellFactory<C, R> {
         TethysSwingTableIconCell(final TethysSwingTableIconColumn<T, C, R> pColumn,
                                  final TethysSwingGuiFactory pFactory,
                                  final Class<T> pClazz) {
-            super(pColumn, pFactory.newIconField(), pClazz);
+            super(pColumn, pFactory.newIconField(pClazz), pClazz);
             final Supplier<TethysIconMapSet<T>> mySupplier = () -> getColumn().getIconMapSet().apply(getActiveRow());
             getControl().setIconMapSet(mySupplier);
             getRenderControl().setIconMapSet(mySupplier);

@@ -116,10 +116,10 @@ public class MoneyWiseLoanAnalysisSelect
      */
     protected MoneyWiseLoanAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the loan button */
-        theLoanButton = pFactory.newScrollButton();
+        theLoanButton = pFactory.newScrollButton(LoanBucket.class);
 
         /* Create the category button */
-        theCatButton = pFactory.newScrollButton();
+        theCatButton = pFactory.newScrollButton(LoanCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

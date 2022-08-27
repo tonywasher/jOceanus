@@ -69,6 +69,13 @@ public interface TethysDataEditField<T>
     void setValue(T pValue);
 
     /**
+     * Obtain the cast value.
+     * @param pValue the value as object
+     * @return the value
+     */
+    T getCastValue(Object pValue);
+
+    /**
      * Obtain the value.
      * @return the value.
      */
@@ -556,6 +563,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysRawDecimalEditField
             extends TethysValidatedEditField<TethysDecimal>, TethysRawDecimalField {
+        @Override
+        default TethysDecimal getCastValue(final Object pValue) {
+            return (TethysDecimal) pValue;
+        }
     }
 
     /**
@@ -582,6 +593,9 @@ public interface TethysDataEditField<T>
      */
     interface TethysStringEditField
             extends TethysDataEditField<String>, TethysValidatedEditField<String> {
+        default String getCastValue(final Object pValue) {
+            return (String) pValue;
+        }
     }
 
     /**
@@ -589,6 +603,9 @@ public interface TethysDataEditField<T>
      */
     interface TethysCharArrayEditField
             extends TethysDataEditField<char[]>, TethysValidatedEditField<char[]> {
+        default char[] getCastValue(final Object pValue) {
+            return (char[]) pValue;
+        }
     }
 
     /**
@@ -596,6 +613,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysShortEditField
             extends TethysDataEditField<Short>, TethysValidatedEditField<Short> {
+        @Override
+        default Short getCastValue(final Object pValue) {
+            return (Short) pValue;
+        }
     }
 
     /**
@@ -603,6 +624,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysIntegerEditField
             extends TethysDataEditField<Integer>, TethysValidatedEditField<Integer> {
+        @Override
+        default Integer getCastValue(final Object pValue) {
+            return (Integer) pValue;
+        }
     }
 
     /**
@@ -610,6 +635,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysLongEditField
             extends TethysDataEditField<Long>, TethysValidatedEditField<Long> {
+        @Override
+        default Long getCastValue(final Object pValue) {
+            return (Long) pValue;
+        }
     }
 
     /**
@@ -617,6 +646,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysMoneyEditField
             extends TethysDataEditField<TethysMoney>, TethysCurrencyEditField<TethysMoney> {
+        @Override
+        default TethysMoney getCastValue(final Object pValue) {
+            return (TethysMoney) pValue;
+        }
     }
 
     /**
@@ -624,6 +657,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysPriceEditField
             extends TethysDataEditField<TethysPrice>, TethysCurrencyEditField<TethysPrice> {
+        @Override
+        default TethysPrice getCastValue(final Object pValue) {
+            return (TethysPrice) pValue;
+        }
     }
 
     /**
@@ -631,6 +668,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysDilutedPriceEditField
             extends TethysDataEditField<TethysDilutedPrice>, TethysCurrencyEditField<TethysDilutedPrice> {
+        @Override
+        default TethysDilutedPrice getCastValue(final Object pValue) {
+            return (TethysDilutedPrice) pValue;
+        }
     }
 
     /**
@@ -638,6 +679,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysUnitsEditField
             extends TethysDataEditField<TethysUnits>, TethysValidatedEditField<TethysUnits> {
+        @Override
+        default TethysUnits getCastValue(final Object pValue) {
+            return (TethysUnits) pValue;
+        }
     }
 
     /**
@@ -645,6 +690,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysDilutionEditField
             extends TethysDataEditField<TethysDilution>, TethysValidatedEditField<TethysDilution> {
+        @Override
+        default TethysDilution getCastValue(final Object pValue) {
+            return (TethysDilution) pValue;
+        }
     }
 
     /**
@@ -652,6 +701,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysRateEditField
             extends TethysDataEditField<TethysRate>, TethysValidatedEditField<TethysRate> {
+        @Override
+        default TethysRate getCastValue(final Object pValue) {
+            return (TethysRate) pValue;
+        }
     }
 
     /**
@@ -659,6 +712,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysRatioEditField
             extends TethysDataEditField<TethysRatio>, TethysValidatedEditField<TethysRatio> {
+        @Override
+        default TethysRatio getCastValue(final Object pValue) {
+            return (TethysRatio) pValue;
+        }
     }
 
     /**
@@ -697,6 +754,10 @@ public interface TethysDataEditField<T>
      */
     interface TethysDateButtonField
             extends TethysDataEditField<TethysDate>, TethysDateButton {
+        @Override
+        default TethysDate getCastValue(final Object pValue) {
+            return (TethysDate) pValue;
+        }
     }
 
     /**

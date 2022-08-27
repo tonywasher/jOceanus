@@ -116,10 +116,10 @@ public class MoneyWiseDepositAnalysisSelect
      */
     protected MoneyWiseDepositAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the deposit button */
-        theDepositButton = pFactory.newScrollButton();
+        theDepositButton = pFactory.newScrollButton(DepositBucket.class);
 
         /* Create the category button */
-        theCatButton = pFactory.newScrollButton();
+        theCatButton = pFactory.newScrollButton(DepositCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();

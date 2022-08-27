@@ -68,7 +68,7 @@ public class MoneyWiseDepositCategoryTable
                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY);
+        super(pView, pUpdateSet, pError, DepositCategory.class, MoneyWiseDataType.DEPOSITCATEGORY);
 
         /* Access field manager */
         final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();

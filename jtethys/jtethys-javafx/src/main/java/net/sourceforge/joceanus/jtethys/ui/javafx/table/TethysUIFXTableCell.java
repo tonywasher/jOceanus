@@ -730,6 +730,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUIFXTableScrollCell(final TethysUIFXTableScrollColumn<T, C, R> pColumn,
                                   final TethysUICoreFactory<?> pFactory,
                                   final Class<T> pClazz) {
@@ -763,6 +764,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
+        @SuppressWarnings("unchecked")
         TethysUIFXTableListCell(final TethysUIFXTableListColumn<T, C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXListButtonField<T>) pFactory.fieldFactory().newListField());
@@ -802,6 +804,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pFactory the GUI Factory
          * @param pClazz   the field class
          */
+        @SuppressWarnings("unchecked")
         TethysUIFXTableIconCell(final TethysUIFXTableIconColumn<T, C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory,
                                 final Class<T> pClazz) {

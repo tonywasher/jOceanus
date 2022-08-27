@@ -125,7 +125,7 @@ public class MetisViewerControl
         theParentButton.getEventRegistrar().addEventListener(e -> theViewer.handleParentPage());
 
         /* Create the mode button */
-        theModeButton = pFactory.newScrollButton();
+        theModeButton = pFactory.newScrollButton(MetisViewerMode.class);
         theModeButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theViewer.handleMode(theModeButton.getValue()));
 
         /* Create the next button */

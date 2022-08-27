@@ -58,7 +58,7 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
      * Constructor.
      * @param pParent the parent.
      */
-    public DataGroup(final T pParent) {
+    protected DataGroup(final T pParent) {
         /* Store parameter */
         theParent = pParent;
         theList = new ArrayList<>();

@@ -69,8 +69,8 @@ public class DepositCategoryPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<DepositCategoryType> myTypeButton = pFactory.newScrollButton();
-        final TethysScrollButtonManager<DepositCategory> myParentButton = pFactory.newScrollButton();
+        final TethysScrollButtonManager<DepositCategoryType> myTypeButton = pFactory.newScrollButton(DepositCategoryType.class);
+        final TethysScrollButtonManager<DepositCategory> myParentButton = pFactory.newScrollButton(DepositCategory.class);
 
         /* Assign the fields to the panel */
         myPanel.addField(CategoryBase.FIELD_NAME, MetisDataType.STRING, myName);

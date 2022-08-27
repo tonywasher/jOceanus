@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollWrapper;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
@@ -616,17 +617,18 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Field item.
          */
-        private final TethysScrollButtonField<E> theField;
+        private final TethysScrollButtonField<TethysScrollWrapper> theField;
 
         /**
          * Constructor.
          *
          * @param pItem the item
          */
+        @SuppressWarnings("unchecked")
         EnumPreferenceElement(final MetisEnumPreference<K, E> pItem) {
             /* Store parameters */
             theItem = pItem;
-            theField = theGuiFactory.newScrollField();
+            theField = theGuiFactory.newScrollField(TethysScrollWrapper.class);
             theField.setEditable(true);
 
             /* Create the label */
@@ -649,7 +651,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
             theField.setMenuConfigurator(this::buildMenu);
             final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theField.getEventRegistrar();
             myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> {
-                pItem.setValue(theField.getValue());
+                 pItem.setValue((E) theField.getValue().getData());
                 notifyChanges();
             });
         }
@@ -659,7 +661,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pMenu the menu
          */
-        private void buildMenu(final TethysScrollMenu<E> pMenu) {
+        private void buildMenu(final TethysScrollMenu<TethysScrollWrapper> pMenu) {
             /* reset the menu */
             pMenu.removeAllItems();
 
@@ -671,7 +673,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
                 /* If the element is not filtered */
                 if (myFilter.test(myEnum)) {
                     /* Create a new MenuItem and add it to the popUp */
-                    pMenu.addItem(myEnum);
+                    pMenu.addItem(new TethysScrollWrapper(myEnum));
                 }
             }
         }
@@ -679,7 +681,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         @Override
         public void updateField() {
             /* Update the field */
-            theField.setValue(theItem.getValue());
+            theField.setValue(new TethysScrollWrapper(theItem.getValue()));
 
             /* Set changed indication */
             theField.setTheAttributeState(TethysFieldAttribute.CHANGED, theItem.isChanged());
