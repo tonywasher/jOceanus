@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.test.threads.MetisTestThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -216,7 +216,7 @@ public class MetisSwingThreadTester {
      */
     private void showDebug() {
         try {
-            final MetisSwingViewerWindow myWindow = theToolkit.newViewerWindow();
+            final MetisViewerWindow myWindow = theToolkit.newViewerWindow();
             theDebugButton.setEnabled(false);
             myWindow.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theDebugButton.setEnabled(true));
             myWindow.showDialog();

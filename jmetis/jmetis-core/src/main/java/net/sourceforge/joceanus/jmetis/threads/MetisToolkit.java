@@ -267,7 +267,9 @@ public abstract class MetisToolkit
      * @return the viewer Window
      * @throws OceanusException on error
      */
-    public abstract MetisViewerWindow newViewerWindow() throws OceanusException;
+    public MetisViewerWindow newViewerWindow() throws OceanusException {
+        return new MetisViewerWindow(getGuiFactory(), theViewerManager);
+    }
 
     /**
      * Create a new Preference View.
@@ -275,14 +277,6 @@ public abstract class MetisToolkit
      */
     public MetisPreferenceView newPreferenceView() {
         return new MetisPreferenceView(getGuiFactory(), thePreferenceManager);
-    }
-
-    /**
-     * Create a new FieldSetPanelPair.
-     * @return the panelPair
-     */
-    public MetisFieldSetPanelPair newFieldSetPanelPair() {
-        return new MetisFieldSetPanelPair(getGuiFactory());
     }
 
     /**

@@ -34,5 +34,4 @@ module net.sourceforge.joceanus.jmetis.swing {
     exports net.sourceforge.joceanus.jmetis.launch.swing;
     exports net.sourceforge.joceanus.jmetis.lethe.field.swing;
     exports net.sourceforge.joceanus.jmetis.threads.swing;
-    exports net.sourceforge.joceanus.jmetis.viewer.swing;
 }

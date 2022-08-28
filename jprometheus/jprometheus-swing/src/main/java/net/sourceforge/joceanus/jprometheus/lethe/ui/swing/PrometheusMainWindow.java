@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
@@ -53,7 +54,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
@@ -623,10 +623,13 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
                 /* If we have updates or changes */
                 if ((hasUpdates()) || (hasChanges())) {
                     /* Ask whether to continue */
-                    final int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
+                    final TethysAlert myAlert = theGuiFactory.newAlert();
+                    myAlert.setMessage(PROMPT_DISCARD);
+                    myAlert.setTitle(TITLE_CLOSE);
+                    final boolean myResult = myAlert.confirmYesNo();
 
-                    /* Ignore if no was responded */
-                    if (myOption != JOptionPane.YES_OPTION) {
+                    /* Ignore if not confirmed */
+                    if (!myResult) {
                         return;
                     }
                 }

@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -85,11 +84,6 @@ public class MetisSwingToolkit
     @Override
     public MetisSwingHelpWindow newHelpWindow() {
         return new MetisSwingHelpWindow(getGuiFactory());
-    }
-
-    @Override
-    public MetisSwingViewerWindow newViewerWindow() throws OceanusException {
-        return new MetisSwingViewerWindow(getGuiFactory(), getViewerManager());
     }
 
     @Override

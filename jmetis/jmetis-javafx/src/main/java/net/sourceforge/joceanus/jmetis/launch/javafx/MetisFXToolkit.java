@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadProgressStatus;
-import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -87,11 +86,6 @@ public class MetisFXToolkit
     @Override
     public MetisFXHelpWindow newHelpWindow() {
         return new MetisFXHelpWindow(getGuiFactory());
-    }
-
-    @Override
-    public MetisFXViewerWindow newViewerWindow() throws OceanusException {
-        return new MetisFXViewerWindow(getGuiFactory(), getViewerManager());
     }
 
     @Override

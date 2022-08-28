@@ -35,5 +35,4 @@ module net.sourceforge.joceanus.jmetis.javafx {
     exports net.sourceforge.joceanus.jmetis.help.javafx;
     exports net.sourceforge.joceanus.jmetis.launch.javafx;
     exports net.sourceforge.joceanus.jmetis.threads.javafx;
-    exports net.sourceforge.joceanus.jmetis.viewer.javafx;
 }

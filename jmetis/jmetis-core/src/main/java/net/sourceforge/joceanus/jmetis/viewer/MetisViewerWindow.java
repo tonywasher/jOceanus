@@ -26,6 +26,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
@@ -36,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 /**
  * Viewer Manager class, responsible for displaying the debug view.
  */
-public abstract class MetisViewerWindow
+public class MetisViewerWindow
         implements TethysEventProvider<TethysXUIEvent> {
     /**
      * The Name of the current page.
@@ -52,6 +54,11 @@ public abstract class MetisViewerWindow
      * The Height of the window.
      */
     protected static final int WINDOW_HEIGHT = 600;
+
+    /**
+     * The Factory.
+     */
+    private final TethysGuiFactory theFactory;
 
     /**
      * The Data Manager.
@@ -94,6 +101,11 @@ public abstract class MetisViewerWindow
     private final MetisViewerControl theControl;
 
     /**
+     * The help dialog.
+     */
+    private TethysChildDialog theDialog;
+
+    /**
      * The Active page.
      */
     private MetisViewerPage theActive;
@@ -104,9 +116,10 @@ public abstract class MetisViewerWindow
      * @param pDataManager the viewer data manager
      * @throws OceanusException on error
      */
-    protected MetisViewerWindow(final TethysGuiFactory pFactory,
-                                final MetisViewerManager pDataManager) throws OceanusException {
-        /* Record the data manager */
+    public MetisViewerWindow(final TethysGuiFactory pFactory,
+                             final MetisViewerManager pDataManager) throws OceanusException {
+        /* Record the parameters */
+        theFactory = pFactory;
         theDataManager = pDataManager;
 
         /* Create the event manager */
@@ -165,11 +178,6 @@ public abstract class MetisViewerWindow
     public TethysHTMLManager getHTMLManager() {
         return theHtml;
     }
-
-    /**
-     * CloseWindow on parent termination.
-     */
-    public abstract void closeWindow();
 
     /**
      * Initialise tree.
@@ -328,12 +336,59 @@ public abstract class MetisViewerWindow
     /**
      * show the dialog.
      */
-    public abstract void showDialog();
+    public void showDialog() {
+        /* If the dialog does not exist */
+        if (theDialog == null) {
+            /* Create a new dialog */
+            theDialog = theFactory.newChildDialog();
+            theDialog.setTitle(MetisViewerResource.VIEWER_TITLE.getValue());
+
+            /* Create the help panel */
+            final TethysBorderPaneManager myPanel = theFactory.newBorderPane();
+            myPanel.setCentre(theSplitTree);
+            myPanel.setPreferredWidth(WINDOW_WIDTH);
+            myPanel.setPreferredHeight(WINDOW_HEIGHT);
+            theDialog.setContent(myPanel);
+
+            /* Set listener */
+            theDialog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> {
+                theTree.setVisible(false);
+                fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
+            });
+        }
+
+        /* If the dialog is not showing */
+        if (!theDialog.isShowing()) {
+            /* Make sure that the dialog is showing */
+            theTree.setVisible(true);
+            theDialog.showDialog();
+        }
+    }
 
     /**
      * Hide the dialog.
      */
-    public abstract void hideDialog();
+    public void hideDialog() {
+        /* If the dialog exists */
+        if (theDialog != null
+            && theDialog.isShowing()) {
+            /* Make sure that the dialog is hidden */
+            theDialog.hideDialog();
+
+            /* Terminate the tree */
+            terminateTree();
+        }
+    }
+
+    /**
+     * CloseWindow on parent termination.
+     */
+    public void closeWindow() {
+        hideDialog();
+        if (theDialog != null) {
+            theDialog.closeDialog();
+        }
+    }
 
     /**
      * Handle the split tree action event.
