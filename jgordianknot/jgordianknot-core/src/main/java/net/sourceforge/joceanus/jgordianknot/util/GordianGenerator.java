@@ -24,9 +24,11 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCoreDialogControl;
 import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCorePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * Factory generator.
@@ -87,17 +89,21 @@ public final class GordianGenerator {
     }
 
     /**
-     * Create a new passwordManager.
-     * @param pFactory the factory
+     * Create a password Manager.
+     * @param pFactory the GUI Factory
+     * @param pFactoryType the factoryType
+     * @param pSecurityPhrase the security phrase
      * @param pKeySetSpec the keySetSpec
-     * @param pDialog the dialog controller
-     * @return the new factory
+     * @return the password Manager
      * @throws OceanusException on error
      */
-    public static GordianPasswordManager newPasswordManager(final GordianFactory pFactory,
-                                                            final GordianKeySetHashSpec pKeySetSpec,
-                                                            final GordianDialogController pDialog) throws OceanusException {
-        return new GordianCorePasswordManager(pFactory, pKeySetSpec, pDialog);
+    public static GordianPasswordManager newPasswordManager(final TethysGuiFactory pFactory,
+                                                            final GordianFactoryType pFactoryType,
+                                                            final char[] pSecurityPhrase,
+                                                            final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
+        final GordianFactory myFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
+        final GordianDialogController myController = new GordianCoreDialogControl(pFactory);
+        return new GordianCorePasswordManager(myFactory, pKeySetSpec, myController);
     }
 
     /**

@@ -24,7 +24,6 @@ module net.sourceforge.joceanus.jprometheus.swing {
     //* jOceanus */
     requires net.sourceforge.joceanus.jprometheus.core;
     requires net.sourceforge.joceanus.jgordianknot.core;
-    requires net.sourceforge.joceanus.jgordianknot.swing;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jmetis.swing;
     requires net.sourceforge.joceanus.jtethys.core;

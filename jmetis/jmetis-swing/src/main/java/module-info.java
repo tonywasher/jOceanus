@@ -26,7 +26,6 @@ module net.sourceforge.joceanus.jmetis.swing {
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jtethys.swing;
     requires net.sourceforge.joceanus.jgordianknot.core;
-    requires net.sourceforge.joceanus.jgordianknot.swing;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.atlas.ui.swing;

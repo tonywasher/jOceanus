@@ -21,11 +21,6 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jgordianknot-swing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>jtethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>

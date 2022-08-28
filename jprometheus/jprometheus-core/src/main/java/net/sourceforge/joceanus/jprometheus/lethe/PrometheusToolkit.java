@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jprometheus.lethe;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
@@ -96,7 +97,9 @@ public abstract class PrometheusToolkit
      * @return the manager
      * @throws OceanusException on error
      */
-    protected abstract GordianPasswordManager newPasswordManager(GordianFactoryType pFactoryType,
-                                                                 char[] pSecurityPhrase,
-                                                                 GordianKeySetHashSpec pKeySetSpec) throws OceanusException;
+    private GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
+                                                        final char[] pSecurityPhrase,
+                                                        final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
+        return GordianGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
+    }
 }

@@ -21,7 +21,6 @@ module net.sourceforge.joceanus.jprometheus.javafx {
     //* jOceanus */
     requires net.sourceforge.joceanus.jprometheus.core;
     requires net.sourceforge.joceanus.jgordianknot.core;
-    requires net.sourceforge.joceanus.jgordianknot.javafx;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jmetis.javafx;
     requires net.sourceforge.joceanus.jtethys.core;

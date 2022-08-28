@@ -199,7 +199,6 @@
           </execution>
         </executions>
         <configuration>
-          <timestampFormat>{0,date,medium} {0,time,short}</timestampFormat>
           <doCheck>false</doCheck>
           <doUpdate>false</doUpdate>
           <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
