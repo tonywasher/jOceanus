@@ -65,6 +65,11 @@ public class TethysUICoreHTMLToFile {
     private static final String ELEMENT_STYLE = "style";
 
     /**
+     * The Gui Factory.
+     */
+    private final  TethysUICoreFactory<?> theFactory;
+
+    /**
      * The HTML Manager.
      */
     private final TethysUICoreHTMLManager theHTMLManager;
@@ -72,7 +77,7 @@ public class TethysUICoreHTMLToFile {
     /**
      * The File Selector.
      */
-    private final TethysUIFileSelector theFileSelector;
+    private TethysUIFileSelector theFileSelector;
 
     /**
      * Constructor.
@@ -82,10 +87,19 @@ public class TethysUICoreHTMLToFile {
     public TethysUICoreHTMLToFile(final TethysUICoreFactory<?> pFactory,
                                   final TethysUICoreHTMLManager pHTMLManager) {
         /* Store parameters */
+        theFactory = pFactory;
         theHTMLManager = pHTMLManager;
-        theFileSelector = pFactory.dialogFactory().newFileSelector();
-        theFileSelector.setUseSave(true);
-        theFileSelector.setExtension(".html");
+    }
+
+    /**
+     * Initialise file selector.
+     * @return the file selector
+     */
+    private TethysUIFileSelector initFileSelector() {
+        final TethysUIFileSelector myFileSelector = theFactory.dialogFactory().newFileSelector();
+        myFileSelector.setUseSave(true);
+        myFileSelector.setExtension(".html");
+        return myFileSelector;
     }
 
     /**
@@ -93,6 +107,11 @@ public class TethysUICoreHTMLToFile {
      */
     public void writeToFile() {
         try {
+            /* Make sure that the file Selector is initialised */
+            if (theFileSelector == null) {
+                theFileSelector = initFileSelector();
+            }
+
             /* Select File */
             final File myFile = theFileSelector.selectFile();
             if (myFile != null) {

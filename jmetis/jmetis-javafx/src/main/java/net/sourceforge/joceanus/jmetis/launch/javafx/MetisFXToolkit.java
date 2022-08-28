@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.launch.javafx;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.help.javafx.MetisFXHelpWindow;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
@@ -81,11 +80,6 @@ public class MetisFXToolkit
     @Override
     protected MetisFXThreadManager newThreadManager(final boolean pSlider) {
         return new MetisFXThreadManager(this, pSlider);
-    }
-
-    @Override
-    public MetisFXHelpWindow newHelpWindow() {
-        return new MetisFXHelpWindow(getGuiFactory());
     }
 
     @Override

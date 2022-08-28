@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.threads.swing;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.help.swing.MetisSwingHelpWindow;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
@@ -79,11 +78,6 @@ public class MetisSwingToolkit
     @Override
     protected MetisSwingThreadManager newThreadManager(final boolean pSlider) {
         return new MetisSwingThreadManager(this, pSlider);
-    }
-
-    @Override
-    public MetisSwingHelpWindow newHelpWindow() {
-        return new MetisSwingHelpWindow(getGuiFactory());
     }
 
     @Override

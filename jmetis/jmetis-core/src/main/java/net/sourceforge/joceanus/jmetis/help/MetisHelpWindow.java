@@ -18,11 +18,14 @@ package net.sourceforge.joceanus.jmetis.help;
 
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
@@ -34,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 /**
  * Help Manager class, responsible for displaying the help.
  */
-public abstract class MetisHelpWindow
+public class MetisHelpWindow
         implements TethysEventProvider<TethysXUIEvent> {
     /**
      * The Height of the window.
@@ -45,6 +48,11 @@ public abstract class MetisHelpWindow
      * The Height of the window.
      */
     protected static final int WINDOW_HEIGHT = 600;
+
+    /**
+     * The Factory.
+     */
+    private final TethysGuiFactory theFactory;
 
     /**
      * The Event Manager.
@@ -62,6 +70,11 @@ public abstract class MetisHelpWindow
     private final TethysTreeManager<MetisHelpEntry> theTree;
 
     /**
+     * The help dialog.
+     */
+    private TethysChildDialog theDialog;
+
+    /**
      * The HTML manager.
      */
     private final TethysHTMLManager theHtml;
@@ -70,7 +83,10 @@ public abstract class MetisHelpWindow
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MetisHelpWindow(final TethysGuiFactory pFactory) {
+    public MetisHelpWindow(final TethysGuiFactory pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
@@ -113,11 +129,6 @@ public abstract class MetisHelpWindow
     }
 
     /**
-     * CloseWindow on parent termination.
-     */
-    public abstract void closeWindow();
-
-    /**
      * Fire event.
      * @param pEventId the eventId
      * @param pValue the relevant value
@@ -130,12 +141,56 @@ public abstract class MetisHelpWindow
     /**
      * show the dialog.
      */
-    public abstract void showDialog();
+    public void showDialog() {
+        /* If the dialog does not exist */
+        if (theDialog == null) {
+            /* Create a new dialog */
+            theDialog = theFactory.newChildDialog();
+            theDialog.setTitle(MetisHelpResource.TITLE.getValue());
+
+            /* Create the help panel */
+            final TethysBorderPaneManager myPanel = theFactory.newBorderPane();
+            myPanel.setCentre(theSplitTree);
+            myPanel.setPreferredWidth(WINDOW_WIDTH);
+            myPanel.setPreferredHeight(WINDOW_HEIGHT);
+            theDialog.setContent(myPanel);
+
+            /* Set listener */
+            theDialog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> {
+                theTree.setVisible(false);
+                fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
+            });
+        }
+
+        /* If the dialog is not showing */
+        if (!theDialog.isShowing()) {
+            /* Make sure that the dialog is showing */
+            theTree.setVisible(true);
+            theDialog.showDialog();
+        }
+    }
 
     /**
      * Hide the dialog.
      */
-    public abstract void hideDialog();
+    public void hideDialog() {
+        /* If the dialog exists */
+        if (theDialog != null
+            && theDialog.isShowing()) {
+            /* Make sure that the dialog is hidden */
+            theDialog.hideDialog();
+        }
+    }
+
+    /**
+     * CloseWindow on parent termination.
+     */
+    public void closeWindow() {
+        hideDialog();
+        if (theDialog != null) {
+            theDialog.closeDialog();
+        }
+    }
 
     /**
      * Set the help module.

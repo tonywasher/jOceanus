@@ -61,6 +61,11 @@ public class CoeusStatementTable
     private static final char COMMA = ',';
 
     /**
+     * The Gui Factory.
+     */
+    private final TethysGuiFactory theFactory;
+
+    /**
      * The List.
      */
     private final MetisListIndexed<CoeusTotals> theList;
@@ -93,7 +98,7 @@ public class CoeusStatementTable
     /**
      * The File Selector.
      */
-    private final TethysFileSelector theFileSelector;
+    private TethysFileSelector theFileSelector;
 
     /**
      * Constructor.
@@ -103,7 +108,7 @@ public class CoeusStatementTable
     public CoeusStatementTable(final MetisToolkit pToolkit,
                                final CoeusMarketCache pCache) {
         /* Access the GUI factory */
-        final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
+        theFactory = pToolkit.getGuiFactory();
 
         /* Create the list */
         theList = new MetisListIndexed<>();
@@ -118,23 +123,18 @@ public class CoeusStatementTable
         theTable.declareRawDecimalColumn(CoeusTotalsField.BALANCE);
 
         /* Create the selector */
-        theSelector = new CoeusStatementSelect(myFactory, pCache);
+        theSelector = new CoeusStatementSelect(theFactory, pCache);
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> updateStatement(theSelector.getFilter()));
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.FILTERCHANGED, e -> filterChanged());
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SAVETOFILE, e -> saveToFile());
 
         /* Create and configure the Pane */
-        thePane = myFactory.newBorderPane();
+        thePane = theFactory.newBorderPane();
         thePane.setNorth(theSelector);
         thePane.setCentre(theTable);
 
         /* Create the calculator */
         theCalculator = new CoeusStatementCalculator(theList);
-
-        /* Create the file selector */
-        theFileSelector = myFactory.newFileSelector();
-        theFileSelector.setUseSave(true);
-        theFileSelector.setExtension(".csv");
     }
 
     @Override
@@ -226,11 +226,27 @@ public class CoeusStatementTable
     }
 
     /**
+     * Initialise file selector.
+     * @return the file selector
+     */
+    private TethysFileSelector initFileSelector() {
+        final TethysFileSelector myFileSelector = theFactory.newFileSelector();
+        myFileSelector.setUseSave(true);
+        myFileSelector.setExtension(".csv");
+        return myFileSelector;
+    }
+
+    /**
      * Write data to file.
      * @param pData the string to write
      */
     private void writeToFile(final String pData) {
         try {
+            /* Make sure that the file Selector is initialised */
+            if (theFileSelector == null) {
+                theFileSelector = initFileSelector();
+            }
+
             /* Select File */
             final File myFile = theFileSelector.selectFile();
             if (myFile != null) {

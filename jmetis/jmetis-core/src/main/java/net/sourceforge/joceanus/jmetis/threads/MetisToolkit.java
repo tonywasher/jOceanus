@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.threads;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
@@ -231,7 +230,9 @@ public abstract class MetisToolkit
      * Create a Help Window.
      * @return the help Window
      */
-    public abstract MetisHelpWindow newHelpWindow();
+    public MetisHelpWindow newHelpWindow() {
+        return new MetisHelpWindow(getGuiFactory());
+    }
 
     /**
      * Create a ReadOnly TableManager.

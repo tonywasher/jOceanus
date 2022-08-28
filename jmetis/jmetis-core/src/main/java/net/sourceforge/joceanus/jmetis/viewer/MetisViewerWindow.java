@@ -43,17 +43,17 @@ public class MetisViewerWindow
     /**
      * The Name of the current page.
      */
-    protected static final String NAME_CURRENT = "Current";
+    private static final String NAME_CURRENT = "Current";
 
     /**
      * The Height of the window.
      */
-    protected static final int WINDOW_WIDTH = 900;
+    private static final int WINDOW_WIDTH = 900;
 
     /**
      * The Height of the window.
      */
-    protected static final int WINDOW_HEIGHT = 600;
+    private static final int WINDOW_HEIGHT = 600;
 
     /**
      * The Factory.
@@ -101,7 +101,7 @@ public class MetisViewerWindow
     private final MetisViewerControl theControl;
 
     /**
-     * The help dialog.
+     * The viewer dialog.
      */
     private TethysChildDialog theDialog;
 
