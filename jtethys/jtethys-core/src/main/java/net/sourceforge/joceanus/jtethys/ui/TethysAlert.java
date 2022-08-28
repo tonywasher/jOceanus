@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Metis: Java Data Framework
+ * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,41 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.test.help;
-
-import java.io.InputStream;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * StyleSheetIds.
+ * Alert.
  */
-public enum MetisTestHelpStyleSheet implements TethysStyleSheetId {
+public interface TethysAlert {
     /**
-     * Help StyleSheet.
+     * Set the title.
+     *
+     * @param pTitle the title
      */
-    CSS_HELP("TethysHelp.css");
-
-    /**
-     * The Source.
-     */
-    private String theSource;
+    void setTitle(String pTitle);
 
     /**
-     * Constructor.
-     * @param pSource the source
+     * Set the message.
+     *
+     * @param pMessage the message
      */
-    MetisTestHelpStyleSheet(final String pSource) {
-        theSource = pSource;
-    }
+    void setMessage(String pMessage);
 
-    @Override
-    public String getSourceName() {
-        return theSource;
-    }
+    /**
+     * Confirm with the user Yes/No.
+     *
+     * @return was Yes selected? true/false
+     */
+    boolean confirmYesNo();
 
-    @Override
-    public InputStream getInputStream() {
-        return MetisTestHelpStyleSheet.class.getResourceAsStream(theSource);
-    }
+    /**
+     * Confirm with the use OK/Cancel.
+     *
+     * @return was OK selected? true/false
+     */
+    boolean confirmOKCancel();
+
+    /**
+     * Show error.
+     */
+    void showError();
+
+    /**
+     * Show warning.
+     */
+    void showWarning();
+
+    /**
+     * Show information.
+     */
+    void showInfo();
 }

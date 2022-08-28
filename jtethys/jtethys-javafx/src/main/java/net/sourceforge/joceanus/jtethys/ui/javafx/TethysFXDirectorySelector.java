@@ -58,6 +58,9 @@ public class TethysFXDirectorySelector
      * @param pParent the parent
      */
     public TethysFXDirectorySelector(final Stage pParent) {
+        if (pParent == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
         theStage = pParent;
         theChooser = new DirectoryChooser();
     }

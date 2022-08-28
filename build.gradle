@@ -40,29 +40,29 @@ allprojects {
     project.ext { 
         /* Dependency versions */
         bouncyCastleVersion = "1.71"
-        jUnitVersion = "5.8.2"
+        jUnitVersion = "5.9.0"
         jsonVersion = "20220320"
-        mySQLVersion = "8.0.29"
-        postGreSQLVersion = "42.4.0"
+        mySQLVersion = "8.0.30"
+        postGreSQLVersion = "42.4.1"
         jtdsVersion = "1.3.1"
-        h2Version = "2.1.212"
+        h2Version = "2.1.214"
         apachePOIVersion = "5.2.2"
-        jsoupVersion = "1.15.1"
+        jsoupVersion = "1.15.2"
         jFreeChartVersion = "1.5.3"
 
         /* javaFX versions */
-        javaFXVersion = "18.0.1"
+        javaFXVersion = "18.0.2"
         javaFXPluginVersion = "0.0.10"
 
         /* Annotation versions */
         jetBrainsAnnotationsVersion = "23.0.0"
 
         /* checkStyle config */
-        checkStyleVersion = "10.3"
+        checkStyleVersion = "10.3.2"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "6.46.0"
+        pmdVersion = "6.48.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.8"

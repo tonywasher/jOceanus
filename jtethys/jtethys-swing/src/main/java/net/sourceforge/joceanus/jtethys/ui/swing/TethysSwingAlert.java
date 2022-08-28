@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 
 /**
  * Swing Alert.
  */
-public class TethysUISwingAlert
-    implements TethysUIAlert {
+public class TethysSwingAlert
+        implements TethysAlert {
     /**
      * The Frame.
      */
@@ -47,10 +45,7 @@ public class TethysUISwingAlert
      * Constructor.
      * @param pFrame the Frame
      */
-    TethysUISwingAlert(final JFrame pFrame) {
-        if (pFrame == null) {
-            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
-        }
+    TethysSwingAlert(final JFrame pFrame) {
         theFrame = pFrame;
     }
 

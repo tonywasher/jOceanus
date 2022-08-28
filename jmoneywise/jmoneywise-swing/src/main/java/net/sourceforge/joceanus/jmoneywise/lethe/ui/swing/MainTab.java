@@ -115,7 +115,7 @@ public class MainTab
     private MoneyWiseMaintenance theMaint;
 
     /**
-     * The about box.
+     * The aboutBox.
      */
     private TethysAbout theAboutBox;
 
@@ -196,9 +196,6 @@ public class MainTab
         theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
         setChildListeners(theRegister.getEventRegistrar());
         setChildListeners(theMaint.getEventRegistrar());
-
-        /* Create the aboutBox */
-        theAboutBox = theView.getGuiFactory().newAboutBox();
 
         /* Create listener and initialise focus */
         determineFocus();
@@ -405,6 +402,10 @@ public class MainTab
 
     @Override
     protected void displayAbout() {
+        /* Create about box if it does not exist */
+        if (theAboutBox == null) {
+            theAboutBox = theView.getGuiFactory().newAboutBox();
+        }
         theAboutBox.showDialog();
     }
 

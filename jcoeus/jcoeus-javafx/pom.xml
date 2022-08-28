@@ -21,11 +21,6 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jgordianknot-javafx</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>jtethys-javafx</artifactId>
       <version>${project.version}</version>
     </dependency>

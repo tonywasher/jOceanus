@@ -57,6 +57,9 @@ public class TethysSwingFileSelector
      * @param pParent the parent
      */
     public TethysSwingFileSelector(final Component pParent) {
+        if (pParent == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
         theParent = pParent;
         theChooser = new JFileChooser();
         theChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

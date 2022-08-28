@@ -1028,7 +1028,7 @@ public class TransactionPanel
         /* Create a list */
         final List<TransactionTag> myList = new ArrayList<>();
 
-        /* Loop through the TransactionTagss */
+        /* Loop through the TransactionTags */
         final Iterator<TransactionTag> myIterator = getItem().getDataSet().getTransactionTags().iterator();
         while (myIterator.hasNext()) {
             final TransactionTag myTag = myIterator.next();

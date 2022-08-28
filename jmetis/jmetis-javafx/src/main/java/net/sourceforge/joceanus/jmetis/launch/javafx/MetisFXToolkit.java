@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.launch.javafx;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.help.javafx.MetisFXHelpWindow;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
@@ -27,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadProgressStatus;
-import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -82,16 +80,6 @@ public class MetisFXToolkit
     @Override
     protected MetisFXThreadManager newThreadManager(final boolean pSlider) {
         return new MetisFXThreadManager(this, pSlider);
-    }
-
-    @Override
-    public MetisFXHelpWindow newHelpWindow() {
-        return new MetisFXHelpWindow(getGuiFactory());
-    }
-
-    @Override
-    public MetisFXViewerWindow newViewerWindow() throws OceanusException {
-        return new MetisFXViewerWindow(getGuiFactory(), getViewerManager());
     }
 
     @Override

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.threads;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
@@ -231,7 +230,9 @@ public abstract class MetisToolkit
      * Create a Help Window.
      * @return the help Window
      */
-    public abstract MetisHelpWindow newHelpWindow();
+    public MetisHelpWindow newHelpWindow() {
+        return new MetisHelpWindow(getGuiFactory());
+    }
 
     /**
      * Create a ReadOnly TableManager.
@@ -267,7 +268,9 @@ public abstract class MetisToolkit
      * @return the viewer Window
      * @throws OceanusException on error
      */
-    public abstract MetisViewerWindow newViewerWindow() throws OceanusException;
+    public MetisViewerWindow newViewerWindow() throws OceanusException {
+        return new MetisViewerWindow(getGuiFactory(), theViewerManager);
+    }
 
     /**
      * Create a new Preference View.
@@ -275,14 +278,6 @@ public abstract class MetisToolkit
      */
     public MetisPreferenceView newPreferenceView() {
         return new MetisPreferenceView(getGuiFactory(), thePreferenceManager);
-    }
-
-    /**
-     * Create a new FieldSetPanelPair.
-     * @return the panelPair
-     */
-    public MetisFieldSetPanelPair newFieldSetPanelPair() {
-        return new MetisFieldSetPanelPair(getGuiFactory());
     }
 
     /**

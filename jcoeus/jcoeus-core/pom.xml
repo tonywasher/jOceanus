@@ -16,11 +16,6 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jgordianknot-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>jtethys-core</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -56,6 +56,9 @@ public class TethysUISwingDirectorySelector
      * @param pParent the parent
      */
     TethysUISwingDirectorySelector(final Component pParent) {
+        if (pParent == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
         theParent = pParent;
         theChooser = new JFileChooser();
         theChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

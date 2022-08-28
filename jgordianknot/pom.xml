@@ -10,8 +10,6 @@
   <description>A Security framework for Java. This embeds the 7Zip SDK v9.20 which is under public domain license</description>
   <packaging>pom</packaging>
   <modules>
-    <module>jgordianknot-swing</module>
-    <module>jgordianknot-javafx</module>
     <module>jgordianknot-core</module>
   </modules>
   <properties>

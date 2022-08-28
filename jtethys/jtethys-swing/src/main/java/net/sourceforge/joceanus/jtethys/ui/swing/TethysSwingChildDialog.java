@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -22,13 +22,12 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.core.dialog.TethysUICoreChildDialog;
-import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
-public class TethysUISwingChildDialog
-        extends TethysUICoreChildDialog {
+public class TethysSwingChildDialog
+        extends TethysChildDialog {
     /**
      * The parent frame.
      */
@@ -48,8 +47,11 @@ public class TethysUISwingChildDialog
      * Constructor.
      * @param pParent the parent frame
      */
-    TethysUISwingChildDialog(final JFrame pParent) {
+    TethysSwingChildDialog(final JFrame pParent) {
         /* Store parameter */
+        if (pParent == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
         theParent = pParent;
 
         /* Create the frame */
@@ -72,8 +74,8 @@ public class TethysUISwingChildDialog
     }
 
     @Override
-    public void setContent(final TethysUIComponent pContent) {
-        theContainer.add(TethysUISwingNode.getComponent(pContent), BorderLayout.CENTER);
+    public void setContent(final TethysComponent pContent) {
+        theContainer.add(TethysSwingNode.getComponent(pContent), BorderLayout.CENTER);
     }
 
     @Override
@@ -90,17 +92,17 @@ public class TethysUISwingChildDialog
     }
 
     @Override
+    public boolean isShowing() {
+        return theFrame.isShowing();
+    }
+
+    @Override
     public void hideDialog() {
         /* If the dialog is visible */
         if (isShowing()) {
             /* hide it */
             theFrame.setVisible(false);
         }
-    }
-
-    @Override
-    public boolean isShowing() {
-        return theFrame.isShowing();
     }
 
     @Override
@@ -124,7 +126,7 @@ public class TethysUISwingChildDialog
          */
         private void handleWindowClosing() {
             theFrame.dispose();
-            fireEvent(TethysUIEvent.WINDOWCLOSED, null);
+            fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
         }
     }
 }

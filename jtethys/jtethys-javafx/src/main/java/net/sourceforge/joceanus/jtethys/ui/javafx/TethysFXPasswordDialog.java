@@ -1,20 +1,20 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.javafx;
+package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -27,18 +27,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public class GordianFXPasswordDialog
-        extends GordianPasswordDialog {
+public class TethysFXPasswordDialog
+        extends TethysPasswordDialog {
     /**
      * approximate width.
      */
@@ -52,7 +49,7 @@ public class GordianFXPasswordDialog
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianFXPasswordDialog.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXPasswordDialog.class);
 
     /**
      * The stage.
@@ -63,25 +60,27 @@ public class GordianFXPasswordDialog
      * Constructor.
      *
      * @param pFactory     the GUI Factory
+     * @param pStage       the stage
      * @param pTitle       the title
      * @param pNeedConfirm true/false
      */
-    GordianFXPasswordDialog(final TethysFXGuiFactory pFactory,
-                            final String pTitle,
-                            final boolean pNeedConfirm) {
+    TethysFXPasswordDialog(final TethysFXGuiFactory pFactory,
+                           final Stage pStage,
+                           final String pTitle,
+                           final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
 
         /* Determine title */
         final String myTitle = pNeedConfirm
-                               ? NLS_TITLENEWPASS + " " + pTitle
-                               : NLS_TITLEPASS + " " + pTitle;
+                ? NLS_TITLENEWPASS + " " + pTitle
+                : NLS_TITLEPASS + " " + pTitle;
 
         /* Initialise the stage */
         theStage = new Stage();
         theStage.initStyle(StageStyle.UTILITY);
         theStage.initModality(Modality.WINDOW_MODAL);
-        theStage.initOwner(pFactory.getStage());
+        theStage.initOwner(pStage);
         theStage.setTitle(myTitle);
 
         /* Create the scene */
@@ -90,11 +89,6 @@ public class GordianFXPasswordDialog
 
         /* Sort out factory */
         pFactory.registerScene(myScene);
-    }
-
-    @Override
-    protected TethysFXGuiFactory getFactory() {
-        return (TethysFXGuiFactory) super.getFactory();
     }
 
     @Override
@@ -115,7 +109,7 @@ public class GordianFXPasswordDialog
     /**
      * show the dialog.
      */
-    private void showDialog() {
+    private void showTheDialog() {
         /* Centre on parent */
         final Window myParent = theStage.getOwner();
         if (myParent != null) {
@@ -139,18 +133,19 @@ public class GordianFXPasswordDialog
      * @param pNeedConfirm true/false
      * @return the new dialog
      */
-    static GordianFXPasswordDialog createTheDialog(final TethysFXGuiFactory pFactory,
-                                                   final String pTitle,
-                                                   final boolean pNeedConfirm) {
+    static TethysFXPasswordDialog createTheDialog(final TethysFXGuiFactory pFactory,
+                                                  final Stage pStage,
+                                                  final String pTitle,
+                                                  final boolean pNeedConfirm) {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
             /* invoke the dialog directly */
-            return new GordianFXPasswordDialog(pFactory, pTitle, pNeedConfirm);
+            return new TethysFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm);
 
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            final FutureTask<GordianFXPasswordDialog> myTask = new FutureTask<>(() -> new GordianFXPasswordDialog(pFactory, pTitle, pNeedConfirm));
+            final FutureTask<TethysFXPasswordDialog> myTask = new FutureTask<>(() -> new TethysFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm));
 
             /* Protect against exceptions */
             try {
@@ -158,33 +153,27 @@ public class GordianFXPasswordDialog
                 Platform.runLater(myTask);
                 return myTask.get();
             } catch (IllegalStateException
-                    | ExecutionException e) {
+                     | ExecutionException e) {
                 LOGGER.error("Failed to create dialog", e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
             return null;
         }
-
     }
 
-    /**
-     * Show the dialog under an invokeAndWait clause.
-     *
-     * @param pDialog the dialog to show
-     * @return successful dialog usage true/false
-     */
-    static boolean showTheDialog(final GordianFXPasswordDialog pDialog) {
+    @Override
+    public boolean showDialog() {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
             /* invoke the dialog directly */
-            pDialog.showDialog();
+            showTheDialog();
 
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
             final FutureTask<Void> myTask = new FutureTask<>(() -> {
-                pDialog.showDialog();
+                showTheDialog();
                 return null;
             });
 
@@ -194,7 +183,7 @@ public class GordianFXPasswordDialog
                 Platform.runLater(myTask);
                 myTask.get();
             } catch (IllegalStateException
-                    | ExecutionException e) {
+                     | ExecutionException e) {
                 LOGGER.error("Failed to display dialog", e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -202,6 +191,6 @@ public class GordianFXPasswordDialog
         }
 
         /* Return to caller */
-        return pDialog.isPasswordSet();
+        return isPasswordSet();
     }
 }

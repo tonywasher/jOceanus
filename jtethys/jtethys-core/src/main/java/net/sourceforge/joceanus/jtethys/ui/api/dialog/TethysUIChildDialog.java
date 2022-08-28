@@ -43,6 +43,11 @@ public interface TethysUIChildDialog
     void showDialog();
 
     /**
+     * Is the dialog showing?
+     */
+    boolean isShowing();
+
+    /**
      * Hide the dialog.
      */
     void hideDialog();

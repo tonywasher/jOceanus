@@ -1,36 +1,29 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.util;
+package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysPasswordField;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUIResource;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public abstract class GordianPasswordDialog {
+public abstract class TethysPasswordDialog {
     /**
      * Minimum password length.
      */
@@ -49,57 +42,57 @@ public abstract class GordianPasswordDialog {
     /**
      * Text for Password title.
      */
-    protected static final String NLS_TITLEPASS = GordianMgrResource.TITLE_PASSWORD.getValue();
+    protected static final String NLS_TITLEPASS = TethysUIResource.PASS_TITLE_PASSWORD.getValue();
 
     /**
      * Text for New Password title.
      */
-    protected static final String NLS_TITLENEWPASS = GordianMgrResource.TITLE_NEWPASS.getValue();
+    protected static final String NLS_TITLENEWPASS = TethysUIResource.PASS_TITLE_NEWPASS.getValue();
 
     /**
      * Text for Password Label.
      */
-    private static final String NLS_PASSWORD = GordianMgrResource.LABEL_PASSWORD.getValue();
+    private static final String NLS_PASSWORD = TethysUIResource.PASS_LABEL_PASSWORD.getValue();
 
     /**
      * Text for Confirm Label.
      */
-    private static final String NLS_CONFIRM = GordianMgrResource.LABEL_CONFIRM.getValue();
+    private static final String NLS_CONFIRM = TethysUIResource.PASS_LABEL_CONFIRM.getValue();
 
     /**
      * Text for OK Button.
      */
-    private static final String NLS_OK = GordianMgrResource.BUTTON_OK.getValue();
+    private static final String NLS_OK = TethysUIResource.BUTTON_OK.getValue();
 
     /**
      * Text for Cancel Button.
      */
-    private static final String NLS_CANCEL = GordianMgrResource.BUTTON_CANCEL.getValue();
+    private static final String NLS_CANCEL = TethysUIResource.BUTTON_CANCEL.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_ERROR = GordianMgrResource.TITLE_ERROR.getValue();
+    private static final String NLS_ERROR = TethysUIResource.PASS_TITLE_ERROR.getValue();
 
     /**
      * Text for Bad Password Error.
      */
-    private static final String NLS_ERRORPASS = GordianMgrResource.ERROR_BADPASS.getValue();
+    private static final String NLS_ERRORPASS = TethysUIResource.PASS_ERROR_BADPASS.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_CONFIRMERROR = GordianMgrResource.ERROR_CONFIRM.getValue();
+    private static final String NLS_CONFIRMERROR = TethysUIResource.PASS_ERROR_CONFIRM.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR1 = GordianMgrResource.ERROR_LENGTH1.getValue();
+    private static final String NLS_LENGTHERR1 = TethysUIResource.PASS_ERROR_LENGTH1.getValue();
 
     /**
      * Text for Error Panel.
      */
-    private static final String NLS_LENGTHERR2 = GordianMgrResource.ERROR_LENGTH2.getValue();
+    private static final String NLS_LENGTHERR2 = TethysUIResource.PASS_ERROR_LENGTH2.getValue();
 
     /**
      * The GUI factory.
@@ -161,8 +154,8 @@ public abstract class GordianPasswordDialog {
      * @param pFactory the GUI factory
      * @param pNeedConfirm true/false
      */
-    protected GordianPasswordDialog(final TethysGuiFactory pFactory,
-                                    final boolean pNeedConfirm) {
+    protected TethysPasswordDialog(final TethysGuiFactory pFactory,
+                                   final boolean pNeedConfirm) {
 
         /* Store the parameters */
         theFactory = pFactory;
@@ -236,6 +229,13 @@ public abstract class GordianPasswordDialog {
     protected TethysGuiFactory getFactory() {
         return theFactory;
     }
+
+    /**
+     * Show the dialog under an invokeAndWait clause.
+     *
+     * @return successful dialog usage true/false
+     */
+    public abstract boolean showDialog();
 
     /**
      * Obtain the container.
@@ -360,6 +360,7 @@ public abstract class GordianPasswordDialog {
     public void reportBadPassword() {
         setError(NLS_ERRORPASS);
     }
+
     /**
      * set the error.
      * @param pError the error to display

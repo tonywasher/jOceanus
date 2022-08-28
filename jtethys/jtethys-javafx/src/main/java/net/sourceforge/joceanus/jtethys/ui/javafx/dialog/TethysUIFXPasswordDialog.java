@@ -74,6 +74,9 @@ public class TethysUIFXPasswordDialog
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
         final TethysUIFXSceneRegister mySceneRegister = (TethysUIFXSceneRegister) pFactory;
+        if (pStage == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
 
         /* Determine title */
         final String myTitle = pNeedConfirm

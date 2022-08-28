@@ -51,6 +51,9 @@ public class TethysUISwingAboutBox
                           final JFrame pFrame) {
         /* Initialise underlying class */
         super(pFactory);
+        if (pFrame == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
 
         /* Store parameters */
         theFrame = pFrame;

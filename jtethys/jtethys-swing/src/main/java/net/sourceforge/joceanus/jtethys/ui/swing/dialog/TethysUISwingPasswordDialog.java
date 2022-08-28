@@ -62,6 +62,9 @@ public class TethysUISwingPasswordDialog
                                 final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
+        if (pFrame == null) {
+            throw new IllegalArgumentException("Cannot create Dialog during initialisation");
+        }
 
         /* Initialise the dialog */
         theDialog = new JDialog(pFrame, pTitle, true);

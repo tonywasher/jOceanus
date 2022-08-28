@@ -20,16 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutedPriceEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutionEditField;
@@ -46,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButto
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysShortEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysUnitsEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysValidatedEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 
 /**
@@ -549,4 +540,25 @@ public abstract class TethysGuiFactory {
      * @return the new box
      */
     public abstract TethysAbout newAboutBox();
+
+    /**
+     * Obtain a new passwordDialog.
+     * @param pTitle       the title
+     * @param pNeedConfirm true/false
+     * @return the new dialog
+     */
+    public abstract TethysPasswordDialog newPasswordDialog(final String pTitle,
+                                                           final boolean pNeedConfirm);
+
+    /**
+     * Obtain a new alert.
+     * @return the new alert
+     */
+    public abstract TethysAlert newAlert();
+
+    /**
+     * Obtain a new child dialog.
+     * @return the new child dialog
+     */
+    public abstract TethysChildDialog newChildDialog();
 }

@@ -1,20 +1,20 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -26,22 +26,19 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
-public class GordianSwingPasswordDialog
-        extends GordianPasswordDialog {
+public class TethysSwingPasswordDialog
+        extends TethysPasswordDialog {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianSwingPasswordDialog.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingPasswordDialog.class);
 
     /**
      * Dialog.
@@ -52,18 +49,19 @@ public class GordianSwingPasswordDialog
      * Constructor.
      *
      * @param pFactory     the GUI Factory
+     * @param pFrame       the frame
      * @param pTitle       the title
      * @param pNeedConfirm true/false
      */
-    GordianSwingPasswordDialog(final TethysSwingGuiFactory pFactory,
-                               final String pTitle,
-                               final boolean pNeedConfirm) {
+    TethysSwingPasswordDialog(final TethysSwingGuiFactory pFactory,
+                              final JFrame pFrame,
+                              final String pTitle,
+                              final boolean pNeedConfirm) {
         /* Initialise underlying class */
-        super(new TethysSwingGuiFactory(), pNeedConfirm);
+        super(pFactory, pNeedConfirm);
 
         /* Initialise the dialog */
-        final JFrame myParent = pFactory.getFrame();
-        theDialog = new JDialog(myParent, pTitle, true);
+        theDialog = new JDialog(pFrame, pTitle, true);
 
         /* If we are confirming */
         if (pNeedConfirm) {
@@ -78,7 +76,7 @@ public class GordianSwingPasswordDialog
         theDialog.pack();
 
         /* Set the relative location */
-        theDialog.setLocationRelativeTo(myParent);
+        theDialog.setLocationRelativeTo(pFrame);
     }
 
     @Override
@@ -99,28 +97,23 @@ public class GordianSwingPasswordDialog
     /**
      * show the dialog.
      */
-    public void showDialog() {
+    private void showTheDialog() {
         /* Show the dialog */
         theDialog.setVisible(true);
         theDialog.toFront();
     }
 
-    /**
-     * Show the dialog under an invokeAndWait clause.
-     *
-     * @param pDialog the dialog to show
-     * @return successful dialog usage true/false
-     */
-    protected static boolean showTheDialog(final GordianSwingPasswordDialog pDialog) {
+    @Override
+    public boolean showDialog() {
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */
-            pDialog.showDialog();
+            showTheDialog();
 
             /* else we must use invokeAndWait */
         } else {
             try {
-                SwingUtilities.invokeAndWait(pDialog::showDialog);
+                SwingUtilities.invokeAndWait(this::showDialog);
             } catch (InvocationTargetException e) {
                 LOGGER.error("Failed to display dialog", e);
             } catch (InterruptedException e) {
@@ -129,7 +122,7 @@ public class GordianSwingPasswordDialog
         }
 
         /* Return to caller */
-        return pDialog.isPasswordSet();
+        return isPasswordSet();
     }
 
     /**

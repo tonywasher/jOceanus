@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jgordianknot-swing</artifactId>
+      <artifactId>jgordianknot-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
