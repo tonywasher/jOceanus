@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jcoeus</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2-b1</version>
   </parent>
   <artifactId>jcoeus-javafx</artifactId>
   <name>Coeus javaFX Peer2Peer Analysis</name>
