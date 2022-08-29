@@ -109,7 +109,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
         theTextArea = myControls.newTextArea();
 
         /* Create buttons */
-        final TethysUIButtonFactory myButtons = pFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
         theCancelButton = myButtons.newButton();
         theCancelButton.setTextOnly();
         theCancelButton.setText(NLS_CANCEL);

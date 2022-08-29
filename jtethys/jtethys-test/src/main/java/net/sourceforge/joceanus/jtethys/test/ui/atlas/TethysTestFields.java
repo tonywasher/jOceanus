@@ -512,7 +512,7 @@ public class TethysTestFields {
      */
     private TethysUIBoxPaneManager buildControlPane() {
         /* Create Toggle button for edit mode */
-        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
         final TethysUIButton myEditButton = myButtons.newButton();
         myEditButton.setText("Edit");
         myEditButton.getEventRegistrar().addEventListener(e -> {

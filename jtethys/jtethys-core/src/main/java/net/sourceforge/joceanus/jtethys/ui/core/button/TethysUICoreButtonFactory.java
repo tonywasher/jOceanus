@@ -22,9 +22,10 @@ import net.sourceforge.joceanus.jtethys.ui.core.button.TethysUICoreIconButtonMan
 
 /**
  * Core Button factory.
+ * @param <C> the color type
  */
-public abstract class TethysUICoreButtonFactory
-        implements TethysUIButtonFactory {
+public abstract class TethysUICoreButtonFactory<C>
+        implements TethysUIButtonFactory<C> {
     @Override
     public <T> TethysUIIconMapSet<T> newIconMapSet() {
         return new TethysUICoreIconMapSet<>();

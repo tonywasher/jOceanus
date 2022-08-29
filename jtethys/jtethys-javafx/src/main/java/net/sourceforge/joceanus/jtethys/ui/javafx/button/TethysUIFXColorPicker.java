@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
+package net.sourceforge.joceanus.jtethys.ui.javafx.button;
 
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;

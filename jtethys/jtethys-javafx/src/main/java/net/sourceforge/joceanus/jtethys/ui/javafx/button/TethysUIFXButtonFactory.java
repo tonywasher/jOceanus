@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.button;
 
+import javafx.scene.paint.Color;
+
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateRangeSelector;
@@ -29,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  * javaFX Button factory.
  */
 public class TethysUIFXButtonFactory
-        extends TethysUICoreButtonFactory {
+        extends TethysUICoreButtonFactory<Color> {
     /**
      * The Factory.
      */
@@ -72,5 +74,10 @@ public class TethysUIFXButtonFactory
     @Override
     public <T extends Comparable<T>> TethysUIListButtonManager<T> newListButton() {
         return new TethysUIFXListButtonManager<>(theFactory);
+    }
+
+    @Override
+    public TethysUIFXColorPicker newColorPicker() {
+        return new TethysUIFXColorPicker(theFactory);
     }
 }

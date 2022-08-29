@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
+package net.sourceforge.joceanus.jtethys.ui.swing.button;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

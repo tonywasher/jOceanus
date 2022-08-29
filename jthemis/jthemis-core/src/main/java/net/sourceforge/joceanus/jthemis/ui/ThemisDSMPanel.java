@@ -148,7 +148,7 @@ public class ThemisDSMPanel
 
         /* Create the HTML Panes */
         final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
-        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
         theDependencyHTML = myControls.newHTMLManager();
         theDependencyHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);
         theMatrixHTML = myControls.newHTMLManager();
@@ -267,7 +267,7 @@ public class ThemisDSMPanel
         }
 
         /* Determine the name of the directory to load */
-        final TethysUIDialogFactory<?> myDialogs = theGuiFactory.dialogFactory();
+        final TethysUIDialogFactory myDialogs = theGuiFactory.dialogFactory();
         final TethysUIDirectorySelector myDialog = myDialogs.newDirectorySelector();
         myDialog.setTitle("Select Project");
         myDialog.setInitialDirectory(myInit);

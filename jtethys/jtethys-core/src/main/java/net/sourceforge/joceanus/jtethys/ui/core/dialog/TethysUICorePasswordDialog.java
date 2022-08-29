@@ -182,7 +182,7 @@ public abstract class TethysUICorePasswordDialog
         final TethysUILabel myConfLabel = myControls.newLabel(NLS_CONFIRM);
 
         /* Create OK button */
-        final TethysUIButtonFactory myButtons = pFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
         theOKButton = myButtons.newButton();
         theOKButton.setTextOnly();
         theOKButton.setText(NLS_OK);

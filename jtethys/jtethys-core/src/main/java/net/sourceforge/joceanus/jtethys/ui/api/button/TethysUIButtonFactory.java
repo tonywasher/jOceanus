@@ -20,8 +20,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUII
 
 /**
  * Button Factory.
+ * @param <C> the color
  */
-public interface TethysUIButtonFactory {
+public interface TethysUIButtonFactory<C> {
     /**
      * Obtain a new button.
      * @return the new button
@@ -78,4 +79,10 @@ public interface TethysUIButtonFactory {
      * @return the new manager
      */
     <T extends Comparable<T>> TethysUIListButtonManager<T> newListButton();
+
+    /**
+     * Obtain a new colorPicker.
+     * @return the new picker
+     */
+    TethysUIColorPicker<C> newColorPicker();
 }

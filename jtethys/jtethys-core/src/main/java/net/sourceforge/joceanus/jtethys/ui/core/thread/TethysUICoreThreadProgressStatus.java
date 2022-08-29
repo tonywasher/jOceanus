@@ -191,7 +191,7 @@ public abstract class TethysUICoreThreadProgressStatus
         theStageProgress = myControls.newProgressBar();
 
         /* Create buttons */
-        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
         theCancelButton = myButtons.newButton();
         theCancelButton.setTextOnly();
         theCancelButton.setText(NLS_CANCEL);

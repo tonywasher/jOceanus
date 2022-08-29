@@ -187,7 +187,7 @@ public abstract class TethysUICoreDateRangeSelector
         theState = new TethysDateRangeState(pBaseIsStart);
 
         /* Access the factories */
-        final TethysUIButtonFactory myButtonFactory = pFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtonFactory = pFactory.buttonFactory();
         final TethysUIControlFactory myControlFactory = pFactory.controlFactory();
         final TethysUIPaneFactory myPaneFactory = pFactory.paneFactory();
 

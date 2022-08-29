@@ -422,7 +422,7 @@ public class TethysTestDate {
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        final TethysUIButtonFactory myButtons = theFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theFactory.buttonFactory();
         theStartDate = myButtons.newDateButton();
         theEndDate = myButtons.newDateButton();
 

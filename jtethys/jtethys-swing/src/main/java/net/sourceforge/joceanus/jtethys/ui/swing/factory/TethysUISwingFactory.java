@@ -142,7 +142,7 @@ public class TethysUISwingFactory
     }
 
     @Override
-    public TethysUIButtonFactory buttonFactory() {
+    public TethysUIButtonFactory<Color> buttonFactory() {
         return theButtonFactory;
     }
 
@@ -157,7 +157,7 @@ public class TethysUISwingFactory
     }
 
     @Override
-    public TethysUIDialogFactory<Color> dialogFactory() {
+    public TethysUIDialogFactory dialogFactory() {
         return theDialogFactory;
     }
 

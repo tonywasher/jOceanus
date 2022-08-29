@@ -24,12 +24,13 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.button.TethysUISwingColorPicker;
 
 /**
  * swing Dialog factory.
  */
 public class TethysUISwingDialogFactory
-        implements TethysUIDialogFactory<Color> {
+        implements TethysUIDialogFactory {
     /**
      * The Factory.
      */
@@ -55,11 +56,6 @@ public class TethysUISwingDialogFactory
      */
     public void setFrame(final JFrame pFrame) {
         theFrame = pFrame;
-    }
-
-    @Override
-    public TethysUISwingColorPicker newColorPicker() {
-        return new TethysUISwingColorPicker(theFactory);
     }
 
     @Override

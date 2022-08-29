@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing.button;
 
+import java.awt.Color;
+
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateRangeSelector;
@@ -29,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  * swing Button factory.
  */
 public class TethysUISwingButtonFactory
-        extends TethysUICoreButtonFactory {
+        extends TethysUICoreButtonFactory<Color> {
     /**
      * The Factory.
      */
@@ -72,5 +74,10 @@ public class TethysUISwingButtonFactory
     @Override
     public <T extends Comparable<T>> TethysUIListButtonManager<T> newListButton() {
         return new TethysUISwingListButtonManager<>(theFactory);
+    }
+
+    @Override
+    public TethysUISwingColorPicker newColorPicker() {
+        return new TethysUISwingColorPicker(theFactory);
     }
 }

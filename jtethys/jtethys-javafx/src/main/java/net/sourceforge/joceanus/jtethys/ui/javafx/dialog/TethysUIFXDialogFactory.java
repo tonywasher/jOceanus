@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  * javaFX Dialog factory.
  */
 public class TethysUIFXDialogFactory
-        implements TethysUIDialogFactory<Color> {
+        implements TethysUIDialogFactory {
     /**
      * The Factory.
      */
@@ -55,11 +55,6 @@ public class TethysUIFXDialogFactory
      */
     public void setStage(final Stage pStage) {
         theStage = pStage;
-    }
-
-    @Override
-    public TethysUIFXColorPicker newColorPicker() {
-        return new TethysUIFXColorPicker(theFactory);
     }
 
     @Override
