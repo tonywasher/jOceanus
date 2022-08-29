@@ -49,6 +49,7 @@ public abstract class TethysUICoreColorPicker<C>
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      */
     protected TethysUICoreColorPicker(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
@@ -65,18 +66,12 @@ public abstract class TethysUICoreColorPicker<C>
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Set the value.
-     * @param pValue the value
-     */
+    @Override
     public void setValue(final String pValue) {
         theValue = pValue;
     }
 
-    /**
-     * Obtain the value.
-     * @return the value
-     */
+    @Override
     public String getValue() {
         return theValue;
     }

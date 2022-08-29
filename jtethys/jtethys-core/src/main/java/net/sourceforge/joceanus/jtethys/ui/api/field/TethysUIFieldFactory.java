@@ -16,16 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api.field;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutedPriceEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
@@ -42,7 +34,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIShortEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedEditField;
 
 /**
  * Field Factory.

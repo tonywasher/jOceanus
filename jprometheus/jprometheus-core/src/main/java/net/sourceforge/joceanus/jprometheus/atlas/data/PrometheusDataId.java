@@ -125,6 +125,7 @@ public enum PrometheusDataId
     /**
      * Constructor.
      * @param pKeyName the key name
+     * @param pField the lethe field
      */
     PrometheusDataId(final MetisDataFieldId pKeyName,
                      final MetisLetheField pField) {

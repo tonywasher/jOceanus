@@ -23,8 +23,6 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
 
 /**

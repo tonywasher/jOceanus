@@ -122,16 +122,10 @@ public interface TethysUIDataEditField<T>
      */
     void adjustField();
 
-    /**
-     * Set the Preferred Width.
-     * @param pWidth the width
-     */
+    @Override
     void setPreferredWidth(Integer pWidth);
 
-    /**
-     * Set the Preferred Height.
-     * @param pHeight the height
-     */
+    @Override
     void setPreferredHeight(Integer pHeight);
 
     /**

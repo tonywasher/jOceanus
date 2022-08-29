@@ -28,7 +28,6 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
@@ -85,6 +84,7 @@ public final class TethysSwingDataButtonField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
+         * @param pClazz the value class
          * @param pLabel the label
          */
         private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,

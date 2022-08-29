@@ -220,11 +220,7 @@ public abstract class GordianCoreEncryptorFactory
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Obtain a list of all possible encryptors for the keyType.
-     * @param pKeyPairType the keyPairType
-     * @return the list
-     */
+    @Override
     public List<GordianEncryptorSpec> listPossibleEncryptors(final GordianKeyPairType pKeyPairType) {
         /* Create list */
         final List<GordianEncryptorSpec> myEncryptors = new ArrayList<>();
@@ -268,11 +264,7 @@ public abstract class GordianCoreEncryptorFactory
         return myEncryptors;
     }
 
-    /**
-     * Create default signatureSpec for key.
-     * @param pKeySpec the keySpec
-     * @return the SignatureSpec
-     */
+    @Override
     public GordianEncryptorSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:

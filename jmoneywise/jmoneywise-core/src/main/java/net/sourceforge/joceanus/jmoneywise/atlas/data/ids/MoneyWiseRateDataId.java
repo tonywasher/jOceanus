@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseViewResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 
 /**
@@ -95,6 +94,7 @@ public enum MoneyWiseRateDataId
     /**
      * Constructor.
      * @param pKeyName the key name
+     * @param pField the lethe field
      */
     MoneyWiseRateDataId(final MetisDataFieldId pKeyName,
                         final MetisLetheField pField) {

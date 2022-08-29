@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.help;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

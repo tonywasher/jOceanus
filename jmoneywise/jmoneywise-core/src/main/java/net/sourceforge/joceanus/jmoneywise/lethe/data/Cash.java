@@ -240,10 +240,7 @@ public class Cash
                           : null;
     }
 
-    /**
-     * Obtain CashCategory.
-     * @return the category
-     */
+    @Override
     public CashCategory getCategory() {
         return getCategory(getValueSet());
     }

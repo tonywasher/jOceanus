@@ -40,11 +40,11 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuBarManager;
  */
 public class TethysUIFXLaunchState {
     /**
-     *
+     * Set state interface.
      */
     public interface TethysUIFXSetState {
         /**
-         * Set program state
+         * Set program state.
          * @param pState the state
          */
         void setProgramState(TethysUIFXLaunchState pState);

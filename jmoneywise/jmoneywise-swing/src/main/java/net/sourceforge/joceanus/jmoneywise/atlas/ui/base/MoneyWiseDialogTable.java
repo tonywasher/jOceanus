@@ -110,9 +110,7 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
         return !getTable().viewIterator().hasNext();
     }
 
-    /**
-     * Refresh data.
-     */
+    @Override
     public abstract void refreshData();
 
     /**

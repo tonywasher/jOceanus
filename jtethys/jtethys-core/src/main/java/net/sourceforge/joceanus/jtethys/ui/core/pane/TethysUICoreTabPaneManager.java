@@ -115,11 +115,7 @@ public abstract class TethysUICoreTabPaneManager
         return myChild;
     }
 
-    /**
-     * enable Item by name.
-     * @param pName the name of the item
-     * @param pEnabled the enabled state
-     */
+    @Override
     public void enableItemByName(final String pName,
                                  final boolean pEnabled) {
         /* Look up child and adjust */

@@ -51,8 +51,8 @@ public interface TethysUIDialogFactory<C> {
      * @param pNeedConfirm true/false
      * @return the new dialog
      */
-    TethysUIPasswordDialog newPasswordDialog(final String pTitle,
-                                             final boolean pNeedConfirm);
+    TethysUIPasswordDialog newPasswordDialog(String pTitle,
+                                             boolean pNeedConfirm);
 
     /**
      * Obtain a new alert.

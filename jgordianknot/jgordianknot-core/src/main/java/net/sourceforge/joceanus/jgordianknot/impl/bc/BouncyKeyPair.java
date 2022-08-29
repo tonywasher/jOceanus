@@ -260,11 +260,7 @@ public class BouncyKeyPair
             return thePrivateKey;
         }
 
-        /**
-         * Obtain a keyShard from the number of usages.
-         * @param pNumUsages the number of usage for the shard
-         * @return the keyShard
-         */
+        @Override
         public abstract BouncyStateAwarePrivateKey<T> getKeyShard(int pNumUsages);
 
         @Override

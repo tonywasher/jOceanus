@@ -132,10 +132,7 @@ public class TethysUICoreLogTextArea
         theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
     }
 
-    /**
-     * is the logArea active?
-     * @return true/false
-     */
+    @Override
     public boolean isActive() {
         return theTextArea.getTextLength() > 0;
     }

@@ -175,10 +175,7 @@ public class GordianCoreKeyStoreEntry
             return theKeyPair;
         }
 
-        /**
-         * Obtain the certificate chain.
-         * @return the chain
-         */
+        @Override
         public List<GordianCertificate> getCertificateChain() {
             return theChain;
         }
@@ -290,10 +287,7 @@ public class GordianCoreKeyStoreEntry
             theKeySet = pKeySet;
         }
 
-        /**
-         * Obtain the keySetHash.
-         * @return the keySetHash
-         */
+        @Override
         public GordianKeySet getKeySet() {
             return theKeySet;
         }

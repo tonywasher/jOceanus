@@ -547,8 +547,8 @@ public abstract class TethysGuiFactory {
      * @param pNeedConfirm true/false
      * @return the new dialog
      */
-    public abstract TethysPasswordDialog newPasswordDialog(final String pTitle,
-                                                           final boolean pNeedConfirm);
+    public abstract TethysPasswordDialog newPasswordDialog(String pTitle,
+                                                           boolean pNeedConfirm);
 
     /**
      * Obtain a new alert.

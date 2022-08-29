@@ -50,6 +50,7 @@ public enum MoneyWiseRegionDataId
     /**
      * Constructor.
      * @param pKeyName the key name
+     * @param pField the lethe field
      */
     MoneyWiseRegionDataId(final MetisDataFieldId pKeyName,
                           final MetisLetheField pField) {

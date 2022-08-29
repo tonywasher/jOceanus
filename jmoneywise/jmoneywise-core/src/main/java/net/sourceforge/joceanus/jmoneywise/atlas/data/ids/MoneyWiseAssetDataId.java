@@ -280,6 +280,7 @@ public enum MoneyWiseAssetDataId
     /**
      * Constructor.
      * @param pKeyName the key name
+     * @param pField the lethe field
      */
     MoneyWiseAssetDataId(final MetisDataFieldId pKeyName,
                          final MetisLetheField pField) {

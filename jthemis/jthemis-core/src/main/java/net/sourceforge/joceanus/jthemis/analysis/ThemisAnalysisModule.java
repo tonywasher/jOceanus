@@ -175,7 +175,7 @@ public class ThemisAnalysisModule
 
             /* If this is aAccess file name */
             if (myName.endsWith(ThemisAnalysisPackage.SFX_JAVA)
-                    && !myName.equals(MODULE_INFO)) {
+                    && !MODULE_INFO.equals(myName)) {
                 isPackage = pPackage != null;
             }
         }

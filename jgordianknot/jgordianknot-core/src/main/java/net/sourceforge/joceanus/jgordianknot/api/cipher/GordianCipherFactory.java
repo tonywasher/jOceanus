@@ -150,5 +150,5 @@ public interface GordianCipherFactory {
      * @param pSpec the keySpec
      * @return the list
      */
-    List<GordianSymCipherSpec> listAllSymCipherSpecs(final GordianSymKeySpec pSpec);
+    List<GordianSymCipherSpec> listAllSymCipherSpecs(GordianSymKeySpec pSpec);
 }

@@ -41,13 +41,13 @@ public abstract class TethysChildDialog
     }
 
     /**
-     * Set the title
+     * Set the title.
      * @param pTitle the title
      */
     public abstract  void setTitle(String pTitle);
 
     /**
-     * Set the contents
+     * Set the contents.
      * @param pContent the dialog content
      */
     public abstract void setContent(TethysComponent pContent);
@@ -59,6 +59,7 @@ public abstract class TethysChildDialog
 
     /**
      * Is the dialog showing?
+     * @return true/false
      */
     public abstract boolean isShowing();
 

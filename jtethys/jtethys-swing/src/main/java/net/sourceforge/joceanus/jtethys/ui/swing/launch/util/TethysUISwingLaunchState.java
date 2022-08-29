@@ -23,7 +23,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -77,7 +76,7 @@ public class TethysUISwingLaunchState {
         /* Sort out splash frame */
         final TethysUIIconId mySplashId = theApp.getSplash();
         if (mySplashId != null) {
-            TethysUISwingSplash.renderSplashFrame(theApp.getName(),theApp.getVersion());
+            TethysUISwingSplash.renderSplashFrame(theApp.getName(), theApp.getVersion());
         }
     }
 

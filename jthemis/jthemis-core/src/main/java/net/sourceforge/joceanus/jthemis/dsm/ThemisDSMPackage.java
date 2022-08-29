@@ -212,7 +212,7 @@ public class ThemisDSMPackage {
 
                 /* If this is a .java that is not package-info */
                 if (myName.endsWith(ThemisAnalysisPackage.SFX_JAVA)
-                    && !myName.equals(PACKAGE_INFO)) {
+                    && !PACKAGE_INFO.equals(myName)) {
                     /* Add the class */
                     final ThemisDSMClass myClass = new ThemisDSMClass(this, myFile);
                     theClasses.add(myClass);

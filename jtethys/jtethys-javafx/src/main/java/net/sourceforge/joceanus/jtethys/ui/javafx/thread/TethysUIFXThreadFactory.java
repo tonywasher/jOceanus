@@ -57,11 +57,7 @@ public class TethysUIFXThreadFactory
         return new TethysUIFXThreadProgressStatus(pManager, theFactory);
     }
 
-    /**
-     * Create a Thread TextArea Status.
-     * @param pManager the thread manager
-     * @return the thread status manager
-     */
+    @Override
     public TethysUIFXThreadTextAreaStatus newThreadTextAreaStatus(final TethysUICoreThreadManager pManager) {
         return new TethysUIFXThreadTextAreaStatus(pManager, theFactory);
     }

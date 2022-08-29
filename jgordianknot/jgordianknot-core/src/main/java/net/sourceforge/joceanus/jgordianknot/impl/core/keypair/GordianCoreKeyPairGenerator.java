@@ -64,10 +64,7 @@ public abstract class GordianCoreKeyPairGenerator
         theRandomSource = pFactory.getRandomSource();
     }
 
-    /**
-     * Obtain keySpec.
-     * @return the keySpec
-     */
+    @Override
     public GordianKeyPairSpec getKeySpec() {
         return theKeySpec;
     }

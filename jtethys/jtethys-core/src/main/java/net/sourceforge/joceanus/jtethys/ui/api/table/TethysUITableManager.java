@@ -198,7 +198,7 @@ public interface TethysUITableManager<C, R>
      *
      * @param pItems the items
      */
-    void setItems(final List<R> pItems);
+    void setItems(List<R> pItems);
 
     /**
      * fire TableDataChanged.

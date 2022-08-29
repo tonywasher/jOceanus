@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
@@ -14,10 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-/**
- * javaFX launch.
- */
-
 /**
  * javaFX launch classes.
  */

@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * FieldSetEvent.
+ * @param <F> the field type
  */
 public class PrometheusFieldSetEvent<F> {
     /**

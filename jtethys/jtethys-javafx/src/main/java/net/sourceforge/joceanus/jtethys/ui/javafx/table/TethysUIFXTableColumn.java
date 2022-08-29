@@ -25,10 +25,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.util.Callback;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;

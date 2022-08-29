@@ -267,7 +267,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
 
@@ -281,7 +281,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
 
@@ -1136,7 +1136,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
 
@@ -1150,7 +1150,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
 
@@ -1266,7 +1266,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
          }
 
@@ -1292,7 +1292,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
 
@@ -1387,7 +1387,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
 
@@ -1408,7 +1408,7 @@ public class GordianKeyPairAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException(ERROR_PARSE);
+                throw new GordianIOException(ERROR_PARSE, e);
             }
         }
     }

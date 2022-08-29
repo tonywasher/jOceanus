@@ -141,7 +141,7 @@ public class ThemisAnalysisPackage
 
                 /* If this is a .java that is not package-info */
                 if (myName.endsWith(SFX_JAVA)
-                        && !myName.equals(PACKAGE_INFO)) {
+                        && !PACKAGE_INFO.equals(myName)) {
                     /* Add the class */
                     final ThemisAnalysisFile myClass = new ThemisAnalysisFile(this, myFile);
                     myClasses.add(myClass);

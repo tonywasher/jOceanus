@@ -282,10 +282,7 @@ public abstract class TethysUICoreDateRangeSelector
         }
     }
 
-    /**
-     * Obtain selected DateRange.
-     * @return the selected date range
-     */
+    @Override
     public TethysDateRange getRange() {
         return theState.getRange();
     }
@@ -298,47 +295,32 @@ public abstract class TethysUICoreDateRangeSelector
         return theState;
     }
 
-    /**
-     * Set the overall range for the control.
-     * @param pRange the range
-     */
+    @Override
     public final void setOverallRange(final TethysDateRange pRange) {
         theState.adjustOverallRange(pRange);
         applyState();
     }
 
-    /**
-     * Set the locale.
-     * @param pLocale the locale
-     */
+    @Override
     public void setLocale(final Locale pLocale) {
         theFormatter.setLocale(pLocale);
         theState.setLocale(pLocale);
         applyState();
     }
 
-    /**
-     * Set period.
-     * @param pPeriod the new period
-     */
+    @Override
     public void setPeriod(final TethysDatePeriod pPeriod) {
         theState.setPeriod(pPeriod);
         applyState();
     }
 
-    /**
-     * Lock period.
-     * @param isLocked true/false.
-     */
+    @Override
     public void lockPeriod(final boolean isLocked) {
         theState.lockPeriod(isLocked);
         applyState();
     }
 
-    /**
-     * Copy date selection from other box.
-     * @param pSource the source box
-     */
+    @Override
     public void setSelection(final TethysUIDateRangeSelector pSource) {
         /* Access the state */
         final TethysDateRangeState myState = ((TethysUICoreDateRangeSelector) pSource).getState();
@@ -350,17 +332,13 @@ public abstract class TethysUICoreDateRangeSelector
         applyState();
     }
 
-    /**
-     * Create SavePoint.
-     */
+    @Override
     public void createSavePoint() {
         /* Create the savePoint */
         theSavePoint = new TethysDateRangeState(theState);
     }
 
-    /**
-     * Restore SavePoint.
-     */
+    @Override
     public void restoreSavePoint() {
         /* Restore the savePoint */
         theState = new TethysDateRangeState(theSavePoint);

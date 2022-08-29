@@ -283,11 +283,7 @@ public class TethysSwingTableManager<C, R>
         }
     }
 
-    /**
-     * Set the table items.
-     *
-     * @param pItems the items
-     */
+    @Override
     public void setItems(final List<R> pItems) {
         super.setItems(pItems);
         theModel.fireTableDataChanged();

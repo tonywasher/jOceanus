@@ -29,6 +29,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
@@ -173,8 +174,8 @@ public class ThemisAnalysisFile
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw an exception */
-            throw new ThemisDataException("Failed to load file "
-                    + theLocation.getAbsolutePath());
+            throw new ThemisIOException("Failed to load file "
+                    + theLocation.getAbsolutePath(), e);
         }
     }
 

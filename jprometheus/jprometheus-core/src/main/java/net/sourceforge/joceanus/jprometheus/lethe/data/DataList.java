@@ -206,10 +206,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         theList.sortList();
     }
 
-    /**
-     * Obtain the class of objects in this sorted list.
-     * @return the clazz
-     */
+    @Override
     public Class<T> getBaseClass() {
         return theBaseClazz;
     }

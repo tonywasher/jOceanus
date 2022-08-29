@@ -164,7 +164,7 @@ public class GordianCompositeKeyPair
             boolean myFirst = true;
             final Iterator<GordianKeyPair> myIterator = iterator();
             while (myIterator.hasNext()) {
-                GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();
+                final GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();
                 if (myFirst) {
                     myUsages = myKeyPair.getUsagesRemaining();
                     myFirst = false;
@@ -180,7 +180,7 @@ public class GordianCompositeKeyPair
             final GordianStateAwareCompositeKeyPair myCompositeShard = new GordianStateAwareCompositeKeyPair(getKeyPairSpec());
             final Iterator<GordianKeyPair> myIterator = iterator();
             while (myIterator.hasNext()) {
-                GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();
+                final GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();
                 myCompositeShard.addKeyPair(myKeyPair.getKeyPairShard(pNumUsages));
             }
             return myCompositeShard;

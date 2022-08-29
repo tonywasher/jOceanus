@@ -129,6 +129,7 @@ public class TethysFXPasswordDialog
      * Create the dialog under an invokeAndWait clause.
      *
      * @param pFactory     the GUI Factory
+     * @param pStage       the stage
      * @param pTitle       the title
      * @param pNeedConfirm true/false
      * @return the new dialog

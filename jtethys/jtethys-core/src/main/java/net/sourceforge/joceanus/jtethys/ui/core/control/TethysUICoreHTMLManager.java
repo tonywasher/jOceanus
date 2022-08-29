@@ -129,10 +129,7 @@ public abstract class TethysUICoreHTMLManager
         return theCSSProcessed;
     }
 
-    /**
-     * Process selected reference.
-     * @param pReference the reference
-     */
+    @Override
     public void processReference(final String pReference) {
         /* Access local copy of reference */
         String myRef = pReference;
@@ -172,11 +169,7 @@ public abstract class TethysUICoreHTMLManager
         }
     }
 
-    /**
-     * Set the HTML.
-     * @param pHTMLString the HTML content.
-     * @param pReference the reference
-     */
+    @Override
     public void setHTMLContent(final String pHTMLString,
                                final String pReference) {
         /* Store the reference and string */

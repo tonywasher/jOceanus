@@ -120,10 +120,7 @@ public class TethysUISwingColorPicker
         theButton.setIcon(new TethysSwatch(theColour));
     }
 
-    /**
-     * Obtain the colour.
-     * @return the colour
-     */
+    @Override
     public Color getColour() {
         return theColour;
     }

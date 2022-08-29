@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicK
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -262,9 +262,9 @@ public final class BouncySM2KeyPair {
                     /* Store the secret */
                     storeSecret(myResults[0]);
 
-                    /* Catch mistmatch on confirmation tag */
+                    /* Catch mismatch on confirmation tag */
                 } catch (IllegalStateException e) {
-                    throw new GordianDataException("Confirmation failed");
+                    throw new GordianIOException("Confirmation failed", e);
                 }
 
                 /* else standard agreement */

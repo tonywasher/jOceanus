@@ -99,10 +99,7 @@ public abstract class TethysUICoreAreaChart
         return theFormatter;
     }
 
-    /**
-     * Update AreaChart with data.
-     * @param pData the data
-     */
+    @Override
     public void updateAreaChart(final TethysUIAreaChartData pData) {
         /* clear the data */
         resetData();

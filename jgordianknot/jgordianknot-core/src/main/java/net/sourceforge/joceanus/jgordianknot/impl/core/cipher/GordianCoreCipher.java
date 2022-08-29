@@ -68,18 +68,12 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         theParameters = new GordianCoreCipherParameters<>(pFactory, theCipherSpec);
     }
 
-    /**
-     * Obtain the keyType.
-     * @return the keyType
-     */
+    @Override
     public T getKeyType() {
         return theCipherSpec.getKeyType();
     }
 
-    /**
-     * Obtain the cipherSpec.
-     * @return the mode
-     */
+    @Override
     public GordianCipherSpec<T> getCipherSpec() {
         return theCipherSpec;
     }

@@ -218,8 +218,8 @@ public abstract class TethysUISwingDataTextField<T>
         final JComponent myControl = pDataField.getEditControl();
 
         /* Access font and colorSets */
-        TethysUISwingFontSet myFontSet = theAdjuster.getFontSet();
-        TethysUISwingColorSet myColorSet = theAdjuster.getColorSet();
+        final TethysUISwingFontSet myFontSet = theAdjuster.getFontSet();
+        final TethysUISwingColorSet myColorSet = theAdjuster.getColorSet();
 
         /* Determine the font */
         final Font myFont = isNumeric

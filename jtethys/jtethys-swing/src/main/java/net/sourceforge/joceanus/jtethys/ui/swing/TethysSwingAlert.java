@@ -32,12 +32,12 @@ public class TethysSwingAlert
     private final JFrame theFrame;
 
     /**
-     * The Title
+     * The Title.
      */
     private String theTitle;
 
     /**
-     * The Message
+     * The Message.
      */
     private String theMessage;
 

@@ -159,10 +159,7 @@ public class Region
         return super.includeXmlField(pField);
     }
 
-    /**
-     * Obtain Name.
-     * @return the name
-     */
+    @Override
     public String getName() {
         return getName(getValueSet());
     }

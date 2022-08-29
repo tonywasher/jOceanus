@@ -232,7 +232,7 @@ public final class DilutionEvent
         /**
          * The list.
          */
-        private final ArrayList<DilutionEvent> theList;
+        private final List<DilutionEvent> theList;
 
         /**
          * Security.

@@ -68,10 +68,7 @@ public class ThemisStatsModule
         return theModule.getName();
     }
 
-    /**
-     * Obtain package iterator.
-     * @return the iterator
-     */
+    @Override
     public Iterator<ThemisStatsBase> childIterator() {
         return theChildren.iterator();
     }

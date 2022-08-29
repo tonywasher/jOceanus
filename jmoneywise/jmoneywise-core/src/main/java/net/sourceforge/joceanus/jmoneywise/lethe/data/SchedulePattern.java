@@ -196,14 +196,14 @@ public abstract class SchedulePattern
          * Constructor.
          * @param pPattern the integer pattern value
          */
-        protected WeeklyPattern(final Integer pPattern) {
+        WeeklyPattern(final Integer pPattern) {
             super(pPattern);
         }
 
         /**
          * Constructor.
          */
-        protected WeeklyPattern() {
+        WeeklyPattern() {
         }
 
         /**
@@ -261,7 +261,7 @@ public abstract class SchedulePattern
          */
         private static int parseFlag(final String pName) throws OceanusException {
             /* handle special cases */
-            if (pName.equals(ITEM_NONE)) {
+            if (ITEM_NONE.equals(pName)) {
                 return 0;
             }
 
@@ -321,14 +321,14 @@ public abstract class SchedulePattern
          * Constructor.
          * @param pPattern the integer pattern value
          */
-        protected MonthlyPattern(final Integer pPattern) {
+        MonthlyPattern(final Integer pPattern) {
             super(pPattern);
         }
 
         /**
          * Constructor.
          */
-        protected MonthlyPattern() {
+        MonthlyPattern() {
         }
 
         /**
@@ -387,9 +387,9 @@ public abstract class SchedulePattern
          */
         private static int parseFlag(final String pName) throws OceanusException {
             /* handle special cases */
-            if (pName.equals(ITEM_NONE)) {
+            if (ITEM_NONE.equals(pName)) {
                 return 0;
-            } else if (pName.equals(ITEM_LAST)) {
+            } else if (ITEM_LAST.equals(pName)) {
                 return getFlag(LAST_DAY);
             }
 

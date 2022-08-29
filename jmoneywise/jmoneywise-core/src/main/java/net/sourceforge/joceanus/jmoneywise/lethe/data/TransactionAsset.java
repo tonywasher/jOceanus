@@ -34,10 +34,7 @@ public interface TransactionAsset
      */
     Integer getId();
 
-    /**
-     * Obtain the asset name.
-     * @return the name
-     */
+    @Override
     String getName();
 
     /**

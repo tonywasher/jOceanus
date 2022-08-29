@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;

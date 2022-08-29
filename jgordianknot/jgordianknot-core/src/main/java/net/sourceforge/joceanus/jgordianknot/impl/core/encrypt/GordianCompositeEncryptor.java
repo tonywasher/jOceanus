@@ -115,12 +115,7 @@ public class GordianCompositeEncryptor
         }
     }
 
-    /**
-     * Encrypt the bytes.
-     * @param pBytes the bytes to encrypt
-     * @return the encrypted bytes
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] encrypt(final byte[] pBytes) throws OceanusException {
         /* Loop through the encryptors */
         byte[] myData = pBytes;
@@ -133,12 +128,7 @@ public class GordianCompositeEncryptor
         return myData;
     }
 
-    /**
-     * Decrypt the encrypted bytes.
-     * @param pEncrypted the encrypted bytes
-     * @return the decrypted bytes
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] decrypt(final byte[] pEncrypted) throws OceanusException {
         /* Loop through the encryptors */
         byte[] myData = pEncrypted;

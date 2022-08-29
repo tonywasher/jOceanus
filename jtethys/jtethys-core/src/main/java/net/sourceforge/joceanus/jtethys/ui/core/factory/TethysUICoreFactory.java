@@ -162,10 +162,7 @@ public abstract class TethysUICoreFactory<C>
         return theProfile;
     }
 
-    /**
-     * Obtain the active profile.
-     * @return the active profile
-     */
+    @Override
     public TethysProfile getActiveProfile() {
         return theProfile;
     }

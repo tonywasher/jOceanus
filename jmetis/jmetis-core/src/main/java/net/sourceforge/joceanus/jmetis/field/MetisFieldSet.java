@@ -192,7 +192,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         try {
             Class.forName(myClassName);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Invalid class " + myClassName);
+            throw new IllegalStateException("Invalid class " + myClassName, e);
         }
 
         /* Look up the FieldSet for the class and return it */

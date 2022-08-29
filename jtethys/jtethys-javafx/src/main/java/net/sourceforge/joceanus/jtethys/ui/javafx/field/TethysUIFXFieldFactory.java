@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.field;
 
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
@@ -39,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXUnitsTextField;
 
 /**
- * JavaFX field factory
+ * JavaFX field factory.
  */
 public class TethysUIFXFieldFactory
         implements TethysUIFieldFactory {

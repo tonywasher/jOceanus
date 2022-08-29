@@ -993,10 +993,7 @@ public class TaxBasisBucket
             return theList.getItemById(pId);
         }
 
-        /**
-         * Obtain the charges.
-         * @return the charges
-         */
+        @Override
         public MoneyWiseChargeableGainSliceList getGainSlices() {
             return theCharges;
         }

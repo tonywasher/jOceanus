@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing.field;
 
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
@@ -40,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextFiel
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingUnitsTextField;
 
 /**
- * Swing field factory
+ * Swing field factory.
  */
 public class TethysUISwingFieldFactory
         implements TethysUIFieldFactory {

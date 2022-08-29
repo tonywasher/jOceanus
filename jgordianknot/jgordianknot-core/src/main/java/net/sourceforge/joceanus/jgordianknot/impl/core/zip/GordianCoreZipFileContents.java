@@ -188,11 +188,7 @@ public class GordianCoreZipFileContents
         theList.add(iIndex, pEntry);
     }
 
-    /**
-     * Locate the file by name.
-     * @param pName the name of the file
-     * @return the entry or null if not found
-     */
+    @Override
     public GordianZipFileEntry findFileEntry(final String pName) {
         /* Loop through the file entries */
         final Iterator<GordianZipFileEntry> myIterator = theList.iterator();

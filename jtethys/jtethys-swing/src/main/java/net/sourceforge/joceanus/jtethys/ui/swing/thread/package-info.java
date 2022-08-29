@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Tethys: Java Utilities
  * Copyright 2012,2022 Tony Washer
  *
@@ -14,4 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
+/**
+ * Thread swing classes.
+ */
 package net.sourceforge.joceanus.jtethys.ui.swing.thread;

@@ -68,18 +68,12 @@ public abstract class TethysUICoreCheckBox
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * set selected.
-     * @param pSelected is the box selected?
-     */
+    @Override
     public void setSelected(final boolean pSelected) {
         isSelected = pSelected;
     }
 
-    /**
-     * Is the box selected?
-     * @return true/false
-     */
+    @Override
     public boolean isSelected() {
         return isSelected;
     }

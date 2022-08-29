@@ -238,10 +238,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
         updateText();
     }
 
-    /**
-     * Obtain the value.
-     * @return the value
-     */
+    @Override
     public List<T> getValue() {
         return theValue;
     }
@@ -392,10 +389,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
         theButton.setText(getText());
     }
 
-    /**
-     * Obtain the text value.
-     * @return the formatted values
-     */
+    @Override
     public String getText() {
         if (theValue == null) {
             return null;

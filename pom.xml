@@ -91,7 +91,7 @@
     <CleanPluginVersion>3.2.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.1</InstallPluginVersion>
-    <SitePluginVersion>4.0.0-M3</SitePluginVersion>
+    <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0</DeployPluginVersion>
     <EnforcerPluginVersion>3.1.0</EnforcerPluginVersion>
     <CompilerPluginVersion>3.10.1</CompilerPluginVersion>

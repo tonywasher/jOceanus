@@ -234,9 +234,7 @@ public abstract class TethysUICoreThreadManager
         theEventManager.fireEvent(TethysUIThreadEvent.THREADEND, myThread);
     }
 
-    /**
-     * Shut down the thread manager.
-     */
+    @Override
     public void shutdown() {
         theExecutor.shutdownNow();
     }

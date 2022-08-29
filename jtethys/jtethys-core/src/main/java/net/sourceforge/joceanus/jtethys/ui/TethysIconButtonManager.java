@@ -223,10 +223,7 @@ public abstract class TethysIconButtonManager<T>
         applyButtonState();
     }
 
-    /**
-     * Set the mapSet selector.
-     * @param pSelector the selector
-     */
+    @Override
     public void setIconMapSet(final Supplier<TethysIconMapSet<T>> pSelector) {
         theMapSet = pSelector;
     }

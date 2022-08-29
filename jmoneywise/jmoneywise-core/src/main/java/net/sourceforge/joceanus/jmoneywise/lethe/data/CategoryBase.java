@@ -191,10 +191,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         return super.includeXmlField(pField);
     }
 
-    /**
-     * Obtain Name.
-     * @return the name
-     */
+    @Override
     public final String getName() {
         return getName(getValueSet());
     }

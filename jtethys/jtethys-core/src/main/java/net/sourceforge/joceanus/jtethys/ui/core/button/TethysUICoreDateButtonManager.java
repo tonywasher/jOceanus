@@ -124,10 +124,7 @@ public abstract class TethysUICoreDateButtonManager
         return theButton;
     }
 
-    /**
-     * Obtain the configuration.
-     * @return the configuration
-     */
+    @Override
     public TethysDateConfig getConfig() {
         return theConfig;
     }
@@ -152,34 +149,22 @@ public abstract class TethysUICoreDateButtonManager
      */
     protected abstract void showDialog();
 
-    /**
-     * Obtain the selected Date.
-     * @return the selected Date
-     */
+    @Override
     public TethysDate getSelectedDate() {
         return theValue;
     }
 
-    /**
-     * Obtain the earliest Date.
-     * @return the earliest Date
-     */
+    @Override
     public TethysDate getEarliestDate() {
         return theConfig.getEarliestDate();
     }
 
-    /**
-     * Obtain the latest Date.
-     * @return the latest Date
-     */
+    @Override
     public TethysDate getLatestDate() {
         return theConfig.getLatestDate();
     }
 
-    /**
-     * Set selected Date.
-     * @param pDate the selected date
-     */
+    @Override
     public void setSelectedDate(final TethysDate pDate) {
         theValue = pDate;
         theConfig.setSelectedDate(pDate);
@@ -193,51 +178,32 @@ public abstract class TethysUICoreDateButtonManager
         theButton.setText(theFormatter.formatDate(theValue));
     }
 
-    /**
-     * Get button text.
-     * @return the text
-     */
+    @Override
     public String getText() {
         return theFormatter.formatDate(theValue);
     }
 
-    /**
-     * Set earliest Date.
-     * @param pDate the earliest date
-     */
+    @Override
     public void setEarliestDate(final TethysDate pDate) {
         theConfig.setEarliestDate(pDate);
     }
 
-    /**
-     * Set latest Date.
-     * @param pDate the latest date
-     */
+    @Override
     public void setLatestDate(final TethysDate pDate) {
         theConfig.setLatestDate(pDate);
     }
 
-    /**
-     * Allow Null Date selection.
-     * @return true/false
-     */
+    @Override
     public boolean allowNullDateSelection() {
         return theConfig.allowNullDateSelection();
     }
 
-    /**
-     * Allow null date selection. If this flag is set an additional button will be displayed
-     * allowing the user to explicitly select no date, thus setting the SelectedDate to null.
-     * @param pAllowNullDateSelection true/false
-     */
+    @Override
     public void setAllowNullDateSelection(final boolean pAllowNullDateSelection) {
         theConfig.setAllowNullDateSelection(pAllowNullDateSelection);
     }
 
-    /**
-     * Show Narrow Days. If this flag is set Days are show in narrow rather than short form.
-     * @param pShowNarrowDays true/false
-     */
+    @Override
     public void setShowNarrowDays(final boolean pShowNarrowDays) {
         theConfig.setShowNarrowDays(pShowNarrowDays);
     }

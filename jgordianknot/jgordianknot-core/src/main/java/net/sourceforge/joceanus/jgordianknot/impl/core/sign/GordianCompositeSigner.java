@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair;
@@ -150,11 +149,7 @@ public class GordianCompositeSigner
         }
     }
 
-    /**
-     * Complete the signature operation and return the signature bytes.
-     * @return the signature
-     * @throws OceanusException on error
-     */
+    @Override
     public final byte[] sign() throws OceanusException {
         /* Protect against exceptions */
         try {
@@ -185,12 +180,7 @@ public class GordianCompositeSigner
         }
     }
 
-    /**
-     * Verify the signature against the supplied signature bytes.
-     * @param pSignature the supplied signature
-     * @return the signature
-     * @throws OceanusException on error
-     */
+    @Override
     public boolean verify(final byte[] pSignature) throws OceanusException {
         /* Protect against exceptions */
         try {
@@ -219,7 +209,7 @@ public class GordianCompositeSigner
             return numFailed == 0;
 
         } catch (IllegalArgumentException e) {
-            throw new GordianDataException("Invalid encoded signature");
+            throw new GordianIOException("Invalid encoded signature", e);
         }
     }
 }

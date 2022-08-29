@@ -21,18 +21,18 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 
 /**
- * Child Dialog
+ * Child Dialog.
  */
 public interface TethysUIChildDialog
     extends TethysEventProvider<TethysUIEvent> {
     /**
-     * Set the title
+     * Set the title.
      * @param pTitle the title
      */
     void setTitle(String pTitle);
 
     /**
-     * Set the contents
+     * Set the contents.
      * @param pContent the dialog content
      */
     void setContent(TethysUIComponent pContent);
@@ -44,6 +44,7 @@ public interface TethysUIChildDialog
 
     /**
      * Is the dialog showing?
+     * @return true/false
      */
     boolean isShowing();
 

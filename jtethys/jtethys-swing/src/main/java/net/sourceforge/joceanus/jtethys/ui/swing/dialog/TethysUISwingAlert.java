@@ -19,8 +19,6 @@ package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
 
 /**
@@ -34,12 +32,12 @@ public class TethysUISwingAlert
     private final JFrame theFrame;
 
     /**
-     * The Title
+     * The Title.
      */
     private String theTitle;
 
     /**
-     * The Message
+     * The Message.
      */
     private String theMessage;
 

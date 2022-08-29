@@ -196,6 +196,7 @@ public enum MoneyWiseTransDataId
     /**
      * Constructor.
      * @param pKeyName the key name
+     * @param pField the lethe field
      */
     MoneyWiseTransDataId(final MetisDataFieldId pKeyName,
                          final MetisLetheField pField) {

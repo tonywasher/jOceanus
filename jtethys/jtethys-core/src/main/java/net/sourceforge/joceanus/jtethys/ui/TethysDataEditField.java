@@ -593,6 +593,7 @@ public interface TethysDataEditField<T>
      */
     interface TethysStringEditField
             extends TethysDataEditField<String>, TethysValidatedEditField<String> {
+        @Override
         default String getCastValue(final Object pValue) {
             return (String) pValue;
         }
@@ -603,6 +604,7 @@ public interface TethysDataEditField<T>
      */
     interface TethysCharArrayEditField
             extends TethysDataEditField<char[]>, TethysValidatedEditField<char[]> {
+        @Override
         default char[] getCastValue(final Object pValue) {
             return (char[]) pValue;
         }

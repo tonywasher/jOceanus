@@ -69,18 +69,12 @@ public abstract class TethysUICoreButton
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain width.
-     * @return the width
-     */
+    @Override
     public int getIconWidth() {
         return theWidth;
     }
 
-    /**
-     * Set the width.
-     * @param pWidth the width to set
-     */
+    @Override
     public void setIconWidth(final int pWidth) {
         /* Store the width */
         theWidth = pWidth;

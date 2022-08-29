@@ -72,7 +72,7 @@ public class MetisPreferenceManager
     /**
      * Map of preferenceSets.
      */
-    private Map<String, MetisPreferenceSet<?>> theMap = new HashMap<>();
+    private final Map<String, MetisPreferenceSet<?>> theMap = new HashMap<>();
 
     /**
      * Constructor.
@@ -82,7 +82,7 @@ public class MetisPreferenceManager
     public MetisPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         theViewerManager = pViewer;
         theEventManager = new TethysEventManager<>();
-        theFields = MetisFieldSet.newFieldSet(MetisPreferenceManager.this);
+        theFields = MetisFieldSet.newFieldSet(this);
         theSecurityManager = new MetisPreferenceSecurity(this);
     }
 

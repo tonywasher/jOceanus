@@ -115,10 +115,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         return theButton.getId();
     }
 
-    /**
-     * Obtain value.
-     * @return the value
-     */
+    @Override
     public T getValue() {
         return theValue;
     }
@@ -157,10 +154,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         }
     }
 
-    /**
-     * Set the value.
-     * @param pValue the value to set
-     */
+    @Override
     public void setValue(final T pValue) {
         /* Store the value */
         theValue = pValue;
@@ -169,18 +163,12 @@ public abstract class TethysUICoreIconButtonManager<T>
         applyButtonState();
     }
 
-    /**
-     * Set the mapSet selector.
-     * @param pSelector the selector
-     */
+    @Override
     public void setIconMapSet(final Supplier<TethysUIIconMapSet<T>> pSelector) {
         theMapSet = pSelector;
     }
 
-    /**
-     * Get the mapSet selector.
-     * @return the selector
-     */
+    @Override
     public Supplier<TethysUIIconMapSet<T>> getIconMapSet() {
         return theMapSet;
     }
@@ -195,16 +183,12 @@ public abstract class TethysUICoreIconButtonManager<T>
         theButton.setVisible(pVisible);
     }
 
-    /**
-     * Set Null Margins.
-     */
+    @Override
     public void setNullMargins() {
         theButton.setNullMargins();
     }
 
-    /**
-     * Apply button state.
-     */
+    @Override
     public void applyButtonState() {
         /* Access MapSet and check iconWidth */
         final TethysUIIconMapSet<T> myMapSet = theMapSet.get();
@@ -240,9 +224,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         return theIconMap.computeIfAbsent(pIconId, i -> theFactory.resolveIcon(i, theWidth));
     }
 
-    /**
-     * Progress state.
-     */
+    @Override
     public void progressToNextState() {
         /* Access next value */
         final TethysUIIconMapSet<T> myMapSet = theMapSet.get();
@@ -288,7 +270,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         /**
          * The icon Width.
          */
-        private int theWidth;
+        private final int theWidth;
 
         /**
          * Value Map.
@@ -326,17 +308,12 @@ public abstract class TethysUICoreIconButtonManager<T>
             theTipMap = new HashMap<>();
         }
 
-        /**
-         * Obtain the iconWidth.
-         * @return the iconWidth
-         */
+        @Override
         public int getWidth() {
             return theWidth;
         }
 
-        /**
-         * Clear the mapSet.
-         */
+        @Override
         public void clearMaps() {
             theValueMap.clear();
             theIconMap.clear();
@@ -354,20 +331,12 @@ public abstract class TethysUICoreIconButtonManager<T>
             theTipMap.put(pValue, pTooltip);
         }
 
-        /**
-         * Obtain Icon for value.
-         * @param pValue the value
-         * @return the value
-         */
+        @Override
         public TethysUIIconId getIconForValue(final T pValue) {
             return theIconMap.get(pValue);
         }
 
-        /**
-         * Obtain ToolTip for value.
-         * @param pValue the value
-         * @return the value
-         */
+        @Override
         public String getTooltipForValue(final T pValue) {
             return theTipMap.get(pValue);
         }

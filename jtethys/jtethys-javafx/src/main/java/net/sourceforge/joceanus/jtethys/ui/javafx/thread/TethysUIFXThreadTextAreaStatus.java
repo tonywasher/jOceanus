@@ -37,7 +37,7 @@ public class TethysUIFXThreadTextAreaStatus
         /* Initialise underlying class */
         super(pManager, pFactory);
     }
-    
+
     @Override
     public TethysUIFXNode getNode() {
         return (TethysUIFXNode) super.getNode();

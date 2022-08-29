@@ -418,7 +418,7 @@ public abstract class TethysTableManager<C, R>
     public abstract void cancelEditing();
 
     /**
-     * Set the items
+     * Set the items.
      * @param pItems the items
      */
     public void setItems(final List<R> pItems) {
@@ -1304,12 +1304,7 @@ public abstract class TethysTableManager<C, R>
             return this;
         }
 
-        /**
-         * Set cell value Factory.
-         *
-         * @param pFactory the cell factory
-         * @return the column
-         */
+        @Override
         public TethysTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
             theValueFactory = pFactory;
             return this;

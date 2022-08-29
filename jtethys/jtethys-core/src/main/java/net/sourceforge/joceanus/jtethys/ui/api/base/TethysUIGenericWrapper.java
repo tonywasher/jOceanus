@@ -35,7 +35,7 @@ public class TethysUIGenericWrapper {
     }
 
     /**
-     * Obtain the data
+     * Obtain the data.
      * @return the data
      */
     public Object getData() {

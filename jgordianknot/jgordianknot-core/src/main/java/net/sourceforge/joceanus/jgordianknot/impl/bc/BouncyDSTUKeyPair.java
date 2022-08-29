@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDSACoder;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -235,7 +235,7 @@ public final class BouncyDSTUKeyPair {
             try {
                 key = (ASN1OctetString) ASN1Primitive.fromByteArray(bits.getBytes());
             } catch (IOException ex) {
-                throw new GordianDataException("error recovering public key");
+                throw new GordianIOException("error recovering public key", ex);
             }
 
             final byte[] keyEnc = key.getOctets();

@@ -127,26 +127,17 @@ public abstract class TethysUICoreTreeManager<T>
         theRoot = pRoot;
     }
 
-    /**
-     * Obtain the root.
-     * @return the root
-     */
+    @Override
     public TethysUITreeItem<T> getRoot() {
         return theRoot;
     }
 
-    /**
-     * Set the root name.
-     * @param pName the root name
-     */
+    @Override
     public void setRootName(final String pName) {
         theRootName = pName;
     }
 
-    /**
-     * Is the tree visible?
-     * @return true/false
-     */
+    @Override
     public boolean isVisible() {
         return isVisible;
     }
@@ -172,11 +163,7 @@ public abstract class TethysUICoreTreeManager<T>
         }
     }
 
-    /**
-     * LookUp item by name.
-     * @param pName the name of the item
-     * @return the item (or null)
-     */
+    @Override
     public TethysUITreeItem<T> lookUpItem(final String pName) {
         return theItemMap.get(pName);
     }
@@ -215,11 +202,7 @@ public abstract class TethysUICoreTreeManager<T>
      */
     protected abstract void applyFocus();
 
-    /**
-     * Obtain the icon for the iconId.
-     * @param pIconId the iconId
-     * @return the icon
-     */
+    @Override
     public TethysUIIcon getIcon(final TethysUIIconId pIconId) {
         return theIconMap.computeIfAbsent(pIconId, i -> theFactory.resolveIcon(i, ICONWIDTH));
     }
@@ -340,82 +323,52 @@ public abstract class TethysUICoreTreeManager<T>
             setVisible(true);
         }
 
-        /**
-         * Obtain the item.
-         * @return the item
-         */
+        @Override
         public T getItem() {
             return theItem;
         }
 
-        /**
-         * Obtain the iconId.
-         * @return the iconId
-         */
+        @Override
         public TethysUIIconId getIconId() {
             return theIcon;
         }
 
-        /**
-         * Obtain the unique name.
-         * @return the name
-         */
+        @Override
         public String getName() {
             return theName;
         }
 
-        /**
-         * Obtain the parent.
-         * @return the parent
-         */
+        @Override
         public TethysUICoreTreeItem<T> getParent() {
             return theParent;
         }
 
-        /**
-         * Obtain the tree.
-         * @return the tree
-         */
+        @Override
         public TethysUITreeManager<T> getTree() {
             return theTree;
         }
 
-        /**
-         * Is the item visible?
-         * @return true/false
-         */
+        @Override
         public boolean isVisible() {
             return isVisible;
         }
 
-        /**
-         * Is the item root?
-         * @return true/false
-         */
+        @Override
         public boolean isRoot() {
             return theItem == null;
         }
 
-        /**
-         * Set the item.
-         * @param pItem the item
-         */
+        @Override
         public void setItem(final T pItem) {
             theItem = pItem;
         }
 
-        /**
-         * Set the iconId.
-         * @param pIconId the iconId
-         */
+        @Override
         public void setIcon(final TethysUIIconId pIconId) {
             theIcon = pIconId;
         }
 
-        /**
-         * Set the visibility of the item.
-         * @param pVisible true/false
-         */
+        @Override
         public void setVisible(final boolean pVisible) {
             /* If we are changing visibility */
             if (pVisible != isVisible) {
@@ -446,18 +399,12 @@ public abstract class TethysUICoreTreeManager<T>
          */
         protected abstract void attachAsChildNo(int pChildNo);
 
-        /**
-         * Do we have children?
-         * @return true/false
-         */
+        @Override
         public boolean hasChildren() {
             return theFirstChild != null;
         }
 
-        /**
-         * Count previous visible items.
-         * @return the count
-         */
+        @Override
         public int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
             int myCount = 0;
@@ -499,9 +446,7 @@ public abstract class TethysUICoreTreeManager<T>
             }
         }
 
-        /**
-         * Remove all children.
-         */
+        @Override
         public void removeChildren() {
             /* Loop through the children */
             while (theFirstChild != null) {

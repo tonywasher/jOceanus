@@ -80,10 +80,6 @@ public interface MetisListKey
      */
     <T extends MetisFieldVersionedItem> T newItem(MetisListSetVersioned pListSet);
 
-    /**
-     * Obtain the Clazz of the item.
-     * @param <T> the item type
-     * @return the class of the item
-     */
+    @Override
     <T extends MetisFieldVersionedItem> Class<T> getClazz();
 }
