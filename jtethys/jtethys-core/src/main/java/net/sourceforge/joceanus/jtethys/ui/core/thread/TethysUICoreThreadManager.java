@@ -28,13 +28,14 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Thread Manager.
  */
 public abstract class TethysUICoreThreadManager
-        implements TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadManager, TethysUIThreadStatusReport {
+        implements TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadManager {
     /**
      * Default Reporting Steps.
      */
@@ -58,7 +59,7 @@ public abstract class TethysUICoreThreadManager
     /**
      * The StatusManager.
      */
-    private final TethysUICoreThreadStatusManager theStatusManager;
+    private final TethysUIThreadStatusManager theStatusManager;
 
     /**
      * The status data.
@@ -124,11 +125,8 @@ public abstract class TethysUICoreThreadManager
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the status manager.
-     * @return the status Manager
-     */
-    public TethysUICoreThreadStatusManager getStatusManager() {
+    @Override
+    public TethysUIThreadStatusManager getStatusManager() {
         return theStatusManager;
     }
 

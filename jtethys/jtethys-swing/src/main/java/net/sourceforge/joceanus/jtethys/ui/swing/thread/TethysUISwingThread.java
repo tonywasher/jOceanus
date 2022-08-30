@@ -24,8 +24,8 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUICoreThreadStatus;
-import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUICoreThreadStatusManager;
 
 /**
  * javaFX Thread wrapper.
@@ -46,7 +46,7 @@ public class TethysUISwingThread<T>
     /**
      * The ThreadStatusManager.
      */
-    private final TethysUICoreThreadStatusManager theStatusMgr;
+    private final TethysUIThreadStatusManager theStatusMgr;
 
     /**
      * The wrapped thread.

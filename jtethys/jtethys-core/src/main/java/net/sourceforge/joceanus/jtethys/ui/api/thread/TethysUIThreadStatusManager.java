@@ -16,19 +16,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api.thread;
 
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+
 /**
- * Thread Factory API.
+ * Thread Status Manager.
  */
-public interface TethysUIThreadFactory {
+public interface TethysUIThreadStatusManager
+        extends TethysUIComponent {
     /**
-     * Obtain the default Thread Manager.
-     * @return the thread manager
+     * set Progress.
+     * @param pStatus the status to apply
      */
-    TethysUIThreadManager defaultThreadManager();
+    void setProgress(TethysUIThreadStatus pStatus);
 
     /**
-     * Create a Thread Manager.
-     * @return the thread manager
+     * set Completion.
      */
-    TethysUIThreadManager newThreadManager();
+    void setCompletion();
+
+    /**
+     * set Failure.
+     * @param pException the exception
+     */
+    void setFailure(Throwable pException);
+
+    /**
+     * set Cancelled.
+     */
+    void setCancelled();
 }

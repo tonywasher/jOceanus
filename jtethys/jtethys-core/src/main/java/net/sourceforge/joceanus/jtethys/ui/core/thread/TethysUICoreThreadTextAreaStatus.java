@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatus;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
@@ -33,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  */
 public abstract class TethysUICoreThreadTextAreaStatus
         extends TethysUICoreComponent
-        implements TethysUICoreThreadStatusManager {
+        implements TethysUIThreadStatusManager {
     /**
      * Cancel button text.
      */
@@ -82,7 +84,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
     /**
      * The current status.
      */
-    private TethysUICoreThreadStatus theStatus;
+    private TethysUIThreadStatus theStatus;
 
     /**
      * The TextPosition.
@@ -162,9 +164,9 @@ public abstract class TethysUICoreThreadTextAreaStatus
     }
 
     @Override
-    public void setProgress(final TethysUICoreThreadStatus pStatus) {
+    public void setProgress(final TethysUIThreadStatus pStatus) {
         /* Set new status */
-        final TethysUICoreThreadStatus myOld = theStatus;
+        final TethysUIThreadStatus myOld = theStatus;
         theStatus = pStatus;
 
         /* Handle new task */

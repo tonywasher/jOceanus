@@ -27,6 +27,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatus;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
@@ -35,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  */
 public abstract class TethysUICoreThreadProgressStatus
         extends TethysUICoreComponent
-        implements TethysUICoreThreadStatusManager {
+        implements TethysUIThreadStatusManager {
     /**
      * Timer duration.
      */
@@ -261,7 +263,7 @@ public abstract class TethysUICoreThreadProgressStatus
     }
 
     @Override
-    public void setProgress(final TethysUICoreThreadStatus pStatus) {
+    public void setProgress(final TethysUIThreadStatus pStatus) {
         /* Obtain the stage name */
         final String myStage = pStatus.getStage();
 

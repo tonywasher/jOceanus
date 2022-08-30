@@ -23,7 +23,13 @@ import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
  * Thread Manager.
  */
 public interface TethysUIThreadManager
-        extends TethysEventProvider<TethysUIThreadEvent> {
+        extends TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadStatusReport {
+    /**
+     * Obtain the status manager.
+     * @return the status Manager
+     */
+    TethysUIThreadStatusManager getStatusManager();
+
     /**
      * obtain the task name.
      * @return the task name

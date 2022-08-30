@@ -37,6 +37,11 @@ public class TethysUIFXThreadFactory
     private final boolean useSlider;
 
     /**
+     * The default thread factory.
+     */
+    private TethysUIThreadManager theDefault;
+
+    /**
      * Constructor.
      * @param pFactory the factory
      * @param pSlider use slider
@@ -45,6 +50,14 @@ public class TethysUIFXThreadFactory
                                    final boolean pSlider) {
         theFactory = pFactory;
         useSlider = pSlider;
+    }
+
+    @Override
+    public TethysUIThreadManager defaultThreadManager() {
+        if (theDefault == null) {
+            theDefault = newThreadManager();
+        }
+        return theDefault;
     }
 
     @Override
