@@ -89,7 +89,7 @@ public class MetisSwingState {
         final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the toolkit */
-        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(theInfo, myDef.useSliderStatus());
+        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(theInfo, myApp.useSliderStatus());
 
         /* Create the frame and declare it */
         theFrame = new JFrame(myApp.getName());
@@ -107,7 +107,7 @@ public class MetisSwingState {
         myPane.add(TethysSwingNode.getComponent(theMain.getComponent()), BorderLayout.CENTER);
 
         /* Set preferred size if specified */
-        final int[] myDim = myDef.getPanelDimensions();
+        final int[] myDim = myApp.getPanelDimensions();
         if (myDim != null) {
             myPane.setPreferredSize(new Dimension(myDim[0], myDim[1]));
         }

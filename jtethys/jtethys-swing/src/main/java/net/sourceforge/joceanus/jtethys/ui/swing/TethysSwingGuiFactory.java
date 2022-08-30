@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
@@ -411,5 +412,15 @@ public class TethysSwingGuiFactory
     @Override
     public TethysChildDialog newChildDialog() {
         return new TethysSwingChildDialog(theFrame);
+    }
+
+    @Override
+    public TethysThreadManager newThreadManager() {
+        return new TethysSwingThreadManager(this, getProgramDefinitions().useSliderStatus());
+    }
+
+    @Override
+    protected TethysSwingThreadProgressStatus newThreadSliderStatus(final TethysThreadManager pManager) {
+        return new TethysSwingThreadProgressStatus(pManager, this);
     }
 }

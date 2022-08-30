@@ -14,28 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.core.thread;
+package net.sourceforge.joceanus.jtethys.ui;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIProgressBar;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUIThreadResource;
 
 /**
  * Thread ProgressBar Status Manager.
  */
-public abstract class TethysUICoreThreadProgressStatus
-        extends TethysUICoreComponent
-        implements TethysUICoreThreadStatusManager {
+public abstract class TethysThreadProgressStatus
+        implements TethysThreadStatusManager {
     /**
      * Timer duration.
      */
@@ -99,47 +86,47 @@ public abstract class TethysUICoreThreadProgressStatus
     /**
      * The Thread Manager.
      */
-    private final TethysUICoreThreadManager theThreadManager;
+    private final TethysThreadManager theThreadManager;
 
     /**
      * GUI Factory.
      */
-    private final TethysUICoreFactory<?> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * Task Name.
      */
-    private final TethysUILabel theTaskField;
+    private final TethysLabel theTaskField;
 
     /**
      * Task Progress Bar.
      */
-    private final TethysUIProgressBar theTaskProgress;
+    private final TethysProgressBar theTaskProgress;
 
     /**
      * Stage Name.
      */
-    private final TethysUILabel theStageField;
+    private final TethysLabel theStageField;
 
     /**
      * Steps Progress Bar.
      */
-    private final TethysUIProgressBar theStageProgress;
+    private final TethysProgressBar theStageProgress;
 
     /**
      * Status Label.
      */
-    private final TethysUILabel theStatusField;
+    private final TethysLabel theStatusField;
 
     /**
      * The Stage Panel.
      */
-    private final TethysUIBorderPaneManager theStagePanel;
+    private final TethysBorderPaneManager theStagePanel;
 
     /**
      * The Node.
      */
-    private final TethysUICardPaneManager<TethysUIBorderPaneManager> theNode;
+    private final TethysCardPaneManager<TethysBorderPaneManager> theNode;
 
     /**
      * is the progress pane showing?
@@ -156,51 +143,48 @@ public abstract class TethysUICoreThreadProgressStatus
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected TethysUICoreThreadProgressStatus(final TethysUICoreThreadManager pManager,
-                                               final TethysUICoreFactory<?> pFactory) {
+    protected TethysThreadProgressStatus(final TethysThreadManager pManager,
+                                         final TethysGuiFactory pFactory) {
         /* Store parameters */
         theThreadManager = pManager;
         theGuiFactory = pFactory;
 
         /* Create components */
-        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
-        theTaskField = myControls.newLabel();
-        theStageField = myControls.newLabel();
-        theStatusField = myControls.newLabel();
-        theTaskProgress = myControls.newProgressBar();
-        theStageProgress = myControls.newProgressBar();
+        theTaskField = theGuiFactory.newLabel();
+        theStageField = theGuiFactory.newLabel();
+        theStatusField = theGuiFactory.newLabel();
+        theTaskProgress = theGuiFactory.newProgressBar();
+        theStageProgress = theGuiFactory.newProgressBar();
 
         /* Create buttons */
-        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
-        final TethysUIButton myCancelButton = myButtons.newButton();
+        final TethysButton myCancelButton = theGuiFactory.newButton();
         myCancelButton.setTextOnly();
         myCancelButton.setText(NLS_CANCEL);
-        final TethysUIButton myClearButton = myButtons.newButton();
+        final TethysButton myClearButton = theGuiFactory.newButton();
         myClearButton.setTextOnly();
         myClearButton.setText(NLS_CLEAR);
 
         /* Create the status pane */
-        final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
-        final TethysUIBorderPaneManager myStatusNode = myPanes.newBorderPane();
+        final TethysBorderPaneManager myStatusNode = theGuiFactory.newBorderPane();
         myStatusNode.setHGap(GAP_WIDTH);
         myStatusNode.setCentre(theStatusField);
         myStatusNode.setWest(myClearButton);
         myStatusNode.setBorderTitle(NLS_STATUS);
 
         /* Create the task progress pane */
-        final TethysUIBorderPaneManager myTaskProgress = myPanes.newBorderPane();
+        final TethysBorderPaneManager myTaskProgress = theGuiFactory.newBorderPane();
         myTaskProgress.setHGap(GAP_WIDTH);
         myTaskProgress.setCentre(theTaskProgress);
         myTaskProgress.setWest(theTaskField);
 
         /* Create the stage progress pane */
-        theStagePanel = myPanes.newBorderPane();
+        theStagePanel = theGuiFactory.newBorderPane();
         theStagePanel.setHGap(GAP_WIDTH);
         theStagePanel.setCentre(theStageProgress);
         theStagePanel.setWest(theStageField);
 
         /* Create the stage progress pane */
-        final TethysUIGridPaneManager myProgressGrid = myPanes.newGridPane();
+        final TethysGridPaneManager myProgressGrid = theGuiFactory.newGridPane();
         myProgressGrid.setHGap(GAP_WIDTH);
         myProgressGrid.addCell(myTaskProgress);
         myProgressGrid.allowCellGrowth(myTaskProgress);
@@ -208,14 +192,14 @@ public abstract class TethysUICoreThreadProgressStatus
         myProgressGrid.allowCellGrowth(theStagePanel);
 
         /* Create the progress pane */
-        final TethysUIBorderPaneManager myProgressNode = myPanes.newBorderPane();
+        final TethysBorderPaneManager myProgressNode = theGuiFactory.newBorderPane();
         myProgressNode.setHGap(GAP_WIDTH);
         myProgressNode.setCentre(myProgressGrid);
         myProgressNode.setEast(myCancelButton);
         myProgressNode.setBorderTitle(NLS_PROGRESS);
 
         /* Create the basic Pane */
-        theNode = myPanes.newCardPane();
+        theNode = theGuiFactory.newCardPane();
         theNode.addCard(PANEL_STATUS, myStatusNode);
         theNode.addCard(PANEL_PROGRESS, myProgressNode);
 
@@ -230,7 +214,7 @@ public abstract class TethysUICoreThreadProgressStatus
     }
 
     @Override
-    public TethysUINode getNode() {
+    public TethysNode getNode() {
         return theNode.getNode();
     }
 
@@ -248,7 +232,7 @@ public abstract class TethysUICoreThreadProgressStatus
      * get Thread Manager.
      * @return the thread manager
      */
-    protected TethysUIThreadManager getThreadManager() {
+    protected TethysThreadManager getThreadManager() {
         return theThreadManager;
     }
 
@@ -256,12 +240,12 @@ public abstract class TethysUICoreThreadProgressStatus
      * Obtain the GUI factory.
      * @return the factory
      */
-    protected TethysUICoreFactory<?> getGuiFactory() {
+    protected TethysGuiFactory getGuiFactory() {
         return theGuiFactory;
     }
 
     @Override
-    public void setProgress(final TethysUICoreThreadStatus pStatus) {
+    public void setProgress(final TethysThreadStatus pStatus) {
         /* Obtain the stage name */
         final String myStage = pStatus.getStage();
 

@@ -40,7 +40,7 @@ public class ThemisAnalysisArray {
      */
     ThemisAnalysisArray(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If the token is VARARGS */
-        if (pLine.peekNextToken().equals(VARARGS)) {
+        if (VARARGS.equals(pLine.peekNextToken())) {
             pLine.stripNextToken();
             theNotation = VARARGS;
             return;
@@ -74,7 +74,7 @@ public class ThemisAnalysisArray {
     static boolean isArray(final ThemisAnalysisLine pLine) {
         /* If we are started with an ARRAY_OPEN or we have args */
         return pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)
-                || pLine.peekNextToken().equals(VARARGS);
+                || VARARGS.equals(pLine.peekNextToken());
     }
 
     @Override

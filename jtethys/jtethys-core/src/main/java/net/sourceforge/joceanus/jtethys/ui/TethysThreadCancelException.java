@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
+package net.sourceforge.joceanus.jtethys.ui;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Thread Events.
+ * TethysThread Cancellation Exception.
  */
-public enum TethysUIThreadEvent {
+public class TethysThreadCancelException
+        extends OceanusException {
     /**
-     * ThreadStart.
+     * Serial Id.
      */
-    THREADSTART,
+    private static final long serialVersionUID = 5500219673770564855L;
 
     /**
-     * ThreadError.
+     * Thread Cancellation Exception.
+     * @param s the reason
      */
-    THREADERROR,
-
-    /**
-     * ThreadEnd.
-     */
-    THREADEND;
+    public TethysThreadCancelException(final String s) {
+        super(s);
+    }
 }
-

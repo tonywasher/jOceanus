@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.core.thread;
+package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,17 +24,12 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Thread Manager.
  */
-public abstract class TethysUICoreThreadManager
-        implements TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadManager, TethysUIThreadStatusReport {
+public abstract class TethysThreadManager
+        implements TethysEventProvider<TethysThreadEvent>, TethysThreadStatusReport {
     /**
      * Default Reporting Steps.
      */
@@ -48,35 +43,35 @@ public abstract class TethysUICoreThreadManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIThreadEvent> theEventManager;
+    private final TethysEventManager<TethysThreadEvent> theEventManager;
 
     /**
-     * The Toolkit.
+     * The Factory.
      */
-    private final TethysUICoreFactory<?> theFactory;
+    private final TethysGuiFactory theFactory;
 
     /**
      * The StatusManager.
      */
-    private final TethysUICoreThreadStatusManager theStatusManager;
+    private final TethysThreadStatusManager theStatusManager;
 
     /**
      * The status data.
      */
-    private final TethysUICoreThreadStatus theStatus;
+    private final TethysThreadStatus theStatus;
 
     /**
      * The ThreadData.
      */
-    private TethysUIThreadData theThreadData;
+    private TethysThreadData theThreadData;
 
     /**
      * The Active thread.
      */
-    private TethysUIThread<?> theThread;
+    private TethysThread<?> theThread;
 
     /**
-     * The Active thread.
+     * The Active Profile.
      */
     private TethysProfile theProfile;
 
@@ -95,8 +90,8 @@ public abstract class TethysUICoreThreadManager
      * @param pFactory the factory
      * @param pSlider use slider status
      */
-    protected TethysUICoreThreadManager(final TethysUICoreFactory<?> pFactory,
-                                        final boolean pSlider) {
+    protected TethysThreadManager(final TethysGuiFactory pFactory,
+                                  final boolean pSlider) {
         /* record parameters */
         theFactory = pFactory;
 
@@ -107,20 +102,19 @@ public abstract class TethysUICoreThreadManager
         theExecutor = Executors.newSingleThreadExecutor();
 
         /* Create the status */
-        theStatus = new TethysUICoreThreadStatus();
+        theStatus = new TethysThreadStatus();
 
-        /* Create the Status area */
-        final TethysUICoreThreadFactory myFactory = (TethysUICoreThreadFactory) pFactory.threadFactory();
+        /* Create the status manager */
         theStatusManager = pSlider
-                ? myFactory.newThreadSliderStatus(this)
-                : myFactory.newThreadTextAreaStatus(this);
+                ? theFactory.newThreadSliderStatus(this)
+                : theFactory.newThreadTextAreaStatus(this);
 
         /* Default ThreadData is the factory */
         theThreadData = theFactory;
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysThreadEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -128,7 +122,7 @@ public abstract class TethysUICoreThreadManager
      * Obtain the status manager.
      * @return the status Manager
      */
-    public TethysUICoreThreadStatusManager getStatusManager() {
+    public TethysThreadStatusManager getStatusManager() {
         return theStatusManager;
     }
 
@@ -136,40 +130,62 @@ public abstract class TethysUICoreThreadManager
      * Obtain the GUI factory.
      * @return the factory
      */
-    public TethysUICoreFactory<?> getGuiFactory() {
+    public TethysGuiFactory getGuiFactory() {
         return theFactory;
     }
 
-    @Override
+    /**
+     * obtain the task name.
+     * @return the task name
+     */
+    public abstract String getTaskName();
+
+    /**
+     * Do we have a running thread.
+     * @return true/false
+     */
     public boolean hasWorker() {
         return theThread != null;
     }
 
-    @Override
-    public void setThreadData(final TethysUIThreadData pThreadData) {
+    /**
+     * Set the thread Data.
+     * @param pThreadData the threadData
+     */
+    public void setThreadData(final TethysThreadData pThreadData) {
         theThreadData = pThreadData;
-    }
-
-    @Override
-    public void setReportingSteps(final int pSteps) {
-        theReportingSteps = pSteps;
-    }
-
-    @Override
-    public Throwable getError() {
-        return theError;
     }
 
     /**
      * Get the thread Data.
      * @return the threadData
      */
-    protected TethysUIThreadData getThreadData() {
+    protected TethysThreadData getThreadData() {
         return theThreadData;
     }
 
-    @Override
-    public <T> void startThread(final TethysUIThread<T> pThread) {
+    /**
+     * Set the reporting steps.
+     * @param pSteps the reporting steps
+     */
+    public void setReportingSteps(final int pSteps) {
+        theReportingSteps = pSteps;
+    }
+
+    /**
+     * Get the error.
+     * @return the error
+     */
+    public Throwable getError() {
+        return theError;
+    }
+
+    /**
+     * Start a thread.
+     * @param <T> the thread result
+     * @param pThread the thread to start
+     */
+    public <T> void startThread(final TethysThread<T> pThread) {
         /* Set new profile */
         final String myName = pThread.getTaskName();
         setNewProfile(myName);
@@ -188,7 +204,11 @@ public abstract class TethysUICoreThreadManager
             theExecutor.execute(myRunnable);
 
             /* Note that thread has started */
-            theEventManager.fireEvent(TethysUIThreadEvent.THREADSTART, theThread);
+            theEventManager.fireEvent(TethysThreadEvent.THREADSTART, theThread);
+
+            /* Tasks for event handler */
+            //theError = null;
+            //theErrorEntry.setVisible(false);
         }
     }
 
@@ -220,24 +240,35 @@ public abstract class TethysUICoreThreadManager
      * @param pThread the thread to wrap
      * @return the runnable thread
      */
-    protected abstract <T> Runnable wrapThread(TethysUIThread<T> pThread);
+    protected abstract <T> Runnable wrapThread(TethysThread<T> pThread);
 
     /**
      * Register thread completion.
      */
     protected void threadCompleted() {
         /* Remove reference */
-        final TethysUIThread<?> myThread = theThread;
+        final TethysThread<?> myThread = theThread;
         theThread = null;
 
         /* Note that thread has completed */
-        theEventManager.fireEvent(TethysUIThreadEvent.THREADEND, myThread);
+        theEventManager.fireEvent(TethysThreadEvent.THREADEND, myThread);
+
+        /* Tasks for event handler */
+        //theProfileEntry.setObject(theProfile);
+        //theProfileEntry.setFocus();
     }
 
-    @Override
+    /**
+     * Shut down the thread manager.
+     */
     public void shutdown() {
         theExecutor.shutdownNow();
     }
+
+    /**
+     * cancel the worker.
+     */
+    public abstract void cancelWorker();
 
     @Override
     public void initTask(final String pTask) throws OceanusException {
@@ -340,7 +371,7 @@ public abstract class TethysUICoreThreadManager
 
     @Override
     public void throwCancelException() throws OceanusException {
-        throw new TethysUIThreadCancelException("Cancelled");
+        throw new TethysThreadCancelException("Cancelled");
     }
 
     /**
@@ -348,7 +379,7 @@ public abstract class TethysUICoreThreadManager
      * @param pStatus the status to publish
      * @throws OceanusException on cancellation
      */
-    protected abstract void publishStatus(TethysUICoreThreadStatus pStatus) throws OceanusException;
+    protected abstract void publishStatus(TethysThreadStatus pStatus) throws OceanusException;
 
     /**
      * Create new profile.
@@ -356,10 +387,7 @@ public abstract class TethysUICoreThreadManager
      */
     public void setNewProfile(final String pTask) {
         /* Create a new profile */
-        theProfile = new TethysProfile(pTask);
-
-        /* Clear errors */
-        theError = null;
+        theProfile = theFactory.getNewProfile(pTask);
     }
 
     /**
@@ -385,10 +413,18 @@ public abstract class TethysUICoreThreadManager
         theError = pException;
 
         /* Note that thread has an error */
-        theEventManager.fireEvent(TethysUIThreadEvent.THREADERROR, theError);
+        theEventManager.fireEvent(TethysThreadEvent.THREADERROR, theError);
+
+        /* Tasks for event handler */
+        //theErrorEntry.setObject(theError);
+        //theErrorEntry.setVisible(true);
+        //theErrorEntry.setFocus();
     }
 
-    @Override
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
     public TethysProfile getActiveProfile() {
         return theProfile;
     }

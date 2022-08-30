@@ -14,25 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
+package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Thread Events.
+ * Marker for thread data.
  */
-public enum TethysUIThreadEvent {
-    /**
-     * ThreadStart.
-     */
-    THREADSTART,
-
-    /**
-     * ThreadError.
-     */
-    THREADERROR,
-
-    /**
-     * ThreadEnd.
-     */
-    THREADEND;
+public interface TethysThreadData {
 }
-

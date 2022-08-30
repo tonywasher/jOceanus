@@ -14,25 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.thread;
+package net.sourceforge.joceanus.jtethys.ui;
 
 /**
- * Thread Events.
+ * Thread Status Manager.
  */
-public enum TethysUIThreadEvent {
+public interface TethysThreadStatusManager
+        extends TethysComponent {
     /**
-     * ThreadStart.
+     * set Progress.
+     * @param pStatus the status to apply
      */
-    THREADSTART,
+    void setProgress(TethysThreadStatus pStatus);
 
     /**
-     * ThreadError.
+     * set Completion.
      */
-    THREADERROR,
+    void setCompletion();
 
     /**
-     * ThreadEnd.
+     * set Failure.
+     * @param pException the exception
      */
-    THREADEND;
+    void setFailure(Throwable pException);
+
+    /**
+     * set Cancelled.
+     */
+    void setCancelled();
 }
-

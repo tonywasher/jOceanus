@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
 
-import java.awt.Color;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
@@ -24,7 +23,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.button.TethysUISwingColorPicker;
 
 /**
  * swing Dialog factory.

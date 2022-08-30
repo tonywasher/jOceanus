@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
 
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;

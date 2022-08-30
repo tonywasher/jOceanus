@@ -24,22 +24,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public interface MetisProgram {
     /**
-     * Obtain the dimensions (width, height) of the panel.
-     * @return the width/height (or null for default)
-     */
-    default int[] getPanelDimensions() {
-        return null;
-    }
-
-    /**
-     * Does the panel use a slider status?
-     * @return true/false
-     */
-    default boolean useSliderStatus() {
-        return false;
-    }
-
-    /**
      * create a new mainPanel.
      * @param pToolkit the toolkit
      * @return the main panel

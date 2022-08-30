@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutedPriceEditField;
@@ -43,7 +44,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * Tethys GUI Factory.
  */
-public abstract class TethysGuiFactory {
+public abstract class TethysGuiFactory
+        implements TethysThreadData {
     /**
      * The Next nodeId.
      */
@@ -75,6 +77,11 @@ public abstract class TethysGuiFactory {
     private final TethysLogTextArea theLogSink;
 
     /**
+     * The Active Profile.
+     */
+    private TethysProfile theProfile;
+
+    /**
      * ParentComponent.
      */
     @FunctionalInterface
@@ -97,9 +104,12 @@ public abstract class TethysGuiFactory {
                                final TethysProgram pApp) {
         /* Store details */
         theFormatter = pFormatter;
+        theProgram = pApp;
+        theProfile = new TethysProfile("StartUp");
+
+         /* Create base items */
         theParentMap = new HashMap<>();
         theValueSet = new TethysValueSet();
-        theProgram = pApp;
 
         /* Create logSink */
         theLogSink = new TethysLogTextArea(this);
@@ -142,6 +152,38 @@ public abstract class TethysGuiFactory {
      */
     public void activateLogSink() {
         TethysLogManager.setSink(theLogSink);
+    }
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    public TethysProfile getNewProfile(final String pTask) {
+        /* Create a new profile */
+        theProfile = new TethysProfile(pTask);
+
+        /* Return the new profile */
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    public TethysProfile getActiveProfile() {
+        return theProfile;
+    }
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    public TethysProfile getActiveTask() {
+        /* Create a new profile */
+        return theProfile == null
+                ? null
+                : theProfile.getActiveTask();
     }
 
     /**
@@ -561,4 +603,26 @@ public abstract class TethysGuiFactory {
      * @return the new child dialog
      */
     public abstract TethysChildDialog newChildDialog();
+
+    /**
+     * Create a Thread Manager.
+     * @return the thread manager
+     */
+    public abstract TethysThreadManager newThreadManager();
+
+    /**
+     * Create a Thread Slider Status.
+     * @param pManager the thread manager
+     * @return the thread status manager
+     */
+    protected abstract TethysThreadProgressStatus newThreadSliderStatus(TethysThreadManager pManager);
+
+    /**
+     * Create a Thread TextArea Status.
+     * @param pManager the thread manager
+     * @return the thread status manager
+     */
+    protected TethysThreadTextAreaStatus newThreadTextAreaStatus(final TethysThreadManager pManager) {
+        return new TethysThreadTextAreaStatus(pManager, this);
+    }
 }

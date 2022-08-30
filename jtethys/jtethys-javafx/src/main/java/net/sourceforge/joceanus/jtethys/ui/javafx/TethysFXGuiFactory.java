@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
@@ -507,5 +508,15 @@ public class TethysFXGuiFactory
     @Override
     public TethysChildDialog newChildDialog() {
         return new TethysFXChildDialog(this, theStage);
+    }
+
+    @Override
+    public TethysThreadManager newThreadManager() {
+        return new TethysFXThreadManager(this, getProgramDefinitions().useSliderStatus());
+    }
+
+    @Override
+    protected TethysFXThreadProgressStatus newThreadSliderStatus(final TethysThreadManager pManager) {
+        return new TethysFXThreadProgressStatus(pManager, this);
     }
 }
