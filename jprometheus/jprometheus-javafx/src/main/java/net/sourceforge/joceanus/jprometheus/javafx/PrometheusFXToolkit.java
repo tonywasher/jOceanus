@@ -28,31 +28,12 @@ public class PrometheusFXToolkit
         extends PrometheusToolkit {
     /**
      * Constructor.
-     * @throws OceanusException on error
-     */
-    public PrometheusFXToolkit() throws OceanusException {
-        this(null, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pSlider use slider status
-     * @throws OceanusException on error
-     */
-    public PrometheusFXToolkit(final boolean pSlider) throws OceanusException {
-        this(null, pSlider);
-    }
-
-    /**
-     * Constructor.
      * @param pInfo the program info
-     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public PrometheusFXToolkit(final MetisState pInfo,
-                               final boolean pSlider) throws OceanusException {
+    public PrometheusFXToolkit(final MetisState pInfo) throws OceanusException {
         /* Create Toolkit */
-        this(new MetisFXToolkit(pInfo, pSlider));
+        this(new MetisFXToolkit(pInfo));
     }
 
     /**

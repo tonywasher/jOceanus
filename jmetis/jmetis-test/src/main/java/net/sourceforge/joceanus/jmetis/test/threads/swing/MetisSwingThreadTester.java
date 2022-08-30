@@ -97,7 +97,7 @@ public class MetisSwingThreadTester {
      */
     public MetisSwingThreadTester() throws OceanusException {
         /* Create toolkit */
-        theToolkit = new MetisSwingToolkit();
+        theToolkit = new MetisSwingToolkit(null);
 
         /* Access components */
         theGuiFactory = theToolkit.getGuiFactory();

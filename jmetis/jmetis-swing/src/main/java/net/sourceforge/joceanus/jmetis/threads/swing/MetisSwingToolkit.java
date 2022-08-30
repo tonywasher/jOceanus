@@ -34,30 +34,11 @@ public class MetisSwingToolkit
         extends MetisToolkit {
     /**
      * Constructor.
-     * @throws OceanusException on error
-     */
-    public MetisSwingToolkit() throws OceanusException {
-        this(null, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pSlider use slider status
-     * @throws OceanusException on error
-     */
-    public MetisSwingToolkit(final boolean pSlider) throws OceanusException {
-        this(null, pSlider);
-    }
-
-    /**
-     * Constructor.
      * @param pInfo the program info
-     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public MetisSwingToolkit(final MetisState pInfo,
-                             final boolean pSlider) throws OceanusException {
-        super(pInfo, pSlider);
+    public MetisSwingToolkit(final MetisState pInfo) throws OceanusException {
+        super(pInfo);
     }
 
     @Override
@@ -72,7 +53,7 @@ public class MetisSwingToolkit
 
     @Override
     protected TethysSwingGuiFactory newGuiFactory() {
-        return new TethysSwingGuiFactory(getFormatter(), getProgramDefinitions());
+        return new TethysSwingGuiFactory(getProgramDefinitions());
     }
 
     @Override

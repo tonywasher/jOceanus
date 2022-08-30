@@ -65,7 +65,7 @@ public class MetisSwingTestTable {
      */
     public MetisSwingTestTable() throws OceanusException {
         /* Create toolkit */
-        theToolkit = new MetisSwingToolkit();
+        theToolkit = new MetisSwingToolkit(null);
 
         /* Access components */
         theGuiFactory = theToolkit.getGuiFactory();

@@ -92,7 +92,7 @@ public class MetisFXThreadTester
      */
     public MetisFXThreadTester() throws OceanusException {
         /* Create toolkit */
-        theToolkit = new MetisFXToolkit();
+        theToolkit = new MetisFXToolkit(null);
 
         /* Access components */
         theGuiFactory = theToolkit.getGuiFactory();

@@ -105,15 +105,11 @@ public abstract class MetisToolkit
     /**
      * Constructor.
      * @param pInfo the program info
-     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    protected MetisToolkit(final MetisState pInfo,
-                           final boolean pSlider) throws OceanusException {
+    protected MetisToolkit(final MetisState pInfo) throws OceanusException {
         /* Store program definitions */
-        theProgram = pInfo == null
-                                   ? null
-                                   : pInfo.getProgramDefinitions();
+        theProgram = pInfo.getProgramDefinitions();
 
         /* Create the formatter */
         theFormatter = new MetisDataFormatter();
@@ -125,9 +121,7 @@ public abstract class MetisToolkit
         theProfileEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.PROFILE);
 
         /* Record the profile */
-        setProfile(pInfo == null
-                                 ? new MetisProfile("StartUp")
-                                 : pInfo.getProfile());
+        setProfile(pInfo.getProfile());
 
         /* Create the preference manager */
         thePreferenceManager = new MetisPreferenceManager(theViewerManager);
@@ -136,7 +130,7 @@ public abstract class MetisToolkit
         theGuiFactory = newGuiFactory();
 
         /* create the thread manager */
-        theThreadManager = newThreadManager(pSlider);
+        theThreadManager = newThreadManager(theProgram.useSliderStatus());
 
         /* Access the Colour Preferences */
         theColorPreferences = thePreferenceManager.getPreferenceSet(MetisColorPreferences.class);

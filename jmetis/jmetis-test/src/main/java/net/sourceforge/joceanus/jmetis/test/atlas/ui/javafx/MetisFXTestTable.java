@@ -52,7 +52,7 @@ public class MetisFXTestTable extends Application {
      */
     public MetisFXTestTable() throws OceanusException {
         /* Create toolkit */
-        theToolkit = new MetisFXToolkit();
+        theToolkit = new MetisFXToolkit(null);
 
         /* Access components */
         theGuiFactory = theToolkit.getGuiFactory();

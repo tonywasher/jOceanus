@@ -54,7 +54,7 @@ public final class Control {
     private static void createAndShowGUI(final MetisState pInfo) {
         try {
             /* Create the view */
-            final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo, true);
+            final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo);
 
             /* Obtain program details */
             final TethysProgram myApp = pInfo.getProgramDefinitions();

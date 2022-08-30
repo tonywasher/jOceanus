@@ -93,28 +93,11 @@ public class TethysFXGuiFactory
 
     /**
      * Constructor.
-     */
-    public TethysFXGuiFactory() {
-        this(null);
-    }
-
-    /**
-     * Constructor.
      * @param pApp the program definition
      */
     public TethysFXGuiFactory(final TethysProgram pApp) {
-        this(new TethysDataFormatter(), pApp);
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the formatter
-     * @param pApp the program definition
-     */
-    public TethysFXGuiFactory(final TethysDataFormatter pFormatter,
-                              final TethysProgram pApp) {
         /* Initialise class */
-        super(pFormatter, pApp);
+        super(pApp);
         theScenes = new ArrayList<>();
 
         /* Create event manager */

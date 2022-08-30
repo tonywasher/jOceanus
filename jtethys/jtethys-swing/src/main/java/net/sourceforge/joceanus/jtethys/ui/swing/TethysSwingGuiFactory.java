@@ -63,27 +63,10 @@ public class TethysSwingGuiFactory
 
     /**
      * Constructor.
-     */
-    public TethysSwingGuiFactory() {
-        this(null);
-    }
-
-    /**
-     * Constructor.
      * @param pApp the program definition
      */
     public TethysSwingGuiFactory(final TethysProgram pApp) {
-        this(new TethysDataFormatter(), pApp);
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the formatter
-     * @param pApp the program definition
-     */
-    public TethysSwingGuiFactory(final TethysDataFormatter pFormatter,
-                                 final TethysProgram pApp) {
-        super(pFormatter, pApp);
+        super(pApp);
         theAdjuster = new TethysSwingDataFieldAdjust(this);
     }
 

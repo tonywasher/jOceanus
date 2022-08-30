@@ -36,30 +36,11 @@ public class MetisFXToolkit
         extends MetisToolkit {
     /**
      * Constructor.
-     * @throws OceanusException on error
-     */
-    public MetisFXToolkit() throws OceanusException {
-        this(null, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pSlider use slider status
-     * @throws OceanusException on error
-     */
-    public MetisFXToolkit(final boolean pSlider) throws OceanusException {
-        this(null, pSlider);
-    }
-
-    /**
-     * Constructor.
      * @param pInfo the program info
-     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public MetisFXToolkit(final MetisState pInfo,
-                          final boolean pSlider) throws OceanusException {
-        super(pInfo, pSlider);
+    public MetisFXToolkit(final MetisState pInfo) throws OceanusException {
+        super(pInfo);
     }
 
     @Override
@@ -74,7 +55,7 @@ public class MetisFXToolkit
 
     @Override
     protected TethysFXGuiFactory newGuiFactory() {
-        return new TethysFXGuiFactory(getFormatter(), getProgramDefinitions());
+        return new TethysFXGuiFactory(getProgramDefinitions());
     }
 
     @Override

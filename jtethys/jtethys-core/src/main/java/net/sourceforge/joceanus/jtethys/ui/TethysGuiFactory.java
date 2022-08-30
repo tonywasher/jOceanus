@@ -97,17 +97,15 @@ public abstract class TethysGuiFactory
 
     /**
      * Constructor.
-     * @param pFormatter the formatter
      * @param pApp the program definition
      */
-    protected TethysGuiFactory(final TethysDataFormatter pFormatter,
-                               final TethysProgram pApp) {
+    protected TethysGuiFactory(final TethysProgram pApp) {
         /* Store details */
-        theFormatter = pFormatter;
         theProgram = pApp;
         theProfile = new TethysProfile("StartUp");
 
          /* Create base items */
+        theFormatter = new TethysDataFormatter();
         theParentMap = new HashMap<>();
         theValueSet = new TethysValueSet();
 

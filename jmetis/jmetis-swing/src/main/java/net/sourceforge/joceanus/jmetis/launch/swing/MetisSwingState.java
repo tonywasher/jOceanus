@@ -89,7 +89,7 @@ public class MetisSwingState {
         final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the toolkit */
-        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(theInfo, myApp.useSliderStatus());
+        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(theInfo);
 
         /* Create the frame and declare it */
         theFrame = new JFrame(myApp.getName());

@@ -115,7 +115,7 @@ public class MetisFXState {
         /* Create the Toolkit */
         final TethysProgram myApp = theInfo.getProgramDefinitions();
         final MetisProgram myDef = (MetisProgram) myApp;
-        theToolkit = new MetisFXToolkit(theInfo, myApp.useSliderStatus());
+        theToolkit = new MetisFXToolkit(theInfo);
 
         /* Create the main panel */
         theMain = createMain(myDef, theToolkit);
