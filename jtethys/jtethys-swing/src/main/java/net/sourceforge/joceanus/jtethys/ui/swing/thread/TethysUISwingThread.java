@@ -23,7 +23,6 @@ import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUICoreThreadStatus;
 
@@ -33,11 +32,6 @@ import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUICoreThreadStatus;
  */
 public class TethysUISwingThread<T>
         extends SwingWorker<Void, TethysUICoreThreadStatus> {
-    /**
-     * The ThreadData.
-     */
-    private final TethysUIThreadData theThreadData;
-
     /**
      * The ThreadManager.
      */
@@ -66,13 +60,10 @@ public class TethysUISwingThread<T>
     /**
      * Constructor.
      * @param pManager the thread manager
-     * @param pThreadData the thread data
      * @param pThread the thread to wrap
      */
     protected TethysUISwingThread(final TethysUISwingThreadManager pManager,
-                                  final TethysUIThreadData pThreadData,
                                   final TethysUIThread<T> pThread) {
-        theThreadData = pThreadData;
         theManager = pManager;
         theStatusMgr = theManager.getStatusManager();
         theThread = pThread;
@@ -89,7 +80,7 @@ public class TethysUISwingThread<T>
 
     @Override
     public Void doInBackground() throws OceanusException {
-        theResult = theThread.performTask(theThreadData);
+        theResult = theThread.performTask(theManager);
         return null;
     }
 

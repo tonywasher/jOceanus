@@ -236,10 +236,11 @@ public abstract class TethysUICoreThreadTextAreaStatus
      */
     private void completeStatus(final String pStatus) {
         /* Append the text */
-        theTextArea.appendText(pStatus);
+        theTextArea.replaceText(pStatus, theStatusPosition, thePosition);
         thePosition = theStatusPosition + pStatus.length();
         theTextArea.appendText("\n");
         thePosition++;
+        theStatusPosition = thePosition;
         theTextArea.setCaretPosition(thePosition);
 
         /* Hide the cancel button */

@@ -58,7 +58,13 @@ public interface TethysUIThreadManager
      * Set the thread Data.
      * @param pThreadData the threadData
      */
-    void setThreadData(TethysUIThreadData pThreadData);
+    void setThreadData(Object pThreadData);
+
+    /**
+     * Obtain the thread data.
+     * @return the threadData
+     */
+    Object getThreadData();
 
     /**
      * Start a thread.

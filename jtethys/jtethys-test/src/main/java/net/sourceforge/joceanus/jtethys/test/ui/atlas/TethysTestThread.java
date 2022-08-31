@@ -17,9 +17,7 @@
 package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 import java.util.concurrent.TimeUnit;
@@ -36,21 +34,17 @@ public class TethysTestThread
     }
 
     @Override
-    public Void performTask(final TethysUIThreadData pThreadData) throws OceanusException {
-        /* Access the Thread Manager */
-        final TethysUIFactory<?> myFactory = (TethysUIFactory<?>) pThreadData;
-        final TethysUIThreadManager myManager = myFactory.threadFactory().defaultThreadManager();
-
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Set stages */
-        myManager.setNumStages(2);
+        pManager.setNumStages(2);
 
         /* Perform first task */
-        myManager.setNewStage("First");
-        singleTask(myManager, 500);
+        pManager.setNewStage("First");
+        singleTask(pManager, 500);
 
         /* Perform second task */
-        myManager.setNewStage("Second");
-        singleTask(myManager, 200);
+        pManager.setNewStage("Second");
+        singleTask(pManager, 200);
 
         /* No result */
         return null;

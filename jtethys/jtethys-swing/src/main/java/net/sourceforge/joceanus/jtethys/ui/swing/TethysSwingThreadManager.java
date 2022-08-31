@@ -52,7 +52,7 @@ public class TethysSwingThreadManager
     @Override
     protected <T> Runnable wrapThread(final TethysThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
-        theWorker = new TethysSwingThread<>(this, getThreadData(), pThread);
+        theWorker = new TethysSwingThread<>(this, pThread);
 
         /* Return the worker to the caller */
         return theWorker;

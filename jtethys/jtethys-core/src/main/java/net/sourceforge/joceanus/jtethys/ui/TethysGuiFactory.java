@@ -44,8 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * Tethys GUI Factory.
  */
-public abstract class TethysGuiFactory
-        implements TethysThreadData {
+public abstract class TethysGuiFactory {
     /**
      * The Next nodeId.
      */

@@ -63,7 +63,7 @@ public abstract class TethysThreadManager
     /**
      * The ThreadData.
      */
-    private TethysThreadData theThreadData;
+    private Object theThreadData;
 
     /**
      * The Active thread.
@@ -152,7 +152,7 @@ public abstract class TethysThreadManager
      * Set the thread Data.
      * @param pThreadData the threadData
      */
-    public void setThreadData(final TethysThreadData pThreadData) {
+    public void setThreadData(final Object pThreadData) {
         theThreadData = pThreadData;
     }
 
@@ -160,7 +160,7 @@ public abstract class TethysThreadManager
      * Get the thread Data.
      * @return the threadData
      */
-    protected TethysThreadData getThreadData() {
+    public Object getThreadData() {
         return theThreadData;
     }
 
@@ -221,7 +221,7 @@ public abstract class TethysThreadManager
         boolean myResult = true;
         try {
             /* Prepare the task and continue */
-            theThread.prepareTask(theThreadData);
+            theThread.prepareTask(this);
 
             /* Catch exceptions */
         } catch (OceanusException e) {

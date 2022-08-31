@@ -20,7 +20,7 @@ import javafx.concurrent.Task;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * javaFX Thread wrapper.
@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 public class TethysUIFXThread<T>
         extends Task<Integer> {
     /**
-     * The ThreadData.
+     * The ThreadManager.
      */
-    private final TethysUIThreadData theThreadData;
+    private final TethysUIThreadManager theManager;
 
     /**
      * The wrapped thread.
@@ -57,13 +57,13 @@ public class TethysUIFXThread<T>
     /**
      * Constructor.
      *
-     * @param pThreadData the threadData
+     * @param pManager the threadManager
      * @param pThread  the thread to wrap
      */
-    TethysUIFXThread(final TethysUIThreadData pThreadData,
+    TethysUIFXThread(final TethysUIThreadManager pManager,
                      final TethysUIThread<T> pThread) {
         /* Store parameters */
-        theThreadData = pThreadData;
+        theManager = pManager;
         theThread = pThread;
         theTask = pThread.getTaskName();
     }
@@ -86,7 +86,7 @@ public class TethysUIFXThread<T>
 
     @Override
     protected Integer call() throws Exception {
-        theResult = theThread.performTask(theThreadData);
+        theResult = theThread.performTask(theManager);
         return null;
     }
 

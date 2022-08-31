@@ -63,7 +63,7 @@ public class TethysFXThreadManager
     @Override
     protected <T> Runnable wrapThread(final TethysThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
-        theWorker = new TethysFXThread<>(getThreadData(), pThread);
+        theWorker = new TethysFXThread<>(this, pThread);
         theWorker.stateProperty().addListener((v, o, n) -> handleThreadState(n));
         theWorker.valueProperty().addListener((v, o, n) -> processStatus());
 

@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
@@ -69,7 +68,7 @@ public abstract class TethysUICoreThreadManager
     /**
      * The ThreadData.
      */
-    private TethysUIThreadData theThreadData;
+    private Object theThreadData;
 
     /**
      * The Active thread.
@@ -144,7 +143,7 @@ public abstract class TethysUICoreThreadManager
     }
 
     @Override
-    public void setThreadData(final TethysUIThreadData pThreadData) {
+    public void setThreadData(final Object pThreadData) {
         theThreadData = pThreadData;
     }
 
@@ -158,11 +157,8 @@ public abstract class TethysUICoreThreadManager
         return theError;
     }
 
-    /**
-     * Get the thread Data.
-     * @return the threadData
-     */
-    protected TethysUIThreadData getThreadData() {
+    @Override
+    public Object getThreadData() {
         return theThreadData;
     }
 
@@ -199,7 +195,7 @@ public abstract class TethysUICoreThreadManager
         boolean myResult = true;
         try {
             /* Prepare the task and continue */
-            theThread.prepareTask(theThreadData);
+            theThread.prepareTask(this);
 
             /* Catch exceptions */
         } catch (OceanusException e) {

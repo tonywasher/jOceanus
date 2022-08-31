@@ -62,7 +62,7 @@ public class TethysTestThreadPanel {
     TethysTestThreadPanel(final TethysUIFactory<?> pFactory) {
         /* Access components */
         theGuiFactory = pFactory;
-        theThreadMgr = theGuiFactory.threadFactory().defaultThreadManager();
+        theThreadMgr = theGuiFactory.threadFactory().newThreadManager();
 
         /* Create button */
         theLaunchButton = theGuiFactory.buttonFactory().newButton();

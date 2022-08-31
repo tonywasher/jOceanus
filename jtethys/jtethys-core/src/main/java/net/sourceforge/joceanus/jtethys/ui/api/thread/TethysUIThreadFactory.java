@@ -21,12 +21,6 @@ package net.sourceforge.joceanus.jtethys.ui.api.thread;
  */
 public interface TethysUIThreadFactory {
     /**
-     * Obtain the default Thread Manager.
-     * @return the thread manager
-     */
-    TethysUIThreadManager defaultThreadManager();
-
-    /**
      * Create a Thread Manager.
      * @return the thread manager
      */
