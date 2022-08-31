@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFCategoryLine;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Class representing a QIF Event record.
@@ -108,7 +108,7 @@ public class QIFEvent
      * @param pLines the data lines
      */
     protected QIFEvent(final QIFFile pFile,
-                       final MetisDataFormatter pFormatter,
+                       final TethysDataFormatter pFormatter,
                        final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QEventLineType.class);

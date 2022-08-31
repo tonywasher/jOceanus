@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusColumnType;
@@ -41,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Column definition classes handling data-type specifics.
@@ -1013,7 +1013,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysMoney getValue(final MetisDataFormatter pFormatter) throws OceanusException {
+        public TethysMoney getValue(final TethysDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysMoney.class);
             } catch (IllegalArgumentException e) {
@@ -1079,7 +1079,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysRate getValue(final MetisDataFormatter pFormatter) throws OceanusException {
+        public TethysRate getValue(final TethysDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysRate.class);
             } catch (IllegalArgumentException e) {
@@ -1145,7 +1145,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysPrice getValue(final MetisDataFormatter pFormatter) throws OceanusException {
+        public TethysPrice getValue(final TethysDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysPrice.class);
             } catch (IllegalArgumentException e) {
@@ -1211,7 +1211,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysUnits getValue(final MetisDataFormatter pFormatter) throws OceanusException {
+        public TethysUnits getValue(final TethysDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysUnits.class);
             } catch (IllegalArgumentException e) {
@@ -1277,7 +1277,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysDilution getValue(final MetisDataFormatter pFormatter) throws OceanusException {
+        public TethysDilution getValue(final TethysDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysDilution.class);
             } catch (IllegalArgumentException e) {
@@ -1343,7 +1343,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysRatio getValue(final MetisDataFormatter pFormatter) throws OceanusException {
+        public TethysRatio getValue(final TethysDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), TethysRatio.class);
             } catch (IllegalArgumentException e) {

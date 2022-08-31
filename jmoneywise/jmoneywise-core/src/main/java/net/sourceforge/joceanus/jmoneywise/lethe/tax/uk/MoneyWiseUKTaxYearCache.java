@@ -19,13 +19,13 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * UK Tax Year cache.
@@ -144,7 +144,7 @@ public class MoneyWiseUKTaxYearCache
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return toString();
     }
 }

@@ -30,13 +30,13 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * RateSetter LoanBook Parser.
@@ -61,7 +61,7 @@ public class CoeusRateSetterLoanBookParser {
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusRateSetterLoanBookParser(final MetisDataFormatter pFormatter) {
+    CoeusRateSetterLoanBookParser(final TethysDataFormatter pFormatter) {
         /* Create the loan list */
         theLoans = new ArrayList<>();
 

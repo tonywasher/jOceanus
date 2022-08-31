@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QAccountLin
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Class representing a QIF Account record.
@@ -173,7 +173,7 @@ public class QIFAccount
      * @param pLines the data lines
      */
     protected QIFAccount(final QIFFile pFile,
-                         final MetisDataFormatter pFormatter,
+                         final TethysDataFormatter pFormatter,
                          final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QAccountLineType.class);

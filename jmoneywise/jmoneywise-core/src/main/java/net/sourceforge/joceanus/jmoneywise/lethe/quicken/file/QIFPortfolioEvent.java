@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QPortfolioLineType;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Class representing a QIF Portfolio Event record.
@@ -99,7 +99,7 @@ public class QIFPortfolioEvent
      * @param pLines the data lines
      */
     protected QIFPortfolioEvent(final QIFFile pFile,
-                                final MetisDataFormatter pFormatter,
+                                final TethysDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QPortfolioLineType.class);
@@ -601,7 +601,7 @@ public class QIFPortfolioEvent
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Add the action */
             pBuilder.append(theAction.getSymbol());

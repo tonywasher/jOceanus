@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmetis.lethe.field;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -31,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
@@ -47,7 +47,7 @@ public abstract class MetisLetheFieldSetBase
     /**
      * The Data Formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Is the data being refreshed?
@@ -58,7 +58,7 @@ public abstract class MetisLetheFieldSetBase
      * Constructor.
      * @param pFormatter the data formatter
      */
-    public MetisLetheFieldSetBase(final MetisDataFormatter pFormatter) {
+    public MetisLetheFieldSetBase(final TethysDataFormatter pFormatter) {
         /* Store the formatter */
         theFormatter = pFormatter;
 
@@ -75,7 +75,7 @@ public abstract class MetisLetheFieldSetBase
      * Obtain the data formatter.
      * @return the formatter
      */
-    public MetisDataFormatter getDataFormatter() {
+    public TethysDataFormatter getDataFormatter() {
         return theFormatter;
     }
 

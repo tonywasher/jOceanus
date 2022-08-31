@@ -22,7 +22,6 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
@@ -30,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -115,7 +115,7 @@ public class MetisSwingFieldManager
     /**
      * General formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * The Configuration.
@@ -141,8 +141,8 @@ public class MetisSwingFieldManager
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
-        /* Create data formatter */
-        theFormatter = new MetisDataFormatter();
+        /* Access data formatter */
+        theFormatter = theFactory.getDataFormatter();
         theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
     }
 
@@ -155,7 +155,7 @@ public class MetisSwingFieldManager
      * Obtain the data formatter.
      * @return the formatter
      */
-    public MetisDataFormatter getDataFormatter() {
+    public TethysDataFormatter getDataFormatter() {
         return theFormatter;
     }
 

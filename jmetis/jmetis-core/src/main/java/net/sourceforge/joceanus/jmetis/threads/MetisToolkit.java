@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
@@ -56,11 +57,6 @@ public abstract class MetisToolkit
      * Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisToolkit.class);
-
-    /**
-     * Formatter.
-     */
-    private final MetisDataFormatter theFormatter;
 
     /**
      * Viewer Manager.
@@ -111,9 +107,6 @@ public abstract class MetisToolkit
         /* Store program definitions */
         theProgram = pInfo.getProgramDefinitions();
 
-        /* Create the formatter */
-        theFormatter = new MetisDataFormatter();
-
         /* Create the viewer */
         theViewerManager = new MetisViewerManager();
 
@@ -128,6 +121,9 @@ public abstract class MetisToolkit
 
         /* Create the guiFactory */
         theGuiFactory = newGuiFactory();
+
+        /* Extend the formatter */
+        getFormatter().extendFormatter(new MetisDataFormatter(getFormatter()));
 
         /* create the thread manager */
         theThreadManager = newThreadManager(theProgram.useSliderStatus());
@@ -155,8 +151,8 @@ public abstract class MetisToolkit
      * Obtain the Data Formatter.
      * @return the formatter
      */
-    public MetisDataFormatter getFormatter() {
-        return theFormatter;
+    public TethysDataFormatter getFormatter() {
+        return getGuiFactory().getDataFormatter();
     }
 
     /**

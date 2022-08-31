@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * FundingCircle LoanBook Parser.
@@ -46,7 +46,7 @@ public class CoeusFundingCircleLoanBookParser
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusFundingCircleLoanBookParser(final MetisDataFormatter pFormatter) {
+    CoeusFundingCircleLoanBookParser(final TethysDataFormatter pFormatter) {
         /* Initialise the underlying class */
         super(pFormatter, HEADERS);
 

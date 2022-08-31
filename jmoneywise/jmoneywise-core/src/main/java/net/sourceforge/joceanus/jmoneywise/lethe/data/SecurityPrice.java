@@ -25,7 +25,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -51,6 +50,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * SecurityPrice data type.
@@ -126,7 +126,7 @@ public class SecurityPrice
         super(pList, pValues);
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -198,7 +198,7 @@ public class SecurityPrice
         final Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -213,7 +213,7 @@ public class SecurityPrice
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return toString();
     }
 
@@ -811,7 +811,7 @@ public class SecurityPrice
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1030,7 +1030,7 @@ public class SecurityPrice
             }
 
             @Override
-            public String formatObject(final MetisDataFormatter pFormatter) {
+            public String formatObject(final TethysDataFormatter pFormatter) {
                 return theSecurity.formatObject(pFormatter)
                        + "("
                        + size()

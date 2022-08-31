@@ -47,6 +47,11 @@ public class MoneyWiseApp
     }
 
     @Override
+    public boolean useSliderStatus() {
+        return true;
+    }
+
+    @Override
     public TethysIconId[] getIcons() {
         return new TethysIconId[]
         { MoneyWiseIcon.SMALL, MoneyWiseIcon.BIG };

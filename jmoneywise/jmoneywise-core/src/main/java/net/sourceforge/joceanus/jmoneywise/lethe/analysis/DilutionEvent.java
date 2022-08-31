@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Dilution Events relating to stock dilution.
@@ -117,7 +117,7 @@ public final class DilutionEvent
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 
@@ -259,7 +259,7 @@ public final class DilutionEvent
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return theSecurity.formatObject(pFormatter);
         }
 
@@ -343,7 +343,7 @@ public final class DilutionEvent
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return getClass().getSimpleName();
         }
 

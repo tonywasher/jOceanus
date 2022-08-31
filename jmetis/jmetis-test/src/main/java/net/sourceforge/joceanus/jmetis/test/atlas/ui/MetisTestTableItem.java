@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.test.atlas.ui;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Metis Table item.
@@ -107,7 +107,7 @@ public class MetisTestTableItem
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 

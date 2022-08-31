@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QLineType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -29,6 +28,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * A standard event line in the QIF file.
@@ -76,7 +76,7 @@ public abstract class QIFLine<T extends QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    protected abstract void formatData(MetisDataFormatter pFormatter,
+    protected abstract void formatData(TethysDataFormatter pFormatter,
                                        StringBuilder pBuilder);
 
     /**
@@ -84,7 +84,7 @@ public abstract class QIFLine<T extends QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    protected void formatLine(final MetisDataFormatter pFormatter,
+    protected void formatLine(final TethysDataFormatter pFormatter,
                               final StringBuilder pBuilder) {
         /* Add the lineType */
         final T myType = getLineType();
@@ -155,7 +155,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theValue);
@@ -229,7 +229,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
             final TethysDecimal myDecimal = new TethysDecimal(theMoney);
@@ -306,7 +306,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theDate));
@@ -437,7 +437,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* If we should set the flag */
             if (isSet()) {
@@ -481,7 +481,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
             final TethysDecimal myDecimal = new TethysDecimal(thePrice);
@@ -558,7 +558,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theUnits));
@@ -632,7 +632,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theRate));
@@ -706,7 +706,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theRatio));
@@ -780,7 +780,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the security name */
             pBuilder.append(theSecurity.getName());
@@ -878,7 +878,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(QIF_XFERSTART);
@@ -1066,7 +1066,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(thePayee.getName());
@@ -1164,7 +1164,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theCategory.getName());
@@ -1383,7 +1383,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theCategory.getName());

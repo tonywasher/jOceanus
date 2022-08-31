@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference.MetisDataDiffers;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -41,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Encrypted data types.
@@ -144,7 +144,7 @@ public final class MetisEncryptedData {
         /**
          * Data formatter.
          */
-        private MetisDataFormatter theFormatter;
+        private TethysDataFormatter theFormatter;
 
         /**
          * Constructor.
@@ -154,7 +154,7 @@ public final class MetisEncryptedData {
          * @throws OceanusException on error
          */
         private MetisEncryptedField(final GordianKeySet pKeySet,
-                                    final MetisDataFormatter pFormatter,
+                                    final TethysDataFormatter pFormatter,
                                     final byte[] pEncrypted) throws OceanusException {
             /* Store the keySet and formatter */
             theKeySet = pKeySet;
@@ -183,7 +183,7 @@ public final class MetisEncryptedData {
          * @throws OceanusException on error
          */
         private MetisEncryptedField(final GordianKeySet pKeySet,
-                                    final MetisDataFormatter pFormatter,
+                                    final TethysDataFormatter pFormatter,
                                     final T pUnencrypted) throws OceanusException {
             /* Store the keySet and formatter */
             theKeySet = pKeySet;
@@ -205,7 +205,7 @@ public final class MetisEncryptedData {
          * Obtain the formatter.
          * @return the formatter
          */
-        protected MetisDataFormatter getFormatter() {
+        protected TethysDataFormatter getFormatter() {
             return theFormatter;
         }
 
@@ -253,7 +253,7 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             /* Format the unencrypted field */
             return toString();
         }
@@ -299,7 +299,7 @@ public final class MetisEncryptedData {
          * @throws OceanusException on error
          */
         protected void adoptEncryption(final GordianKeySet pKeySet,
-                                       final MetisDataFormatter pFormatter,
+                                       final TethysDataFormatter pFormatter,
                                        final MetisEncryptedField<?> pField) throws OceanusException {
             /* Store the keySet and formatter */
             theKeySet = pKeySet;
@@ -399,9 +399,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedString(final GordianKeySet pKeySet,
-                                       final MetisDataFormatter pFormatter,
-                                       final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedString(final GordianKeySet pKeySet,
+                             final TethysDataFormatter pFormatter,
+                             final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -412,9 +412,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedString(final GordianKeySet pKeySet,
-                                       final MetisDataFormatter pFormatter,
-                                       final String pUnencrypted) throws OceanusException {
+        MetisEncryptedString(final GordianKeySet pKeySet,
+                             final TethysDataFormatter pFormatter,
+                             final String pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -443,9 +443,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedShort(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedShort(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -456,9 +456,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedShort(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final Short pUnencrypted) throws OceanusException {
+        MetisEncryptedShort(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final Short pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -494,9 +494,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedInteger(final GordianKeySet pKeySet,
-                                        final MetisDataFormatter pFormatter,
-                                        final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedInteger(final GordianKeySet pKeySet,
+                              final TethysDataFormatter pFormatter,
+                              final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -507,9 +507,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedInteger(final GordianKeySet pKeySet,
-                                        final MetisDataFormatter pFormatter,
-                                        final Integer pUnencrypted) throws OceanusException {
+        MetisEncryptedInteger(final GordianKeySet pKeySet,
+                              final TethysDataFormatter pFormatter,
+                              final Integer pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -545,9 +545,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedLong(final GordianKeySet pKeySet,
-                                     final MetisDataFormatter pFormatter,
-                                     final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedLong(final GordianKeySet pKeySet,
+                           final TethysDataFormatter pFormatter,
+                           final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -558,9 +558,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedLong(final GordianKeySet pKeySet,
-                                     final MetisDataFormatter pFormatter,
-                                     final Long pUnencrypted) throws OceanusException {
+        MetisEncryptedLong(final GordianKeySet pKeySet,
+                           final TethysDataFormatter pFormatter,
+                           final Long pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -596,9 +596,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedFloat(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedFloat(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -609,9 +609,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedFloat(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final Float pUnencrypted) throws OceanusException {
+        MetisEncryptedFloat(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final Float pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -647,9 +647,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedDouble(final GordianKeySet pKeySet,
-                                       final MetisDataFormatter pFormatter,
-                                       final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedDouble(final GordianKeySet pKeySet,
+                             final TethysDataFormatter pFormatter,
+                             final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -660,9 +660,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedDouble(final GordianKeySet pKeySet,
-                                       final MetisDataFormatter pFormatter,
-                                       final Double pUnencrypted) throws OceanusException {
+        MetisEncryptedDouble(final GordianKeySet pKeySet,
+                             final TethysDataFormatter pFormatter,
+                             final Double pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -698,9 +698,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedBoolean(final GordianKeySet pKeySet,
-                                        final MetisDataFormatter pFormatter,
-                                        final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedBoolean(final GordianKeySet pKeySet,
+                              final TethysDataFormatter pFormatter,
+                              final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -711,9 +711,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedBoolean(final GordianKeySet pKeySet,
-                                        final MetisDataFormatter pFormatter,
-                                        final Boolean pUnencrypted) throws OceanusException {
+        MetisEncryptedBoolean(final GordianKeySet pKeySet,
+                              final TethysDataFormatter pFormatter,
+                              final Boolean pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -747,9 +747,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedJavaDate(final GordianKeySet pKeySet,
-                                         final MetisDataFormatter pFormatter,
-                                         final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedJavaDate(final GordianKeySet pKeySet,
+                               final TethysDataFormatter pFormatter,
+                               final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -760,9 +760,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedJavaDate(final GordianKeySet pKeySet,
-                                         final MetisDataFormatter pFormatter,
-                                         final Date pUnencrypted) throws OceanusException {
+        MetisEncryptedJavaDate(final GordianKeySet pKeySet,
+                               final TethysDataFormatter pFormatter,
+                               final Date pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -816,9 +816,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedDate(final GordianKeySet pKeySet,
-                                     final MetisDataFormatter pFormatter,
-                                     final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedDate(final GordianKeySet pKeySet,
+                           final TethysDataFormatter pFormatter,
+                           final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -829,9 +829,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedDate(final GordianKeySet pKeySet,
-                                     final MetisDataFormatter pFormatter,
-                                     final TethysDate pUnencrypted) throws OceanusException {
+        MetisEncryptedDate(final GordianKeySet pKeySet,
+                           final TethysDataFormatter pFormatter,
+                           final TethysDate pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -880,9 +880,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedCharArray(final GordianKeySet pKeySet,
-                                          final MetisDataFormatter pFormatter,
-                                          final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedCharArray(final GordianKeySet pKeySet,
+                                final TethysDataFormatter pFormatter,
+                                final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -893,9 +893,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedCharArray(final GordianKeySet pKeySet,
-                                          final MetisDataFormatter pFormatter,
-                                          final char[] pUnencrypted) throws OceanusException {
+        MetisEncryptedCharArray(final GordianKeySet pKeySet,
+                                final TethysDataFormatter pFormatter,
+                                final char[] pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -922,9 +922,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedBigInteger(final GordianKeySet pKeySet,
-                                           final MetisDataFormatter pFormatter,
-                                           final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedBigInteger(final GordianKeySet pKeySet,
+                                 final TethysDataFormatter pFormatter,
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -935,9 +935,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedBigInteger(final GordianKeySet pKeySet,
-                                           final MetisDataFormatter pFormatter,
-                                           final BigInteger pUnencrypted) throws OceanusException {
+        MetisEncryptedBigInteger(final GordianKeySet pKeySet,
+                                 final TethysDataFormatter pFormatter,
+                                 final BigInteger pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -969,9 +969,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedBigDecimal(final GordianKeySet pKeySet,
-                                           final MetisDataFormatter pFormatter,
-                                           final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedBigDecimal(final GordianKeySet pKeySet,
+                                 final TethysDataFormatter pFormatter,
+                                 final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -982,9 +982,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedBigDecimal(final GordianKeySet pKeySet,
-                                           final MetisDataFormatter pFormatter,
-                                           final BigDecimal pUnencrypted) throws OceanusException {
+        MetisEncryptedBigDecimal(final GordianKeySet pKeySet,
+                                 final TethysDataFormatter pFormatter,
+                                 final BigDecimal pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1028,7 +1028,7 @@ public final class MetisEncryptedData {
          * @throws OceanusException on error
          */
         private MetisEncryptedDecimal(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
+                                      final TethysDataFormatter pFormatter,
                                       final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
@@ -1041,7 +1041,7 @@ public final class MetisEncryptedData {
          * @throws OceanusException on error
          */
         private MetisEncryptedDecimal(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
+                                      final TethysDataFormatter pFormatter,
                                       final X pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
@@ -1112,9 +1112,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedMoney(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedMoney(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1125,9 +1125,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedMoney(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final TethysMoney pUnencrypted) throws OceanusException {
+        MetisEncryptedMoney(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final TethysMoney pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1162,9 +1162,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedUnits(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedUnits(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1175,9 +1175,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedUnits(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final TethysUnits pUnencrypted) throws OceanusException {
+        MetisEncryptedUnits(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final TethysUnits pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1203,9 +1203,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedRate(final GordianKeySet pKeySet,
-                                     final MetisDataFormatter pFormatter,
-                                     final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedRate(final GordianKeySet pKeySet,
+                           final TethysDataFormatter pFormatter,
+                           final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1216,9 +1216,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedRate(final GordianKeySet pKeySet,
-                                     final MetisDataFormatter pFormatter,
-                                     final TethysRate pUnencrypted) throws OceanusException {
+        MetisEncryptedRate(final GordianKeySet pKeySet,
+                           final TethysDataFormatter pFormatter,
+                           final TethysRate pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1245,9 +1245,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedPrice(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedPrice(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1258,9 +1258,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedPrice(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final TethysPrice pUnencrypted) throws OceanusException {
+        MetisEncryptedPrice(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final TethysPrice pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1295,9 +1295,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedDilution(final GordianKeySet pKeySet,
-                                         final MetisDataFormatter pFormatter,
-                                         final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedDilution(final GordianKeySet pKeySet,
+                               final TethysDataFormatter pFormatter,
+                               final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1308,9 +1308,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedDilution(final GordianKeySet pKeySet,
-                                         final MetisDataFormatter pFormatter,
-                                         final TethysDilution pUnencrypted) throws OceanusException {
+        MetisEncryptedDilution(final GordianKeySet pKeySet,
+                               final TethysDataFormatter pFormatter,
+                               final TethysDilution pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 
@@ -1336,9 +1336,9 @@ public final class MetisEncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedRatio(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws OceanusException {
+        MetisEncryptedRatio(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final byte[] pEncrypted) throws OceanusException {
             super(pKeySet, pFormatter, pEncrypted);
         }
 
@@ -1349,9 +1349,9 @@ public final class MetisEncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws OceanusException on error
          */
-        protected MetisEncryptedRatio(final GordianKeySet pKeySet,
-                                      final MetisDataFormatter pFormatter,
-                                      final TethysRatio pUnencrypted) throws OceanusException {
+        MetisEncryptedRatio(final GordianKeySet pKeySet,
+                            final TethysDataFormatter pFormatter,
+                            final TethysRatio pUnencrypted) throws OceanusException {
             super(pKeySet, pFormatter, pUnencrypted);
         }
 

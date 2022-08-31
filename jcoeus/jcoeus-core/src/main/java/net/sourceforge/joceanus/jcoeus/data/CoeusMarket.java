@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Loan Market.
@@ -59,7 +59,7 @@ public abstract class CoeusMarket
     /**
      * Data Formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Loan Map.
@@ -91,7 +91,7 @@ public abstract class CoeusMarket
      * @param pFormatter the data formatter
      * @param pProvider the loanMarket provider
      */
-    protected CoeusMarket(final MetisDataFormatter pFormatter,
+    protected CoeusMarket(final TethysDataFormatter pFormatter,
                           final CoeusMarketProvider pProvider) {
         /* Store parameters */
         theFormatter = pFormatter;
@@ -120,7 +120,7 @@ public abstract class CoeusMarket
      * Obtain the formatter.
      * @return the formatter
      */
-    public MetisDataFormatter getFormatter() {
+    public TethysDataFormatter getFormatter() {
         return theFormatter;
     }
 

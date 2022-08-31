@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Encrypted Data Item and List.
@@ -53,6 +54,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
     public static final String ERROR_USAGE = PrometheusDataResource.ENCRYPTED_ERROR_USAGE.getValue();
 
     /**
+     * Data Formatter.
+     */
+    private static TethysDataFormatter FORMATTER = new TethysDataFormatter();
+    /**
      * Generator field.
      */
     private MetisEncryptionGenerator theGenerator;
@@ -66,7 +71,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     protected EncryptedItem(final EncryptedList<?, E> pList,
                             final Integer pId) {
         super(pList, pId);
-        theGenerator = new MetisEncryptionGenerator(null);
+        theGenerator = new MetisEncryptionGenerator(null, FORMATTER);
     }
 
     /**
@@ -96,7 +101,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         if (myId != null) {
             setDataKeySet(myId);
         } else {
-            theGenerator = new MetisEncryptionGenerator(null);
+            theGenerator = new MetisEncryptionGenerator(null, FORMATTER);
         }
     }
 

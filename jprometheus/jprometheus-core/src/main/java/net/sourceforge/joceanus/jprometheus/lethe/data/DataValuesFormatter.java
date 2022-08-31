@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -55,6 +54,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -280,7 +280,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         pDocument.appendChild(myElement);
 
         /* Access the Data formatter */
-        final MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         final int myTotal = pList.size();
@@ -460,7 +460,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final MetisFields myFields = pList.getItemFields();
 
         /* Access the Data formatter */
-        final MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         final int myTotal = getListCount(myFormatter, myElement);
@@ -494,7 +494,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @return the list count
      * @throws OceanusException on error
      */
-    private static Integer getListCount(final MetisDataFormatter pFormatter,
+    private static Integer getListCount(final TethysDataFormatter pFormatter,
                                         final Element pElement) throws OceanusException {
         try {
             /* Access the list count */

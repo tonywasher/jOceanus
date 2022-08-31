@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,18 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  */
 public class TethysDataFormatter {
     /**
+     * Formatter extension.
+     */
+    public interface TethysDataFormatterExtension {
+        /**
+         * Format an object value.
+         * @param pValue the object to format
+         * @return the formatted value (or null if not recognised)
+         */
+        String formatObject(Object pValue);
+    }
+
+    /**
      * Invalid class error.
      */
     private static final String ERROR_CLASS = "Invalid Class: ";
@@ -65,6 +78,11 @@ public class TethysDataFormatter {
     private final TethysDecimalParser theDecimalParser;
 
     /**
+     * Extensions.
+     */
+    private final List<TethysDataFormatterExtension> theExtensions;
+
+    /**
      * Constructor.
      */
     public TethysDataFormatter() {
@@ -79,6 +97,15 @@ public class TethysDataFormatter {
         theDateFormatter = new TethysDateFormatter(pLocale);
         theDecimalFormatter = new TethysDecimalFormatter(pLocale);
         theDecimalParser = new TethysDecimalParser(pLocale);
+        theExtensions = new ArrayList<>();
+    }
+
+    /**
+     * Extend the formatter.
+     * @param pExtension the extension
+     */
+    public void extendFormatter(final TethysDataFormatterExtension pExtension) {
+        theExtensions.add(pExtension);
     }
 
     /**
@@ -162,15 +189,20 @@ public class TethysDataFormatter {
             return null;
         }
 
-        /* Access the class */
-        final Class<?> myClass = pValue.getClass();
+        /* Loop through extensions */
+        for (TethysDataFormatterExtension myExtension : theExtensions) {
+            final String myResult = myExtension.formatObject(pValue);
+            if (myResult != null) {
+                return myResult;
+            }
+        }
 
         /* Handle Native classes */
         if (pValue instanceof String) {
             return (String) pValue;
         }
         if (pValue instanceof Boolean) {
-            return ((Boolean) pValue)
+            return Boolean.TRUE.equals(pValue)
                                       ? "true"
                                       : "false";
         }
@@ -230,6 +262,8 @@ public class TethysDataFormatter {
 
         /* Handle OceanusExceptions */
         if (pValue instanceof OceanusException) {
+            /* Access the class */
+            final Class<?> myClass = pValue.getClass();
             return myClass.getSimpleName();
         }
 

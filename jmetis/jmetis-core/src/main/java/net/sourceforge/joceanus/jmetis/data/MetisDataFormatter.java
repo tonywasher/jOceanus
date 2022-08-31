@@ -16,41 +16,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
-import java.util.Locale;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter.TethysDataFormatterExtension;
 
 /**
  * Generic Data object formatter.
  * @author Tony Washer
  */
 public class MetisDataFormatter
-        extends TethysDataFormatter {
+        implements TethysDataFormatterExtension {
     /**
-     * Constructor.
+     * The formatter.
      */
-    public MetisDataFormatter() {
-        this(Locale.getDefault());
-    }
+    private final TethysDataFormatter theFormatter;
 
     /**
-     * Constructor for a locale.
-     * @param pLocale the locale
+     * Constructor.
+     * @param pFormatter the formatter
      */
-    public MetisDataFormatter(final Locale pLocale) {
-        super(pLocale);
+    public MetisDataFormatter(final TethysDataFormatter pFormatter) {
+        theFormatter = pFormatter;
     }
 
     @Override
     public String formatObject(final Object pValue) {
-        /* Handle null value */
-        if (pValue == null) {
-            return null;
-        }
-
         /* Handle maps and lists */
         if (pValue instanceof MetisDataMap) {
             return formatValue(pValue, ((MetisDataMap<?, ?>) pValue).size());
@@ -70,17 +62,17 @@ public class MetisDataFormatter
      */
     private String formatValue(final Object pValue) {
         /* Handle ones that we can directly format */
-        if (MetisDataObjectFormat.class.isInstance(pValue)) {
-            return ((MetisDataObjectFormat) pValue).formatObject(this);
+        if (pValue instanceof MetisDataObjectFormat) {
+            return ((MetisDataObjectFormat) pValue).formatObject(theFormatter);
         }
 
         /* Handle delta class */
-        if (MetisDataDelta.class.isInstance(pValue)) {
+        if (pValue instanceof MetisDataDelta) {
             return formatObject(((MetisDataDelta) pValue).getObject());
         }
 
-        /* Pass call on */
-        return super.formatObject(pValue);
+        /* Not supported */
+        return null;
     }
 
     /**
@@ -94,14 +86,10 @@ public class MetisDataFormatter
         /* Format value normally */
         final String myValue = formatValue(pValue);
 
-        /* Build modified format */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myValue);
-        myBuilder.append('(');
-        myBuilder.append(pSize);
-        myBuilder.append(')');
-
-        /* Pass call on */
-        return myBuilder.toString();
+        /* Return modified value */
+        return myValue +
+                '(' +
+                pSize +
+                ')';
     }
 }
