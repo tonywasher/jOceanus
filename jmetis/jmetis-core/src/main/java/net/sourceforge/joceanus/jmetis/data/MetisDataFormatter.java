@@ -87,9 +87,9 @@ public class MetisDataFormatter
         final String myValue = formatValue(pValue);
 
         /* Return modified value */
-        return myValue +
-                '(' +
-                pSize +
-                ')';
+        return myValue
+                + '('
+                + pSize
+                + ')';
     }
 }

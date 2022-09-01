@@ -56,7 +56,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Data Formatter.
      */
-    private static TethysDataFormatter FORMATTER = new TethysDataFormatter();
+    private static final TethysDataFormatter FORMATTER = new TethysDataFormatter();
     /**
      * Generator field.
      */

@@ -190,6 +190,7 @@ public abstract class TethysThreadManager
         final String myName = pThread.getTaskName();
         setNewProfile(myName);
         theThread = pThread;
+        theError = null;
 
         /* Create the wrapped thread */
         final Runnable myRunnable = wrapThread(pThread);
@@ -205,10 +206,6 @@ public abstract class TethysThreadManager
 
             /* Note that thread has started */
             theEventManager.fireEvent(TethysThreadEvent.THREADSTART, theThread);
-
-            /* Tasks for event handler */
-            //theError = null;
-            //theErrorEntry.setVisible(false);
         }
     }
 
@@ -252,10 +249,6 @@ public abstract class TethysThreadManager
 
         /* Note that thread has completed */
         theEventManager.fireEvent(TethysThreadEvent.THREADEND, myThread);
-
-        /* Tasks for event handler */
-        //theProfileEntry.setObject(theProfile);
-        //theProfileEntry.setFocus();
     }
 
     /**
@@ -414,11 +407,6 @@ public abstract class TethysThreadManager
 
         /* Note that thread has an error */
         theEventManager.fireEvent(TethysThreadEvent.THREADERROR, theError);
-
-        /* Tasks for event handler */
-        //theErrorEntry.setObject(theError);
-        //theErrorEntry.setVisible(true);
-        //theErrorEntry.setFocus();
     }
 
     /**

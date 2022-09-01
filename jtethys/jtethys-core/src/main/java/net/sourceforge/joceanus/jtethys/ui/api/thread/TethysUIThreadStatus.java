@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api.thread;
 
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-
 /**
  * Thread Status.
  */

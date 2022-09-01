@@ -41,6 +41,8 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 
 import java.io.File;
@@ -84,6 +86,11 @@ public abstract class MetisToolkit
     private final MetisViewerEntry theProfileEntry;
 
     /**
+     * The Error Viewer Entry.
+     */
+    private final MetisViewerEntry theErrorEntry;
+
+    /**
      * Colour Preferences.
      */
     private final MetisColorPreferences theColorPreferences;
@@ -110,8 +117,9 @@ public abstract class MetisToolkit
         /* Create the viewer */
         theViewerManager = new MetisViewerManager();
 
-        /* Access the profile entry */
+        /* Access the profile entries */
         theProfileEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.PROFILE);
+        theErrorEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.ERROR);
 
         /* Record the profile */
         setProfile(pInfo.getProfile());
@@ -335,5 +343,36 @@ public abstract class MetisToolkit
         } catch (IOException e) {
             LOGGER.error("Failed to delete File", e);
         }
+    }
+
+    /**
+     * Attach to threadManager.
+     * @param pManager the thread manager
+     */
+    private void attachToThreadManager(final TethysThreadManager pManager) {
+        /* Access the event registrar */
+        final TethysEventRegistrar<TethysThreadEvent> myRegistrar = pManager.getEventRegistrar();
+
+        /* Add Thread start support */
+        myRegistrar.addEventListener(TethysThreadEvent.THREADSTART, e -> {
+            /* Tasks for event handler */
+            theErrorEntry.setObject(null);
+            theErrorEntry.setVisible(false);
+        });
+
+        /* Add Thread end support */
+        myRegistrar.addEventListener(TethysThreadEvent.THREADEND, e -> {
+            /* Tasks for event handler */
+            theProfileEntry.setObject(pManager.getActiveProfile());
+            theProfileEntry.setFocus();
+        });
+
+        /* Add Thread error support */
+        myRegistrar.addEventListener(TethysThreadEvent.THREADERROR, e -> {
+            /* Tasks for event handler */
+            theErrorEntry.setObject(e.getDetails());
+            theErrorEntry.setVisible(true);
+            theErrorEntry.setFocus();
+        });
     }
 }

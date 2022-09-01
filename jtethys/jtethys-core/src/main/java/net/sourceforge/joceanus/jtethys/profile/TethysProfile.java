@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jtethys.profile;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -38,7 +39,7 @@ public class TethysProfile {
     /**
      * Status.
      */
-    private ProfileStatus theStatus;
+    private TethysProfileStatus theStatus;
 
     /**
      * Start time.
@@ -73,7 +74,7 @@ public class TethysProfile {
         /* Record the name and start the timer */
         theName = pName;
         theStart = System.nanoTime();
-        theStatus = ProfileStatus.RUNNING;
+        theStatus = TethysProfileStatus.RUNNING;
     }
 
     /**
@@ -88,7 +89,7 @@ public class TethysProfile {
      * Obtain the status of the profile.
      * @return the status
      */
-    public ProfileStatus getStatus() {
+    public TethysProfileStatus getStatus() {
         return theStatus.isRunning()
                 ? theStatus
                 : null;
@@ -110,6 +111,14 @@ public class TethysProfile {
      */
     public TethysDecimal getHidden() {
         return theHidden;
+    }
+
+    /**
+     * Obtain the subtask iterator.
+     * @return the iterator
+     */
+    public Iterator<TethysProfile> subTaskIterator() {
+        return theSubTasks.iterator();
     }
 
     /**
@@ -176,7 +185,7 @@ public class TethysProfile {
                     : calculateHidden();
 
             /* Mark time as stopped */
-            theStatus = ProfileStatus.STOPPED;
+            theStatus = TethysProfileStatus.STOPPED;
         }
     }
 
@@ -227,7 +236,7 @@ public class TethysProfile {
     /**
      * Status of timer.
      */
-    private enum ProfileStatus {
+    public enum TethysProfileStatus {
         /**
          * Running.
          */
