@@ -59,7 +59,7 @@ public class TethysTestThread
     private static void singleTask(final TethysUIThreadManager pManager,
                                    final int pNumSteps) throws OceanusException {
         /* Record task details */
-        pManager.setNumSteps(500);
+        pManager.setNumSteps(pNumSteps);
 
         /* Protect against exceptions */
         try {

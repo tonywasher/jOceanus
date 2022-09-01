@@ -171,8 +171,8 @@ public abstract class TethysUICoreThreadTextAreaStatus
 
         /* Handle new task */
         final String myNewTask = pStatus.getTask();
-        if ((myNewTask != null)
-                && (!myNewTask.equals(myOld.getTask()))) {
+        if (myNewTask != null
+            && !myNewTask.equals(myOld.getTask())) {
             setNewStage(myNewTask);
             return;
         }
@@ -187,11 +187,12 @@ public abstract class TethysUICoreThreadTextAreaStatus
         /* Handle new step */
         final int myStepsDone = pStatus.getStepsDone();
         if (myStepsDone != myOld.getStepsDone()) {
+            final String myStep = pStatus.getStep() == null
+                    ? "" : (": " + pStatus.getStep());
             final String myDone = (myStepsDone + 1)
                     + " of "
                     + pStatus.getNumSteps()
-                    + ": "
-                    + pStatus.getStep();
+                    + myStep;
             setNewStep(myDone);
         }
 
@@ -246,6 +247,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
         /* Hide the cancel button */
         theCancelButton.setVisible(false);
         theThreadManager.threadCompleted();
+        theStatus = new TethysUICoreThreadStatus();
     }
 
     @Override

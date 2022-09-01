@@ -31,6 +31,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManage
  */
 public class TethysTestThreadPanel {
     /**
+     * Status height.
+     */
+    private static final int STATUS_HEIGHT = 300;
+
+    /**
      * GUI factory.
      */
     private final TethysUIFactory<?> theGuiFactory;
@@ -107,6 +112,7 @@ public class TethysTestThreadPanel {
         /* Set the status panel */
         theMainPanel.setNorth(theStatusPanel);
         theStatusPanel.setVisible(false);
+        theStatusPanel.setPreferredHeight(STATUS_HEIGHT);
 
         /* Create thread status change handler */
         theThreadMgr.getEventRegistrar().addEventListener(e -> handleThreadChange());
