@@ -45,7 +45,6 @@ module net.sourceforge.joceanus.jmetis.core {
     exports net.sourceforge.joceanus.jmetis.preference;
     exports net.sourceforge.joceanus.jmetis.profile;
     exports net.sourceforge.joceanus.jmetis.report;
-    exports net.sourceforge.joceanus.jmetis.threads;
     exports net.sourceforge.joceanus.jmetis.viewer;
     exports net.sourceforge.joceanus.jmetis.ui;
 }

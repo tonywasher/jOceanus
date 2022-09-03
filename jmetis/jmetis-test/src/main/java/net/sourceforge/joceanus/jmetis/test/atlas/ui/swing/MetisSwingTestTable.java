@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.test.atlas.ui.swing;
 
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.test.atlas.ui.MetisTestDataTable;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;

@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.list.MetisListSetVersioned;
 import net.sourceforge.joceanus.jmetis.list.MetisListUpdateManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.ui.MetisUIEvent;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
