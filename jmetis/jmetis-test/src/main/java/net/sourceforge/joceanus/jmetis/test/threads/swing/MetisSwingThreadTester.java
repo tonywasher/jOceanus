@@ -101,7 +101,7 @@ public class MetisSwingThreadTester {
 
         /* Access components */
         theGuiFactory = theToolkit.getGuiFactory();
-        theThreadMgr = theToolkit.getThreadManager();
+        theThreadMgr = null; theToolkit.getThreadManager();
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -113,7 +113,7 @@ public class MetisSwingThreadTester {
 
         /* Create the Panels */
         theFrame = new JFrame("MetisSwingThread Demo");
-        theStatusPanel = theThreadMgr.getStatusManager();
+        theStatusPanel = null; //theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();
         theGuiFactory.setFrame(theFrame);
     }

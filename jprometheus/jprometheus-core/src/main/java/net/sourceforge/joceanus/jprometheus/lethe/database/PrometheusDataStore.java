@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
@@ -26,6 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -203,7 +203,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @param pData the new DataSet
      * @throws OceanusException on error
      */
-    public void loadDatabase(final MetisThreadStatusReport pReport,
+    public void loadDatabase(final TethysThreadStatusReport pReport,
                              final T pData) throws OceanusException {
         /* Initialise task */
         pReport.initTask("loadDatabase");
@@ -235,7 +235,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @param pData the data
      * @throws OceanusException on error
      */
-    public void updateDatabase(final MetisThreadStatusReport pReport,
+    public void updateDatabase(final TethysThreadStatusReport pReport,
                                final T pData) throws OceanusException {
         final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
 
@@ -307,7 +307,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void createTables(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void createTables(final TethysThreadStatusReport pReport) throws OceanusException {
         /* Set the number of stages */
         pReport.setNumStages(2);
 
@@ -342,7 +342,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @param pReport the report
      * @throws OceanusException on error
      */
-    private void dropTables(final MetisThreadStatusReport pReport) throws OceanusException {
+    private void dropTables(final TethysThreadStatusReport pReport) throws OceanusException {
         /* Obtain the active profile */
         TethysProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("dropTables");
@@ -371,7 +371,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void purgeTables(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void purgeTables(final TethysThreadStatusReport pReport) throws OceanusException {
         /* Set the number of stages */
         pReport.setNumStages(1);
 

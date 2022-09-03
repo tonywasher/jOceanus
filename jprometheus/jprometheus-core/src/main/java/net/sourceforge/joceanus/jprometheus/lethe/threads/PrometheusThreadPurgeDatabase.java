@@ -16,15 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be
@@ -33,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisThread<Void> {
+        implements TethysThread<Void> {
     /**
      * Data Control.
      */
@@ -53,13 +50,9 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
-        /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-
+    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
-        myManager.initTask(getTaskName());
+        pManager.initTask(getTaskName());
 
         /* Create interface */
         final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
@@ -67,18 +60,18 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends En
         /* Protect against failures */
         try {
             /* Purge database */
-            myDatabase.purgeTables(myManager);
+            myDatabase.purgeTables(pManager);
 
             /* Re-base this set on a null set */
             final T myNull = theControl.getNewData();
             final T myData = theControl.getData();
-            myData.reBase(myManager, myNull);
+            myData.reBase(pManager, myNull);
 
             /* Derive the new set of updates */
             theControl.deriveUpdates();
 
             /* State that we have completed */
-            myManager.setCompletion();
+            pManager.setCompletion();
 
             /* Return null */
             return null;

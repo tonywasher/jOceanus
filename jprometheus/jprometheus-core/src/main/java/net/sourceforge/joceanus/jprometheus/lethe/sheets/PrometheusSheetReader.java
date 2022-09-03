@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvider;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Load control for spreadsheets.
@@ -47,7 +47,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
      * Report.
      */
-    private final MetisThreadStatusReport theReport;
+    private final TethysThreadStatusReport theReport;
 
     /**
      * The password manager.
@@ -74,7 +74,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * @param pReport the report
      * @param pPasswordMgr the password manager
      */
-    protected PrometheusSheetReader(final MetisThreadStatusReport pReport,
+    protected PrometheusSheetReader(final TethysThreadStatusReport pReport,
                                     final GordianPasswordManager pPasswordMgr) {
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
@@ -84,7 +84,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * get report.
      * @return the report
      */
-    protected MetisThreadStatusReport getReport() {
+    protected TethysThreadStatusReport getReport() {
         return theReport;
     }
 

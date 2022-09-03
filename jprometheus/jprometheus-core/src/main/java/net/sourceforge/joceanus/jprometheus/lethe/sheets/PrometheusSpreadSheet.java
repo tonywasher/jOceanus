@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Spreadsheet control.
@@ -41,7 +41,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @param pPasswordMgr the password manager
      * @return the sheet reader
      */
-    protected abstract PrometheusSheetReader<T> getSheetReader(MetisThreadStatusReport pReport,
+    protected abstract PrometheusSheetReader<T> getSheetReader(TethysThreadStatusReport pReport,
                                                                GordianPasswordManager pPasswordMgr);
 
     /**
@@ -49,7 +49,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @param pReport the report
      * @return the sheet writer
      */
-    protected abstract PrometheusSheetWriter<T> getSheetWriter(MetisThreadStatusReport pReport);
+    protected abstract PrometheusSheetWriter<T> getSheetWriter(TethysThreadStatusReport pReport);
 
     /**
      * Load a Backup Workbook.
@@ -59,7 +59,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @param pFile the backup file to load from
      * @throws OceanusException on error
      */
-    public void loadBackup(final MetisThreadStatusReport pReport,
+    public void loadBackup(final TethysThreadStatusReport pReport,
                            final GordianPasswordManager pPasswordMgr,
                            final T pData,
                            final File pFile) throws OceanusException {
@@ -78,7 +78,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    public void createBackup(final MetisThreadStatusReport pReport,
+    public void createBackup(final TethysThreadStatusReport pReport,
                              final T pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {

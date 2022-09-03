@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -31,6 +29,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * SheetDataItem extension for SecurityPrice.
@@ -119,7 +119,7 @@ public class SheetSecurityPrice
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final MetisThreadStatusReport pReport,
+    protected static void loadArchive(final TethysThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
@@ -193,7 +193,7 @@ public class SheetSecurityPrice
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (MetisThreadCancelException e) {
+        } catch (TethysThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);

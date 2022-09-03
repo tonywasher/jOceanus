@@ -53,8 +53,7 @@ import java.nio.file.Path;
 /**
  * Metis Toolkit.
  */
-public abstract class MetisToolkit
-        implements MetisThreadData {
+public abstract class MetisToolkit {
     /**
      * Logger.
      */
@@ -78,7 +77,7 @@ public abstract class MetisToolkit
     /**
      * Thread Manager.
      */
-    private final MetisThreadManager theThreadManager;
+    private final TethysThreadManager theThreadManager;
 
     /**
      * The Profile Viewer Entry.
@@ -129,7 +128,8 @@ public abstract class MetisToolkit
         getFormatter().extendFormatter(new MetisDataFormatter(getFormatter()));
 
         /* create the thread manager */
-        theThreadManager = newThreadManager(theProgram.useSliderStatus());
+        theThreadManager = theGuiFactory.newThreadManager();
+        attachToThreadManager();
 
         /* Access the Colour Preferences */
         theColorPreferences = thePreferenceManager.getPreferenceSet(MetisColorPreferences.class);
@@ -186,31 +186,8 @@ public abstract class MetisToolkit
      * Obtain the Thread Manager.
      * @return the factory
      */
-    public MetisThreadManager getThreadManager() {
+    public TethysThreadManager getThreadManager() {
         return theThreadManager;
-    }
-
-    /**
-     * Create a Thread Manager.
-     * @param pSlider use slider status
-     * @return the thread manager
-     */
-    protected abstract MetisThreadManager newThreadManager(boolean pSlider);
-
-    /**
-     * Create a Thread Slider Status.
-     * @param pManager the thread manager
-     * @return the thread status manager
-     */
-    protected abstract MetisThreadProgressStatus newThreadSliderStatus(MetisThreadManager pManager);
-
-    /**
-     * Create a Thread TextArea Status.
-     * @param pManager the thread manager
-     * @return the thread status manager
-     */
-    protected MetisThreadTextAreaStatus newThreadTextAreaStatus(final MetisThreadManager pManager) {
-        return new MetisThreadTextAreaStatus(pManager, theGuiFactory);
     }
 
     /**
@@ -331,11 +308,10 @@ public abstract class MetisToolkit
 
     /**
      * Attach to threadManager.
-     * @param pManager the thread manager
      */
-    private void attachToThreadManager(final TethysThreadManager pManager) {
+    private void attachToThreadManager() {
         /* Access the event registrar */
-        final TethysEventRegistrar<TethysThreadEvent> myRegistrar = pManager.getEventRegistrar();
+        final TethysEventRegistrar<TethysThreadEvent> myRegistrar = theThreadManager.getEventRegistrar();
 
         /* Add Thread start support */
         myRegistrar.addEventListener(TethysThreadEvent.THREADSTART, e -> {
@@ -347,7 +323,7 @@ public abstract class MetisToolkit
         /* Add Thread end support */
         myRegistrar.addEventListener(TethysThreadEvent.THREADEND, e -> {
             /* Tasks for event handler */
-            theProfileEntry.setObject(pManager.getActiveProfile());
+            theProfileEntry.setObject(theThreadManager.getActiveProfile());
             theProfileEntry.setFocus();
         });
 

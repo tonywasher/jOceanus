@@ -22,8 +22,6 @@ import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
@@ -45,21 +43,6 @@ public class MetisSwingToolkit
     @Override
     public TethysSwingGuiFactory getGuiFactory() {
         return (TethysSwingGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public MetisSwingThreadManager getThreadManager() {
-        return (MetisSwingThreadManager) super.getThreadManager();
-    }
-
-    @Override
-    protected MetisSwingThreadManager newThreadManager(final boolean pSlider) {
-        return new MetisSwingThreadManager(this, pSlider);
-    }
-
-    @Override
-    protected MetisSwingThreadProgressStatus newThreadSliderStatus(final MetisThreadManager pManager) {
-        return new MetisSwingThreadProgressStatus(pManager, getGuiFactory());
     }
 
     @Override

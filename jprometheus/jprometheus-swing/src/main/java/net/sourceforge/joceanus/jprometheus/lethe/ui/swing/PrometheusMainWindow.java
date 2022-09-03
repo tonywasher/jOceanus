@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -47,6 +44,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
@@ -115,7 +115,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * The Thread Manager.
      */
-    private MetisThreadManager theThreadMgr;
+    private TethysThreadManager theThreadMgr;
 
     /**
      * The Started Help window.
@@ -221,7 +221,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         /* Access the status bar and set to invisible */
         theStatusBar = TethysSwingNode.getComponent(theThreadMgr.getStatusManager());
         theStatusBar.setVisible(false);
-        theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> {
+        theThreadMgr.getEventRegistrar().addEventListener(TethysThreadEvent.THREADEND, e -> {
             setVisibility();
             theStatusBar.setVisible(false);
         });
@@ -424,7 +424,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      *
      * @param pThread the thread to start
      */
-    protected void startThread(final MetisThread<?> pThread) {
+    protected void startThread(final TethysThread<?> pThread) {
         /* Execute the thread and record it */
         theThreadMgr.startThread(pThread);
 

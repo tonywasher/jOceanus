@@ -29,7 +29,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -81,6 +80,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Class to load an archive SpreadSheet.
@@ -211,7 +211,7 @@ public class ArchiveLoader {
      * @param pPreferences the backup preferences
      * @throws OceanusException on error
      */
-    public void loadArchive(final MetisThreadStatusReport pReport,
+    public void loadArchive(final TethysThreadStatusReport pReport,
                             final MoneyWiseData pData,
                             final PrometheusBackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
@@ -247,7 +247,7 @@ public class ArchiveLoader {
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    private void loadArchive(final MetisThreadStatusReport pReport,
+    private void loadArchive(final TethysThreadStatusReport pReport,
                              final PrometheusSheetWorkBook pWorkBook,
                              final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
@@ -281,7 +281,7 @@ public class ArchiveLoader {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    private void loadArchiveStream(final MetisThreadStatusReport pReport,
+    private void loadArchiveStream(final TethysThreadStatusReport pReport,
                                    final MoneyWiseData pData,
                                    final InputStream pStream,
                                    final PrometheusSheetWorkBookType pType) throws OceanusException {

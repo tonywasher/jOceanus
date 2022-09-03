@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Write control for spreadsheets.
@@ -47,7 +47,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
     /**
      * Report.
      */
-    private final MetisThreadStatusReport theReport;
+    private final TethysThreadStatusReport theReport;
 
     /**
      * Writable spreadsheet.
@@ -68,7 +68,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * Constructor.
      * @param pReport the report
      */
-    protected PrometheusSheetWriter(final MetisThreadStatusReport pReport) {
+    protected PrometheusSheetWriter(final TethysThreadStatusReport pReport) {
         theReport = pReport;
     }
 
@@ -76,7 +76,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * get report.
      * @return the report
      */
-    protected MetisThreadStatusReport getReport() {
+    protected TethysThreadStatusReport getReport() {
         return theReport;
     }
 

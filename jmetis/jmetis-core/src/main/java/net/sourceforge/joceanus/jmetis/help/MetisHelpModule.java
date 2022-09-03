@@ -73,7 +73,7 @@ public abstract class MetisHelpModule {
      * Constructor.
      * @param pTitle the title
      */
-    public MetisHelpModule(final String pTitle) {
+    protected MetisHelpModule(final String pTitle) {
         /* Store parameters */
         theTitle = pTitle;
 

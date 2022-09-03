@@ -26,10 +26,10 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Encrypted Data Item and List.
@@ -398,7 +398,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pControl the control key to apply
          * @throws OceanusException on error
          */
-        public void updateSecurity(final MetisThreadStatusReport pReport,
+        public void updateSecurity(final TethysThreadStatusReport pReport,
                                    final ControlKey pControl) throws OceanusException {
             /* Declare the new stage */
             pReport.setNewStage(listName());
@@ -429,7 +429,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pBase The base list to adopt from
          * @throws OceanusException on error
          */
-        protected void adoptSecurity(final MetisThreadStatusReport pReport,
+        protected void adoptSecurity(final TethysThreadStatusReport pReport,
                                      final EncryptedList<?, E> pBase) throws OceanusException {
             /* Declare the new stage */
             pReport.setNewStage(listName());

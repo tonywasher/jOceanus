@@ -74,8 +74,8 @@ public class MetisSwingThread<T>
                                final MetisThreadData pThreadData,
                                final MetisThread<T> pThread) {
         theThreadData = pThreadData;
-        theManager = pToolkit.getThreadManager();
-        theStatusMgr = theManager.getStatusManager();
+        theManager = null; //pToolkit.getThreadManager();
+        theStatusMgr = null; //theManager.getStatusManager();
         theThread = pThread;
         theTask = pThread.getTaskName();
     }

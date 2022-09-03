@@ -16,16 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * Thread to store changes in the DataSet to a database.
@@ -33,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisThread<Void> {
+        implements TethysThread<Void> {
     /**
      * Data control.
      */
@@ -53,13 +50,9 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
-        /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-
+    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
-        myManager.initTask(getTaskName());
+        pManager.initTask(getTaskName());
 
         /* Create interface */
         final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
@@ -67,15 +60,15 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
         /* Protect against failures */
         try {
             /* Store database */
-            myDatabase.updateDatabase(myManager, theControl.getUpdates());
+            myDatabase.updateDatabase(pManager, theControl.getUpdates());
 
             /* Load database */
             final T myStore = theControl.getNewData();
-            myDatabase.loadDatabase(myManager, myStore);
+            myDatabase.loadDatabase(pManager, myStore);
 
             /* Create a difference set between the two data copies */
             final T myData = theControl.getData();
-            final DataSet<T, ?> myDiff = myData.getDifferenceSet(myManager, myStore);
+            final DataSet<T, ?> myDiff = myData.getDifferenceSet(pManager, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
@@ -90,7 +83,7 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
             theControl.deriveUpdates();
 
             /* State that we have completed */
-            myManager.setCompletion();
+            pManager.setCompletion();
 
             /* Return null */
             return null;

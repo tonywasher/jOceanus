@@ -96,7 +96,7 @@ public class MetisFXThreadTester
 
         /* Access components */
         theGuiFactory = theToolkit.getGuiFactory();
-        theThreadMgr = theToolkit.getThreadManager();
+        theThreadMgr = null; theToolkit.getThreadManager();
 
         /* Create buttons */
         theLaunchButton = theGuiFactory.newButton();
@@ -107,7 +107,7 @@ public class MetisFXThreadTester
         theDebugButton.setText("Debug");
 
         /* Create the Panels */
-        theStatusPanel = theThreadMgr.getStatusManager();
+        theStatusPanel = null; //theThreadMgr.getStatusManager();
         theMainPanel = theGuiFactory.newBorderPane();
     }
 

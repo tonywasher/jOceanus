@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetWriter;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * SheetWriter extension for MoneyWiseData.
@@ -30,7 +30,7 @@ public class MoneyWiseWriter
      * Constructor.
      * @param pReport the report
      */
-    public MoneyWiseWriter(final MetisThreadStatusReport pReport) {
+    public MoneyWiseWriter(final TethysThreadStatusReport pReport) {
         /* Call super-constructor */
         super(pReport);
     }

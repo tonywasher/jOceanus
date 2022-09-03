@@ -16,14 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * Thread to change the password. The user will be prompted for a new password and this will be used
@@ -35,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadUpdatePassword<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisThread<T> {
+        implements TethysThread<T> {
     /**
      * Data Control.
      */
@@ -55,23 +52,19 @@ public class PrometheusThreadUpdatePassword<T extends DataSet<T, E>, E extends E
     }
 
     @Override
-    public T performTask(final MetisThreadData pThreadData) throws OceanusException {
-        /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-
+    public T performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
-        myManager.initTask(getTaskName());
+        pManager.initTask(getTaskName());
 
         /* Access Data */
         T myData = theControl.getData();
         myData = myData.deriveCloneSet();
 
         /* Update password */
-        myData.updatePasswordHash(myManager, "Database");
+        myData.updatePasswordHash(pManager, "Database");
 
         /* State that we have completed */
-        myManager.setCompletion();
+        pManager.setCompletion();
 
         /* Return data */
         return myData;

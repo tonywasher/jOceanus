@@ -39,7 +39,7 @@ public class MetisTestThread
     public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the Thread Manager */
         final MetisToolkit myToolkit = (MetisToolkit) pThreadData;
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
+        final MetisThreadManager myManager = null; myToolkit.getThreadManager();
 
         /* Set stages */
         myManager.setNumStages(2);

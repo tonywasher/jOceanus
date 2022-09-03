@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -55,6 +54,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -70,7 +70,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * The report.
      */
-    private final MetisThreadStatusReport theReport;
+    private final TethysThreadStatusReport theReport;
 
     /**
      * The password manager.
@@ -98,7 +98,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pPasswordMgr the password manager
      * @throws PrometheusIOException on error
      */
-    public DataValuesFormatter(final MetisThreadStatusReport pReport,
+    public DataValuesFormatter(final TethysThreadStatusReport pReport,
                                final GordianPasswordManager pPasswordMgr) throws PrometheusIOException {
         /* Store values */
         theReport = pReport;

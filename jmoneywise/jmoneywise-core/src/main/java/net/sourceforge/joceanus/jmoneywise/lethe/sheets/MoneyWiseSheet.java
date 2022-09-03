@@ -17,11 +17,11 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetWriter;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * SpreadSheet extension for MoneyWiseData.
@@ -30,14 +30,14 @@ import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
 public class MoneyWiseSheet
         extends PrometheusSpreadSheet<MoneyWiseData> {
     @Override
-    protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final MetisThreadStatusReport pReport,
+    protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final TethysThreadStatusReport pReport,
                                                                   final GordianPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
         return new MoneyWiseReader(pReport, pPasswordMgr);
     }
 
     @Override
-    protected PrometheusSheetWriter<MoneyWiseData> getSheetWriter(final MetisThreadStatusReport pReport) {
+    protected PrometheusSheetWriter<MoneyWiseData> getSheetWriter(final TethysThreadStatusReport pReport) {
         /* Create a MoneyWise Writer object and return it */
         return new MoneyWiseWriter(pReport);
     }

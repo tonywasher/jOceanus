@@ -21,10 +21,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadProgressStatus;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -45,21 +42,6 @@ public class MetisFXToolkit
     @Override
     public TethysFXGuiFactory getGuiFactory() {
         return (TethysFXGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public MetisFXThreadManager getThreadManager() {
-        return (MetisFXThreadManager) super.getThreadManager();
-    }
-
-    @Override
-    protected MetisFXThreadManager newThreadManager(final boolean pSlider) {
-        return new MetisFXThreadManager(this, pSlider);
-    }
-
-    @Override
-    protected MetisFXThreadProgressStatus newThreadSliderStatus(final MetisThreadManager pManager) {
-        return new MetisFXThreadProgressStatus(pManager, getGuiFactory());
     }
 
     @Override

@@ -126,9 +126,9 @@ public abstract class MetisThreadManager
         theErrorEntry.setVisible(false);
 
         /* Create the status manager */
-        theStatusManager = pSlider
-                                   ? theToolkit.newThreadSliderStatus(this)
-                                   : theToolkit.newThreadTextAreaStatus(this);
+        theStatusManager = null; //pSlider
+                                 //  ? theToolkit.newThreadSliderStatus(this)
+                                 //  : theToolkit.newThreadTextAreaStatus(this);
 
         /* Access the threadStatus properties */
         final MetisPreferenceManager myMgr = theToolkit.getPreferenceManager();
@@ -136,7 +136,7 @@ public abstract class MetisThreadManager
         theReportingSteps = myPreferences.getIntegerValue(MetisThreadPreferenceKey.REPSTEPS);
 
         /* Default ThreadData is the toolkit */
-        theThreadData = theToolkit;
+        theThreadData = null; //theToolkit;
     }
 
     @Override
