@@ -24,10 +24,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
@@ -38,16 +35,17 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFStreamWriter;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * WorkerThread extension to create a QIF archive.
  */
 public class MoneyWiseThreadWriteQIF
-        implements MetisThread<Void> {
+        implements TethysThread<Void> {
     /**
      * Logger.
      */
@@ -72,13 +70,9 @@ public class MoneyWiseThreadWriteQIF
     }
 
     @Override
-    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
-        /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-
+    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
-        myManager.initTask("Analysing Data");
+        pManager.initTask("Analysing Data");
 
         /* Load configuration */
         final MetisPreferenceManager myMgr = theView.getPreferenceManager();
@@ -91,7 +85,7 @@ public class MoneyWiseThreadWriteQIF
         final QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
-        myManager.initTask("Writing QIF file");
+        pManager.initTask("Writing QIF file");
 
         /* Determine name of output file */
         final String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
@@ -101,7 +95,7 @@ public class MoneyWiseThreadWriteQIF
         final File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
 
         /* Create the Writer */
-        final QIFWriter myQWriter = new QIFWriter(myManager, myQFile);
+        final QIFWriter myQWriter = new QIFWriter(pManager, myQFile);
 
         /* Protect against exceptions */
         boolean writeFailed = false;
@@ -143,7 +137,7 @@ public class MoneyWiseThreadWriteQIF
         }
 
         /* State that we have completed */
-        myManager.setCompletion();
+        pManager.setCompletion();
 
         /* Return nothing */
         return null;

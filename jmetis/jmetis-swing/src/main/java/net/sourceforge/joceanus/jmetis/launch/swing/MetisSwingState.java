@@ -29,10 +29,10 @@ import javax.swing.WindowConstants;
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -59,16 +59,32 @@ public class MetisSwingState {
 
     /**
      * Constructor.
-     * @param pClazz the program definition class
+     * @param pInfo the program definition
      * @throws OceanusException on error
      */
-    public MetisSwingState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
+    public MetisSwingState(final TethysProgram pInfo) throws OceanusException {
         /* Create the program class. */
-        theInfo = new MetisState(pClazz);
+        theInfo = new MetisState(new TethysSwingGuiFactory(pInfo));
     }
 
     /**
-     * Create a SwingSSplash.
+     * Obtain the program definitions.
+     * @return the program definitions
+     */
+    public TethysProgram getProgramDefinitions() {
+        return theInfo.getProgramDefinitions();
+    }
+
+    /**
+     * Obtain the state.
+     * @return the state
+     */
+    public MetisState getState() {
+        return theInfo;
+    }
+
+    /**
+     * Create a SwingSplash.
      */
     public void createSplash() {
         /* Sort out splash frame */
@@ -89,7 +105,7 @@ public class MetisSwingState {
         final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the toolkit */
-        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(theInfo, myDef.useSliderStatus());
+        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(this);
 
         /* Create the frame and declare it */
         theFrame = new JFrame(myApp.getName());
@@ -107,7 +123,7 @@ public class MetisSwingState {
         myPane.add(TethysSwingNode.getComponent(theMain.getComponent()), BorderLayout.CENTER);
 
         /* Set preferred size if specified */
-        final int[] myDim = myDef.getPanelDimensions();
+        final int[] myDim = myApp.getPanelDimensions();
         if (myDim != null) {
             myPane.setPreferredSize(new Dimension(myDim[0], myDim[1]));
         }

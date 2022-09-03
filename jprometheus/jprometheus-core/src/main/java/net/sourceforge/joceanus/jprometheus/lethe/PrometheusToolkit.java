@@ -20,19 +20,17 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * Prometheus Toolkit.
  */
-public abstract class PrometheusToolkit
-        implements MetisThreadData {
+public abstract class PrometheusToolkit {
     /**
      * Toolkit.
      */
@@ -54,7 +52,7 @@ public abstract class PrometheusToolkit
 
         /* Access components */
         final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
-        final MetisThreadManager myThreadMgr = pToolkit.getThreadManager();
+        final TethysThreadManager myThreadMgr = pToolkit.getThreadManager();
 
         /* Create the passwordManager */
         final MetisSecurityPreferences myPreferences = myPreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);

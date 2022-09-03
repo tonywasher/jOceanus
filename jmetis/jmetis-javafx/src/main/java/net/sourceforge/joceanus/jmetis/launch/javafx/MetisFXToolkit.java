@@ -21,11 +21,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadProgressStatus;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -36,55 +32,16 @@ public class MetisFXToolkit
         extends MetisToolkit {
     /**
      * Constructor.
-     * @throws OceanusException on error
-     */
-    public MetisFXToolkit() throws OceanusException {
-        this(null, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pSlider use slider status
-     * @throws OceanusException on error
-     */
-    public MetisFXToolkit(final boolean pSlider) throws OceanusException {
-        this(null, pSlider);
-    }
-
-    /**
-     * Constructor.
      * @param pInfo the program info
-     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public MetisFXToolkit(final MetisState pInfo,
-                          final boolean pSlider) throws OceanusException {
-        super(pInfo, pSlider);
+    public MetisFXToolkit(final MetisFXState pInfo) throws OceanusException {
+        super(pInfo.getState());
     }
 
     @Override
     public TethysFXGuiFactory getGuiFactory() {
         return (TethysFXGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public MetisFXThreadManager getThreadManager() {
-        return (MetisFXThreadManager) super.getThreadManager();
-    }
-
-    @Override
-    protected TethysFXGuiFactory newGuiFactory() {
-        return new TethysFXGuiFactory(getFormatter(), getProgramDefinitions());
-    }
-
-    @Override
-    protected MetisFXThreadManager newThreadManager(final boolean pSlider) {
-        return new MetisFXThreadManager(this, pSlider);
-    }
-
-    @Override
-    protected MetisFXThreadProgressStatus newThreadSliderStatus(final MetisThreadManager pManager) {
-        return new MetisFXThreadProgressStatus(pManager, getGuiFactory());
     }
 
     @Override

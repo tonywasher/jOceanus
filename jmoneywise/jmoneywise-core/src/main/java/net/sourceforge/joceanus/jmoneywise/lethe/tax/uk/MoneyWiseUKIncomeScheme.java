@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
@@ -27,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWi
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Income Tax Scheme.
@@ -249,7 +249,7 @@ public class MoneyWiseUKIncomeScheme
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 }

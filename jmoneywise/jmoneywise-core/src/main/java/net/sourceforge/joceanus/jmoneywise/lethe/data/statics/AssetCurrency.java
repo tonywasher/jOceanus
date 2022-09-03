@@ -20,7 +20,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * AssetCurrency data type.
@@ -113,7 +113,7 @@ public class AssetCurrency
         if (myValue instanceof Boolean) {
             setValueDefault((Boolean) myValue);
         } else if (myValue instanceof String) {
-            final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+            final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
             setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
         } else {
             setValueDefault(Boolean.FALSE);
@@ -546,7 +546,7 @@ public class AssetCurrency
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

@@ -25,7 +25,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -50,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * ExchangeRate class.
@@ -133,7 +133,7 @@ public class ExchangeRate
         super(pList, pValues);
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -193,15 +193,25 @@ public class ExchangeRate
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return toString();
     }
 
     @Override
     public String toString() {
-        return getDate() + " " + getFromCurrency().getCurrency().getCurrencyCode() + ":"
-               + getToCurrency().getCurrency().getCurrencyCode() + "="
-               + getExchangeRate().toString();
+        /* Access formatter */
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Create string builder */
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myFormatter.formatObject(getDate()));
+        myBuilder.append(" ");
+        myBuilder.append(myFormatter.formatObject(getFromCurrency().getCurrency().getCurrencyCode()));
+        myBuilder.append(": ");
+        myBuilder.append(myFormatter.formatObject(getToCurrency().getCurrency().getCurrencyCode()));
+        myBuilder.append('=');
+        myBuilder.append(myFormatter.formatObject(getExchangeRate()));
+        return myBuilder.toString();
     }
 
     @Override
@@ -961,7 +971,7 @@ public class ExchangeRate
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1178,7 +1188,7 @@ public class ExchangeRate
             }
 
             @Override
-            public String formatObject(final MetisDataFormatter pFormatter) {
+            public String formatObject(final TethysDataFormatter pFormatter) {
                 return theCurrency.formatObject(pFormatter)
                        + "("
                        + size()

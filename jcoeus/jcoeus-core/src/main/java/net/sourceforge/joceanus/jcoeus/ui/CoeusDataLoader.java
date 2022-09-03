@@ -20,14 +20,12 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSet;
 import net.sourceforge.joceanus.jcoeus.data.fundingcircle.CoeusFundingCircleLoader;
 import net.sourceforge.joceanus.jcoeus.data.lendingworks.CoeusLendingWorksLoader;
-import net.sourceforge.joceanus.jcoeus.data.ratesetter.CoeusRateSetterLoader;
-import net.sourceforge.joceanus.jcoeus.data.zopa.CoeusZopaLoader;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Loader.
@@ -36,7 +34,7 @@ public class CoeusDataLoader {
     /**
      * Data formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Preferences.
@@ -49,7 +47,7 @@ public class CoeusDataLoader {
      */
     public CoeusDataLoader(final MetisToolkit pToolkit) {
         /* Access the formatter */
-        theFormatter = new MetisDataFormatter();
+        theFormatter = pToolkit.getFormatter();
 
         /* Obtain preferences */
         final MetisPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
@@ -70,14 +68,10 @@ public class CoeusDataLoader {
 
         /* Create the loaders */
         final CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(theFormatter, myBase);
-        final CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(theFormatter, myBase);
-        final CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(theFormatter, myBase);
         final CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(theFormatter, myBase);
 
         /* Load the markets */
         myMarketSet.declareMarket(CoeusMarketProvider.FUNDINGCIRCLE, myFundingCircleLoader.loadMarket());
-        myMarketSet.declareMarket(CoeusMarketProvider.RATESETTER, myRateSetterLoader.loadMarket());
-        myMarketSet.declareMarket(CoeusMarketProvider.ZOPA, myZopaLoader.loadMarket());
         myMarketSet.declareMarket(CoeusMarketProvider.LENDINGWORKS, myLendingWorksLoader.loadMarket());
 
         /* Analyse the markets */

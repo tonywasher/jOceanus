@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFStringLine;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Class representing a QIF Category record.
@@ -258,7 +258,7 @@ public class QIFEventCategory
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
@@ -286,7 +286,7 @@ public class QIFEventCategory
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
@@ -314,7 +314,7 @@ public class QIFEventCategory
         }
 
         @Override
-        protected void formatData(final MetisDataFormatter pFormatter,
+        protected void formatData(final TethysDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }

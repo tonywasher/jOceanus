@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingColorPicker;
+import net.sourceforge.joceanus.jtethys.ui.swing.button.TethysUISwingColorPicker;
 
 /**
  * ColorButtonField class.
@@ -59,7 +59,7 @@ public class TethysUISwingColorButtonField
      */
     private TethysUISwingColorButtonField(final TethysUICoreFactory<?> pFactory,
                                           final JLabel pLabel) {
-        this(pFactory, (TethysUISwingColorPicker) pFactory.dialogFactory().newColorPicker(), pLabel);
+        this(pFactory, (TethysUISwingColorPicker) pFactory.buttonFactory().newColorPicker(), pLabel);
     }
 
     /**

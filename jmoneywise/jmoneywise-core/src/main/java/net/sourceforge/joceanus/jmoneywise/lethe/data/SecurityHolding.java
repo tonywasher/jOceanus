@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Portfolio/Security combination.
@@ -120,7 +120,7 @@ public final class SecurityHolding
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return toString();
     }
 
@@ -408,7 +408,7 @@ public final class SecurityHolding
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return SecurityHoldingMap.class.getSimpleName();
         }
 
@@ -728,7 +728,7 @@ public final class SecurityHolding
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return thePortfolio.formatObject(pFormatter);
         }
 

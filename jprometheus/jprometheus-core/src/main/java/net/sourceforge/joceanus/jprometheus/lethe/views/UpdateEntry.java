@@ -45,7 +45,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      * Constructor.
      * @param pDataType the dataType
      */
-    protected UpdateEntry(final E pDataType) {
+    UpdateEntry(final E pDataType) {
         /* Store details */
         theDataType = pDataType;
         theDataList = null;
@@ -64,6 +64,11 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public String getName() {
         return theDataType.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     /**

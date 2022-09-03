@@ -36,6 +36,11 @@ public enum MetisViewerResource
     VIEWER_TITLE("window.Title"),
 
     /**
+     * Viewer Root title.
+     */
+    VIEWER_ROOT("window.Root"),
+
+    /**
      * Field column title.
      */
     VIEWER_COLUMN_FIELD("column.Field"),

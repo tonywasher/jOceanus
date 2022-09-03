@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * Data Control for MoneyWiseApp.
@@ -171,7 +171,7 @@ public class MoneyWiseView
      */
     public final TransactionAnalyser analyseData(final MoneyWiseData pData) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = getActiveTask();
+        TethysProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
 
         /* Initialise the analysis */
@@ -195,7 +195,7 @@ public class MoneyWiseView
     @Override
     protected boolean analyseData(final boolean bPreserve) {
         /* Obtain the active profile */
-        MetisProfile myTask = getActiveTask();
+        TethysProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
 
         /* Clear the errors */

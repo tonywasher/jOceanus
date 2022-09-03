@@ -21,11 +21,11 @@ import javax.swing.JFrame;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
@@ -62,27 +62,10 @@ public class TethysSwingGuiFactory
 
     /**
      * Constructor.
-     */
-    public TethysSwingGuiFactory() {
-        this(null);
-    }
-
-    /**
-     * Constructor.
      * @param pApp the program definition
      */
     public TethysSwingGuiFactory(final TethysProgram pApp) {
-        this(new TethysDataFormatter(), pApp);
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the formatter
-     * @param pApp the program definition
-     */
-    public TethysSwingGuiFactory(final TethysDataFormatter pFormatter,
-                                 final TethysProgram pApp) {
-        super(pFormatter, pApp);
+        super(pApp);
         theAdjuster = new TethysSwingDataFieldAdjust(this);
     }
 
@@ -411,5 +394,15 @@ public class TethysSwingGuiFactory
     @Override
     public TethysChildDialog newChildDialog() {
         return new TethysSwingChildDialog(theFrame);
+    }
+
+    @Override
+    public TethysThreadManager newThreadManager() {
+        return new TethysSwingThreadManager(this, getProgramDefinitions().useSliderStatus());
+    }
+
+    @Override
+    protected TethysSwingThreadProgressStatus newThreadSliderStatus(final TethysThreadManager pManager) {
+        return new TethysSwingThreadProgressStatus(pManager, this);
     }
 }

@@ -20,11 +20,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -35,6 +32,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * Thread to create an encrypted backup of a data set.
@@ -43,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisThread<Void> {
+        implements TethysThread<Void> {
     /**
      * Buffer length.
      */
@@ -73,17 +72,16 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     }
 
     @Override
-    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
+    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianPasswordManager myPasswordMgr = ((PrometheusToolkit) pThreadData).getPasswordManager();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
 
         try {
             /* Initialise the status window */
-            myManager.initTask(getTaskName());
+            pManager.initTask(getTaskName());
 
             /* Access the Backup preferences */
             final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -123,20 +121,20 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             /* Create backup */
             final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
             final T myOldData = theControl.getData();
-            mySheet.createBackup(myManager, myOldData, myFile, myType);
+            mySheet.createBackup(pManager, myOldData, myFile, myType);
 
             /* File created, so delete on error */
             doDelete = true;
 
             /* Initialise the status window */
-            myManager.initTask("Verifying Backup");
+            pManager.initTask("Verifying Backup");
 
             /* Load workbook */
             final T myNewData = theControl.getNewData();
-            mySheet.loadBackup(myManager, myPasswordMgr, myNewData, myFile);
+            mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
+            final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
@@ -148,7 +146,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             doDelete = false;
 
             /* State that we have completed */
-            myManager.setCompletion();
+            pManager.setCompletion();
 
             /* Delete file on error */
         } finally {

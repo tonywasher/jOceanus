@@ -27,6 +27,18 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
  */
 public interface TethysUIDataFormatter {
     /**
+     * Formatter extension.
+     */
+    interface TethysUIDataFormatterExtension {
+        /**
+         * Format an object value.
+         * @param pValue the object to format
+         * @return the formatted value (or null if not recognised)
+         */
+        String formatObject(Object pValue);
+    }
+
+    /**
      * Obtain the date formatter.
      * @return the formatter
      */
@@ -43,6 +55,12 @@ public interface TethysUIDataFormatter {
      * @return the parser
      */
     TethysDecimalParser getDecimalParser();
+
+    /**
+     * Extend the formatter.
+     * @param pExtension the extension
+     */
+    void extendFormatter(TethysUIDataFormatterExtension pExtension);
 
     /**
      * Set accounting width.

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseReportTab;
@@ -44,6 +43,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
@@ -149,7 +149,7 @@ public class MainTab
     @Override
     protected JComponent buildMainPanel() throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theView.getActiveTask();
+        TethysProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */

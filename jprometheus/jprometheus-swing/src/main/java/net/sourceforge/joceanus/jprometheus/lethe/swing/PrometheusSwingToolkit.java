@@ -17,11 +17,11 @@
 package net.sourceforge.joceanus.jprometheus.lethe.swing;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -43,31 +43,12 @@ public class PrometheusSwingToolkit
 
     /**
      * Constructor.
-     * @throws OceanusException on error
-     */
-    public PrometheusSwingToolkit() throws OceanusException {
-        this(null, true);
-    }
-
-    /**
-     * Constructor.
-     * @param pSlider use slider status
-     * @throws OceanusException on error
-     */
-    public PrometheusSwingToolkit(final boolean pSlider) throws OceanusException {
-        this(null, pSlider);
-    }
-
-    /**
-     * Constructor.
      * @param pInfo the program info
-     * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public PrometheusSwingToolkit(final MetisState pInfo,
-                                  final boolean pSlider) throws OceanusException {
+    public PrometheusSwingToolkit(final MetisSwingState pInfo) throws OceanusException {
         /* Create Toolkit */
-        this(new MetisSwingToolkit(pInfo, pSlider));
+        this(new MetisSwingToolkit(pInfo));
     }
 
     /**

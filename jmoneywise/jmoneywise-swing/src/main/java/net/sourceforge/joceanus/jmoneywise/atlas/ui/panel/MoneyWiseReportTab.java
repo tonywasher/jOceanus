@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
@@ -48,6 +47,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
@@ -215,7 +215,7 @@ public class MoneyWiseReportTab
      */
     private void refreshData() {
         /* Obtain the active profile */
-        MetisProfile myTask = theView.getActiveTask();
+        TethysProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Reports");
 
         /* Protect against exceptions */

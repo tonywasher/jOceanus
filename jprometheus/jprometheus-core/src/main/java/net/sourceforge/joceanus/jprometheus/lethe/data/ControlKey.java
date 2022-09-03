@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -830,7 +830,7 @@ public final class ControlKey
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

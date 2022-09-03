@@ -23,7 +23,6 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -48,6 +47,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Payee class.
@@ -1004,7 +1004,7 @@ public class Payee
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

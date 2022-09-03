@@ -20,11 +20,9 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket.CashCategoryBucketList;
@@ -70,6 +68,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Class to analyse transactions.
@@ -187,7 +187,7 @@ public class TransactionAnalyser
     /**
      * The profile.
      */
-    private final MetisProfile theProfile;
+    private final TethysProfile theProfile;
 
     /**
      * Constructor for a complete set of accounts.
@@ -196,12 +196,12 @@ public class TransactionAnalyser
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
-    public TransactionAnalyser(final MetisProfile pTask,
+    public TransactionAnalyser(final TethysProfile pTask,
                                final MoneyWiseData pData,
                                final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        final MetisProfile myTask = theProfile.startTask("analyseTransactions");
+        final TethysProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
         theHoldingMap = pData.getSecurityHoldingsMap();
@@ -269,12 +269,12 @@ public class TransactionAnalyser
      * @param pTransactions the edited transactions
      * @throws OceanusException on error
      */
-    public TransactionAnalyser(final MetisProfile pTask,
+    public TransactionAnalyser(final TethysProfile pTask,
                                final Analysis pAnalysis,
                                final TransactionList pTransactions) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        final MetisProfile myTask = theProfile.startTask("analyseTransactions");
+        final TethysProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
         theAnalysis = new Analysis(pAnalysis);
@@ -364,7 +364,7 @@ public class TransactionAnalyser
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 
@@ -390,7 +390,7 @@ public class TransactionAnalyser
      */
     public void postProcessAnalysis() throws OceanusException {
         /* Start a new task */
-        final MetisProfile myTask = theProfile.startTask("postProcessAnalysis");
+        final TethysProfile myTask = theProfile.startTask("postProcessAnalysis");
         myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */

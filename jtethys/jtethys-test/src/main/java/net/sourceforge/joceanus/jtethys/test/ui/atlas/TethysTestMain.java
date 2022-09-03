@@ -43,6 +43,7 @@ public class TethysTestMain
         final TethysTestTable myTable = new TethysTestTable(pFactory);
         final TethysTestDate myDates = new TethysTestDate(pFactory);
         final TethysTestDialog myDialogs = new TethysTestDialog(pFactory);
+        final TethysTestThreadPanel myThreads = new TethysTestThreadPanel(pFactory);
         theMain = pFactory.paneFactory().newTabPane();
         theMain.addTabItem("Charts", myCharts.getComponent());
         theMain.addTabItem("Buttons", myButtons.getComponent());
@@ -50,6 +51,7 @@ public class TethysTestMain
         theMain.addTabItem("Table", myTable.getComponent());
         theMain.addTabItem("Dates", myDates.getComponent());
         theMain.addTabItem("Dialogs", myDialogs.getComponent());
+        theMain.addTabItem("Threads", myThreads.getComponent());
     }
 
     @Override

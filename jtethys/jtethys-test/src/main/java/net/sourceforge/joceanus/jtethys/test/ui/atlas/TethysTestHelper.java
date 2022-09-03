@@ -204,7 +204,7 @@ public class TethysTestHelper {
     public <K extends TethysUIIconId> TethysUIIconMapSet<Boolean> buildSimpleIconState(final K pFalseIcon,
                                                                                        final K pTrueIcon) {
         /* Create the state */
-        final TethysUIButtonFactory myButtons = theFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theFactory.buttonFactory();
         final TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
@@ -224,7 +224,7 @@ public class TethysTestHelper {
                                                                                                             final K pAltTrueIcon) {
         /* Create the map */
         final Map<TethysIconState, TethysUIIconMapSet<Boolean>> myMap = new EnumMap<>(TethysIconState.class);
-        final TethysUIButtonFactory myButtons = theFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theFactory.buttonFactory();
 
         /* Create the CLOSED state */
         TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();

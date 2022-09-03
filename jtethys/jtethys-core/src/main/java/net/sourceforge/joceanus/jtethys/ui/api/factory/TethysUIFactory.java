@@ -97,7 +97,7 @@ public interface TethysUIFactory<C> {
      * Obtain the button factory.
      * @return the factory
      */
-    TethysUIButtonFactory buttonFactory();
+    TethysUIButtonFactory<C> buttonFactory();
 
     /**
      * Obtain the chart factory.
@@ -115,7 +115,7 @@ public interface TethysUIFactory<C> {
      * Obtain the dialog factory.
      * @return the factory
      */
-    TethysUIDialogFactory<C> dialogFactory();
+    TethysUIDialogFactory dialogFactory();
 
     /**
      * Obtain the field factory.

@@ -20,10 +20,10 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataTouch.TouchCounter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Class to record reference to a DataItem via another data item.
@@ -51,7 +51,7 @@ public class DataTouch<E extends Enum<E>>
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 
@@ -163,7 +163,7 @@ public class DataTouch<E extends Enum<E>>
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return Integer.toString(theTouches);
         }
 

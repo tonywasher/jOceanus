@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Parent category registration.
@@ -112,7 +112,7 @@ public class QIFParentCategory
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    public void formatRecord(final MetisDataFormatter pFormatter,
+    public void formatRecord(final TethysDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format own record */
         theSelf.formatRecord(pFormatter, pBuilder);

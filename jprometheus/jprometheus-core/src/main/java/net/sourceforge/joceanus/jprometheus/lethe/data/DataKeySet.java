@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -138,7 +138,7 @@ public class DataKeySet
         /* Access the Password manager */
         final DataSet<?, ?> myData = getDataSet();
         final GordianPasswordManager mySecure = myData.getPasswordMgr();
-        final MetisDataFormatter myFormatter = myData.getDataFormatter();
+        final TethysDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Record the security factory */
         theSecurityFactory = mySecure.getSecurityFactory();
@@ -206,7 +206,7 @@ public class DataKeySet
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
             final GordianPasswordManager mySecure = myData.getPasswordMgr();
-            final MetisDataFormatter myFormatter = myData.getDataFormatter();
+            final TethysDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
             theSecurityFactory = mySecure.getSecurityFactory();

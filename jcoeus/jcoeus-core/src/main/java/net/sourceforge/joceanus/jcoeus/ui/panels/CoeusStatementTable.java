@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrol
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;

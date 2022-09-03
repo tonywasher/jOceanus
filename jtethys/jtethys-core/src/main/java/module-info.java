@@ -57,5 +57,5 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.ui.core.menu to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.pane to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.table to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
-    exports net.sourceforge.joceanus.jtethys.ui.core.thread;
+    exports net.sourceforge.joceanus.jtethys.ui.core.thread to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
 }

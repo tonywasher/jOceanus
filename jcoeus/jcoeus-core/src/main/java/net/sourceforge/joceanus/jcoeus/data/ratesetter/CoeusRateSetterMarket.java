@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * RateSetter Market.
@@ -59,7 +59,7 @@ public class CoeusRateSetterMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusRateSetterMarket(final MetisDataFormatter pFormatter) {
+    CoeusRateSetterMarket(final TethysDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.RATESETTER);
 

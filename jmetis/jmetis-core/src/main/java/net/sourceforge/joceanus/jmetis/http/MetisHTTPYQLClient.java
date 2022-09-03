@@ -27,12 +27,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Client to query YQL.
@@ -139,7 +139,7 @@ public class MetisHTTPYQLClient
      * Constructor.
      * @param pFormatter the data formatter
      */
-    public MetisHTTPYQLClient(final MetisDataFormatter pFormatter) {
+    public MetisHTTPYQLClient(final TethysDataFormatter pFormatter) {
         super(YQL_WEBSITE);
         theParser = pFormatter.getDecimalParser();
     }

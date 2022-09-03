@@ -67,20 +67,28 @@ public class MetisFXState {
 
     /**
      * Constructor.
-     * @param pClazz the program definition class
+     * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public MetisFXState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
+    public MetisFXState(final TethysProgram pInfo) throws OceanusException {
         /* Create the program class. */
-        theInfo = new MetisState(pClazz);
+        theInfo = new MetisState(new TethysFXGuiFactory(pInfo));
     }
 
     /**
      * Obtain the program definitions.
      * @return the program definitions
      */
-    TethysProgram getProgramDefinitions() {
+    public TethysProgram getProgramDefinitions() {
         return theInfo.getProgramDefinitions();
+    }
+
+    /**
+     * Obtain the state.
+     * @return the state
+     */
+    public MetisState getState() {
+        return theInfo;
     }
 
     /**
@@ -113,8 +121,9 @@ public class MetisFXState {
      */
     public void createMain() throws OceanusException {
         /* Create the Toolkit */
-        final MetisProgram myDef = (MetisProgram) theInfo.getProgramDefinitions();
-        theToolkit = new MetisFXToolkit(theInfo, myDef.useSliderStatus());
+        final TethysProgram myApp = theInfo.getProgramDefinitions();
+        final MetisProgram myDef = (MetisProgram) myApp;
+        theToolkit = new MetisFXToolkit(this);
 
         /* Create the main panel */
         theMain = createMain(myDef, theToolkit);
@@ -172,10 +181,9 @@ public class MetisFXState {
         /* Access the GUI factory and program definitions */
         final TethysFXGuiFactory myFactory = theToolkit.getGuiFactory();
         final TethysProgram myApp = theInfo.getProgramDefinitions();
-        final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the scene */
-        final int[] myDim = myDef.getPanelDimensions();
+        final int[] myDim = myApp.getPanelDimensions();
         final Scene myScene = myDim == null
                               ? new Scene(thePane)
                               : new Scene(thePane, myDim[0], myDim[1]);

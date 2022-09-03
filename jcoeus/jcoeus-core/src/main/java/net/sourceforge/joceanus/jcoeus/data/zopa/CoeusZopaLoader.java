@@ -30,8 +30,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Zopa Loader.
@@ -70,7 +70,7 @@ public class CoeusZopaLoader {
     /**
      * The formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * The base path.
@@ -82,7 +82,7 @@ public class CoeusZopaLoader {
      * @param pFormatter the formatter
      * @param pPath the path to load from
      */
-    public CoeusZopaLoader(final MetisDataFormatter pFormatter,
+    public CoeusZopaLoader(final TethysDataFormatter pFormatter,
                            final String pPath) {
         /* Store the formatter */
         theFormatter = pFormatter;

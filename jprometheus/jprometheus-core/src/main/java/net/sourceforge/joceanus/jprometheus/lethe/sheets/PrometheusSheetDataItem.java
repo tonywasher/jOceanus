@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -55,7 +55,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     /**
      * The report.
      */
-    private final MetisThreadStatusReport theReport;
+    private final TethysThreadStatusReport theReport;
 
     /**
      * The input sheet.

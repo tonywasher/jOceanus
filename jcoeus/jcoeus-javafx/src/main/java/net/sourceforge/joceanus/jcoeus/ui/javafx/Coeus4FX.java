@@ -52,7 +52,7 @@ public class Coeus4FX
         try {
             /* Create a timer */
             if (theState == null) {
-                theState = new MetisFXState(CoeusApp.class);
+                theState = new MetisFXState(new CoeusApp());
             }
 
             /* Create the main panel */

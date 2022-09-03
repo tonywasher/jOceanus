@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.dialog;
 
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
@@ -29,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  * javaFX Dialog factory.
  */
 public class TethysUIFXDialogFactory
-        implements TethysUIDialogFactory<Color> {
+        implements TethysUIDialogFactory {
     /**
      * The Factory.
      */
@@ -55,11 +54,6 @@ public class TethysUIFXDialogFactory
      */
     public void setStage(final Stage pStage) {
         theStage = pStage;
-    }
-
-    @Override
-    public TethysUIFXColorPicker newColorPicker() {
-        return new TethysUIFXColorPicker(theFactory);
     }
 
     @Override

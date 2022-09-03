@@ -21,7 +21,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Encryptor/Decryptor.
@@ -57,14 +57,14 @@ public class PrometheusEncryptor {
     /**
      * The Data formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor.
      * @param pFormatter the formatter
      * @param pKeySet the keySet
      */
-    PrometheusEncryptor(final MetisDataFormatter pFormatter,
+    PrometheusEncryptor(final TethysDataFormatter pFormatter,
                         final GordianKeySet pKeySet) {
         theFormatter = pFormatter;
         theKeySet = pKeySet;
@@ -145,7 +145,7 @@ public class PrometheusEncryptor {
          * @return the converted bytes.
          * @throws OceanusException on error
          */
-        byte[] convertValue(MetisDataFormatter pFormatter,
+        byte[] convertValue(TethysDataFormatter pFormatter,
                             Object pValue) throws OceanusException;
 
         /**
@@ -155,7 +155,7 @@ public class PrometheusEncryptor {
          * @return the parsed value.
          * @throws OceanusException on error
          */
-        Object parseValue(MetisDataFormatter pFormatter,
+        Object parseValue(TethysDataFormatter pFormatter,
                           byte[] pBytes) throws OceanusException;
     }
 
@@ -166,14 +166,14 @@ public class PrometheusEncryptor {
         implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             final String myDate = pFormatter.getDateFormatter().formatDate((TethysDate) pValue);
             return TethysDataConverter.stringToByteArray(myDate);
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDateString = TethysDataConverter.byteArrayToString(pBytes);
@@ -191,13 +191,13 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             return TethysDataConverter.stringToByteArray(pValue.toString());
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myShortString = TethysDataConverter.byteArrayToString(pBytes);
@@ -214,13 +214,13 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             return TethysDataConverter.stringToByteArray(pValue.toString());
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myIntString = TethysDataConverter.byteArrayToString(pBytes);
@@ -238,13 +238,13 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             return TethysDataConverter.stringToByteArray(pValue.toString());
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myLongString = TethysDataConverter.byteArrayToString(pBytes);
@@ -262,13 +262,13 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             return TethysDataConverter.stringToByteArray(pValue.toString());
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) {
             final String myBoolString = TethysDataConverter.byteArrayToString(pBytes);
             return Boolean.parseBoolean(myBoolString);
@@ -282,13 +282,13 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             return TethysDataConverter.stringToByteArray((String) pValue);
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) {
             return TethysDataConverter.byteArrayToString(pBytes);
         }
@@ -301,13 +301,13 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) throws OceanusException {
             return TethysDataConverter.charsToByteArray((char[]) pValue);
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return TethysDataConverter.bytesToCharArray(pBytes);
         }
@@ -320,14 +320,14 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             final String myDecString = pFormatter.getDecimalFormatter().toCurrencyString((TethysMoney) pValue);
             return TethysDataConverter.stringToByteArray(myDecString);
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
@@ -345,7 +345,7 @@ public class PrometheusEncryptor {
             extends PrometheusMoneyEncryptor {
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
@@ -363,14 +363,14 @@ public class PrometheusEncryptor {
             implements PrometheusDataEncryptor {
 
         @Override
-        public byte[] convertValue(final MetisDataFormatter pFormatter,
+        public byte[] convertValue(final TethysDataFormatter pFormatter,
                                    final Object pValue) {
             final String myDecString = pValue.toString();
             return TethysDataConverter.stringToByteArray(myDecString);
         }
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
@@ -388,7 +388,7 @@ public class PrometheusEncryptor {
             extends PrometheusRatioEncryptor {
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
@@ -406,7 +406,7 @@ public class PrometheusEncryptor {
             extends PrometheusRatioEncryptor {
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
@@ -424,7 +424,7 @@ public class PrometheusEncryptor {
             extends PrometheusRatioEncryptor {
 
         @Override
-        public Object parseValue(final MetisDataFormatter pFormatter,
+        public Object parseValue(final TethysDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);

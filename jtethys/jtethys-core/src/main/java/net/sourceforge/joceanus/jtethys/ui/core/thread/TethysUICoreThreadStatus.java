@@ -18,11 +18,13 @@ package net.sourceforge.joceanus.jtethys.ui.core.thread;
 
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatus;
 
 /**
  * Thread Status.
  */
-public class TethysUICoreThreadStatus {
+public class TethysUICoreThreadStatus
+    implements TethysUIThreadStatus {
     /**
      * Logger.
      */
@@ -89,132 +91,85 @@ public class TethysUICoreThreadStatus {
         theTask = pStatus.getTask();
     }
 
-    /**
-     * Get step.
-     * @return the step name
-     */
+    @Override
     public String getStep() {
         return theStep;
     }
 
-    /**
-     * Get number of steps.
-     * @return number of steps
-     */
+    @Override
     public int getNumSteps() {
         return theNumSteps;
     }
 
-    /**
-     * Get number of steps done.
-     * @return number of steps done
-     */
+    @Override
     public int getStepsDone() {
         return theStepsDone;
     }
 
-    /**
-     * Get stage progress done.
-     * @return stage progress
-     */
+    @Override
     public double getStageProgress() {
         return ((double) theStepsDone) / theNumSteps;
     }
 
-    /**
-     * Get number of stages.
-     * @return number of stages
-     */
+    @Override
     public int getNumStages() {
         return theNumStages;
     }
 
-    /**
-     * Get number of stages done.
-     * @return number of stages done
-     */
+    @Override
     public int getStagesDone() {
         return theStagesDone;
     }
 
-    /**
-     * Get task progress done.
-     * @return task progress
-     */
+    @Override
     public double getTaskProgress() {
         return ((double) theStagesDone) / theNumStages;
     }
 
-    /**
-     * Get name of stage.
-     * @return name of stage
-     */
+    @Override
     public String getStage() {
         return theStage;
     }
 
-    /**
-     * Get name of task.
-     * @return name of task
-     */
+    @Override
     public String getTask() {
         return theTask;
     }
 
-    /**
-     * Set Number of steps in this stage.
-     * @param pValue the value
-     */
+    @Override
     public void setNumSteps(final int pValue) {
         theNumSteps = pValue;
         theStepsDone = -1;
     }
 
-    /**
-     * Set Next step.
-     * @param pStep the next step
-     */
+    @Override
     public void setNextStep(final String pStep) {
         theStep = pStep;
         theStepsDone++;
     }
 
-    /**
-     * Set StepsDone.
-     * @param pSteps the # of steps done
-     */
+    @Override
     public void setStepsDone(final int pSteps) {
         theStepsDone += pSteps;
     }
 
-    /**
-     * Set Next step.
-     */
+    @Override
     public void setNextStep() {
         setNextStep(null);
     }
 
-    /**
-     * Set Number of stages in this task.
-     * @param pValue the value
-     */
+    @Override
     public void setNumStages(final int pValue) {
         theNumStages = pValue;
         theStagesDone = -1;
     }
 
-    /**
-     * Set Number of stages completed in this task.
-     * @param pValue the value
-     */
+    @Override
     public void setStagesDone(final int pValue) {
         theStagesDone = pValue;
     }
 
-    /**
-     * Set name of stage in this task.
-     * @param pValue the value
-     */
+    @Override
     public void setStage(final String pValue) {
         theStage = pValue;
         theStagesDone++;
@@ -223,10 +178,7 @@ public class TethysUICoreThreadStatus {
         theStepsDone = -1;
     }
 
-    /**
-     * Set Name of task.
-     * @param pValue the value
-     */
+    @Override
     public void setTask(final String pValue) {
         theTask = pValue;
         theStep = null;
@@ -237,9 +189,7 @@ public class TethysUICoreThreadStatus {
         theStepsDone = -1;
     }
 
-    /**
-     * Set Completion.
-     */
+    @Override
     public void setCompletion() {
         theStagesDone++;
         theNumSteps = -1;

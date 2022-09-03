@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jtethys.test.ui.atlas;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
@@ -28,7 +27,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAboutBox;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIColorPicker;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
@@ -54,8 +52,8 @@ public class TethysTestDialog {
     TethysTestDialog(final TethysUIFactory<?> pFactory) {
         /* Create the pane */
         final TethysUIPaneFactory myPanes = pFactory.paneFactory();
-        final TethysUIDialogFactory<?> myDialogs = pFactory.dialogFactory();
-        final TethysUIButtonFactory myButtons = pFactory.buttonFactory();
+        final TethysUIDialogFactory myDialogs = pFactory.dialogFactory();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
         final TethysUIControlFactory myControls = pFactory.controlFactory();
         thePane = myPanes.newVBoxPane();
 

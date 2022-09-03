@@ -20,11 +20,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -34,6 +31,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * LoaderThread extension to create an XML backup.
@@ -41,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @param <E> the Data list type
  */
 public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisThread<Void> {
+        implements TethysThread<Void> {
     /**
      * Buffer length.
      */
@@ -86,18 +85,17 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
+    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianPasswordManager myPasswordMgr = ((PrometheusToolkit) pThreadData).getPasswordManager();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
 
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
-            myManager.initTask(getTaskName());
+            pManager.initTask(getTaskName());
 
             /* Access the Backup preferences */
             final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -140,7 +138,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             final T myOldData = theControl.getData();
 
             /* Create a new formatter */
-            final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, myPasswordMgr);
+            final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
 
             /* Create backup */
             if (isSecure) {
@@ -157,20 +155,20 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
                 /* Check for cancellation */
 
                 /* Initialise the status window */
-                myManager.initTask("Reading Backup");
+                pManager.initTask("Reading Backup");
 
                 /* Load workbook */
                 final T myNewData = theControl.getNewData();
                 myFormatter.loadZipFile(myNewData, myFile);
 
                 /* Initialise the security, from the original data */
-                myNewData.initialiseSecurity(myManager, myOldData);
+                myNewData.initialiseSecurity(pManager, myOldData);
 
                 /* Initialise the status window */
-                myManager.initTask("Verifying Backup");
+                pManager.initTask("Verifying Backup");
 
                 /* Create a difference set between the two data copies */
-                final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
+                final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {

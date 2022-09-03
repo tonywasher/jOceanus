@@ -21,7 +21,6 @@ import java.util.Iterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.Securit
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * AssetGains report builder.
@@ -72,7 +72,7 @@ public class MoneyWiseReportAssetGains
     /**
      * The Formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor.

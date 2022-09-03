@@ -21,7 +21,6 @@ import java.util.Iterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxDueBucket.Money
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * TaxCalculation report builder.
@@ -76,7 +76,7 @@ public class MoneyWiseReportTaxCalculation
     /**
      * The Formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor.

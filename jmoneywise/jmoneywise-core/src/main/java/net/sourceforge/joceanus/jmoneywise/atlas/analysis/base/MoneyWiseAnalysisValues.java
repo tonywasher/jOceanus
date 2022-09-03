@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.analysis.base;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
@@ -30,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Analysis Bucket Value.
@@ -106,7 +106,7 @@ public class MoneyWiseAnalysisValues<E extends Enum<E> & MoneyWiseAnalysisAttrib
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 

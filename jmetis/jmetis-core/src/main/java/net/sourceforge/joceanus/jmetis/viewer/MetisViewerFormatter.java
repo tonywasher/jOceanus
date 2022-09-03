@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldSto
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
@@ -149,6 +150,10 @@ public class MetisViewerFormatter {
             /* If we are Stack Trace */
         } else if (myObject instanceof StackTraceElement[]) {
             formatHTMLStackTrace((StackTraceElement[]) myObject);
+
+            /* If we are TethysProfile */
+        } else if (myObject instanceof TethysProfile) {
+            formatHTMLEosFieldItem(new MetisViewerProfileWrapper((TethysProfile) myObject));
 
             /* If we are Throwable */
         } else if (myObject instanceof Throwable) {

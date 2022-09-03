@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Group class for data item.
@@ -65,7 +65,7 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getDataFieldSet().getName() + "(" + size() + ")";
     }
 

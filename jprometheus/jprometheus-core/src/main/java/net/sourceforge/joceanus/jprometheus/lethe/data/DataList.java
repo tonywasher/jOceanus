@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Generic implementation of a DataList for DataItems.
@@ -174,7 +174,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public abstract MetisFields getItemFields();
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 

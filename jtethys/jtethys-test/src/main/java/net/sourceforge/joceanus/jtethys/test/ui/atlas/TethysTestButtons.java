@@ -29,8 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManage
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIColorPicker;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIColorPicker;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
@@ -152,10 +151,9 @@ public class TethysTestButtons {
         theHelper = new TethysTestHelper(theGuiFactory);
 
         /* Create resources */
-        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
         final TethysUIMenuFactory myMenus = theGuiFactory.menuFactory();
         final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
-        final TethysUIDialogFactory<?> myDialogs = theGuiFactory.dialogFactory();
         theContextMenu = myMenus.newContextMenu();
         theScrollButtonMgr = myButtons.newScrollButton(String.class);
         theSimpleIconButtonMgr = myButtons.newIconButton(Boolean.class);
@@ -163,7 +161,7 @@ public class TethysTestButtons {
         theStateButtonMgr = myButtons.newScrollButton(TethysIconState.class);
         theListButtonMgr = myButtons.newListButton();
         theDateButtonMgr = myButtons.newDateButton();
-        theColorPicker = myDialogs.newColorPicker();
+        theColorPicker = myButtons.newColorPicker();
         theContextValue = myControls.newLabel();
         theScrollValue = myControls.newLabel();
         theDateValue = myControls.newLabel();

@@ -24,7 +24,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -48,6 +47,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * DepositRate data type.
@@ -127,7 +127,7 @@ public class DepositRate
         super(pList, pValues);
 
         /* Access the formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -206,7 +206,7 @@ public class DepositRate
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return toString();
     }
 
@@ -219,7 +219,7 @@ public class DepositRate
         final Object myEndDate = myValues.getValue(FIELD_ENDDATE);
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -890,7 +890,7 @@ public class DepositRate
         }
 
         @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
+        public String formatObject(final TethysDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1049,7 +1049,7 @@ public class DepositRate
             }
 
             @Override
-            public String formatObject(final MetisDataFormatter pFormatter) {
+            public String formatObject(final TethysDataFormatter pFormatter) {
                 return theDeposit.formatObject(pFormatter)
                        + "("
                        + size()

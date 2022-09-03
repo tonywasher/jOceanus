@@ -21,7 +21,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
@@ -222,7 +222,7 @@ public abstract class MetisLetheFieldModel<T extends MetisFieldSetItem> {
             super(pFieldSet, pField, pClass);
 
             /* Store formatter value */
-            final MetisDataFormatter myDataFormatter = pFieldSet.getDataFormatter();
+            final TethysDataFormatter myDataFormatter = pFieldSet.getDataFormatter();
             theParser = myDataFormatter.getDecimalParser();
             theFormatter = myDataFormatter.getDecimalFormatter();
             theCurrency = theParser.getDefaultCurrency();

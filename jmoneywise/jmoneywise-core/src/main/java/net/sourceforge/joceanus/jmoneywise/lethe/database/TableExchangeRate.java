@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
@@ -29,6 +28,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDataIt
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * TableEncrypted extension for ExchangeRate.
@@ -44,7 +44,7 @@ public class TableExchangeRate
     /**
      * The formatter.
      */
-    private MetisDataFormatter theFormatter;
+    private TethysDataFormatter theFormatter;
 
     /**
      * Constructor.

@@ -20,6 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
@@ -29,42 +31,23 @@ public class MetisState {
     /**
      * Profile.
      */
-    private final MetisProfile theProfile;
-
-    /**
-     * The program definition.
-     */
-    private final TethysProgram theApp;
+    private final TethysGuiFactory theFactory;
 
     /**
      * Constructor.
-     * @param pClazz the program definition class
-     * @throws OceanusException on error
+     * @param pFactory the factory
      */
-    public MetisState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
-        try {
-            /* Create a timer */
-            theProfile = new MetisProfile("StartUp");
-
-            /* Obtain program details */
-            theApp = pClazz.getDeclaredConstructor().newInstance();
-
-        } catch (InstantiationException
-                | IllegalAccessException
-                | IllegalArgumentException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | SecurityException e) {
-            throw new MetisDataException("failed to access program definitions", e);
-        }
+    public MetisState(final TethysGuiFactory pFactory) {
+        /* Store the factory */
+        theFactory = pFactory;
     }
 
     /**
      * Obtain the profile.
      * @return the profile
      */
-    public MetisProfile getProfile() {
-        return theProfile;
+    public TethysGuiFactory getFactory() {
+        return theFactory;
     }
 
     /**
@@ -72,6 +55,6 @@ public class MetisState {
      * @return the definition
      */
     public TethysProgram getProgramDefinitions() {
-        return theApp;
+        return theFactory.getProgramDefinitions();
     }
 }

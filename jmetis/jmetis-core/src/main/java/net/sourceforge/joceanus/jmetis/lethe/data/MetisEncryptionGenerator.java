@@ -23,7 +23,6 @@ import java.util.Date;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBigDecimal;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBigInteger;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBoolean;
@@ -51,6 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Encrypted field generator.
@@ -69,16 +69,7 @@ public class MetisEncryptionGenerator {
     /**
      * Data formatter.
      */
-    private final MetisDataFormatter theFormatter;
-
-    /**
-     * Constructor.
-     * @param pKeySet the KeySet
-     */
-    public MetisEncryptionGenerator(final GordianKeySet pKeySet) {
-        /* Use new formatter */
-        this(pKeySet, new MetisDataFormatter());
-    }
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor.
@@ -86,7 +77,7 @@ public class MetisEncryptionGenerator {
      * @param pFormatter the formatter
      */
     public MetisEncryptionGenerator(final GordianKeySet pKeySet,
-                                    final MetisDataFormatter pFormatter) {
+                                    final TethysDataFormatter pFormatter) {
         /* Store Parameter */
         theKeySet = pKeySet;
         theFormatter = pFormatter;
@@ -110,74 +101,74 @@ public class MetisEncryptionGenerator {
         MetisEncryptedField<?> myCurrent = pCurrent;
 
         /* If we have no keySet or else a different keySet, ignore the current value */
-        if ((myCurrent != null)
-            && ((theKeySet == null) || (!theKeySet.equals(myCurrent.getKeySet())))) {
+        if (myCurrent != null
+            && (theKeySet == null || !theKeySet.equals(myCurrent.getKeySet()))) {
             myCurrent = null;
         }
 
         /* If the value is not changed return the current value */
-        if ((myCurrent != null)
-            && (MetisDataDifference.isEqual(myCurrent.getValue(), pValue))) {
+        if (myCurrent != null
+            && MetisDataDifference.isEqual(myCurrent.getValue(), pValue)) {
             return pCurrent;
         }
 
         /* We need a new Field so handle each case individually */
-        if (String.class.isInstance(pValue)) {
+        if (pValue instanceof String) {
             return new MetisEncryptedString(theKeySet, theFormatter, (String) pValue);
         }
-        if (Short.class.isInstance(pValue)) {
+        if (pValue instanceof Short) {
             return new MetisEncryptedShort(theKeySet, theFormatter, (Short) pValue);
         }
-        if (Integer.class.isInstance(pValue)) {
+        if (pValue instanceof Integer) {
             return new MetisEncryptedInteger(theKeySet, theFormatter, (Integer) pValue);
         }
-        if (Long.class.isInstance(pValue)) {
+        if (pValue instanceof Long) {
             return new MetisEncryptedLong(theKeySet, theFormatter, (Long) pValue);
         }
-        if (Boolean.class.isInstance(pValue)) {
+        if (pValue instanceof Boolean) {
             return new MetisEncryptedBoolean(theKeySet, theFormatter, (Boolean) pValue);
         }
-        if (Date.class.isInstance(pValue)) {
+        if (pValue instanceof Date) {
             return new MetisEncryptedJavaDate(theKeySet, theFormatter, (Date) pValue);
         }
-        if (char[].class.isInstance(pValue)) {
+        if (pValue instanceof char[]) {
             return new MetisEncryptedCharArray(theKeySet, theFormatter, (char[]) pValue);
         }
-        if (Float.class.isInstance(pValue)) {
+        if (pValue instanceof Float) {
             return new MetisEncryptedFloat(theKeySet, theFormatter, (Float) pValue);
         }
-        if (Double.class.isInstance(pValue)) {
+        if (pValue instanceof Double) {
             return new MetisEncryptedDouble(theKeySet, theFormatter, (Double) pValue);
         }
 
         /* Handle big integer classes */
-        if (BigInteger.class.isInstance(pValue)) {
+        if (pValue instanceof BigInteger) {
             return new MetisEncryptedBigInteger(theKeySet, theFormatter, (BigInteger) pValue);
         }
-        if (BigDecimal.class.isInstance(pValue)) {
+        if (pValue instanceof BigDecimal) {
             return new MetisEncryptedBigDecimal(theKeySet, theFormatter, (BigDecimal) pValue);
         }
 
         /* Handle decimal instances */
-        if (TethysDate.class.isInstance(pValue)) {
+        if (pValue instanceof TethysDate) {
             return new MetisEncryptedDate(theKeySet, theFormatter, (TethysDate) pValue);
         }
-        if (TethysUnits.class.isInstance(pValue)) {
+        if (pValue instanceof TethysUnits) {
             return new MetisEncryptedUnits(theKeySet, theFormatter, (TethysUnits) pValue);
         }
-        if (TethysRate.class.isInstance(pValue)) {
+        if (pValue instanceof TethysRate) {
             return new MetisEncryptedRate(theKeySet, theFormatter, (TethysRate) pValue);
         }
-        if (TethysPrice.class.isInstance(pValue)) {
+        if (pValue instanceof TethysPrice) {
             return new MetisEncryptedPrice(theKeySet, theFormatter, (TethysPrice) pValue);
         }
-        if (TethysMoney.class.isInstance(pValue)) {
+        if (pValue instanceof TethysMoney) {
             return new MetisEncryptedMoney(theKeySet, theFormatter, (TethysMoney) pValue);
         }
-        if (TethysDilution.class.isInstance(pValue)) {
+        if (pValue instanceof TethysDilution) {
             return new MetisEncryptedDilution(theKeySet, theFormatter, (TethysDilution) pValue);
         }
-        if (TethysRatio.class.isInstance(pValue)) {
+        if (pValue instanceof TethysRatio) {
             return new MetisEncryptedRatio(theKeySet, theFormatter, (TethysRatio) pValue);
         }
 

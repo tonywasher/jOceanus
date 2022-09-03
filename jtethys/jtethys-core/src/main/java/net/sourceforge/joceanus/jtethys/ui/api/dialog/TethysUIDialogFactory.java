@@ -18,15 +18,8 @@ package net.sourceforge.joceanus.jtethys.ui.api.dialog;
 
 /**
  * Dialog Factory.
- * @param <C> the color
  */
-public interface TethysUIDialogFactory<C> {
-    /**
-     * Obtain a new colorPicker.
-     * @return the new picker
-     */
-    TethysUIColorPicker<C> newColorPicker();
-
+public interface TethysUIDialogFactory {
     /**
      * Obtain a new fileSelector.
      * @return the new selector

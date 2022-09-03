@@ -25,9 +25,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmetis.MetisIOException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Build a report document.
@@ -231,14 +231,14 @@ public class MetisReportHTMLBuilder {
     /**
      * The data formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor.
      * @param pFormatter the formatter
      * @throws OceanusException on error
      */
-    public MetisReportHTMLBuilder(final MetisDataFormatter pFormatter) throws OceanusException {
+    public MetisReportHTMLBuilder(final TethysDataFormatter pFormatter) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store the formatter */
@@ -260,7 +260,7 @@ public class MetisReportHTMLBuilder {
      * Obtain the data formatter.
      * @return the formatter
      */
-    public MetisDataFormatter getDataFormatter() {
+    public TethysDataFormatter getDataFormatter() {
         return theFormatter;
     }
 

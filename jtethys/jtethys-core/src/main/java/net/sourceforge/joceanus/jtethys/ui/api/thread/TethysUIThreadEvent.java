@@ -26,6 +26,11 @@ public enum TethysUIThreadEvent {
     THREADSTART,
 
     /**
+     * ThreadError.
+     */
+    THREADERROR,
+
+    /**
      * ThreadEnd.
      */
     THREADEND;

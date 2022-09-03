@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * Writer class for QIF Files.
@@ -54,7 +54,7 @@ public class QIFWriter {
     /**
      * Thread Status.
      */
-    private final MetisThreadStatusReport theReport;
+    private final TethysThreadStatusReport theReport;
 
     /**
      * QIF File.
@@ -64,21 +64,21 @@ public class QIFWriter {
     /**
      * Data formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pFile the QIF file.
      */
-    public QIFWriter(final MetisThreadStatusReport pReport,
+    public QIFWriter(final TethysThreadStatusReport pReport,
                      final QIFFile pFile) {
         /* Store parameters */
         theReport = pReport;
         theFile = pFile;
 
         /* Allocate the formatter and set date format */
-        theFormatter = new MetisDataFormatter();
+        theFormatter = new TethysDataFormatter();
         theFormatter.setFormat(QIF_DATEFORMAT);
     }
 

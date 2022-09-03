@@ -25,16 +25,16 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadData;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Thread Manager.
  */
 public abstract class TethysUICoreThreadManager
-        implements TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadManager, TethysUIThreadStatusReport {
+        implements TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadManager {
     /**
      * Default Reporting Steps.
      */
@@ -58,7 +58,7 @@ public abstract class TethysUICoreThreadManager
     /**
      * The StatusManager.
      */
-    private final TethysUICoreThreadStatusManager theStatusManager;
+    private final TethysUIThreadStatusManager theStatusManager;
 
     /**
      * The status data.
@@ -68,7 +68,7 @@ public abstract class TethysUICoreThreadManager
     /**
      * The ThreadData.
      */
-    private TethysUIThreadData theThreadData;
+    private Object theThreadData;
 
     /**
      * The Active thread.
@@ -124,11 +124,8 @@ public abstract class TethysUICoreThreadManager
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the status manager.
-     * @return the status Manager
-     */
-    public TethysUICoreThreadStatusManager getStatusManager() {
+    @Override
+    public TethysUIThreadStatusManager getStatusManager() {
         return theStatusManager;
     }
 
@@ -146,7 +143,7 @@ public abstract class TethysUICoreThreadManager
     }
 
     @Override
-    public void setThreadData(final TethysUIThreadData pThreadData) {
+    public void setThreadData(final Object pThreadData) {
         theThreadData = pThreadData;
     }
 
@@ -160,11 +157,8 @@ public abstract class TethysUICoreThreadManager
         return theError;
     }
 
-    /**
-     * Get the thread Data.
-     * @return the threadData
-     */
-    protected TethysUIThreadData getThreadData() {
+    @Override
+    public Object getThreadData() {
         return theThreadData;
     }
 
@@ -188,7 +182,7 @@ public abstract class TethysUICoreThreadManager
             theExecutor.execute(myRunnable);
 
             /* Note that thread has started */
-            theEventManager.fireEvent(TethysUIThreadEvent.THREADSTART);
+            theEventManager.fireEvent(TethysUIThreadEvent.THREADSTART, theThread);
         }
     }
 
@@ -201,7 +195,7 @@ public abstract class TethysUICoreThreadManager
         boolean myResult = true;
         try {
             /* Prepare the task and continue */
-            theThread.prepareTask(theThreadData);
+            theThread.prepareTask(this);
 
             /* Catch exceptions */
         } catch (OceanusException e) {
@@ -383,6 +377,9 @@ public abstract class TethysUICoreThreadManager
     protected void setError(final Throwable pException) {
         /* Record the error */
         theError = pException;
+
+        /* Note that thread has an error */
+        theEventManager.fireEvent(TethysUIThreadEvent.THREADERROR, theError);
     }
 
     @Override

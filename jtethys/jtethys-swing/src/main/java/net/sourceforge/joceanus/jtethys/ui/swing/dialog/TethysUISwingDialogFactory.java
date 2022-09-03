@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing.dialog;
 
-import java.awt.Color;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
@@ -29,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  * swing Dialog factory.
  */
 public class TethysUISwingDialogFactory
-        implements TethysUIDialogFactory<Color> {
+        implements TethysUIDialogFactory {
     /**
      * The Factory.
      */
@@ -55,11 +54,6 @@ public class TethysUISwingDialogFactory
      */
     public void setFrame(final JFrame pFrame) {
         theFrame = pFrame;
-    }
-
-    @Override
-    public TethysUISwingColorPicker newColorPicker() {
-        return new TethysUISwingColorPicker(theFactory);
     }
 
     @Override

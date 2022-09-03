@@ -17,10 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -28,12 +24,14 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
  */
 public class MoneyWiseThreadLoadArchive
-        implements MetisThread<MoneyWiseData> {
+        implements TethysThread<MoneyWiseData> {
     /**
      * Data Control.
      */
@@ -53,28 +51,25 @@ public class MoneyWiseThreadLoadArchive
     }
 
     @Override
-    public MoneyWiseData performTask(final MetisThreadData pThreadData) throws OceanusException {
-        /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-
+    public MoneyWiseData performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
-        myManager.initTask(getTaskName());
+        pManager.initTask(getTaskName());
 
         /* Load workbook */
-        final MetisPreferenceManager myMgr = myToolkit.getPreferenceManager();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final MetisPreferenceManager myMgr = myPromToolkit.getToolkit().getPreferenceManager();
         final ArchiveLoader myLoader = new ArchiveLoader();
         final MoneyWiseData myData = theView.getNewData();
-        myLoader.loadArchive(myManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
+        myLoader.loadArchive(pManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 
         /* Initialise the status window */
-        myManager.initTask("Analysing Data");
+        pManager.initTask("Analysing Data");
 
         /* Analyse the Data to ensure that close dates are updated */
         theView.analyseData(myData);
 
         /* Initialise the status window */
-        myManager.initTask("Accessing DataStore");
+        pManager.initTask("Accessing DataStore");
 
         /* Create interface */
         final PrometheusDataStore<MoneyWiseData> myDatabase = theView.getDatabase();
@@ -83,19 +78,19 @@ public class MoneyWiseThreadLoadArchive
         try {
             /* Load underlying database */
             final MoneyWiseData myStore = theView.getNewData();
-            myDatabase.loadDatabase(myManager, myStore);
+            myDatabase.loadDatabase(pManager, myStore);
 
             /* Check security on the database */
-            myStore.checkSecurity(myManager);
+            myStore.checkSecurity(pManager);
 
             /* Initialise the security, either from database or with a new security control */
-            myData.initialiseSecurity(myManager, myStore);
+            myData.initialiseSecurity(pManager, myStore);
 
             /* Re-base the loaded spreadsheet onto the database image */
-            myData.reBase(myManager, myStore);
+            myData.reBase(pManager, myStore);
 
             /* State that we have completed */
-            myManager.setCompletion();
+            pManager.setCompletion();
 
             /* Return the loaded data */
             return myData;

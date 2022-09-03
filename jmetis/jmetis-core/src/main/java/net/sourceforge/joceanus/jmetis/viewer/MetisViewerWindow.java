@@ -183,13 +183,18 @@ public class MetisViewerWindow
      * Initialise tree.
      */
     private void initialiseTree() {
+        /* Set up root */
+        final TethysTreeItem<MetisViewerEntry> myRoot = theTree.getRoot();
+        theTree.setRootName(MetisViewerResource.VIEWER_ROOT.getValue());
+        theTree.setRootVisible();
+
         /* Loop through the root children */
         final Iterator<MetisViewerEntry> myIterator = theDataManager.rootIterator();
         while (myIterator.hasNext()) {
             final MetisViewerEntry myEntry = myIterator.next();
 
             /* Create a new root entry */
-            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
+            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.addChildItem(myRoot, myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */

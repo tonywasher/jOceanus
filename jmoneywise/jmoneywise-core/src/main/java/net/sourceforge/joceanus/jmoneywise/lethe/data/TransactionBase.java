@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedMoney;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Transaction data type.
@@ -144,7 +144,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super(pList, pValues);
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -243,7 +243,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return toString();
     }
 
@@ -261,7 +261,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         final Object myAmount = myValues.getValue(FIELD_AMOUNT);
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();

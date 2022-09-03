@@ -28,11 +28,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXColorButtonField;
@@ -92,28 +92,11 @@ public class TethysFXGuiFactory
 
     /**
      * Constructor.
-     */
-    public TethysFXGuiFactory() {
-        this(null);
-    }
-
-    /**
-     * Constructor.
      * @param pApp the program definition
      */
     public TethysFXGuiFactory(final TethysProgram pApp) {
-        this(new TethysDataFormatter(), pApp);
-    }
-
-    /**
-     * Constructor.
-     * @param pFormatter the formatter
-     * @param pApp the program definition
-     */
-    public TethysFXGuiFactory(final TethysDataFormatter pFormatter,
-                              final TethysProgram pApp) {
         /* Initialise class */
-        super(pFormatter, pApp);
+        super(pApp);
         theScenes = new ArrayList<>();
 
         /* Create event manager */
@@ -507,5 +490,15 @@ public class TethysFXGuiFactory
     @Override
     public TethysChildDialog newChildDialog() {
         return new TethysFXChildDialog(this, theStage);
+    }
+
+    @Override
+    public TethysThreadManager newThreadManager() {
+        return new TethysFXThreadManager(this, getProgramDefinitions().useSliderStatus());
+    }
+
+    @Override
+    protected TethysFXThreadProgressStatus newThreadSliderStatus(final TethysThreadManager pManager) {
+        return new TethysFXThreadProgressStatus(pManager, this);
     }
 }

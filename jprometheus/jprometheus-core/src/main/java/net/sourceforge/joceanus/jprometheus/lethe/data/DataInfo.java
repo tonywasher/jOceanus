@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -246,7 +246,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         /* Access Info Type Value */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
@@ -258,7 +258,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         final I myInfoType = getInfoType();
 
         /* Access formatter */
-        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
         final S myInfoClass = myInfoType.getStaticClass();
 
         /* Switch on type of Data */
@@ -578,7 +578,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
 
         /* Access the DataSet and parser */
         final DataSet<?, ?> myDataSet = getDataSet();
-        final MetisDataFormatter myFormatter = myDataSet.getDataFormatter();
+        final TethysDataFormatter myFormatter = myDataSet.getDataFormatter();
         final TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
@@ -665,7 +665,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setIntegerValue(final MetisDataFormatter pFormatter,
+    private boolean setIntegerValue(final TethysDataFormatter pFormatter,
                                     final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */

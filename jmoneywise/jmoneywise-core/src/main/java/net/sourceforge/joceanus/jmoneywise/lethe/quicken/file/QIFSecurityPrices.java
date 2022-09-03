@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * Security Price List.
@@ -120,7 +120,7 @@ public class QIFSecurityPrices
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatPrices(final MetisDataFormatter pFormatter,
+    protected void formatPrices(final TethysDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Loop through the prices */
         final Iterator<QIFPrice> myIterator = thePrices.iterator();

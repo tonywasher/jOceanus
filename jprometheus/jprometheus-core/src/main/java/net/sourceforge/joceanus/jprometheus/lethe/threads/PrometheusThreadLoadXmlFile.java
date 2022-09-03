@@ -21,10 +21,6 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -34,6 +30,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
+import net.sourceforge.joceanus.jtethys.ui.TethysThread;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 
 /**
  * LoaderThread extension to load an XML backup.
@@ -41,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
  * @param <E> the Data list type
  */
 public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisThread<T> {
+        implements TethysThread<T> {
     /**
      * Select Backup Task.
      */
@@ -66,14 +64,13 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     }
 
     @Override
-    public T performTask(final MetisThreadData pThreadData) throws OceanusException {
+    public T performTask(final TethysThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
-        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
-        final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianPasswordManager myPasswordMgr = ((PrometheusToolkit) pThreadData).getPasswordManager();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
 
         /* Initialise the status window */
-        myManager.initTask(getTaskName());
+        pManager.initTask(getTaskName());
 
         /* Access the Sheet preferences */
         final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -83,7 +80,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         final File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
 
         /* Determine the name of the file to load */
-        final TethysFileSelector myDialog = myToolkit.getGuiFactory().newFileSelector();
+        final TethysFileSelector myDialog = myPromToolkit.getToolkit().getGuiFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);
@@ -92,11 +89,11 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            myManager.throwCancelException();
+            pManager.throwCancelException();
         }
 
         /* Create a new formatter */
-        final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, myPasswordMgr);
+        final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
 
         /* Load data */
         final T myNewData = theControl.getNewData();
@@ -107,19 +104,19 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
 
         /* Load underlying database */
         final T myStore = theControl.getNewData();
-        myDatabase.loadDatabase(myManager, myStore);
+        myDatabase.loadDatabase(pManager, myStore);
 
         /* Check security on the database */
-        myStore.checkSecurity(myManager);
+        myStore.checkSecurity(pManager);
 
         /* Initialise the security, either from database or with a new security control */
-        myNewData.initialiseSecurity(myManager, myStore);
+        myNewData.initialiseSecurity(pManager, myStore);
 
         /* Re-base the loaded backup onto the database image */
-        myNewData.reBase(myManager, myStore);
+        myNewData.reBase(pManager, myStore);
 
         /* State that we have completed */
-        myManager.setCompletion();
+        pManager.setCompletion();
 
         /* Return the Data */
         return myNewData;

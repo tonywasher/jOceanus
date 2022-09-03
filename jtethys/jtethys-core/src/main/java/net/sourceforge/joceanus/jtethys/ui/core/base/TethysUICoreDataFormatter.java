@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.base;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -74,6 +76,11 @@ public class TethysUICoreDataFormatter
     }
 
     /**
+     * Extensions.
+     */
+    private final List<TethysUIDataFormatterExtension> theExtensions;
+
+    /**
      * Constructor.
      * @param pLocale the locale
      */
@@ -81,6 +88,7 @@ public class TethysUICoreDataFormatter
         theDateFormatter = new TethysDateFormatter(pLocale);
         theDecimalFormatter = new TethysDecimalFormatter(pLocale);
         theDecimalParser = new TethysDecimalParser(pLocale);
+        theExtensions = new ArrayList<>();
     }
 
     @Override
@@ -96,6 +104,11 @@ public class TethysUICoreDataFormatter
     @Override
     public TethysDecimalParser getDecimalParser() {
         return theDecimalParser;
+    }
+
+    @Override
+    public void extendFormatter(final TethysUIDataFormatterExtension pExtension) {
+        theExtensions.add(pExtension);
     }
 
     @Override
@@ -135,6 +148,14 @@ public class TethysUICoreDataFormatter
         /* Handle null value */
         if (pValue == null) {
             return null;
+        }
+
+        /* Loop through extensions */
+        for (TethysUIDataFormatterExtension myExtension : theExtensions) {
+            final String myResult = myExtension.formatObject(pValue);
+            if (myResult != null) {
+                return myResult;
+            }
         }
 
         /* Access the class */
@@ -201,6 +222,18 @@ public class TethysUICoreDataFormatter
         /* Handle decimal classes */
         if (pValue instanceof TethysDecimal) {
             return theDecimalFormatter.formatDecimal((TethysDecimal) pValue);
+        }
+
+
+        /* Handle TethysProfile */
+        if (pValue instanceof TethysProfile) {
+            /* Format the profile */
+            final TethysProfile myProfile = (TethysProfile) pValue;
+            return myProfile.getName()
+                    + ": "
+                    + (myProfile.isRunning()
+                        ? myProfile.getStatus()
+                        : myProfile.getElapsed());
         }
 
         /* Handle OceanusExceptions */

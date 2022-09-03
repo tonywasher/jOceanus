@@ -18,8 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -38,6 +36,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * SheetDataItem extension for Transaction.
@@ -154,7 +154,7 @@ public class SheetTransaction
      * @param pLoader the archive loader
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final MetisThreadStatusReport pReport,
+    protected static void loadArchive(final TethysThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
@@ -216,7 +216,7 @@ public class SheetTransaction
             myList.validateOnLoad();
 
             /* Handle Exceptions */
-        } catch (MetisThreadCancelException e) {
+        } catch (TethysThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);

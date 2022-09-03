@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatus;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
@@ -33,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  */
 public abstract class TethysUICoreThreadTextAreaStatus
         extends TethysUICoreComponent
-        implements TethysUICoreThreadStatusManager {
+        implements TethysUIThreadStatusManager {
     /**
      * Cancel button text.
      */
@@ -82,7 +84,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
     /**
      * The current status.
      */
-    private TethysUICoreThreadStatus theStatus;
+    private TethysUIThreadStatus theStatus;
 
     /**
      * The TextPosition.
@@ -109,7 +111,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
         theTextArea = myControls.newTextArea();
 
         /* Create buttons */
-        final TethysUIButtonFactory myButtons = pFactory.buttonFactory();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
         theCancelButton = myButtons.newButton();
         theCancelButton.setTextOnly();
         theCancelButton.setText(NLS_CANCEL);
@@ -162,15 +164,15 @@ public abstract class TethysUICoreThreadTextAreaStatus
     }
 
     @Override
-    public void setProgress(final TethysUICoreThreadStatus pStatus) {
+    public void setProgress(final TethysUIThreadStatus pStatus) {
         /* Set new status */
-        final TethysUICoreThreadStatus myOld = theStatus;
+        final TethysUIThreadStatus myOld = theStatus;
         theStatus = pStatus;
 
         /* Handle new task */
         final String myNewTask = pStatus.getTask();
-        if ((myNewTask != null)
-                && (!myNewTask.equals(myOld.getTask()))) {
+        if (myNewTask != null
+            && !myNewTask.equals(myOld.getTask())) {
             setNewStage(myNewTask);
             return;
         }
@@ -185,11 +187,12 @@ public abstract class TethysUICoreThreadTextAreaStatus
         /* Handle new step */
         final int myStepsDone = pStatus.getStepsDone();
         if (myStepsDone != myOld.getStepsDone()) {
+            final String myStep = pStatus.getStep() == null
+                    ? "" : (": " + pStatus.getStep());
             final String myDone = (myStepsDone + 1)
                     + " of "
                     + pStatus.getNumSteps()
-                    + ": "
-                    + pStatus.getStep();
+                    + myStep;
             setNewStep(myDone);
         }
 
@@ -234,15 +237,17 @@ public abstract class TethysUICoreThreadTextAreaStatus
      */
     private void completeStatus(final String pStatus) {
         /* Append the text */
-        theTextArea.appendText(pStatus);
+        theTextArea.replaceText(pStatus, theStatusPosition, thePosition);
         thePosition = theStatusPosition + pStatus.length();
         theTextArea.appendText("\n");
         thePosition++;
+        theStatusPosition = thePosition;
         theTextArea.setCaretPosition(thePosition);
 
         /* Hide the cancel button */
         theCancelButton.setVisible(false);
         theThreadManager.threadCompleted();
+        theStatus = new TethysUICoreThreadStatus();
     }
 
     @Override

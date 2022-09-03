@@ -27,6 +27,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatus;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
@@ -35,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  */
 public abstract class TethysUICoreThreadProgressStatus
         extends TethysUICoreComponent
-        implements TethysUICoreThreadStatusManager {
+        implements TethysUIThreadStatusManager {
     /**
      * Timer duration.
      */
@@ -127,29 +129,9 @@ public abstract class TethysUICoreThreadProgressStatus
     private final TethysUIProgressBar theStageProgress;
 
     /**
-     * Cancel Button.
-     */
-    private final TethysUIButton theCancelButton;
-
-    /**
      * Status Label.
      */
     private final TethysUILabel theStatusField;
-
-    /**
-     * Clear Button.
-     */
-    private final TethysUIButton theClearButton;
-
-    /**
-     * The Status Node.
-     */
-    private final TethysUIBorderPaneManager theStatusNode;
-
-    /**
-     * The Progress Node.
-     */
-    private final TethysUIBorderPaneManager theProgressNode;
 
     /**
      * The Stage Panel.
@@ -191,21 +173,21 @@ public abstract class TethysUICoreThreadProgressStatus
         theStageProgress = myControls.newProgressBar();
 
         /* Create buttons */
-        final TethysUIButtonFactory myButtons = theGuiFactory.buttonFactory();
-        theCancelButton = myButtons.newButton();
-        theCancelButton.setTextOnly();
-        theCancelButton.setText(NLS_CANCEL);
-        theClearButton = myButtons.newButton();
-        theClearButton.setTextOnly();
-        theClearButton.setText(NLS_CLEAR);
+        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButton myCancelButton = myButtons.newButton();
+        myCancelButton.setTextOnly();
+        myCancelButton.setText(NLS_CANCEL);
+        final TethysUIButton myClearButton = myButtons.newButton();
+        myClearButton.setTextOnly();
+        myClearButton.setText(NLS_CLEAR);
 
         /* Create the status pane */
         final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
-        theStatusNode = myPanes.newBorderPane();
-        theStatusNode.setHGap(GAP_WIDTH);
-        theStatusNode.setCentre(theStatusField);
-        theStatusNode.setWest(theClearButton);
-        theStatusNode.setBorderTitle(NLS_STATUS);
+        final TethysUIBorderPaneManager myStatusNode = myPanes.newBorderPane();
+        myStatusNode.setHGap(GAP_WIDTH);
+        myStatusNode.setCentre(theStatusField);
+        myStatusNode.setWest(myClearButton);
+        myStatusNode.setBorderTitle(NLS_STATUS);
 
         /* Create the task progress pane */
         final TethysUIBorderPaneManager myTaskProgress = myPanes.newBorderPane();
@@ -228,20 +210,20 @@ public abstract class TethysUICoreThreadProgressStatus
         myProgressGrid.allowCellGrowth(theStagePanel);
 
         /* Create the progress pane */
-        theProgressNode = myPanes.newBorderPane();
-        theProgressNode.setHGap(GAP_WIDTH);
-        theProgressNode.setCentre(myProgressGrid);
-        theProgressNode.setEast(theCancelButton);
-        theProgressNode.setBorderTitle(NLS_PROGRESS);
+        final TethysUIBorderPaneManager myProgressNode = myPanes.newBorderPane();
+        myProgressNode.setHGap(GAP_WIDTH);
+        myProgressNode.setCentre(myProgressGrid);
+        myProgressNode.setEast(myCancelButton);
+        myProgressNode.setBorderTitle(NLS_PROGRESS);
 
         /* Create the basic Pane */
         theNode = myPanes.newCardPane();
-        theNode.addCard(PANEL_STATUS, theStatusNode);
-        theNode.addCard(PANEL_PROGRESS, theProgressNode);
+        theNode.addCard(PANEL_STATUS, myStatusNode);
+        theNode.addCard(PANEL_PROGRESS, myProgressNode);
 
         /* Create listeners */
-        theCancelButton.getEventRegistrar().addEventListener(e -> handleCancel());
-        theClearButton.getEventRegistrar().addEventListener(e -> handleClear());
+        myCancelButton.getEventRegistrar().addEventListener(e -> handleCancel());
+        myClearButton.getEventRegistrar().addEventListener(e -> handleClear());
     }
 
     @Override
@@ -281,7 +263,7 @@ public abstract class TethysUICoreThreadProgressStatus
     }
 
     @Override
-    public void setProgress(final TethysUICoreThreadStatus pStatus) {
+    public void setProgress(final TethysUIThreadStatus pStatus) {
         /* Obtain the stage name */
         final String myStage = pStatus.getStage();
 

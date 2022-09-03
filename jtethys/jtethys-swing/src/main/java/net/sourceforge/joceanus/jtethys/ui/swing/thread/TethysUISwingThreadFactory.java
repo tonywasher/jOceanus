@@ -43,7 +43,7 @@ public class TethysUISwingThreadFactory
      */
    public TethysUISwingThreadFactory(final TethysUICoreFactory<?> pFactory,
                                      final boolean pSlider) {
-        theFactory = pFactory;
+       theFactory = pFactory;
        useSlider = pSlider;
     }
 

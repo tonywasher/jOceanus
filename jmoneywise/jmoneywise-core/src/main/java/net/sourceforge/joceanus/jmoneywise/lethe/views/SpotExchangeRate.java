@@ -87,6 +87,7 @@ public final class SpotExchangeRate
 
         /* Store base values */
         setDate(pList.theDate);
+        setFromCurrency(pList.getCurrency());
         setToCurrency(pCurrency);
     }
 

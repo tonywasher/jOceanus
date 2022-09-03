@@ -24,15 +24,12 @@ import java.util.Map.Entry;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey.ControlKeyList;
@@ -41,6 +38,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -154,7 +154,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * General formatter.
      */
-    private final MetisDataFormatter theFormatter;
+    private final TethysDataFormatter theFormatter;
 
     /**
      * Constructor for new empty DataSet.
@@ -207,7 +207,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public String formatObject(final MetisDataFormatter pFormatter) {
+    public String formatObject(final TethysDataFormatter pFormatter) {
         return DataSet.class.getSimpleName();
     }
 
@@ -215,7 +215,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the data formatter.
      * @return the formatter
      */
-    public MetisDataFormatter getDataFormatter() {
+    public TethysDataFormatter getDataFormatter() {
         return theFormatter;
     }
 
@@ -400,7 +400,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the difference set
      * @throws OceanusException on error
      */
-    public abstract T getDifferenceSet(MetisThreadStatusReport pReport,
+    public abstract T getDifferenceSet(TethysThreadStatusReport pReport,
                                        T pOld) throws OceanusException;
 
     /**
@@ -413,12 +413,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pOld The old list to compare
      * @throws OceanusException on error
      */
-    protected void deriveDifferences(final MetisThreadStatusReport pReport,
+    protected void deriveDifferences(final TethysThreadStatusReport pReport,
                                      final T pNew,
                                      final T pOld) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_DATADIFF);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_DATADIFF);
 
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
@@ -453,11 +453,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pOld The old data to reBase against
      * @throws OceanusException on error
      */
-    public void reBase(final MetisThreadStatusReport pReport,
+    public void reBase(final TethysThreadStatusReport pReport,
                        final T pOld) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_DATAREBASE);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
         /* ReBase the security items */
         boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
@@ -788,11 +788,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pBase the database data
      * @throws OceanusException on error
      */
-    public void initialiseSecurity(final MetisThreadStatusReport pReport,
+    public void initialiseSecurity(final TethysThreadStatusReport pReport,
                                    final T pBase) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_SECINIT);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_SECINIT);
 
         /* Set the number of stages */
         pReport.initTask(TASK_SECINIT);
@@ -831,10 +831,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void renewSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void renewSecurity(final TethysThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_SECRENEW);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_SECRENEW);
 
         /* Access ControlData */
         final ControlData myControl = getControl();
@@ -857,10 +857,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void checkSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void checkSecurity(final TethysThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_SECCHECK);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {
@@ -883,7 +883,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void updateSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
+    public void updateSecurity(final TethysThreadStatusReport pReport) throws OceanusException {
         /* Access the control key */
         final ControlKey myControl = getControlKey();
 
@@ -930,7 +930,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pSource the source of the data
      * @throws OceanusException on error
      */
-    public void updatePasswordHash(final MetisThreadStatusReport pReport,
+    public void updatePasswordHash(final TethysThreadStatusReport pReport,
                                    final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
         final GordianKeySetHash myHash = thePasswordMgr.newKeySetHash(pSource);

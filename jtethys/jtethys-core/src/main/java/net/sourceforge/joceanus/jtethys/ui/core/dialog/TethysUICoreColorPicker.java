@@ -21,7 +21,7 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIColorPicker;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIColorPicker;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
