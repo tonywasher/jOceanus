@@ -20,7 +20,6 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 import java.util.EnumMap;
@@ -205,7 +205,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void incrementVersion() {
         /* Obtain the active profile */
-        final MetisProfile myTask = theControl.getNewProfile("incrementVersion");
+        final TethysProfile myTask = theControl.getNewProfile("incrementVersion");
 
         /* Increment the version */
         theVersion++;
@@ -242,8 +242,8 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
-        final MetisProfile myTask = theControl.getActiveTask();
-        MetisProfile mySubTask = myTask.startTask("reWindToVersion");
+        final TethysProfile myTask = theControl.getActiveTask();
+        TethysProfile mySubTask = myTask.startTask("reWindToVersion");
 
         /* Record the version */
         theVersion = pVersion;
@@ -332,7 +332,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void applyChanges() {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getActiveTask();
+        TethysProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("applyChanges");
 
         /* Validate the changes */
@@ -387,7 +387,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private boolean prepareChanges() {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getActiveTask();
+        TethysProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("prepareChanges");
         boolean bSuccess = true;
 
@@ -420,7 +420,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void commitChanges() {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getActiveTask();
+        TethysProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("commitChanges");
 
         /* Loop through the items in the list */
@@ -448,7 +448,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void rollBackChanges() {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getActiveTask();
+        TethysProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("rollBackChanges");
 
         /* Loop through the items in the list */
@@ -503,7 +503,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void validate() {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getActiveTask();
+        TethysProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("validate");
 
         /* Loop through the items in the list */
@@ -558,7 +558,7 @@ public class UpdateSet<E extends Enum<E>>
     public void processCommand(final PrometheusUIEvent pCmd,
                                final MetisErrorPanel pError) {
         /* Create a new profile */
-        final MetisProfile myTask = theControl.getNewProfile("EditCommand");
+        final TethysProfile myTask = theControl.getNewProfile("EditCommand");
 
         /* Switch on command */
         switch (pCmd) {
@@ -597,7 +597,7 @@ public class UpdateSet<E extends Enum<E>>
                                    final int pVersion,
                                    final MetisErrorPanel pError) {
         /* Create a new profile */
-        final MetisProfile myTask = theControl.getNewProfile("ItemCommand");
+        final TethysProfile myTask = theControl.getNewProfile("ItemCommand");
 
         /* Switch on command */
         switch (pCmd) {

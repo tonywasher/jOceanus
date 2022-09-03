@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * Report status.
@@ -93,5 +93,5 @@ public interface MetisThreadStatusReport {
      * Obtain the active task.
      * @return the active task
      */
-    MetisProfile getActiveTask();
+    TethysProfile getActiveTask();
 }

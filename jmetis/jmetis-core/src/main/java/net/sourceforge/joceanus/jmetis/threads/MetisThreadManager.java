@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferenceKey;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadPreference.MetisThreadPreferences;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -31,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
@@ -86,7 +86,7 @@ public abstract class MetisThreadManager
     /**
      * The Active Profile.
      */
-    private MetisProfile theProfile;
+    private TethysProfile theProfile;
 
     /**
      * The Error.
@@ -430,12 +430,12 @@ public abstract class MetisThreadManager
      * Obtain the active profile.
      * @return the active profile
      */
-    public MetisProfile getActiveProfile() {
+    public TethysProfile getActiveProfile() {
         return theProfile;
     }
 
     @Override
-    public MetisProfile getActiveTask() {
+    public TethysProfile getActiveTask() {
         return theProfile == null
                                   ? null
                                   : theProfile.getActiveTask();

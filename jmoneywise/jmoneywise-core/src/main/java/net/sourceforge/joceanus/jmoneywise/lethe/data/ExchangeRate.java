@@ -199,9 +199,19 @@ public class ExchangeRate
 
     @Override
     public String toString() {
-        return getDate() + " " + getFromCurrency().getCurrency().getCurrencyCode() + ":"
-               + getToCurrency().getCurrency().getCurrencyCode() + "="
-               + getExchangeRate().toString();
+        /* Access formatter */
+        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Create string builder */
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myFormatter.formatObject(getDate()));
+        myBuilder.append(" ");
+        myBuilder.append(myFormatter.formatObject(getFromCurrency().getCurrency().getCurrencyCode()));
+        myBuilder.append(": ");
+        myBuilder.append(myFormatter.formatObject(getToCurrency().getCurrency().getCurrencyCode()));
+        myBuilder.append('=');
+        myBuilder.append(myFormatter.formatObject(getExchangeRate()));
+        return myBuilder.toString();
     }
 
     @Override

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
@@ -206,7 +206,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         theThreadMgr = theToolkit.getThreadManager();
 
         /* Obtain the active profile */
-        final MetisProfile myTask = theView.getActiveTask();
+        final TethysProfile myTask = theView.getActiveTask();
         myTask.startTask("buildGUI");
 
         /* Create the panel */
@@ -474,7 +474,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void undoLastEdit() {
         /* Create a new profile */
-        final MetisProfile myTask = theView.getNewProfile("unDoLastEdit");
+        final TethysProfile myTask = theView.getNewProfile("unDoLastEdit");
 
         /* Undo the last edit */
         theView.undoLastChange();
@@ -491,7 +491,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void resetEdit() {
         /* Create a new profile */
-        final MetisProfile myTask = theView.getNewProfile("resetEdit");
+        final TethysProfile myTask = theView.getNewProfile("resetEdit");
 
         /* Reset the edit View */
         theView.resetChanges();

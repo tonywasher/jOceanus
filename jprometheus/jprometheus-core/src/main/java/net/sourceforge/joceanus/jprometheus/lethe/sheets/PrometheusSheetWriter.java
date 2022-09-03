@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvide
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * Write control for spreadsheets.
@@ -115,7 +115,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theReport.getActiveTask();
+        TethysProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
@@ -189,7 +189,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      */
     private void writeWorkBook(final OutputStream pStream) throws OceanusException {
         /* Obtain the active profile */
-        final MetisProfile myTask = theReport.getActiveTask();
+        final TethysProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);

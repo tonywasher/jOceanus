@@ -47,6 +47,11 @@ public class MetisViewerProfileWrapper
     }
 
     /**
+     * Report fields.
+     */
+    private final MetisFieldSet<MetisViewerProfileWrapper> theFields = MetisFieldSet.newFieldSet(this);
+
+    /**
      * The wrapped profile.
      */
     private final TethysProfile theWrapped;
@@ -60,17 +65,16 @@ public class MetisViewerProfileWrapper
         theWrapped = pProfile;
 
         /* Loop through the subtasks */
-        final MetisFieldSet<MetisViewerProfileWrapper> myFields = MetisFieldSet.newFieldSet(this);
         final Iterator<TethysProfile> myIterator = theWrapped.subTaskIterator();
         while (myIterator.hasNext()) {
             final TethysProfile mySubTask = myIterator.next();
-            myFields.declareLocalField(mySubTask.getName(), p -> new MetisViewerProfileWrapper(mySubTask));
+            theFields.declareLocalField(mySubTask.getName(), p -> mySubTask);
         }
     }
 
     @Override
     public MetisFieldSet<MetisViewerProfileWrapper> getDataFieldSet() {
-        return FIELD_DEFS;
+        return theFields;
     }
 
     @Override

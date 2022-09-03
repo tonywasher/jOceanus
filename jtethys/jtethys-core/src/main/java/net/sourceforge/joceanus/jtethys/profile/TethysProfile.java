@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jtethys.profile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class TethysProfile {
      * @return the iterator
      */
     public Iterator<TethysProfile> subTaskIterator() {
-        return theSubTasks.iterator();
+        return theSubTasks == null ? Collections.emptyIterator() : theSubTasks.iterator();
     }
 
     /**

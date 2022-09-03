@@ -29,7 +29,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -81,6 +80,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * Class to load an archive SpreadSheet.
@@ -288,7 +288,7 @@ public class ArchiveLoader {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
-            MetisProfile myTask = pReport.getActiveTask();
+            TethysProfile myTask = pReport.getActiveTask();
             myTask = myTask.startTask("LoadArchive");
             myTask.startTask("ParseWorkBook");
 
@@ -300,7 +300,7 @@ public class ArchiveLoader {
             pReport.checkForCancellation();
 
             /* Determine Year Range */
-            final MetisProfile myStage = myTask.startTask("LoadSheets");
+            final TethysProfile myStage = myTask.startTask("LoadSheets");
             myStage.startTask("Range");
             loadArchive(pReport, myWorkbook, pData);
 

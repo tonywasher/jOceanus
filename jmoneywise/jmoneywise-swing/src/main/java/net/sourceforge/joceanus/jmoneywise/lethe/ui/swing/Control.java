@@ -21,6 +21,7 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
@@ -51,7 +52,7 @@ public final class Control {
      * Create and show the GUI.
      * @param pInfo the program info
      */
-    private static void createAndShowGUI(final MetisState pInfo) {
+    private static void createAndShowGUI(final MetisSwingState pInfo) {
         try {
             /* Create the view */
             final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo);
@@ -78,7 +79,7 @@ public final class Control {
             myFrame.setVisible(true);
 
             /* Record startUp completion */
-            pInfo.getProfile().end();
+            myToolkit.getToolkit().getActiveProfile().end();
             myToolkit.getToolkit().getGuiFactory().activateLogSink();
 
         } catch (OceanusException e) {
@@ -93,7 +94,7 @@ public final class Control {
     public static void main(final String[] args) {
         try {
             /* Create a timer */
-            final MetisState myInfo = new MetisState(MoneyWiseApp.class);
+            final MetisSwingState myInfo = new MetisSwingState(new MoneyWiseApp());
 
             /* Obtain program details */
             final TethysProgram myApp = myInfo.getProgramDefinitions();

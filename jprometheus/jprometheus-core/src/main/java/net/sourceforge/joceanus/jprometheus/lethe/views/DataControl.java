@@ -21,7 +21,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
@@ -311,7 +311,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     final void refreshViews() {
         /* Obtain the active profile */
-        MetisProfile myTask = getActiveTask();
+        TethysProfile myTask = getActiveTask();
         myTask = myTask.startTask("refreshViews");
 
         /* Refresh the Control */
@@ -326,7 +326,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void undoLastChange() {
         /* Obtain the active profile */
-        MetisProfile myTask = getActiveTask();
+        TethysProfile myTask = getActiveTask();
         myTask = myTask.startTask("unDoLastChange");
 
         /* UndoLastChange */
@@ -348,7 +348,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void resetChanges() {
         /* Obtain the active profile */
-        MetisProfile myTask = getActiveTask();
+        TethysProfile myTask = getActiveTask();
         myTask = myTask.startTask("resetChanges");
 
         /* Rewind the data */
@@ -370,7 +370,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pTask the name of the task
      * @return the new profile
      */
-    public MetisProfile getNewProfile(final String pTask) {
+    public TethysProfile getNewProfile(final String pTask) {
         return theMetisToolkit.getNewProfile(pTask);
     }
 
@@ -378,7 +378,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the active profile.
      * @return the active profile
      */
-    public MetisProfile getActiveProfile() {
+    public TethysProfile getActiveProfile() {
         return theMetisToolkit.getActiveProfile();
     }
 
@@ -386,7 +386,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the active task.
      * @return the active task
      */
-    public MetisProfile getActiveTask() {
+    public TethysProfile getActiveTask() {
         return theMetisToolkit.getActiveTask();
     }
 }

@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvide
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * Load control for spreadsheets.
@@ -121,7 +121,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     public void loadBackup(final File pFile,
                            final T pData) throws OceanusException {
         /* Start the task */
-        MetisProfile myTask = theReport.getActiveTask();
+        TethysProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Loading");
         theData = pData;
 
@@ -169,7 +169,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.createInputStream(pEntry)) {
             /* Obtain the active profile */
-            final MetisProfile myTask = theReport.getActiveTask();
+            final TethysProfile myTask = theReport.getActiveTask();
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
@@ -228,7 +228,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      */
     private void loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
-        final MetisProfile myTask = theReport.getActiveTask();
+        final TethysProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);

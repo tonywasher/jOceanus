@@ -47,13 +47,13 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
@@ -134,8 +134,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public void createBackup(final T pData,
                              final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        final MetisProfile myTask = theReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask("Writing");
+        final TethysProfile myTask = theReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
@@ -192,8 +192,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public void createExtract(final T pData,
                               final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        final MetisProfile myTask = theReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask("Writing");
+        final TethysProfile myTask = theReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask("Writing");
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -332,8 +332,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public void loadZipFile(final T pData,
                             final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        final MetisProfile myTask = theReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask("Loading");
+        final TethysProfile myTask = theReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask("Loading");
         myStage.startTask("Parsing");
 
         /* Access the zip file */
@@ -363,11 +363,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pZipFile the file to parse
      * @throws OceanusException on error
      */
-    private void parseZipFile(final MetisProfile pProfile,
+    private void parseZipFile(final TethysProfile pProfile,
                               final T pData,
                               final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
-        final MetisProfile myStage = pProfile.startTask("Loading");
+        final TethysProfile myStage = pProfile.startTask("Loading");
 
         /* Declare the number of stages */
         theReport.setNumStages(pData.getListMap().size());

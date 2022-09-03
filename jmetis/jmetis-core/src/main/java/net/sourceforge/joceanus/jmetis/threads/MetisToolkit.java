@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
@@ -101,11 +101,6 @@ public abstract class MetisToolkit
     private final TethysProgram theProgram;
 
     /**
-     * The Active Profile.
-     */
-    private MetisProfile theProfile;
-
-    /**
      * Constructor.
      * @param pInfo the program info
      * @throws OceanusException on error
@@ -113,6 +108,9 @@ public abstract class MetisToolkit
     protected MetisToolkit(final MetisState pInfo) throws OceanusException {
         /* Store program definitions */
         theProgram = pInfo.getProgramDefinitions();
+
+        /* Access the guiFactory */
+        theGuiFactory = pInfo.getFactory();
 
         /* Create the viewer */
         theViewerManager = new MetisViewerManager();
@@ -122,13 +120,10 @@ public abstract class MetisToolkit
         theErrorEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.ERROR);
 
         /* Record the profile */
-        setProfile(pInfo.getProfile());
+        setProfile(theGuiFactory.getActiveProfile());
 
         /* Create the preference manager */
         thePreferenceManager = new MetisPreferenceManager(theViewerManager);
-
-        /* Create the guiFactory */
-        theGuiFactory = newGuiFactory();
 
         /* Extend the formatter */
         getFormatter().extendFormatter(new MetisDataFormatter(getFormatter()));
@@ -194,12 +189,6 @@ public abstract class MetisToolkit
     public MetisThreadManager getThreadManager() {
         return theThreadManager;
     }
-
-    /**
-     * Create a GUI Factory.
-     * @return the factory
-     */
-    protected abstract TethysGuiFactory newGuiFactory();
 
     /**
      * Create a Thread Manager.
@@ -292,12 +281,9 @@ public abstract class MetisToolkit
      * Set profile.
      * @param pProfile the profile
      */
-    private void setProfile(final MetisProfile pProfile) {
-        /* Create a new profile */
-        theProfile = pProfile;
-
+    private void setProfile(final TethysProfile pProfile) {
         /* Update the Profile Viewer entry */
-        theProfileEntry.setObject(theProfile);
+        theProfileEntry.setObject(pProfile);
     }
 
     /**
@@ -305,31 +291,29 @@ public abstract class MetisToolkit
      * @param pTask the name of the task
      * @return the new profile
      */
-    public MetisProfile getNewProfile(final String pTask) {
+    public TethysProfile getNewProfile(final String pTask) {
         /* Create a new profile */
-        setProfile(new MetisProfile(pTask));
+        final TethysProfile myProfile = theGuiFactory.getNewProfile(pTask);
+        setProfile(myProfile);
 
         /* Return the new profile */
-        return theProfile;
+        return myProfile;
     }
 
     /**
      * Obtain the active profile.
      * @return the active profile
      */
-    public MetisProfile getActiveProfile() {
-        return theProfile;
+    public TethysProfile getActiveProfile() {
+        return theGuiFactory.getActiveProfile();
     }
 
     /**
      * Obtain the active task.
      * @return the active task
      */
-    public MetisProfile getActiveTask() {
-        /* Create a new profile */
-        return theProfile == null
-                                  ? null
-                                  : theProfile.getActiveTask();
+    public TethysProfile getActiveTask() {
+        return theGuiFactory.getActiveTask();
     }
 
     /**

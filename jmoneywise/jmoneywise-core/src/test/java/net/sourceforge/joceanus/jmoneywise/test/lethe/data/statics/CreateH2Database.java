@@ -2,14 +2,13 @@ package net.sourceforge.joceanus.jmoneywise.test.lethe.data.statics;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisEnumPreference;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * H2 Database Create Test.
@@ -58,7 +57,7 @@ public final class CreateH2Database {
         /**
          * Profile.
          */
-        private final MetisProfile myProfile = new MetisProfile("Test");
+        private final TethysProfile myProfile = new TethysProfile("Test");
 
         @Override
         public void initTask(final String pTask) {
@@ -101,7 +100,7 @@ public final class CreateH2Database {
         }
 
         @Override
-        public MetisProfile getActiveTask() {
+        public TethysProfile getActiveTask() {
             return myProfile;
         }
     }

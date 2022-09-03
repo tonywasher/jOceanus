@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
  * Tethys Data Formatter.
@@ -258,6 +259,18 @@ public class TethysDataFormatter {
         /* Handle decimal classes */
         if (pValue instanceof TethysDecimal) {
             return theDecimalFormatter.formatDecimal((TethysDecimal) pValue);
+        }
+
+
+        /* Handle TethysProfile */
+        if (pValue instanceof TethysProfile) {
+            /* Format the profile */
+            final TethysProfile myProfile = (TethysProfile) pValue;
+            return myProfile.getName()
+                    + ": "
+                    + (myProfile.isRunning()
+                        ? myProfile.getStatus()
+                        : myProfile.getElapsed());
         }
 
         /* Handle OceanusExceptions */

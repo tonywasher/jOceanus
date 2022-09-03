@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.lethe.swing;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
@@ -46,7 +47,7 @@ public class PrometheusSwingToolkit
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public PrometheusSwingToolkit(final MetisState pInfo) throws OceanusException {
+    public PrometheusSwingToolkit(final MetisSwingState pInfo) throws OceanusException {
         /* Create Toolkit */
         this(new MetisSwingToolkit(pInfo));
     }

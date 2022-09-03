@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jmetis.threads.swing;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
@@ -37,8 +38,8 @@ public class MetisSwingToolkit
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public MetisSwingToolkit(final MetisState pInfo) throws OceanusException {
-        super(pInfo);
+    public MetisSwingToolkit(final MetisSwingState pInfo) throws OceanusException {
+        super(pInfo.getState());
     }
 
     @Override
@@ -49,11 +50,6 @@ public class MetisSwingToolkit
     @Override
     public MetisSwingThreadManager getThreadManager() {
         return (MetisSwingThreadManager) super.getThreadManager();
-    }
-
-    @Override
-    protected TethysSwingGuiFactory newGuiFactory() {
-        return new TethysSwingGuiFactory(getProgramDefinitions());
     }
 
     @Override

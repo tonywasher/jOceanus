@@ -44,7 +44,7 @@ public class CoeusFXpreLoader
         /* Protect against exceptions */
         try {
             /* Access program info */
-            theState = new MetisFXState(CoeusApp.class);
+            theState = new MetisFXState(new CoeusApp());
 
             /* Create a splash panel */
             theState.createSplash();

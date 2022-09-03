@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.javafx;
 
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
 import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -31,7 +31,7 @@ public class PrometheusFXToolkit
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public PrometheusFXToolkit(final MetisState pInfo) throws OceanusException {
+    public PrometheusFXToolkit(final MetisFXState pInfo) throws OceanusException {
         /* Create Toolkit */
         this(new MetisFXToolkit(pInfo));
     }

@@ -67,20 +67,28 @@ public class MetisFXState {
 
     /**
      * Constructor.
-     * @param pClazz the program definition class
+     * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public MetisFXState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
+    public MetisFXState(final TethysProgram pInfo) throws OceanusException {
         /* Create the program class. */
-        theInfo = new MetisState(pClazz);
+        theInfo = new MetisState(new TethysFXGuiFactory(pInfo));
     }
 
     /**
      * Obtain the program definitions.
      * @return the program definitions
      */
-    TethysProgram getProgramDefinitions() {
+    public TethysProgram getProgramDefinitions() {
         return theInfo.getProgramDefinitions();
+    }
+
+    /**
+     * Obtain the state.
+     * @return the state
+     */
+    public MetisState getState() {
+        return theInfo;
     }
 
     /**
@@ -115,7 +123,7 @@ public class MetisFXState {
         /* Create the Toolkit */
         final TethysProgram myApp = theInfo.getProgramDefinitions();
         final MetisProgram myDef = (MetisProgram) myApp;
-        theToolkit = new MetisFXToolkit(theInfo);
+        theToolkit = new MetisFXToolkit(this);
 
         /* Create the main panel */
         theMain = createMain(myDef, theToolkit);

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
@@ -26,6 +25,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -210,7 +210,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         pReport.setNumStages(theTables.size());
 
         /* Obtain the active profile */
-        MetisProfile myTask = pReport.getActiveTask();
+        TethysProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("loadDatabase");
 
         /* Loop through the tables */
@@ -243,11 +243,11 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());
 
         /* Obtain the active profile */
-        MetisProfile myTask = pReport.getActiveTask();
+        TethysProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("updateDatabase");
 
         /* Loop through the tables */
-        MetisProfile myStage = myTask.startTask("insertData");
+        TethysProfile myStage = myTask.startTask("insertData");
         final Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
         while (myIterator.hasNext()) {
             final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
@@ -315,7 +315,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         dropTables(pReport);
 
         /* Obtain the active profile */
-        MetisProfile myTask = pReport.getActiveTask();
+        TethysProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("createTables");
 
         /* Loop through the tables */
@@ -344,7 +344,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      */
     private void dropTables(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = pReport.getActiveTask();
+        TethysProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("dropTables");
 
         /* Loop through the tables in reverse order */
@@ -376,7 +376,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         pReport.setNumStages(1);
 
         /* Obtain the active profile */
-        MetisProfile myTask = pReport.getActiveTask();
+        TethysProfile myTask = pReport.getActiveTask();
         myTask = myTask.startTask("purgeTables");
 
         /* Loop through the tables in reverse order */

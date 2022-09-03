@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -183,13 +184,17 @@ public class MetisViewerWindow
      * Initialise tree.
      */
     private void initialiseTree() {
+        final TethysTreeItem<MetisViewerEntry> myRoot = theTree.getRoot();
+        theTree.setRootName("Debug");
+        theTree.setRootVisible();
+
         /* Loop through the root children */
         final Iterator<MetisViewerEntry> myIterator = theDataManager.rootIterator();
         while (myIterator.hasNext()) {
             final MetisViewerEntry myEntry = myIterator.next();
 
             /* Create a new root entry */
-            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
+            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.addChildItem(myRoot, myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */

@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -40,6 +39,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
@@ -417,8 +417,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                      final T pNew,
                                      final T pOld) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_DATADIFF);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_DATADIFF);
 
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
@@ -456,8 +456,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void reBase(final MetisThreadStatusReport pReport,
                        final T pOld) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_DATAREBASE);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
         /* ReBase the security items */
         boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
@@ -791,8 +791,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void initialiseSecurity(final MetisThreadStatusReport pReport,
                                    final T pBase) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_SECINIT);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_SECINIT);
 
         /* Set the number of stages */
         pReport.initTask(TASK_SECINIT);
@@ -833,8 +833,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void renewSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_SECRENEW);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_SECRENEW);
 
         /* Access ControlData */
         final ControlData myControl = getControl();
@@ -859,8 +859,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void checkSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final MetisProfile myTask = pReport.getActiveTask();
-        final MetisProfile myStage = myTask.startTask(TASK_SECCHECK);
+        final TethysProfile myTask = pReport.getActiveTask();
+        final TethysProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {

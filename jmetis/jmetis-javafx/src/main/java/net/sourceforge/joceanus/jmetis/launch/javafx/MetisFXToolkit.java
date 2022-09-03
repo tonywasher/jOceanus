@@ -21,7 +21,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
@@ -39,8 +38,8 @@ public class MetisFXToolkit
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public MetisFXToolkit(final MetisState pInfo) throws OceanusException {
-        super(pInfo);
+    public MetisFXToolkit(final MetisFXState pInfo) throws OceanusException {
+        super(pInfo.getState());
     }
 
     @Override
@@ -51,11 +50,6 @@ public class MetisFXToolkit
     @Override
     public MetisFXThreadManager getThreadManager() {
         return (MetisFXThreadManager) super.getThreadManager();
-    }
-
-    @Override
-    protected TethysFXGuiFactory newGuiFactory() {
-        return new TethysFXGuiFactory(getProgramDefinitions());
     }
 
     @Override

@@ -60,7 +60,7 @@ public final class Coeus4Swing {
     public static void main(final String[] args) {
         try {
             /* Create a timer */
-            final MetisSwingState myState = new MetisSwingState(CoeusApp.class);
+            final MetisSwingState myState = new MetisSwingState(new CoeusApp());
 
             /* Create the splash */
             myState.createSplash();
