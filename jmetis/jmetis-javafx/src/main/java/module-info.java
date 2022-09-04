@@ -30,6 +30,5 @@ module net.sourceforge.joceanus.jmetis.javafx {
     requires net.sourceforge.joceanus.jgordianknot.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
     exports net.sourceforge.joceanus.jmetis.launch.javafx;
 }

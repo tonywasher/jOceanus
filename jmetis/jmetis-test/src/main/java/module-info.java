@@ -34,7 +34,4 @@ module net.sourceforge.joceanus.jmetis.test.core {
     requires net.sourceforge.joceanus.jtethys.javafx;
     requires net.sourceforge.joceanus.jtethys.swing;
     requires net.sourceforge.joceanus.jtethys.test.core;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jmetis.test.atlas.ui.javafx to javafx.graphics;
 }

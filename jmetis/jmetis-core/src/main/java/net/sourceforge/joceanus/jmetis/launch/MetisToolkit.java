@@ -19,13 +19,8 @@ package net.sourceforge.joceanus.jmetis.launch;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
-import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
-import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
@@ -197,26 +192,6 @@ public abstract class MetisToolkit {
     public MetisHelpWindow newHelpWindow() {
         return new MetisHelpWindow(getGuiFactory());
     }
-
-    /**
-     * Create a ReadOnly TableManager.
-     * @param <R> the row type
-     * @param pClazz the cxlass of the item
-     * @param pList the base list
-     * @return the table manager
-     */
-    public abstract <R extends MetisFieldTableItem> MetisTableManager<R> newTableManager(Class<R> pClazz,
-                                                                                         MetisListIndexed<R> pList);
-
-    /**
-     * Create an editable TableManager.
-     * @param <R> the row type
-     * @param pItemType the itemType of the item
-     * @param pSession the editSession
-     * @return the table manager
-     */
-    public abstract <R extends MetisFieldTableItem> MetisTableManager<R> newTableManager(MetisListKey pItemType,
-                                                                                         MetisListEditSession pSession);
 
     /**
      * Create an ErrorPanel.
