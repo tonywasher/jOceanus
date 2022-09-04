@@ -22,16 +22,15 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Statement calculator.
  */
-public class CoeusStatementCalculator
-        implements MetisTableCalculator<CoeusTotals> {
+public class CoeusStatementCalculator {
     /**
      * The FieldSet.
      */
@@ -97,10 +96,15 @@ public class CoeusStatementCalculator
         return theFilter;
     }
 
-    @Override
-    public Object calculateValue(final CoeusTotals pTotals,
-                                 final MetisFieldDef pField) {
-        switch ((CoeusTotalsField) pField.getFieldId()) {
+    /**
+     * Calculate value.
+     * @param pTotals the totals
+     * @param pField the field Id
+     * @return the value
+     */
+    public TethysDecimal calculateValue(final CoeusTotals pTotals,
+                                        final CoeusTotalsField pField) {
+        switch (pField) {
             case DELTA:
                 return pTotals.getDelta();
             case BALANCE:

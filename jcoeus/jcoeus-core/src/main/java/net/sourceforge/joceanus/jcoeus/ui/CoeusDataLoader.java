@@ -20,6 +20,8 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSet;
 import net.sourceforge.joceanus.jcoeus.data.fundingcircle.CoeusFundingCircleLoader;
 import net.sourceforge.joceanus.jcoeus.data.lendingworks.CoeusLendingWorksLoader;
+import net.sourceforge.joceanus.jcoeus.data.ratesetter.CoeusRateSetterLoader;
+import net.sourceforge.joceanus.jcoeus.data.zopa.CoeusZopaLoader;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -69,10 +71,14 @@ public class CoeusDataLoader {
         /* Create the loaders */
         final CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(theFormatter, myBase);
         final CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(theFormatter, myBase);
+        final CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(theFormatter, myBase);
+        final CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(theFormatter, myBase);
 
         /* Load the markets */
         myMarketSet.declareMarket(CoeusMarketProvider.FUNDINGCIRCLE, myFundingCircleLoader.loadMarket());
         myMarketSet.declareMarket(CoeusMarketProvider.LENDINGWORKS, myLendingWorksLoader.loadMarket());
+        myMarketSet.declareMarket(CoeusMarketProvider.RATESETTER, myRateSetterLoader.loadMarket());
+        myMarketSet.declareMarket(CoeusMarketProvider.ZOPA, myZopaLoader.loadMarket());
 
         /* Analyse the markets */
         myMarketSet.analyseMarkets();

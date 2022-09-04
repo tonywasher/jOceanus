@@ -22,7 +22,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;

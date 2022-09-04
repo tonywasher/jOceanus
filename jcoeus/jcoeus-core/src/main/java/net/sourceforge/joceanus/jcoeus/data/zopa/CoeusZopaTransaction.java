@@ -38,6 +38,11 @@ public final class CoeusZopaTransaction
     private static final MetisFieldSet<CoeusZopaTransaction> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaTransaction.class);
 
     /**
+     * Date length.
+     */
+    private static final int DATE_LEN = 10;
+
+    /**
      * Transfer prefix.
      */
     private static final String PFIX_TRANSFER = "Funding Bacs";
@@ -227,7 +232,9 @@ public final class CoeusZopaTransaction
         final Iterator<String> myIterator = pFields.iterator();
 
         /* Parse the date */
-        theDate = pParser.parseDate(myIterator.next());
+        String myDate = myIterator.next();
+        myDate = myDate.substring(0, DATE_LEN);
+        theDate = pParser.parseDate(myDate);
 
         /* Obtain description */
         theDesc = myIterator.next();

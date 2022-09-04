@@ -30,13 +30,13 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
@@ -44,6 +44,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableScrollColumn;
 
 /**
  * Statement Panel.
@@ -73,7 +75,7 @@ public class CoeusStatementTable
     /**
      * The Table.
      */
-    private final MetisTableManager<CoeusTotals> theTable;
+    private final TethysTableManager<MetisDataFieldId, CoeusTotals> theTable;
 
     /**
      * The Selector.
@@ -88,7 +90,7 @@ public class CoeusStatementTable
     /**
      * The Loan Column.
      */
-    private final MetisTableScrollColumn<CoeusLoan, CoeusTotals> theLoanColumn;
+    private final TethysTableScrollColumn<CoeusLoan, MetisDataFieldId, CoeusTotals> theLoanColumn;
 
     /**
      * The Statement Calculator.
@@ -110,17 +112,37 @@ public class CoeusStatementTable
         /* Access the GUI factory */
         theFactory = pToolkit.getGuiFactory();
 
+         /* Create the table */
+        theTable = theFactory.newTable();
+        theTable.setEditable(false);
+
         /* Create the list */
         theList = new MetisListIndexed<>();
+        theTable.setItems(theList.getUnderlyingList());
 
-        /* Create the table */
-        theTable = pToolkit.newTableManager(CoeusTotals.class, theList);
-        theTable.declareDateColumn(CoeusTotalsField.DATE);
-        theTable.declareScrollColumn(CoeusTotalsField.TRANSTYPE, CoeusTransactionType.class);
-        theTable.declareStringColumn(CoeusTotalsField.DESC);
+        /* Create the date column */
+        theTable.declareDateColumn(CoeusTotalsField.DATE)
+                .setCellValueFactory(CoeusTotals::getDate);
+
+        /* Create the transactionType column */
+        theTable.declareScrollColumn(CoeusTotalsField.TRANSTYPE, CoeusTransactionType.class)
+                .setCellValueFactory(CoeusTotals::getTransType);
+
+        /* Create the description column */
+        theTable.declareStringColumn(CoeusTotalsField.DESC)
+                .setCellValueFactory(CoeusTotals::getDescription);
+
+        /* Create the loan column */
         theLoanColumn = theTable.declareScrollColumn(CoeusTotalsField.LOAN, CoeusLoan.class);
-        theTable.declareRawDecimalColumn(CoeusTotalsField.DELTA);
-        theTable.declareRawDecimalColumn(CoeusTotalsField.BALANCE);
+        theLoanColumn.setCellValueFactory(CoeusTotals::getLoan);
+
+        /* Create the delta column */
+        theTable.declareRawDecimalColumn(CoeusTotalsField.DELTA)
+                .setCellValueFactory(this::getFilteredDelta);
+
+        /* Create the balance column */
+        theTable.declareRawDecimalColumn(CoeusTotalsField.BALANCE)
+                .setCellValueFactory(this::getFilteredBalance);
 
         /* Create the selector */
         theSelector = new CoeusStatementSelect(theFactory, pCache);
@@ -158,6 +180,24 @@ public class CoeusStatementTable
     }
 
     /**
+     * Obtain filtered delta for transaction.
+     * @param pTotals the totals
+     * @return the delta
+     */
+    private TethysDecimal getFilteredDelta(final CoeusTotals pTotals) {
+        return theCalculator.calculateValue(pTotals, CoeusTotalsField.DELTA);
+    }
+
+    /**
+     * Obtain filtered balance for transaction.
+     * @param pTotals the totals
+     * @return the balance
+     */
+    private TethysDecimal getFilteredBalance(final CoeusTotals pTotals) {
+        return theCalculator.calculateValue(pTotals, CoeusTotalsField.BALANCE);
+    }
+
+    /**
      * Process the filter.
      * @param pFilter the filter
      */
@@ -172,6 +212,7 @@ public class CoeusStatementTable
      */
     public void updateStatement(final CoeusFilter pFilter) {
         MetisListBaseManager.resetContent(theList, pFilter.getHistory().historyIterator());
+        theTable.setItems(theList.getUnderlyingList());
         filterChanged();
     }
 
@@ -191,9 +232,6 @@ public class CoeusStatementTable
 
         /* Reset the filter */
         theTable.setFilter(theCalculator.getFilter());
-
-        /* Declare the calculator */
-        theTable.setCalculator(theCalculator);
     }
 
     /**
@@ -266,7 +304,7 @@ public class CoeusStatementTable
     private static void writeDataToFile(final String pData,
                                         final File pFile) throws OceanusException {
         /* Protect the write */
-        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8)) {
             /* Write to stream */
             myWriter.print(pData);
 
