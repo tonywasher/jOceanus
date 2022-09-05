@@ -38,5 +38,5 @@ module net.sourceforge.joceanus.jtethys.test.core {
     exports net.sourceforge.joceanus.jtethys.test.ui;
 
     /* Main classes */
-    exports net.sourceforge.joceanus.jtethys.test.ui.atlas.javafx to javafx.graphics;
+    exports net.sourceforge.joceanus.jtethys.test.ui.javafx to javafx.graphics;
 }

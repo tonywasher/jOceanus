@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.2-b1</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
   <artifactId>jmetis</artifactId>
   <name>Metis Data Framework</name>
@@ -13,7 +13,6 @@
     <module>jmetis-core</module>
     <module>jmetis-javafx</module>
     <module>jmetis-swing</module>
-    <module>jmetis-test</module>
   </modules>
   <properties>
     <scmComponent>jmetis</scmComponent>
