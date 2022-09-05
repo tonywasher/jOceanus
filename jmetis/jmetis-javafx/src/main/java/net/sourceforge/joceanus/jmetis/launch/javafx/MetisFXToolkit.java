@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.launch.javafx;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
-import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
@@ -42,17 +37,5 @@ public class MetisFXToolkit
     @Override
     public TethysFXGuiFactory getGuiFactory() {
         return (TethysFXGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public <R extends MetisFieldTableItem> MetisFXTableManager<R> newTableManager(final Class<R> pClazz,
-                                                                                  final MetisListIndexed<R> pList) {
-        return new MetisFXTableManager<>(getGuiFactory(), pClazz, pList);
-    }
-
-    @Override
-    public <R extends MetisFieldTableItem> MetisFXTableManager<R> newTableManager(final MetisListKey pItemType,
-                                                                                  final MetisListEditSession pSession) {
-        return new MetisFXTableManager<>(getGuiFactory(), pItemType, pSession);
     }
 }

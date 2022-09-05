@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.launch.swing;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.swing.MetisSwingTableManager;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
-import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
@@ -42,17 +37,5 @@ public class MetisSwingToolkit
     @Override
     public TethysSwingGuiFactory getGuiFactory() {
         return (TethysSwingGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public <R extends MetisFieldTableItem> MetisSwingTableManager<R> newTableManager(final Class<R> pClazz,
-                                                                                     final MetisListIndexed<R> pList) {
-        return new MetisSwingTableManager<>(getGuiFactory(), pClazz, pList);
-    }
-
-    @Override
-    public <R extends MetisFieldTableItem> MetisSwingTableManager<R> newTableManager(final MetisListKey pItemType,
-                                                                                     final MetisListEditSession pSession) {
-        return new MetisSwingTableManager<>(getGuiFactory(), pItemType, pSession);
     }
 }

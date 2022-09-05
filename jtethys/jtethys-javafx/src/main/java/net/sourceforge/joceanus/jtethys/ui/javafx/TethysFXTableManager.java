@@ -28,13 +28,12 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.util.Callback;
@@ -216,6 +215,13 @@ public class TethysFXTableManager<C, R>
      */
     public void setItems(final ObservableList<R> pItems) {
         theItems = pItems;
+        setTheItems();
+    }
+
+    @Override
+    public void setItems(final List<R> pItems) {
+        super.setItems(pItems);
+        theItems = FXCollections.observableArrayList(pItems);
         setTheItems();
     }
 
@@ -437,13 +443,11 @@ public class TethysFXTableManager<C, R>
             return getTable().getCellFactory();
         }
 
-        /**
-         * Set cell value Factory.
-         *
-         * @param pFactory the cell factory
-         */
-        public void setCellValueFactory(final Callback<CellDataFeatures<R, T>, ObservableValue<T>> pFactory) {
-            theColumn.setCellValueFactory(pFactory);
+        @Override
+        public TethysBaseTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
+            super.setCellValueFactory(pFactory);
+            theColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(pFactory.apply(p.getValue())));
+            return this;
         }
 
         /**

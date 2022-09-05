@@ -80,7 +80,7 @@ public class CoeusZopaTransactionParser
     @Override
     protected void resetFields() {
         /* Set the date format */
-        setDateFormat("dd/MM/yyyy HH:mm");
+        setDateFormat("dd/MM/yyyy");
 
         /* Clear data */
         theTransactions.clear();

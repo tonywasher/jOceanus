@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.profile;
 
-import java.lang.reflect.InvocationTargetException;
-
-import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
