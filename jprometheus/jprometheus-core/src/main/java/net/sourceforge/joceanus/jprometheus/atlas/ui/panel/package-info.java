@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Prometheus FieldSet.
+ * Prometheus FieldSet Panel.
  */
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;

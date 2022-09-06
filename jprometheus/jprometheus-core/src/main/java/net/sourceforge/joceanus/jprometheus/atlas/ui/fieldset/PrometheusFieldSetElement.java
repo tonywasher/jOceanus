@@ -15,7 +15,7 @@
  * the License.
  ******************************************************************************/
 
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;

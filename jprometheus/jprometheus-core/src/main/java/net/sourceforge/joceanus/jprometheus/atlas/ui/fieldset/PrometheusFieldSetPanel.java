@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -162,12 +162,23 @@ public class PrometheusFieldSetPanel<T, F>
      * @param pItem the item
      */
     void setItem(final T pItem) {
-        /* Loop through the elements looking for a visible element */
+        /* Loop through the elements */
         for (PrometheusFieldSetElement<F, ?> myElement: theElements.values()) {
             /* Obtain the value factory */
             final Function<T, Object> myValueFactory = theValues.get(myElement.getFieldId());
             final Object myValue = myValueFactory.apply(pItem);
             myElement.setValue(myValue);
+        }
+    }
+
+    /**
+     * Set editable item.
+     * @param isEditable true/false
+     */
+    void setEditable(final boolean isEditable) {
+        /* Loop through the elements */
+        for (PrometheusFieldSetElement<F, ?> myElement: theElements.values()) {
+            myElement.setEditable(isEditable);
         }
     }
 

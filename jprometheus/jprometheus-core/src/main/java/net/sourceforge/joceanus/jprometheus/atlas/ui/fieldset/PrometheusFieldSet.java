@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +107,7 @@ public class PrometheusFieldSet<T, F>
      * Obtain the component.
      * @return the component
      */
-    TethysComponent getComponent() {
+    public TethysComponent getComponent() {
         return thePanel;
     }
 
@@ -148,6 +148,17 @@ public class PrometheusFieldSet<T, F>
     }
 
     /**
+     * Set editable item.
+     * @param isEditable true/false
+     */
+    public void setEditable(final boolean isEditable) {
+        /* Update all the panels */
+        for (PrometheusFieldSetPanel<T, F> myPanel : thePanels) {
+            myPanel.setEditable(isEditable);
+        }
+    }
+
+    /**
      * Set item.
      * @param pItem the item.
      */
@@ -184,7 +195,12 @@ public class PrometheusFieldSet<T, F>
         /* Adjust visibility of field */
         final PrometheusFieldSetPanel<T, F> myPanel = theFieldMap.get(pFieldId);
         myPanel.setVisible(pFieldId, pVisible);
+    }
 
+    /**
+     * Adjust tab visibility.
+     */
+    public void adjustTabVisibility() {
         /* Adjust visibility of tabs if present */
         if (theTabs != null) {
             theTabs.adjustVisibilty();

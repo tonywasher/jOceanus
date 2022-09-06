@@ -1,0 +1,218 @@
+/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2022 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.panel.PrometheusNewDataItemPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+
+/**
+ * MoneyWise Data Item Panel.
+ * @param <T> the item type
+ */
+public abstract class MoneyWiseNewItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
+        extends PrometheusNewDataItemPanel<T, MoneyWiseGoToId, MoneyWiseDataType> {
+    /**
+     * Filter text.
+     */
+    private static final String FILTER_MENU = "Filter";
+
+    /**
+     * The DataItem GoToMenuMap.
+     */
+    private final List<DataItem<MoneyWiseDataType>> theGoToItemList;
+
+    /**
+     * The Filter GoToMenuMap.
+     */
+    private final List<AnalysisFilter<?, ?>> theGoToFilterList;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pUpdateSet the update set
+     * @param pError the error panel
+     */
+    protected MoneyWiseNewItemPanel(final TethysGuiFactory pFactory,
+                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                    final MetisErrorPanel pError) {
+        super(pFactory, pUpdateSet, pError);
+        theGoToFilterList = new ArrayList<>();
+        theGoToItemList = new ArrayList<>();
+    }
+
+    @Override
+    protected void buildGoToMenu(final TethysScrollMenu<TethysGenericWrapper> pMenu) {
+        /* Clear the goTo lists */
+        theGoToFilterList.clear();
+        theGoToItemList.clear();
+        pMenu.removeAllItems();
+
+        /* Declare the goTo items */
+        declareGoToItems(getUpdateSet().hasUpdates());
+
+        /* Process the goTo items */
+        processGoToItems(pMenu);
+    }
+
+    /**
+     * Declare GoTo Items.
+     * @param pUpdates are there active updates?
+     */
+    protected abstract void declareGoToItems(boolean pUpdates);
+
+    /**
+     * Declare GoTo Item.
+     * @param pItem the item to declare
+     */
+    protected void declareGoToItem(final DataItem<MoneyWiseDataType> pItem) {
+        /* Ignore null items */
+        if (pItem == null) {
+            return;
+        }
+
+        /* Ignore if the item is already listed */
+        if (theGoToItemList.contains(pItem)) {
+            return;
+        }
+
+        /* remember the item */
+        theGoToItemList.add(pItem);
+    }
+
+    /**
+     * Declare GoTo Filter.
+     * @param pFilter the filter to declare
+     */
+    protected void declareGoToFilter(final AnalysisFilter<?, ?> pFilter) {
+        /* Ignore null filters */
+        if (pFilter == null) {
+            return;
+        }
+
+        /* Ignore if the item is already listed */
+        if (theGoToFilterList.contains(pFilter)) {
+            return;
+        }
+
+        /* remember the item */
+        theGoToFilterList.add(pFilter);
+    }
+
+    /**
+     * Process goTo items.
+     * @param pMenu the menu
+     */
+    private void processGoToItems(final TethysScrollMenu<TethysGenericWrapper> pMenu) {
+        /* Process goTo filters */
+        processGoToFilters(pMenu);
+
+        /* Create a simple map for top-level categories */
+        final Map<MoneyWiseDataType, TethysScrollSubMenu<TethysGenericWrapper>> myMap = new EnumMap<>(MoneyWiseDataType.class);
+
+        /* Loop through the items */
+        for (DataItem<MoneyWiseDataType> myItem : theGoToItemList) {
+            /* Determine DataType and obtain parent menu */
+            final MoneyWiseDataType myType = myItem.getItemType();
+            TethysScrollSubMenu<TethysGenericWrapper> myMenu = myMap.get(myType);
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(myType.getItemName());
+                myMap.put(myType, myMenu);
+            }
+
+            /* set default values */
+            MoneyWiseGoToId myId = null;
+            String myName = null;
+
+            /* Handle differing items */
+            if (myItem instanceof StaticData) {
+                final StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) myItem;
+                myId = MoneyWiseGoToId.STATIC;
+                myName = myStatic.getName();
+            } else if (myItem instanceof AssetBase) {
+                final AssetBase<?, ?> myAccount = (AssetBase<?, ?>) myItem;
+                myId = MoneyWiseGoToId.ACCOUNT;
+                myName = myAccount.getName();
+            } else if (myItem instanceof CategoryBase) {
+                final CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) myItem;
+                myId = MoneyWiseGoToId.CATEGORY;
+                myName = myCategory.getName();
+            } else if (myItem instanceof Region) {
+                final Region myRegion = (Region) myItem;
+                myId = MoneyWiseGoToId.REGION;
+                myName = myRegion.getName();
+            } else if (myItem instanceof TransactionTag) {
+                final TransactionTag myTag = (TransactionTag) myItem;
+                myId = MoneyWiseGoToId.TAG;
+                myName = myTag.getName();
+            }
+
+            /* Build the item */
+            final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myItem);
+            myMenu.getSubMenu().addItem(new TethysGenericWrapper(myEvent), myName);
+        }
+    }
+
+    /**
+     * Process goTo filters.
+     * @param pMenu the menu
+     */
+    private void processGoToFilters(final TethysScrollMenu<TethysGenericWrapper> pMenu) {
+        /* Create a simple map for top-level categories */
+        TethysScrollSubMenu<TethysGenericWrapper> myMenu = null;
+
+        /* Loop through the items */
+        for (AnalysisFilter<?, ?> myFilter : theGoToFilterList) {
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(FILTER_MENU);
+            }
+
+            /* Determine action */
+            final StatementSelect myStatement = new StatementSelect(null, myFilter);
+            final MoneyWiseGoToId myId = MoneyWiseGoToId.STATEMENT;
+
+            /* Build the item */
+            final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myStatement);
+            myMenu.getSubMenu().addItem(new TethysGenericWrapper(myEvent), myFilter.getName());
+        }
+    }
+}
