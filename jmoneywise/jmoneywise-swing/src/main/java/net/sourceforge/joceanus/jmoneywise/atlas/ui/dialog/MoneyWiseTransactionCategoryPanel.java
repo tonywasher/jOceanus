@@ -56,7 +56,7 @@ public class MoneyWiseTransactionCategoryPanel
         super(pFactory, pUpdateSet, pError);
 
         /* Create a new panel */
-        final PrometheusFieldSet<TransactionCategory, PrometheusDataFieldId> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<TransactionCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
@@ -95,7 +95,7 @@ public class MoneyWiseTransactionCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusFieldSet<TransactionCategory, PrometheusDataFieldId> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<TransactionCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
         final TransactionCategory myCategory = getItem();
@@ -120,7 +120,7 @@ public class MoneyWiseTransactionCategoryPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent<PrometheusDataFieldId> pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final TransactionCategory myCategory = getItem();

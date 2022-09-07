@@ -36,7 +36,7 @@ public class PrometheusFieldSetTabs {
     /**
      * The list of panels.
      */
-    private final Map<String, PrometheusFieldSetPanel<?, ?>> thePanels;
+    private final Map<String, PrometheusFieldSetPanel<?>> thePanels;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ public class PrometheusFieldSetTabs {
      * @param pPanel the panel
      */
     void addPanel(final String pName,
-                  final PrometheusFieldSetPanel<?, ?> pPanel) {
+                  final PrometheusFieldSetPanel<?> pPanel) {
         theTabs.addTabItem(pName, pPanel);
         thePanels.put(pName, pPanel);
     }
@@ -71,9 +71,9 @@ public class PrometheusFieldSetTabs {
      */
     void adjustVisibilty() {
         /* Update visibility for all the panels */
-        for (Map.Entry<String, PrometheusFieldSetPanel<?, ?>> myEntry : thePanels.entrySet()) {
+        for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
             final TethysTabItem myItem = theTabs.findItemByName(myEntry.getKey());
-            final PrometheusFieldSetPanel<?, ?> myPanel = myEntry.getValue();
+            final PrometheusFieldSetPanel<?> myPanel = myEntry.getValue();
             myItem.setVisible(myPanel.isVisible());
         }
     }

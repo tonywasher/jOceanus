@@ -17,17 +17,17 @@
 package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * FieldSetEvent.
- * @param <F> the field type
  */
-public class PrometheusFieldSetEvent<F> {
+public class PrometheusFieldSetEvent {
     /**
      * The field.
      */
-    private final F theFieldId;
+    private final PrometheusDataFieldId theFieldId;
 
     /**
      * The new value.
@@ -39,7 +39,7 @@ public class PrometheusFieldSetEvent<F> {
      * @param pFieldId the source fieldId
      * @param pNewValue the new Value
      */
-    public PrometheusFieldSetEvent(final F pFieldId,
+    public PrometheusFieldSetEvent(final PrometheusDataFieldId pFieldId,
                                    final Object pNewValue) {
         theFieldId = pFieldId;
         theValue = pNewValue;
@@ -49,7 +49,7 @@ public class PrometheusFieldSetEvent<F> {
      * Obtain the source field.
      * @return the field
      */
-    public F getFieldId() {
+    public PrometheusDataFieldId getFieldId() {
         return theFieldId;
     }
 

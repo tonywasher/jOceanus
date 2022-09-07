@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
@@ -95,7 +94,7 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
     /**
      * The Field Set.
      */
-    private final PrometheusFieldSet<T, PrometheusDataFieldId> theFieldSet;
+    private final PrometheusFieldSet<T> theFieldSet;
 
     /**
      * The Update Set.
@@ -180,6 +179,14 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
         theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(PrometheusFieldSetEvent.class)));
 
+        /* Layout the panel */
+        thePanel.setWest(theItemActions);
+        thePanel.setCentre(theMainPanel);
+        thePanel.setEast(theEditActions);
+
+        /* Set visibility */
+        thePanel.setVisible(false);
+
         /* Listen to the EditActions */
         TethysEventRegistrar<PrometheusUIEvent> myRegistrar = theEditActions.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusUIEvent.OK, e -> requestCommit());
@@ -234,7 +241,7 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
      * Obtain the field Set.
      * @return the FieldSet
      */
-    protected PrometheusFieldSet<T, PrometheusDataFieldId> getFieldSet() {
+    protected PrometheusFieldSet<T> getFieldSet() {
         return theFieldSet;
     }
 
@@ -282,19 +289,6 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
     @Override
     public boolean isNew() {
         return isNew;
-    }
-
-    /**
-     * Layout the panel.
-     */
-    protected void layoutPanel() {
-        /* Layout the panel */
-        thePanel.setWest(theItemActions);
-        thePanel.setCentre(theMainPanel);
-        thePanel.setEast(theEditActions);
-
-        /* Set visibility */
-        thePanel.setVisible(false);
     }
 
     /**
@@ -408,7 +402,7 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
      * @param pUpdate the update
      * @throws OceanusException on error
      */
-    protected abstract void updateField(PrometheusFieldSetEvent<PrometheusDataFieldId> pUpdate) throws OceanusException;
+    protected abstract void updateField(PrometheusFieldSetEvent pUpdate) throws OceanusException;
 
     /**
      * Obtain the list for a class in base updateSet.
@@ -580,7 +574,7 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
      * Update item.
      * @param pUpdate the update
      */
-    private void updateItem(final PrometheusFieldSetEvent<PrometheusDataFieldId> pUpdate) {
+    private void updateItem(final PrometheusFieldSetEvent pUpdate) {
         /* Push history */
         theItem.pushHistory();
 

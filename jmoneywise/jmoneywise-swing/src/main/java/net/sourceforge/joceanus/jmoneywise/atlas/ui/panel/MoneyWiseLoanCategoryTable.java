@@ -20,21 +20,19 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseLoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -51,7 +49,7 @@ public class MoneyWiseLoanCategoryTable
     /**
      * The Category dialog.
      */
-    private final LoanCategoryPanel theActiveCategory;
+    private final MoneyWiseLoanCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -65,20 +63,17 @@ public class MoneyWiseLoanCategoryTable
      * @param pError the error panel
      */
     MoneyWiseLoanCategoryTable(final MoneyWiseView pView,
-                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                  final MetisErrorPanel pError) {
+                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                               final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, LoanCategory.class, MoneyWiseDataType.LOANCATEGORY);
-
-        /* Access field manager */
-        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         final TethysTableManager<PrometheusDataFieldId, LoanCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new LoanCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new MoneyWiseLoanCategoryPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */

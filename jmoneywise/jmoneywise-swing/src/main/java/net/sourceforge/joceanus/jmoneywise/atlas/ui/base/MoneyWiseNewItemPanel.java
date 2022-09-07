@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
@@ -30,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.ui.panel.PrometheusNewDataItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
@@ -68,11 +70,25 @@ public abstract class MoneyWiseNewItemPanel<T extends DataItem<MoneyWiseDataType
      * @param pError the error panel
      */
     protected MoneyWiseNewItemPanel(final TethysGuiFactory pFactory,
-                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                     final MetisErrorPanel pError) {
         super(pFactory, pUpdateSet, pError);
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();
+        getFieldSet().setChanged(this::isFieldChanged);
+    }
+
+    /**
+     * is field changed?
+     *
+     * @param pField the field
+     * @param pItem  the item
+     * @return true/false
+     */
+    private boolean isFieldChanged(final T pItem,
+                                   final PrometheusDataFieldId pField) {
+        final MetisLetheField myField = pField.getLetheField();
+        return myField != null && pItem.fieldChanged(myField).isDifferent();
     }
 
     @Override

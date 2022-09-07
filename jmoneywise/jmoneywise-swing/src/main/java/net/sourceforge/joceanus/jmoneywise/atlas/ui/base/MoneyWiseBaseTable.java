@@ -235,6 +235,15 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
     }
 
+    /**
+     * Declare item panel.
+     * @param pPanel the item panel
+     */
+    protected void declareItemPanel(final MoneyWiseNewItemPanel<T> pPanel) {
+        thePanel.setSouth(pPanel);
+        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
+    }
+
     @Override
     public Integer getId() {
         return thePanel.getId();

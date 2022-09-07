@@ -48,7 +48,7 @@ public class MoneyWiseTagPanel
         super(pFactory, pUpdateSet, pError);
 
         /* Access the fieldSet */
-        final PrometheusFieldSet<TransactionTag, PrometheusDataFieldId> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
@@ -75,7 +75,7 @@ public class MoneyWiseTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusFieldSet<TransactionTag, PrometheusDataFieldId> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
@@ -83,7 +83,7 @@ public class MoneyWiseTagPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent<PrometheusDataFieldId> pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final TransactionTag myTag = getItem();

@@ -48,7 +48,7 @@ public class MoneyWiseRegionPanel
         super(pFactory, pUpdateSet, pError);
 
         /* Access the fieldSet */
-        final PrometheusFieldSet<Region, PrometheusDataFieldId> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<Region> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
@@ -75,7 +75,7 @@ public class MoneyWiseRegionPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusFieldSet<Region, PrometheusDataFieldId> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<Region> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
@@ -83,7 +83,7 @@ public class MoneyWiseRegionPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent<PrometheusDataFieldId> pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Region myRegion = getItem();
