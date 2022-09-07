@@ -126,6 +126,12 @@ public interface TethysDataEditField<T>
     void adjustField();
 
     /**
+     * Obtain the height.
+     * @return the height
+     */
+    Integer getHeight();
+
+    /**
      * Set the Preferred Width.
      * @param pWidth the width
      */

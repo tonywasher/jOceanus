@@ -189,6 +189,11 @@ public abstract class TethysFXDataTextField<T>
         return (TethysFXScrollContextMenu<String>) super.getCmdMenu();
     }
 
+    @Override
+    public Integer getHeight() {
+        return (int) thePane.getHeight();
+    }
+
     /**
      * Obtain the label.
      *

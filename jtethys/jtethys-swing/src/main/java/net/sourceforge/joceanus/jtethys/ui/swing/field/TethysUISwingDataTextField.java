@@ -201,6 +201,11 @@ public abstract class TethysUISwingDataTextField<T>
         theNode.setVisible(pVisible);
     }
 
+    @Override
+    public Integer getHeight() {
+        return (int) theCard.getPreferredSize().getHeight();
+    }
+
     /**
      * Adjust field.
      * @param pDataField the dataField

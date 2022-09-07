@@ -207,6 +207,11 @@ public abstract class TethysSwingDataTextField<T>
         return theGuiFactory;
     }
 
+    @Override
+    public Integer getHeight() {
+        return (int) theCard.getPreferredSize().getHeight();
+    }
+
     /**
      * Obtain the label.
      * @return the label

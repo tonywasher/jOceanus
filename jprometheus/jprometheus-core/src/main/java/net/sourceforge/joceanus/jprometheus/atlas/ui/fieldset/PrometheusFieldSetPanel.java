@@ -133,16 +133,22 @@ public class PrometheusFieldSetPanel<T>
      * Adjust the label width.
      */
     private void adjustLabelWidth() {
+        /* Initialise counters */
         int myWidth = 0;
+        int myHeight = 0;
+
         /* Loop through the elements getting the max width */
         for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             final int myLabelWidth = myElement.getLabelWidth();
+            final int myFieldHeight = myElement.getFieldHeight();
             myWidth = Math.max(myWidth, myLabelWidth);
+            myHeight = Math.max(myHeight, myFieldHeight);
         }
 
         /* Loop through the elements setting the width */
         for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             myElement.setLabelWidth(myWidth);
+            myElement.setFieldHeight(myHeight);
         }
     }
 

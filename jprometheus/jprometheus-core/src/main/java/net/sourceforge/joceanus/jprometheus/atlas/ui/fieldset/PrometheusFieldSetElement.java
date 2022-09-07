@@ -155,6 +155,24 @@ public class PrometheusFieldSetElement<V> {
     }
 
     /**
+     * Obtain the field height.
+     *
+     * @return the field height
+     */
+    int getFieldHeight() {
+        return theField.getHeight();
+    }
+
+    /**
+     * Set the field height.
+     *
+     * @param pHeight the field height
+     */
+    void setFieldHeight(final int pHeight) {
+        theField.setPreferredHeight(pHeight);
+    }
+
+    /**
      * Adjust changed indications.
      *
      * @param pChanged is the field changed?
