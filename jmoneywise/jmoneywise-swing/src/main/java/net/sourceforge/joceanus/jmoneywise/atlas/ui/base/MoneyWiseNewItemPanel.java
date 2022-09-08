@@ -23,6 +23,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
@@ -88,7 +89,10 @@ public abstract class MoneyWiseNewItemPanel<T extends DataItem<MoneyWiseDataType
     private boolean isFieldChanged(final T pItem,
                                    final PrometheusDataFieldId pField) {
         final MetisLetheField myField = pField.getLetheField();
-        return myField != null && pItem.fieldChanged(myField).isDifferent();
+        final MetisValueSet myBaseValues = getBaseValues();
+        return myField != null
+                && myBaseValues != null
+                && pItem.getValueSet().fieldChanged(myField, myBaseValues).isDifferent();
     }
 
     @Override

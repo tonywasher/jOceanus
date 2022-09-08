@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
@@ -135,6 +136,11 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
      * The EditVersion.
      */
     private int theEditVersion = VERSION_READONLY;
+
+    /**
+     * The BaseValues.
+     */
+    private MetisValueSet theBaseValues;
 
     /**
      * Is this a new item.
@@ -292,6 +298,14 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
     }
 
     /**
+     * Obtain the base Values.
+     * @return the values
+     */
+    protected MetisValueSet getBaseValues() {
+        return theBaseValues;
+    }
+
+    /**
      * Set editable item.
      * @param isEditable true/false
      */
@@ -300,11 +314,13 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
         if (theItem != null) {
             /* Determine EditVersion */
             if (isEditable) {
-                theEditVersion = isEditing()
-                        ? theEditVersion
-                        : theUpdateSet.getVersion();
+                if (!isEditing()) {
+                    theEditVersion = theUpdateSet.getVersion();
+                    theBaseValues = theItem.getValueSet();
+                }
             } else {
                 theEditVersion = VERSION_READONLY;
+                theBaseValues = null;
             }
 
             /* adjust fields */
@@ -326,6 +342,7 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
         } else {
             /* Set EditVersion */
             theEditVersion = VERSION_READONLY;
+            theBaseValues = null;
             isNew = false;
 
             /* Set visibility */
