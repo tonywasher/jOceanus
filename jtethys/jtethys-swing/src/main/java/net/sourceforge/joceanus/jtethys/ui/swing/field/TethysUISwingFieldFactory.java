@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutionTextField;
@@ -70,6 +71,11 @@ public class TethysUISwingFieldFactory
     @Override
     public TethysUISwingCharArrayTextField newCharArrayField() {
         return new TethysUISwingCharArrayTextField(theFactory);
+    }
+
+    @Override
+    public TethysUISwingCharArrayTextAreaField newCharArrayAreaField() {
+        return new TethysUISwingCharArrayTextAreaField(theFactory);
     }
 
     @Override

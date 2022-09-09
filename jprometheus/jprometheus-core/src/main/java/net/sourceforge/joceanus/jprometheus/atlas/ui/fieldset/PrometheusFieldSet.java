@@ -145,6 +145,9 @@ public class PrometheusFieldSet<T>
     /**
      * Add a textArea tab.
      * @param pName the name of the tab.
+     * @param pFieldId the fieldId
+     * @param pField the edit field
+     * @param pValueFactory the valueFactory
      */
     public void newTextArea(final String pName,
                             final PrometheusDataFieldId pFieldId,

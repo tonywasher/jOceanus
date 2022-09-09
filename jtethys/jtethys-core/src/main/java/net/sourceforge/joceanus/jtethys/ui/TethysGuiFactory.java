@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutedPriceEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutionEditField;
@@ -453,6 +454,12 @@ public abstract class TethysGuiFactory {
      * @return the new field
      */
     public abstract TethysCharArrayEditField newCharArrayField();
+
+    /**
+     * Obtain a new charArray textArea field.
+     * @return the new field
+     */
+    public abstract TethysCharArrayTextAreaField newCharArrayAreaField();
 
     /**
      * Obtain a new short data field.

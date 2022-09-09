@@ -699,6 +699,36 @@ public abstract class TethysSwingDataTextField<T>
     }
 
     /**
+     * SwingCharArrayTextAreaField class.
+     */
+    public static class TethysSwingCharArrayTextAreaField
+            extends TethysSwingTextEditField<char[], JTextArea>
+            implements TethysCharArrayTextAreaField {
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         */
+        protected TethysSwingCharArrayTextAreaField(final TethysSwingGuiFactory pFactory) {
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysSwingCharArrayTextAreaField(final TethysSwingGuiFactory pFactory,
+                                                  final JLabel pLabel) {
+            super(pFactory, new TethysCharArrayEditConverter(), pLabel, new JTextArea());
+        }
+
+        @Override
+        protected TethysSwingCharArrayTextField cloneField(final JLabel pLabel) {
+            return new TethysSwingCharArrayTextField(super.getGuiFactory(), pLabel);
+        }
+    }
+
+    /**
      * ShortSwingTextField class.
      */
     public static class TethysSwingShortTextField

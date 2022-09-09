@@ -16,17 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
  * FieldSet Panel.

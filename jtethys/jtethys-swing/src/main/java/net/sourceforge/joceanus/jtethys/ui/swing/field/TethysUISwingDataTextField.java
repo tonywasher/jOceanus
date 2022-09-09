@@ -243,30 +243,41 @@ public abstract class TethysUISwingDataTextField<T>
         final TethysUISwingColorSet myColorSet = theAdjuster.getColorSet();
 
         /* Determine the font */
-        final Font myFont = isNumeric
-                ? isChanged
-                ? isSelected
-                ? myFontSet.getBoldChangedNumeric()
-                : myFontSet.getChangedNumeric()
-                : isSelected
-                ? myFontSet.getBoldNumeric()
-                : myFontSet.getNumeric()
-                : isChanged
-                ? isSelected
-                ? myFontSet.getBoldChanged()
-                : myFontSet.getChanged()
-                : isSelected
-                ? myFontSet.getBoldStandard()
-                : myFontSet.getStandard();
+        final Font myFont;
+        if (isNumeric) {
+            if (isChanged) {
+                myFont = isSelected
+                            ? myFontSet.getBoldChangedNumeric()
+                            : myFontSet.getChangedNumeric();
+            } else {
+                myFont = isSelected
+                            ? myFontSet.getBoldNumeric()
+                            : myFontSet.getNumeric();
+            }
+        } else {
+            if (isChanged) {
+                myFont = isSelected
+                            ? myFontSet.getBoldChanged()
+                            : myFontSet.getChanged();
+            } else {
+                myFont = isSelected
+                            ? myFontSet.getBoldStandard()
+                            : myFontSet.getStandard();
+            }
+        }
         myLabel.setFont(myFont);
         myControl.setFont(myFont);
 
         /* Determine the foreground */
-        final Color myForeground = isChanged
-                ? myColorSet.getChanged()
-                : isDisabled
-                ? myColorSet.getDisabled()
-                : myColorSet.getStandard();
+        final Color myForeground;
+        if (isChanged) {
+            myForeground = myColorSet.getChanged();
+        } else {
+            myForeground = isDisabled
+                                ? myColorSet.getDisabled()
+                                : myColorSet.getStandard();
+
+        }
         myLabel.setForeground(myForeground);
         myControl.setForeground(myForeground);
 
@@ -756,6 +767,36 @@ public abstract class TethysUISwingDataTextField<T>
         private TethysUISwingCharArrayTextField(final TethysUICoreFactory<?> pFactory,
                                                 final JLabel pLabel) {
             super(pFactory, new TethysUICoreCharArrayEditConverter(), pLabel, new JTextField());
+        }
+
+        @Override
+        public TethysUISwingCharArrayTextField cloneField(final JLabel pLabel) {
+            return new TethysUISwingCharArrayTextField(super.getGuiFactory(), pLabel);
+        }
+    }
+
+    /**
+     * SwingCharArrayTextAreaField class.
+     */
+    public static class TethysUISwingCharArrayTextAreaField
+            extends TethysUISwingTextEditField<char[], JTextArea>
+            implements TethysUICharArrayTextAreaField {
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         */
+        protected TethysUISwingCharArrayTextAreaField(final TethysUICoreFactory<?> pFactory) {
+            this(pFactory, new JLabel());
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the GUI factory
+         * @param pLabel the label
+         */
+        private TethysUISwingCharArrayTextAreaField(final TethysUICoreFactory<?> pFactory,
+                                                    final JLabel pLabel) {
+            super(pFactory, new TethysUICoreCharArrayEditConverter(), pLabel, new JTextArea());
         }
 
         @Override

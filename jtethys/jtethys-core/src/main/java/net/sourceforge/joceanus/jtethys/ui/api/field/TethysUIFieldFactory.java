@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jtethys.ui.api.field;
 
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutedPriceEditField;
@@ -57,6 +58,12 @@ public interface TethysUIFieldFactory {
      * @return the new field
      */
     TethysUICharArrayEditField newCharArrayField();
+
+    /**
+     * Obtain a new charArray textArea field.
+     * @return the new field
+     */
+    TethysUICharArrayTextAreaField newCharArrayAreaField();
 
     /**
      * Obtain a new short data field.

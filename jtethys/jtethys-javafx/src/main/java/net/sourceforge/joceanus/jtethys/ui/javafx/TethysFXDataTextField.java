@@ -615,6 +615,22 @@ public abstract class TethysFXDataTextField<T>
     }
 
     /**
+     * FXStringTextField class.
+     */
+    public static class TethysFXCharArrayTextAreaField
+            extends TethysFXTextEditField<char[], TextArea>
+            implements TethysCharArrayTextAreaField {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the GUI factory
+         */
+        TethysFXCharArrayTextAreaField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysCharArrayEditConverter());
+        }
+    }
+
+    /**
      * FXShortTextField class.
      */
     public static class TethysFXShortTextField
