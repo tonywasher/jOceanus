@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXRatioTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXShortTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXUnitsTextField;
 
@@ -59,6 +60,11 @@ public class TethysUIFXFieldFactory
     @Override
     public TethysUIFXStringTextField newStringField() {
         return new TethysUIFXStringTextField(theFactory);
+    }
+
+    @Override
+    public TethysUIFXStringTextAreaField newStringAreaField() {
+        return new TethysUIFXStringTextAreaField(theFactory);
     }
 
     @Override

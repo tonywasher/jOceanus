@@ -356,7 +356,7 @@ public class TethysFXTableCellFactory<C, R> {
             /* Apply validator to a text field */
             if (theControl instanceof TethysFXTextEditField
                     && theColumn instanceof TethysFXTableValidatedColumn) {
-                final TethysFXTextEditField<T> myField = (TethysFXTextEditField<T>) theControl;
+                final TethysFXTextEditField<T, ?> myField = (TethysFXTextEditField<T, ?>) theControl;
                 final TethysFXTableValidatedColumn<T, C, R> myColumn = (TethysFXTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
                 myField.setReporter(theColumn.getTable().getOnValidateError());

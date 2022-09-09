@@ -52,11 +52,14 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIShortEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 
 /**
  * Scroll utilities examples.
@@ -86,6 +89,11 @@ public class TethysTestFields {
      * The string edit field.
      */
     private final TethysUIStringEditField theStringField;
+
+    /**
+     * The textArea field.
+     */
+    private final TethysUIStringTextAreaField theTextAreaField;
 
     /**
      * The password edit field.
@@ -223,6 +231,7 @@ public class TethysTestFields {
         final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
         theStringField = myFields.newStringField();
         configureCmdMenu(theStringField);
+        theTextAreaField = myFields.newStringAreaField();
         thePassField = myFields.newCharArrayField();
         theShortField = myFields.newShortField();
         theIntegerField = myFields.newIntegerField();
@@ -469,6 +478,17 @@ public class TethysTestFields {
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(Boolean.FALSE);
 
+        /* Create TextArea field line */
+        myLabel = myControls.newLabel("TextArea:");
+        myGrid.addCell(myLabel);
+        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
+        final TethysUIScrollPaneManager myScroll = theGuiFactory.paneFactory().newScrollPane();
+        myScroll.setContent(theTextAreaField);
+        myGrid.addCell(myScroll);
+        myGrid.allowCellGrowth(myScroll);
+        myGrid.newRow();
+        theTextAreaField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theTextAreaField, e));
+
         /* Return the pane */
         return myGrid;
     }
@@ -553,6 +573,7 @@ public class TethysTestFields {
     private void setEditMode(final boolean pDoEdit) {
         /* Set the editable indication */
         theStringField.setEditable(pDoEdit);
+        theTextAreaField.setEditable(pDoEdit);
         thePassField.setEditable(pDoEdit);
         theShortField.setEditable(pDoEdit);
         theIntegerField.setEditable(pDoEdit);

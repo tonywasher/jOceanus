@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIShortEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
 
 /**
@@ -44,6 +45,12 @@ public interface TethysUIFieldFactory {
      * @return the new field
      */
     TethysUIStringEditField newStringField();
+
+    /**
+     * Obtain a new string textArea field.
+     * @return the new field
+     */
+    TethysUIStringTextAreaField newStringAreaField();
 
     /**
      * Obtain a new charArray data field.

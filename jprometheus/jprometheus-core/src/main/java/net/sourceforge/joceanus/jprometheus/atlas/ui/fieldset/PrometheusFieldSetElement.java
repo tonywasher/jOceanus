@@ -179,5 +179,6 @@ public class PrometheusFieldSetElement<V> {
      */
     void adjustChanged(final boolean pChanged) {
         theField.setTheAttributeState(TethysFieldAttribute.CHANGED, pChanged);
+        theField.adjustField();
     }
 }

@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRatioTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
 
@@ -364,6 +365,11 @@ public class TethysFXGuiFactory
     @Override
     public TethysFXStringTextField newStringField() {
         return new TethysFXStringTextField(this);
+    }
+
+    @Override
+    public TethysFXStringTextAreaField newStringAreaField() {
+        return new TethysFXStringTextAreaField(this);
     }
 
     @Override

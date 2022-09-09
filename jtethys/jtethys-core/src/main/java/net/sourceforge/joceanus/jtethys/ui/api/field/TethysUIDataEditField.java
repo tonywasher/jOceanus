@@ -217,6 +217,17 @@ public interface TethysUIDataEditField<T>
     }
 
     /**
+     * StringTextAreaFieldControl.
+     */
+    interface TethysUIStringTextAreaField
+            extends TethysUIDataEditField<String>, TethysUIValidatedEditField<String> {
+        @Override
+        default String getCastValue(final Object pValue) {
+            return (String) pValue;
+        }
+    }
+
+    /**
      * CharArrayTextFieldControl.
      */
     interface TethysUICharArrayEditField

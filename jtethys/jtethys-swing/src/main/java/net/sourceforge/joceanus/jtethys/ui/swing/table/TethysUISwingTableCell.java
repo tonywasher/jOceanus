@@ -175,7 +175,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
         /* Apply validator to text field */
         if (theEditControl instanceof TethysUISwingDataTextField.TethysUISwingTextEditField
                 && theColumn instanceof TethysUISwingTableColumn.TethysUISwingTableValidatedColumn) {
-            final TethysUISwingTextEditField<T> myField = (TethysUISwingTextEditField<T>) theEditControl;
+            final TethysUISwingTextEditField<T, ?> myField = (TethysUISwingTextEditField<T, ?>) theEditControl;
             final TethysUISwingTableValidatedColumn<T, C, R> myColumn = (TethysUISwingTableValidatedColumn<T, C, R>) theColumn;
             myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             myField.setReporter(theColumn.getTable().getOnValidateError());

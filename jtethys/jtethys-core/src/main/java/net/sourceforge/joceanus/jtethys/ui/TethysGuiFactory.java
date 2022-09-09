@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalE
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysShortEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysUnitsEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 
@@ -440,6 +441,12 @@ public abstract class TethysGuiFactory {
      * @return the new field
      */
     public abstract TethysStringEditField newStringField();
+
+    /**
+     * Obtain a new string textArea field.
+     * @return the new field
+     */
+    public abstract TethysStringTextAreaField newStringAreaField();
 
     /**
      * Obtain a new charArray data field.
