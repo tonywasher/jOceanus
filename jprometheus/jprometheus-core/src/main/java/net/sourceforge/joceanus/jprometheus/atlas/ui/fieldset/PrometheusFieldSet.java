@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
@@ -67,7 +68,7 @@ public class PrometheusFieldSet<T>
     /**
      * The currently active panel.
      */
-    private PrometheusFieldSetPanel<T> theCurrentPanel;
+    private PrometheusFieldSetFields<T> theCurrentPanel;
 
     /**
      * The tabPanel.
@@ -100,7 +101,7 @@ public class PrometheusFieldSet<T>
         thePanels = new ArrayList<>();
 
         /* Create the initial panel */
-        theCurrentPanel = new PrometheusFieldSetPanel<>(pFactory, this);
+        theCurrentPanel = new PrometheusFieldSetFields<>(pFactory, this);
         thePanels.add(theCurrentPanel);
 
         /* Create the main panel */
@@ -136,9 +137,34 @@ public class PrometheusFieldSet<T>
         }
 
         /* Create the new panel and add as tab */
-        theCurrentPanel = new PrometheusFieldSetPanel<>(theFactory, this);
+        theCurrentPanel = new PrometheusFieldSetFields<>(theFactory, this);
         thePanels.add(theCurrentPanel);
         theTabs.addPanel(pName, theCurrentPanel);
+    }
+
+    /**
+     * Add a textArea tab.
+     * @param pName the name of the tab.
+     */
+    public void newTextArea(final String pName,
+                            final PrometheusDataFieldId pFieldId,
+                            final TethysStringTextAreaField pField,
+                            final Function<T, String> pValueFactory) {
+        /* If we do not currently have any tabs */
+        if (theTabs == null) {
+            /* Create the tab pane and add to main panel */
+            theTabs = new PrometheusFieldSetTabs(theFactory);
+            thePanel.addCell(theTabs.getComponent());
+            thePanel.allowCellGrowth(theTabs.getComponent());
+        }
+
+        /* Create the new panel and add as tab */
+        final PrometheusFieldSetTextArea<T> myTextArea = new PrometheusFieldSetTextArea<>(theFactory, this);
+        thePanels.add(myTextArea);
+        theTabs.addPanel(pName, myTextArea);
+
+        /* Add the field */
+        myTextArea.addField(pFieldId, pField, pValueFactory);
     }
 
     /**
