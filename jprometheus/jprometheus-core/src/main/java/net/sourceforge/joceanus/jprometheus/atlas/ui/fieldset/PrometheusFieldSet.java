@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
@@ -151,8 +151,8 @@ public class PrometheusFieldSet<T>
      */
     public void newTextArea(final String pName,
                             final PrometheusDataFieldId pFieldId,
-                            final TethysStringTextAreaField pField,
-                            final Function<T, String> pValueFactory) {
+                            final TethysCharArrayTextAreaField pField,
+                            final Function<T, char[]> pValueFactory) {
         /* If we do not currently have any tabs */
         if (theTabs == null) {
             /* Create the tab pane and add to main panel */

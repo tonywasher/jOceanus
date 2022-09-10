@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -56,12 +56,12 @@ public class PrometheusFieldSetTextArea<T>
     /**
      * The text area.
      */
-    private TethysStringTextAreaField theTextArea;
+    private TethysCharArrayTextAreaField theTextArea;
 
     /**
      * The value factory.
      */
-    private Function<T, String> theValueFactory;
+    private Function<T, char[]> theValueFactory;
 
     /**
      * Is the field visible?
@@ -116,11 +116,12 @@ public class PrometheusFieldSetTextArea<T>
      * @param pValueFactory the valueFactory
      */
     public void addField(final PrometheusDataFieldId pFieldId,
-                         final TethysStringTextAreaField pField,
-                         final Function<T, String> pValueFactory) {
+                         final TethysCharArrayTextAreaField pField,
+                         final Function<T, char[]> pValueFactory) {
         /* Store details */
         theFieldId = pFieldId;
         theTextArea = pField;
+        theValueFactory = pValueFactory;
 
         /* create the scrollable pane */
         final TethysScrollPaneManager myScroll = theFactory.newScrollPane();
@@ -148,7 +149,7 @@ public class PrometheusFieldSetTextArea<T>
         theItem = pItem;
 
         /* Store the value */
-        final String myValue = theValueFactory.apply(pItem);
+        final char[] myValue = theValueFactory.apply(pItem);
         theTextArea.setValue(myValue);
     }
 
