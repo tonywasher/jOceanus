@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWisePriceDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseDialogTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
@@ -33,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -45,7 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
  * Security Price Table.
  */
 public class MoneyWiseSecurityPriceTable
-        extends MoneyWiseDialogTable<SecurityPrice> {
+        extends MoneyWiseDialogTable<SecurityPrice>
+        implements PrometheusFieldSetTable<Security> {
     /**
      * Security.
      */
@@ -116,11 +119,8 @@ public class MoneyWiseSecurityPriceTable
         getTable().setItems(thePrices.getUnderlyingList());
     }
 
-    /**
-     * Set the security.
-     * @param pSecurity the security
-     */
-    public void setSecurity(final Security pSecurity) {
+    @Override
+    public void setItem(final Security pSecurity) {
         /* Store the security */
         if (!MetisDataDifference.isEqual(pSecurity, theSecurity)) {
             theSecurity = pSecurity;
@@ -198,6 +198,11 @@ public class MoneyWiseSecurityPriceTable
          * when there is a slot available, and that we validate the entire list after an update
          */
         return myPrice;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return !isViewEmpty();
     }
 
     @Override

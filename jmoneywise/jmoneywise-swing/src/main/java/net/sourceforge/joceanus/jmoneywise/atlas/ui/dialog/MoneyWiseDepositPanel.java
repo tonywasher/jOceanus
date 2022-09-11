@@ -78,11 +78,6 @@ public class MoneyWiseDepositPanel
     private final MoneyWiseDepositRateTable theRates;
 
     /**
-     * Table tab item.
-     */
-    //private final MoneyWiseDataTabTable theRatesTab;
-
-    /**
      * The Closed State.
      */
     private Boolean theClosedState = Boolean.FALSE;
@@ -113,9 +108,9 @@ public class MoneyWiseDepositPanel
         /* Build the notes panel */
         buildNotesPanel(pFactory);
 
-        /* Create the DepositRates table */
+        /* Create the DepositRates table and add to fieldSet */
         theRates = new MoneyWiseDepositRateTable(pView, getUpdateSet(), pError);
-        //theRatesTab = new MoneyWiseDataTabTable(TAB_RATES, theRates);
+        theFieldSet.newTable(TAB_RATES, theRates);
 
         /* Create the listeners */
         theRates.getEventRegistrar().addEventListener(e -> {
@@ -258,9 +253,6 @@ public class MoneyWiseDepositPanel
 
         /* Set editable value for parent */
         theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, isEditable && !bIsClosed);
-
-        /* Set the table visibility */
-        //theRatesTab.setRequireVisible(isEditable || !theRates.isViewEmpty());
     }
 
     @Override
@@ -324,24 +316,6 @@ public class MoneyWiseDepositPanel
     }
 
     @Override
-    public void setItem(final Deposit pItem) {
-        /* Update the rates */
-        theRates.setDeposit(pItem);
-
-        /* Pass call onwards */
-        super.setItem(pItem);
-    }
-
-    @Override
-    public void setNewItem(final Deposit pItem) {
-        /* Update the rates */
-        theRates.setDeposit(pItem);
-
-        /* Pass call onwards */
-        super.setNewItem(pItem);
-    }
-
-    @Override
     public void setEditable(final boolean isEditable) {
         /* Update the rates */
         theRates.setEditable(isEditable);
@@ -393,14 +367,7 @@ public class MoneyWiseDepositPanel
             /* Determine menu to add to */
             final DepositCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<DepositCategory> myMenu = myMap.get(myParentName);
-
-            /* If this is a new subMenu */
-            if (myMenu == null) {
-                /* Create a new subMenu and add it to the popUp */
-                myMenu = pMenu.addSubMenu(myParentName);
-                myMap.put(myParentName, myMenu);
-            }
+            TethysScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
             final TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());

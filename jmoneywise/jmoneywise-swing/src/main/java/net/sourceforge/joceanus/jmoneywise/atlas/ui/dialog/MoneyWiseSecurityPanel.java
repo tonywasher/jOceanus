@@ -77,11 +77,6 @@ public class MoneyWiseSecurityPanel
     private final MoneyWiseSecurityPriceTable thePrices;
 
     /**
-     * Table tab item.
-     */
-    //private final MoneyWiseDataTabTable thePricesTab;
-
-    /**
      * The Closed State.
      */
     private Boolean theClosedState = Boolean.FALSE;
@@ -114,7 +109,7 @@ public class MoneyWiseSecurityPanel
 
         /* Create the SecurityPrices table */
         thePrices = new MoneyWiseSecurityPriceTable(pView, getUpdateSet(), pError);
-        //thePricesTab = new MoneyWiseDataTabTable(TAB_PRICES, thePrices);
+        theFieldSet.newTable(TAB_PRICES, thePrices);
 
         /* Create the listener */
         thePrices.getEventRegistrar().addEventListener(e -> {
@@ -267,11 +262,6 @@ public class MoneyWiseSecurityPanel
 
         /* Set editable value for parent */
         theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, isEditable && !bIsClosed);
-
-        /* Set the table visibility */
-        boolean bShowPrices = !mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
-        bShowPrices &= isEditable || !thePrices.isViewEmpty();
-        //thePricesTab.setRequireVisible(bShowPrices);
     }
 
     /**
@@ -347,24 +337,6 @@ public class MoneyWiseSecurityPanel
             declareGoToItem(myCurrency);
         }
         declareGoToItem(myParent);
-    }
-
-    @Override
-    public void setItem(final Security pItem) {
-        /* Update the prices */
-        thePrices.setSecurity(pItem);
-
-        /* Pass call onwards */
-        super.setItem(pItem);
-    }
-
-    @Override
-    public void setNewItem(final Security pItem) {
-        /* Update the prices */
-        thePrices.setSecurity(pItem);
-
-        /* Pass call onwards */
-        super.setNewItem(pItem);
     }
 
     /**

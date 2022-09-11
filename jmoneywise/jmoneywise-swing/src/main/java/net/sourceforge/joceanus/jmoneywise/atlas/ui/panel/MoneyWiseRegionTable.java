@@ -228,7 +228,7 @@ public class MoneyWiseRegionTable
             theActiveRegion.setNewItem(myRegion);
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

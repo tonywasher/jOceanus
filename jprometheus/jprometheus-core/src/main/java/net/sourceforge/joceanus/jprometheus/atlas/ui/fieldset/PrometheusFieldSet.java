@@ -24,6 +24,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -168,6 +169,27 @@ public class PrometheusFieldSet<T>
 
         /* Add the field */
         myTextArea.addField(pFieldId, pField, pValueFactory);
+    }
+
+    /**
+     * Add a table tab.
+     * @param pName the name of the tab.
+     * @param pTable the table
+      */
+    public void newTable(final String pName,
+                         final PrometheusFieldSetTable<T> pTable) {
+        /* If we do not currently have any tabs */
+        if (theTabs == null) {
+            /* Create the tab pane and add to main panel */
+            theTabs = new PrometheusFieldSetTabs(theFactory);
+            thePanel.addCell(theTabs.getComponent());
+            thePanel.allowCellGrowth(theTabs.getComponent());
+        }
+
+        /* Create the new panel and add as tab */
+        final PrometheusFieldSetTableTab<T> myTable = new PrometheusFieldSetTableTab<>(theFactory, pTable);
+        thePanels.add(myTable);
+        theTabs.addPanel(pName, myTable);
     }
 
     /**

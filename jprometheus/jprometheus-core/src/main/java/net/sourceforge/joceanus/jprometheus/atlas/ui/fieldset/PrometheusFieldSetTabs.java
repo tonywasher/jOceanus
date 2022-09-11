@@ -70,11 +70,19 @@ public class PrometheusFieldSetTabs {
      * Adjust visibility.
      */
     void adjustVisibilty() {
+        /* Determine whether any panels are visible */
+        boolean anyVisible = false;
+
         /* Update visibility for all the panels */
         for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
             final TethysTabItem myItem = theTabs.findItemByName(myEntry.getKey());
             final PrometheusFieldSetPanel<?> myPanel = myEntry.getValue();
-            myItem.setVisible(myPanel.isVisible());
+            final boolean isVisible = myPanel.isVisible();
+            myItem.setVisible(isVisible);
+            anyVisible |= isVisible;
         }
+
+        /* Hide the tabs if there are none visible */
+        theTabs.setVisible(anyVisible);
     }
 }

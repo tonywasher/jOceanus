@@ -18,20 +18,18 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWisePayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -54,7 +52,7 @@ public class MoneyWisePayeeTable
     /**
      * The Payee dialog.
      */
-    private final PayeePanel theActivePayee;
+    private final MoneyWisePayeePanel theActivePayee;
 
     /**
      * The edit list.
@@ -76,15 +74,12 @@ public class MoneyWisePayeeTable
         /* register the infoEntry */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.PAYEEINFO);
 
-        /* Access field manager */
-        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
-
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         final TethysTableManager<PrometheusDataFieldId, Payee> myTable = getTable();
 
         /* Create a payee panel */
-        theActivePayee = new PayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActivePayee = new MoneyWisePayeePanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActivePayee);
 
         /* Set table configuration */
@@ -205,7 +200,7 @@ public class MoneyWisePayeeTable
             theActivePayee.setNewItem(myPayee);
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

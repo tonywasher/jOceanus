@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -45,7 +46,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
  * Deposit Rate Table.
  */
 public class MoneyWiseDepositRateTable
-        extends MoneyWiseDialogTable<DepositRate> {
+        extends MoneyWiseDialogTable<DepositRate>
+        implements PrometheusFieldSetTable<Deposit> {
     /**
      * Deposit.
      */
@@ -123,11 +125,8 @@ public class MoneyWiseDepositRateTable
         getTable().setItems(theRates.getUnderlyingList());
     }
 
-    /**
-     * Set the deposit.
-     * @param pDeposit the deposit
-     */
-    public void setDeposit(final Deposit pDeposit) {
+    @Override
+    public void setItem(final Deposit pDeposit) {
         /* Store the security */
         if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {
             theDeposit = pDeposit;
@@ -215,6 +214,11 @@ public class MoneyWiseDepositRateTable
          * when there is a slot available, and that we validate the entire list after an update
          */
         return myRate;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return !isViewEmpty();
     }
 
     @Override

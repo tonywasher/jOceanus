@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 
 /**
- * FieldSet Panel.
+ * FieldSet TextArea.
  * @param <T> the item type
  */
 public class PrometheusFieldSetTextArea<T>
@@ -139,7 +139,6 @@ public class PrometheusFieldSetTextArea<T>
 
     @Override
     public boolean isVisible() {
-         /* No visible element found */
         return isVisible;
     }
 

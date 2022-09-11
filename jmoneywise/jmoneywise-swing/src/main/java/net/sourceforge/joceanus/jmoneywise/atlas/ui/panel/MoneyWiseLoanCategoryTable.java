@@ -225,7 +225,7 @@ public class MoneyWiseLoanCategoryTable
             theActiveCategory.setNewItem(myCategory);
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

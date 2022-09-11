@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseDepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
@@ -32,10 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateLis
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -63,7 +61,7 @@ public class MoneyWiseDepositTable
     /**
      * The Deposit dialog.
      */
-    private final DepositPanel theActiveDeposit;
+    private final MoneyWiseDepositPanel theActiveDeposit;
 
     /**
      * The edit list.
@@ -86,15 +84,12 @@ public class MoneyWiseDepositTable
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITINFO);
         theRateEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITRATE);
 
-        /* Access field manager */
-        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
-
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         final TethysTableManager<PrometheusDataFieldId, Deposit> myTable = getTable();
 
         /* Create a Deposit panel */
-        theActiveDeposit = new DepositPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
+        theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, pUpdateSet, pError);
         declareItemPanel(theActiveDeposit);
 
         /* Set table configuration */
@@ -234,7 +229,7 @@ public class MoneyWiseDepositTable
             theActiveDeposit.setNewItem(myDeposit);
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

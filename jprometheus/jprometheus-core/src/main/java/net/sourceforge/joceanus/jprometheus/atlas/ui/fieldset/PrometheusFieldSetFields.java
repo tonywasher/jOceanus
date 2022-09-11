@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -42,6 +43,11 @@ public class PrometheusFieldSetFields<T>
      * The fieldSet.
      */
     private final PrometheusFieldSet<T> theFieldSet;
+
+    /**
+     * The holding panel.
+     */
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The panel.
@@ -75,7 +81,9 @@ public class PrometheusFieldSetFields<T>
         theFieldSet = pFieldSet;
 
         /* Create the panel */
+        thePane = theFactory.newBorderPane();
         thePanel = theFactory.newVBoxPane();
+        thePane.setNorth(thePanel);
 
         /* Create the maps */
         theElements = new HashMap<>();
@@ -85,22 +93,22 @@ public class PrometheusFieldSetFields<T>
 
     @Override
     public TethysNode getNode() {
-        return thePanel.getNode();
+        return thePane.getNode();
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
+        thePane.setEnabled(pEnabled);
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        thePane.setVisible(pVisible);
     }
 
     @Override
     public Integer getId() {
-        return thePanel.getId();
+        return thePane.getId();
     }
 
     /**

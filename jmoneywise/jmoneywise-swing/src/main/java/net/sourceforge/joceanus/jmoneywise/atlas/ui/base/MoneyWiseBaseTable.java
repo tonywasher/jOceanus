@@ -242,6 +242,9 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     protected void declareItemPanel(final MoneyWiseNewItemPanel<T> pPanel) {
         thePanel.setSouth(pPanel);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
+        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
+            setTableEnabled(!pPanel.isEditing());
+        });
     }
 
     @Override
@@ -262,6 +265,14 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     @Override
     public void setEnabled(final boolean pEnabled) {
         thePanel.setEnabled(pEnabled);
+    }
+
+    /**
+     * Set the table enabled status.
+     * @param pEnabled true/false
+     */
+    public void setTableEnabled(final boolean pEnabled) {
+        theTable.setEnabled(pEnabled);
     }
 
     @Override
