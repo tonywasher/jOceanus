@@ -21,7 +21,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * Dialog to display/edit/create a TransactionCategory.
  */
 public class MoneyWiseTransactionCategoryPanel
-        extends MoneyWiseNewItemPanel<TransactionCategory> {
+        extends MoneyWiseItemPanel<TransactionCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

@@ -144,7 +144,7 @@ public class MoneyWiseStaticPanel
      *
      * @param pView the view
      */
-    public MoneyWiseStaticPanel(final MoneyWiseView pView) {
+    MoneyWiseStaticPanel(final MoneyWiseView pView) {
         /* Store parameters */
         theView = pView;
 

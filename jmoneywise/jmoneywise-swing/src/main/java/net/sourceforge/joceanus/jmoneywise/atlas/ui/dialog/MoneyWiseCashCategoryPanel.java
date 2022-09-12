@@ -21,7 +21,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * Panel to display/edit/create a CashCategory.
  */
 public class MoneyWiseCashCategoryPanel
-        extends MoneyWiseNewItemPanel<CashCategory> {
+        extends MoneyWiseItemPanel<CashCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

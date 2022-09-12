@@ -177,7 +177,7 @@ public class MoneyWiseAccountPanel
      * Constructor.
      * @param pView the data view
      */
-    public MoneyWiseAccountPanel(final MoneyWiseView pView) {
+    MoneyWiseAccountPanel(final MoneyWiseView pView) {
         /* Store details */
         theView = pView;
 

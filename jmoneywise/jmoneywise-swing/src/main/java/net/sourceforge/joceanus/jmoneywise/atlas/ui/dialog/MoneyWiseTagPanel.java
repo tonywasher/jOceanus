@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTagDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
  * Panel to display/edit/create a TransactionTag.
  */
 public class MoneyWiseTagPanel
-        extends MoneyWiseNewItemPanel<TransactionTag> {
+        extends MoneyWiseItemPanel<TransactionTag> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

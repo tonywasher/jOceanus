@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * Panel to display/edit/create a Security.
  */
 public class MoneyWiseSecurityPanel
-        extends MoneyWiseNewItemPanel<Security> {
+        extends MoneyWiseItemPanel<Security> {
     /**
      * Prices Tab Title.
      */
@@ -169,7 +169,7 @@ public class MoneyWiseSecurityPanel
         theFieldSet.addField(MoneyWiseAssetDataId.SECURITYSYMBOL, mySymbol, Security::getSymbol);
         theFieldSet.addField(MoneyWiseAssetDataId.SECURITYREGION, myRegionButton, Security::getRegion);
         theFieldSet.addField(MoneyWiseAssetDataId.SECURITYUNDERLYING, myStockButton, Security::getUnderlyingStock);
-        theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITREFERENCE, myPrice, Security::getOptionPrice);
+        theFieldSet.addField(MoneyWiseAssetDataId.SECURITYOPTIONPRICE, myPrice, Security::getOptionPrice);
 
         /* Configure the menuBuilders */
         myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));

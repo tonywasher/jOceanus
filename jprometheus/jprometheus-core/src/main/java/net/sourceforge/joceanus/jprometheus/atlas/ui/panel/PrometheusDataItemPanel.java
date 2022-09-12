@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <G> the goto id type
  * @param <E> the data type enum class
  */
-public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
+public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent, PrometheusItemEditParent {
     /**
      * Details Tab Title.
@@ -154,9 +154,9 @@ public abstract class PrometheusNewDataItemPanel<T extends PrometheusTableItem &
      * @param pError the error panel
      */
     @SuppressWarnings("unchecked")
-    protected PrometheusNewDataItemPanel(final TethysGuiFactory pFactory,
-                                         final UpdateSet<E> pUpdateSet,
-                                         final MetisErrorPanel pError) {
+    protected PrometheusDataItemPanel(final TethysGuiFactory pFactory,
+                                      final UpdateSet<E> pUpdateSet,
+                                      final MetisErrorPanel pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;

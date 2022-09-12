@@ -21,7 +21,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * Panel to display/edit/create a DepositCategory.
  */
 public class MoneyWiseDepositCategoryPanel
-        extends MoneyWiseNewItemPanel<DepositCategory> {
+        extends MoneyWiseItemPanel<DepositCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

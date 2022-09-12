@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseRegionDataId;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseNewItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
  * Panel to display/edit/create a Region.
  */
 public class MoneyWiseRegionPanel
-        extends MoneyWiseNewItemPanel<Region> {
+        extends MoneyWiseItemPanel<Region> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

@@ -20,7 +20,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -28,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTransDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseTransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
@@ -40,13 +40,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
@@ -89,7 +87,7 @@ public class MoneyWiseTransactionTable
     /**
      * The transaction dialog.
      */
-    private final TransactionPanel theActiveTran;
+    private final MoneyWiseTransactionPanel theActiveTran;
 
     /**
      * The new button.
@@ -170,8 +168,7 @@ public class MoneyWiseTransactionTable
         theViewerAnalysis = pAnalysis;
         theViewerFilter = pFilter;
 
-        /* Access field manager and gui factory */
-        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
+        /* Access gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         final TethysTableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
 
@@ -192,7 +189,7 @@ public class MoneyWiseTransactionTable
         theBuilder = new TransactionBuilder(getUpdateSet());
 
         /* Create a transaction panel */
-        theActiveTran = new TransactionPanel(myGuiFactory, myFieldMgr, pUpdateSet, theBuilder, theSelect, pError);
+        theActiveTran = new MoneyWiseTransactionPanel(myGuiFactory, pUpdateSet, theBuilder, theSelect, pError);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */
@@ -674,7 +671,11 @@ public class MoneyWiseTransactionTable
         theNewButton.setEnabled(!isItemEditing);
 
         /* Adjust enable of the table */
-        setEnabled(!isItemEditing);
+        if (!isItemEditing) {
+            setEnabled(true);
+        } else {
+            setTableEnabled(false);
+        }
 
         /* Pass call on */
         super.notifyChanges();
@@ -840,7 +841,7 @@ public class MoneyWiseTransactionTable
             getUpdateSet().incrementVersion();
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
             theActiveTran.setNewItem(myTrans);
         }
     }
@@ -977,7 +978,7 @@ public class MoneyWiseTransactionTable
     /**
      * Transaction Panel.
      */
-    public static class MoneyWiseTransactionPanel
+    public static class MoneyWiseStatementPanel
             implements TethysComponent, TethysEventProvider<PrometheusDataEvent> {
         /**
          * Text for DataEntry Title.
@@ -1029,7 +1030,7 @@ public class MoneyWiseTransactionTable
          *
          * @param pView the data view
          */
-        public MoneyWiseTransactionPanel(final MoneyWiseView pView) {
+        public MoneyWiseStatementPanel(final MoneyWiseView pView) {
             /* Build the Update set and entry */
             theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
 

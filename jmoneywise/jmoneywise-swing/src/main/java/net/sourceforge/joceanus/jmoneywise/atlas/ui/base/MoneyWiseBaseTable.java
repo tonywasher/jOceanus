@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -51,8 +50,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * MoneyWise Base Table.
@@ -228,18 +225,6 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pPanel the item panel
      */
     protected void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-        myPanel.setLayout(new BorderLayout());
-        myPanel.add(TethysSwingNode.getComponent(pPanel), BorderLayout.CENTER);
-        thePanel.setSouth(myPanel);
-        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
-    }
-
-    /**
-     * Declare item panel.
-     * @param pPanel the item panel
-     */
-    protected void declareItemPanel(final MoneyWiseNewItemPanel<T> pPanel) {
         thePanel.setSouth(pPanel);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
