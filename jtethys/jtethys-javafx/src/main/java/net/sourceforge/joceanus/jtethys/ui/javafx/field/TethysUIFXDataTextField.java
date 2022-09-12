@@ -29,7 +29,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -195,6 +197,11 @@ public abstract class TethysUIFXDataTextField<T>
         return (TethysUIFXScrollMenu<String>) super.getCmdMenu();
     }
 
+    @Override
+    public Integer getHeight() {
+        return (int) thePane.getHeight();
+    }
+
     /**
      * Obtain the label.
      *
@@ -336,8 +343,9 @@ public abstract class TethysUIFXDataTextField<T>
      * TextField class.
      *
      * @param <T> the data type
+     * @param <F> the field type
      */
-    public abstract static class TethysUIFXTextEditField<T>
+    public abstract static class TethysUIFXTextEditField<T, F extends TextInputControl>
             extends TethysUIFXDataTextField<T>
             implements TethysUIValidatedEditField<T> {
         /**
@@ -353,7 +361,7 @@ public abstract class TethysUIFXDataTextField<T>
         /**
          * The textField.
          */
-        private final TextField theTextField;
+        private final F theTextField;
 
         /**
          * The error text.
@@ -370,11 +378,13 @@ public abstract class TethysUIFXDataTextField<T>
          *
          * @param pFactory   the GUI factory
          * @param pConverter the text converter
+         * @param pField the edit field
          */
         TethysUIFXTextEditField(final TethysUICoreFactory<?> pFactory,
-                                final TethysUICoreDataEditConverter<T> pConverter) {
+                                final TethysUICoreDataEditConverter<T> pConverter,
+                                final F pField) {
             /* Initialise underlying class */
-            super(pFactory, new TextField());
+            super(pFactory, pField);
 
             /* Create the converter control */
             theControl = new TethysUIDataEditTextFieldControl<>(this, pConverter);
@@ -391,7 +401,11 @@ public abstract class TethysUIFXDataTextField<T>
                     ? Pos.CENTER_RIGHT
                     : Pos.CENTER_LEFT;
             myLabel.setAlignment(myAlignment);
-            theTextField.setAlignment(myAlignment);
+            if (theTextField instanceof TextField) {
+                ((TextField) theTextField).setAlignment(myAlignment);
+            }
+            theTextField.setEditable(true);
+
 
             /* Add listener to handle change of focus */
             theTextField.focusedProperty().addListener((v, o, n) -> handleFocusChange(n));
@@ -482,8 +496,9 @@ public abstract class TethysUIFXDataTextField<T>
         }
 
         @Override
-        protected TextField getEditControl() {
-            return (TextField) super.getEditControl();
+        @SuppressWarnings("unchecked")
+        protected F getEditControl() {
+            return (F) super.getEditControl();
         }
 
         /**
@@ -556,7 +571,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXStringTextField class.
      */
     public static class TethysUIFXStringTextField
-            extends TethysUIFXTextEditField<String>
+            extends TethysUIFXTextEditField<String, TextField>
             implements TethysUIStringEditField {
         /**
          * Constructor.
@@ -564,7 +579,23 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXStringTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreStringEditConverter());
+            super(pFactory, new TethysUICoreStringEditConverter(), new TextField());
+        }
+    }
+
+    /**
+     * FXStringTextField class.
+     */
+    public static class TethysUIFXStringTextAreaField
+            extends TethysUIFXTextEditField<String, TextArea>
+            implements TethysUIStringTextAreaField {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the GUI factory
+         */
+        TethysUIFXStringTextAreaField(final TethysUICoreFactory<?> pFactory) {
+            super(pFactory, new TethysUICoreStringEditConverter(), new TextArea());
         }
     }
 
@@ -572,7 +603,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXCharArrayTextField class.
      */
     public static class TethysUIFXCharArrayTextField
-            extends TethysUIFXTextEditField<char[]>
+            extends TethysUIFXTextEditField<char[], TextField>
             implements TethysUICharArrayEditField {
         /**
          * Constructor.
@@ -580,7 +611,23 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXCharArrayTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreCharArrayEditConverter());
+            super(pFactory, new TethysUICoreCharArrayEditConverter(), new TextField());
+        }
+    }
+
+    /**
+     * FXCharArrayTextField class.
+     */
+    public static class TethysUIFXCharArrayTextAreaField
+            extends TethysUIFXTextEditField<char[], TextArea>
+            implements TethysUICharArrayTextAreaField {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the GUI factory
+         */
+        TethysUIFXCharArrayTextAreaField(final TethysUICoreFactory<?> pFactory) {
+            super(pFactory, new TethysUICoreCharArrayEditConverter(), new TextArea());
         }
     }
 
@@ -588,7 +635,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXShortTextField class.
      */
     public static class TethysUIFXShortTextField
-            extends TethysUIFXTextEditField<Short>
+            extends TethysUIFXTextEditField<Short, TextField>
             implements TethysUIShortEditField {
         /**
          * Constructor.
@@ -596,7 +643,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXShortTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreShortEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreShortEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }
@@ -605,7 +652,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXIntegerTextField class.
      */
     public static class TethysUIFXIntegerTextField
-            extends TethysUIFXTextEditField<Integer>
+            extends TethysUIFXTextEditField<Integer, TextField>
             implements TethysUIIntegerEditField {
         /**
          * Constructor.
@@ -613,7 +660,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXIntegerTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreIntegerEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreIntegerEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }
@@ -622,7 +669,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXLongTextField class.
      */
     public static class TethysUIFXLongTextField
-            extends TethysUIFXTextEditField<Long>
+            extends TethysUIFXTextEditField<Long, TextField>
             implements TethysUILongEditField {
         /**
          * Constructor.
@@ -630,7 +677,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXLongTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreLongEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreLongEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }
@@ -639,7 +686,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRawDecimalTextField class.
      */
     public static class TethysUIFXRawDecimalTextField
-            extends TethysUIFXTextEditField<TethysDecimal>
+            extends TethysUIFXTextEditField<TethysDecimal, TextField>
             implements TethysUIRawDecimalEditField {
         /**
          * Constructor.
@@ -647,7 +694,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXRawDecimalTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreRawDecimalEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreRawDecimalEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
 
@@ -668,7 +715,7 @@ public abstract class TethysUIFXDataTextField<T>
      * @param <T> the data type
      */
     protected abstract static class TethysUIFXCurrencyTextFieldBase<T extends TethysMoney>
-            extends TethysUIFXTextEditField<T>
+            extends TethysUIFXTextEditField<T, TextField>
             implements TethysUICurrencyEditField<T> {
         /**
          * Constructor.
@@ -678,7 +725,7 @@ public abstract class TethysUIFXDataTextField<T>
          */
         TethysUIFXCurrencyTextFieldBase(final TethysUICoreFactory<?> pFactory,
                                         final TethysUICoreMoneyEditConverterBase<T> pConverter) {
-            super(pFactory, pConverter);
+            super(pFactory, pConverter, new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
 
@@ -745,7 +792,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRateTextField class.
      */
     public static class TethysUIFXRateTextField
-            extends TethysUIFXTextEditField<TethysRate>
+            extends TethysUIFXTextEditField<TethysRate, TextField>
             implements TethysUIRateEditField {
         /**
          * Constructor.
@@ -753,7 +800,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXRateTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreRateEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreRateEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }
@@ -762,7 +809,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXUnitsTextField class.
      */
     public static class TethysUIFXUnitsTextField
-            extends TethysUIFXTextEditField<TethysUnits>
+            extends TethysUIFXTextEditField<TethysUnits, TextField>
             implements TethysUIUnitsEditField {
         /**
          * Constructor.
@@ -770,7 +817,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXUnitsTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreUnitsEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreUnitsEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }
@@ -779,7 +826,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXDilutionTextField class.
      */
     public static class TethysUIFXDilutionTextField
-            extends TethysUIFXTextEditField<TethysDilution>
+            extends TethysUIFXTextEditField<TethysDilution, TextField>
             implements TethysUIDilutionEditField {
         /**
          * Constructor.
@@ -787,7 +834,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXDilutionTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreDilutionEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreDilutionEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }
@@ -796,7 +843,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRatioTextField class.
      */
     public static class TethysUIFXRatioTextField
-            extends TethysUIFXTextEditField<TethysRatio>
+            extends TethysUIFXTextEditField<TethysRatio, TextField>
             implements TethysUIRatioEditField {
         /**
          * Constructor.
@@ -804,7 +851,7 @@ public abstract class TethysUIFXDataTextField<T>
          * @param pFactory the GUI factory
          */
         TethysUIFXRatioTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreRatioEditConverter(pFactory.getDataFormatter()));
+            super(pFactory, new TethysUICoreRatioEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }

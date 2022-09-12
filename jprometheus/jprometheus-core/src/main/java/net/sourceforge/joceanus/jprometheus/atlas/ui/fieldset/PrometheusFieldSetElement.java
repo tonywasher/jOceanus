@@ -15,25 +15,26 @@
  * the License.
  ******************************************************************************/
 
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 
 /**
  * FieldSet Element.
- * @param <F> the fieldId type
  * @param <V> the value type
  */
-public class PrometheusFieldSetElement<F, V> {
+public class PrometheusFieldSetElement<V> {
     /**
      * The fieldId.
      */
-    private final F theFieldId;
+    private final PrometheusDataFieldId theFieldId;
 
     /**
      * The label.
@@ -57,12 +58,13 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Constructor.
+     *
      * @param pFactory the gui factory.
      * @param pFieldId the fieldId
-     * @param pField the field
+     * @param pField   the field
      */
     PrometheusFieldSetElement(final TethysGuiFactory pFactory,
-                              final F pFieldId,
+                              final PrometheusDataFieldId pFieldId,
                               final TethysDataEditField<V> pField) {
         /* Store field and id */
         theFieldId = pFieldId;
@@ -70,7 +72,7 @@ public class PrometheusFieldSetElement<F, V> {
 
         /* Create the label */
         theLabel = pFactory.newLabel(theFieldId.toString() + ":");
-        theLabel.setAlignment(TethysAlignment.WEST);
+        theLabel.setAlignment(TethysAlignment.EAST);
 
         /* Create the element */
         theElement = pFactory.newBorderPane();
@@ -81,14 +83,16 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Obtain the fieldId.
+     *
      * @return the fieldId
      */
-    F getFieldId() {
+    PrometheusDataFieldId getFieldId() {
         return theFieldId;
     }
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     TethysComponent getComponent() {
@@ -97,6 +101,7 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Set value.
+     *
      * @param pValue the value
      */
     void setValue(final Object pValue) {
@@ -105,6 +110,7 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Set editable.
+     *
      * @param pEditable true/false
      */
     void setEditable(final boolean pEditable) {
@@ -113,6 +119,7 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Set visible.
+     *
      * @param pVisible true/false
      */
     void setVisible(final boolean pVisible) {
@@ -122,6 +129,7 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Is the element visible.
+     *
      * @return true/false
      */
     boolean isVisible() {
@@ -130,6 +138,7 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Obtain the label width.
+     *
      * @return the label width
      */
     int getLabelWidth() {
@@ -138,9 +147,38 @@ public class PrometheusFieldSetElement<F, V> {
 
     /**
      * Set the label width.
+     *
      * @param pWidth the label width
      */
     void setLabelWidth(final int pWidth) {
         theLabel.setPreferredWidth(pWidth);
+    }
+
+    /**
+     * Obtain the field height.
+     *
+     * @return the field height
+     */
+    int getFieldHeight() {
+        return theField.getHeight();
+    }
+
+    /**
+     * Set the field height.
+     *
+     * @param pHeight the field height
+     */
+    void setFieldHeight(final int pHeight) {
+        theField.setPreferredHeight(pHeight);
+    }
+
+    /**
+     * Adjust changed indications.
+     *
+     * @param pChanged is the field changed?
+     */
+    void adjustChanged(final boolean pChanged) {
+        theField.setTheAttributeState(TethysFieldAttribute.CHANGED, pChanged);
+        theField.adjustField();
     }
 }

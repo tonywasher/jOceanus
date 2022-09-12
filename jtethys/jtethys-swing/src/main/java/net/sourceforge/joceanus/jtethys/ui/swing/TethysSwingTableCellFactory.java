@@ -372,7 +372,7 @@ public class TethysSwingTableCellFactory<C, R> {
             /* Apply validator to text field */
             if (theEditControl instanceof TethysSwingTextEditField
                     && theColumn instanceof TethysSwingTableValidatedColumn) {
-                final TethysSwingTextEditField<T> myField = (TethysSwingTextEditField<T>) theEditControl;
+                final TethysSwingTextEditField<T, ?> myField = (TethysSwingTextEditField<T, ?>) theEditControl;
                 final TethysSwingTableValidatedColumn<T, C, R> myColumn = (TethysSwingTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
                 myField.setReporter(theColumn.getTable().getOnValidateError());

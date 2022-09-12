@@ -17,22 +17,20 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTagDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -56,7 +54,7 @@ public class MoneyWiseTransTagTable
     /**
      * The tag dialog.
      */
-    private final TransactionTagPanel theActiveTag;
+    private final MoneyWiseTagPanel theActiveTag;
 
     /**
      * The edit list.
@@ -75,9 +73,6 @@ public class MoneyWiseTransTagTable
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.TRANSTAG);
 
-        /* Access field manager */
-        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
-
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         final TethysTableManager<PrometheusDataFieldId, TransactionTag> myTable = getTable();
@@ -92,7 +87,7 @@ public class MoneyWiseTransTagTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a tag panel */
-        theActiveTag = new TransactionTagPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveTag = new MoneyWiseTagPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveTag);
 
         /* Set table configuration */
@@ -233,7 +228,7 @@ public class MoneyWiseTransTagTable
             theActiveTag.setNewItem(myTag);
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

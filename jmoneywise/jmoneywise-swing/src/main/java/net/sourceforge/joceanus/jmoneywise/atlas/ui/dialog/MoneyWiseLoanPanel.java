@@ -14,26 +14,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
@@ -41,25 +35,34 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
  * Panel to display/edit/create a Loan.
  */
-public class LoanPanel
+public class MoneyWiseLoanPanel
         extends MoneyWiseItemPanel<Loan> {
+    /**
+     * The fieldSet.
+     */
+    private final PrometheusFieldSet<Loan> theFieldSet;
+
     /**
      * The Closed State.
      */
@@ -68,59 +71,50 @@ public class LoanPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanPanel(final TethysGuiFactory pFactory,
-                     final MetisSwingFieldManager pFieldMgr,
-                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel pError) {
+    public MoneyWiseLoanPanel(final TethysGuiFactory pFactory,
+                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                              final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
+
+        /* Access the fieldSet */
+        theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        buildMainPanel(pFactory);
 
         /* Build the detail panel */
         buildXtrasPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
     }
 
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
-
+    private void buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<LoanCategory> myCategoryButton = pFactory.newScrollButton(LoanCategory.class);
-        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton(Payee.class);
-        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton(AssetCurrency.class);
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
+        final TethysScrollButtonField<LoanCategory> myCategoryButton = pFactory.newScrollField(LoanCategory.class);
+        final TethysScrollButtonField<Payee> myParentButton = pFactory.newScrollField(Payee.class);
+        final TethysScrollButtonField<AssetCurrency> myCurrencyButton = pFactory.newScrollField(AssetCurrency.class);
+        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, LoanCategory.class, myCategoryButton);
-        myPanel.addField(AssetBase.FIELD_PARENT, Payee.class, myParentButton);
-        myPanel.addField(AssetBase.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Layout the panel */
-        myPanel.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Loan::getName);
+        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Loan::getDesc);
+        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myCategoryButton, Loan::getCategory);
+        theFieldSet.addField(MoneyWiseAssetDataId.PARENT, myParentButton, Loan::getParent);
+        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Loan::getAssetCurrency);
+        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Loan::isClosed);
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
@@ -128,9 +122,6 @@ public class LoanPanel
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
@@ -139,22 +130,22 @@ public class LoanPanel
      */
     private void buildXtrasPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, DataItem.NAMELEN >> 1);
+        theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysStringEditField mySortCode = pFactory.newStringField();
-        final TethysStringEditField myAccount = pFactory.newStringField();
-        final TethysStringEditField myReference = pFactory.newStringField();
-        final TethysStringEditField myOpening = pFactory.newStringField();
+        final TethysCharArrayEditField mySortCode = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myAccount = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myReference = pFactory.newCharArrayField();
+        final TethysMoneyEditField myOpening = pFactory.newMoneyField();
 
         /* Assign the fields to the panel */
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
+        theFieldSet.addField(MoneyWiseAssetDataId.LOANSORTCODE, mySortCode, Loan::getSortCode);
+        theFieldSet.addField(MoneyWiseAssetDataId.LOANACCOUNT, myAccount, Loan::getAccount);
+        theFieldSet.addField(MoneyWiseAssetDataId.LOANREFERENCE, myReference, Loan::getReference);
+        theFieldSet.addField(MoneyWiseAssetDataId.LOANOPENINGBALANCE, myOpening, Loan::getOpeningBalance);
 
-        /* Layout the panel */
-        myTab.compactPanel();
+        /* Configure the currency */
+        myOpening.setDeemedCurrency(() -> getItem().getCurrency());
     }
 
     /**
@@ -162,19 +153,11 @@ public class LoanPanel
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), DataItem.NAMELEN);
-
         /* Allocate fields */
-        final TethysTextArea myNotes = pFactory.newTextArea();
-        final TethysScrollPaneManager myScroll = pFactory.newScrollPane();
-        myScroll.setContent(myNotes);
+        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        myTab.addField(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.LOANNOTES, myNotes, Loan::getNotes);
     }
 
     @Override
@@ -192,9 +175,6 @@ public class LoanPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Access the fieldSet */
-        final MetisSwingFieldSet<Loan> myFieldSet = getFieldSet();
-
         /* Access the item */
         final Loan myLoan = getItem();
         final boolean bIsClosed = myLoan.isClosed();
@@ -204,92 +184,82 @@ public class LoanPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        myFieldSet.setVisibility(AssetBase.FIELD_CLOSED, bShowClosed);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed
-                                              ? !myLoan.getParent().isClosed()
-                                              : !bIsRelevant;
-        myFieldSet.setEditable(AssetBase.FIELD_CLOSED, isEditable && bEditClosed);
+                ? !myLoan.getParent().isClosed()
+                : !bIsRelevant;
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myLoan.getDesc() != null;
-        myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANSORTCODE, bShowSortCode);
         final boolean bShowAccount = isEditable || myLoan.getAccount() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myLoan.getReference() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANREFERENCE, bShowReference);
         final boolean bHasOpening = myLoan.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        final MetisLetheField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
-        myFieldSet.setVisibility(myOpeningField, bShowOpening);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANOPENINGBALANCE, bShowOpening);
         final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
-        myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANNOTES, bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
-        myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, bIsChangeable);
-        myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
-        myFieldSet.setEditable(myOpeningField, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, bIsChangeable && !bHasOpening);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.LOANOPENINGBALANCE, bIsChangeable);
 
         /* Set editable value for parent */
-        myFieldSet.setEditable(AssetBase.FIELD_PARENT, isEditable && !bIsClosed);
-
-        /* Set currency for opening balance */
-        myFieldSet.setAssumedCurrency(myOpeningField, myLoan.getCurrency());
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, isEditable && !bIsClosed);
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Loan myLoan = getItem();
 
         /* Process updates */
-        if (myField.equals(AssetBase.FIELD_NAME)) {
+        if (MoneyWiseAssetDataId.NAME.equals(myField)) {
             /* Update the Name */
-            myLoan.setName(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_DESC)) {
+            myLoan.setName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myLoan.setDescription(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
+            myLoan.setDescription(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
             /* Update the Category */
             myLoan.setCategory(pUpdate.getValue(LoanCategory.class));
             myLoan.autoCorrect(getUpdateSet());
-        } else if (myField.equals(AssetBase.FIELD_PARENT)) {
+        } else if (MoneyWiseAssetDataId.PARENT.equals(myField)) {
             /* Update the Parent */
             myLoan.setParent(pUpdate.getValue(Payee.class));
-        } else if (myField.equals(AssetBase.FIELD_CURRENCY)) {
+        } else if (MoneyWiseAssetDataId.CURRENCY.equals(myField)) {
             /* Update the Currency */
             myLoan.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
-        } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
+        } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
             /* Update the Closed indication */
-            myLoan.setClosed(pUpdate.getBoolean());
-        } else {
-            /* Switch on the field */
-            switch (LoanInfoSet.getClassForField(myField)) {
-                case OPENINGBALANCE:
-                    myLoan.setOpeningBalance(pUpdate.getMoney());
-                    break;
-                case SORTCODE:
-                    myLoan.setSortCode(pUpdate.getCharArray());
-                    break;
-                case ACCOUNT:
-                    myLoan.setAccount(pUpdate.getCharArray());
-                    break;
-                case REFERENCE:
-                    myLoan.setReference(pUpdate.getCharArray());
-                    break;
-                case NOTES:
-                    myLoan.setNotes(pUpdate.getCharArray());
-                    break;
-                default:
-                    break;
-            }
+            myLoan.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (MoneyWiseAssetDataId.LOANSORTCODE.equals(myField)) {
+            /* Update the SortCode */
+            myLoan.setSortCode(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.LOANACCOUNT.equals(myField)) {
+            /* Update the Account */
+            myLoan.setAccount(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.LOANREFERENCE.equals(myField)) {
+            /* Update the Reference */
+            myLoan.setReference(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.LOANOPENINGBALANCE.equals(myField)) {
+            /* Update the OpeningBalance */
+            myLoan.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
+        } else if (MoneyWiseAssetDataId.LOANNOTES.equals(myField)) {
+            /* Update the Notes */
+            myLoan.setNotes(pUpdate.getValue(char[].class));
         }
     }
 

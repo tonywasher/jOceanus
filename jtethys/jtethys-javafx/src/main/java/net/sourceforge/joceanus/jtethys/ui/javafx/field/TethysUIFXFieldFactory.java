@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutionTextField;
@@ -34,6 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXRatioTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXRawDecimalTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXShortTextField;
+import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXUnitsTextField;
 
@@ -62,8 +64,18 @@ public class TethysUIFXFieldFactory
     }
 
     @Override
+    public TethysUIFXStringTextAreaField newStringAreaField() {
+        return new TethysUIFXStringTextAreaField(theFactory);
+    }
+
+    @Override
     public TethysUIFXCharArrayTextField newCharArrayField() {
         return new TethysUIFXCharArrayTextField(theFactory);
+    }
+
+    @Override
+    public TethysUIFXCharArrayTextAreaField newCharArrayAreaField() {
+        return new TethysUIFXCharArrayTextAreaField(theFactory);
     }
 
     @Override

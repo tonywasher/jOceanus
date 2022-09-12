@@ -14,19 +14,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
@@ -34,9 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 /**
  * FieldSet.
  * @param <T> the item type
- * @param <F> the fieldId type
  */
-public class PrometheusFieldSet<T, F>
+public class PrometheusFieldSet<T>
         implements TethysEventProvider<TethysXUIEvent> {
     /**
      * The gui factory.
@@ -51,12 +54,12 @@ public class PrometheusFieldSet<T, F>
     /**
      * The map of Fields to panels.
      */
-    private final Map<F, PrometheusFieldSetPanel<T, F>> theFieldMap;
+    private final Map<PrometheusDataFieldId, PrometheusFieldSetPanel<T>> theFieldMap;
 
     /**
      * The list of panels.
      */
-    private final List<PrometheusFieldSetPanel<T, F>> thePanels;
+    private final List<PrometheusFieldSetPanel<T>> thePanels;
 
     /**
      * The panel.
@@ -66,12 +69,17 @@ public class PrometheusFieldSet<T, F>
     /**
      * The currently active panel.
      */
-    private PrometheusFieldSetPanel<T, F> theCurrentPanel;
+    private PrometheusFieldSetFields<T> theCurrentPanel;
 
     /**
      * The tabPanel.
      */
     private PrometheusFieldSetTabs theTabs;
+
+    /**
+     * is field changed predicate.
+     */
+    private BiPredicate<T, PrometheusDataFieldId> theChanged;
 
     /**
      * Is the data being refreshed?
@@ -94,7 +102,7 @@ public class PrometheusFieldSet<T, F>
         thePanels = new ArrayList<>();
 
         /* Create the initial panel */
-        theCurrentPanel = new PrometheusFieldSetPanel<>(pFactory, this);
+        theCurrentPanel = new PrometheusFieldSetFields<>(pFactory, this);
         thePanels.add(theCurrentPanel);
 
         /* Create the main panel */
@@ -107,7 +115,7 @@ public class PrometheusFieldSet<T, F>
      * Obtain the component.
      * @return the component
      */
-    TethysComponent getComponent() {
+    public TethysComponent getComponent() {
         return thePanel;
     }
 
@@ -130,9 +138,58 @@ public class PrometheusFieldSet<T, F>
         }
 
         /* Create the new panel and add as tab */
-        theCurrentPanel = new PrometheusFieldSetPanel<>(theFactory, this);
+        theCurrentPanel = new PrometheusFieldSetFields<>(theFactory, this);
         thePanels.add(theCurrentPanel);
         theTabs.addPanel(pName, theCurrentPanel);
+    }
+
+    /**
+     * Add a textArea tab.
+     * @param pName the name of the tab.
+     * @param pFieldId the fieldId
+     * @param pField the edit field
+     * @param pValueFactory the valueFactory
+     */
+    public void newTextArea(final String pName,
+                            final PrometheusDataFieldId pFieldId,
+                            final TethysCharArrayTextAreaField pField,
+                            final Function<T, char[]> pValueFactory) {
+        /* If we do not currently have any tabs */
+        if (theTabs == null) {
+            /* Create the tab pane and add to main panel */
+            theTabs = new PrometheusFieldSetTabs(theFactory);
+            thePanel.addCell(theTabs.getComponent());
+            thePanel.allowCellGrowth(theTabs.getComponent());
+        }
+
+        /* Create the new panel and add as tab */
+        final PrometheusFieldSetTextArea<T> myTextArea = new PrometheusFieldSetTextArea<>(theFactory, this);
+        thePanels.add(myTextArea);
+        theTabs.addPanel(pName, myTextArea);
+
+        /* Add the field */
+        myTextArea.addField(pFieldId, pField, pValueFactory);
+    }
+
+    /**
+     * Add a table tab.
+     * @param pName the name of the tab.
+     * @param pTable the table
+      */
+    public void newTable(final String pName,
+                         final PrometheusFieldSetTable<T> pTable) {
+        /* If we do not currently have any tabs */
+        if (theTabs == null) {
+            /* Create the tab pane and add to main panel */
+            theTabs = new PrometheusFieldSetTabs(theFactory);
+            thePanel.addCell(theTabs.getComponent());
+            thePanel.allowCellGrowth(theTabs.getComponent());
+        }
+
+        /* Create the new panel and add as tab */
+        final PrometheusFieldSetTableTab<T> myTable = new PrometheusFieldSetTableTab<>(theFactory, pTable);
+        thePanels.add(myTable);
+        theTabs.addPanel(pName, myTable);
     }
 
     /**
@@ -141,10 +198,51 @@ public class PrometheusFieldSet<T, F>
      * @param pField the edit field
      * @param pValueFactory the valueFactory
      */
-    public void addField(final F pFieldId,
+    public void addField(final PrometheusDataFieldId pFieldId,
                          final TethysDataEditField<?> pField,
                          final Function<T, Object> pValueFactory) {
         theCurrentPanel.addField(pFieldId, pField, pValueFactory);
+    }
+
+    /**
+     * Set the changed predicate.
+     * @param pChanged the changed predicate
+     */
+    public void setChanged(final BiPredicate<T, PrometheusDataFieldId> pChanged) {
+        theChanged = pChanged;
+    }
+
+    /**
+     * Is the cell changed?
+     * @param pItem the item
+     * @param pField the field id
+     * @return true/false
+     */
+    boolean isChanged(final T pItem,
+                      final PrometheusDataFieldId pField) {
+        return theChanged != null
+                && theChanged.test(pItem, pField);
+    }
+
+    /**
+     * Set editable item.
+     * @param isEditable true/false
+     */
+    public void setEditable(final boolean isEditable) {
+        /* Update all the panels */
+        for (PrometheusFieldSetPanel<T> myPanel : thePanels) {
+            myPanel.setEditable(isEditable);
+        }
+    }
+
+    /**
+     * Adjust changed indications.
+     */
+    public void adjustChanged() {
+        /* Update all the panels */
+        for (PrometheusFieldSetPanel<T> myPanel : thePanels) {
+            myPanel.adjustChanged();
+        }
     }
 
     /**
@@ -156,7 +254,7 @@ public class PrometheusFieldSet<T, F>
         isRefreshing = true;
 
         /* Update all the panels */
-        for (PrometheusFieldSetPanel<T, F> myPanel : thePanels) {
+        for (PrometheusFieldSetPanel<T> myPanel : thePanels) {
             myPanel.setItem(pItem);
         }
 
@@ -169,8 +267,8 @@ public class PrometheusFieldSet<T, F>
      * @param pFieldId the field.
      * @param pPanel the panel.
      */
-    void registerField(final F pFieldId,
-                       final PrometheusFieldSetPanel<T, F> pPanel) {
+    void registerField(final PrometheusDataFieldId pFieldId,
+                       final PrometheusFieldSetPanel<T> pPanel) {
         theFieldMap.put(pFieldId, pPanel);
     }
 
@@ -179,16 +277,22 @@ public class PrometheusFieldSet<T, F>
      * @param pFieldId the field.
      * @param pVisible is visible true/false?
      */
-    public void setFieldVisible(final F pFieldId,
+    public void setFieldVisible(final PrometheusDataFieldId pFieldId,
                                 final boolean pVisible) {
         /* Adjust visibility of field */
-        final PrometheusFieldSetPanel<T, F> myPanel = theFieldMap.get(pFieldId);
+        final PrometheusFieldSetPanel<T> myPanel = theFieldMap.get(pFieldId);
         myPanel.setVisible(pFieldId, pVisible);
+    }
 
+    /**
+     * Adjust tab visibility.
+     */
+    public void adjustTabVisibility() {
         /* Adjust visibility of tabs if present */
         if (theTabs != null) {
             theTabs.adjustVisibilty();
         }
+        adjustChanged();
     }
 
     /**
@@ -196,10 +300,10 @@ public class PrometheusFieldSet<T, F>
      * @param pFieldId the fieldId.
      * @param pEditable is editable true/false?
      */
-    public void setFieldEditable(final F pFieldId,
+    public void setFieldEditable(final PrometheusDataFieldId pFieldId,
                                  final boolean pEditable) {
         /* Adjust edit-ability of field */
-        final PrometheusFieldSetPanel<T, F> myPanel = theFieldMap.get(pFieldId);
+        final PrometheusFieldSetPanel<T> myPanel = theFieldMap.get(pFieldId);
         myPanel.setEditable(pFieldId, pEditable);
     }
 
@@ -208,12 +312,12 @@ public class PrometheusFieldSet<T, F>
      * @param pFieldId the fieldId.
      * @param pNewValue the new value
      */
-    void newData(final F pFieldId,
+    void newData(final PrometheusDataFieldId pFieldId,
                  final Object pNewValue) {
         /* If we are not refreshing data */
         if (!isRefreshing) {
             /* Create the notification */
-            final PrometheusFieldSetEvent<F> myUpdate = new PrometheusFieldSetEvent<>(pFieldId, pNewValue);
+            final PrometheusFieldSetEvent myUpdate = new PrometheusFieldSetEvent(pFieldId, pNewValue);
 
             /* Fire the notification */
             theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, myUpdate);

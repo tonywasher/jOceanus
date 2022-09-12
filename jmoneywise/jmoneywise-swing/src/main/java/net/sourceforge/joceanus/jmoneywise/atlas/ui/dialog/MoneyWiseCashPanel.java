@@ -14,26 +14,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
@@ -44,25 +38,33 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.Asse
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
  * Panel to display/edit/create a Cash.
  */
-public class CashPanel
+public class MoneyWiseCashPanel
         extends MoneyWiseItemPanel<Cash> {
+    /**
+     * The fieldSet.
+     */
+    private final PrometheusFieldSet<Cash> theFieldSet;
+
     /**
      * The Closed State.
      */
@@ -71,66 +73,54 @@ public class CashPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public CashPanel(final TethysGuiFactory pFactory,
-                     final MetisSwingFieldManager pFieldMgr,
-                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel pError) {
+    public MoneyWiseCashPanel(final TethysGuiFactory pFactory,
+                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                              final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
+
+        /* Access the fieldSet */
+        theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        buildMainPanel(pFactory);
 
         /* Build the detail panel */
         buildXtrasPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
     }
 
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
-
+    private void buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<CashCategory> myCategoryButton = pFactory.newScrollButton(CashCategory.class);
-        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton(AssetCurrency.class);
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
+        final TethysScrollButtonField<CashCategory> myCategoryButton = pFactory.newScrollField(CashCategory.class);
+        final TethysScrollButtonField<AssetCurrency> myCurrencyButton = pFactory.newScrollField(AssetCurrency.class);
+        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, CashCategory.class, myCategoryButton);
-        myPanel.addField(AssetBase.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Layout the panel */
-        myPanel.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Cash::getName);
+        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Cash::getDesc);
+        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myCategoryButton, Cash::getCategory);
+        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Cash::getAssetCurrency);
+        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Cash::isClosed);
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
@@ -139,26 +129,24 @@ public class CashPanel
      */
     private void buildXtrasPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, DataItem.NAMELEN >> 1);
+        theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysStringEditField myOpening = pFactory.newStringField();
+        final TethysMoneyEditField myOpening = pFactory.newMoneyField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton(TransactionCategory.class);
-        final TethysScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton(Payee.class);
+        final TethysScrollButtonField<TransactionCategory> myAutoExpenseButton = pFactory.newScrollField(TransactionCategory.class);
+        final TethysScrollButtonField<Payee> myAutoPayeeButton = pFactory.newScrollField(Payee.class);
 
         /* Assign the fields to the panel */
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, myAutoPayeeButton);
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.CASHAUTOEXPENSE, myAutoExpenseButton, Cash::getAutoExpense);
+        theFieldSet.addField(MoneyWiseAssetDataId.CASHAUTOPAYEE, myAutoPayeeButton, Cash::getAutoPayee);
+        theFieldSet.addField(MoneyWiseAssetDataId.CASHOPENINGBALANCE, myOpening, Cash::getOpeningBalance);
 
         /* Configure the menuBuilders */
         myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
         myAutoPayeeButton.setMenuConfigurator(c -> buildAutoPayeeMenu(c, getItem()));
+        myOpening.setDeemedCurrency(() -> getItem().getCurrency());
     }
 
     /**
@@ -166,19 +154,11 @@ public class CashPanel
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), DataItem.NAMELEN);
-
         /* Allocate fields */
-        final TethysTextArea myNotes = pFactory.newTextArea();
-        final TethysScrollPaneManager myScroll = pFactory.newScrollPane();
-        myScroll.setContent(myNotes);
+        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.CASHNOTES, myNotes, Cash::getNotes);
     }
 
     @Override
@@ -196,9 +176,6 @@ public class CashPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Access the fieldSet */
-        final MetisSwingFieldSet<Cash> myFieldSet = getFieldSet();
-
         /* Access the item */
         final Cash myCash = getItem();
         final boolean bIsClosed = myCash.isClosed();
@@ -209,89 +186,75 @@ public class CashPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        myFieldSet.setVisibility(AssetBase.FIELD_CLOSED, bShowClosed);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed || !bIsRelevant;
-        myFieldSet.setEditable(AssetBase.FIELD_CLOSED, isEditable && bEditClosed);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCash.getDesc() != null;
-        myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
 
         /* AutoExpense/Payee is hidden unless we are autoExpense */
-        final MetisLetheField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
-        final MetisLetheField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
-        myFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
-        myFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHAUTOEXPENSE, isAutoExpense);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHAUTOPAYEE, isAutoExpense);
 
         /* OpeningBalance is hidden if we are autoExpense */
-        final MetisLetheField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         final boolean bHasOpening = myCash.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        myFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHOPENINGBALANCE, !isAutoExpense && bShowOpening);
 
         /* Determine whether to show notes */
         final boolean bShowNotes = isEditable || myCash.getNotes() != null;
-        myFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHNOTES, bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
-        myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, bIsChangeable);
-        myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, bIsChangeable && !bHasOpening);
 
         /* AutoExpense/Payee cannot be changed for closed item */
         final boolean canEdit = isEditable && !bIsClosed;
-        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
-        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
-
-        /* Set currency for opening balance */
-        if (!isAutoExpense) {
-            myFieldSet.setAssumedCurrency(myOpeningField, myCash.getCurrency());
-        }
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CASHAUTOEXPENSE, canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CASHAUTOPAYEE, canEdit);
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Cash myCash = getItem();
 
         /* Process updates */
-        if (myField.equals(AssetBase.FIELD_NAME)) {
+        if (MoneyWiseAssetDataId.NAME.equals(myField)) {
             /* Update the Name */
-            myCash.setName(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_DESC)) {
+            myCash.setName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myCash.setDescription(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
+            myCash.setDescription(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
             /* Update the Category */
             myCash.setCategory(pUpdate.getValue(CashCategory.class));
             myCash.autoCorrect(getUpdateSet());
-        } else if (myField.equals(AssetBase.FIELD_CURRENCY)) {
+        } else if (MoneyWiseAssetDataId.CURRENCY.equals(myField)) {
             /* Update the Currency */
             myCash.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
-        } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
+        } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
             /* Update the Closed indication */
-            myCash.setClosed(pUpdate.getBoolean());
-        } else {
-            /* Switch on the field */
-            switch (CashInfoSet.getClassForField(myField)) {
-                case AUTOEXPENSE:
-                    myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
-                    break;
-                case AUTOPAYEE:
-                    myCash.setAutoPayee(pUpdate.getValue(Payee.class));
-                    break;
-                case OPENINGBALANCE:
-                    myCash.setOpeningBalance(pUpdate.getMoney());
-                    break;
-                case NOTES:
-                    myCash.setNotes(pUpdate.getCharArray());
-                    break;
-                default:
-                    break;
-            }
+            myCash.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (MoneyWiseAssetDataId.CASHAUTOEXPENSE.equals(myField)) {
+            /* Update the AutoExpense */
+            myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
+        } else if (MoneyWiseAssetDataId.CASHAUTOPAYEE.equals(myField)) {
+            /* Update the AutoPayee */
+            myCash.setAutoPayee(pUpdate.getValue(Payee.class));
+        } else if (MoneyWiseAssetDataId.CASHOPENINGBALANCE.equals(myField)) {
+            /* Update the OpeningBalance */
+            myCash.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
+        } else if (MoneyWiseAssetDataId.CASHNOTES.equals(myField)) {
+            /* Update the OpeningBalance */
+            myCash.setNotes(pUpdate.getValue(char[].class));
         }
     }
 

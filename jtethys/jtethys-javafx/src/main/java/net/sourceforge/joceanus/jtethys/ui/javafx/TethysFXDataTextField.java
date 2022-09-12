@@ -29,7 +29,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -189,6 +191,11 @@ public abstract class TethysFXDataTextField<T>
         return (TethysFXScrollContextMenu<String>) super.getCmdMenu();
     }
 
+    @Override
+    public Integer getHeight() {
+        return (int) thePane.getHeight();
+    }
+
     /**
      * Obtain the label.
      *
@@ -330,8 +337,9 @@ public abstract class TethysFXDataTextField<T>
      * TextField class.
      *
      * @param <T> the data type
+     * @param <F> the field type
      */
-    public abstract static class TethysFXTextEditField<T>
+    public abstract static class TethysFXTextEditField<T, F extends TextInputControl>
             extends TethysFXDataTextField<T>
             implements TethysValidatedEditField<T> {
         /**
@@ -347,7 +355,7 @@ public abstract class TethysFXDataTextField<T>
         /**
          * The textField.
          */
-        private final TextField theTextField;
+        private final F theTextField;
 
         /**
          * The error text.
@@ -385,7 +393,10 @@ public abstract class TethysFXDataTextField<T>
                                     ? Pos.CENTER_RIGHT
                                     : Pos.CENTER_LEFT;
             myLabel.setAlignment(myAlignment);
-            theTextField.setAlignment(myAlignment);
+            if (theTextField instanceof TextField) {
+                ((TextField) theTextField).setAlignment(myAlignment);
+            }
+            theTextField.setEditable(true);
 
             /* Add listener to handle change of focus */
             theTextField.focusedProperty().addListener((v, o, n) -> handleFocusChange(n));
@@ -476,8 +487,9 @@ public abstract class TethysFXDataTextField<T>
         }
 
         @Override
-        protected TextField getEditControl() {
-            return (TextField) super.getEditControl();
+        @SuppressWarnings("unchecked")
+        protected F getEditControl() {
+            return (F) super.getEditControl();
         }
 
         /**
@@ -558,7 +570,7 @@ public abstract class TethysFXDataTextField<T>
      * FXStringTextField class.
      */
     public static class TethysFXStringTextField
-            extends TethysFXTextEditField<String>
+            extends TethysFXTextEditField<String, TextField>
             implements TethysStringEditField {
         /**
          * Constructor.
@@ -571,10 +583,26 @@ public abstract class TethysFXDataTextField<T>
     }
 
     /**
+     * FXStringTextField class.
+     */
+    public static class TethysFXStringTextAreaField
+            extends TethysFXTextEditField<String, TextArea>
+            implements TethysStringTextAreaField {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the GUI factory
+         */
+        TethysFXStringTextAreaField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysStringEditConverter());
+        }
+    }
+
+    /**
      * FXCharArrayTextField class.
      */
     public static class TethysFXCharArrayTextField
-            extends TethysFXTextEditField<char[]>
+            extends TethysFXTextEditField<char[], TextField>
             implements TethysCharArrayEditField {
         /**
          * Constructor.
@@ -587,10 +615,26 @@ public abstract class TethysFXDataTextField<T>
     }
 
     /**
+     * FXStringTextField class.
+     */
+    public static class TethysFXCharArrayTextAreaField
+            extends TethysFXTextEditField<char[], TextArea>
+            implements TethysCharArrayTextAreaField {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the GUI factory
+         */
+        TethysFXCharArrayTextAreaField(final TethysFXGuiFactory pFactory) {
+            super(pFactory, new TethysCharArrayEditConverter());
+        }
+    }
+
+    /**
      * FXShortTextField class.
      */
     public static class TethysFXShortTextField
-            extends TethysFXTextEditField<Short>
+            extends TethysFXTextEditField<Short, TextField>
             implements TethysShortEditField {
         /**
          * Constructor.
@@ -607,7 +651,7 @@ public abstract class TethysFXDataTextField<T>
      * FXIntegerTextField class.
      */
     public static class TethysFXIntegerTextField
-            extends TethysFXTextEditField<Integer>
+            extends TethysFXTextEditField<Integer, TextField>
             implements TethysIntegerEditField {
         /**
          * Constructor.
@@ -624,7 +668,7 @@ public abstract class TethysFXDataTextField<T>
      * FXLongTextField class.
      */
     public static class TethysFXLongTextField
-            extends TethysFXTextEditField<Long>
+            extends TethysFXTextEditField<Long, TextField>
             implements TethysLongEditField {
         /**
          * Constructor.
@@ -641,7 +685,7 @@ public abstract class TethysFXDataTextField<T>
      * FXRawDecimalTextField class.
      */
     public static class TethysFXRawDecimalTextField
-            extends TethysFXTextEditField<TethysDecimal>
+            extends TethysFXTextEditField<TethysDecimal, TextField>
             implements TethysRawDecimalEditField {
         /**
          * Constructor.
@@ -670,7 +714,7 @@ public abstract class TethysFXDataTextField<T>
      * @param <T> the data type
      */
     protected abstract static class TethysFXCurrencyTextFieldBase<T extends TethysMoney>
-            extends TethysFXTextEditField<T>
+            extends TethysFXTextEditField<T, TextField>
             implements TethysCurrencyEditField<T> {
         /**
          * Constructor.
@@ -747,7 +791,7 @@ public abstract class TethysFXDataTextField<T>
      * FXRateTextField class.
      */
     public static class TethysFXRateTextField
-            extends TethysFXTextEditField<TethysRate>
+            extends TethysFXTextEditField<TethysRate, TextField>
             implements TethysRateEditField {
         /**
          * Constructor.
@@ -764,7 +808,7 @@ public abstract class TethysFXDataTextField<T>
      * FXUnitsTextField class.
      */
     public static class TethysFXUnitsTextField
-            extends TethysFXTextEditField<TethysUnits>
+            extends TethysFXTextEditField<TethysUnits, TextField>
             implements TethysUnitsEditField {
         /**
          * Constructor.
@@ -781,7 +825,7 @@ public abstract class TethysFXDataTextField<T>
      * FXDilutionTextField class.
      */
     public static class TethysFXDilutionTextField
-            extends TethysFXTextEditField<TethysDilution>
+            extends TethysFXTextEditField<TethysDilution, TextField>
             implements TethysDilutionEditField {
         /**
          * Constructor.
@@ -798,7 +842,7 @@ public abstract class TethysFXDataTextField<T>
      * FXRatioTextField class.
      */
     public static class TethysFXRatioTextField
-            extends TethysFXTextEditField<TethysRatio>
+            extends TethysFXTextEditField<TethysRatio, TextField>
             implements TethysRatioEditField {
         /**
          * Constructor.

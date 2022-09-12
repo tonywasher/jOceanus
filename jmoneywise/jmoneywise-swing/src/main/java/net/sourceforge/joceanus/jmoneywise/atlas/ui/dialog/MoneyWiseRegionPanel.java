@@ -14,19 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseRegionDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
@@ -35,35 +33,30 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 /**
  * Panel to display/edit/create a Region.
  */
-public class RegionPanel
+public class MoneyWiseRegionPanel
         extends MoneyWiseItemPanel<Region> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public RegionPanel(final TethysGuiFactory pFactory,
-                       final MetisSwingFieldManager pFieldMgr,
-                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                       final MetisErrorPanel pError) {
+    public MoneyWiseRegionPanel(final TethysGuiFactory pFactory,
+                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
 
-        /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
+        /* Access the fieldSet */
+        final PrometheusFieldSet<Region> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Assign the fields to the panel */
-        myPanel.addField(Region.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(Region.FIELD_DESC, MetisDataType.STRING, myDesc);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
+        myFieldSet.addField(MoneyWiseRegionDataId.NAME, myName, Region::getName);
+        myFieldSet.addField(MoneyWiseRegionDataId.DESC, myDesc, Region::getDesc);
     }
 
     @Override
@@ -82,26 +75,26 @@ public class RegionPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<Region> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<Region> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
-        myFieldSet.setVisibility(Region.FIELD_DESC, bShowDesc);
+        myFieldSet.setFieldVisible(MoneyWiseRegionDataId.DESC, bShowDesc);
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Region myRegion = getItem();
 
         /* Process updates */
-        if (myField.equals(Region.FIELD_NAME)) {
+        if (MoneyWiseRegionDataId.NAME.equals(myField)) {
             /* Update the Name */
-            myRegion.setName(pUpdate.getString());
-        } else if (myField.equals(Region.FIELD_DESC)) {
+            myRegion.setName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseRegionDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myRegion.setDescription(pUpdate.getString());
+            myRegion.setDescription(pUpdate.getValue(String.class));
         }
     }
 

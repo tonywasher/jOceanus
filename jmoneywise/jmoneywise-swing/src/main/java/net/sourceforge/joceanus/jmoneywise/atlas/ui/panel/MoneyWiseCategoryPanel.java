@@ -152,7 +152,7 @@ public class MoneyWiseCategoryPanel
      * Constructor.
      * @param pView the data view
      */
-    public MoneyWiseCategoryPanel(final MoneyWiseView pView) {
+    MoneyWiseCategoryPanel(final MoneyWiseView pView) {
         /* Store details */
         theView = pView;
 

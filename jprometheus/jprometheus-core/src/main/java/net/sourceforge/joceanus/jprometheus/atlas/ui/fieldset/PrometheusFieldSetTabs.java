@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class PrometheusFieldSetTabs {
     /**
      * The list of panels.
      */
-    private final Map<String, PrometheusFieldSetPanel<?, ?>> thePanels;
+    private final Map<String, PrometheusFieldSetPanel<?>> thePanels;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ public class PrometheusFieldSetTabs {
      * @param pPanel the panel
      */
     void addPanel(final String pName,
-                  final PrometheusFieldSetPanel<?, ?> pPanel) {
+                  final PrometheusFieldSetPanel<?> pPanel) {
         theTabs.addTabItem(pName, pPanel);
         thePanels.put(pName, pPanel);
     }
@@ -70,11 +70,19 @@ public class PrometheusFieldSetTabs {
      * Adjust visibility.
      */
     void adjustVisibilty() {
+        /* Determine whether any panels are visible */
+        boolean anyVisible = false;
+
         /* Update visibility for all the panels */
-        for (Map.Entry<String, PrometheusFieldSetPanel<?, ?>> myEntry : thePanels.entrySet()) {
+        for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
             final TethysTabItem myItem = theTabs.findItemByName(myEntry.getKey());
-            final PrometheusFieldSetPanel<?, ?> myPanel = myEntry.getValue();
-            myItem.setVisible(myPanel.isVisible());
+            final PrometheusFieldSetPanel<?> myPanel = myEntry.getValue();
+            final boolean isVisible = myPanel.isVisible();
+            myItem.setVisible(isVisible);
+            anyVisible |= isVisible;
         }
+
+        /* Hide the tabs if there are none visible */
+        theTabs.setVisible(anyVisible);
     }
 }

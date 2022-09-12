@@ -158,7 +158,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
         /* Apply validator to a text field */
         if (theControl instanceof TethysUIFXDataTextField.TethysUIFXTextEditField
                 && theColumn instanceof TethysUIFXTableColumn.TethysUIFXTableValidatedColumn) {
-            final TethysUIFXTextEditField<T> myField = (TethysUIFXTextEditField<T>) theControl;
+            final TethysUIFXTextEditField<T, ?> myField = (TethysUIFXTextEditField<T, ?>) theControl;
             final TethysUIFXTableValidatedColumn<T, C, R> myColumn = (TethysUIFXTableValidatedColumn<T, C, R>) theColumn;
             myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             myField.setReporter(theColumn.getTable().getOnValidateError());

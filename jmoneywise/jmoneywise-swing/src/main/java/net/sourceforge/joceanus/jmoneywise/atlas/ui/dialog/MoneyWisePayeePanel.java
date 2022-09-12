@@ -14,46 +14,47 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
  * Panel to display/edit/create a Payee.
  */
-public class PayeePanel
+public class MoneyWisePayeePanel
         extends MoneyWiseItemPanel<Payee> {
+    /**
+     * The fieldSet.
+     */
+    private final PrometheusFieldSet<Payee> theFieldSet;
+
     /**
      * The Closed State.
      */
@@ -62,63 +63,51 @@ public class PayeePanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public PayeePanel(final TethysGuiFactory pFactory,
-                      final MetisSwingFieldManager pFieldMgr,
-                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                      final MetisErrorPanel pError) {
+    public MoneyWisePayeePanel(final TethysGuiFactory pFactory,
+                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                               final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
+
+        /* Access the fieldSet */
+        theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        buildMainPanel(pFactory);
 
         /* Build the detail panel */
         buildXtrasPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
     }
 
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Payee.NAMELEN);
-
+    private void buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<PayeeType> myTypeButton = pFactory.newScrollButton(PayeeType.class);
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
+        final TethysScrollButtonField<PayeeType> myTypeButton = pFactory.newScrollField(PayeeType.class);
+        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, PayeeType.class, myTypeButton);
-        myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Layout the panel */
-        myPanel.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Payee::getName);
+        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Payee::getDesc);
+        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myTypeButton, Payee::getCategory);
+        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Payee::isClosed);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildPayeeTypeMenu(c, getItem()));
         final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
@@ -127,28 +116,25 @@ public class PayeePanel
      */
     private void buildXtrasPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, Payee.NAMELEN >> 1);
+        theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysStringEditField mySortCode = pFactory.newStringField();
-        final TethysStringEditField myAccount = pFactory.newStringField();
-        final TethysStringEditField myReference = pFactory.newStringField();
-        final TethysStringEditField myWebSite = pFactory.newStringField();
-        final TethysStringEditField myCustNo = pFactory.newStringField();
-        final TethysStringEditField myUserId = pFactory.newStringField();
-        final TethysStringEditField myPassWord = pFactory.newStringField();
+        final TethysCharArrayEditField mySortCode = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myAccount = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myReference = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myWebSite = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myCustNo = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myUserId = pFactory.newCharArrayField();
+        final TethysCharArrayEditField myPassWord = pFactory.newCharArrayField();
 
         /* Assign the fields to the panel */
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), MetisDataType.CHARARRAY, myWebSite);
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), MetisDataType.CHARARRAY, myCustNo);
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.USERID), MetisDataType.CHARARRAY, myUserId);
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEESORTCODE, mySortCode, Payee::getSortCode);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEACCOUNT, myAccount, Payee::getAccount);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEREFERENCE, myReference, Payee::getReference);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEWEBSITE, myWebSite, Payee::getWebSite);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEECUSTNO, myCustNo, Payee::getCustNo);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEUSERID, myUserId, Payee::getUserId);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEPASSWORD, myPassWord, Payee::getPassword);
     }
 
     /**
@@ -156,19 +142,11 @@ public class PayeePanel
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), DataItem.NAMELEN);
-
         /* Allocate fields */
-        final TethysTextArea myNotes = pFactory.newTextArea();
-        final TethysScrollPaneManager myScroll = pFactory.newScrollPane();
-        myScroll.setContent(myNotes);
+        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        myTab.addField(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.PAYEENOTES, myNotes, Payee::getNotes);
     }
 
     @Override
@@ -186,9 +164,6 @@ public class PayeePanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Access the fieldSet */
-        final MetisSwingFieldSet<Payee> myFieldSet = getFieldSet();
-
         /* Access the item */
         final Payee myPayee = getItem();
         final boolean bIsClosed = myPayee.isClosed();
@@ -197,90 +172,84 @@ public class PayeePanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        myFieldSet.setVisibility(AssetBase.FIELD_CLOSED, bShowClosed);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed || !bIsRelevant;
-        myFieldSet.setEditable(AssetBase.FIELD_CLOSED, isEditable && bEditClosed);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myPayee.getDesc() != null;
-        myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myPayee.getSortCode() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEESORTCODE, bShowSortCode);
         final boolean bShowAccount = isEditable || myPayee.getAccount() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEEACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myPayee.getReference() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEEREFERENCE, bShowReference);
         final boolean bShowWebSite = isEditable || myPayee.getWebSite() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEEWEBSITE, bShowWebSite);
         final boolean bShowCustNo = isEditable || myPayee.getCustNo() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEECUSTNO, bShowCustNo);
         final boolean bShowUserId = isEditable || myPayee.getUserId() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEEUSERID, bShowUserId);
         final boolean bShowPasswd = isEditable || myPayee.getPassword() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEEPASSWORD, bShowPasswd);
         final boolean bShowNotes = isEditable || myPayee.getNotes() != null;
-        myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PAYEENOTES, bShowNotes);
 
         /* Payee type cannot be changed if the item is singular, or if its relevant */
         final PayeeTypeClass myClass = myPayee.getCategoryClass();
         final boolean bIsSingular = myClass.isSingular();
-        myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, isEditable && !bIsSingular && !bIsRelevant);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, isEditable && !bIsSingular && !bIsRelevant);
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Payee myPayee = getItem();
 
         /* Process updates */
-        if (myField.equals(AssetBase.FIELD_NAME)) {
+        if (MoneyWiseAssetDataId.NAME.equals(myField)) {
             /* Update the Name */
-            myPayee.setName(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_DESC)) {
+            myPayee.setName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myPayee.setDescription(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
+            myPayee.setDescription(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
             /* Update the Payee Type */
             myPayee.setCategory(pUpdate.getValue(PayeeType.class));
-        } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
+        } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
             /* Update the Closed indication */
-            myPayee.setClosed(pUpdate.getBoolean());
-        } else {
-            /* Switch on the field */
-            switch (PayeeInfoSet.getClassForField(myField)) {
-                case SORTCODE:
-                    myPayee.setSortCode(pUpdate.getCharArray());
-                    break;
-                case ACCOUNT:
-                    myPayee.setAccount(pUpdate.getCharArray());
-                    break;
-                case REFERENCE:
-                    myPayee.setReference(pUpdate.getCharArray());
-                    break;
-                case WEBSITE:
-                    myPayee.setWebSite(pUpdate.getCharArray());
-                    break;
-                case CUSTOMERNO:
-                    myPayee.setCustNo(pUpdate.getCharArray());
-                    break;
-                case USERID:
-                    myPayee.setUserId(pUpdate.getCharArray());
-                    break;
-                case PASSWORD:
-                    myPayee.setPassword(pUpdate.getCharArray());
-                    break;
-                case NOTES:
-                    myPayee.setNotes(pUpdate.getCharArray());
-                    break;
-                default:
-                    break;
-            }
+            myPayee.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (MoneyWiseAssetDataId.PAYEESORTCODE.equals(myField)) {
+            /* Update the SortCode */
+            myPayee.setSortCode(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEEACCOUNT.equals(myField)) {
+            /* Update the Account */
+            myPayee.setAccount(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEEREFERENCE.equals(myField)) {
+            /* Update the Reference */
+            myPayee.setReference(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEEWEBSITE.equals(myField)) {
+            /* Update the WebSite */
+            myPayee.setWebSite(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEECUSTNO.equals(myField)) {
+            /* Update the Customer# */
+            myPayee.setCustNo(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEEUSERID.equals(myField)) {
+            /* Update the UserId */
+            myPayee.setUserId(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEEPASSWORD.equals(myField)) {
+            /* Update the Password */
+            myPayee.setPassword(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.PAYEENOTES.equals(myField)) {
+            /* Update the Notes */
+            myPayee.setNotes(pUpdate.getValue(char[].class));
         }
     }
 

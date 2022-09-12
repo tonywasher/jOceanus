@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseReportTab;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseMaintenance;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseTransactionTable.MoneyWiseTransactionPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
@@ -97,7 +97,7 @@ public class MainTab
     /**
      * The register panel.
      */
-    private MoneyWiseTransactionPanel theRegister;
+    private MoneyWiseStatementPanel theRegister;
 
     /**
      * The SpotPricesPanel.
@@ -163,7 +163,7 @@ public class MainTab
 
         /* Create the Register Tab */
         myTask.startTask("Register");
-        theRegister = new MoneyWiseTransactionPanel(theView);
+        theRegister = new MoneyWiseStatementPanel(theView);
         theTabs.addTabItem(TITLE_REGISTER, theRegister);
 
         /* Create the SpotPrices Tab */

@@ -18,4 +18,4 @@
 /**
  * Prometheus FieldSet.
  */
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;

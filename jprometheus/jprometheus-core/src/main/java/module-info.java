@@ -31,6 +31,8 @@ module net.sourceforge.joceanus.jprometheus.core {
     exports net.sourceforge.joceanus.jprometheus;
     exports net.sourceforge.joceanus.jprometheus.atlas.data;
     exports net.sourceforge.joceanus.jprometheus.atlas.preference;
+    exports net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
+    exports net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
     exports net.sourceforge.joceanus.jprometheus.lethe;
     exports net.sourceforge.joceanus.jprometheus.lethe.data;
     exports net.sourceforge.joceanus.jprometheus.lethe.database;

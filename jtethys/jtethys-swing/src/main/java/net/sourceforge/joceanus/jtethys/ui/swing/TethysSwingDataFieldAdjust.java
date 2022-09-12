@@ -74,30 +74,40 @@ public class TethysSwingDataFieldAdjust {
         final JComponent myControl = pDataField.getEditControl();
 
         /* Determine the font */
-        final Font myFont = isNumeric
-                                      ? isChanged
-                                                  ? isSelected
-                                                               ? theFontSet.getBoldChangedNumeric()
-                                                               : theFontSet.getChangedNumeric()
-                                                  : isSelected
-                                                               ? theFontSet.getBoldNumeric()
-                                                               : theFontSet.getNumeric()
-                                      : isChanged
-                                                  ? isSelected
-                                                               ? theFontSet.getBoldChanged()
-                                                               : theFontSet.getChanged()
-                                                  : isSelected
-                                                               ? theFontSet.getBoldStandard()
-                                                               : theFontSet.getStandard();
+        final Font myFont;
+        if (isNumeric) {
+            if (isChanged) {
+                myFont = isSelected
+                            ? theFontSet.getBoldChangedNumeric()
+                            : theFontSet.getChangedNumeric();
+            } else {
+                myFont = isSelected
+                            ? theFontSet.getBoldNumeric()
+                            : theFontSet.getNumeric();
+            }
+        } else {
+            if (isChanged) {
+                myFont = isSelected
+                            ? theFontSet.getBoldChanged()
+                            : theFontSet.getChanged();
+            } else {
+                myFont = isSelected
+                            ? theFontSet.getBoldStandard()
+                            : theFontSet.getStandard();
+            }
+        }
         myLabel.setFont(myFont);
         myControl.setFont(myFont);
 
         /* Determine the foreground */
-        final Color myForeground = isChanged
-                                             ? theColorSet.getChanged()
-                                             : isDisabled
-                                                          ? theColorSet.getDisabled()
-                                                          : theColorSet.getStandard();
+        final Color myForeground;
+        if (isChanged) {
+            myForeground = theColorSet.getChanged();
+        } else {
+            myForeground = isDisabled
+                                ? theColorSet.getDisabled()
+                                : theColorSet.getStandard();
+        }
         myLabel.setForeground(myForeground);
         myControl.setForeground(myForeground);
 

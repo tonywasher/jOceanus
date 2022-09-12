@@ -14,54 +14,49 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 
 /**
  * Panel to display/edit/create a CashCategory.
  */
-public class CashCategoryPanel
+public class MoneyWiseCashCategoryPanel
         extends MoneyWiseItemPanel<CashCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public CashCategoryPanel(final TethysGuiFactory pFactory,
-                             final MetisSwingFieldManager pFieldMgr,
-                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final MetisErrorPanel pError) {
+    public MoneyWiseCashCategoryPanel(final TethysGuiFactory pFactory,
+                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                      final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
 
         /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
+        final PrometheusFieldSet<CashCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
@@ -69,18 +64,15 @@ public class CashCategoryPanel
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton(CashCategoryType.class);
-        final TethysScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton(CashCategory.class);
+        final TethysScrollButtonField<CashCategoryType> myTypeButton = pFactory.newScrollField(CashCategoryType.class);
+        final TethysScrollButtonField<CashCategory> myParentButton = pFactory.newScrollField(CashCategory.class);
 
         /* Assign the fields to the panel */
-        myPanel.addField(CategoryBase.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(CategoryBase.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        myPanel.addField(CategoryBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(CashCategory.FIELD_CATTYPE, CashCategoryType.class, myTypeButton);
-        myPanel.addField(CategoryBase.FIELD_PARENT, CashCategory.class, myParentButton);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
+        myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, CashCategory::getName);
+        myFieldSet.addField(MoneyWiseCategoryDataId.SUBCAT, mySubName, CashCategory::getSubCategory);
+        myFieldSet.addField(MoneyWiseCategoryDataId.DESC, myDesc, CashCategory::getDesc);
+        myFieldSet.addField(MoneyWiseCategoryDataId.CASHCATTYPE, myTypeButton, CashCategory::getCategoryType);
+        myFieldSet.addField(MoneyWiseCategoryDataId.PARENT, myParentButton, CashCategory::getParentCategory);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -103,7 +95,7 @@ public class CashCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<CashCategory> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<CashCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
         final CashCategory myCategory = getItem();
@@ -112,43 +104,43 @@ public class CashCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        myFieldSet.setVisibility(CategoryBase.FIELD_DESC, bShowDesc);
+        myFieldSet.setFieldVisible(MoneyWiseCategoryDataId.DESC, bShowDesc);
 
         /* Set visibility */
-        myFieldSet.setVisibility(CategoryBase.FIELD_PARENT, !isParent);
-        myFieldSet.setVisibility(CategoryBase.FIELD_SUBCAT, !isParent);
+        myFieldSet.setFieldVisible(MoneyWiseCategoryDataId.PARENT, !isParent);
+        myFieldSet.setFieldVisible(MoneyWiseCategoryDataId.SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
 
         /* We cannot change a parent category type */
         canEdit &= !isParent;
-        myFieldSet.setEditable(CashCategory.FIELD_CATTYPE, canEdit);
+        myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.CASHCATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        myFieldSet.setEditable(CategoryBase.FIELD_NAME, isEditable && isParent);
+        myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.NAME, isEditable && isParent);
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final CashCategory myCategory = getItem();
 
         /* Process updates */
-        if (myField.equals(CategoryBase.FIELD_NAME)) {
+        if (MoneyWiseCategoryDataId.NAME.equals(myField)) {
             /* Update the SUBCATEGORY(!!) Name */
-            myCategory.setSubCategoryName(pUpdate.getString());
-        } else if (myField.equals(CategoryBase.FIELD_SUBCAT)) {
+            myCategory.setSubCategoryName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseCategoryDataId.SUBCAT.equals(myField)) {
             /* Update the SubCategory */
-            myCategory.setSubCategoryName(pUpdate.getString());
-        } else if (myField.equals(CategoryBase.FIELD_PARENT)) {
+            myCategory.setSubCategoryName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseCategoryDataId.PARENT.equals(myField)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(CashCategory.class));
-        } else if (myField.equals(CategoryBase.FIELD_DESC)) {
+        } else if (MoneyWiseCategoryDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myCategory.setDescription(pUpdate.getString());
-        } else if (myField.equals(CashCategory.FIELD_CATTYPE)) {
+            myCategory.setDescription(pUpdate.getValue(String.class));
+        } else if (MoneyWiseCategoryDataId.CASHCATTYPE.equals(myField)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(CashCategoryType.class));
         }

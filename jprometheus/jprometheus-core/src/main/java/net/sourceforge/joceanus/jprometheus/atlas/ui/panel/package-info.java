@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * MoneyWise: Finance Application
+ * Prometheus: Application Framework
  * Copyright 2012,2022 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+
 /**
- * User interface dialogs modules for jMoneyWise.
+ * Prometheus FieldSet Panel.
  */
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;

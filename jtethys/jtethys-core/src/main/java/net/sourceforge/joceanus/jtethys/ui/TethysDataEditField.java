@@ -126,6 +126,12 @@ public interface TethysDataEditField<T>
     void adjustField();
 
     /**
+     * Obtain the height.
+     * @return the height
+     */
+    Integer getHeight();
+
+    /**
      * Set the Preferred Width.
      * @param pWidth the width
      */
@@ -600,9 +606,31 @@ public interface TethysDataEditField<T>
     }
 
     /**
+     * StringTextAreaFieldControl.
+     */
+    interface TethysStringTextAreaField
+            extends TethysDataEditField<String>, TethysValidatedEditField<String> {
+        @Override
+        default String getCastValue(final Object pValue) {
+            return (String) pValue;
+        }
+    }
+
+    /**
      * CharArrayTextFieldControl.
      */
     interface TethysCharArrayEditField
+            extends TethysDataEditField<char[]>, TethysValidatedEditField<char[]> {
+        @Override
+        default char[] getCastValue(final Object pValue) {
+            return (char[]) pValue;
+        }
+    }
+
+    /**
+     * StringTextAreaFieldControl.
+     */
+    interface TethysCharArrayTextAreaField
             extends TethysDataEditField<char[]>, TethysValidatedEditField<char[]> {
         @Override
         default char[] getCastValue(final Object pValue) {

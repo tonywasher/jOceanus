@@ -14,19 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTagDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
@@ -35,35 +33,30 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 /**
  * Panel to display/edit/create a TransactionTag.
  */
-public class TransactionTagPanel
+public class MoneyWiseTagPanel
         extends MoneyWiseItemPanel<TransactionTag> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public TransactionTagPanel(final TethysGuiFactory pFactory,
-                               final MetisSwingFieldManager pFieldMgr,
-                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final MetisErrorPanel pError) {
+    public MoneyWiseTagPanel(final TethysGuiFactory pFactory,
+                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
 
-        /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DataItem.NAMELEN);
+        /* Access the fieldSet */
+        final PrometheusFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Assign the fields to the panel */
-        myPanel.addField(TransactionTag.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(TransactionTag.FIELD_DESC, MetisDataType.STRING, myDesc);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
+        myFieldSet.addField(MoneyWiseTagDataId.NAME, myName, TransactionTag::getName);
+        myFieldSet.addField(MoneyWiseTagDataId.DESC, myDesc, TransactionTag::getDesc);
     }
 
     @Override
@@ -82,26 +75,26 @@ public class TransactionTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisSwingFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
-        myFieldSet.setVisibility(TransactionTag.FIELD_DESC, bShowDesc);
+        myFieldSet.setFieldVisible(MoneyWiseTagDataId.DESC, bShowDesc);
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final TransactionTag myTag = getItem();
 
         /* Process updates */
-        if (myField.equals(TransactionTag.FIELD_NAME)) {
+        if (MoneyWiseTagDataId.NAME.equals(myField)) {
             /* Update the Name */
-            myTag.setName(pUpdate.getString());
-        } else if (myField.equals(TransactionTag.FIELD_DESC)) {
+            myTag.setName(pUpdate.getValue(String.class));
+       } else if (MoneyWiseTagDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myTag.setDescription(pUpdate.getString());
+            myTag.setDescription(pUpdate.getValue(String.class));
         }
     }
 

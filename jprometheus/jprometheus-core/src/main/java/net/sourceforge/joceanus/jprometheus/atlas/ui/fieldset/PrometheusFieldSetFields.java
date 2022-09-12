@@ -14,14 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -30,10 +31,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
 /**
  * FieldSet Panel.
  * @param <T> the item type
- * @param <F> the fieldId type.
  */
-public class PrometheusFieldSetPanel<T, F>
-    implements TethysComponent {
+public class PrometheusFieldSetFields<T>
+        implements PrometheusFieldSetPanel<T> {
     /**
      * The gui factory.
      */
@@ -42,7 +42,12 @@ public class PrometheusFieldSetPanel<T, F>
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet<T, F> theFieldSet;
+    private final PrometheusFieldSet<T> theFieldSet;
+
+    /**
+     * The holding panel.
+     */
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The panel.
@@ -52,26 +57,33 @@ public class PrometheusFieldSetPanel<T, F>
     /**
      * The map of elements.
      */
-    private final Map<F, PrometheusFieldSetElement<F, ?>> theElements;
+    private final Map<PrometheusDataFieldId, PrometheusFieldSetElement<?>> theElements;
 
     /**
      * The map of Fields to value factory.
      */
-    private final Map<F, Function<T, Object>> theValues;
+    private final Map<PrometheusDataFieldId, Function<T, Object>> theValues;
+
+    /**
+     * The current item.
+     */
+    private T theItem;
 
     /**
      * Constructor.
      * @param pFactory the factory
      * @param pFieldSet the fieldSet
      */
-    PrometheusFieldSetPanel(final TethysGuiFactory pFactory,
-                            final PrometheusFieldSet<T, F> pFieldSet) {
+    PrometheusFieldSetFields(final TethysGuiFactory pFactory,
+                             final PrometheusFieldSet<T> pFieldSet) {
         /* Store the factory */
         theFactory = pFactory;
         theFieldSet = pFieldSet;
 
         /* Create the panel */
+        thePane = theFactory.newBorderPane();
         thePanel = theFactory.newVBoxPane();
+        thePane.setNorth(thePanel);
 
         /* Create the maps */
         theElements = new HashMap<>();
@@ -81,22 +93,22 @@ public class PrometheusFieldSetPanel<T, F>
 
     @Override
     public TethysNode getNode() {
-        return thePanel.getNode();
+        return thePane.getNode();
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
+        thePane.setEnabled(pEnabled);
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        thePane.setVisible(pVisible);
     }
 
     @Override
     public Integer getId() {
-        return thePanel.getId();
+        return thePane.getId();
     }
 
     /**
@@ -105,11 +117,11 @@ public class PrometheusFieldSetPanel<T, F>
      * @param pField the edit field
      * @param pValueFactory the valueFactory
      */
-    public void addField(final F pFieldId,
+    public void addField(final PrometheusDataFieldId pFieldId,
                          final TethysDataEditField<?> pField,
                          final Function<T, Object> pValueFactory) {
         /* create the element */
-        final PrometheusFieldSetElement<F, ?> myElement = new PrometheusFieldSetElement<>(theFactory, pFieldId, pField);
+        final PrometheusFieldSetElement<?> myElement = new PrometheusFieldSetElement<>(theFactory, pFieldId, pField);
         theElements.put(pFieldId, myElement);
         theValues.put(pFieldId, pValueFactory);
 
@@ -128,26 +140,29 @@ public class PrometheusFieldSetPanel<T, F>
      * Adjust the label width.
      */
     private void adjustLabelWidth() {
+        /* Initialise counters */
         int myWidth = 0;
+        int myHeight = 0;
+
         /* Loop through the elements getting the max width */
-        for (PrometheusFieldSetElement<F, ?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             final int myLabelWidth = myElement.getLabelWidth();
+            final int myFieldHeight = myElement.getFieldHeight();
             myWidth = Math.max(myWidth, myLabelWidth);
+            myHeight = Math.max(myHeight, myFieldHeight);
         }
 
         /* Loop through the elements setting the width */
-        for (PrometheusFieldSetElement<F, ?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             myElement.setLabelWidth(myWidth);
+            myElement.setFieldHeight(myHeight);
         }
     }
 
-    /**
-     * Are there any visible elements?
-     * @return true/false
-     */
-    boolean isVisible() {
+    @Override
+    public boolean isVisible() {
         /* Loop through the elements looking for a visible element */
-        for (PrometheusFieldSetElement<F, ?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             if (myElement.isVisible()) {
                 return true;
             }
@@ -157,13 +172,13 @@ public class PrometheusFieldSetPanel<T, F>
         return false;
     }
 
-    /**
-     * Set item.
-     * @param pItem the item
-     */
-    void setItem(final T pItem) {
-        /* Loop through the elements looking for a visible element */
-        for (PrometheusFieldSetElement<F, ?> myElement: theElements.values()) {
+    @Override
+    public void setItem(final T pItem) {
+        /* Store the item */
+        theItem = pItem;
+
+        /* Loop through the elements */
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             /* Obtain the value factory */
             final Function<T, Object> myValueFactory = theValues.get(myElement.getFieldId());
             final Object myValue = myValueFactory.apply(pItem);
@@ -171,27 +186,41 @@ public class PrometheusFieldSetPanel<T, F>
         }
     }
 
-    /**
-     * Set editable.
-     * @param pFieldId the fieldId
-     * @param pEditable true/false
-     */
-    void setEditable(final F pFieldId,
-                     final boolean pEditable) {
+    @Override
+    public void adjustChanged() {
+        /* Ignore if we have no item */
+        if (theItem == null) {
+            return;
+        }
+
+        /* Loop through the elements */
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+            final boolean isChanged = theFieldSet.isChanged(theItem, myElement.getFieldId());
+            myElement.adjustChanged(isChanged);
+        }
+    }
+
+    @Override
+    public void setEditable(final boolean isEditable) {
+        /* Loop through the elements */
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+            myElement.setEditable(isEditable);
+        }
+    }
+
+    @Override
+    public void setEditable(final PrometheusDataFieldId pFieldId,
+                            final boolean pEditable) {
         /* adjust the element */
-        final PrometheusFieldSetElement<F, ?> myElement = theElements.get(pFieldId);
+        final PrometheusFieldSetElement<?> myElement = theElements.get(pFieldId);
         myElement.setEditable(pEditable);
     }
 
-    /**
-     * Set visible.
-     * @param pFieldId the fieldId
-     * @param pVisible true/false
-     */
-    void setVisible(final F pFieldId,
-                    final boolean pVisible) {
+    @Override
+    public void setVisible(final PrometheusDataFieldId pFieldId,
+                           final boolean pVisible) {
         /* adjust the element */
-        final PrometheusFieldSetElement<F, ?> myElement = theElements.get(pFieldId);
+        final PrometheusFieldSetElement<?> myElement = theElements.get(pFieldId);
         myElement.setVisible(pVisible);
     }
 }

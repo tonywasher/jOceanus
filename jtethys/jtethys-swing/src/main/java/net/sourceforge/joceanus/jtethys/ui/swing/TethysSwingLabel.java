@@ -75,7 +75,9 @@ public final class TethysSwingLabel
     @Override
     public void setAlignment(final TethysAlignment pAlign) {
         theLabel.setHorizontalTextPosition(determineHAlignment(pAlign));
+        theLabel.setHorizontalAlignment(determineHAlignment(pAlign));
         theLabel.setVerticalTextPosition(determineVAlignment(pAlign));
+        theLabel.setVerticalAlignment(determineVAlignment(pAlign));
     }
 
     @Override
@@ -168,7 +170,7 @@ public final class TethysSwingLabel
 
     @Override
     public Integer getWidth() {
-        return theLabel.getWidth();
+        return (int) theLabel.getPreferredSize().getWidth();
     }
 
     @Override

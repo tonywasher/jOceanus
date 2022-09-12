@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseSecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
@@ -33,10 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -64,7 +62,7 @@ public class MoneyWiseSecurityTable
     /**
      * The Security dialog.
      */
-    private final SecurityPanel theActiveSecurity;
+    private final MoneyWiseSecurityPanel theActiveSecurity;
 
     /**
      * The edit list.
@@ -87,15 +85,12 @@ public class MoneyWiseSecurityTable
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.SECURITYINFO);
         thePriceEntry = getUpdateSet().registerType(MoneyWiseDataType.SECURITYPRICE);
 
-        /* Access field manager */
-        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
-
         /* Access Gui factory */
         final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
         final TethysTableManager<PrometheusDataFieldId, Security> myTable = getTable();
 
         /* Create a security panel */
-        theActiveSecurity = new SecurityPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
+        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pUpdateSet, pError);
         declareItemPanel(theActiveSecurity);
 
         /* Set table configuration */
@@ -243,7 +238,7 @@ public class MoneyWiseSecurityTable
             theActiveSecurity.setNewItem(mySecurity);
 
             /* Lock the table */
-            setEnabled(false);
+            setTableEnabled(false);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

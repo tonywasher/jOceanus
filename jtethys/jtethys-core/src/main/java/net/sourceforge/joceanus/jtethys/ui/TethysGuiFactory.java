@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutedPriceEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutionEditField;
@@ -38,6 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalE
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysShortEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysUnitsEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 
@@ -442,10 +444,22 @@ public abstract class TethysGuiFactory {
     public abstract TethysStringEditField newStringField();
 
     /**
+     * Obtain a new string textArea field.
+     * @return the new field
+     */
+    public abstract TethysStringTextAreaField newStringAreaField();
+
+    /**
      * Obtain a new charArray data field.
      * @return the new field
      */
     public abstract TethysCharArrayEditField newCharArrayField();
+
+    /**
+     * Obtain a new charArray textArea field.
+     * @return the new field
+     */
+    public abstract TethysCharArrayTextAreaField newCharArrayAreaField();
 
     /**
      * Obtain a new short data field.

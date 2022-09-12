@@ -14,23 +14,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
-import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseSecurityPriceTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
@@ -47,23 +40,26 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
  * Panel to display/edit/create a Security.
  */
-public class SecurityPanel
+public class MoneyWiseSecurityPanel
         extends MoneyWiseItemPanel<Security> {
     /**
      * Prices Tab Title.
@@ -71,14 +67,14 @@ public class SecurityPanel
     private static final String TAB_PRICES = MoneyWiseUIResource.SECURITYPANEL_TAB_PRICES.getValue();
 
     /**
+     * The fieldSet.
+     */
+    private final PrometheusFieldSet<Security> theFieldSet;
+
+    /**
      * SecurityPrice Table.
      */
     private final MoneyWiseSecurityPriceTable thePrices;
-
-    /**
-     * Table tab item.
-     */
-    private final MoneyWiseDataTabTable thePricesTab;
 
     /**
      * The Closed State.
@@ -89,20 +85,21 @@ public class SecurityPanel
      * Constructor.
      * @param pFactory the GUI factory
      * @param pView the data view
-     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public SecurityPanel(final TethysGuiFactory pFactory,
-                         final MoneyWiseView pView,
-                         final MetisSwingFieldManager pFieldMgr,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final MetisErrorPanel pError) {
+    public MoneyWiseSecurityPanel(final TethysGuiFactory pFactory,
+                                  final MoneyWiseView pView,
+                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                  final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pFieldMgr, pUpdateSet, pError);
+        super(pFactory, pUpdateSet, pError);
+
+        /* Access the fieldSet */
+        theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
+        buildMainPanel(pFactory);
 
         /* Build the info panel */
         buildInfoPanel(pFactory);
@@ -112,10 +109,7 @@ public class SecurityPanel
 
         /* Create the SecurityPrices table */
         thePrices = new MoneyWiseSecurityPriceTable(pView, getUpdateSet(), pError);
-        thePricesTab = new MoneyWiseDataTabTable(TAB_PRICES, thePrices);
-
-        /* Define the panel */
-        defineMainPanel(myPanel);
+        theFieldSet.newTable(TAB_PRICES, thePrices);
 
         /* Create the listener */
         thePrices.getEventRegistrar().addEventListener(e -> {
@@ -127,32 +121,25 @@ public class SecurityPanel
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private MoneyWiseDataPanel buildMainPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Security.NAMELEN);
-
+    private void buildMainPanel(final TethysGuiFactory pFactory) {
         /* Create the text fields */
         final TethysStringEditField myName = pFactory.newStringField();
         final TethysStringEditField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton(SecurityType.class);
-        final TethysScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton(Payee.class);
-        final TethysScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton(AssetCurrency.class);
-        final TethysIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton(Boolean.class);
+        final TethysScrollButtonField<SecurityType> myTypeButton = pFactory.newScrollField(SecurityType.class);
+        final TethysScrollButtonField<Payee> myParentButton = pFactory.newScrollField(Payee.class);
+        final TethysScrollButtonField<AssetCurrency> myCurrencyButton = pFactory.newScrollField(AssetCurrency.class);
+        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        myPanel.addField(AssetBase.FIELD_NAME, MetisDataType.STRING, myName);
-        myPanel.addField(AssetBase.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(AssetBase.FIELD_CATEGORY, SecurityType.class, myTypeButton);
-        myPanel.addField(AssetBase.FIELD_PARENT, Payee.class, myParentButton);
-        myPanel.addField(AssetBase.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        myPanel.addField(AssetBase.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Layout the panel */
-        myPanel.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Security::getName);
+        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Security::getDesc);
+        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myTypeButton, Security::getCategory);
+        theFieldSet.addField(MoneyWiseAssetDataId.PARENT, myParentButton, Security::getParent);
+        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Security::getAssetCurrency);
+        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Security::isClosed);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildSecTypeMenu(c, getItem()));
@@ -160,9 +147,6 @@ public class SecurityPanel
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
@@ -171,28 +155,26 @@ public class SecurityPanel
      */
     private void buildInfoPanel(final TethysGuiFactory pFactory) {
         /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, DataItem.NAMELEN >> 1);
+        theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
         final TethysStringEditField mySymbol = pFactory.newStringField();
-        final TethysStringEditField myPrice = pFactory.newStringField();
+        final TethysPriceEditField myPrice = pFactory.newPriceField();
 
         /* Create the buttons */
-        final TethysScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton(Region.class);
-        final TethysScrollButtonManager<Security> myStockButton = pFactory.newScrollButton(Security.class);
+        final TethysScrollButtonField<Region> myRegionButton = pFactory.newScrollField(Region.class);
+        final TethysScrollButtonField<Security> myStockButton = pFactory.newScrollField(Security.class);
 
         /* Assign the fields to the panel */
-        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);
-        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, myRegionButton);
-        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, myStockButton);
-        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.addField(MoneyWiseAssetDataId.SECURITYSYMBOL, mySymbol, Security::getSymbol);
+        theFieldSet.addField(MoneyWiseAssetDataId.SECURITYREGION, myRegionButton, Security::getRegion);
+        theFieldSet.addField(MoneyWiseAssetDataId.SECURITYUNDERLYING, myStockButton, Security::getUnderlyingStock);
+        theFieldSet.addField(MoneyWiseAssetDataId.SECURITYOPTIONPRICE, myPrice, Security::getOptionPrice);
 
         /* Configure the menuBuilders */
         myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));
         myStockButton.setMenuConfigurator(c -> buildStockMenu(c, getItem()));
+        myPrice.setDeemedCurrency(() -> getItem().getCurrency());
     }
 
     /**
@@ -200,19 +182,11 @@ public class SecurityPanel
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysGuiFactory pFactory) {
-        /* Create a new panel */
-        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), DataItem.NAMELEN);
-
         /* Allocate fields */
-        final TethysTextArea myNotes = pFactory.newTextArea();
-        final TethysScrollPaneManager myScroll = pFactory.newScrollPane();
-        myScroll.setContent(myNotes);
+        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
-
-        /* Layout the panel */
-        myTab.compactPanel();
+        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.SECURITYNOTES, myNotes, Security::getNotes);
     }
 
     @Override
@@ -233,75 +207,61 @@ public class SecurityPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Access the fieldSet */
-        final MetisSwingFieldSet<Security> myFieldSet = getFieldSet();
-
         /* Access the item */
         final Security mySecurity = getItem();
         final boolean bIsClosed = mySecurity.isClosed();
         final boolean bIsActive = mySecurity.isActive();
         final boolean bIsRelevant = mySecurity.isRelevant();
-        final Currency myCurrency = mySecurity.getCurrency();
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        myFieldSet.setVisibility(AssetBase.FIELD_CLOSED, bShowClosed);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed
-                                              ? !mySecurity.getParent().isClosed()
-                                              : !bIsRelevant;
-        myFieldSet.setEditable(AssetBase.FIELD_CLOSED, isEditable && bEditClosed);
+                ? !mySecurity.getParent().isClosed()
+                : !bIsRelevant;
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || mySecurity.getDesc() != null;
-        myFieldSet.setVisibility(AssetBase.FIELD_DESC, bShowDesc);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
-        myFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.SECURITYNOTES, bShowNotes);
 
         /* Determine whether the symbol field should be visible */
-        MetisLetheField myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL);
         boolean bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.SYMBOL);
         boolean bShowField = bEditField || mySecurity.getSymbol() != null;
-        myFieldSet.setVisibility(myField, bShowField);
-        myFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.SECURITYSYMBOL, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.SECURITYSYMBOL, bEditField);
 
         /* Determine whether the region field should be visible */
-        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.REGION);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        myFieldSet.setVisibility(myField, bShowField);
-        myFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.SECURITYREGION, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.SECURITYREGION, bEditField);
 
         /* Determine whether the stock field should be visible */
-        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.UNDERLYINGSTOCK);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        myFieldSet.setVisibility(myField, bShowField);
-        myFieldSet.setEditable(myField, bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.SECURITYUNDERLYING, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.SECURITYUNDERLYING, bEditField);
 
         /* Determine whether the price field should be visible */
-        myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.OPTIONPRICE);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        myFieldSet.setVisibility(myField, bShowField);
-        myFieldSet.setEditable(myField, bEditField);
-        myFieldSet.setAssumedCurrency(myField, myCurrency);
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.SECURITYOPTIONPRICE, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.SECURITYOPTIONPRICE, bEditField);
 
         /* Security type and currency cannot be changed if the item is active */
-        myFieldSet.setEditable(AssetBase.FIELD_CATEGORY, isEditable && !bIsActive);
-        myFieldSet.setEditable(AssetBase.FIELD_CURRENCY, isEditable && !bIsActive);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, isEditable && !bIsActive);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, isEditable && !bIsActive);
 
         /* Set editable value for parent */
-        myFieldSet.setEditable(AssetBase.FIELD_PARENT, isEditable && !bIsClosed);
-
-        /* Set the table visibility */
-        boolean bShowPrices = !mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
-        bShowPrices &= isEditable || !thePrices.isViewEmpty();
-        thePricesTab.setRequireVisible(bShowPrices);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, isEditable && !bIsClosed);
     }
 
     /**
@@ -321,52 +281,46 @@ public class SecurityPanel
     }
 
     @Override
-    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisLetheField myField = pUpdate.getField();
+        final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Security mySecurity = getItem();
 
         /* Process updates */
-        if (myField.equals(AssetBase.FIELD_NAME)) {
+        if (MoneyWiseAssetDataId.NAME.equals(myField)) {
             /* Update the Name */
-            mySecurity.setName(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_DESC)) {
+            mySecurity.setName(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
             /* Update the Description */
-            mySecurity.setDescription(pUpdate.getString());
-        } else if (myField.equals(AssetBase.FIELD_CATEGORY)) {
+            mySecurity.setDescription(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
             /* Update the Security Type */
             mySecurity.setCategory(pUpdate.getValue(SecurityType.class));
             mySecurity.autoCorrect(getUpdateSet());
-        } else if (myField.equals(AssetBase.FIELD_PARENT)) {
+        } else if (MoneyWiseAssetDataId.PARENT.equals(myField)) {
             /* Update the Parent */
             mySecurity.setParent(pUpdate.getValue(Payee.class));
-        } else if (myField.equals(AssetBase.FIELD_CURRENCY)) {
+        } else if (MoneyWiseAssetDataId.CURRENCY.equals(myField)) {
             /* Update the Currency */
             mySecurity.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
-        } else if (myField.equals(AssetBase.FIELD_CLOSED)) {
+        } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
             /* Update the Closed indication */
-            mySecurity.setClosed(pUpdate.getBoolean());
-        } else {
-            /* Switch on the field */
-            switch (SecurityInfoSet.getClassForField(myField)) {
-                case NOTES:
-                    mySecurity.setNotes(pUpdate.getCharArray());
-                    break;
-                case SYMBOL:
-                    mySecurity.setSymbol(pUpdate.getString());
-                    break;
-                case REGION:
-                    mySecurity.setRegion(pUpdate.getValue(Region.class));
-                    break;
-                case UNDERLYINGSTOCK:
-                    mySecurity.setUnderlyingStock(pUpdate.getValue(Security.class));
-                    break;
-                case OPTIONPRICE:
-                    mySecurity.setOptionPrice(pUpdate.getPrice());
-                    break;
-                default:
-                    break;
-            }
+            mySecurity.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (MoneyWiseAssetDataId.SECURITYSYMBOL.equals(myField)) {
+            /* Update the Symbol */
+            mySecurity.setSymbol(pUpdate.getValue(String.class));
+        } else if (MoneyWiseAssetDataId.SECURITYREGION.equals(myField)) {
+            /* Update the Region */
+            mySecurity.setRegion(pUpdate.getValue(Region.class));
+        } else if (MoneyWiseAssetDataId.SECURITYUNDERLYING.equals(myField)) {
+            /* Update the Underlying Stock */
+            mySecurity.setUnderlyingStock(pUpdate.getValue(Security.class));
+        } else if (MoneyWiseAssetDataId.SECURITYOPTIONPRICE.equals(myField)) {
+            /* Update the OptionPrice */
+            mySecurity.setOptionPrice(pUpdate.getValue(TethysPrice.class));
+        } else if (MoneyWiseAssetDataId.SECURITYNOTES.equals(myField)) {
+            /* Update the Notes */
+            mySecurity.setNotes(pUpdate.getValue(char[].class));
         }
     }
 
@@ -383,24 +337,6 @@ public class SecurityPanel
             declareGoToItem(myCurrency);
         }
         declareGoToItem(myParent);
-    }
-
-    @Override
-    public void setItem(final Security pItem) {
-        /* Update the prices */
-        thePrices.setSecurity(pItem);
-
-        /* Pass call onwards */
-        super.setItem(pItem);
-    }
-
-    @Override
-    public void setNewItem(final Security pItem) {
-        /* Update the prices */
-        thePrices.setSecurity(pItem);
-
-        /* Pass call onwards */
-        super.setNewItem(pItem);
     }
 
     /**
