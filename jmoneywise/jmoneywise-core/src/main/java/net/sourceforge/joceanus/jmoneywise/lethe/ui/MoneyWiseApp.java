@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui;
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.panel.MoneyWiseMainTab;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
@@ -69,6 +70,6 @@ public class MoneyWiseApp
 
     @Override
     public MetisMainPanel createMainPanel(final MetisToolkit pToolkit) throws OceanusException {
-        return null;
+        return new MoneyWiseMainTab(pToolkit);
     }
 }

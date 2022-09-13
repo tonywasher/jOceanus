@@ -30,6 +30,7 @@ public class PrometheusFieldSetTableTab<T>
         implements PrometheusFieldSetPanel<T> {
     /**
      * Table interface.
+     * @param <T> the item type
      */
     public interface PrometheusFieldSetTable<T>
             extends TethysComponent {

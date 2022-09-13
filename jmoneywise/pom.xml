@@ -23,6 +23,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>jmoneywise-swing</module>
+    <module>jmoneywise-javafx</module>
     <module>jmoneywise-core</module>
   </modules>
   <properties>

@@ -26,7 +26,6 @@ module net.sourceforge.joceanus.jmoneywise.swing {
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jprometheus.core;
-    requires net.sourceforge.joceanus.jprometheus.swing;
     requires net.sourceforge.joceanus.jmetis.swing;
     requires net.sourceforge.joceanus.jtethys.swing;
 }

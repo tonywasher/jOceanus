@@ -90,11 +90,16 @@ public final class MetisDataTester {
          */
         private static final MetisFieldSet<MainClass> FIELD_DEFS = MetisFieldSet.newFieldSet(MainClass.class);
 
+        /**
+         * FieldSet.
+         */
+        private static final int THREE = 3;
+
         /*
          * DataFieldThree.
          */
         static {
-            FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("Three"), p -> 3);
+            FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("Three"), p -> THREE);
         }
 
         /**

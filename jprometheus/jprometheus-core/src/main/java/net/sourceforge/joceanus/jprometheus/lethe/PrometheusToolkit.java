@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 /**
  * Prometheus Toolkit.
  */
-public abstract class PrometheusToolkit {
+public class PrometheusToolkit {
     /**
      * Toolkit.
      */
@@ -46,7 +46,7 @@ public abstract class PrometheusToolkit {
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected PrometheusToolkit(final MetisToolkit pToolkit) throws OceanusException {
+    public PrometheusToolkit(final MetisToolkit pToolkit) throws OceanusException {
         /* Store parameters */
         theToolkit = pToolkit;
 

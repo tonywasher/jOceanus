@@ -48,7 +48,7 @@ import java.nio.file.Path;
 /**
  * Metis Toolkit.
  */
-public abstract class MetisToolkit {
+public class MetisToolkit {
     /**
      * Logger.
      */
@@ -99,7 +99,7 @@ public abstract class MetisToolkit {
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    protected MetisToolkit(final MetisState pInfo) throws OceanusException {
+    public MetisToolkit(final MetisState pInfo) throws OceanusException {
         /* Store program definitions */
         theProgram = pInfo.getProgramDefinitions();
 

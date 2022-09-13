@@ -43,26 +43,26 @@ allprojects {
         jUnitVersion = "5.9.0"
         jsonVersion = "20220320"
         mySQLVersion = "8.0.30"
-        postGreSQLVersion = "42.4.1"
+        postGreSQLVersion = "42.5.0"
         jtdsVersion = "1.3.1"
         h2Version = "2.1.214"
         apachePOIVersion = "5.2.2"
-        jsoupVersion = "1.15.2"
+        jsoupVersion = "1.15.3"
         jFreeChartVersion = "1.5.3"
 
         /* javaFX versions */
         javaFXVersion = "18.0.2"
-        javaFXPluginVersion = "0.0.10"
+        javaFXPluginVersion = "0.0.13"
 
         /* Annotation versions */
         jetBrainsAnnotationsVersion = "23.0.0"
 
         /* checkStyle config */
-        checkStyleVersion = "10.3.2"
+        checkStyleVersion = "10.3.3"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "6.48.0"
+        pmdVersion = "6.49.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.8"
