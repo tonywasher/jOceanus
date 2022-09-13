@@ -367,7 +367,7 @@ public class MoneyWiseDepositPanel
             /* Determine menu to add to */
             final DepositCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
             final TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
