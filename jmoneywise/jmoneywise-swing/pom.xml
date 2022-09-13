@@ -36,7 +36,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <packageMain>${packageName}.lethe.ui.swing.Control</packageMain>
+    <packageMain>${packageName}.lethe.ui.swing.MoneyWise4Swing</packageMain>
     <moduleName>${packageName}.swing</moduleName>
     <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/icons/swing/MoneyWiseSplash.png</packageSplash>
   </properties>
