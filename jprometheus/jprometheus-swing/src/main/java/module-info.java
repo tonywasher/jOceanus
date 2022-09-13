@@ -30,6 +30,5 @@ module net.sourceforge.joceanus.jprometheus.swing {
     requires net.sourceforge.joceanus.jtethys.swing;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jprometheus.lethe.swing;
     exports net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 }

@@ -21,14 +21,16 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 
@@ -54,14 +56,15 @@ public final class Control {
     private static void createAndShowGUI(final MetisSwingState pInfo) {
         try {
             /* Create the view */
-            final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo);
+            final MetisToolkit myBase = new MetisToolkit(pInfo.getState());
+            final PrometheusToolkit myToolkit = new PrometheusToolkit(myBase);
 
             /* Obtain program details */
             final TethysProgram myApp = pInfo.getProgramDefinitions();
 
             /* Create the frame and declare it */
             final JFrame myFrame = new JFrame(myApp.getName());
-            myToolkit.getToolkit().getGuiFactory().setFrame(myFrame);
+            ((TethysSwingGuiFactory) myToolkit.getToolkit().getGuiFactory()).setFrame(myFrame);
 
             /* Create the window */
             final MainTab myWindow = new MainTab(myToolkit);

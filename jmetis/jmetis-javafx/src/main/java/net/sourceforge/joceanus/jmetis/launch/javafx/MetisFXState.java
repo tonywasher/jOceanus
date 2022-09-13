@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
+import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
@@ -53,7 +54,7 @@ public class MetisFXState {
     /**
      * The toolkit.
      */
-    private MetisFXToolkit theToolkit;
+    private MetisToolkit theToolkit;
 
     /**
      * The Panel.
@@ -123,7 +124,7 @@ public class MetisFXState {
         /* Create the Toolkit */
         final TethysProgram myApp = theInfo.getProgramDefinitions();
         final MetisProgram myDef = (MetisProgram) myApp;
-        theToolkit = new MetisFXToolkit(this);
+        theToolkit = new MetisToolkit(getState());
 
         /* Create the main panel */
         theMain = createMain(myDef, theToolkit);
@@ -145,7 +146,7 @@ public class MetisFXState {
      * @throws OceanusException on error
      */
     private static MetisMainPanel createMain(final MetisProgram pProgram,
-                                             final MetisFXToolkit pToolkit) throws OceanusException {
+                                             final MetisToolkit pToolkit) throws OceanusException {
         /* Create the main panel */
         return pProgram.createMainPanel(pToolkit);
     }
@@ -179,7 +180,7 @@ public class MetisFXState {
      */
     protected void attachToStage(final Stage pStage) {
         /* Access the GUI factory and program definitions */
-        final TethysFXGuiFactory myFactory = theToolkit.getGuiFactory();
+        final TethysFXGuiFactory myFactory = (TethysFXGuiFactory) theToolkit.getGuiFactory();
         final TethysProgram myApp = theInfo.getProgramDefinitions();
 
         /* Create the scene */

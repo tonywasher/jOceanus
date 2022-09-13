@@ -14,15 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
-
-import javax.swing.JComponent;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseReportTab;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseMaintenance;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
@@ -36,15 +32,16 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.panel.PrometheusNewMainWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusMainWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
@@ -52,13 +49,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMen
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
- * Main Window for jMoneyWise.
+ * Main Window for MoneyWise.
  */
-public class MainTab
-        extends PrometheusMainWindow<MoneyWiseData, MoneyWiseDataType> {
+public class MoneyWiseMainTab
+        extends PrometheusNewMainWindow<MoneyWiseData, MoneyWiseDataType> {
     /**
      * Report tab title.
      */
@@ -124,7 +120,7 @@ public class MainTab
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public MainTab(final PrometheusToolkit pToolkit) throws OceanusException {
+    public MoneyWiseMainTab(final PrometheusToolkit pToolkit) throws OceanusException {
         /* create the view */
         theView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
 
@@ -147,7 +143,7 @@ public class MainTab
     }
 
     @Override
-    protected JComponent buildMainPanel() throws OceanusException {
+    protected TethysComponent buildMainPanel() throws OceanusException {
         /* Obtain the active profile */
         TethysProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
@@ -204,7 +200,7 @@ public class MainTab
         myTask.end();
 
         /* Return the panel */
-        return TethysSwingNode.getComponent(theTabs);
+        return theTabs;
     }
 
     /**
