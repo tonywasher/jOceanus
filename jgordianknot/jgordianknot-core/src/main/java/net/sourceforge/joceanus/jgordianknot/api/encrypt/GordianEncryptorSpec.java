@@ -124,15 +124,6 @@ public final class GordianEncryptorSpec {
     }
 
     /**
-     * Create McEliece Encryptor.
-     * @param pType the encryptionType
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec mcEliece(final GordianMcElieceEncryptionType pType) {
-        return new GordianEncryptorSpec(GordianKeyPairType.MCELIECE, pType);
-    }
-
-    /**
      * Create CompositeSpec.
      * @param pSpecs the list of encryptorSpecs
      * @return the encryptorSpec
@@ -175,17 +166,6 @@ public final class GordianEncryptorSpec {
             throw new IllegalArgumentException();
         }
         return (GordianDigestSpec) theEncryptorType;
-    }
-
-    /**
-     * Obtain the mcEliece encryption type.
-     * @return the encryptionType.
-     */
-    public GordianMcElieceEncryptionType getMcElieceType() {
-        if (!(theEncryptorType instanceof GordianMcElieceEncryptionType)) {
-            throw new IllegalArgumentException();
-        }
-        return (GordianMcElieceEncryptionType) theEncryptorType;
     }
 
     /**
@@ -239,8 +219,6 @@ public final class GordianEncryptorSpec {
             case EC:
             case GOST2012:
                 return theEncryptorType == null;
-            case MCELIECE:
-                return theEncryptorType instanceof GordianMcElieceEncryptionType;
             case COMPOSITE:
                 return theEncryptorType instanceof List && checkComposite();
             default:
@@ -260,7 +238,6 @@ public final class GordianEncryptorSpec {
                 return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
             case EC:
             case GOST2012:
-            case MCELIECE:
             case SM2:
             case COMPOSITE:
                 return true;
@@ -296,7 +273,6 @@ public final class GordianEncryptorSpec {
                 switch (theKeyPairType) {
                     case RSA:
                     case ELGAMAL:
-                    case MCELIECE:
                         theName += SEP + theEncryptorType;
                         break;
                     case EC:

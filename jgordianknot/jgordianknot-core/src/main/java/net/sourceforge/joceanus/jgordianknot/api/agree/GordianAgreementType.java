@@ -155,7 +155,6 @@ public enum GordianAgreementType {
      */
     public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
-            case NEWHOPE:
             case DH:
             case EC:
             case SM2:

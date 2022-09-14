@@ -174,40 +174,6 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Create SPHINCSKey.
-     * @param pDigestType the SPHINCS digestType
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec sphincs(final GordianSPHINCSDigestType pDigestType) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SPHINCS, pDigestType);
-    }
-
-    /**
-     * Create McElieceKey.
-     * @param pKeySpec the McEliece keySpec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec mcEliece(final GordianMcElieceKeySpec pKeySpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.MCELIECE, pKeySpec);
-    }
-
-    /**
-     * Create RainbowKey.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec rainbow() {
-        return new GordianKeyPairSpec(GordianKeyPairType.RAINBOW, null);
-    }
-
-    /**
-     * Create NewHopeKey.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec newHope() {
-        return new GordianKeyPairSpec(GordianKeyPairType.NEWHOPE, null);
-    }
-
-    /**
      * Create xmssKey.
      * @param pDigestType the xmss digestType
      * @param pHeight the height
@@ -454,28 +420,6 @@ public class GordianKeyPairSpec {
             throw new IllegalArgumentException();
         }
         return (GordianEdwardsElliptic) theSubKeyType;
-    }
-
-    /**
-     * Obtain the SPHINCS digestType.
-     * @return the digestType.
-     */
-    public GordianSPHINCSDigestType getSPHINCSDigestType() {
-        if (!(theSubKeyType instanceof GordianSPHINCSDigestType)) {
-            throw new IllegalArgumentException();
-        }
-        return (GordianSPHINCSDigestType) theSubKeyType;
-    }
-
-    /**
-     * Obtain the mcEliece keySpec.
-     * @return the keySpec.
-     */
-    public GordianMcElieceKeySpec getMcElieceKeySpec() {
-        if (!(theSubKeyType instanceof GordianMcElieceKeySpec)) {
-            throw new IllegalArgumentException();
-        }
-        return (GordianMcElieceKeySpec) theSubKeyType;
     }
 
     /**
@@ -776,11 +720,6 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianGOSTElliptic;
             case DSTU4145:
                 return theSubKeyType instanceof GordianDSTU4145Elliptic;
-            case SPHINCS:
-                return theSubKeyType instanceof GordianSPHINCSDigestType;
-            case MCELIECE:
-                return theSubKeyType instanceof GordianMcElieceKeySpec
-                        && ((GordianMcElieceKeySpec) theSubKeyType).isValid();
             case XMSS:
                 return theSubKeyType instanceof GordianXMSSKeySpec
                         && ((GordianXMSSKeySpec) theSubKeyType).isValid();
@@ -816,9 +755,6 @@ public class GordianKeyPairSpec {
             case EDDSA:
             case XDH:
                 return theSubKeyType instanceof GordianEdwardsElliptic;
-            case RAINBOW:
-            case NEWHOPE:
-                return theSubKeyType == null;
             case COMPOSITE:
                 return theSubKeyType instanceof List && checkComposite();
             default:

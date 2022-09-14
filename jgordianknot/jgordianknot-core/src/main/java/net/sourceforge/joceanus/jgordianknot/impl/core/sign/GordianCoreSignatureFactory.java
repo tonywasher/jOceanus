@@ -349,10 +349,6 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpec.gost2012(GordianLength.LEN_512);
             case EDDSA:
                 return GordianSignatureSpec.edDSA();
-            case RAINBOW:
-                return GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case SPHINCS:
-                return GordianSignatureSpec.sphincs();
             case SPHINCSPLUS:
                 return GordianSignatureSpec.sphincsPlus();
             case DILITHIUM:

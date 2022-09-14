@@ -22,7 +22,6 @@ import javax.crypto.NoSuchPaddingException;
 
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -76,10 +75,6 @@ public class JcaEncryptorFactory
                 return new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
             case SM2:
                 return new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
-            case MCELIECE:
-                return GordianMcElieceEncryptionType.STANDARD.equals(pEncryptorSpec.getMcElieceType())
-                       ? new JcaBlockEncryptor(getFactory(), pEncryptorSpec)
-                       : new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
             case COMPOSITE:
                 return new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
             default:
@@ -122,7 +117,6 @@ public class JcaEncryptorFactory
         switch (pSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:
-            case MCELIECE:
             case COMPOSITE:
                 return true;
             case SM2:

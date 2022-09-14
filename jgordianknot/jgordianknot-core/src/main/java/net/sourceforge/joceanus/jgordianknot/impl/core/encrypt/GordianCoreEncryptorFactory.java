@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -144,11 +143,6 @@ public abstract class GordianCoreEncryptorFactory
             return pKeyPairSpec.getElliptic().canEncrypt();
         }
 
-        /* Disallow McEliece if it is the wrong style key */
-        if (GordianKeyPairType.MCELIECE.equals(pKeyPairSpec.getKeyPairType())) {
-            return GordianMcElieceEncryptionType.checkValidEncryptionType(pKeyPairSpec.getMcElieceKeySpec(), pEncryptorSpec.getMcElieceType());
-        }
-
         /* If this is a RSA encryption */
         if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* The digest length cannot be too large wrt to the modulus */
@@ -250,12 +244,6 @@ public abstract class GordianCoreEncryptorFactory
                     myEncryptors.add(GordianEncryptorSpec.sm2(mySpec));
                 }
                 break;
-            case MCELIECE:
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD));
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI));
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.KOBARAIMAI));
-                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.POINTCHEVAL));
-                break;
             default:
                 break;
         }
@@ -275,10 +263,6 @@ public abstract class GordianCoreEncryptorFactory
                 return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sm3()));
             case ELGAMAL:
                 return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case MCELIECE:
-                return pKeySpec.getMcElieceKeySpec().isCCA2()
-                        ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
-                        : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
             case COMPOSITE:
                 final List<GordianEncryptorSpec> mySpecs = new ArrayList<>();
                 final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();

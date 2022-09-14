@@ -71,29 +71,9 @@ public enum GordianKeyPairType {
     EDDSA,
 
     /**
-     * SPHINCS.
-     */
-    SPHINCS,
-
-    /**
-     * McEliece.
-     */
-    MCELIECE,
-
-    /**
-     * Rainbow.
-     */
-    RAINBOW,
-
-    /**
      * XMSS.
      */
     XMSS,
-
-    /**
-     * NewHope.
-     */
-    NEWHOPE,
 
     /**
      * LMS.
@@ -171,7 +151,6 @@ public enum GordianKeyPairType {
      */
     public boolean useRandomForSignatures() {
         switch (this) {
-            case SPHINCS:
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
@@ -189,7 +168,6 @@ public enum GordianKeyPairType {
      */
     public boolean nullDigestForSignatures() {
         switch (this) {
-            case SPHINCS:
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
@@ -209,7 +187,6 @@ public enum GordianKeyPairType {
      */
     public boolean subTypeForSignatures() {
         switch (this) {
-            case SPHINCS:
             case XMSS:
                 return true;
             default:

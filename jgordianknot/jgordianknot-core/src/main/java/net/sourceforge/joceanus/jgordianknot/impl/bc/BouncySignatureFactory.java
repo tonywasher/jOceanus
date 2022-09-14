@@ -30,9 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOS
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSKeyPair.BouncySPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -98,8 +96,6 @@ public class BouncySignatureFactory
                 return new BouncyEdDSASignature(getFactory(), pSignatureSpec);
             case DSA:
                 return new BouncyDSASignature(getFactory(), pSignatureSpec);
-            case SPHINCS:
-                return new BouncySPHINCSSignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new BouncySPHINCSPlusSignature(getFactory(), pSignatureSpec);
             case DILITHIUM:
@@ -108,8 +104,6 @@ public class BouncySignatureFactory
                 return new BouncyFALCONSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new BouncyPICNICSignature(getFactory(), pSignatureSpec);
-            case RAINBOW:
-                return new BouncyRainbowSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new BouncyXMSSSignature(getFactory(), pSignatureSpec);
             case LMS:

@@ -57,10 +57,7 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.ec.CustomNamedCurves;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
-import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
-import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
 import org.bouncycastle.pqc.asn1.XMSSKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
 import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
@@ -93,8 +90,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSOtsType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSSigType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
@@ -102,7 +97,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
@@ -167,14 +161,9 @@ public class GordianKeyPairAlgId {
         GordianDSTUEncodedParser.register(this);
         GordianGOSTEncodedParser.register(this);
         GordianEdwardsEncodedParser.register(this);
-        GordianRainbowEncodedParser.register(this);
-        GordianNewHopeEncodedParser.register(this);
-        GordianSPHINCSEncodedParser.register(this);
         GordianSPHINCSPlusEncodedParser.register(this);
         GordianXMSSEncodedParser.register(this);
         GordianXMSSMTEncodedParser.register(this);
-        GordianMcElieceEncodedParser.register(this);
-        GordianMcElieceCCA2EncodedParser.register(this);
         GordianLMSEncodedParser.register(this);
         GordianCMCEEncodedParser.register(this);
         GordianFrodoEncodedParser.register(this);
@@ -660,98 +649,6 @@ public class GordianKeyPairAlgId {
 
             /* Curve is not supported */
             throw new GordianDataException(ERROR_UNSUPCURVE + myParms);
-        }
-    }
-
-    /**
-     * Rainbow Encoded parser.
-     */
-    private static class GordianRainbowEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.rainbow, new GordianRainbowEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.rainbow();
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.rainbow();
-        }
-    }
-
-    /**
-     * NewHope Encoded parser.
-     */
-    private static class GordianNewHopeEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.newHope, new GordianNewHopeEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.newHope();
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.newHope();
-        }
-    }
-
-    /**
-     * SPHINCS Encoded parser.
-     */
-    private static class GordianSPHINCSEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.sphincs256, new GordianSPHINCSEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
-            final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
-            return determineKeyPairSpec(myParms);
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
-            final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
-            return determineKeyPairSpec(myParms);
-        }
-
-        /**
-         * Obtain keySpec from Parameters.
-         * @param pParms the parameters
-         * @return the keySpec
-         * @throws OceanusException on error
-         */
-        private static GordianKeyPairSpec determineKeyPairSpec(final SPHINCS256KeyParams pParms) throws OceanusException {
-            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-            if (myDigest.equals(NISTObjectIdentifiers.id_sha512_256)) {
-                return GordianKeyPairSpec.sphincs(GordianSPHINCSDigestType.SHA2);
-            }
-            if (myDigest.equals(NISTObjectIdentifiers.id_sha3_256)) {
-                return GordianKeyPairSpec.sphincs(GordianSPHINCSDigestType.SHA3);
-            }
-
-            /* Tree Digest is not supported */
-            throw new GordianDataException(ERROR_TREEDIGEST + myDigest);
         }
     }
 
@@ -1387,109 +1284,6 @@ public class GordianKeyPairAlgId {
 
             /* Layers is not supported */
             throw new GordianDataException("Invalid layers: " + pLayers);
-        }
-    }
-
-    /**
-     * McEliece Encoded parser.
-     */
-    private static class GordianMcElieceEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.mcEliece, new GordianMcElieceEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard());
-        }
-    }
-
-    /**
-     * McEliece Encoded parser.
-     */
-    private static class GordianMcElieceCCA2EncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.mcElieceCca2, new GordianMcElieceCCA2EncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Parse public key */
-                final McElieceCCA2PublicKey myPublic = McElieceCCA2PublicKey.getInstance(pInfo.parsePublicKey());
-                return determineKeyPairSpec(myPublic.getDigest());
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianIOException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Parse public key */
-                final McElieceCCA2PrivateKey myPrivate = McElieceCCA2PrivateKey.getInstance(pInfo.parsePrivateKey());
-                return determineKeyPairSpec(myPrivate.getDigest());
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianIOException(ERROR_PARSE, e);
-            }
-        }
-
-        /**
-         * Obtain keySpec from digestId.
-         * @param pDigest the digest
-         * @return the keySpec
-         * @throws OceanusException on error
-         */
-        private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pDigest) throws OceanusException {
-            final GordianMcElieceDigestType myDigest = determineDigestType(pDigest);
-            return GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.cca2(myDigest));
-        }
-
-        /**
-         * Obtain digestType from digest.
-         * @param pDigest the treeDigest
-         * @return the keyType
-         * @throws OceanusException on error
-         */
-        static  GordianMcElieceDigestType determineDigestType(final AlgorithmIdentifier pDigest) throws OceanusException {
-            final ASN1ObjectIdentifier myId = pDigest.getAlgorithm();
-            if (myId.equals(OIWObjectIdentifiers.idSHA1)) {
-                return GordianMcElieceDigestType.SHA1;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha224)) {
-                return GordianMcElieceDigestType.SHA224;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha256)) {
-                return GordianMcElieceDigestType.SHA256;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha384)) {
-                return GordianMcElieceDigestType.SHA384;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha512)) {
-                return GordianMcElieceDigestType.SHA512;
-            }
-
-            /* Tree Digest is not supported */
-            throw new GordianDataException(ERROR_TREEDIGEST + pDigest);
         }
     }
 

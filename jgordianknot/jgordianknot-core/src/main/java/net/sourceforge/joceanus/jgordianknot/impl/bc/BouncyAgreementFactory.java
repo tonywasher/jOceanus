@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFr
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKYBERKeyPair.BouncyKYBERAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySABERKeyPair.BouncySABERAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncyECSM2Agreement;
@@ -96,8 +95,6 @@ public class BouncyAgreementFactory
                 return getBCECAgreement(pSpec);
             case DH:
                 return getBCDHAgreement(pSpec);
-            case NEWHOPE:
-                return new BouncyNewHopeAgreement(getFactory(), pSpec);
             case CMCE:
                 return new BouncyCMCEAgreement(getFactory(), pSpec);
             case FRODO:

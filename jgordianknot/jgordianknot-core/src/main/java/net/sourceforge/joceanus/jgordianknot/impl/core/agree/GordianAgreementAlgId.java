@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
@@ -82,7 +81,7 @@ public class GordianAgreementAlgId {
     /**
      * Null KeyPairSpec for Partial AgreementSpec.
      */
-    private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpec.rainbow();
+    private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpec.ed448();
 
     /**
      * The factory.
@@ -216,9 +215,6 @@ public class GordianAgreementAlgId {
             case DSTU4145:
                 myId = myId.branch(Integer.toString(((GordianDSTU4145Elliptic) pSpec.getElliptic()).ordinal() + 1));
                 break;
-            case SPHINCS:
-                myId = myId.branch(Integer.toString(pSpec.getSPHINCSDigestType().ordinal() + 1));
-                break;
             case SPHINCSPLUS:
                 myId = myId.branch(Integer.toString(pSpec.getSPHINCSPlusKeySpec().ordinal() + 1));
                 break;
@@ -246,13 +242,6 @@ public class GordianAgreementAlgId {
             case SNTRUPRIME:
                 myId = myId.branch(Integer.toString(pSpec.getSNTRUPrimeKeySpec().ordinal() + 1));
                 break;
-            case MCELIECE:
-                final GordianMcElieceKeySpec myMcEliece = pSpec.getMcElieceKeySpec();
-                myId = myId.branch(Integer.toString(myMcEliece.getKeyType().ordinal() + 1));
-                if (myMcEliece.getDigestType() != null) {
-                    myId = myId.branch(Integer.toString(myMcEliece.getDigestType().ordinal() + 1));
-                }
-                break;
             case XMSS:
                 final GordianXMSSKeySpec myXMSS = pSpec.getXMSSKeySpec();
                 myId = myId.branch(Integer.toString(myXMSS.getKeyType().ordinal() + 1));
@@ -276,8 +265,6 @@ public class GordianAgreementAlgId {
                     myId = myId.branch(Integer.toString(myHSS.getTreeDepth()));
                 }
                 break;
-            case RAINBOW:
-            case NEWHOPE:
             case COMPOSITE:
             default:
                 break;

@@ -165,14 +165,6 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create SPHINCSSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec sphincs() {
-        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.NATIVE);
-    }
-
-    /**
      * Create SPHINCSPlusSpec.
      * @return the SignatureSpec
      */
@@ -202,15 +194,6 @@ public final class GordianSignatureSpec {
      */
     public static GordianSignatureSpec picnic() {
         return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create RainbowSpec.
-     * @param pDigestSpec the digestSpec
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec rainbow(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, pDigestSpec);
     }
 
     /**
@@ -324,14 +307,12 @@ public final class GordianSignatureSpec {
             case DSTU4145:
             case GOST2012:
             case SM2:
-            case RAINBOW:
                 if (!(theSignatureSpec instanceof GordianDigestSpec)) {
                     return false;
                 }
                 final GordianDigestSpec mySpec = getDigestSpec();
                 return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
             case EDDSA:
-            case SPHINCS:
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:

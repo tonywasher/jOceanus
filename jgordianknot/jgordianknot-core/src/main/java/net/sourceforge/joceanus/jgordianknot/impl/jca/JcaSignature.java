@@ -115,11 +115,6 @@ public abstract class JcaSignature
     static final String SPHINCS_ALGOBASE = "withSPHINCS256";
 
     /**
-     * The Rainbow Signature.
-     */
-    static final String RAINBOW_ALGOBASE = "withRainbow";
-
-    /**
      * The DSTU Signature.
      */
     private static final String DSTU_SIGN = "DSTU4145";
@@ -386,66 +381,6 @@ public abstract class JcaSignature
     }
 
     /**
-     * SPHINCS signature.
-     */
-    static class JcaSPHINCSSignature
-            extends JcaSignature {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
-         */
-        JcaSPHINCSSignature(final GordianCoreFactory pFactory,
-                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Initialise class */
-            super(pFactory, pSignatureSpec);
-        }
-
-        @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
-
-            /* pass on call */
-            super.initForSigning(pKeyPair);
-        }
-
-        @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
-
-            /* pass on call */
-            super.initForVerify(pKeyPair);
-        }
-
-        /**
-         * Obtain algorithmName for keyPair.
-         * @param pKeyPair the keyPair
-         * @return the name
-         * @throws OceanusException on error
-         */
-        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Determine the required signer */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeyPairSpec().getSPHINCSDigestType().getDigestSpec();
-            final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
-
-            /* Create builder */
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(myDigest)
-                    .append(SPHINCS_ALGOBASE);
-
-            /* Build the algorithm */
-            return myBuilder.toString();
-        }
-    }
-
-    /**
      * SPHINCSPlus signature.
      */
     static class JcaSPHINCSPlusSignature
@@ -526,28 +461,6 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             setSigner(JcaSignatureFactory.getJavaSignature("PICNIC", true));
-        }
-    }
-
-    /**
-     * Rainbow signature.
-     */
-    static class JcaRainbowSignature
-            extends JcaSignature {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
-         */
-        JcaRainbowSignature(final GordianCoreFactory pFactory,
-                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Initialise class */
-            super(pFactory, pSignatureSpec);
-
-            /* Create the signature class */
-            final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-            setSigner(JcaSignatureFactory.getJavaSignature(myDigest + RAINBOW_ALGOBASE, true));
         }
     }
 

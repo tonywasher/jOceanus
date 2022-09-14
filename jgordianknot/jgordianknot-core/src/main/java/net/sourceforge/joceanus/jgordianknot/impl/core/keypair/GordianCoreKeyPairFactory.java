@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
@@ -53,7 +52,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
@@ -275,20 +273,8 @@ public abstract class GordianCoreKeyPairFactory
         mySpecs.add(GordianKeyPairSpec.x448());
         mySpecs.add(GordianKeyPairSpec.x25519());
 
-        /* Add Rainbow */
-        mySpecs.add(GordianKeyPairSpec.rainbow());
-
-        /* Add NewHope */
-        mySpecs.add(GordianKeyPairSpec.newHope());
-
-        /* Add SPHINCS */
-        EnumSet.allOf(GordianSPHINCSDigestType.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sphincs(t)));
-
         /* Add XMSS/XMSSMT */
         GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianKeyPairSpec(GordianKeyPairType.XMSS, t)));
-
-        /* Add McEliece */
-        GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianKeyPairSpec.mcEliece(t)));
 
         /* Add LMS */
         GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> {

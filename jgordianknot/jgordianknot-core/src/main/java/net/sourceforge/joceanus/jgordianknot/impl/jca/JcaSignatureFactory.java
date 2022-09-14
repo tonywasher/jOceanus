@@ -21,7 +21,6 @@ import java.security.Signature;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -38,9 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignat
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -117,8 +114,6 @@ public class JcaSignatureFactory
                 return new JcaGOSTSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
-            case SPHINCS:
-                return new JcaSPHINCSSignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
             case DILITHIUM:
@@ -127,8 +122,6 @@ public class JcaSignatureFactory
                 return new JcaFalconSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new JcaPicnicSignature(getFactory(), pSignatureSpec);
-            case RAINBOW:
-                return new JcaRainbowSignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             case COMPOSITE:
@@ -157,10 +150,7 @@ public class JcaSignatureFactory
                 return true;
             case DSA:
                 return validDSASignature(pSpec);
-            case RAINBOW:
-                return validRainbowSignature(pSpec.getDigestSpec());
             case XMSS:
-            case SPHINCS:
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
@@ -170,8 +160,6 @@ public class JcaSignatureFactory
             case COMPOSITE:
                 return true;
             case DH:
-            case NEWHOPE:
-            case MCELIECE:
             case XDH:
             default:
                 return false;
@@ -267,15 +255,5 @@ public class JcaSignatureFactory
             default:
                 return false;
         }
-    }
-
-    /**
-     * Check RainbowSignature.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
-        return pSpec.getDigestType() == GordianDigestType.SHA2
-                && pSpec.getStateLength() == null;
     }
 }

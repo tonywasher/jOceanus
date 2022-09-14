@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -181,8 +180,6 @@ public final class GordianKeyPairValidity {
             case GOST2012:
             case DSTU4145:
             case SM2:
-            case RAINBOW:
-            case SPHINCS:
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
@@ -192,11 +189,6 @@ public final class GordianKeyPairValidity {
                 return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
                 return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case MCELIECE:
-                return mySpec.getMcElieceKeySpec().isCCA2()
-                        ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
-                        : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
-            case NEWHOPE:
             case DH:
                 return GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF);
             case XDH:

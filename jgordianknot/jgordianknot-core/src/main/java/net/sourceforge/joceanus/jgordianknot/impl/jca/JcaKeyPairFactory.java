@@ -42,16 +42,12 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaFAL
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaKYBERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaPICNICKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSPHINCSPlusKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -151,16 +147,8 @@ public class JcaKeyPairFactory
                 return new JcaEdKeyPairGenerator(getFactory(), pKeySpec);
             case DH:
                 return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);
-            case SPHINCS:
-                return new JcaSPHINCSKeyPairGenerator(getFactory(), pKeySpec);
             case SPHINCSPLUS:
                 return new JcaSPHINCSPlusKeyPairGenerator(getFactory(), pKeySpec);
-            case RAINBOW:
-                return new JcaRainbowKeyPairGenerator(getFactory(), pKeySpec);
-            case MCELIECE:
-                return new JcaMcElieceKeyPairGenerator(getFactory(), pKeySpec);
-            case NEWHOPE:
-                return new JcaNewHopeKeyPairGenerator(getFactory(), pKeySpec);
             case CMCE:
                 return new JcaCMCEKeyPairGenerator(getFactory(), pKeySpec);
             case FRODO:
