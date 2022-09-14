@@ -20,12 +20,15 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDILITHIUMKeyPair.BouncyDILITHIUMSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFALCONKeyPair.BouncyFALCONSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
@@ -99,6 +102,12 @@ public class BouncySignatureFactory
                 return new BouncySPHINCSSignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new BouncySPHINCSPlusSignature(getFactory(), pSignatureSpec);
+            case DILITHIUM:
+                return new BouncyDILITHIUMSignature(getFactory(), pSignatureSpec);
+            case FALCON:
+                return new BouncyFALCONSignature(getFactory(), pSignatureSpec);
+            case PICNIC:
+                return new BouncyPICNICSignature(getFactory(), pSignatureSpec);
             case RAINBOW:
                 return new BouncyRainbowSignature(getFactory(), pSignatureSpec);
             case XMSS:

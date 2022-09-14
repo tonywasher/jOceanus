@@ -355,6 +355,12 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpec.sphincs();
             case SPHINCSPLUS:
                 return GordianSignatureSpec.sphincsPlus();
+            case DILITHIUM:
+                return GordianSignatureSpec.dilithium();
+            case FALCON:
+                return GordianSignatureSpec.falcon();
+            case PICNIC:
+                return GordianSignatureSpec.picnic();
             case XMSS:
                 return GordianSignatureSpec.xmss();
             case LMS:

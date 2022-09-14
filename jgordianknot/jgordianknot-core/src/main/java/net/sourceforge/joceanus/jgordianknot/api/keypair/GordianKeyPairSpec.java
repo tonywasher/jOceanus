@@ -288,6 +288,78 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Create KYBERKey.
+     * @param pSpec the KYBER Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec kyber(final GordianKYBERSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.KYBER, pSpec);
+    }
+
+    /**
+     * Create DILITHIUMKey.
+     * @param pSpec the DILITHIUM Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec dilithium(final GordianDILITHIUMSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.DILITHIUM, pSpec);
+    }
+
+    /**
+     * Create BIKEKey.
+     * @param pSpec the BIKE Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec bike(final GordianBIKESpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.BIKE, pSpec);
+    }
+
+    /**
+     * Create NTRUKey.
+     * @param pSpec the NTRU Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec ntru(final GordianNTRUSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.NTRU, pSpec);
+    }
+
+    /**
+     * Create NTRULPRIMEKey.
+     * @param pSpec the NTRULPRIME Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec ntrulprime(final GordianNTRULPrimeSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.NTRULPRIME, pSpec);
+    }
+
+    /**
+     * Create SNTRUPRIMEKey.
+     * @param pSpec the SNTRUPRIME Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec sntruprime(final GordianSNTRUPrimeSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.SNTRUPRIME, pSpec);
+    }
+
+    /**
+     * Create FalconKey.
+     * @param pSpec the FALCON Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec falcon(final GordianFALCONSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.FALCON, pSpec);
+    }
+
+    /**
+     * Create PicnicKey.
+     * @param pSpec the Picnic Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec picnic(final GordianPICNICSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.PICNIC, pSpec);
+    }
+
+    /**
      * Create CompositeKey.
      * @param pSpecs the list of keySpecs
      * @return the KeySpec
@@ -492,6 +564,94 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Obtain the Kyber keySpec.
+     * @return the keySpec.
+     */
+    public GordianKYBERSpec getKyberKeySpec() {
+        if (!(theSubKeyType instanceof GordianKYBERSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianKYBERSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Bike keySpec.
+     * @return the keySpec.
+     */
+    public GordianDILITHIUMSpec getDilithiumKeySpec() {
+        if (!(theSubKeyType instanceof GordianDILITHIUMSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianDILITHIUMSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Bike keySpec.
+     * @return the keySpec.
+     */
+    public GordianBIKESpec getBIKEKeySpec() {
+        if (!(theSubKeyType instanceof GordianBIKESpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianBIKESpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the NTRU keySpec.
+     * @return the keySpec.
+     */
+    public GordianNTRUSpec getNTRUKeySpec() {
+        if (!(theSubKeyType instanceof GordianNTRUSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianNTRUSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the NTRUPRIME keySpec.
+     * @return the keySpec.
+     */
+    public GordianNTRULPrimeSpec getNTRULPrimeKeySpec() {
+        if (!(theSubKeyType instanceof GordianNTRULPrimeSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianNTRULPrimeSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the NTRUPRIME keySpec.
+     * @return the keySpec.
+     */
+    public GordianSNTRUPrimeSpec getSNTRUPrimeKeySpec() {
+        if (!(theSubKeyType instanceof GordianSNTRUPrimeSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianSNTRUPrimeSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Falcon keySpec.
+     * @return the keySpec.
+     */
+    public GordianFALCONSpec getFalconKeySpec() {
+        if (!(theSubKeyType instanceof GordianFALCONSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianFALCONSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Picnic keySpec.
+     * @return the keySpec.
+     */
+    public GordianPICNICSpec getPicnicKeySpec() {
+        if (!(theSubKeyType instanceof GordianPICNICSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianPICNICSpec) theSubKeyType;
+    }
+
+    /**
      * Obtain the composite keySpec iterator.
      * @return the keySpec iterator.
      */
@@ -632,6 +792,22 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianFRODOSpec;
             case SABER:
                 return theSubKeyType instanceof GordianSABERSpec;
+            case KYBER:
+                return theSubKeyType instanceof GordianKYBERSpec;
+            case DILITHIUM:
+                return theSubKeyType instanceof GordianDILITHIUMSpec;
+            case BIKE:
+                return theSubKeyType instanceof GordianBIKESpec;
+            case NTRU:
+                return theSubKeyType instanceof GordianNTRUSpec;
+            case NTRULPRIME:
+                return theSubKeyType instanceof GordianNTRULPrimeSpec;
+            case SNTRUPRIME:
+                return theSubKeyType instanceof GordianSNTRUPrimeSpec;
+            case FALCON:
+                return theSubKeyType instanceof GordianFALCONSpec;
+            case PICNIC:
+                return theSubKeyType instanceof GordianPICNICSpec;
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
                          && ((GordianLMSKeySpec) theSubKeyType).isValid())

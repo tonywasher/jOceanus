@@ -143,6 +143,9 @@ public enum GordianSignatureType {
             case RAINBOW:
             case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case XMSS:
             case LMS:
             case COMPOSITE:

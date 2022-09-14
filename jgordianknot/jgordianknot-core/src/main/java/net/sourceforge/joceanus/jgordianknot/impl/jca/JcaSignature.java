@@ -467,6 +467,69 @@ public abstract class JcaSignature
     }
 
     /**
+     * SPHINCSPlus signature.
+     */
+    static class JcaDilithiumSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaDilithiumSignature(final GordianCoreFactory pFactory,
+                              final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("DILITHIUM", true));
+        }
+    }
+
+    /**
+     * Falcon signature.
+     */
+    static class JcaFalconSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaFalconSignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("FALCON", true));
+        }
+    }
+
+    /**
+     * Picnic signature.
+     */
+    static class JcaPicnicSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaPicnicSignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("PICNIC", true));
+        }
+    }
+
+    /**
      * Rainbow signature.
      */
     static class JcaRainbowSignature

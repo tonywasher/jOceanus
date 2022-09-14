@@ -184,6 +184,9 @@ public final class GordianKeyPairValidity {
             case RAINBOW:
             case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case XMSS:
             case LMS:
                 return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
@@ -203,6 +206,11 @@ public final class GordianKeyPairValidity {
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
                 return GordianAgreementSpec.kem(mySpec, GordianKDFType.NONE);
             default:
                 return null;

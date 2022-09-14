@@ -22,6 +22,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import javax.crypto.spec.PSource;
+import javax.security.auth.DestroyFailedException;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -32,13 +33,14 @@ import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.SecretWithEncapsulation;
 import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
-import org.bouncycastle.crypto.kems.RSAKeyEncapsulation;
+import org.bouncycastle.crypto.kems.RSAKEMExtractor;
+import org.bouncycastle.crypto.kems.RSAKEMGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
@@ -66,6 +68,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicK
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
@@ -479,9 +482,19 @@ public final class BouncyRSAKeyPair {
     public static class BouncyRSAEncapsulationAgreement
             extends GordianCoreAnonymousAgreement {
         /**
-         * The agreement.
+         * Key Length.
          */
-        private final RSAKeyEncapsulation theAgreement;
+        private static final int KEYLEN = 32;
+
+        /**
+         * The generator.
+         */
+        private final RSAKEMGenerator theGenerator;
+
+        /**
+         * Derivation function.
+         */
+        private final DerivationFunction theDerivation;
 
         /**
          * Constructor.
@@ -494,34 +507,34 @@ public final class BouncyRSAKeyPair {
             super(pFactory, pSpec);
 
             /* Create Agreement */
-            final DerivationFunction myKDF = newDerivationFunction();
-            theAgreement = new RSAKeyEncapsulation(myKDF, getRandom());
+            theDerivation = newDerivationFunction();
+            theGenerator = new RSAKEMGenerator(KEYLEN, theDerivation, getRandom());
         }
 
         @Override
         public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
+            /* Protect against exceptions */
+            try {
+                /* Check keyPair */
+                BouncyKeyPair.checkKeyPair(pServer);
+                checkKeyPair(pServer);
 
-            /* Initialise Key Encapsulation */
-            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pServer);
-            theAgreement.init(myPublic.getPublicKey());
+                /* Create encapsulation */
+                final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pServer);
+                final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
 
-            /* Create message */
-            final GordianRSAModulus myModulus = myPublic.getKeySpec().getRSAModulus();
-            final int myLen = myModulus.getLength() / Byte.SIZE;
-            final byte[] myData = new byte[myLen];
-            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
+                /* Create message */
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());
 
-            /* Build the clientHello Message */
-            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myData);
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
 
-            /* Store secret and create initVector */
-            storeSecret(myParms.getKey());
-
-            /* Return the message  */
-            return myClientHello;
+                /* Return the clientHello message  */
+                return myClientHello;
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
         }
 
         @Override
@@ -533,14 +546,11 @@ public final class BouncyRSAKeyPair {
 
             /* Initialise Key Encapsulation */
             final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pServer);
-            theAgreement.init(myPrivate.getPrivateKey());
+            final RSAKEMExtractor myExtractor = new RSAKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
 
             /* Parse clientHello message and store secret */
-            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
-            final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myMessage = pClientHello.getEncapsulated();
-            final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
-            storeSecret(myParms.getKey());
+            storeSecret(myExtractor.extractSecret(myMessage));
         }
     }
 

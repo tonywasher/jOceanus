@@ -24,19 +24,19 @@ import java.util.Arrays;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.crypto.patch.utils.PqcPrivateKeyFactory;
-import org.bouncycastle.crypto.patch.utils.PqcPrivateKeyInfoFactory;
-import org.bouncycastle.crypto.patch.utils.PqcPublicKeyFactory;
-import org.bouncycastle.crypto.patch.utils.PqcSubjectPublicKeyInfoFactory;
-import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowKeyGenerationParameters;
-import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowKeyPairGenerator;
-import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowParameters;
-import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowPrivateKeyParameters;
-import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowPublicKeyParameters;
-import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowSigner;
+import org.bouncycastle.pqc.crypto.falcon.FalconKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconSigner;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -49,101 +49,116 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairVal
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Rainbow KeyPair classes.
+ * FALCON KeyPair classes.
  */
-public final class BouncyRainbowKeyPair {
+public final class BouncyFALCONKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyRainbowKeyPair() {
+    private BouncyFALCONKeyPair() {
     }
 
     /**
-     * Bouncy Rainbow PublicKey.
+     * Bouncy Falcon PublicKey.
      */
-    public static class BouncyRainbowPublicKey
-            extends BouncyPublicKey<RainbowPublicKeyParameters> {
+    public static class BouncyFALCONPublicKey
+            extends BouncyPublicKey<FalconPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyRainbowPublicKey(final GordianKeyPairSpec pKeySpec,
-                               final RainbowPublicKeyParameters pPublicKey) {
+        BouncyFALCONPublicKey(final GordianKeyPairSpec pKeySpec,
+                              final FalconPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final RainbowPublicKeyParameters myThis = getPublicKey();
-            final RainbowPublicKeyParameters myThat = (RainbowPublicKeyParameters) pThat;
+            final FalconPublicKeyParameters myThis = getPublicKey();
+            final FalconPublicKeyParameters myThat = (FalconPublicKeyParameters) pThat;
 
-            /* Check equality */
-            return Arrays.equals(myThis.getCoeffScalar(), myThat.getCoeffScalar())
-                    && Arrays.deepEquals(myThis.getCoeffSingular(), myThat.getCoeffSingular())
-                    && Arrays.deepEquals(myThis.getCoeffQuadratic(), myThat.getCoeffQuadratic());
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final FalconPublicKeyParameters pFirst,
+                                           final FalconPublicKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * Bouncy Rainbow PrivateKey.
+     * Bouncy Falcon PrivateKey.
      */
-    public static class BouncyRainbowPrivateKey
-            extends BouncyPrivateKey<RainbowPrivateKeyParameters> {
+    public static class BouncyFALCONPrivateKey
+            extends BouncyPrivateKey<FalconPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyRainbowPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                final RainbowPrivateKeyParameters pPrivateKey) {
+        BouncyFALCONPrivateKey(final GordianKeyPairSpec pKeySpec,
+                               final FalconPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
+
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final RainbowPrivateKeyParameters myThis = getPrivateKey();
-            final RainbowPrivateKeyParameters myThat = (RainbowPrivateKeyParameters) pThat;
+            final FalconPrivateKeyParameters myThis = getPrivateKey();
+            final FalconPrivateKeyParameters myThat = (FalconPrivateKeyParameters) pThat;
 
-            /* Check equality */
-            if (!Arrays.equals(myThis.getB1(), myThat.getB1())
-                    || !Arrays.equals(myThis.getB2(), myThat.getB2())) {
-                return false;
-            }
-            if (!Arrays.deepEquals(myThis.getInvA1(), myThat.getInvA1())
-                    || !Arrays.deepEquals(myThis.getInvA2(), myThat.getInvA2())) {
-                return false;
-            }
-            return Arrays.equals(myThis.getVi(), myThat.getVi())
-                    && Arrays.equals(myThis.getLayers(), myThat.getLayers());
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final FalconPrivateKeyParameters pFirst,
+                                           final FalconPrivateKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle Rainbow KeyPair generator.
+     * BouncyCastle Falcon KeyPair generator.
      */
-    public static class BouncyRainbowKeyPairGenerator
+    public static class BouncyFALCONKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final RainbowKeyPairGenerator theGenerator;
+        private final FalconKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyRainbowKeyPairGenerator(final BouncyFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) {
+        BouncyFALCONKeyPairGenerator(final BouncyFactory pFactory,
+                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
+            /* Determine the parameters */
+            final FalconParameters myParms = pKeySpec.getFalconKeySpec().getParameters();
+
             /* Create and initialise the generator */
-            theGenerator = new RainbowKeyPairGenerator();
-            final KeyGenerationParameters myParams = new RainbowKeyGenerationParameters(getRandom(), new RainbowParameters());
+            theGenerator = new FalconKeyPairGenerator();
+            final FalconKeyGenerationParameters myParams = new FalconKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -151,8 +166,8 @@ public final class BouncyRainbowKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyRainbowPublicKey myPublic = new BouncyRainbowPublicKey(getKeySpec(), (RainbowPublicKeyParameters) myPair.getPublic());
-            final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), (RainbowPrivateKeyParameters) myPair.getPrivate());
+            final BouncyFALCONPublicKey myPublic = new BouncyFALCONPublicKey(getKeySpec(), (FalconPublicKeyParameters) myPair.getPublic());
+            final BouncyFALCONPrivateKey myPrivate = new BouncyFALCONPrivateKey(getKeySpec(), (FalconPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -164,9 +179,9 @@ public final class BouncyRainbowKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyRainbowPrivateKey myPrivateKey = (BouncyRainbowPrivateKey) getPrivateKey(pKeyPair);
-                final RainbowPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                final BouncyFALCONPrivateKey myPrivateKey = (BouncyFALCONPrivateKey) getPrivateKey(pKeyPair);
+                final FalconPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
             } catch (IOException e) {
@@ -183,10 +198,10 @@ public final class BouncyRainbowKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyRainbowPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyFALCONPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final RainbowPrivateKeyParameters myParms = (RainbowPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
-                final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), myParms);
+                final FalconPrivateKeyParameters myParms = (FalconPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyFALCONPrivateKey myPrivate = new BouncyFALCONPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -208,9 +223,9 @@ public final class BouncyRainbowKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyRainbowPublicKey myPublicKey = (BouncyRainbowPublicKey) getPublicKey(pKeyPair);
-                final RainbowPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                final BouncyFALCONPublicKey myPublicKey = (BouncyFALCONPublicKey) getPublicKey(pKeyPair);
+                final FalconPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
             } catch (IOException e) {
@@ -220,7 +235,7 @@ public final class BouncyRainbowKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            final BouncyRainbowPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyFALCONPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -230,7 +245,7 @@ public final class BouncyRainbowKeyPair {
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncyRainbowPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyFALCONPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -238,8 +253,8 @@ public final class BouncyRainbowKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final RainbowPublicKeyParameters myParms = (RainbowPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
-                return new BouncyRainbowPublicKey(getKeySpec(), myParms);
+                final FalconPublicKeyParameters myParms = (FalconPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyFALCONPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -248,14 +263,14 @@ public final class BouncyRainbowKeyPair {
     }
 
     /**
-     * Rainbow signature.
+     * Falcon signer.
      */
-    public static class BouncyRainbowSignature
+    public static class BouncyFALCONSignature
             extends BouncyDigestSignature {
         /**
-         * The Rainbow Signer.
+         * The SPHINCSPlus Signer.
          */
-        private final RainbowSigner theSigner;
+        private final FalconSigner theSigner;
 
         /**
          * Constructor.
@@ -263,13 +278,11 @@ public final class BouncyRainbowKeyPair {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        BouncyRainbowSignature(final BouncyFactory pFactory,
-                               final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyFALCONSignature(final BouncyFactory pFactory,
+                              final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new RainbowSigner();
+            theSigner = new FalconSigner();
         }
 
         @Override
@@ -279,8 +292,8 @@ public final class BouncyRainbowKeyPair {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyRainbowPrivateKey myPrivate = (BouncyRainbowPrivateKey) getKeyPair().getPrivateKey();
-            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            final BouncyFALCONPrivateKey myPrivate = (BouncyFALCONPrivateKey) getKeyPair().getPrivateKey();
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
@@ -291,7 +304,7 @@ public final class BouncyRainbowKeyPair {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyRainbowPublicKey myPublic = (BouncyRainbowPublicKey) getKeyPair().getPublicKey();
+            final BouncyFALCONPublicKey myPublic = (BouncyFALCONPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

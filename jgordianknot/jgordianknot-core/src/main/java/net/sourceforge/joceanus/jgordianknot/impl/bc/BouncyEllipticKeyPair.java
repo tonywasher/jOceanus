@@ -21,6 +21,8 @@ import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import javax.security.auth.DestroyFailedException;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -30,12 +32,14 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.SecretWithEncapsulation;
 import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
 import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
 import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
 import org.bouncycastle.crypto.ext.engines.EllipticEncryptor;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
-import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
+import org.bouncycastle.crypto.kems.ECIESKEMExtractor;
+import org.bouncycastle.crypto.kems.ECIESKEMGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ECDHUPrivateParameters;
 import org.bouncycastle.crypto.params.ECDHUPublicParameters;
@@ -43,7 +47,6 @@ import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ECNamedDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.MQVPrivateParameters;
 import org.bouncycastle.crypto.params.MQVPublicParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
@@ -72,6 +75,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgr
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
@@ -395,9 +399,19 @@ public final class BouncyEllipticKeyPair {
     public static class BouncyECIESAgreement
             extends GordianCoreAnonymousAgreement {
         /**
-         * Key Agreement.
+         * Key Length.
          */
-        private final ECIESKeyEncapsulation theAgreement;
+        private static final int KEYLEN = 32;
+
+        /**
+         * Key Generator.
+         */
+        private final ECIESKEMGenerator theGenerator;
+
+        /**
+         * Derivation function.
+         */
+        private final DerivationFunction theDerivation;
 
         /**
          * Constructor.
@@ -410,35 +424,34 @@ public final class BouncyEllipticKeyPair {
             super(pFactory, pSpec);
 
             /* Create Key Encapsulation */
-            final DerivationFunction myKDF = newDerivationFunction();
-            theAgreement = new ECIESKeyEncapsulation(myKDF, getRandom(), true, false, false);
+            theDerivation = newDerivationFunction();
+            theGenerator = new ECIESKEMGenerator(KEYLEN, theDerivation, getRandom());
         }
 
         @Override
         public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
+            /* Protect against exceptions */
+            try {
+                /* Check keyPair */
+                BouncyKeyPair.checkKeyPair(pServer);
+                checkKeyPair(pServer);
 
-            /* initialise Key Encapsulation */
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pServer);
-            theAgreement.init(myPublic.getPublicKey());
+                /* Create encapsulation */
+                final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pServer);
+                final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
 
-            /* Determine key length */
-            int myFieldSize = myPublic.getPublicKey().getParameters().getCurve().getFieldSize();
-            myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
-            final int myLen = 2 * myFieldSize + 1;
+                /* Build the clientHello Message */
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());
 
-            /* Create clientHello message */
-            final byte[] myData = new byte[myLen];
-            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
-            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myData);
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
 
-            /* Store secret */
-            storeSecret(myParms.getKey());
-
-            /* Return the clientHello message  */
-            return myClientHello;
+                /* Return the clientHello message  */
+                return myClientHello;
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
         }
 
         @Override
@@ -450,19 +463,11 @@ public final class BouncyEllipticKeyPair {
 
             /* initialise Key Encapsulation */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
-            theAgreement.init(myPrivate.getPrivateKey());
+            final ECIESKEMExtractor myExtractor = new ECIESKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
 
-            /* Determine key length */
-            int myFieldSize = myPrivate.getPrivateKey().getParameters().getCurve().getFieldSize();
-            myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
-            final int myLen = 2 * myFieldSize + 1;
-
-            /* Parse clientHello */
+            /* Parse clientHello message and store secret */
             final byte[] myMessage = pClientHello.getEncapsulated();
-            final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
-
-            /* Store secret */
-            storeSecret(myParms.getKey());
+            storeSecret(myExtractor.extractSecret(myMessage));
         }
     }
 

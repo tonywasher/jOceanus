@@ -121,6 +121,46 @@ public enum GordianKeyPairType {
     SABER,
 
     /**
+     * Kyber.
+     */
+    KYBER,
+
+    /**
+     * Dilithium.
+     */
+    DILITHIUM,
+
+    /**
+     * BIKE.
+     */
+    BIKE,
+
+    /**
+     * NTRU.
+     */
+    NTRU,
+
+    /**
+     * NTRULPRIME.
+     */
+    NTRULPRIME,
+
+    /**
+     * SNTRUPRIME.
+     */
+    SNTRUPRIME,
+
+    /**
+     * Falcon.
+     */
+    FALCON,
+
+    /**
+     * Picnic.
+     */
+    PICNIC,
+
+    /**
      * Composite.
      */
     COMPOSITE;
@@ -133,6 +173,8 @@ public enum GordianKeyPairType {
         switch (this) {
             case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
             case XMSS:
             case EDDSA:
                 return false;
@@ -149,6 +191,9 @@ public enum GordianKeyPairType {
         switch (this) {
             case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case XMSS:
             case EDDSA:
             case LMS:

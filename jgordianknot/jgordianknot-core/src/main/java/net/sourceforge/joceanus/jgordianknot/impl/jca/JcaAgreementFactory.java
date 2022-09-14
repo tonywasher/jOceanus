@@ -87,6 +87,11 @@ public class JcaAgreementFactory
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
                 return getPostQuantumAgreement(pAgreementSpec);
             case NEWHOPE:
                 return getNHAgreement(pAgreementSpec);
@@ -279,6 +284,11 @@ public class JcaAgreementFactory
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
             case COMPOSITE:
                 return true;
             case EC:

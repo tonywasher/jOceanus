@@ -181,6 +181,30 @@ public final class GordianSignatureSpec {
     }
 
     /**
+     * Create DilithiumSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec dilithium() {
+        return new GordianSignatureSpec(GordianKeyPairType.DILITHIUM, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create falconSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec falcon() {
+        return new GordianSignatureSpec(GordianKeyPairType.FALCON, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create picnicSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec picnic() {
+        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE);
+    }
+
+    /**
      * Create RainbowSpec.
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
@@ -309,6 +333,9 @@ public final class GordianSignatureSpec {
             case EDDSA:
             case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case XMSS:
             case LMS:
                 return theSignatureSpec == null;

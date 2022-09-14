@@ -31,9 +31,12 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDilithiumSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaFalconSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
@@ -118,6 +121,12 @@ public class JcaSignatureFactory
                 return new JcaSPHINCSSignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
+            case DILITHIUM:
+                return new JcaDilithiumSignature(getFactory(), pSignatureSpec);
+            case FALCON:
+                return new JcaFalconSignature(getFactory(), pSignatureSpec);
+            case PICNIC:
+                return new JcaPicnicSignature(getFactory(), pSignatureSpec);
             case RAINBOW:
                 return new JcaRainbowSignature(getFactory(), pSignatureSpec);
             case LMS:
@@ -153,6 +162,9 @@ public class JcaSignatureFactory
             case XMSS:
             case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case EDDSA:
             case LMS:
             case COMPOSITE:

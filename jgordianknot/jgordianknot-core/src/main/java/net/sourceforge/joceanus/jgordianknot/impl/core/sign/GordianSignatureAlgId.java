@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
@@ -403,6 +404,16 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSDigestType.SHA3,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512, DERNull.INSTANCE));
+
+        /* Add new PQC signatures */
+        addToMaps(GordianSignatureSpec.dilithium(),
+                  new AlgorithmIdentifier(BCObjectIdentifiers.dilithium, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.falcon(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.sphincsPlus(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.sphincsPlus, DERNull.INSTANCE));
 
         /* List XMSS Sha256 signatures */
         for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA256)) {

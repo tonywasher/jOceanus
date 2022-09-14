@@ -26,9 +26,9 @@ import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
 import org.bouncycastle.pqc.asn1.McEliecePublicKey;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.RainbowPublicKey;
-import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PublicKeyParameters;
-import org.bouncycastle.pqc.crypto.mceliece.McEliecePublicKeyParameters;
-import org.bouncycastle.pqc.crypto.rainbow.RainbowPublicKeyParameters;
+import org.bouncycastle.pqc.legacy.crypto.mceliece.McElieceCCA2PublicKeyParameters;
+import org.bouncycastle.pqc.legacy.crypto.mceliece.McEliecePublicKeyParameters;
+import org.bouncycastle.pqc.legacy.crypto.rainbow.RainbowPublicKeyParameters;
 
 /**
  * Additional AsymmetricKeys that are missing from SublicPublicKeyInfoFactory.

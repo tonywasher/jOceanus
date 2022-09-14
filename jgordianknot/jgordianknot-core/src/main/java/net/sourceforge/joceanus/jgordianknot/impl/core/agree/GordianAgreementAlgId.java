@@ -231,6 +231,21 @@ public class GordianAgreementAlgId {
             case SABER:
                 myId = myId.branch(Integer.toString(pSpec.getSABERKeySpec().ordinal() + 1));
                 break;
+            case KYBER:
+                myId = myId.branch(Integer.toString(pSpec.getKyberKeySpec().ordinal() + 1));
+                break;
+            case BIKE:
+                myId = myId.branch(Integer.toString(pSpec.getBIKEKeySpec().ordinal() + 1));
+                break;
+            case NTRU:
+                myId = myId.branch(Integer.toString(pSpec.getNTRUKeySpec().ordinal() + 1));
+                break;
+            case NTRULPRIME:
+                myId = myId.branch(Integer.toString(pSpec.getNTRULPrimeKeySpec().ordinal() + 1));
+                break;
+            case SNTRUPRIME:
+                myId = myId.branch(Integer.toString(pSpec.getSNTRUPrimeKeySpec().ordinal() + 1));
+                break;
             case MCELIECE:
                 final GordianMcElieceKeySpec myMcEliece = pSpec.getMcElieceKeySpec();
                 myId = myId.branch(Integer.toString(myMcEliece.getKeyType().ordinal() + 1));

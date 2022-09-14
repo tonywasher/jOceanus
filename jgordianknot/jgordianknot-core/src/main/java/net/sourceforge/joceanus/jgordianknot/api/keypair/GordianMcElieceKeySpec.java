@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.api.keypair;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bouncycastle.pqc.crypto.mceliece.McElieceParameters;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
+import org.bouncycastle.pqc.legacy.crypto.mceliece.McElieceParameters;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
