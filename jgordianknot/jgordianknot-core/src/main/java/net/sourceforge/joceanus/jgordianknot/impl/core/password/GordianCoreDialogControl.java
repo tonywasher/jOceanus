@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.password;
 
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * DialogControl.
@@ -29,18 +29,18 @@ public class GordianCoreDialogControl
     /**
      * GUI factory.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * Password dialog.
      */
-    private TethysPasswordDialog theDialog;
+    private TethysUIPasswordDialog theDialog;
 
     /**
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreDialogControl(final TethysGuiFactory pFactory) {
+    public GordianCoreDialogControl(final TethysUIFactory<?> pFactory) {
         theFactory = pFactory;
     }
 
@@ -48,7 +48,7 @@ public class GordianCoreDialogControl
     public void createTheDialog(final String pTitle,
                                 final boolean pNeedConfirm) {
         /* Create the dialog */
-        theDialog = theFactory.newPasswordDialog(pTitle, pNeedConfirm);
+        theDialog = theFactory.dialogFactory().newPasswordDialog(pTitle, pNeedConfirm);
     }
 
     @Override
