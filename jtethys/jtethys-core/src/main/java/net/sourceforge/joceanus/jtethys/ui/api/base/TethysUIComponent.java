@@ -21,62 +21,88 @@ package net.sourceforge.joceanus.jtethys.ui.api.base;
  */
 public interface TethysUIComponent {
     /**
+     * Obtain the underlying component (if any).
+     * @return the underlying component
+     */
+    TethysUIComponent getUnderlying();
+
+    /**
      * Obtain the Id.
      * @return the id
      */
-    Integer getId();
+    default Integer getId() {
+        return getUnderlying().getId();
+    }
 
     /**
      * Obtain the Node.
      * @return the node
      */
-    TethysUINode getNode();
+    default TethysUINode getNode() {
+        return getUnderlying().getNode();
+    }
 
     /**
      * Set Enabled status.
      * @param pEnabled true/false
      */
-    void setEnabled(boolean pEnabled);
+    default void setEnabled(boolean pEnabled) {
+        getUnderlying().setEnabled(pEnabled);
+    }
 
     /**
      * Set Visible.
      * @param pVisible true/false
      */
-    void setVisible(boolean pVisible);
+    default void setVisible(boolean pVisible) {
+        getUnderlying().setVisible(pVisible);
+    }
 
     /**
      * Obtain the Border Padding.
      * @return the Padding.
      */
-    Integer getBorderPadding();
+    default Integer getBorderPadding() {
+        return getUnderlying().getBorderPadding();
+    }
 
     /**
      * Obtain the Border Title.
      * @return the Title.
      */
-    String getBorderTitle();
+    default String getBorderTitle() {
+        return getUnderlying().getBorderTitle();
+    }
 
     /**
      * Set the Border Padding.
      * @param pPadding the border padding
      */
-    void setBorderPadding(Integer pPadding);
+    default void setBorderPadding(Integer pPadding) {
+        getUnderlying().setBorderPadding(pPadding);
+    }
 
     /**
      * Set the Border Title.
      * @param pTitle the border title
      */
-    void setBorderTitle(String pTitle);
+    default void setBorderTitle(String pTitle) {
+        getUnderlying().setBorderTitle(pTitle);
+    }
 
     /**
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    void setPreferredWidth(Integer pWidth);
+    default void setPreferredWidth(Integer pWidth) {
+        getUnderlying().setPreferredWidth(pWidth);
+    }
 
     /**
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    void setPreferredHeight(Integer pHeight);
+    default void setPreferredHeight(Integer pHeight) {
+        getUnderlying().setPreferredHeight(pHeight);
+    }
 }

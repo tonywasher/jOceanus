@@ -39,6 +39,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,12 +73,12 @@ public class MetisToolkit {
     /**
      * GUI Factory.
      */
-    private final TethysGuiFactory theGuiFactory;
+    private final TethysUIFactory<?> theGuiFactory;
 
     /**
      * Thread Manager.
      */
-    private final TethysThreadManager theThreadManager;
+    private final TethysUIThreadManager theThreadManager;
 
     /**
      * The Profile Viewer Entry.
@@ -92,7 +98,7 @@ public class MetisToolkit {
     /**
      * Program Definition.
      */
-    private final TethysProgram theProgram;
+    private final TethysUIProgram theProgram;
 
     /**
      * Constructor.
@@ -123,7 +129,7 @@ public class MetisToolkit {
         getFormatter().extendFormatter(new MetisDataFormatter(getFormatter()));
 
         /* create the thread manager */
-        theThreadManager = theGuiFactory.newThreadManager();
+        theThreadManager = theGuiFactory.threadFactory().newThreadManager();
         attachToThreadManager();
 
         /* Access the Colour Preferences */
@@ -141,7 +147,7 @@ public class MetisToolkit {
      * Obtain the Program Definitions.
      * @return the definitions
      */
-    public TethysProgram getProgramDefinitions() {
+    public TethysUIProgram getProgramDefinitions() {
         return theProgram;
     }
 
@@ -149,7 +155,7 @@ public class MetisToolkit {
      * Obtain the Data Formatter.
      * @return the formatter
      */
-    public TethysDataFormatter getFormatter() {
+    public TethysUIDataFormatter getFormatter() {
         return getGuiFactory().getDataFormatter();
     }
 
@@ -173,7 +179,7 @@ public class MetisToolkit {
      * Obtain the GUI Factory.
      * @return the factory
      */
-    public TethysGuiFactory getGuiFactory() {
+    public TethysUIFactory<?> getGuiFactory() {
         return theGuiFactory;
     }
 
@@ -181,7 +187,7 @@ public class MetisToolkit {
      * Obtain the Thread Manager.
      * @return the factory
      */
-    public TethysThreadManager getThreadManager() {
+    public TethysUIThreadManager getThreadManager() {
         return theThreadManager;
     }
 
@@ -224,8 +230,8 @@ public class MetisToolkit {
      */
     private void processColorPreferences() {
         /* Update the value Set with the preferences */
-        final TethysGuiFactory myFactory = getGuiFactory();
-        final TethysValueSet myValueSet = myFactory.getValueSet();
+        final TethysUIFactory<?> myFactory = getGuiFactory();
+        final TethysUIValueSet myValueSet = myFactory.getValueSet();
         theColorPreferences.updateValueSet(myValueSet);
     }
 
@@ -286,24 +292,24 @@ public class MetisToolkit {
      */
     private void attachToThreadManager() {
         /* Access the event registrar */
-        final TethysEventRegistrar<TethysThreadEvent> myRegistrar = theThreadManager.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIThreadEvent> myRegistrar = theThreadManager.getEventRegistrar();
 
         /* Add Thread start support */
-        myRegistrar.addEventListener(TethysThreadEvent.THREADSTART, e -> {
+        myRegistrar.addEventListener(TethysUIThreadEvent.THREADSTART, e -> {
             /* Tasks for event handler */
             theErrorEntry.setObject(null);
             theErrorEntry.setVisible(false);
         });
 
         /* Add Thread end support */
-        myRegistrar.addEventListener(TethysThreadEvent.THREADEND, e -> {
+        myRegistrar.addEventListener(TethysUIThreadEvent.THREADEND, e -> {
             /* Tasks for event handler */
             theProfileEntry.setObject(theThreadManager.getActiveProfile());
             theProfileEntry.setFocus();
         });
 
         /* Add Thread error support */
-        myRegistrar.addEventListener(TethysThreadEvent.THREADERROR, e -> {
+        myRegistrar.addEventListener(TethysUIThreadEvent.THREADERROR, e -> {
             /* Tasks for event handler */
             theErrorEntry.setObject(e.getDetails());
             theErrorEntry.setVisible(true);

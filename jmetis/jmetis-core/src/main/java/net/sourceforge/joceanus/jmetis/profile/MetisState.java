@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.profile;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Program definition.
@@ -26,13 +26,13 @@ public class MetisState {
     /**
      * Profile.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory
      */
-    public MetisState(final TethysGuiFactory pFactory) {
+    public MetisState(final TethysUIFactory<?> pFactory) {
         /* Store the factory */
         theFactory = pFactory;
     }
@@ -41,7 +41,7 @@ public class MetisState {
      * Obtain the profile.
      * @return the profile
      */
-    public TethysGuiFactory getFactory() {
+    public TethysUIFactory<?> getFactory() {
         return theFactory;
     }
 
@@ -49,7 +49,7 @@ public class MetisState {
      * Obtain the program definition.
      * @return the definition
      */
-    public TethysProgram getProgramDefinitions() {
+    public TethysUIProgram getProgramDefinitions() {
         return theFactory.getProgramDefinitions();
     }
 }

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
- * Resource IDs for JMetis viewer.
+ * Resource IDs for Metis viewer.
  */
 public enum MetisViewerResource
         implements TethysBundleId, MetisDataFieldId {

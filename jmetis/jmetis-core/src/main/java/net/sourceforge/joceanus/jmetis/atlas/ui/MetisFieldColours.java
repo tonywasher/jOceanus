@@ -22,7 +22,8 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueKey;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 
 /**
  * Preferences for colours.
@@ -142,23 +143,23 @@ public interface MetisFieldColours {
          * Update the valueSet.
          * @param pValueSet the value set
          */
-        public void updateValueSet(final TethysValueSet pValueSet) {
+        public void updateValueSet(final TethysUIValueSet pValueSet) {
             /* Create the Colour Map */
             final HashMap<String, String> myMap = new HashMap<>();
 
             /* Populate the map */
-            myMap.put(TethysValueSet.TETHYS_COLOR_STANDARD, getStringValue(MetisColorPreferenceKey.STANDARD));
-            myMap.put(TethysValueSet.TETHYS_COLOR_BACKGROUND, getStringValue(MetisColorPreferenceKey.BACKGROUND));
-            myMap.put(TethysValueSet.TETHYS_COLOR_ERROR, getStringValue(MetisColorPreferenceKey.ERROR));
-            myMap.put(TethysValueSet.TETHYS_COLOR_CHANGED, getStringValue(MetisColorPreferenceKey.CHANGED));
-            myMap.put(TethysValueSet.TETHYS_COLOR_DISABLED, getStringValue(MetisColorPreferenceKey.DISABLED));
-            myMap.put(TethysValueSet.TETHYS_COLOR_ZEBRA, getStringValue(MetisColorPreferenceKey.ZEBRA));
-            myMap.put(TethysValueSet.TETHYS_COLOR_LINK, getStringValue(MetisColorPreferenceKey.LINK));
-            myMap.put(TethysValueSet.TETHYS_COLOR_VALUE, getStringValue(MetisColorPreferenceKey.VALUE));
-            myMap.put(TethysValueSet.TETHYS_COLOR_NEGATIVE, getStringValue(MetisColorPreferenceKey.NEGATIVE));
-            myMap.put(TethysValueSet.TETHYS_COLOR_SECURITY, getStringValue(MetisColorPreferenceKey.SECURITY));
-            myMap.put(TethysValueSet.TETHYS_COLOR_HEADER, getStringValue(MetisColorPreferenceKey.HEADER));
-            myMap.put(TethysValueSet.TETHYS_COLOR_PROGRESS, getStringValue(MetisColorPreferenceKey.PROGRESS));
+            myMap.put(TethysUIValueKey.COLOR_STANDARD, getStringValue(MetisColorPreferenceKey.STANDARD));
+            myMap.put(TethysUIValueKey.COLOR_BACKGROUND, getStringValue(MetisColorPreferenceKey.BACKGROUND));
+            myMap.put(TethysUIValueKey.COLOR_ERROR, getStringValue(MetisColorPreferenceKey.ERROR));
+            myMap.put(TethysUIValueKey.COLOR_CHANGED, getStringValue(MetisColorPreferenceKey.CHANGED));
+            myMap.put(TethysUIValueKey.COLOR_DISABLED, getStringValue(MetisColorPreferenceKey.DISABLED));
+            myMap.put(TethysUIValueKey.COLOR_ZEBRA, getStringValue(MetisColorPreferenceKey.ZEBRA));
+            myMap.put(TethysUIValueKey.COLOR_LINK, getStringValue(MetisColorPreferenceKey.LINK));
+            myMap.put(TethysUIValueKey.COLOR_VALUE, getStringValue(MetisColorPreferenceKey.VALUE));
+            myMap.put(TethysUIValueKey.COLOR_NEGATIVE, getStringValue(MetisColorPreferenceKey.NEGATIVE));
+            myMap.put(TethysUIValueKey.COLOR_SECURITY, getStringValue(MetisColorPreferenceKey.SECURITY));
+            myMap.put(TethysUIValueKey.COLOR_HEADER, getStringValue(MetisColorPreferenceKey.HEADER));
+            myMap.put(TethysUIValueKey.COLOR_PROGRESS, getStringValue(MetisColorPreferenceKey.PROGRESS));
 
             /* Apply settings */
             pValueSet.applyColorMapping(myMap);
@@ -182,18 +183,18 @@ public interface MetisFieldColours {
 
         @Override
         public void autoCorrectPreferences() {
-            defaultColour(MetisColorPreferenceKey.STANDARD, TethysValueSet.DEFAULT_COLOR_STANDARD);
-            defaultColour(MetisColorPreferenceKey.BACKGROUND, TethysValueSet.DEFAULT_COLOR_BACKGROUND);
-            defaultColour(MetisColorPreferenceKey.ERROR, TethysValueSet.DEFAULT_COLOR_ERROR);
-            defaultColour(MetisColorPreferenceKey.CHANGED, TethysValueSet.DEFAULT_COLOR_CHANGED);
-            defaultColour(MetisColorPreferenceKey.DISABLED, TethysValueSet.DEFAULT_COLOR_DISABLED);
-            defaultColour(MetisColorPreferenceKey.ZEBRA, TethysValueSet.DEFAULT_COLOR_ZEBRA);
-            defaultColour(MetisColorPreferenceKey.PROGRESS, TethysValueSet.DEFAULT_COLOR_PROGRESS);
-            defaultColour(MetisColorPreferenceKey.LINK, TethysValueSet.DEFAULT_COLOR_LINK);
-            defaultColour(MetisColorPreferenceKey.VALUE, TethysValueSet.DEFAULT_COLOR_VALUE);
-            defaultColour(MetisColorPreferenceKey.NEGATIVE, TethysValueSet.DEFAULT_COLOR_NEGATIVE);
-            defaultColour(MetisColorPreferenceKey.SECURITY, TethysValueSet.DEFAULT_COLOR_SECURITY);
-            defaultColour(MetisColorPreferenceKey.HEADER, TethysValueSet.DEFAULT_COLOR_HEADER);
+            defaultColour(MetisColorPreferenceKey.STANDARD, TethysUIValueKey.DEFAULT_COLOR_STANDARD);
+            defaultColour(MetisColorPreferenceKey.BACKGROUND, TethysUIValueKey.DEFAULT_COLOR_BACKGROUND);
+            defaultColour(MetisColorPreferenceKey.ERROR, TethysUIValueKey.DEFAULT_COLOR_ERROR);
+            defaultColour(MetisColorPreferenceKey.CHANGED, TethysUIValueKey.DEFAULT_COLOR_CHANGED);
+            defaultColour(MetisColorPreferenceKey.DISABLED, TethysUIValueKey.DEFAULT_COLOR_DISABLED);
+            defaultColour(MetisColorPreferenceKey.ZEBRA, TethysUIValueKey.DEFAULT_COLOR_ZEBRA);
+            defaultColour(MetisColorPreferenceKey.PROGRESS, TethysUIValueKey.DEFAULT_COLOR_PROGRESS);
+            defaultColour(MetisColorPreferenceKey.LINK, TethysUIValueKey.DEFAULT_COLOR_LINK);
+            defaultColour(MetisColorPreferenceKey.VALUE, TethysUIValueKey.DEFAULT_COLOR_VALUE);
+            defaultColour(MetisColorPreferenceKey.NEGATIVE, TethysUIValueKey.DEFAULT_COLOR_NEGATIVE);
+            defaultColour(MetisColorPreferenceKey.SECURITY, TethysUIValueKey.DEFAULT_COLOR_SECURITY);
+            defaultColour(MetisColorPreferenceKey.HEADER, TethysUIValueKey.DEFAULT_COLOR_HEADER);
         }
 
         /**

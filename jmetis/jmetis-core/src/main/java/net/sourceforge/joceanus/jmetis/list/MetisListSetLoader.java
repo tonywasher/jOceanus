@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.list;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Loader.
@@ -30,7 +30,7 @@ public class MetisListSetLoader {
     /**
      * The formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * The NameMap.
@@ -53,7 +53,7 @@ public class MetisListSetLoader {
      * @param pFormatter the formatter
      */
     MetisListSetLoader(final MetisListSetVersioned pListSet,
-                       final TethysDataFormatter pFormatter) {
+                       final TethysUIDataFormatter pFormatter) {
         /* Store the listSet */
         theListSet = pListSet;
         theFormatter = pFormatter;
