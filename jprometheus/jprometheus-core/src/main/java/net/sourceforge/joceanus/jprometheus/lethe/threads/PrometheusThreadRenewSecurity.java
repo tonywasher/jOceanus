@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to renew security in the data set. A new ControlKey will be created using the same
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadRenewSecurity<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysThread<T> {
+        implements TethysUIThread<T> {
     /**
      * Data Control.
      */
@@ -52,7 +52,7 @@ public class PrometheusThreadRenewSecurity<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public T performTask(final TethysThreadManager pManager) throws OceanusException {
+    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
         pManager.initTask(getTaskName());
 

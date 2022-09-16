@@ -17,10 +17,9 @@
 package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 
 /**
  * FieldSet Table.
@@ -33,7 +32,7 @@ public class PrometheusFieldSetTableTab<T>
      * @param <T> the item type
      */
     public interface PrometheusFieldSetTable<T>
-            extends TethysComponent {
+            extends TethysUIComponent {
         /**
          * Are there any visible elements?
          * @return true/false
@@ -56,7 +55,7 @@ public class PrometheusFieldSetTableTab<T>
     /**
      * The panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The table.
@@ -68,34 +67,19 @@ public class PrometheusFieldSetTableTab<T>
      * @param pFactory the factory
      * @param pTable the table
      */
-    PrometheusFieldSetTableTab(final TethysGuiFactory pFactory,
+    PrometheusFieldSetTableTab(final TethysUIFactory<?> pFactory,
                                final PrometheusFieldSetTable<T> pTable) {
         /* Store the table */
         theTable = pTable;
 
         /* Create the panel */
-        thePanel = pFactory.newBorderPane();
+        thePanel = pFactory.paneFactory().newBorderPane();
         thePanel.setCentre(theTable);
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
-    }
-
-    @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override

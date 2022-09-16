@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -41,17 +40,18 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysAlert;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadEvent;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
 
 /**
  * Main window for application.
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
  * @param <E> the data list enum class
  */
 public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisMainPanel {
+        implements TethysUIMainPanel {
     /**
      * Logger.
      */
@@ -84,7 +84,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
     /**
      * The GUI Factory.
      */
-    private TethysGuiFactory theGuiFactory;
+    private TethysUIFactory<?> theGuiFactory;
 
     /**
      * The data view.
@@ -94,17 +94,17 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
     /**
      * The panel.
      */
-    private TethysBorderPaneManager thePanel;
+    private TethysUIBorderPaneManager thePanel;
 
     /**
      * The data menu.
      */
-    private TethysMenuBarManager theMenuBar;
+    private TethysUIMenuBarManager theMenuBar;
 
     /**
      * The Thread Manager.
      */
-    private TethysThreadManager theThreadMgr;
+    private TethysUIThreadManager theThreadMgr;
 
     /**
      * The Started data window.
@@ -114,7 +114,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
     /**
      * The Status window.
      */
-    private TethysThreadStatusManager theStatusBar;
+    private TethysUIThreadStatusManager theStatusBar;
 
     /**
      * Get the data view.
@@ -126,12 +126,12 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
     }
 
     @Override
-    public TethysComponent getComponent() {
+    public TethysUIComponent getComponent() {
         return thePanel;
     }
 
     @Override
-    public TethysMenuBarManager getMenuBar() {
+    public TethysUIMenuBarManager getMenuBar() {
         return theMenuBar;
     }
 
@@ -141,7 +141,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      * @return the main panel
      * @throws OceanusException on error
      */
-    protected abstract TethysComponent buildMainPanel() throws OceanusException;
+    protected abstract TethysUIComponent buildMainPanel() throws OceanusException;
 
     /**
      * Obtain the Help Module.
@@ -171,15 +171,15 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
         myTask.startTask("buildGUI");
 
         /* Create the panel */
-        thePanel = theGuiFactory.newBorderPane();
+        thePanel = theGuiFactory.paneFactory().newBorderPane();
 
         /* Build the Main Panel */
-        final TethysComponent myMainPanel = buildMainPanel();
+        final TethysUIComponent myMainPanel = buildMainPanel();
 
         /* Access the status bar and set to invisible */
         theStatusBar = theThreadMgr.getStatusManager();
         theStatusBar.setVisible(false);
-        theThreadMgr.getEventRegistrar().addEventListener(TethysThreadEvent.THREADEND, e -> {
+        theThreadMgr.getEventRegistrar().addEventListener(TethysUIThreadEvent.THREADEND, e -> {
             setVisibility();
             theStatusBar.setVisible(false);
         });
@@ -193,7 +193,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
 
         /* Create the data window */
         theDataWdw = theToolkit.newViewerWindow();
-        theDataWdw.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));
+        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));
 
         /* Complete task */
         myTask.end();
@@ -204,10 +204,10 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      */
     protected void buildMainMenu() {
         /* Create the menu bar */
-        theMenuBar = theGuiFactory.newMenuBar();
+        theMenuBar = theGuiFactory.menuFactory().newMenuBar();
 
         /* Add Data Menu Items */
-        TethysMenuSubMenu<?> myMenu = theMenuBar.newSubMenu(PrometheusMenuId.DATA);
+        TethysUIMenuSubMenu myMenu = theMenuBar.newSubMenu(PrometheusMenuId.DATA);
         addDataMenuItems(myMenu);
 
         /* Add Edit Menu Items */
@@ -232,7 +232,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      *
      * @param pMenu the menu
      */
-    protected void addDataMenuItems(final TethysMenuSubMenu<?> pMenu) {
+    protected void addDataMenuItems(final TethysUIMenuSubMenu pMenu) {
         /* Add Standard Data Menu items */
         pMenu.newMenuItem(PrometheusThreadId.LOADDB, e -> loadDatabase());
         pMenu.newMenuItem(PrometheusThreadId.STOREDB, e -> storeDatabase());
@@ -245,7 +245,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      *
      * @param pMenu the menu
      */
-    protected void addEditMenuItems(final TethysMenuSubMenu<?> pMenu) {
+    protected void addEditMenuItems(final TethysUIMenuSubMenu pMenu) {
         /* Add Standard Edit Menu items */
         pMenu.newMenuItem(PrometheusMenuId.UNDO, e -> undoLastEdit());
         pMenu.newMenuItem(PrometheusMenuId.RESET, e -> resetEdit());
@@ -256,7 +256,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      *
      * @param pMenu the menu
      */
-    protected void addBackupMenuItems(final TethysMenuSubMenu<?> pMenu) {
+    protected void addBackupMenuItems(final TethysUIMenuSubMenu pMenu) {
         /* Add Standard Backup menu items */
         pMenu.newMenuItem(PrometheusThreadId.CREATEBACKUP, e -> writeBackup());
         pMenu.newMenuItem(PrometheusThreadId.RESTOREBACKUP, e -> restoreBackup());
@@ -270,7 +270,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      *
      * @param pMenu the menu
      */
-    protected void addSecurityMenuItems(final TethysMenuSubMenu<?> pMenu) {
+    protected void addSecurityMenuItems(final TethysUIMenuSubMenu pMenu) {
         /* Add Standard Security menu items */
         pMenu.newMenuItem(PrometheusThreadId.CHANGEPASS, e -> updatePassword());
         pMenu.newMenuItem(PrometheusThreadId.RENEWSECURITY, e -> reNewSecurity());
@@ -281,7 +281,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      *
      * @param pMenu the menu
      */
-    protected void addHelpMenuItems(final TethysMenuSubMenu<?> pMenu) {
+    protected void addHelpMenuItems(final TethysUIMenuSubMenu pMenu) {
         /* Create the menu items */
         pMenu.newMenuItem(PrometheusMenuId.SHOWHELP, e -> displayHelp());
         pMenu.newMenuItem(PrometheusMenuId.DATAVIEWER, e -> displayViewerMgr());
@@ -370,7 +370,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
      *
      * @param pThread the thread to start
      */
-    protected void startThread(final TethysThread<?> pThread) {
+    protected void startThread(final TethysUIThread<?> pThread) {
         /* Execute the thread and record it */
         theThreadMgr.startThread(pThread);
 
@@ -559,7 +559,7 @@ public abstract class PrometheusNewMainWindow<T extends DataSet<T, E>, E extends
         /* If we have updates or changes */
         if ((hasUpdates()) || (hasChanges())) {
             /* Ask whether to continue */
-            final TethysAlert myAlert = theGuiFactory.newAlert();
+            final TethysUIAlert myAlert = theGuiFactory.dialogFactory().newAlert();
             myAlert.setMessage(PROMPT_DISCARD);
             myAlert.setTitle(TITLE_CLOSE);
             final boolean myResult = myAlert.confirmYesNo();

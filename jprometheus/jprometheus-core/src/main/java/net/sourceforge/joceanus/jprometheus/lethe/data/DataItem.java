@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the
@@ -425,7 +425,7 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getDataFields().getName();
     }
 
@@ -1193,5 +1193,4 @@ public abstract class DataItem<E extends Enum<E>>
             }
         }
     }
-
 }

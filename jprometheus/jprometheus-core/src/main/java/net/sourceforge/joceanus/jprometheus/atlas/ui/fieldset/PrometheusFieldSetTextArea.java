@@ -19,13 +19,13 @@ package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
-import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 
 /**
  * FieldSet TextArea.
@@ -36,7 +36,7 @@ public class PrometheusFieldSetTextArea<T>
     /**
      * The gui factory.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * The fieldSet.
@@ -46,7 +46,7 @@ public class PrometheusFieldSetTextArea<T>
     /**
      * The panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The fieldId.
@@ -56,7 +56,7 @@ public class PrometheusFieldSetTextArea<T>
     /**
      * The text area.
      */
-    private TethysCharArrayTextAreaField theTextArea;
+    private TethysUICharArrayTextAreaField theTextArea;
 
     /**
      * The value factory.
@@ -78,35 +78,20 @@ public class PrometheusFieldSetTextArea<T>
      * @param pFactory the factory
      * @param pFieldSet the fieldSet
      */
-    PrometheusFieldSetTextArea(final TethysGuiFactory pFactory,
+    PrometheusFieldSetTextArea(final TethysUIFactory<?> pFactory,
                                final PrometheusFieldSet<T> pFieldSet) {
         /* Store the factory */
         theFactory = pFactory;
         theFieldSet = pFieldSet;
 
         /* Create the panel */
-        thePanel = theFactory.newBorderPane();
+        thePanel = theFactory.paneFactory().newBorderPane();
     }
 
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
-    }
-
-    @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     /**
@@ -116,7 +101,7 @@ public class PrometheusFieldSetTextArea<T>
      * @param pValueFactory the valueFactory
      */
     public void addField(final PrometheusDataFieldId pFieldId,
-                         final TethysCharArrayTextAreaField pField,
+                         final TethysUICharArrayTextAreaField pField,
                          final Function<T, char[]> pValueFactory) {
         /* Store details */
         theFieldId = pFieldId;
@@ -124,7 +109,7 @@ public class PrometheusFieldSetTextArea<T>
         theValueFactory = pValueFactory;
 
         /* create the scrollable pane */
-        final TethysScrollPaneManager myScroll = theFactory.newScrollPane();
+        final TethysUIScrollPaneManager myScroll = theFactory.paneFactory().newScrollPane();
         myScroll.setContent(pField);
 
         /* Add to the panel and adjust label widths */
@@ -134,7 +119,7 @@ public class PrometheusFieldSetTextArea<T>
         theFieldSet.registerField(pFieldId, this);
 
         /* Pass newData event to fieldSet */
-        pField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theFieldSet.newData(pFieldId, e.getDetails()));
+        pField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theFieldSet.newData(pFieldId, e.getDetails()));
     }
 
     @Override
@@ -161,7 +146,7 @@ public class PrometheusFieldSetTextArea<T>
 
         /* Update the changed flags */
         final boolean isChanged = theFieldSet.isChanged(theItem, theFieldId);
-        theTextArea.setTheAttributeState(TethysFieldAttribute.CHANGED, isChanged);
+        theTextArea.setTheAttributeState(TethysUIFieldAttribute.CHANGED, isChanged);
         theTextArea.adjustField();
     }
 

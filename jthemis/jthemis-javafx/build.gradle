@@ -10,7 +10,6 @@ javafx {
 /* Dependencies */
 dependencies {
     implementation project(':jthemis-core')
-    implementation project(':jmetis-javafx')
     implementation project(':jmetis-core')
     implementation project(':jtethys-javafx')
     implementation project(':jtethys-core')

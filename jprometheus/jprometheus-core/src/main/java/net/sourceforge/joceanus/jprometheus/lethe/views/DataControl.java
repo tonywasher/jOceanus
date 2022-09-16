@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Provides top-level control of data.
@@ -204,7 +204,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain DataFormatter.
      * @return the DataFormatter
      */
-    public TethysDataFormatter getDataFormatter() {
+    public TethysUIDataFormatter getDataFormatter() {
         return theMetisToolkit.getFormatter();
     }
 
@@ -236,7 +236,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain GuiFactory.
      * @return the GuiFactory
      */
-    public TethysGuiFactory getGuiFactory() {
+    public TethysUIFactory<?> getGuiFactory() {
         return theMetisToolkit.getGuiFactory();
     }
 

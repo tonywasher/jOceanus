@@ -28,28 +28,28 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
 
 /**
  * FieldSet.
  * @param <T> the item type
  */
 public class PrometheusFieldSet<T>
-        implements TethysEventProvider<TethysXUIEvent> {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The gui factory.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysXUIEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The map of Fields to panels.
@@ -64,7 +64,7 @@ public class PrometheusFieldSet<T>
     /**
      * The panel.
      */
-    private final TethysGridPaneManager thePanel;
+    private final TethysUIGridPaneManager thePanel;
 
     /**
      * The currently active panel.
@@ -90,7 +90,7 @@ public class PrometheusFieldSet<T>
      * Constructor.
      * @param pFactory the gui factory
      */
-    public PrometheusFieldSet(final TethysGuiFactory pFactory) {
+    public PrometheusFieldSet(final TethysUIFactory<?> pFactory) {
         /* Store parameters */
         theFactory = pFactory;
 
@@ -106,7 +106,7 @@ public class PrometheusFieldSet<T>
         thePanels.add(theCurrentPanel);
 
         /* Create the main panel */
-        thePanel = theFactory.newGridPane();
+        thePanel = theFactory.paneFactory().newGridPane();
         thePanel.addCell(theCurrentPanel);
         thePanel.allowCellGrowth(theCurrentPanel);
     }
@@ -115,12 +115,12 @@ public class PrometheusFieldSet<T>
      * Obtain the component.
      * @return the component
      */
-    public TethysComponent getComponent() {
+    public TethysUIComponent getComponent() {
         return thePanel;
     }
 
     @Override
-    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -152,7 +152,7 @@ public class PrometheusFieldSet<T>
      */
     public void newTextArea(final String pName,
                             final PrometheusDataFieldId pFieldId,
-                            final TethysCharArrayTextAreaField pField,
+                            final TethysUICharArrayTextAreaField pField,
                             final Function<T, char[]> pValueFactory) {
         /* If we do not currently have any tabs */
         if (theTabs == null) {
@@ -199,7 +199,7 @@ public class PrometheusFieldSet<T>
      * @param pValueFactory the valueFactory
      */
     public void addField(final PrometheusDataFieldId pFieldId,
-                         final TethysDataEditField<?> pField,
+                         final TethysUIDataEditField<?> pField,
                          final Function<T, Object> pValueFactory) {
         theCurrentPanel.addField(pFieldId, pField, pValueFactory);
     }
@@ -290,7 +290,7 @@ public class PrometheusFieldSet<T>
     public void adjustTabVisibility() {
         /* Adjust visibility of tabs if present */
         if (theTabs != null) {
-            theTabs.adjustVisibilty();
+            theTabs.adjustVisibility();
         }
         adjustChanged();
     }
@@ -320,7 +320,7 @@ public class PrometheusFieldSet<T>
             final PrometheusFieldSetEvent myUpdate = new PrometheusFieldSetEvent(pFieldId, pNewValue);
 
             /* Fire the notification */
-            theEventManager.fireEvent(TethysXUIEvent.NEWVALUE, myUpdate);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myUpdate);
         }
     }
 }

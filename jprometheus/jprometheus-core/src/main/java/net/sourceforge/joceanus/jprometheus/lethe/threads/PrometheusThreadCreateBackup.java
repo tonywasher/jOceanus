@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysThread;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to create an encrypted backup of a data set.
@@ -42,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysThread<Void> {
+        implements TethysUIThread<Void> {
     /**
      * Buffer length.
      */
@@ -72,7 +74,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     }
 
     @Override
-    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();

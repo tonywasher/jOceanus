@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Arguments class for DataItem.
@@ -503,7 +503,7 @@ public class DataValues<E extends Enum<E>> {
      * @return the new element
      */
     protected Element createXML(final Document pDocument,
-                                final TethysDataFormatter pFormatter,
+                                final TethysUIDataFormatter pFormatter,
                                 final boolean pStoreIds) {
         /* Create an element for the item */
         final Element myElement = pDocument.createElement(theItemType);

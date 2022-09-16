@@ -19,14 +19,15 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui;
 import java.io.InputStream;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Prometheus Icon IDs.
  */
-public enum PrometheusIcon implements TethysIconId {
+public enum PrometheusIcon implements TethysUIIconId {
     /**
      * Disabled.
      */
@@ -79,17 +80,18 @@ public enum PrometheusIcon implements TethysIconId {
      * Configure goto scroll button.
      * @param pButton the button manager
      */
-    public static void configureGoToScrollButton(final TethysScrollButtonManager<?> pButton) {
+    public static void configureGoToScrollButton(final TethysUIScrollButtonManager<?> pButton) {
         pButton.setNullMargins();
         pButton.setSimpleDetails(GOTO, MetisIcon.ICON_SIZE, TIP_GOTO);
     }
 
     /**
      * Configure enabled icon button.
+     * @param pFactory the factory
      * @return the mapSet configuration
      */
-    public static TethysIconMapSet<Boolean> configureEnabledIconButton() {
-        final TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>();
+    public static TethysUIIconMapSet<Boolean> configureEnabledIconButton(final TethysUIFactory<?> pFactory) {
+        final TethysUIIconMapSet<Boolean> myMapSet = pFactory.buttonFactory().newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, MetisIcon.ACTIVE, TIP_DISABLE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, DISABLED, TIP_ENABLE);
         return myMapSet;

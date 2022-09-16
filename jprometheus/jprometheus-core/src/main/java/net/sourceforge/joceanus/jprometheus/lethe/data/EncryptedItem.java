@@ -28,8 +28,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Encrypted Data Item and List.
@@ -54,10 +53,6 @@ public abstract class EncryptedItem<E extends Enum<E>>
     public static final String ERROR_USAGE = PrometheusDataResource.ENCRYPTED_ERROR_USAGE.getValue();
 
     /**
-     * Data Formatter.
-     */
-    private static final TethysDataFormatter FORMATTER = new TethysDataFormatter();
-    /**
      * Generator field.
      */
     private MetisEncryptionGenerator theGenerator;
@@ -71,7 +66,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     protected EncryptedItem(final EncryptedList<?, E> pList,
                             final Integer pId) {
         super(pList, pId);
-        theGenerator = new MetisEncryptionGenerator(null, FORMATTER);
+        theGenerator = new MetisEncryptionGenerator(null, pList.getDataSet().getDataFormatter());
     }
 
     /**
@@ -101,7 +96,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         if (myId != null) {
             setDataKeySet(myId);
         } else {
-            theGenerator = new MetisEncryptionGenerator(null, FORMATTER);
+            theGenerator = new MetisEncryptionGenerator(null, pList.getDataSet().getDataFormatter());
         }
     }
 
@@ -398,7 +393,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pControl the control key to apply
          * @throws OceanusException on error
          */
-        public void updateSecurity(final TethysThreadStatusReport pReport,
+        public void updateSecurity(final TethysUIThreadStatusReport pReport,
                                    final ControlKey pControl) throws OceanusException {
             /* Declare the new stage */
             pReport.setNewStage(listName());
@@ -429,7 +424,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pBase The base list to adopt from
          * @throws OceanusException on error
          */
-        protected void adoptSecurity(final TethysThreadStatusReport pReport,
+        protected void adoptSecurity(final TethysUIThreadStatusReport pReport,
                                      final EncryptedList<?, E> pBase) throws OceanusException {
             /* Declare the new stage */
             pReport.setNewStage(listName());

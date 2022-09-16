@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Prometheus Toolkit.
@@ -52,7 +52,7 @@ public class PrometheusToolkit {
 
         /* Access components */
         final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
-        final TethysThreadManager myThreadMgr = pToolkit.getThreadManager();
+        final TethysUIThreadManager myThreadMgr = pToolkit.getThreadManager();
 
         /* Create the passwordManager */
         final MetisSecurityPreferences myPreferences = myPreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
@@ -75,7 +75,7 @@ public class PrometheusToolkit {
      * Obtain the Program Definitions.
      * @return the definitions
      */
-    public TethysProgram getProgramDefinitions() {
+    public TethysUIProgram getProgramDefinitions() {
         return theToolkit.getProgramDefinitions();
     }
 

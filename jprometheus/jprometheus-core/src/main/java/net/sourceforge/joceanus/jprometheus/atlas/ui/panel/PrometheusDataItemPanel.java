@@ -36,13 +36,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 
 /**
  * Class to enable display/editing of and individual dataItem.
@@ -51,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <E> the data type enum class
  */
 public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent, PrometheusItemEditParent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent, PrometheusItemEditParent {
     /**
      * Details Tab Title.
      */
@@ -73,11 +72,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     protected static final int FIELD_HEIGHT = 20;
 
     /**
-     * The Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -85,12 +79,12 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The Panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The DataFormatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * The Field Set.
@@ -110,7 +104,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The MainPanel.
      */
-    private final TethysComponent theMainPanel;
+    private final TethysUIComponent theMainPanel;
 
     /**
      * The Item Actions.
@@ -154,15 +148,12 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pError the error panel
      */
     @SuppressWarnings("unchecked")
-    protected PrometheusDataItemPanel(final TethysGuiFactory pFactory,
+    protected PrometheusDataItemPanel(final TethysUIFactory<?> pFactory,
                                       final UpdateSet<E> pUpdateSet,
                                       final MetisErrorPanel pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
-
-        /* Create the Id */
-        theId = pFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -174,7 +165,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         theFieldSet = new PrometheusFieldSet<>(pFactory);
 
         /* Create the main panel */
-        thePanel = pFactory.newBorderPane();
+        thePanel = pFactory.paneFactory().newBorderPane();
         theMainPanel = theFieldSet.getComponent();
 
         /* create the action panels */
@@ -202,15 +193,10 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
         /* Listen to the Actions */
         myRegistrar = theItemActions.getEventRegistrar();
-        myRegistrar.addEventListener(PrometheusUIEvent.BUILDGOTO, e -> buildGoToMenu(e.getDetails(TethysScrollMenu.class)));
+        myRegistrar.addEventListener(PrometheusUIEvent.BUILDGOTO, e -> buildGoToMenu(e.getDetails(TethysUIScrollMenu.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.GOTO, e -> processGoToRequest(e.getDetails(PrometheusGoToEvent.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.EDIT, e -> requestEdit());
         myRegistrar.addEventListener(PrometheusUIEvent.DELETE, e -> requestDelete());
-    }
-
-    @Override
-    public Integer getId() {
-        return theId;
     }
 
     @Override
@@ -219,13 +205,8 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -239,7 +220,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Obtain the formatter.
      * @return the formatter
      */
-    protected TethysDataFormatter getFormatter() {
+    protected TethysUIDataFormatter getFormatter() {
         return theFormatter;
     }
 
@@ -567,7 +548,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Build goTo menu.
      * @param pMenu the menu to build
      */
-    protected abstract void buildGoToMenu(TethysScrollMenu<TethysGenericWrapper> pMenu);
+    protected abstract void buildGoToMenu(TethysUIScrollMenu<TethysUIGenericWrapper> pMenu);
 
     /**
      * Create a GoTo event.

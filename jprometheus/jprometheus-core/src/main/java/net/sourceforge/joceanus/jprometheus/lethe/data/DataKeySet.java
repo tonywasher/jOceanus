@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataT
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -138,7 +139,7 @@ public class DataKeySet
         /* Access the Password manager */
         final DataSet<?, ?> myData = getDataSet();
         final GordianPasswordManager mySecure = myData.getPasswordMgr();
-        final TethysDataFormatter myFormatter = myData.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Record the security factory */
         theSecurityFactory = mySecure.getSecurityFactory();
@@ -206,7 +207,7 @@ public class DataKeySet
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
             final GordianPasswordManager mySecure = myData.getPasswordMgr();
-            final TethysDataFormatter myFormatter = myData.getDataFormatter();
+            final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
             theSecurityFactory = mySecure.getSecurityFactory();

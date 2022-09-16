@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * FieldSet Tab pane.
@@ -31,7 +31,7 @@ public class PrometheusFieldSetTabs {
     /**
      * The tabPane.
      */
-    private final TethysTabPaneManager theTabs;
+    private final TethysUITabPaneManager theTabs;
 
     /**
      * The list of panels.
@@ -42,8 +42,8 @@ public class PrometheusFieldSetTabs {
      * Constructor.
      * @param pFactory the gui factory.
      */
-    PrometheusFieldSetTabs(final TethysGuiFactory pFactory) {
-        theTabs = pFactory.newTabPane();
+    PrometheusFieldSetTabs(final TethysUIFactory<?> pFactory) {
+        theTabs = pFactory.paneFactory().newTabPane();
         thePanels = new HashMap<>();
     }
 
@@ -62,20 +62,20 @@ public class PrometheusFieldSetTabs {
      * Obtain the component.
      * @return the component
      */
-    TethysComponent getComponent() {
+    TethysUIComponent getComponent() {
         return theTabs;
     }
 
     /**
      * Adjust visibility.
      */
-    void adjustVisibilty() {
+    void adjustVisibility() {
         /* Determine whether any panels are visible */
         boolean anyVisible = false;
 
         /* Update visibility for all the panels */
         for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
-            final TethysTabItem myItem = theTabs.findItemByName(myEntry.getKey());
+            final TethysUITabItem myItem = theTabs.findItemByName(myEntry.getKey());
             final PrometheusFieldSetPanel<?> myPanel = myEntry.getValue();
             final boolean isVisible = myPanel.isVisible();
             myItem.setVisible(isVisible);
