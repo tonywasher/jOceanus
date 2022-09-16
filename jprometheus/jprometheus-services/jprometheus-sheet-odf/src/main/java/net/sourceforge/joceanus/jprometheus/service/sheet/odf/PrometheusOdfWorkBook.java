@@ -26,7 +26,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Odf WorkBook.
@@ -51,7 +52,7 @@ public class PrometheusOdfWorkBook
     /**
      * Data formatter.
      */
-    private final TethysDataFormatter theDataFormatter;
+    private final TethysUIDataFormatter theDataFormatter;
 
     /**
      * Is the workBook readOnly?
@@ -70,17 +71,19 @@ public class PrometheusOdfWorkBook
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      * @param pInput the input stream
      * @throws OceanusException on error
      */
-    PrometheusOdfWorkBook(final InputStream pInput) throws OceanusException {
+    PrometheusOdfWorkBook(final TethysUIFactory<?> pFactory,
+                          final InputStream pInput) throws OceanusException {
         /* Load the contents of the spreadSheet */
         theContents = PrometheusOdfLoader.loadNewSpreadSheet(pInput);
         theParser = new PrometheusOdfParser(theContents);
         theStyler = null;
 
         /* Allocate the formatter */
-        theDataFormatter = createFormatter();
+        theDataFormatter = createFormatter(pFactory);
 
         /* Note readOnly */
         isReadOnly = true;
@@ -97,16 +100,17 @@ public class PrometheusOdfWorkBook
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      * @throws OceanusException on error
      */
-    PrometheusOdfWorkBook() throws OceanusException {
+    PrometheusOdfWorkBook(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create empty workBook */
         theContents = PrometheusOdfLoader.loadInitialSpreadSheet();
         theParser = new PrometheusOdfParser(theContents);
         theStyler = new PrometheusOdfStyler(theParser);
 
         /* Allocate the formatter */
-        theDataFormatter = createFormatter();
+        theDataFormatter = createFormatter(pFactory);
 
         /* Clear out all existing tables */
         final Element myMain = theContents.getDocumentElement();
@@ -148,7 +152,7 @@ public class PrometheusOdfWorkBook
      * Obtain the data formatter.
      * @return the formatter
      */
-    TethysDataFormatter getFormatter() {
+    TethysUIDataFormatter getFormatter() {
         return theDataFormatter;
     }
 

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jprometheus.service.sheet;
 import java.io.InputStream;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * WorkBook Factory.
@@ -26,16 +27,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface PrometheusSheetFactory {
     /**
      * Load readOnly workBook from inputStream.
+     * @param pFactory the gui factory
      * @param pInput the input stream
      * @return the loaded workBook
      * @throws OceanusException on error
      */
-    PrometheusSheetWorkBook loadFromStream(InputStream pInput) throws OceanusException;
+    PrometheusSheetWorkBook loadFromStream(TethysUIFactory<?> pFactory,
+                                           InputStream pInput) throws OceanusException;
 
     /**
      * Create empty workBook.
+     * @param pFactory the gui factory
      * @return the new workBook
      * @throws OceanusException on error
      */
-    PrometheusSheetWorkBook newWorkBook() throws OceanusException;
+    PrometheusSheetWorkBook newWorkBook(TethysUIFactory<?> pFactory) throws OceanusException;
 }

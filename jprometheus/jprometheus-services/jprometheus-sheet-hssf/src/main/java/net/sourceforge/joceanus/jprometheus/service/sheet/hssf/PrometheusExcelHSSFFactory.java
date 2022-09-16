@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetService
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Factory to load/initialise an HSSF WorkBook.
@@ -31,12 +32,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class PrometheusExcelHSSFFactory
         implements PrometheusSheetFactory {
     @Override
-    public PrometheusSheetWorkBook loadFromStream(final InputStream pInput) throws OceanusException {
-        return new PrometheusExcelHSSFWorkBook(pInput);
+    public PrometheusSheetWorkBook loadFromStream(final TethysUIFactory<?> pFactory,
+                                                  final InputStream pInput) throws OceanusException {
+        return new PrometheusExcelHSSFWorkBook(pFactory, pInput);
     }
 
     @Override
-    public PrometheusSheetWorkBook newWorkBook() {
-        return new PrometheusExcelHSSFWorkBook();
+    public PrometheusSheetWorkBook newWorkBook(final TethysUIFactory<?> pFactory) {
+        return new PrometheusExcelHSSFWorkBook(pFactory);
     }
 }

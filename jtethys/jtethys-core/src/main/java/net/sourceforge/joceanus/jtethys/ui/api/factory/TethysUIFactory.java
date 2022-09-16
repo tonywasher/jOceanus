@@ -44,6 +44,12 @@ public interface TethysUIFactory<C> {
     TethysUIDataFormatter getDataFormatter();
 
     /**
+     * Obtain a new formatter.
+     * @return the formatter
+     */
+    TethysUIDataFormatter newDataFormatter();
+
+    /**
      * Obtain the valueSet.
      * @return the valueSet
      */

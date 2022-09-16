@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a row within a sheet or a view.
@@ -194,7 +194,7 @@ public class PrometheusExcelHSSFRow
      */
     protected <T> T parseValue(final String pSource,
                                final Class<T> pClass) {
-        final TethysDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -207,7 +207,7 @@ public class PrometheusExcelHSSFRow
      */
     protected <T> T parseValue(final Double pSource,
                                final Class<T> pClass) {
-        final TethysDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -222,7 +222,7 @@ public class PrometheusExcelHSSFRow
     protected <T> T parseValue(final Double pSource,
                                final String pCurrCode,
                                final Class<T> pClass) {
-        final TethysDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 }

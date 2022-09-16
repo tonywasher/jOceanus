@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ServiceLoader;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * SpreadSheet Factory Provider.
@@ -56,24 +57,28 @@ public final class PrometheusSheetProvider {
     /**
      * Load readOnly workBook from inputStream.
      * @param pType the workBook type
+     * @param pGuiFactory the gui factory
      * @param pInput the input stream
      * @return the loaded workBook
      * @throws OceanusException on error
      */
     public static PrometheusSheetWorkBook loadFromStream(final PrometheusSheetWorkBookType pType,
+                                                         final TethysUIFactory<?> pGuiFactory,
                                                          final InputStream pInput) throws OceanusException {
         final PrometheusSheetFactory myFactory = newFactory(pType);
-        return myFactory.loadFromStream(pInput);
+        return myFactory.loadFromStream(pGuiFactory, pInput);
     }
 
     /**
      * Create empty workBook.
+     * @param pGuiFactory the gui factory
      * @param pType the workBook type
      * @return the new workBook
      * @throws OceanusException on error
      */
-    public static PrometheusSheetWorkBook newWorkBook(final PrometheusSheetWorkBookType pType) throws OceanusException {
+    public static PrometheusSheetWorkBook newWorkBook(final PrometheusSheetWorkBookType pType,
+                                                      final TethysUIFactory<?> pGuiFactory) throws OceanusException {
         final PrometheusSheetFactory myFactory = newFactory(pType);
-        return myFactory.newWorkBook();
+        return myFactory.newWorkBook(pGuiFactory);
     }
 }
