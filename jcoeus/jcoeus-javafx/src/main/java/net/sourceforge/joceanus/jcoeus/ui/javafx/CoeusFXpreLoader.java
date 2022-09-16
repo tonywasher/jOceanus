@@ -16,51 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.javafx;
 
-import javafx.application.Preloader;
-import javafx.stage.Stage;
 import net.sourceforge.joceanus.jcoeus.ui.launch.CoeusApp;
-import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXPreLoader;
 
 /**
  * Coeus javaFX preLoader.
  */
 public class CoeusFXpreLoader
-        extends Preloader {
-    /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(CoeusFXpreLoader.class);
-
-    /**
-     * javaFXState.
-     */
-    private MetisFXState theState;
-
+        extends TethysUIFXPreLoader {
     @Override
-    public void init() {
-        /* Protect against exceptions */
-        try {
-            /* Access program info */
-            theState = new MetisFXState(new CoeusApp());
-
-            /* Create a splash panel */
-            theState.createSplash();
-
-        } catch (OceanusException e) {
-            LOGGER.error("createSplash didn't complete successfully", e);
-        }
-    }
-
-    @Override
-    public void start(final Stage pStage) {
-        theState.startPreLoader(pStage);
-    }
-
-    @Override
-    public void handleStateChangeNotification(final StateChangeNotification pEvent) {
-        theState.handleStateChangeNotification(pEvent);
+    protected TethysUILaunchProgram getProgramInfo() {
+        return new CoeusApp();
     }
 }

@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
@@ -33,12 +32,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadEvent;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
@@ -102,15 +95,15 @@ public class MetisToolkit {
 
     /**
      * Constructor.
-     * @param pInfo the program info
+     * @param pFactory the GUI factory
      * @throws OceanusException on error
      */
-    public MetisToolkit(final MetisState pInfo) throws OceanusException {
-        /* Store program definitions */
-        theProgram = pInfo.getProgramDefinitions();
+    public MetisToolkit(final TethysUIFactory<?> pFactory) throws OceanusException {
+        /* Store parameters */
+        theGuiFactory = pFactory;
 
-        /* Access the guiFactory */
-        theGuiFactory = pInfo.getFactory();
+        /* Store program definitions */
+        theProgram = theGuiFactory.getProgramDefinitions();
 
         /* Create the viewer */
         theViewerManager = new MetisViewerManager();

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Loader.
@@ -36,7 +36,7 @@ public class CoeusDataLoader {
     /**
      * Data formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Preferences.

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * FundingCircle Market.
@@ -79,7 +79,7 @@ public class CoeusFundingCircleMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusFundingCircleMarket(final TethysDataFormatter pFormatter) {
+    CoeusFundingCircleMarket(final TethysUIDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.FUNDINGCIRCLE);
 

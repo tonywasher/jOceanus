@@ -31,7 +31,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * RateSetter Loader.
@@ -90,7 +90,7 @@ public class CoeusRateSetterLoader {
     /**
      * The formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * The base path.
@@ -102,7 +102,7 @@ public class CoeusRateSetterLoader {
      * @param pFormatter the formatter
      * @param pPath the path to load from
      */
-    public CoeusRateSetterLoader(final TethysDataFormatter pFormatter,
+    public CoeusRateSetterLoader(final TethysUIDataFormatter pFormatter,
                                  final String pPath) {
         /* Store the formatter */
         theFormatter = pFormatter;

@@ -39,19 +39,18 @@ import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableScrollColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableScrollColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * Statement Panel.
  */
 public class CoeusStatementTable
-        implements TethysComponent {
+        implements TethysUIComponent {
     /**
      * The logger.
      */
@@ -65,7 +64,7 @@ public class CoeusStatementTable
     /**
      * The Gui Factory.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * The List.
@@ -75,7 +74,7 @@ public class CoeusStatementTable
     /**
      * The Table.
      */
-    private final TethysTableManager<MetisDataFieldId, CoeusTotals> theTable;
+    private final TethysUITableManager<MetisDataFieldId, CoeusTotals> theTable;
 
     /**
      * The Selector.
@@ -85,12 +84,12 @@ public class CoeusStatementTable
     /**
      * The BorderPane.
      */
-    private final TethysBorderPaneManager thePane;
+    private final TethysUIBorderPaneManager thePane;
 
     /**
      * The Loan Column.
      */
-    private final TethysTableScrollColumn<CoeusLoan, MetisDataFieldId, CoeusTotals> theLoanColumn;
+    private final TethysUITableScrollColumn<CoeusLoan, MetisDataFieldId, CoeusTotals> theLoanColumn;
 
     /**
      * The Statement Calculator.
@@ -100,7 +99,7 @@ public class CoeusStatementTable
     /**
      * The File Selector.
      */
-    private TethysFileSelector theFileSelector;
+    private TethysUIFileSelector theFileSelector;
 
     /**
      * Constructor.
@@ -113,7 +112,7 @@ public class CoeusStatementTable
         theFactory = pToolkit.getGuiFactory();
 
          /* Create the table */
-        theTable = theFactory.newTable();
+        theTable = theFactory.tableFactory().newTable();
         theTable.setEditable(false);
 
         /* Create the list */
@@ -151,7 +150,7 @@ public class CoeusStatementTable
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SAVETOFILE, e -> saveToFile());
 
         /* Create and configure the Pane */
-        thePane = theFactory.newBorderPane();
+        thePane = theFactory.paneFactory().newBorderPane();
         thePane.setNorth(theSelector);
         thePane.setCentre(theTable);
 
@@ -160,8 +159,8 @@ public class CoeusStatementTable
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePane.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePane;
     }
 
     @Override
@@ -267,8 +266,8 @@ public class CoeusStatementTable
      * Initialise file selector.
      * @return the file selector
      */
-    private TethysFileSelector initFileSelector() {
-        final TethysFileSelector myFileSelector = theFactory.newFileSelector();
+    private TethysUIFileSelector initFileSelector() {
+        final TethysUIFileSelector myFileSelector = theFactory.dialogFactory().newFileSelector();
         myFileSelector.setUseSave(true);
         myFileSelector.setExtension(".csv");
         return myFileSelector;

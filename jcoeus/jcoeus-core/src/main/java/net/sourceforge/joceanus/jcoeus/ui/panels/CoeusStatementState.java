@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Statement Select State.
@@ -352,7 +352,7 @@ public final class CoeusStatementState {
      * Build loans menu.
      * @param pBuilder the menu builder
      */
-    void buildLoansMenu(final TethysScrollMenu<CoeusLoan> pBuilder) {
+    void buildLoansMenu(final TethysUIScrollMenu<CoeusLoan> pBuilder) {
         /* Only perform for snapShots */
         if (!(theFilter instanceof CoeusSnapShotFilter)) {
             return;

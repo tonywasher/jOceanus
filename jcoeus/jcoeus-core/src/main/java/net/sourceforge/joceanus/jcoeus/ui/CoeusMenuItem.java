@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui;
 
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+
 /**
  * Coeus Menu Items.
  */
-public enum CoeusMenuItem {
+public enum CoeusMenuItem
+        implements TethysUIMenuId {
     /**
      * Help.
      */

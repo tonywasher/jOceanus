@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMenuItem;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -35,20 +34,26 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
-import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAboutBox;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Main Panel.
  */
 public class CoeusMainPanel
-    implements MetisMainPanel {
+    implements TethysUIMainPanel {
+    /**
+     * The Totals Table.
+     */
+    private final TethysUIFactory<?> theGuiFactory;
+
     /**
      * The Totals Table.
      */
@@ -57,22 +62,22 @@ public class CoeusMainPanel
     /**
      * The tabs.
      */
-    private final TethysTabPaneManager theTabs;
+    private final TethysUITabPaneManager theTabs;
 
     /**
      * The Totals Tab.
      */
-    private final TethysTabItem theTotalsTab;
+    private final TethysUITabItem theTotalsTab;
 
     /**
      * The Log Tab.
      */
-    private final TethysTabItem theLogTab;
+    private final TethysUITabItem theLogTab;
 
     /**
      * The menuBar.
      */
-    private final TethysMenuBarManager theMenuBar;
+    private final TethysUIMenuBarManager theMenuBar;
 
     /**
      * The data window.
@@ -82,32 +87,35 @@ public class CoeusMainPanel
     /**
      * The about box.
      */
-    private final TethysAbout theAboutBox;
+    private TethysUIAboutBox theAboutBox;
 
     /**
      * Constructor.
-     * @param pToolkit the toolkit
+     * @param pFactory the factory
      * @throws OceanusException on error
      */
-    public CoeusMainPanel(final MetisToolkit pToolkit) throws OceanusException {
-        /* Access Gui Factory and Preference Manager */
-        final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
-        final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+    public CoeusMainPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
+        /* Store Gui factory */
+        theGuiFactory = pFactory;
+
+        /* Create Toolkit and access Preference Manager */
+        final MetisToolkit myToolkit = new MetisToolkit(theGuiFactory);
+        final MetisPreferenceManager myPreferences = myToolkit.getPreferenceManager();
 
         /* Create the Cache */
-        final CoeusMarketCache myMarketCache = new CoeusMarketCache(pToolkit);
+        final CoeusMarketCache myMarketCache = new CoeusMarketCache(myToolkit);
 
         /* Create the viewer entry for the cache */
-        final MetisViewerManager myDataMgr = pToolkit.getViewerManager();
+        final MetisViewerManager myDataMgr = myToolkit.getViewerManager();
         final MetisViewerEntry mySection = myDataMgr.getStandardEntry(MetisViewerStandardEntry.VIEW);
         final MetisViewerEntry myEntry = myDataMgr.newEntry(mySection, CoeusResource.DATA_MARKETCACHE.getValue());
         myEntry.setObject(myMarketCache);
 
         /* Create the Tabbed Pane */
-        theTabs = myFactory.newTabPane();
+        theTabs = theGuiFactory.paneFactory().newTabPane();
 
         /* Create the report panel */
-        final CoeusReportPanel myReports = new CoeusReportPanel(pToolkit, myMarketCache);
+        final CoeusReportPanel myReports = new CoeusReportPanel(myToolkit, myMarketCache);
         theTabs.addTabItem(CoeusUIResource.TAB_REPORTS.getValue(), myReports);
 
         /* Listen to filter requests */
@@ -115,50 +123,47 @@ public class CoeusMainPanel
         myRegistrar.addEventListener(CoeusDataEvent.GOTOSTATEMENT, this::handleGoToEvent);
 
         /* Create the totals table */
-        theTotalsTable = new CoeusStatementTable(pToolkit, myMarketCache);
+        theTotalsTable = new CoeusStatementTable(myToolkit, myMarketCache);
         theTotalsTab = theTabs.addTabItem(CoeusUIResource.TAB_STATEMENTS.getValue(), theTotalsTable);
 
         /* Create the Preferences Tab */
-        final MetisPreferenceView myPrefPanel = new MetisPreferenceView(myFactory, myPreferences);
+        final MetisPreferenceView myPrefPanel = new MetisPreferenceView(theGuiFactory, myPreferences);
         theTabs.addTabItem(CoeusUIResource.TAB_PREFERENCES.getValue(), myPrefPanel);
 
         /* Create the log tab */
-        final TethysLogTextArea myLog = myFactory.getLogSink();
+        final TethysUILogTextArea myLog = theGuiFactory.getLogSink();
         theLogTab = theTabs.addTabItem(CoeusUIResource.TAB_LOG.getValue(), myLog);
-        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
-        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
         theLogTab.setVisible(myLog.isActive());
 
         /* Create the menu bar */
-        theMenuBar = myFactory.newMenuBar();
+        theMenuBar = pFactory.menuFactory().newMenuBar();
 
         /* Create the Help menu */
-        final TethysMenuSubMenu<CoeusMenuItem> myHelp = theMenuBar.newSubMenu(CoeusMenuItem.HELP);
+        final TethysUIMenuSubMenu myHelp = theMenuBar.newSubMenu(CoeusMenuItem.HELP);
 
         /* Create the Viewer menuItem */
         myHelp.newMenuItem(CoeusMenuItem.DATAVIEWER, e -> handleDataViewer());
         myHelp.newMenuItem(CoeusMenuItem.ABOUT, e -> handleAboutBox());
 
         /* Create the data window */
-        theDataWdw = pToolkit.newViewerWindow();
-        theDataWdw.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(CoeusMenuItem.DATAVIEWER, true));
-
-        /* Create the aboutBox */
-        theAboutBox = myFactory.newAboutBox();
+        theDataWdw = myToolkit.newViewerWindow();
+        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(CoeusMenuItem.DATAVIEWER, true));
 
         /* Create the loader */
-        final CoeusDataLoader myLoader = new CoeusDataLoader(pToolkit);
+        final CoeusDataLoader myLoader = new CoeusDataLoader(myToolkit);
         final CoeusMarketSet myMarketSet = myLoader.loadData();
         myMarketCache.declareMarketSet(myMarketSet);
     }
 
     @Override
-    public TethysTabPaneManager getComponent() {
+    public TethysUITabPaneManager getComponent() {
         return theTabs;
     }
 
     @Override
-    public TethysMenuBarManager getMenuBar() {
+    public TethysUIMenuBarManager getMenuBar() {
         return theMenuBar;
     }
 
@@ -174,6 +179,9 @@ public class CoeusMainPanel
      * Handle AboutBox.
      */
     private void handleAboutBox() {
+        if (theAboutBox == null) {
+            theAboutBox = theGuiFactory.dialogFactory().newAboutBox();
+        }
         theAboutBox.showDialog();
     }
 

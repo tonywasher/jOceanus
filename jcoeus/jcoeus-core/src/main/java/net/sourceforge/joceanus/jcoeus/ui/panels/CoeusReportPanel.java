@@ -43,19 +43,18 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 
 /**
  * Report Panel.
  */
 public class CoeusReportPanel
-        implements TethysEventProvider<CoeusDataEvent>, TethysComponent {
+        implements TethysEventProvider<CoeusDataEvent>, TethysUIComponent {
     /**
      * The Event Manager.
      */
@@ -69,12 +68,12 @@ public class CoeusReportPanel
     /**
      * The Panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The HTML pane.
      */
-    private final TethysHTMLManager theHTMLPane;
+    private final TethysUIHTMLManager theHTMLPane;
 
     /**
      * The Report selection Panel.
@@ -113,13 +112,13 @@ public class CoeusReportPanel
         theCache = pCache;
 
         /* Access the GUI factory */
-        final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
+        final TethysUIFactory<?> myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
-        thePanel = myFactory.newBorderPane();
+        thePanel = myFactory.paneFactory().newBorderPane();
 
         /* Create the viewer entries */
         final MetisViewerManager myDataMgr = pToolkit.getViewerManager();
@@ -129,7 +128,7 @@ public class CoeusReportPanel
         theMarketEntry.setVisible(false);
 
         /* Create the HTML Pane */
-        theHTMLPane = myFactory.newHTMLManager();
+        theHTMLPane = myFactory.controlFactory().newHTMLManager();
 
         /* Create Report Manager */
         theManager = new MetisReportManager<>(new MetisReportHTMLBuilder(pToolkit.getFormatter()));
@@ -144,7 +143,7 @@ public class CoeusReportPanel
         theError = pToolkit.newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        final TethysScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
+        final TethysUIScrollPaneManager myHTMLScroll = myFactory.paneFactory().newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
         /* Now define the panel */
@@ -162,15 +161,15 @@ public class CoeusReportPanel
         myRegistrar.addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(CoeusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(CoeusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
-        theHTMLPane.getEventRegistrar().addEventListener(TethysXUIEvent.BUILDPAGE, e -> {
+        theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
         });
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -179,20 +178,10 @@ public class CoeusReportPanel
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
     public void setEnabled(final boolean pEnabled) {
         theSelect.setEnabled(pEnabled);
         theError.setEnabled(pEnabled);
         theHTMLPane.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**

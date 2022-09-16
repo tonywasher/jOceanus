@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -325,7 +326,7 @@ public class MetisReportManager<F>
      * @param pHTMLPane the HTML pane
      */
     public void processReference(final String pId,
-                                 final TethysHTMLManager pHTMLPane) {
+                                 final TethysUIHTMLManager pHTMLPane) {
         /* Process the reference */
         final String myText = processReference(pId);
 

@@ -16,7 +16,7 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jmetis-javafx</artifactId>
+      <artifactId>jmetis-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

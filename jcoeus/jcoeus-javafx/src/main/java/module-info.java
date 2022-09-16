@@ -25,7 +25,6 @@ module net.sourceforge.joceanus.jcoeus.javafx {
     requires net.sourceforge.joceanus.jcoeus.core;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jmetis.javafx;
     requires net.sourceforge.joceanus.jtethys.javafx;
 
     /* Exports */

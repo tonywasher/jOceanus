@@ -18,19 +18,17 @@ package net.sourceforge.joceanus.jcoeus.ui.launch;
 
 import net.sourceforge.joceanus.jcoeus.ui.CoeusIcon;
 import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
-import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
 
 /**
  * Coeus Application definition.
  */
 public class CoeusApp
-        extends TethysProgram
-        implements MetisProgram {
+        extends TethysUILaunchProgram {
     /**
      * Width for main panel.
      */
@@ -49,13 +47,13 @@ public class CoeusApp
     }
 
     @Override
-    public TethysIconId[] getIcons() {
-        return new TethysIconId[]
+    public TethysUIIconId[] getIcons() {
+        return new TethysUIIconId[]
         { CoeusIcon.SMALL, CoeusIcon.BIG };
     }
 
     @Override
-    public TethysIconId getSplash() {
+    public TethysUIIconId getSplash() {
         return CoeusIcon.SPLASH;
     }
 
@@ -65,7 +63,7 @@ public class CoeusApp
     }
 
     @Override
-    public MetisMainPanel createMainPanel(final MetisToolkit pToolkit) throws OceanusException {
-        return new CoeusMainPanel(pToolkit);
+    public TethysUIMainPanel createMainPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
+        return new CoeusMainPanel(pFactory);
     }
 }

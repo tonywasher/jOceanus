@@ -22,11 +22,11 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueKey;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
@@ -222,13 +222,13 @@ public class TethysUIFXFactory
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Create the default colour values */
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_STANDARD);
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_ERROR);
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_BACKGROUND);
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_DISABLED);
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_ZEBRA);
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_CHANGED);
-        addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_PROGRESS);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_STANDARD);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_ERROR);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_BACKGROUND);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_DISABLED);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_ZEBRA);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_CHANGED);
+        addValueToBuffer(myBuilder, TethysUIValueKey.COLOR_PROGRESS);
 
         /* Return the string */
         return myBuilder.toString();
