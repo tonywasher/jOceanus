@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeValue
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * CashFlow report builder.
@@ -54,7 +54,7 @@ public class MoneyWiseReportCashFlow
     /**
      * The Formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.

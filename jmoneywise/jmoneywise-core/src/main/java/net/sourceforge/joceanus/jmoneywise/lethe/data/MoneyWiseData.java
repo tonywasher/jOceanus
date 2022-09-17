@@ -69,8 +69,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * MoneyWise dataSet.
@@ -146,7 +146,7 @@ public class MoneyWiseData
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return MoneyWiseData.class.getSimpleName();
     }
 
@@ -642,7 +642,7 @@ public class MoneyWiseData
      * @throws OceanusException on error
      */
     @Override
-    public MoneyWiseData getDifferenceSet(final TethysThreadStatusReport pReport,
+    public MoneyWiseData getDifferenceSet(final TethysUIThreadStatusReport pReport,
                                           final MoneyWiseData pOld) throws OceanusException {
         /* Build an empty DataSet */
         final MoneyWiseData myDiffers = new MoneyWiseData(this);

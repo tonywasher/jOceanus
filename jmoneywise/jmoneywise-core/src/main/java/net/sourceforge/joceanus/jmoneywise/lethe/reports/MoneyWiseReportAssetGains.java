@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.Securit
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * AssetGains report builder.
@@ -72,7 +72,7 @@ public class MoneyWiseReportAssetGains
     /**
      * The Formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.

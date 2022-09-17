@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDataIt
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * TableEncrypted extension for ExchangeRate.
@@ -44,7 +44,7 @@ public class TableExchangeRate
     /**
      * The formatter.
      */
-    private TethysDataFormatter theFormatter;
+    private TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.

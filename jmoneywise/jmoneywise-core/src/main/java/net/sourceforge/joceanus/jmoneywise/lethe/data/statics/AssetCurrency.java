@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * AssetCurrency data type.
@@ -113,7 +113,7 @@ public class AssetCurrency
         if (myValue instanceof Boolean) {
             setValueDefault((Boolean) myValue);
         } else if (myValue instanceof String) {
-            final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+            final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
             setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
         } else {
             setValueDefault(Boolean.FALSE);
@@ -546,7 +546,7 @@ public class AssetCurrency
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

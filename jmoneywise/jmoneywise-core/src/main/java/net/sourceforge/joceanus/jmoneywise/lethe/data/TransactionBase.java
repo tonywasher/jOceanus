@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Transaction data type.
@@ -144,7 +144,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super(pList, pValues);
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -243,7 +243,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
@@ -261,7 +261,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         final Object myAmount = myValues.getValue(FIELD_AMOUNT);
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -272,11 +272,13 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                                           : myFormatter.formatObject(myAmount));
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(myFormatter.formatObject(myAccount));
-        myBuilder.append(myDir == null
-                                       ? "??"
-                                       : myDir.isFrom()
-                                                        ? "<-"
-                                                        : "->");
+        if (myDir == null) {
+            myBuilder.append("??");
+        } else {
+            myBuilder.append(myDir.isFrom()
+                    ? "<-"
+                    : "->");
+        }
         myBuilder.append(myFormatter.formatObject(myPartner));
 
         /* return it */

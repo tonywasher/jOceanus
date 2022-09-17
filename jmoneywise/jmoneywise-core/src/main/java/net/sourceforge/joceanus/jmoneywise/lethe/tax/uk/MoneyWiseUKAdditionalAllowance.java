@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Additional Band UK Tax Allowance.
@@ -102,7 +102,7 @@ public class MoneyWiseUKAdditionalAllowance
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 }

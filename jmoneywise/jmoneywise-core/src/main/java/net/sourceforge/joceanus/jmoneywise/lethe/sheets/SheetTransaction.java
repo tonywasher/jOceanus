@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetDataItem extension for Transaction.
@@ -154,7 +154,7 @@ public class SheetTransaction
      * @param pLoader the archive loader
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final TethysThreadStatusReport pReport,
+    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
@@ -216,7 +216,7 @@ public class SheetTransaction
             myList.validateOnLoad();
 
             /* Handle Exceptions */
-        } catch (TethysThreadCancelException e) {
+        } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
@@ -455,11 +455,11 @@ public class SheetTransaction
         /* If we have a TagList */
         if (myTagList != null) {
             /* Process any separated items */
-            int iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
+            int iIndex = myTagList.indexOf(TethysUIConstant.LIST_SEP);
             while (iIndex != -1) {
                 myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TRANSTAG, myTagList.substring(0, iIndex));
                 myTagList = myTagList.substring(iIndex + 1);
-                iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
+                iIndex = myTagList.indexOf(TethysUIConstant.LIST_SEP);
             }
 
             /* Process the single remaining item */

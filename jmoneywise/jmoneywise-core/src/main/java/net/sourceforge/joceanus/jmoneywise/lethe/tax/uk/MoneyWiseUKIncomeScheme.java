@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWi
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Income Tax Scheme.
@@ -249,7 +249,7 @@ public class MoneyWiseUKIncomeScheme
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 }

@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxDueBucket.Money
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * TaxCalculation report builder.
@@ -76,7 +76,7 @@ public class MoneyWiseReportTaxCalculation
     /**
      * The Formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.

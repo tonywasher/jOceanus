@@ -38,14 +38,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * WorkerThread extension to create a QIF archive.
  */
 public class MoneyWiseThreadWriteQIF
-        implements TethysThread<Void> {
+        implements TethysUIThread<Void> {
     /**
      * Logger.
      */
@@ -70,7 +70,7 @@ public class MoneyWiseThreadWriteQIF
     }
 
     @Override
-    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
         pManager.initTask("Analysing Data");
 

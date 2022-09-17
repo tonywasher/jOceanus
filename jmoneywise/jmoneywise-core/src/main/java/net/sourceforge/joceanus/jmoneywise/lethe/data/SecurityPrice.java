@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * SecurityPrice data type.
@@ -126,7 +126,7 @@ public class SecurityPrice
         super(pList, pValues);
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -198,7 +198,7 @@ public class SecurityPrice
         final Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -213,7 +213,7 @@ public class SecurityPrice
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
@@ -811,7 +811,7 @@ public class SecurityPrice
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1030,7 +1030,7 @@ public class SecurityPrice
             }
 
             @Override
-            public String formatObject(final TethysDataFormatter pFormatter) {
+            public String formatObject(final TethysUIDataFormatter pFormatter) {
                 return theSecurity.formatObject(pFormatter)
                        + "("
                        + size()

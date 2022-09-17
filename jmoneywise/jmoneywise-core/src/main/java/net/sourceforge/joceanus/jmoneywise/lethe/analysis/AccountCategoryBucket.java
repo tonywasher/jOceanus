@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.Securit
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Account Category Bucket.
@@ -84,7 +84,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T, C>, C>
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 

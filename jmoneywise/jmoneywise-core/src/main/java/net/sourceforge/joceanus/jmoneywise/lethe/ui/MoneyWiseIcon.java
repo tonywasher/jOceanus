@@ -22,13 +22,15 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * MoneyWise Icon IDs.
  */
-public enum MoneyWiseIcon implements TethysIconId {
+public enum MoneyWiseIcon implements TethysUIIconId {
     /**
      * The program icon.
      */
@@ -174,20 +176,22 @@ public enum MoneyWiseIcon implements TethysIconId {
 
     /**
      * Configure locked icon button.
+     * @param pFactory the gui factory
      * @return the mapSet configuration
      */
-    public static Map<Boolean, TethysIconMapSet<Boolean>> configureLockedIconButton() {
+    public static Map<Boolean, TethysUIIconMapSet<Boolean>> configureLockedIconButton(final TethysUIFactory<?> pFactory) {
         /* Create the map */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMap = new HashMap<>();
 
         /* Create the TRUE state */
-        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, UNLOCKABLE, TIP_UNLOCK);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, LOCKABLE, TIP_LOCK);
         myMap.put(Boolean.TRUE, myMapSet);
 
         /* Create the FALSE state */
-        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, LOCKED, TIP_LOCKED);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, MetisIcon.TIP_ACTIVE);
         myMap.put(Boolean.FALSE, myMapSet);
@@ -198,20 +202,22 @@ public enum MoneyWiseIcon implements TethysIconId {
 
     /**
      * Configure reconciled icon button.
+     * @param pFactory the gui factory
      * @return the mapSet configuration
      */
-    public static Map<Boolean, TethysIconMapSet<Boolean>> configureReconciledIconButton() {
+    public static Map<Boolean, TethysUIIconMapSet<Boolean>> configureReconciledIconButton(final TethysUIFactory<?> pFactory) {
         /* Create the map */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMap = new HashMap<>();
 
         /* Create the FALSE state */
-        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, MetisIcon.COMMIT, TIP_RELEASE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);
         myMap.put(Boolean.FALSE, myMapSet);
 
         /* Create the TRUE state */
-        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENRECONCILED, TIP_FROZEN);
         myMap.put(Boolean.TRUE, myMapSet);
 
@@ -221,20 +227,22 @@ public enum MoneyWiseIcon implements TethysIconId {
 
     /**
      * Configure direction icon button.
+     * @param pFactory the gui factory
      * @return the mapSet configuration
      */
-    public static Map<Boolean, TethysIconMapSet<AssetDirection>> configureDirectionIconButton() {
+    public static Map<Boolean, TethysUIIconMapSet<AssetDirection>> configureDirectionIconButton(final TethysUIFactory<?> pFactory) {
         /* Create the map */
-        final Map<Boolean, TethysIconMapSet<AssetDirection>> myMap = new HashMap<>();
+        final Map<Boolean, TethysUIIconMapSet<AssetDirection>> myMap = new HashMap<>();
 
         /* Create the FALSE state */
-        TethysIconMapSet<AssetDirection> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        TethysUIIconMapSet<AssetDirection> myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.FROM, DIRTO, TIP_DIRTO);
         myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.TO, DIRFROM, TIP_DIRFROM);
         myMap.put(Boolean.FALSE, myMapSet);
 
         /* Create the TRUE state */
-        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.TO, DIRTOLOCKED, TIP_DIRTO);
         myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.FROM, DIRFROMLOCKED, TIP_DIRFROM);
         myMap.put(Boolean.TRUE, myMapSet);
@@ -245,20 +253,22 @@ public enum MoneyWiseIcon implements TethysIconId {
 
     /**
      * Configure option icon button.
+     * @param pFactory the gui factory
      * @return the mapSet configuration
      */
-    public static Map<Boolean, TethysIconMapSet<Boolean>> configureOptionIconButton() {
+    public static Map<Boolean, TethysUIIconMapSet<Boolean>> configureOptionIconButton(final TethysUIFactory<?> pFactory) {
         /* Create the map */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMap = new HashMap<>();
 
         /* Create the TRUE state */
-        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, BOXCHECK);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, BOXCLEAR);
         myMap.put(Boolean.TRUE, myMapSet);
 
         /* Create the FALSE state */
-        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet = myButtons.newIconMapSet();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENBOXCHECK);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, FROZENBOXCLEAR);
         myMap.put(Boolean.FALSE, myMapSet);

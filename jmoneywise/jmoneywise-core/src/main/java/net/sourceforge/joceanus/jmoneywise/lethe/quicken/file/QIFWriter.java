@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Writer class for QIF Files.
@@ -54,7 +54,7 @@ public class QIFWriter {
     /**
      * Thread Status.
      */
-    private final TethysThreadStatusReport theReport;
+    private final TethysUIThreadStatusReport theReport;
 
     /**
      * QIF File.
@@ -71,7 +71,7 @@ public class QIFWriter {
      * @param pReport the report
      * @param pFile the QIF file.
      */
-    public QIFWriter(final TethysThreadStatusReport pReport,
+    public QIFWriter(final TethysUIThreadStatusReport pReport,
                      final QIFFile pFile) {
         /* Store parameters */
         theReport = pReport;

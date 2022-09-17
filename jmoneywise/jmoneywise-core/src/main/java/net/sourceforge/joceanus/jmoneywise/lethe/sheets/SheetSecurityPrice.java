@@ -31,6 +31,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetDataItem extension for SecurityPrice.
@@ -119,7 +121,7 @@ public class SheetSecurityPrice
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final TethysThreadStatusReport pReport,
+    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
@@ -193,7 +195,7 @@ public class SheetSecurityPrice
             myList.postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (TethysThreadCancelException e) {
+        } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);

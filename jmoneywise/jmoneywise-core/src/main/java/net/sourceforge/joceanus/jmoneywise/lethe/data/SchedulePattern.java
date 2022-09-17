@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Pattern for Schedule.
@@ -275,7 +275,7 @@ public abstract class SchedulePattern
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             /* Initialise variables */
             boolean myFirst = true;
             final Locale myLocale = Locale.getDefault();
@@ -403,7 +403,7 @@ public abstract class SchedulePattern
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             /* Initialise variables */
             boolean myFirst = true;
             final StringBuilder myBuilder = new StringBuilder();

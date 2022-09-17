@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Category Base class.
@@ -165,7 +165,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 

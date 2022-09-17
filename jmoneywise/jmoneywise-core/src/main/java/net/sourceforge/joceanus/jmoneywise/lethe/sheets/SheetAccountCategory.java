@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
 
 /**
  * SheetDataItem extension for AccountCategory.
@@ -58,7 +58,7 @@ public final class SheetAccountCategory {
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    static void loadArchive(final TethysThreadStatusReport pReport,
+    static void loadArchive(final TethysUIThreadStatusReport pReport,
                             final PrometheusSheetWorkBook pWorkBook,
                             final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
@@ -91,7 +91,7 @@ public final class SheetAccountCategory {
             resolveCategoryLists(pData);
 
             /* Handle exceptions */
-        } catch (TethysThreadCancelException e) {
+        } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + AREA_ACTCATEGORIES, e);

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
 import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetStaticData extension for Frequency.
@@ -81,7 +82,7 @@ public class SheetFrequency
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final TethysThreadStatusReport pReport,
+    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of frequencies */

@@ -24,14 +24,14 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
  */
 public class MoneyWiseThreadLoadArchive
-        implements TethysThread<MoneyWiseData> {
+        implements TethysUIThread<MoneyWiseData> {
     /**
      * Data Control.
      */
@@ -51,14 +51,14 @@ public class MoneyWiseThreadLoadArchive
     }
 
     @Override
-    public MoneyWiseData performTask(final TethysThreadManager pManager) throws OceanusException {
+    public MoneyWiseData performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
         pManager.initTask(getTaskName());
 
         /* Load workbook */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final MetisPreferenceManager myMgr = myPromToolkit.getToolkit().getPreferenceManager();
-        final ArchiveLoader myLoader = new ArchiveLoader();
+        final ArchiveLoader myLoader = new ArchiveLoader(myPromToolkit.getToolkit().getGuiFactory());
         final MoneyWiseData myData = theView.getNewData();
         myLoader.loadArchive(pManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 

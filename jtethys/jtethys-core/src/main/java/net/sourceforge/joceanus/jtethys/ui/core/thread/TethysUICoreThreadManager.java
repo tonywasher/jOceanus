@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;

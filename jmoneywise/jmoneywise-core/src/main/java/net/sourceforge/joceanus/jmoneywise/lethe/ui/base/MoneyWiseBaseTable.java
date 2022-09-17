@@ -42,21 +42,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUIOnCellCommit;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Base Table.
  * @param <T> the data type
  */
 public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * The logger.
      */
@@ -160,12 +159,12 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     /**
      * The panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The underlying table.
      */
-    private final TethysTableManager<PrometheusDataFieldId, T> theTable;
+    private final TethysUITableManager<PrometheusDataFieldId, T> theTable;
 
     /**
      * is the table editing?
@@ -196,11 +195,11 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         theUpdateEntry = theUpdateSet.registerType(pDataType);
 
         /* Create the panel */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        thePanel = myGuiFactory.newBorderPane();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        thePanel = myGuiFactory.paneFactory().newBorderPane();
 
         /* Create the table */
-        theTable = myGuiFactory.newTable();
+        theTable = myGuiFactory.tableFactory().newTable();
         thePanel.setCentre(theTable);
 
         /* Set table configuration */
@@ -214,7 +213,8 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
                 .setEditable(true);
 
         /* Set standard size */
-        theTable.setPreferredWidthAndHeight(WIDTH_PANEL, HEIGHT_PANEL);
+        theTable.setPreferredWidth(WIDTH_PANEL);
+        theTable.setPreferredHeight(HEIGHT_PANEL);
 
         /* Add listeners */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -233,23 +233,13 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     /**
@@ -258,11 +248,6 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      */
     public void setTableEnabled(final boolean pEnabled) {
         theTable.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -285,7 +270,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the table.
      * @return the table
      */
-    protected TethysTableManager<PrometheusDataFieldId, T> getTable() {
+    protected TethysUITableManager<PrometheusDataFieldId, T> getTable() {
         return theTable;
     }
 
@@ -364,7 +349,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pValue the value
      * @throws OceanusException on error
      */
-    protected <V> void updateField(final TethysOnCellCommit<T, V> pOnCommit,
+    protected <V> void updateField(final TethysUIOnCellCommit<T, V> pOnCommit,
                                    final T pRow,
                                    final V pValue) throws OceanusException {
         /* Push history */
@@ -573,7 +558,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      */
     private String createCSV() {
         /* Create the stringBuilder */
-        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Loop through the columns */
@@ -581,7 +566,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         boolean bDoneFirst = false;
         while (myColIterator.hasNext()) {
             final PrometheusDataFieldId myColId = myColIterator.next();
-            final TethysTableColumn<?, PrometheusDataFieldId, T> myCol = myTable.getColumn(myColId);
+            final TethysUITableColumn<?, PrometheusDataFieldId, T> myCol = myTable.getColumn(myColId);
 
             /* Add the column name */
             if (bDoneFirst) {
@@ -602,7 +587,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
             bDoneFirst = false;
             while (myColIterator.hasNext()) {
                 final PrometheusDataFieldId myColId = myColIterator.next();
-                final TethysTableColumn<?, PrometheusDataFieldId, T> myCol = myTable.getColumn(myColId);
+                final TethysUITableColumn<?, PrometheusDataFieldId, T> myCol = myTable.getColumn(myColId);
 
                 /* Output the column value */
                 final Object myVar = myCol.getValueForRow(myRow);
@@ -625,10 +610,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Write CSV to file.
      * @param pFactory the gui factory
      */
-    public void writeCSVToFile(final TethysGuiFactory pFactory) {
+    public void writeCSVToFile(final TethysUIFactory<?> pFactory) {
         try {
             /* Create a file selector */
-            final TethysFileSelector mySelector = pFactory.newFileSelector();
+            final TethysUIFileSelector mySelector = pFactory.dialogFactory().newFileSelector();
 
             /* Select File */
             mySelector.setUseSave(true);

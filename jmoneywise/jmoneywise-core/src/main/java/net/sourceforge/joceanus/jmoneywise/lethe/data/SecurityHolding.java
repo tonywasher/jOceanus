@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Portfolio/Security combination.
@@ -120,7 +120,7 @@ public final class SecurityHolding
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
@@ -408,7 +408,7 @@ public final class SecurityHolding
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return SecurityHoldingMap.class.getSimpleName();
         }
 
@@ -728,7 +728,7 @@ public final class SecurityHolding
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return thePortfolio.formatObject(pFormatter);
         }
 
