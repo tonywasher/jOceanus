@@ -27,8 +27,9 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 
 /**
  * Panel to display/edit/create a Region.
@@ -41,7 +42,7 @@ public class MoneyWiseRegionPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseRegionPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseRegionPanel(final TethysUIFactory<?> pFactory,
                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                 final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -51,8 +52,9 @@ public class MoneyWiseRegionPanel
         final PrometheusFieldSet<Region> myFieldSet = getFieldSet();
 
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Assign the fields to the panel */
         myFieldSet.addField(MoneyWiseRegionDataId.NAME, myName, Region::getName);

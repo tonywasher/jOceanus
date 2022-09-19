@@ -48,20 +48,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 
 /**
  * Report panel.
  */
 public class MoneyWiseReportTab
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for DataEntry Title.
      */
@@ -80,12 +80,12 @@ public class MoneyWiseReportTab
     /**
      * The Panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The HTML pane.
      */
-    private final TethysHTMLManager theHTMLPane;
+    private final TethysUIHTMLManager theHTMLPane;
 
     /**
      * The Report selection Panel.
@@ -122,13 +122,14 @@ public class MoneyWiseReportTab
         theView = pView;
 
         /* Access GUI Factory */
-        final TethysGuiFactory myFactory = pView.getGuiFactory();
+        final TethysUIFactory<?> myFactory = pView.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the Panel */
-        thePanel = myFactory.newBorderPane();
+        final TethysUIPaneFactory myPanes = myFactory.paneFactory();
+        thePanel = myPanes.newBorderPane();
 
         /* Create the top level debug entry for this view */
         final MetisViewerManager myDataMgr = theView.getViewerManager();
@@ -138,7 +139,7 @@ public class MoneyWiseReportTab
         theSpotEntry.setVisible(false);
 
         /* Create the HTML Pane */
-        theHTMLPane = myFactory.newHTMLManager();
+        theHTMLPane = myFactory.controlFactory().newHTMLManager();
 
         /* Create Report Manager */
         theManager = new MetisReportManager<>(new MetisReportHTMLBuilder(pView.getDataFormatter()));
@@ -153,11 +154,11 @@ public class MoneyWiseReportTab
         theError = theView.getToolkit().getToolkit().newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        final TethysScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
+        final TethysUIScrollPaneManager myHTMLScroll = myPanes.newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
         /* Create the header panel */
-        final TethysBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();
         myHeader.setCentre(theSelect);
         myHeader.setNorth(theError);
 
@@ -176,25 +177,20 @@ public class MoneyWiseReportTab
         myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
-        theHTMLPane.getEventRegistrar().addEventListener(TethysXUIEvent.BUILDPAGE, e -> {
+        theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
         });
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
     }
 
     @Override
@@ -314,7 +310,7 @@ public class MoneyWiseReportTab
             /* else we are selecting a statement */
         } else {
             /* Create the details of the report */
-            final TethysDateRangeSelector mySelect = theSelect.getDateRangeSelector();
+            final TethysUIDateRangeSelector mySelect = theSelect.getDateRangeSelector();
             final StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 
             /* Request the action */

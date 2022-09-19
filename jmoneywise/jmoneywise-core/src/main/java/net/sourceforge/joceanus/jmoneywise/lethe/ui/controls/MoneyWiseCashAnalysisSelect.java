@@ -35,15 +35,18 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Cash Analysis Selection.
@@ -68,27 +71,27 @@ public class MoneyWiseCashAnalysisSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The cash button.
      */
-    private final TethysScrollButtonManager<CashBucket> theCashButton;
+    private final TethysUIScrollButtonManager<CashBucket> theCashButton;
 
     /**
      * The category button.
      */
-    private final TethysScrollButtonManager<CashCategory> theCatButton;
+    private final TethysUIScrollButtonManager<CashCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<CashCategory> theCategoryMenu;
+    private final TethysUIScrollMenu<CashCategory> theCategoryMenu;
 
     /**
      * Cash menu.
      */
-    private final TethysScrollMenu<CashBucket> theCashMenu;
+    private final TethysUIScrollMenu<CashBucket> theCashMenu;
 
     /**
      * The active category bucket list.
@@ -114,22 +117,24 @@ public class MoneyWiseCashAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseCashAnalysisSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseCashAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the cash button */
-        theCashButton = pFactory.newScrollButton(CashBucket.class);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theCashButton = myButtons.newScrollButton(CashBucket.class);
 
         /* Create the category button */
-        theCatButton = pFactory.newScrollButton(CashCategory.class);
+        theCatButton = myButtons.newScrollButton(CashCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        final TethysLabel myCshLabel = pFactory.newLabel(NLS_CASH + TethysLabel.STR_COLON);
+        final TethysUIControlFactory myControls = pFactory.controlFactory();
+        final TethysUILabel myCatLabel = myControls.newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);
+        final TethysUILabel myCshLabel = myControls.newLabel(NLS_CASH + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myCatLabel);
         thePanel.addNode(theCatButton);
@@ -146,22 +151,17 @@ public class MoneyWiseCashAnalysisSelect
         theCashMenu = theCashButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theCatButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
         myRegistrar = theCashButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCash());
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCash());
         theCashButton.setMenuConfigurator(e -> buildCashMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -294,11 +294,11 @@ public class MoneyWiseCashAnalysisSelect
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<CashCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<CashCategory>> myMap = new HashMap<>();
 
         /* Record active item */
         final CashCategory myCurrent = theState.getCategory();
-        TethysScrollMenuItem<CashCategory> myActive = null;
+        TethysUIScrollItem<CashCategory> myActive = null;
 
         /* Loop through the available category values */
         final Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
@@ -313,7 +313,7 @@ public class MoneyWiseCashAnalysisSelect
             /* Determine menu to add to */
             final CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
+            TethysUIScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -324,7 +324,7 @@ public class MoneyWiseCashAnalysisSelect
 
             /* Create a new JMenuItem and add it to the popUp */
             final CashCategory myCategory = myBucket.getAccountCategory();
-            final TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -351,7 +351,7 @@ public class MoneyWiseCashAnalysisSelect
         final CashBucket myCash = theState.getCash();
 
         /* Record active item */
-        TethysScrollMenuItem<CashBucket> myActive = null;
+        TethysUIScrollItem<CashBucket> myActive = null;
 
         /* Loop through the available account values */
         final Iterator<CashBucket> myIterator = theCash.iterator();
@@ -364,7 +364,7 @@ public class MoneyWiseCashAnalysisSelect
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            final TethysScrollMenuItem<CashBucket> myItem = theCashMenu.addItem(myBucket);
+            final TethysUIScrollItem<CashBucket> myItem = theCashMenu.addItem(myBucket);
 
             /* If this is the active cash */
             if (myBucket.equals(myCash)) {

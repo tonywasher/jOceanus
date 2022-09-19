@@ -50,25 +50,26 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * MoneyWise Static Panel.
  */
 public class MoneyWiseStaticPanel
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * The view.
      */
@@ -92,7 +93,7 @@ public class MoneyWiseStaticPanel
     /**
      * The Panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The error panel.
@@ -107,32 +108,32 @@ public class MoneyWiseStaticPanel
     /**
      * The disabled check box.
      */
-    private final TethysCheckBox theDisabledCheckBox;
+    private final TethysUICheckBox theDisabledCheckBox;
 
     /**
      * The Selection Panel.
      */
-    private final TethysBorderPaneManager theSelectionPanel;
+    private final TethysUIBorderPaneManager theSelectionPanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<TethysGenericWrapper> theSelectButton;
+    private final TethysUIScrollButtonManager<TethysUIGenericWrapper> theSelectButton;
 
     /**
      * Data menu builder.
      */
-    private final TethysScrollMenu<TethysGenericWrapper> theDataMenu;
+    private final TethysUIScrollMenu<TethysUIGenericWrapper> theDataMenu;
 
     /**
      * The table card panel.
      */
-    private final TethysCardPaneManager<MoneyWiseStaticTable<?, ?, ?>> theTableCard;
+    private final TethysUICardPaneManager<MoneyWiseStaticTable<?, ?, ?>> theTableCard;
 
     /**
      * The new card panel.
      */
-    private final TethysCardPaneManager<TethysScrollButtonManager<?>> theNewCard;
+    private final TethysUICardPaneManager<TethysUIScrollButtonManager<?>> theNewCard;
 
     /**
      * The list of panels.
@@ -166,34 +167,36 @@ public class MoneyWiseStaticPanel
         thePanels = new ArrayList<>();
 
         /* Access the Gui Factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons(myGuiFactory, theUpdateSet);
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
 
         /* Create the CheckBox */
-        theDisabledCheckBox = myGuiFactory.newCheckBox(MoneyWiseUIResource.STATICDATA_DISABLED.getValue());
+        final TethysUIControlFactory myControls = myGuiFactory.controlFactory();
+        theDisabledCheckBox = myControls.newCheckBox(MoneyWiseUIResource.STATICDATA_DISABLED.getValue());
         theDisabledCheckBox.getEventRegistrar().addEventListener(e -> showDisabled(theDisabledCheckBox.isSelected()));
 
         /* Create the select button */
-        final TethysLabel myLabel = myGuiFactory.newLabel(MoneyWiseUIResource.STATICDATA_SELECT.getValue());
-        theSelectButton = myGuiFactory.newScrollButton(TethysGenericWrapper.class);
+        final TethysUILabel myLabel = myControls.newLabel(MoneyWiseUIResource.STATICDATA_SELECT.getValue());
+        theSelectButton = myGuiFactory.buttonFactory().newScrollButton(TethysUIGenericWrapper.class);
         theDataMenu = theSelectButton.getMenu();
         theSelectButton.setMenuConfigurator(e -> buildDataMenu());
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handlePanelSelection());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePanelSelection());
 
         /* Create the selection panel */
-        theSelectionPanel = myGuiFactory.newBorderPane();
+        final TethysUIPaneFactory myPanes = myGuiFactory.paneFactory();
+        theSelectionPanel = myPanes.newBorderPane();
         theSelectionPanel.setBorderTitle(MoneyWiseUIResource.STATICDATA_SELECTION.getValue());
 
         /* Create the new card panel */
-        theNewCard = myGuiFactory.newCardPane();
+        theNewCard = myPanes.newCardPane();
         theNewCard.setVisible(false);
 
         /* Create the layout for the selection panel */
-        final TethysBoxPaneManager mySubPanel = myGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager mySubPanel = myPanes.newHBoxPane();
         mySubPanel.addNode(myLabel);
         mySubPanel.addNode(theSelectButton);
         mySubPanel.addSpacer();
@@ -203,16 +206,16 @@ public class MoneyWiseStaticPanel
         theSelectionPanel.setEast(theNewCard);
 
         /* Create the header panel */
-        final TethysBorderPaneManager myHeader = myGuiFactory.newBorderPane();
+        final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();
         myHeader.setCentre(theSelectionPanel);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
 
         /* Create the table card panel */
-        theTableCard = myGuiFactory.newCardPane();
+        theTableCard = myPanes.newCardPane();
 
         /* Create the Panel */
-        thePanel = myGuiFactory.newBorderPane();
+        thePanel = myPanes.newBorderPane();
 
         /* Now define the panel */
         thePanel.setNorth(myHeader);
@@ -237,28 +240,13 @@ public class MoneyWiseStaticPanel
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
     public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -324,14 +312,14 @@ public class MoneyWiseStaticPanel
         theDataMenu.removeAllItems();
 
         /* Record active item */
-        TethysScrollMenuItem<TethysGenericWrapper> myActive = null;
+        TethysUIScrollItem<TethysUIGenericWrapper> myActive = null;
         final String myActiveName = theTableCard.getActiveName();
 
         /* Loop through the panels */
         for (MoneyWiseStaticTable<?, ?, ?> myTable : thePanels) {
             /* Create a new MenuItem and add it to the popUp */
             final String myName = myTable.getItemType().getFieldName();
-            final TethysScrollMenuItem<TethysGenericWrapper> myItem = theDataMenu.addItem(new TethysGenericWrapper(myTable), myName);
+            final TethysUIScrollItem<TethysUIGenericWrapper> myItem = theDataMenu.addItem(new TethysUIGenericWrapper(myTable), myName);
 
             /* If this is the active panel */
             if (myName.equals(myActiveName)) {
@@ -370,7 +358,7 @@ public class MoneyWiseStaticPanel
         theNewCard.addCard(myName, myPanel.getNewButton());
 
         /* Make sure that the active set is displayed */
-        theSelectButton.setValue(new TethysGenericWrapper(theTableCard.getActiveCard()), theTableCard.getActiveName());
+        theSelectButton.setValue(new TethysUIGenericWrapper(theTableCard.getActiveCard()), theTableCard.getActiveName());
 
         /* Add to the List */
         thePanels.add(myPanel);
@@ -389,7 +377,7 @@ public class MoneyWiseStaticPanel
         if (theTableCard.selectCard(myName)) {
             /* Update selection */
             final MoneyWiseStaticTable<?, ?, ?> myPanel = theTableCard.getActiveCard();
-            theSelectButton.setValue(new TethysGenericWrapper(myPanel), myName);
+            theSelectButton.setValue(new TethysUIGenericWrapper(myPanel), myName);
             myPanel.selectStatic(pStatic);
             setSelection(myName);
         }

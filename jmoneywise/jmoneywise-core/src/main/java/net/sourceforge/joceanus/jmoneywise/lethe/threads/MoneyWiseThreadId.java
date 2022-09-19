@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+
 /**
  * MoneyWise Thread Ids.
  */
-public enum MoneyWiseThreadId {
+public enum MoneyWiseThreadId
+        implements TethysUIMenuId {
     /**
      * LoadArchive.
      */

@@ -46,15 +46,16 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysPriceEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Panel to display/edit/create a Security.
@@ -88,7 +89,7 @@ public class MoneyWiseSecurityPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseSecurityPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseSecurityPanel(final TethysUIFactory<?> pFactory,
                                   final MoneyWiseView pView,
                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                   final MetisErrorPanel pError) {
@@ -122,16 +123,17 @@ public class MoneyWiseSecurityPanel
      * Build Main subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildMainPanel(final TethysGuiFactory pFactory) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<SecurityType> myTypeButton = pFactory.newScrollField(SecurityType.class);
-        final TethysScrollButtonField<Payee> myParentButton = pFactory.newScrollField(Payee.class);
-        final TethysScrollButtonField<AssetCurrency> myCurrencyButton = pFactory.newScrollField(AssetCurrency.class);
-        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
+        final TethysUIScrollButtonField<SecurityType> myTypeButton = myFields.newScrollField(SecurityType.class);
+        final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
+        final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
+        final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Security::getName);
@@ -145,7 +147,7 @@ public class MoneyWiseSecurityPanel
         myTypeButton.setMenuConfigurator(c -> buildSecTypeMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
     }
 
@@ -153,17 +155,18 @@ public class MoneyWiseSecurityPanel
      * Build info subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildInfoPanel(final TethysGuiFactory pFactory) {
+    private void buildInfoPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysStringEditField mySymbol = pFactory.newStringField();
-        final TethysPriceEditField myPrice = pFactory.newPriceField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField mySymbol = myFields.newStringField();
+        final TethysUIPriceEditField myPrice = myFields.newPriceField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<Region> myRegionButton = pFactory.newScrollField(Region.class);
-        final TethysScrollButtonField<Security> myStockButton = pFactory.newScrollField(Security.class);
+        final TethysUIScrollButtonField<Region> myRegionButton = myFields.newScrollField(Region.class);
+        final TethysUIScrollButtonField<Security> myStockButton = myFields.newScrollField(Security.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.SECURITYSYMBOL, mySymbol, Security::getSymbol);
@@ -181,9 +184,10 @@ public class MoneyWiseSecurityPanel
      * Build Notes subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildNotesPanel(final TethysGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
         /* Allocate fields */
-        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.SECURITYNOTES, myNotes, Security::getNotes);
@@ -372,14 +376,14 @@ public class MoneyWiseSecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildSecTypeMenu(final TethysScrollMenu<SecurityType> pMenu,
+    public void buildSecTypeMenu(final TethysUIScrollMenu<SecurityType> pMenu,
                                  final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final SecurityType myCurr = pSecurity.getCategory();
-        TethysScrollMenuItem<SecurityType> myActive = null;
+        TethysUIScrollItem<SecurityType> myActive = null;
 
         /* Access SecurityTypes */
         final SecurityTypeList myTypes = getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
@@ -396,7 +400,7 @@ public class MoneyWiseSecurityPanel
             }
 
             /* Create a new action for the secType */
-            final TethysScrollMenuItem<SecurityType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<SecurityType> myItem = pMenu.addItem(myType);
 
             /* If this is the active secType */
             if (myType.equals(myCurr)) {
@@ -416,7 +420,7 @@ public class MoneyWiseSecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
+    public void buildParentMenu(final TethysUIScrollMenu<Payee> pMenu,
                                 final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -424,7 +428,7 @@ public class MoneyWiseSecurityPanel
         /* Record active item */
         final SecurityTypeClass myType = pSecurity.getCategoryClass();
         final Payee myCurr = pSecurity.getParent();
-        TethysScrollMenuItem<Payee> myActive = null;
+        TethysUIScrollItem<Payee> myActive = null;
 
         /* Access Payees */
         final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -442,7 +446,7 @@ public class MoneyWiseSecurityPanel
             }
 
             /* Create a new action for the payee */
-            final TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysUIScrollItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -462,14 +466,14 @@ public class MoneyWiseSecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildRegionMenu(final TethysScrollMenu<Region> pMenu,
+    public void buildRegionMenu(final TethysUIScrollMenu<Region> pMenu,
                                 final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final Region myCurr = pSecurity.getRegion();
-        TethysScrollMenuItem<Region> myActive = null;
+        TethysUIScrollItem<Region> myActive = null;
 
         /* Access regions */
         final RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
@@ -486,7 +490,7 @@ public class MoneyWiseSecurityPanel
             }
 
             /* Create a new action for the region */
-            final TethysScrollMenuItem<Region> myItem = pMenu.addItem(myRegion);
+            final TethysUIScrollItem<Region> myItem = pMenu.addItem(myRegion);
 
             /* If this is the active region */
             if (myRegion.equals(myCurr)) {
@@ -506,14 +510,14 @@ public class MoneyWiseSecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildStockMenu(final TethysScrollMenu<Security> pMenu,
+    public void buildStockMenu(final TethysUIScrollMenu<Security> pMenu,
                                final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final Security myCurr = pSecurity.getUnderlyingStock();
-        TethysScrollMenuItem<Security> myActive = null;
+        TethysUIScrollItem<Security> myActive = null;
 
         /* Access securities */
         final SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
@@ -531,7 +535,7 @@ public class MoneyWiseSecurityPanel
             }
 
             /* Create a new action for the region */
-            final TethysScrollMenuItem<Security> myItem = pMenu.addItem(mySecurity);
+            final TethysUIScrollItem<Security> myItem = pMenu.addItem(mySecurity);
 
             /* If this is the active stock */
             if (mySecurity.equals(myCurr)) {
@@ -551,14 +555,14 @@ public class MoneyWiseSecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
+    public void buildCurrencyMenu(final TethysUIScrollMenu<AssetCurrency> pMenu,
                                   final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final AssetCurrency myCurr = pSecurity.getAssetCurrency();
-        TethysScrollMenuItem<AssetCurrency> myActive = null;
+        TethysUIScrollItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -575,7 +579,7 @@ public class MoneyWiseSecurityPanel
             }
 
             /* Create a new action for the currency */
-            final TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysUIScrollItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

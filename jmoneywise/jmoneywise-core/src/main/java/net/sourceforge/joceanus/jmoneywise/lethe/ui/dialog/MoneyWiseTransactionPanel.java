@@ -72,22 +72,23 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDilutionEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIntegerEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysMoneyEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysPriceEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRatioEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysUnitsEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIPriceEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIRatioEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
 
 /**
  * Panel to display/edit/create a Transaction.
@@ -147,7 +148,7 @@ public class MoneyWiseTransactionPanel
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
-    public MoneyWiseTransactionPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseTransactionPanel(final TethysUIFactory<?> pFactory,
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                      final TransactionBuilder pBuilder,
                                      final MoneyWiseAnalysisSelect pAnalysisSelect,
@@ -177,17 +178,18 @@ public class MoneyWiseTransactionPanel
      * Build Main subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildMainPanel(final TethysGuiFactory pFactory) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Allocate fields */
-        final TethysMoneyEditField myAmount = pFactory.newMoneyField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIMoneyEditField myAmount = myFields.newMoneyField();
 
         /* Create the buttons */
-        final TethysDateButtonField myDateButton = pFactory.newDateField();
-        final TethysScrollButtonField<TransactionAsset> myAccountButton = pFactory.newScrollField(TransactionAsset.class);
-        final TethysScrollButtonField<TransactionAsset> myPartnerButton = pFactory.newScrollField(TransactionAsset.class);
-        final TethysScrollButtonField<TransactionCategory> myCategoryButton = pFactory.newScrollField(TransactionCategory.class);
-        final TethysIconButtonField<Boolean> myReconciledButton = pFactory.newIconField(Boolean.class);
-        final TethysIconButtonField<AssetDirection> myDirectionButton = pFactory.newIconField(AssetDirection.class);
+        final TethysUIDateButtonField myDateButton = myFields.newDateField();
+        final TethysUIScrollButtonField<TransactionAsset> myAccountButton = myFields.newScrollField(TransactionAsset.class);
+        final TethysUIScrollButtonField<TransactionAsset> myPartnerButton = myFields.newScrollField(TransactionAsset.class);
+        final TethysUIScrollButtonField<TransactionCategory> myCategoryButton = myFields.newScrollField(TransactionCategory.class);
+        final TethysUIIconButtonField<Boolean> myReconciledButton = myFields.newIconField(Boolean.class);
+        final TethysUIIconButtonField<AssetDirection> myDirectionButton = myFields.newIconField(AssetDirection.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.DATE, myDateButton, Transaction::getDate);
@@ -203,9 +205,9 @@ public class MoneyWiseTransactionPanel
         myAccountButton.setMenuConfigurator(c -> buildAccountMenu(c, getItem()));
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myPartnerButton.setMenuConfigurator(c -> buildPartnerMenu(c, getItem()));
-        final Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton(pFactory);
         myReconciledButton.setIconMapSet(() -> myRecMapSets.get(theReconciledState));
-        final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
+        final Map<Boolean, TethysUIIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(pFactory);
         myDirectionButton.setIconMapSet(() -> myDirMapSets.get(theDirectionState));
         myAmount.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
     }
@@ -214,18 +216,19 @@ public class MoneyWiseTransactionPanel
      * Build info subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildInfoPanel(final TethysGuiFactory pFactory) {
+    private void buildInfoPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_INFO);
 
         /* Allocate fields */
-        final TethysMoneyEditField myAmount = pFactory.newMoneyField();
-        final TethysStringEditField myComments = pFactory.newStringField();
-        final TethysStringEditField myReference = pFactory.newStringField();
-        final TethysRatioEditField myRate = pFactory.newRatioField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIMoneyEditField myAmount = myFields.newMoneyField();
+        final TethysUIStringEditField myComments = myFields.newStringField();
+        final TethysUIStringEditField myReference = myFields.newStringField();
+        final TethysUIRatioEditField myRate = myFields.newRatioField();
 
         /* Create the buttons */
-        final TethysListButtonField<TransactionTag> myTagButton = pFactory.newListField();
+        final TethysUIListButtonField<TransactionTag> myTagButton = myFields.newListField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.PARTNERAMOUNT, myAmount, Transaction::getPartnerAmount);
@@ -245,17 +248,18 @@ public class MoneyWiseTransactionPanel
      * Build tax subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildTaxPanel(final TethysGuiFactory pFactory) {
+    private void buildTaxPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_TAXES);
 
         /* Allocate fields */
-        final TethysMoneyEditField myTaxCredit = pFactory.newMoneyField();
-        final TethysMoneyEditField myEeNatIns = pFactory.newMoneyField();
-        final TethysMoneyEditField myErNatIns = pFactory.newMoneyField();
-        final TethysMoneyEditField myBenefit = pFactory.newMoneyField();
-        final TethysMoneyEditField myWithheld = pFactory.newMoneyField();
-        final TethysIntegerEditField myYears = pFactory.newIntegerField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIMoneyEditField myTaxCredit = myFields.newMoneyField();
+        final TethysUIMoneyEditField myEeNatIns = myFields.newMoneyField();
+        final TethysUIMoneyEditField myErNatIns = myFields.newMoneyField();
+        final TethysUIMoneyEditField myBenefit = myFields.newMoneyField();
+        final TethysUIMoneyEditField myWithheld = myFields.newMoneyField();
+        final TethysUIIntegerEditField myYears = myFields.newIntegerField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.TAXCREDIT, myTaxCredit, Transaction::getTaxCredit);
@@ -277,20 +281,21 @@ public class MoneyWiseTransactionPanel
      * Build securities subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildSecuritiesPanel(final TethysGuiFactory pFactory) {
+    private void buildSecuritiesPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_SECURITIES);
 
         /* Allocate fields */
-        final TethysUnitsEditField myAccountUnits = pFactory.newUnitsField();
-        final TethysUnitsEditField myPartnerUnits = pFactory.newUnitsField();
-        final TethysMoneyEditField myCommission = pFactory.newMoneyField();
-        final TethysPriceEditField myPrice = pFactory.newPriceField();
-        final TethysDilutionEditField myDilution = pFactory.newDilutionField();
-        final TethysMoneyEditField myReturnedCash = pFactory.newMoneyField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIUnitsEditField myAccountUnits = myFields.newUnitsField();
+        final TethysUIUnitsEditField myPartnerUnits = myFields.newUnitsField();
+        final TethysUIMoneyEditField myCommission = myFields.newMoneyField();
+        final TethysUIPriceEditField myPrice = myFields.newPriceField();
+        final TethysUIDilutionEditField myDilution = myFields.newDilutionField();
+        final TethysUIMoneyEditField myReturnedCash = myFields.newMoneyField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<TransactionAsset> myReturnedAccountButton = pFactory.newScrollField(TransactionAsset.class);
+        final TethysUIScrollButtonField<TransactionAsset> myReturnedAccountButton = myFields.newScrollField(TransactionAsset.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.ACCOUNTDELTAUNITS, myAccountUnits, Transaction::getAccountDeltaUnits);
@@ -669,7 +674,7 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildAccountMenu(final TethysScrollMenu<TransactionAsset> pMenu,
+    public void buildAccountMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
                                  final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -687,7 +692,7 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildPartnerMenu(final TethysScrollMenu<TransactionAsset> pMenu,
+    public void buildPartnerMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
                                  final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -709,7 +714,7 @@ public class MoneyWiseTransactionPanel
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private static <T extends AssetBase<T, ?>> void buildAssetMenu(final TethysScrollMenu<TransactionAsset> pMenu,
+    private static <T extends AssetBase<T, ?>> void buildAssetMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
                                                                    final AssetBaseList<T, ?> pList,
                                                                    final boolean pIsAccount,
                                                                    final Transaction pTrans) {
@@ -719,8 +724,8 @@ public class MoneyWiseTransactionPanel
         final TransactionAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
-        TethysScrollMenuItem<TransactionAsset> myActive = null;
-        TethysScrollSubMenu<TransactionAsset> myMenu = null;
+        TethysUIScrollItem<TransactionAsset> myActive = null;
+        TethysUIScrollSubMenu<TransactionAsset> myMenu = null;
 
         /* Loop through the available values */
         final Iterator<T> myIterator = pList.iterator();
@@ -745,7 +750,7 @@ public class MoneyWiseTransactionPanel
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<TransactionAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
+            final TethysUIScrollItem<TransactionAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
 
             /* If this is the active category */
             if (myAsset.equals(myCurr)) {
@@ -766,7 +771,7 @@ public class MoneyWiseTransactionPanel
      * @param pIsAccount is this item the account rather than partner
      * @param pTrans the transaction to build for
      */
-    private static void buildHoldingMenu(final TethysScrollMenu<TransactionAsset> pMenu,
+    private static void buildHoldingMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
                                          final boolean pIsAccount,
                                          final Transaction pTrans) {
         /* Record active item */
@@ -775,8 +780,8 @@ public class MoneyWiseTransactionPanel
         final TransactionAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
-        TethysScrollMenuItem<TransactionAsset> myActive = null;
-        TethysScrollSubMenu<TransactionAsset> myMenu = null;
+        TethysUIScrollItem<TransactionAsset> myActive = null;
+        TethysUIScrollSubMenu<TransactionAsset> myMenu = null;
 
         /* Access Portfolios and Holdings Map */
         final MoneyWiseData myData = pTrans.getDataSet();
@@ -787,7 +792,7 @@ public class MoneyWiseTransactionPanel
         final Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final Portfolio myPortfolio = myPortIterator.next();
-            TethysScrollSubMenu<TransactionAsset> myCoreMenu = null;
+            TethysUIScrollSubMenu<TransactionAsset> myCoreMenu = null;
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted()
@@ -825,7 +830,7 @@ public class MoneyWiseTransactionPanel
                         }
 
                         /* Add the item to the menu */
-                        final TethysScrollMenuItem<TransactionAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
+                        final TethysUIScrollItem<TransactionAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
 
                         /* If this is the active holding */
                         if (mySecurity.equals(myCurr)) {
@@ -838,7 +843,7 @@ public class MoneyWiseTransactionPanel
                 /* If there are new elements */
                 if (myNewIterator != null) {
                     /* Loop through them */
-                    TethysScrollSubMenu<TransactionAsset> mySubMenu = null;
+                    TethysUIScrollSubMenu<TransactionAsset> mySubMenu = null;
                     while (myNewIterator.hasNext()) {
                         final SecurityHolding myHolding = myNewIterator.next();
                         final Security mySecurity = myHolding.getSecurity();
@@ -883,7 +888,7 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<TransactionCategory> pMenu,
+    public void buildCategoryMenu(final TethysUIScrollMenu<TransactionCategory> pMenu,
                                   final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -891,11 +896,11 @@ public class MoneyWiseTransactionPanel
         /* Record active item */
         final TransactionAsset myAccount = pTrans.getAccount();
         final TransactionCategory myCurr = pTrans.getCategory();
-        TethysScrollMenuItem<TransactionCategory> myActive = null;
-        TethysScrollMenuItem<TransactionCategory> myItem;
+        TethysUIScrollItem<TransactionCategory> myActive = null;
+        TethysUIScrollItem<TransactionCategory> myItem;
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
 
         /* Access Categories */
         final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
@@ -921,7 +926,7 @@ public class MoneyWiseTransactionPanel
             /* If we have a parent */
             if (myParent != null) {
                 final String myParentName = myParent.getName();
-                TethysScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
+                TethysUIScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
 
                 /* If this is a new subMenu */
                 if (myMenu == null) {
@@ -956,14 +961,14 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildReturnedAccountMenu(final TethysScrollMenu<TransactionAsset> pMenu,
+    public void buildReturnedAccountMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
                                          final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final TransactionAsset myCurr = pTrans.getReturnedCashAccount();
-        TethysScrollMenuItem<TransactionAsset> myActive = null;
+        TethysUIScrollItem<TransactionAsset> myActive = null;
 
         /* Access Deposits */
         final DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
@@ -980,7 +985,7 @@ public class MoneyWiseTransactionPanel
             }
 
             /* Create a new action for the account */
-            final TethysScrollMenuItem<TransactionAsset> myItem = pMenu.addItem(myDeposit);
+            final TethysUIScrollItem<TransactionAsset> myItem = pMenu.addItem(myDeposit);
 
             /* If this is the active returned account */
             if (myDeposit.equals(myCurr)) {

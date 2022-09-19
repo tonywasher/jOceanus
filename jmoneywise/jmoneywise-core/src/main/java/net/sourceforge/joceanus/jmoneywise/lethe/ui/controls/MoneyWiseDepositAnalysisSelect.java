@@ -35,15 +35,18 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Deposit Analysis Selection.
@@ -68,27 +71,27 @@ public class MoneyWiseDepositAnalysisSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The deposit button.
      */
-    private final TethysScrollButtonManager<DepositBucket> theDepositButton;
+    private final TethysUIScrollButtonManager<DepositBucket> theDepositButton;
 
     /**
      * The category button.
      */
-    private final TethysScrollButtonManager<DepositCategory> theCatButton;
+    private final TethysUIScrollButtonManager<DepositCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<DepositCategory> theCategoryMenu;
+    private final TethysUIScrollMenu<DepositCategory> theCategoryMenu;
 
     /**
      * Deposit menu.
      */
-    private final TethysScrollMenu<DepositBucket> theDepositMenu;
+    private final TethysUIScrollMenu<DepositBucket> theDepositMenu;
 
     /**
      * The active category bucket list.
@@ -114,22 +117,24 @@ public class MoneyWiseDepositAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseDepositAnalysisSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseDepositAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the deposit button */
-        theDepositButton = pFactory.newScrollButton(DepositBucket.class);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theDepositButton = myButtons.newScrollButton(DepositBucket.class);
 
         /* Create the category button */
-        theCatButton = pFactory.newScrollButton(DepositCategory.class);
+        theCatButton = myButtons.newScrollButton(DepositCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        final TethysLabel myDepLabel = pFactory.newLabel(NLS_DEPOSIT + TethysLabel.STR_COLON);
+        final TethysUIControlFactory myControls = pFactory.controlFactory();
+        final TethysUILabel myCatLabel = myControls.newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);
+        final TethysUILabel myDepLabel = myControls.newLabel(NLS_DEPOSIT + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myCatLabel);
         thePanel.addNode(theCatButton);
@@ -146,22 +151,17 @@ public class MoneyWiseDepositAnalysisSelect
         theDepositMenu = theDepositButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theCatButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
         myRegistrar = theDepositButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewDeposit());
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDeposit());
         theDepositButton.setMenuConfigurator(e -> buildDepositMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -207,11 +207,6 @@ public class MoneyWiseDepositAnalysisSelect
         /* Pass call on to buttons */
         theDepositButton.setEnabled(dpAvailable);
         theCatButton.setEnabled(dpAvailable);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -294,11 +289,11 @@ public class MoneyWiseDepositAnalysisSelect
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
 
         /* Record active item */
         final DepositCategory myCurrent = theState.getCategory();
-        TethysScrollMenuItem<DepositCategory> myActive = null;
+        TethysUIScrollItem<DepositCategory> myActive = null;
 
         /* Re-Loop through the available category values */
         final Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
@@ -313,7 +308,7 @@ public class MoneyWiseDepositAnalysisSelect
             /* Determine menu to add to */
             final DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<DepositCategory> myMenu = myMap.get(myParentName);
+            TethysUIScrollSubMenu<DepositCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -324,7 +319,7 @@ public class MoneyWiseDepositAnalysisSelect
 
             /* Create a new JMenuItem and add it to the popUp */
             final DepositCategory myCategory = myBucket.getAccountCategory();
-            final TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -351,7 +346,7 @@ public class MoneyWiseDepositAnalysisSelect
         final DepositBucket myDeposit = theState.getDeposit();
 
         /* Record active item */
-        TethysScrollMenuItem<DepositBucket> myActive = null;
+        TethysUIScrollItem<DepositBucket> myActive = null;
 
         /* Loop through the available account values */
         final Iterator<DepositBucket> myIterator = theDeposits.iterator();
@@ -364,7 +359,7 @@ public class MoneyWiseDepositAnalysisSelect
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            final TethysScrollMenuItem<DepositBucket> myItem = theDepositMenu.addItem(myBucket);
+            final TethysUIScrollItem<DepositBucket> myItem = theDepositMenu.addItem(myBucket);
 
             /* If this is the active deposit */
             if (myBucket.equals(myDeposit)) {

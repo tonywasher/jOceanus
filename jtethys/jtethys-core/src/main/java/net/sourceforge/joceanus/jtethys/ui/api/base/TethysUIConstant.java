@@ -11,4 +11,9 @@ public final class TethysUIConstant {
      * List separator.
      */
     public static final String LIST_SEP = ",";
+
+    /**
+     * The colon indicator.
+     */
+    public static final String STR_COLON = ":";
 }

@@ -22,6 +22,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * All transactions Selection.
@@ -31,7 +34,7 @@ public class MoneyWiseAllSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The filter.
@@ -42,20 +45,15 @@ public class MoneyWiseAllSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseAllSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseAllSelect(final TethysUIFactory<?> pFactory) {
         /* Create the filter */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         theFilter = new AllFilter();
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -66,16 +64,6 @@ public class MoneyWiseAllSelect
     @Override
     public boolean isAvailable() {
         return true;
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**

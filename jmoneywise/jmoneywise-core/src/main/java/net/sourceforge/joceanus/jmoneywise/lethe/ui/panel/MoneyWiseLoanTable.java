@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Loan Table.
@@ -77,8 +77,8 @@ public class MoneyWiseLoanTable
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.LOANINFO);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Loan> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Loan> myTable = getTable();
 
         /* Create a Loan panel */
         theActiveLoan = new MoneyWiseLoanPanel(myGuiFactory, pUpdateSet, pError);
@@ -176,21 +176,21 @@ public class MoneyWiseLoanTable
 
     @Override
     protected void buildCategoryMenu(final Loan pLoan,
-                                     final TethysScrollMenu<LoanCategory> pMenu) {
+                                     final TethysUIScrollMenu<LoanCategory> pMenu) {
         /* Build the menu */
         theActiveLoan.buildCategoryMenu(pMenu, pLoan);
     }
 
     @Override
     protected void buildParentMenu(final Loan pLoan,
-                                   final TethysScrollMenu<Payee> pMenu) {
+                                   final TethysUIScrollMenu<Payee> pMenu) {
         /* Build the menu */
         theActiveLoan.buildParentMenu(pMenu, pLoan);
     }
 
     @Override
     protected void buildCurrencyMenu(final Loan pLoan,
-                                     final TethysScrollMenu<AssetCurrency> pMenu) {
+                                     final TethysUIScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveLoan.buildCurrencyMenu(pMenu, pLoan);
     }

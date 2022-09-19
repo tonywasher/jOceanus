@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise LoanCategory Table.
@@ -69,8 +69,8 @@ public class MoneyWiseLoanCategoryTable
         super(pView, pUpdateSet, pError, LoanCategory.class, MoneyWiseDataType.LOANCATEGORY);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, LoanCategory> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, LoanCategory> myTable = getTable();
 
         /* Create a category panel */
         theActiveCategory = new MoneyWiseLoanCategoryPanel(myGuiFactory, pUpdateSet, pError);
@@ -85,7 +85,7 @@ public class MoneyWiseLoanCategoryTable
 
     @Override
     protected void addCategoryTypeColumn() {
-        final TethysTableManager<PrometheusDataFieldId, LoanCategory> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, LoanCategory> myTable = getTable();
         myTable.declareScrollColumn(MoneyWiseCategoryDataId.LOANCATTYPE, LoanCategoryType.class)
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
                 .setCellValueFactory(CategoryBase::getCategoryType)
@@ -199,7 +199,7 @@ public class MoneyWiseLoanCategoryTable
 
     @Override
     protected void buildCategoryTypeMenu(final LoanCategory pCategory,
-                                         final TethysScrollMenu<LoanCategoryType> pMenu) {
+                                         final TethysUIScrollMenu<LoanCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }

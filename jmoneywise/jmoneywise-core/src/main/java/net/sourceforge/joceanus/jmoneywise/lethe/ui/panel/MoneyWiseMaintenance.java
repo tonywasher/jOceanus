@@ -40,13 +40,17 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Maintenance Tab panel.
  * @author Tony Washer
  */
 public class MoneyWiseMaintenance
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Preferences tab title.
      */
@@ -80,7 +84,7 @@ public class MoneyWiseMaintenance
     /**
      * The Tabs.
      */
-    private final TethysTabPaneManager theTabs;
+    private final TethysUITabPaneManager theTabs;
 
     /**
      * The Account Panel.
@@ -116,13 +120,13 @@ public class MoneyWiseMaintenance
         theView = pView;
 
         /* Access GUI Factory */
-        final TethysGuiFactory myFactory = theView.getGuiFactory();
+        final TethysUIFactory<?> myFactory = theView.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the Tabbed Pane */
-        theTabs = theView.getGuiFactory().newTabPane();
+        theTabs = theView.getGuiFactory().paneFactory().newTabPane();
 
         /* Create the account Tab and add it */
         theAccountTab = new MoneyWiseAccountPanel(theView);
@@ -166,8 +170,8 @@ public class MoneyWiseMaintenance
     }
 
     @Override
-    public Integer getId() {
-        return theTabs.getId();
+    public TethysUIComponent getUnderlying() {
+        return theTabs;
     }
 
     @Override
@@ -188,28 +192,12 @@ public class MoneyWiseMaintenance
         pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
     }
 
-    @Override
-    public TethysNode getNode() {
-        return theTabs.getNode();
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        theTabs.setVisible(pVisible);
-    }
-
     /**
      * Obtain the view.
      * @return the view
      */
     protected MoneyWiseView getView() {
         return theView;
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        /* Pass on to important elements */
-        theTabs.setEnabled(pEnabled);
     }
 
     /**
@@ -348,7 +336,7 @@ public class MoneyWiseMaintenance
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        final TethysTabItem myItem = theTabs.findItemByName(pTabName);
+        final TethysUITabItem myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }
@@ -386,7 +374,7 @@ public class MoneyWiseMaintenance
      */
     public void determineFocus() {
         /* Access the selected component */
-        final TethysTabItem myItem = theTabs.getSelectedTab();
+        final TethysUITabItem myItem = theTabs.getSelectedTab();
         final Integer myId = myItem.getId();
 
         /* If the selected component is Account */

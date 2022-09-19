@@ -31,14 +31,17 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * TaxBasisAnalysis Selection.
@@ -68,27 +71,27 @@ public class MoneyWiseTaxBasisAnalysisSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The basis button.
      */
-    private final TethysScrollButtonManager<TaxBasisBucket> theBasisButton;
+    private final TethysUIScrollButtonManager<TaxBasisBucket> theBasisButton;
 
     /**
      * The account button.
      */
-    private final TethysScrollButtonManager<TaxBasisAccountBucket> theAccountButton;
+    private final TethysUIScrollButtonManager<TaxBasisAccountBucket> theAccountButton;
 
     /**
      * Tax menu.
      */
-    private final TethysScrollMenu<TaxBasisBucket> theTaxMenu;
+    private final TethysUIScrollMenu<TaxBasisBucket> theTaxMenu;
 
     /**
      * Account menu.
      */
-    private final TethysScrollMenu<TaxBasisAccountBucket> theAccountMenu;
+    private final TethysUIScrollMenu<TaxBasisAccountBucket> theAccountMenu;
 
     /**
      * The active tax basis bucket list.
@@ -109,20 +112,22 @@ public class MoneyWiseTaxBasisAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTaxBasisAnalysisSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseTaxBasisAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the buttons */
-        theBasisButton = pFactory.newScrollButton(TaxBasisBucket.class);
-        theAccountButton = pFactory.newScrollButton(TaxBasisAccountBucket.class);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theBasisButton = myButtons.newScrollButton(TaxBasisBucket.class);
+        theAccountButton = myButtons.newScrollButton(TaxBasisAccountBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel myBasisLabel = pFactory.newLabel(NLS_BASIS + TethysLabel.STR_COLON);
-        final TethysLabel myAccountLabel = pFactory.newLabel(NLS_ACCOUNT + TethysLabel.STR_COLON);
+        final TethysUIControlFactory myControls = pFactory.controlFactory();
+        final TethysUILabel myBasisLabel = myControls.newLabel(NLS_BASIS + TethysUIConstant.STR_COLON);
+        final TethysUILabel myAccountLabel = myControls.newLabel(NLS_ACCOUNT + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myBasisLabel);
         thePanel.addNode(theBasisButton);
@@ -139,22 +144,17 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theAccountMenu = theAccountButton.getMenu();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewBasis());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBasis());
         theBasisButton.setMenuConfigurator(e -> buildBasisMenu());
         myRegistrar = theAccountButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewAccount());
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewAccount());
         theAccountButton.setMenuConfigurator(e -> buildAccountMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -273,7 +273,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theTaxMenu.removeAllItems();
 
         /* Record active item */
-        TethysScrollMenuItem<TaxBasisBucket> myActive = null;
+        TethysUIScrollItem<TaxBasisBucket> myActive = null;
         final TaxBasisBucket myCurr = theState.getTaxBasis();
 
         /* Loop through the available basis values */
@@ -282,7 +282,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
             final TaxBasisBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<TaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
+            final TethysUIScrollItem<TaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -309,7 +309,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
         final TaxBasisAccountBucket myCurr = theState.getAccount();
 
         /* Add the all item menu */
-        TethysScrollMenuItem<TaxBasisAccountBucket> myActive = theAccountMenu.addItem(null, NLS_ALL);
+        TethysUIScrollItem<TaxBasisAccountBucket> myActive = theAccountMenu.addItem(null, NLS_ALL);
 
         /* Loop through the available account values */
         final Iterator<TaxBasisAccountBucket> myIterator = myBasis.accountIterator();
@@ -317,7 +317,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
             final TaxBasisAccountBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<TaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
+            final TethysUIScrollItem<TaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {

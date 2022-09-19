@@ -39,9 +39,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Deposit Table.
@@ -85,8 +85,8 @@ public class MoneyWiseDepositTable
         theRateEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITRATE);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Deposit> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Deposit> myTable = getTable();
 
         /* Create a Deposit panel */
         theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, pUpdateSet, pError);
@@ -189,21 +189,21 @@ public class MoneyWiseDepositTable
 
     @Override
     protected void buildCategoryMenu(final Deposit pDeposit,
-                                     final TethysScrollMenu<DepositCategory> pMenu) {
+                                     final TethysUIScrollMenu<DepositCategory> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildCategoryMenu(pMenu, pDeposit);
     }
 
     @Override
     protected void buildParentMenu(final Deposit pDeposit,
-                                   final TethysScrollMenu<Payee> pMenu) {
+                                   final TethysUIScrollMenu<Payee> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildParentMenu(pMenu, pDeposit);
     }
 
     @Override
     protected void buildCurrencyMenu(final Deposit pDeposit,
-                                     final TethysScrollMenu<AssetCurrency> pMenu) {
+                                     final TethysUIScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildCurrencyMenu(pMenu, pDeposit);
     }

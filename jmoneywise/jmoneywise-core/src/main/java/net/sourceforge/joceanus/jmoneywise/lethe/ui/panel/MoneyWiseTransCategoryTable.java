@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise TransCategory Table.
@@ -69,8 +69,8 @@ public class MoneyWiseTransCategoryTable
         super(pView, pUpdateSet, pError, TransactionCategory.class, MoneyWiseDataType.TRANSCATEGORY);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, TransactionCategory> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, TransactionCategory> myTable = getTable();
 
         /* Create a category panel */
         theActiveCategory = new MoneyWiseTransactionCategoryPanel(myGuiFactory, pUpdateSet, pError);
@@ -85,7 +85,7 @@ public class MoneyWiseTransCategoryTable
 
     @Override
     protected void addCategoryTypeColumn() {
-        final TethysTableManager<PrometheusDataFieldId, TransactionCategory> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, TransactionCategory> myTable = getTable();
         myTable.declareScrollColumn(MoneyWiseCategoryDataId.TRANSCATTYPE, TransactionCategoryType.class)
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
                 .setCellValueFactory(CategoryBase::getCategoryType)
@@ -199,7 +199,7 @@ public class MoneyWiseTransCategoryTable
 
     @Override
     protected void buildCategoryTypeMenu(final TransactionCategory pCategory,
-                                         final TethysScrollMenu<TransactionCategoryType> pMenu) {
+                                         final TethysUIScrollMenu<TransactionCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }

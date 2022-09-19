@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Region Table.
@@ -49,7 +49,7 @@ public class MoneyWiseRegionTable
     /**
      * The filter panel.
      */
-    private final TethysBoxPaneManager theFilterPanel;
+    private final TethysUIBoxPaneManager theFilterPanel;
 
     /**
      * The Region dialog.
@@ -74,15 +74,15 @@ public class MoneyWiseRegionTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.REGION);
 
         /* Access the GUI factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Region> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Region> myTable = getTable();
 
         /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
+        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a filter panel */
-        theFilterPanel = myGuiFactory.newHBoxPane();
+        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();
         theFilterPanel.addSpacer();
         theFilterPanel.addNode(myNewButton);
 
@@ -112,7 +112,7 @@ public class MoneyWiseRegionTable
                .setOnCommit((r, v) -> updateField(Region::setDescription, r, v));
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(pView.getGuiFactory());
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
@@ -136,7 +136,7 @@ public class MoneyWiseRegionTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysBoxPaneManager getFilterPanel() {
+    protected TethysUIBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

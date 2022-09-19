@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
@@ -72,7 +73,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Colon String.
      */
-    private static final String STR_COLON = ":";
+    private static final String STR_COLON = TethysUIConstant.STR_COLON;
 
     /**
      * Text for Preferences Title.

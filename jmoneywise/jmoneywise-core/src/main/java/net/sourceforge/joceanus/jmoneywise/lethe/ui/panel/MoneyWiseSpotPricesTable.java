@@ -47,13 +47,13 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise SpotPrices Table.
@@ -93,11 +93,11 @@ public class MoneyWiseSpotPricesTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITYPRICE);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, SpotSecurityPrice> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, SpotSecurityPrice> myTable = getTable();
 
         /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
+        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a selection panel */
@@ -134,7 +134,7 @@ public class MoneyWiseSpotPricesTable
                .setColumnWidth(WIDTH_DATE);
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.getPrice() != null && !r.isDisabled() ? MetisAction.DELETE : MetisAction.DO)
@@ -295,7 +295,7 @@ public class MoneyWiseSpotPricesTable
      * SpotPrices Panel.
      */
     public static class MoneyWiseSpotPricesPanel
-            implements TethysComponent, TethysEventProvider<PrometheusDataEvent> {
+            implements TethysUIComponent, TethysEventProvider<PrometheusDataEvent> {
         /**
          * Text for DataEntry Title.
          */
@@ -329,7 +329,7 @@ public class MoneyWiseSpotPricesTable
         /**
          * The panel.
          */
-        private final TethysBorderPaneManager thePanel;
+        private final TethysUIBorderPaneManager thePanel;
 
         /**
          * The viewer entry.
@@ -361,18 +361,19 @@ public class MoneyWiseSpotPricesTable
             theTable = new MoneyWiseSpotPricesTable(pView, theUpdateSet, theError);
 
             /* Create the action buttons */
-            final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+            final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
             theActionButtons = new PrometheusActionButtons(myGuiFactory, theUpdateSet);
             theActionButtons.setVisible(false);
 
             /* Create the header panel */
-            final TethysBorderPaneManager myHeader = myGuiFactory.newBorderPane();
+            final TethysUIPaneFactory myPanes = myGuiFactory.paneFactory();
+            final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();
             myHeader.setCentre(theTable.getSelect());
             myHeader.setNorth(theError);
             myHeader.setEast(theActionButtons);
 
             /* Create the panel */
-            thePanel = myGuiFactory.newBorderPane();
+            thePanel = myPanes.newBorderPane();
             thePanel.setNorth(myHeader);
             thePanel.setCentre(theTable);
 
@@ -383,23 +384,8 @@ public class MoneyWiseSpotPricesTable
         }
 
         @Override
-        public Integer getId() {
-            return thePanel.getId();
-        }
-
-        @Override
-        public TethysNode getNode() {
-            return thePanel.getNode();
-        }
-
-        @Override
-        public void setEnabled(final boolean pEnabled) {
-            thePanel.setEnabled(pEnabled);
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            thePanel.setVisible(pVisible);
+        public TethysUIComponent getUnderlying() {
+            return thePanel;
         }
 
         @Override

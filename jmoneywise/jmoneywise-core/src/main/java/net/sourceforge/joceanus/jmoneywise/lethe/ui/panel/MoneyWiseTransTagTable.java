@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Tag Table.
@@ -49,7 +49,7 @@ public class MoneyWiseTransTagTable
     /**
      * The filter panel.
      */
-    private final TethysBoxPaneManager theFilterPanel;
+    private final TethysUIBoxPaneManager theFilterPanel;
 
     /**
      * The tag dialog.
@@ -74,15 +74,15 @@ public class MoneyWiseTransTagTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.TRANSTAG);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, TransactionTag> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, TransactionTag> myTable = getTable();
 
         /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
+        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a filter panel */
-        theFilterPanel = myGuiFactory.newHBoxPane();
+        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();
         theFilterPanel.addSpacer();
         theFilterPanel.addNode(myNewButton);
 
@@ -112,7 +112,7 @@ public class MoneyWiseTransTagTable
                .setOnCommit((r, v) -> updateField(TransactionTag::setDescription, r, v));
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(pView.getGuiFactory());
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
@@ -136,7 +136,7 @@ public class MoneyWiseTransTagTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysBoxPaneManager getFilterPanel() {
+    protected TethysUIBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

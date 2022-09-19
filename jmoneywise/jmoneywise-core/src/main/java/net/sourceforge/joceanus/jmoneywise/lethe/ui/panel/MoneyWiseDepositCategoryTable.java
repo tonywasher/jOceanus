@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise DepositCategory Table.
@@ -69,8 +69,8 @@ public class MoneyWiseDepositCategoryTable
         super(pView, pUpdateSet, pError, DepositCategory.class, MoneyWiseDataType.DEPOSITCATEGORY);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
 
         /* Create a category panel */
         theActiveCategory = new MoneyWiseDepositCategoryPanel(myGuiFactory, pUpdateSet, pError);
@@ -85,7 +85,7 @@ public class MoneyWiseDepositCategoryTable
 
     @Override
     protected void addCategoryTypeColumn() {
-        final TethysTableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
         myTable.declareScrollColumn(MoneyWiseCategoryDataId.DEPOSITCATTYPE, DepositCategoryType.class)
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
                 .setCellValueFactory(CategoryBase::getCategoryType)
@@ -199,7 +199,7 @@ public class MoneyWiseDepositCategoryTable
 
     @Override
     protected void buildCategoryTypeMenu(final DepositCategory pCategory,
-                                         final TethysScrollMenu<DepositCategoryType> pMenu) {
+                                         final TethysUIScrollMenu<DepositCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }

@@ -35,15 +35,18 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Loan Analysis Selection.
@@ -68,27 +71,27 @@ public class MoneyWiseLoanAnalysisSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The loan button.
      */
-    private final TethysScrollButtonManager<LoanBucket> theLoanButton;
+    private final TethysUIScrollButtonManager<LoanBucket> theLoanButton;
 
     /**
      * The category button.
      */
-    private final TethysScrollButtonManager<LoanCategory> theCatButton;
+    private final TethysUIScrollButtonManager<LoanCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<LoanCategory> theCategoryMenu;
+    private final TethysUIScrollMenu<LoanCategory> theCategoryMenu;
 
     /**
      * Loan menu.
      */
-    private final TethysScrollMenu<LoanBucket> theLoanMenu;
+    private final TethysUIScrollMenu<LoanBucket> theLoanMenu;
 
     /**
      * The active category bucket list.
@@ -114,22 +117,24 @@ public class MoneyWiseLoanAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseLoanAnalysisSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseLoanAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the loan button */
-        theLoanButton = pFactory.newScrollButton(LoanBucket.class);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theLoanButton = myButtons.newScrollButton(LoanBucket.class);
 
         /* Create the category button */
-        theCatButton = pFactory.newScrollButton(LoanCategory.class);
+        theCatButton = myButtons.newScrollButton(LoanCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        final TethysLabel myLoanLabel = pFactory.newLabel(NLS_LOAN + TethysLabel.STR_COLON);
+        final TethysUIControlFactory myControls = pFactory.controlFactory();
+        final TethysUILabel myCatLabel = myControls.newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);
+        final TethysUILabel myLoanLabel = myControls.newLabel(NLS_LOAN + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myCatLabel);
         thePanel.addNode(theCatButton);
@@ -146,22 +151,17 @@ public class MoneyWiseLoanAnalysisSelect
         theLoanMenu = theLoanButton.getMenu();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysXUIEvent> myRegistrar = theCatButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCategory());
+        TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
         myRegistrar = theLoanButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewLoan());
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
         theLoanButton.setMenuConfigurator(e -> buildLoanMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -207,11 +207,6 @@ public class MoneyWiseLoanAnalysisSelect
         /* Pass call on to buttons */
         theLoanButton.setEnabled(lnAvailable);
         theCatButton.setEnabled(lnAvailable);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -294,11 +289,11 @@ public class MoneyWiseLoanAnalysisSelect
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
 
         /* Record active item */
         final LoanCategory myCurrent = theState.getCategory();
-        TethysScrollMenuItem<LoanCategory> myActive = null;
+        TethysUIScrollItem<LoanCategory> myActive = null;
 
         /* Re-Loop through the available category values */
         final Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
@@ -313,7 +308,7 @@ public class MoneyWiseLoanAnalysisSelect
             /* Determine menu to add to */
             final LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<LoanCategory> myMenu = myMap.get(myParent.getName());
+            TethysUIScrollSubMenu<LoanCategory> myMenu = myMap.get(myParent.getName());
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -324,7 +319,7 @@ public class MoneyWiseLoanAnalysisSelect
 
             /* Create a new JMenuItem and add it to the popUp */
             final LoanCategory myCategory = myBucket.getAccountCategory();
-            final TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -351,7 +346,7 @@ public class MoneyWiseLoanAnalysisSelect
         final LoanBucket myLoan = theState.getLoan();
 
         /* Record active item */
-        TethysScrollMenuItem<LoanBucket> myActive = null;
+        TethysUIScrollItem<LoanBucket> myActive = null;
 
         /* Loop through the available account values */
         final Iterator<LoanBucket> myIterator = theLoans.iterator();
@@ -364,7 +359,7 @@ public class MoneyWiseLoanAnalysisSelect
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<LoanBucket> myItem = theLoanMenu.addItem(myBucket);
+            final TethysUIScrollItem<LoanBucket> myItem = theLoanMenu.addItem(myBucket);
 
             /* If this is the active loan */
             if (myBucket.equals(myLoan)) {

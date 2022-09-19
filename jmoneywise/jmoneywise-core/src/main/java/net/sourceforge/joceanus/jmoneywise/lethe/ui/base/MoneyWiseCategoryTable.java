@@ -32,16 +32,17 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Category Table.
@@ -64,12 +65,12 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
     /**
      * The filter panel.
      */
-    private final TethysBoxPaneManager theFilterPanel;
+    private final TethysUIBoxPaneManager theFilterPanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<T> theSelectButton;
+    private final TethysUIScrollButtonManager<T> theSelectButton;
 
     /**
      * Active parent.
@@ -93,20 +94,21 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
         super(pView, pUpdateSet, pError, pDataType);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
+        final TethysUIButtonFactory<?> myButtons = myGuiFactory.buttonFactory();
+        final TethysUIButton myNewButton = myButtons.newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create the filter components */
-        final TethysLabel myPrompt = myGuiFactory.newLabel(TITLE_FILTER);
-        theSelectButton = myGuiFactory.newScrollButton(pClazz);
+        final TethysUILabel myPrompt = myGuiFactory.controlFactory().newLabel(TITLE_FILTER);
+        theSelectButton = myButtons.newScrollButton(pClazz);
         theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create a filter panel */
-        theFilterPanel = myGuiFactory.newHBoxPane();
+        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();
         theFilterPanel.addSpacer();
         theFilterPanel.addNode(myPrompt);
         theFilterPanel.addNode(theSelectButton);
@@ -143,7 +145,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                 .setOnCommit((r, v) -> updateField(CategoryBase::setDescription, r, v));
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
@@ -155,7 +157,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
 
         /* Add listeners */
         myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
-        theSelectButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleParentSelection());
+        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleParentSelection());
         theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
     }
 
@@ -168,7 +170,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * Obtain the filter panel.
      * @return the filter panel
      */
-    public TethysBoxPaneManager getFilterPanel() {
+    public TethysUIBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -234,7 +236,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pMenu the menu to build
      */
     protected abstract void buildCategoryTypeMenu(T pCategory,
-                                                  TethysScrollMenu<S> pMenu);
+                                                  TethysUIScrollMenu<S> pMenu);
 
     /**
      * Obtain the categories.
@@ -254,7 +256,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      */
     private void buildSelectMenu() {
         /* Clear the menu */
-        final TethysScrollMenu<T> myCategoryMenu = theSelectButton.getMenu();
+        final TethysUIScrollMenu<T> myCategoryMenu = theSelectButton.getMenu();
         myCategoryMenu.removeAllItems();
 
         /* Cope if we have no categories */
@@ -264,10 +266,10 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
         }
 
         /* Record active item */
-        TethysScrollMenuItem<T> myActive = null;
+        TethysUIScrollItem<T> myActive = null;
 
         /* Create the no filter MenuItem and add it to the popUp */
-        TethysScrollMenuItem<T> myItem = myCategoryMenu.addItem(null, FILTER_PARENTS);
+        TethysUIScrollItem<T> myItem = myCategoryMenu.addItem(null, FILTER_PARENTS);
 
         /* If this is the active parent */
         if (theParent == null) {

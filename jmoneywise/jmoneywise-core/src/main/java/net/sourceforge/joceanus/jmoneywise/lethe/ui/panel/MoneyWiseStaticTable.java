@@ -34,14 +34,14 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Static Table.
@@ -64,12 +64,12 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * The enabled column.
      */
-    private final TethysTableColumn<Boolean, PrometheusDataFieldId, T> theEnabledColumn;
+    private final TethysUITableColumn<Boolean, PrometheusDataFieldId, T> theEnabledColumn;
 
     /**
      * The new button.
      */
-    private final TethysScrollButtonManager<TethysGenericWrapper> theNewButton;
+    private final TethysUIScrollButtonManager<TethysUIGenericWrapper> theNewButton;
 
     /**
      * The edit list.
@@ -99,11 +99,11 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         theClass = pListClass;
 
         /* Access the gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
-        theNewButton = myGuiFactory.newScrollButton(TethysGenericWrapper.class);
+        theNewButton = myGuiFactory.buttonFactory().newScrollButton(TethysUIGenericWrapper.class);
         MetisIcon.configureNewScrollButton(theNewButton);
 
         /* Set table configuration */
@@ -133,7 +133,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setOnCommit((r, v) -> updateField(StaticData::setDescription, r, v));
 
         /* Create the enabled column */
-        final TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
+        final TethysUIIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton(myGuiFactory);
         theEnabledColumn = myTable.declareIconColumn(PrometheusDataId.ENABLED, Boolean.class)
                .setIconMapSet(r -> myEnabledMapSet)
                .setCellValueFactory(StaticData::getEnabled)
@@ -144,7 +144,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
@@ -155,8 +155,8 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theNewButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewClass());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewClass());
         theNewButton.setMenuConfigurator(e -> buildNewMenu());
         setShowAll(false);
     }
@@ -165,7 +165,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * Obtain the new button.
      * @return the new Button
      */
-    TethysScrollButtonManager<TethysGenericWrapper> getNewButton() {
+    TethysUIScrollButtonManager<TethysUIGenericWrapper> getNewButton() {
         return theNewButton;
     }
 
@@ -222,13 +222,13 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      */
     private void buildNewMenu() {
         /* Reset the menu popUp */
-        final TethysScrollMenu<TethysGenericWrapper> myMenu = theNewButton.getMenu();
+        final TethysUIScrollMenu<TethysUIGenericWrapper> myMenu = theNewButton.getMenu();
         myMenu.removeAllItems();
 
         /* Loop through the missing classes */
         for (S myValue : theStatic.getMissingClasses()) {
             /* Create a new MenuItem and add it to the popUp */
-            myMenu.addItem(new TethysGenericWrapper(myValue));
+            myMenu.addItem(new TethysUIGenericWrapper(myValue));
         }
     }
 
