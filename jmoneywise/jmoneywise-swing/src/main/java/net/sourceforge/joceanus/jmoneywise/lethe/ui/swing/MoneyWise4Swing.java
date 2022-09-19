@@ -16,60 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
 
 /**
  * MoneyWise Swing StartUp.
  */
-public final class MoneyWise4Swing {
+public final class MoneyWise4Swing
+        extends TethysUISwingLaunch {
     /**
-     * Logger.
+     * launch program.
+     *
+     * @param pArgs the arguments
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWise4Swing.class);
-
-    /**
-     * Private constructor.
-     */
-    private MoneyWise4Swing() {
-    }
-
-    /**
-     * Create and show the GUI.
-     * @param pState the program state
-     */
-    private static void createAndShowGUI(final MetisSwingState pState) {
-        try {
-            /* Create the main panel */
-            pState.createMain();
-
-        } catch (OceanusException e) {
-            LOGGER.error("createMain didn't complete successfully", e);
-        }
-    }
-
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        try {
-            /* Create a timer */
-            final MetisSwingState myState = new MetisSwingState(new MoneyWiseApp());
-
-            /* Create the splash */
-            myState.createSplash();
-
-            /* Build the GUI */
-            SwingUtilities.invokeLater(() -> createAndShowGUI(myState));
-
-        } catch (OceanusException e) {
-            LOGGER.error("main didn't complete successfully", e);
-        }
+    public static void main(final String[] pArgs) {
+        launch(new MoneyWiseApp());
     }
 }

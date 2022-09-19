@@ -16,51 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.javafx;
 
-import javafx.application.Preloader;
-import javafx.stage.Stage;
-import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXPreLoader;
 
 /**
  * MoneyWise javaFX preLoader.
  */
 public class MoneyWiseFXpreLoader
-        extends Preloader {
-    /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseFXpreLoader.class);
-
-    /**
-     * javaFXState.
-     */
-    private MetisFXState theState;
-
+        extends TethysUIFXPreLoader {
     @Override
-    public void init() {
-        /* Protect against exceptions */
-        try {
-            /* Access program info */
-            theState = new MetisFXState(new MoneyWiseApp());
-
-            /* Create a splash panel */
-            theState.createSplash();
-
-        } catch (OceanusException e) {
-            LOGGER.error("createSplash didn't complete successfully", e);
-        }
-    }
-
-    @Override
-    public void start(final Stage pStage) {
-        theState.startPreLoader(pStage);
-    }
-
-    @Override
-    public void handleStateChangeNotification(final StateChangeNotification pEvent) {
-        theState.handleStateChangeNotification(pEvent);
+    protected TethysUILaunchProgram getProgramInfo() {
+        return new MoneyWiseApp();
     }
 }
