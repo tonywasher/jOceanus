@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jprometheus.service.sheet;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 

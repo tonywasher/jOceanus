@@ -31,8 +31,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 

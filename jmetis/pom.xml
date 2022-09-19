@@ -11,8 +11,6 @@
   <packaging>pom</packaging>
   <modules>
     <module>jmetis-core</module>
-    <module>jmetis-javafx</module>
-    <module>jmetis-swing</module>
   </modules>
   <properties>
     <scmComponent>jmetis</scmComponent>

@@ -18,12 +18,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Security Price List.
@@ -120,13 +119,10 @@ public class QIFSecurityPrices
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatPrices(final TethysDataFormatter pFormatter,
+    protected void formatPrices(final TethysUIDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Loop through the prices */
-        final Iterator<QIFPrice> myIterator = thePrices.iterator();
-        while (myIterator.hasNext()) {
-            final QIFPrice myPrice = myIterator.next();
-
+        for (QIFPrice myPrice : thePrices) {
             /* Format Item Type header */
             QIFRecord.formatItemType(QIFPrice.QIF_ITEM, pBuilder);
 

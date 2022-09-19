@@ -95,7 +95,7 @@ public class MoneyWiseThreadWriteQIF
         final File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
 
         /* Create the Writer */
-        final QIFWriter myQWriter = new QIFWriter(pManager, myQFile);
+        final QIFWriter myQWriter = new QIFWriter(theView.getGuiFactory(), pManager, myQFile);
 
         /* Protect against exceptions */
         boolean writeFailed = false;
@@ -115,7 +115,7 @@ public class MoneyWiseThreadWriteQIF
         }
 
         /* Create the Parser */
-        final QIFParser myQParser = new QIFParser(myQFile.getFileType());
+        final QIFParser myQParser = new QIFParser(theView.getGuiFactory(), myQFile.getFileType());
 
         /* Protect against exceptions */
         try (FileInputStream myInput = new FileInputStream(myOutFile);

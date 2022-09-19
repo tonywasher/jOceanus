@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;

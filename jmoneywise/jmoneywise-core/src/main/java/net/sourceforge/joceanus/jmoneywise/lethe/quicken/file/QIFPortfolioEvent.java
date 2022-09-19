@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a QIF Portfolio Event record.
@@ -99,7 +99,7 @@ public class QIFPortfolioEvent
      * @param pLines the data lines
      */
     protected QIFPortfolioEvent(final QIFFile pFile,
-                                final TethysDataFormatter pFormatter,
+                                final TethysUIDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QPortfolioLineType.class);
@@ -114,10 +114,7 @@ public class QIFPortfolioEvent
         final TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
-        final Iterator<String> myIterator = pLines.iterator();
-        while (myIterator.hasNext()) {
-            final String myLine = myIterator.next();
-
+        for (String myLine : pLines) {
             /* Determine the category */
             final QPortfolioLineType myType = QPortfolioLineType.parseLine(myLine);
             if (myType != null) {
@@ -387,7 +384,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Date line.
      */
-    public class QIFPortfolioDateLine
+    public static class QIFPortfolioDateLine
             extends QIFDateLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -407,7 +404,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Comment line.
      */
-    public class QIFPortfolioCommentLine
+    public static class QIFPortfolioCommentLine
             extends QIFStringLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -435,7 +432,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Cleared line.
      */
-    public class QIFPortfolioClearedLine
+    public static class QIFPortfolioClearedLine
             extends QIFClearedLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -455,7 +452,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Amount line.
      */
-    public class QIFPortfolioAmountLine
+    public static class QIFPortfolioAmountLine
             extends QIFMoneyLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -483,7 +480,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Commission line.
      */
-    public class QIFPortfolioCommissionLine
+    public static class QIFPortfolioCommissionLine
             extends QIFMoneyLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -511,7 +508,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Price line.
      */
-    public class QIFPortfolioPriceLine
+    public static class QIFPortfolioPriceLine
             extends QIFPriceLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -531,7 +528,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Quantity line.
      */
-    public class QIFPortfolioQuantityLine
+    public static class QIFPortfolioQuantityLine
             extends QIFUnitsLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -551,7 +548,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Split Ratio line.
      */
-    public class QIFPortfolioSplitRatioLine
+    public static class QIFPortfolioSplitRatioLine
             extends QIFRatioLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -601,7 +598,7 @@ public class QIFPortfolioEvent
         }
 
         @Override
-        protected void formatData(final TethysDataFormatter pFormatter,
+        protected void formatData(final TethysUIDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Add the action */
             pBuilder.append(theAction.getSymbol());
@@ -611,7 +608,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Security line.
      */
-    public class QIFPortfolioSecurityLine
+    public static class QIFPortfolioSecurityLine
             extends QIFSecurityLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -631,7 +628,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Payee Account line.
      */
-    public class QIFPortfolioPayeeLine
+    public static class QIFPortfolioPayeeLine
             extends QIFPayeeLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -651,7 +648,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Payee Description line.
      */
-    public class QIFPortfolioPayeeDescLine
+    public static class QIFPortfolioPayeeDescLine
             extends QIFStringLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -671,7 +668,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Account line.
      */
-    public class QIFPortfolioAccountLine
+    public static class QIFPortfolioAccountLine
             extends QIFXferAccountLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -702,7 +699,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Category line.
      */
-    public class QIFPortfolioCategoryLine
+    public static class QIFPortfolioCategoryLine
             extends QIFCategoryLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -733,7 +730,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Category line.
      */
-    public class QIFPortfolioCategoryAccountLine
+    public static class QIFPortfolioCategoryAccountLine
             extends QIFCategoryAccountLine<QPortfolioLineType> {
         /**
          * Constructor.
@@ -768,7 +765,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Transfer Amount line.
      */
-    public class QIFPortfolioXferAmountLine
+    public static class QIFPortfolioXferAmountLine
             extends QIFMoneyLine<QPortfolioLineType> {
         /**
          * Constructor.

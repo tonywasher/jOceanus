@@ -19,7 +19,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -64,21 +65,23 @@ public class QIFWriter {
     /**
      * Data formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.
+     * @param pFactory the factory
      * @param pReport the report
      * @param pFile the QIF file.
      */
-    public QIFWriter(final TethysUIThreadStatusReport pReport,
+    public QIFWriter(final TethysUIFactory<?> pFactory,
+                     final TethysUIThreadStatusReport pReport,
                      final QIFFile pFile) {
         /* Store parameters */
         theReport = pReport;
         theFile = pFile;
 
         /* Allocate the formatter and set date format */
-        theFormatter = new TethysDataFormatter();
+        theFormatter = pFactory.newDataFormatter();
         theFormatter.setFormat(QIF_DATEFORMAT);
     }
 

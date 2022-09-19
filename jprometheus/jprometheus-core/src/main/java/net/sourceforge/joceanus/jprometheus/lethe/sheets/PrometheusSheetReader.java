@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 

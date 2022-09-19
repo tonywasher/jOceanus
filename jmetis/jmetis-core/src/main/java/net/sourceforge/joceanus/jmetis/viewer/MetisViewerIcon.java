@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 
 /**

@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 
 /**

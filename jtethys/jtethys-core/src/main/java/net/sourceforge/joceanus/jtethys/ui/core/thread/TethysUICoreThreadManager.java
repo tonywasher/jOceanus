@@ -351,7 +351,7 @@ public abstract class TethysUICoreThreadManager
      */
     public void setNewProfile(final String pTask) {
         /* Create a new profile */
-        theProfile = new TethysProfile(pTask);
+        theProfile = theFactory.getNewProfile(pTask);
 
         /* Clear errors */
         theError = null;

@@ -20,8 +20,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 

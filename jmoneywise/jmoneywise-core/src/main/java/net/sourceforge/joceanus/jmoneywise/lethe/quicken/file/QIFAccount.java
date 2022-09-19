@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QAccountLin
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a QIF Account record.
@@ -173,7 +172,7 @@ public class QIFAccount
      * @param pLines the data lines
      */
     protected QIFAccount(final QIFFile pFile,
-                         final TethysDataFormatter pFormatter,
+                         final TethysUIDataFormatter pFormatter,
                          final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QAccountLineType.class);
@@ -184,10 +183,7 @@ public class QIFAccount
         Enum<?> myClass = null;
 
         /* Loop through the lines */
-        final Iterator<String> myIterator = pLines.iterator();
-        while (myIterator.hasNext()) {
-            final String myLine = myIterator.next();
-
+        for (String myLine : pLines) {
             /* Determine the category */
             final QAccountLineType myType = QAccountLineType.parseLine(myLine);
             if (myType != null) {
@@ -286,7 +282,7 @@ public class QIFAccount
     /**
      * The Account Name line.
      */
-    public class QIFAccountNameLine
+    public static class QIFAccountNameLine
             extends QIFStringLine<QAccountLineType> {
         /**
          * Constructor.
@@ -314,7 +310,7 @@ public class QIFAccount
     /**
      * The Security Symbol line.
      */
-    public class QIFAccountDescLine
+    public static class QIFAccountDescLine
             extends QIFStringLine<QAccountLineType> {
         /**
          * Constructor.
@@ -342,7 +338,7 @@ public class QIFAccount
     /**
      * The Account Type line.
      */
-    public class QIFAccountTypeLine
+    public static class QIFAccountTypeLine
             extends QIFStringLine<QAccountLineType> {
         /**
          * The Account Category Class.
@@ -371,10 +367,7 @@ public class QIFAccount
 
             /* Loop through the map entries */
             Enum<?> myClass = null;
-            final Iterator<Entry<Enum<?>, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
-            while (myIterator.hasNext()) {
-                final Entry<Enum<?>, String> myEntry = myIterator.next();
-
+            for (Entry<Enum<?>, String> myEntry : QIF_ACTCATMAP.entrySet()) {
                 /* If we have a match */
                 if (pType.equals(myEntry.getValue())) {
                     myClass = myEntry.getKey();
@@ -408,7 +401,7 @@ public class QIFAccount
     /**
      * The Account Credit Limit line.
      */
-    public class QIFAccountLimitLine
+    public static class QIFAccountLimitLine
             extends QIFMoneyLine<QAccountLineType> {
         /**
          * Constructor.

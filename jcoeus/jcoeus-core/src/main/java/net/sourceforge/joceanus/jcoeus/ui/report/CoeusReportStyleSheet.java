@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jcoeus.ui.report;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
