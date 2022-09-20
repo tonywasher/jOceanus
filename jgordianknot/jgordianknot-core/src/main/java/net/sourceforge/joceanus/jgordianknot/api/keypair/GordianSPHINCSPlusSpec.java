@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusParameters;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 
@@ -291,6 +293,56 @@ public enum GordianSPHINCSPlusSpec {
             case HARAKA192SS: return SPHINCSPlusParameterSpec.haraka_192s_simple;
             case HARAKA256FS: return SPHINCSPlusParameterSpec.haraka_256f_simple;
             case HARAKA256SS: return SPHINCSPlusParameterSpec.haraka_256s_simple;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain SPHINCSPlus ParameterSpec.
+     * @return the parameters.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case SHA128FR:
+            case SHA128SR:
+            case SHA128FS:
+            case SHA128SS:
+                return BCObjectIdentifiers.sphincsPlus_sha_256;
+            case SHA192FR:
+            case SHA192SR:
+            case SHA256FR:
+            case SHA256SR:
+            case SHA192FS:
+            case SHA192SS:
+            case SHA256FS:
+            case SHA256SS:
+                return BCObjectIdentifiers.sphincsPlus_sha_512;
+            case SHAKE128FR:
+            case SHAKE128SR:
+            case SHAKE192FR:
+            case SHAKE192SR:
+            case SHAKE256FR:
+            case SHAKE256SR:
+            case SHAKE128FS:
+            case SHAKE128SS:
+            case SHAKE192FS:
+            case SHAKE192SS:
+            case SHAKE256FS:
+            case SHAKE256SS:
+                return BCObjectIdentifiers.sphincsPlus_shake_256;
+            case HARAKA128FR:
+            case HARAKA128SR:
+            case HARAKA192FR:
+            case HARAKA192SR:
+            case HARAKA256FR:
+            case HARAKA256SR:
+            case HARAKA128FS:
+            case HARAKA128SS:
+            case HARAKA192FS:
+            case HARAKA192SS:
+            case HARAKA256FS:
+            case HARAKA256SS:
+                return BCObjectIdentifiers.sphincsPlus_haraka;
             default: throw new IllegalArgumentException();
         }
     }

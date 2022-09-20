@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
@@ -395,9 +396,28 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.picnic(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.sphincsPlus(),
-                new AlgorithmIdentifier(BCObjectIdentifiers.sphincsPlus, DERNull.INSTANCE));
 
+        /* Add SPHINCSPlus signatures */
+        addSPHINCSPlusSignatures();
+
+        /* Add XMSS signatures */
+        addXMSSSignatures();
+    }
+
+    /**
+     * Add XMSS signatures.
+     */
+    private void addSPHINCSPlusSignatures() {
+        for(GordianSPHINCSPlusSpec mySpec : GordianSPHINCSPlusSpec.values()) {
+            addToMaps(GordianSignatureSpec.sphincsPlus(), GordianKeyPairSpec.sphincsPlus(mySpec),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add XMSS signatures.
+     */
+    private void addXMSSSignatures() {
         /* List XMSS Sha256 signatures */
         for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA256)) {
             /* If this is an XMSSMT spec */
