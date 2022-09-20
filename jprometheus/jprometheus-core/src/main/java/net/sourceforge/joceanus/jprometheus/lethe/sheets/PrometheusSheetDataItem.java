@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -55,7 +55,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     /**
      * The report.
      */
-    private final TethysThreadStatusReport theReport;
+    private final TethysUIThreadStatusReport theReport;
 
     /**
      * The input sheet.

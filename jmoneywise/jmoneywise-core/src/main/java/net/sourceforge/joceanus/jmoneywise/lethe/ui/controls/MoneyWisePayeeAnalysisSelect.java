@@ -29,14 +29,15 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Payee Analysis Selection.
@@ -56,17 +57,17 @@ public class MoneyWisePayeeAnalysisSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<PayeeBucket> theButton;
+    private final TethysUIScrollButtonManager<PayeeBucket> theButton;
 
     /**
      * Payee menu.
      */
-    private final TethysScrollMenu<PayeeBucket> thePayeeMenu;
+    private final TethysUIScrollMenu<PayeeBucket> thePayeeMenu;
 
     /**
      * The active payee bucket list.
@@ -87,18 +88,18 @@ public class MoneyWisePayeeAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWisePayeeAnalysisSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWisePayeeAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the button */
-        theButton = pFactory.newScrollButton(PayeeBucket.class);
+        theButton = pFactory.buttonFactory().newScrollButton(PayeeBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the label */
-        final TethysLabel myLabel = pFactory.newLabel(NLS_PAYEE + TethysLabel.STR_COLON);
+        final TethysUILabel myLabel = pFactory.controlFactory().newLabel(NLS_PAYEE + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myLabel);
         thePanel.addNode(theButton);
@@ -111,19 +112,14 @@ public class MoneyWisePayeeAnalysisSelect
         thePayeeMenu = theButton.getMenu();
 
         /* Create the listeners */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewPayee());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPayee());
         theButton.setMenuConfigurator(e -> buildPayeeMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -231,7 +227,7 @@ public class MoneyWisePayeeAnalysisSelect
         thePayeeMenu.removeAllItems();
 
         /* Record active item */
-        TethysScrollMenuItem<PayeeBucket> myActive = null;
+        TethysUIScrollItem<PayeeBucket> myActive = null;
         final PayeeBucket myCurr = theState.getPayee();
 
         /* Loop through the available payee values */
@@ -240,7 +236,7 @@ public class MoneyWisePayeeAnalysisSelect
             final PayeeBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<PayeeBucket> myItem = thePayeeMenu.addItem(myBucket);
+            final TethysUIScrollItem<PayeeBucket> myItem = thePayeeMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {

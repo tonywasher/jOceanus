@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Tax Due Bucket.
@@ -193,7 +193,7 @@ public class MoneyWiseTaxDueBucket
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
@@ -283,7 +283,7 @@ public class MoneyWiseTaxDueBucket
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return toString();
         }
 

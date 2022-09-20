@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Class to parse a QIFFile.
@@ -36,7 +37,7 @@ public class QIFParser {
     /**
      * Data formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Record mode.
@@ -55,14 +56,16 @@ public class QIFParser {
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      * @param pFileType the QIF file type.
      */
-    public QIFParser(final QIFType pFileType) {
+    public QIFParser(final TethysUIFactory<?> pFactory,
+                     final QIFType pFileType) {
         /* Create new file */
         theFile = new QIFFile(pFileType);
 
         /* Allocate the formatter and set date format */
-        theFormatter = new TethysDataFormatter();
+        theFormatter = pFactory.newDataFormatter();
         theFormatter.setFormat(QIFWriter.QIF_DATEFORMAT);
     }
 

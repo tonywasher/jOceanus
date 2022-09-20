@@ -40,9 +40,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Security Table.
@@ -86,8 +86,8 @@ public class MoneyWiseSecurityTable
         thePriceEntry = getUpdateSet().registerType(MoneyWiseDataType.SECURITYPRICE);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Security> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Security> myTable = getTable();
 
         /* Create a security panel */
         theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pUpdateSet, pError);
@@ -198,21 +198,21 @@ public class MoneyWiseSecurityTable
 
     @Override
     protected void buildCategoryMenu(final Security pSecurity,
-                                     final TethysScrollMenu<SecurityType> pMenu) {
+                                     final TethysUIScrollMenu<SecurityType> pMenu) {
         /* Build the menu */
         theActiveSecurity.buildSecTypeMenu(pMenu, pSecurity);
     }
 
     @Override
     protected void buildParentMenu(final Security pSecurity,
-                                   final TethysScrollMenu<Payee> pMenu) {
+                                   final TethysUIScrollMenu<Payee> pMenu) {
         /* Build the menu */
         theActiveSecurity.buildParentMenu(pMenu, pSecurity);
     }
 
     @Override
     protected void buildCurrencyMenu(final Security pSecurity,
-                                     final TethysScrollMenu<AssetCurrency> pMenu) {
+                                     final TethysUIScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveSecurity.buildCurrencyMenu(pMenu, pSecurity);
     }

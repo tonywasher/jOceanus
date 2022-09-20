@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Data Version Control.
@@ -217,7 +217,7 @@ public class MetisFieldVersionedItem
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 

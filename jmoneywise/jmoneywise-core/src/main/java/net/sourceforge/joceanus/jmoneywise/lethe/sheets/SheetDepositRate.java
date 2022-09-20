@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
 
 /**
  * SheetDataItem extension for AccountRate.
@@ -125,7 +125,7 @@ public class SheetDepositRate
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final TethysThreadStatusReport pReport,
+    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
@@ -140,7 +140,7 @@ public class SheetDepositRate
             }
 
             /* Handle exceptions */
-        } catch (TethysThreadCancelException e) {
+        } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to Load " + MoneyWiseDataType.DEPOSITRATE.getListName(), e);
@@ -154,7 +154,7 @@ public class SheetDepositRate
      * @param pView the view to load from
      * @throws OceanusException on error
      */
-    protected static void loadArchiveRows(final TethysThreadStatusReport pReport,
+    protected static void loadArchiveRows(final TethysUIThreadStatusReport pReport,
                                           final MoneyWiseData pData,
                                           final PrometheusSheetView pView) throws OceanusException {
         /* Access the list of rates */

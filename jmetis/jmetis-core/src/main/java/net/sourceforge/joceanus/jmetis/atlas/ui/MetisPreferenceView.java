@@ -27,20 +27,21 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,7 +51,7 @@ import java.util.List;
  * Panel for editing preference Sets.
  */
 public class MetisPreferenceView
-        implements TethysEventProvider<MetisPreferenceEvent>, TethysComponent {
+        implements TethysEventProvider<MetisPreferenceEvent>, TethysUIComponent {
     /**
      * Text for OK.
      */
@@ -94,42 +95,32 @@ public class MetisPreferenceView
     /**
      * The GUI factory.
      */
-    private final TethysGuiFactory theGuiFactory;
+    private final TethysUIFactory<?> theGuiFactory;
 
     /**
      * The Border Pane.
      */
-    private final TethysBorderPaneManager thePane;
+    private final TethysUIBorderPaneManager thePane;
 
     /**
      * The selection button.
      */
-    private final TethysScrollButtonManager<TethysGenericWrapper> theSelectButton;
+    private final TethysUIScrollButtonManager<TethysUIGenericWrapper> theSelectButton;
 
     /**
      * Preference menu.
      */
-    private final TethysScrollMenu<TethysGenericWrapper> thePrefMenu;
+    private final TethysUIScrollMenu<TethysUIGenericWrapper> thePrefMenu;
 
     /**
      * The Properties Pane.
      */
-    private final TethysCardPaneManager<MetisPreferenceSetView<?>> theProperties;
+    private final TethysUICardPaneManager<MetisPreferenceSetView<?>> theProperties;
 
     /**
      * The Buttons Pane.
      */
-    private final TethysBoxPaneManager theButtons;
-
-    /**
-     * The OK button.
-     */
-    private final TethysButton theOKButton;
-
-    /**
-     * The reset button.
-     */
-    private final TethysButton theResetButton;
+    private final TethysUIBoxPaneManager theButtons;
 
     /**
      * The list of views.
@@ -141,7 +132,7 @@ public class MetisPreferenceView
      * @param pFactory the GUI factory
      * @param pPreferenceMgr the preference manager
      */
-    public MetisPreferenceView(final TethysGuiFactory pFactory,
+    public MetisPreferenceView(final TethysUIFactory<?> pFactory,
                                final MetisPreferenceManager pPreferenceMgr) {
         /* Store parameters */
         theGuiFactory = pFactory;
@@ -150,28 +141,30 @@ public class MetisPreferenceView
         theEventManager = new TethysEventManager<>();
 
         /* Create the buttons */
-        theOKButton = theGuiFactory.newButton();
-        theOKButton.setTextOnly();
-        theOKButton.setText(NLS_OK);
-        theResetButton = theGuiFactory.newButton();
-        theResetButton.setTextOnly();
-        theResetButton.setText(NLS_RESET);
+        final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
+        final TethysUIButton myOKButton = myButtons.newButton();
+        myOKButton.setTextOnly();
+        myOKButton.setText(NLS_OK);
+        final TethysUIButton myResetButton = myButtons.newButton();
+        myResetButton.setTextOnly();
+        myResetButton.setText(NLS_RESET);
 
         /* Add Listeners */
-        theOKButton.getEventRegistrar().addEventListener(e -> saveUpdates());
-        theResetButton.getEventRegistrar().addEventListener(e -> resetUpdates());
+        myOKButton.getEventRegistrar().addEventListener(e -> saveUpdates());
+        myResetButton.getEventRegistrar().addEventListener(e -> resetUpdates());
 
         /* Create the buttons box */
-        theButtons = theGuiFactory.newHBoxPane();
+        final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
+        theButtons = myPanes.newHBoxPane();
         theButtons.setBorderTitle(NLS_SAVE);
         theButtons.addSpacer();
-        theButtons.addNode(theOKButton);
+        theButtons.addNode(myOKButton);
         theButtons.addSpacer();
-        theButtons.addNode(theResetButton);
+        theButtons.addNode(myResetButton);
         theButtons.addSpacer();
 
         /* Create the properties pane */
-        theProperties = theGuiFactory.newCardPane();
+        theProperties = myPanes.newCardPane();
 
         /* Create the view list */
         theViews = new ArrayList<>();
@@ -186,12 +179,12 @@ public class MetisPreferenceView
         pPreferenceMgr.getEventRegistrar().addEventListener(this::handleNewPropertySet);
 
         /* Create selection button and label */
-        final TethysLabel myLabel = theGuiFactory.newLabel(NLS_SET);
-        theSelectButton = pFactory.newScrollButton(TethysGenericWrapper.class);
+        final TethysUILabel myLabel = theGuiFactory.controlFactory().newLabel(NLS_SET);
+        theSelectButton = myButtons.newScrollButton(TethysUIGenericWrapper.class);
         thePrefMenu = theSelectButton.getMenu();
 
         /* Create the selection panel */
-        final TethysBoxPaneManager mySelection = theGuiFactory.newHBoxPane();
+        final TethysUIBoxPaneManager mySelection = myPanes.newHBoxPane();
         mySelection.setBorderTitle(NLS_SELECT);
 
         /* Create the layout for the selection panel */
@@ -200,16 +193,16 @@ public class MetisPreferenceView
         mySelection.addSpacer();
 
         /* Set listeners */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handlePropertySetSelect());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePropertySetSelect());
         theSelectButton.setMenuConfigurator(c -> buildPreferenceMenu());
 
         /* Create a new Scroll Pane and add the card to it */
-        final TethysScrollPaneManager myScrollPane = theGuiFactory.newScrollPane();
+        final TethysUIScrollPaneManager myScrollPane = myPanes.newScrollPane();
         myScrollPane.setContent(theProperties);
 
         /* Create the border pane */
-        thePane = theGuiFactory.newBorderPane();
+        thePane = myPanes.newBorderPane();
         thePane.setNorth(mySelection);
         thePane.setCentre(myScrollPane);
         thePane.setSouth(theButtons);
@@ -220,23 +213,8 @@ public class MetisPreferenceView
     }
 
     @Override
-    public Integer getId() {
-        return thePane.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePane.getNode();
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePane.setVisible(pVisible);
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePane.setEnabled(pEnabled);
+    public TethysUIComponent getUnderlying() {
+        return thePane;
     }
 
     @Override
@@ -370,7 +348,7 @@ public class MetisPreferenceView
      */
     private void setSelectText() {
         /* Show selection text */
-        theSelectButton.setValue(new TethysGenericWrapper(theProperties.getActiveCard()));
+        theSelectButton.setValue(new TethysUIGenericWrapper(theProperties.getActiveCard()));
     }
 
     /**
@@ -381,16 +359,13 @@ public class MetisPreferenceView
         thePrefMenu.removeAllItems();
 
         /* Record active item */
-        TethysScrollMenuItem<?> myActive = null;
+        TethysUIScrollItem<?> myActive = null;
         final String myActiveName = theProperties.getActiveName();
 
         /* Loop through the views */
-        final Iterator<MetisPreferenceSetView<?>> myIterator = theViews.iterator();
-        while (myIterator.hasNext()) {
-            final MetisPreferenceSetView<?> myView = myIterator.next();
-
+        for (MetisPreferenceSetView<?> myView : theViews) {
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(new TethysGenericWrapper(myView));
+            final TethysUIScrollItem<?> myItem = thePrefMenu.addItem(new TethysUIGenericWrapper(myView));
 
             /* If this is the active panel */
             if (myView.toString().equals(myActiveName)) {

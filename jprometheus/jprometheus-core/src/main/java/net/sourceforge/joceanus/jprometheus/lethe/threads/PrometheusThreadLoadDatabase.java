@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to load data from the database.
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysThread<T> {
+        implements TethysUIThread<T> {
     /**
      * Data control.
      */
@@ -49,7 +49,7 @@ public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enu
     }
 
     @Override
-    public T performTask(final TethysThreadManager pManager) throws OceanusException {
+    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access database */
         final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 

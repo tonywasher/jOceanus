@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * LoaderThread extension to create an XML backup.
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
  * @param <E> the Data list type
  */
 public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysThread<Void> {
+        implements TethysUIThread<Void> {
     /**
      * Buffer length.
      */
@@ -85,7 +85,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();

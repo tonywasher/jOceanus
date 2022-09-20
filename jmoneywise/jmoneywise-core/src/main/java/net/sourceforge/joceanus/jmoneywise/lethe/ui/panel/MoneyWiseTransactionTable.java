@@ -60,14 +60,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Transaction Table.
@@ -92,7 +92,7 @@ public class MoneyWiseTransactionTable
     /**
      * The new button.
      */
-    private final TethysButton theNewButton;
+    private final TethysUIButton theNewButton;
 
     /**
      * Analysis View.
@@ -169,11 +169,11 @@ public class MoneyWiseTransactionTable
         theViewerFilter = pFilter;
 
         /* Access gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
 
         /* Create new button */
-        theNewButton = myGuiFactory.newButton();
+        theNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(theNewButton);
 
         /* Create the Analysis View */
@@ -225,7 +225,7 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setCategory, r, v));
 
         /* Create the direction column */
-        final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
+        final Map<Boolean, TethysUIIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(myGuiFactory);
         myTable.declareIconColumn(MoneyWiseTransDataId.DIRECTION, AssetDirection.class)
                .setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)))
                .setCellValueFactory(this::getFilteredDirection)
@@ -244,7 +244,7 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(Transaction::setPartner, r, v));
 
         /* Create the reconciled column */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton(myGuiFactory);
         myTable.declareIconColumn(MoneyWiseTransDataId.RECONCILED, Boolean.class)
                .setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)))
                .setCellValueFactory(Transaction::isReconciled)
@@ -388,7 +388,7 @@ public class MoneyWiseTransactionTable
                .setColumnWidth(WIDTH_MONEY);
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(this::getFilteredAction)
@@ -782,7 +782,7 @@ public class MoneyWiseTransactionTable
      * @param pMenu the menu to build
      */
     private void buildAccountMenu(final Transaction pTrans,
-                                  final TethysScrollMenu<TransactionAsset> pMenu) {
+                                  final TethysUIScrollMenu<TransactionAsset> pMenu) {
         /* Build the menu */
         theActiveTran.buildAccountMenu(pMenu, pTrans);
     }
@@ -793,7 +793,7 @@ public class MoneyWiseTransactionTable
      * @param pMenu the menu to build
      */
     private void buildPartnerMenu(final Transaction pTrans,
-                                  final TethysScrollMenu<TransactionAsset> pMenu) {
+                                  final TethysUIScrollMenu<TransactionAsset> pMenu) {
         /* Build the menu */
         theActiveTran.buildPartnerMenu(pMenu, pTrans);
     }
@@ -804,7 +804,7 @@ public class MoneyWiseTransactionTable
      * @param pMenu the menu to build
      */
     private void buildCategoryMenu(final Transaction pTrans,
-                                   final TethysScrollMenu<TransactionCategory> pMenu) {
+                                   final TethysUIScrollMenu<TransactionCategory> pMenu) {
         /* Build the menu */
         theActiveTran.buildCategoryMenu(pMenu, pTrans);
     }
@@ -815,7 +815,7 @@ public class MoneyWiseTransactionTable
      * @param pMenu the menu to build
      */
     private void buildReturnedMenu(final Transaction pTrans,
-                                   final TethysScrollMenu<TransactionAsset> pMenu) {
+                                   final TethysUIScrollMenu<TransactionAsset> pMenu) {
         /* Build the menu */
         theActiveTran.buildReturnedAccountMenu(pMenu, pTrans);
     }
@@ -857,7 +857,7 @@ public class MoneyWiseTransactionTable
         }
 
         /* Hide all columns */
-        final TethysTableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
         hideAllColumns();
 
         /* Switch on column set */
@@ -931,7 +931,7 @@ public class MoneyWiseTransactionTable
      * Hide all columns.
      */
     private void hideAllColumns() {
-        final TethysTableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, Transaction> myTable = getTable();
         myTable.getColumn(MoneyWiseTransDataId.DEBIT).setVisible(false);
         myTable.getColumn(MoneyWiseTransDataId.CREDIT).setVisible(false);
         myTable.getColumn(MoneyWiseTransDataId.BALANCE).setVisible(false);
@@ -979,7 +979,7 @@ public class MoneyWiseTransactionTable
      * Transaction Panel.
      */
     public static class MoneyWiseStatementPanel
-            implements TethysComponent, TethysEventProvider<PrometheusDataEvent> {
+            implements TethysUIComponent, TethysEventProvider<PrometheusDataEvent> {
         /**
          * Text for DataEntry Title.
          */
@@ -1023,7 +1023,7 @@ public class MoneyWiseTransactionTable
         /**
          * The panel.
          */
-        private final TethysBorderPaneManager thePanel;
+        private final TethysUIBorderPaneManager thePanel;
 
         /**
          * Constructor.
@@ -1052,16 +1052,17 @@ public class MoneyWiseTransactionTable
             theTable = new MoneyWiseTransactionTable(pView, theUpdateSet, theError, myViewerFilter, theViewerAnalysis);
 
             /* Create the action buttons */
-            final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
+            final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
             /* Create the header panel */
-            final TethysBorderPaneManager myHeader = myGuiFactory.newBorderPane();
+            final TethysUIPaneFactory myPanes = myGuiFactory.paneFactory();
+            final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();
             myHeader.setCentre(theTable.getSelect());
             myHeader.setNorth(theError);
             myHeader.setEast(theTable.getActionButtons());
 
             /* Create the panel */
-            thePanel = myGuiFactory.newBorderPane();
+            thePanel = myPanes.newBorderPane();
             thePanel.setNorth(myHeader);
             thePanel.setCentre(theTable);
 
@@ -1073,13 +1074,8 @@ public class MoneyWiseTransactionTable
         }
 
         @Override
-        public Integer getId() {
-            return thePanel.getId();
-        }
-
-        @Override
-        public TethysNode getNode() {
-            return thePanel.getNode();
+        public TethysUIComponent getUnderlying() {
+            return thePanel;
         }
 
         @Override

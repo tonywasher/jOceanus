@@ -24,7 +24,6 @@ module net.sourceforge.joceanus.jthemis.javafx {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jmetis.javafx;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jtethys.javafx;
     requires net.sourceforge.joceanus.jthemis.core;

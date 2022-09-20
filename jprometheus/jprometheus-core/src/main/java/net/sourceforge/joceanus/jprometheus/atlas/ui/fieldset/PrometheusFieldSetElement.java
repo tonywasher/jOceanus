@@ -18,13 +18,13 @@
 package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 
 /**
  * FieldSet Element.
@@ -39,17 +39,17 @@ public class PrometheusFieldSetElement<V> {
     /**
      * The label.
      */
-    private final TethysLabel theLabel;
+    private final TethysUILabel theLabel;
 
     /**
      * The editField.
      */
-    private final TethysDataEditField<V> theField;
+    private final TethysUIDataEditField<V> theField;
 
     /**
      * The element.
      */
-    private final TethysBorderPaneManager theElement;
+    private final TethysUIBorderPaneManager theElement;
 
     /**
      * Is the panel visible?.
@@ -63,19 +63,19 @@ public class PrometheusFieldSetElement<V> {
      * @param pFieldId the fieldId
      * @param pField   the field
      */
-    PrometheusFieldSetElement(final TethysGuiFactory pFactory,
+    PrometheusFieldSetElement(final TethysUIFactory<?> pFactory,
                               final PrometheusDataFieldId pFieldId,
-                              final TethysDataEditField<V> pField) {
+                              final TethysUIDataEditField<V> pField) {
         /* Store field and id */
         theFieldId = pFieldId;
         theField = pField;
 
         /* Create the label */
-        theLabel = pFactory.newLabel(theFieldId.toString() + ":");
-        theLabel.setAlignment(TethysAlignment.EAST);
+        theLabel = pFactory.controlFactory().newLabel(theFieldId.toString() + ":");
+        theLabel.setAlignment(TethysUIAlignment.EAST);
 
         /* Create the element */
-        theElement = pFactory.newBorderPane();
+        theElement = pFactory.paneFactory().newBorderPane();
         theElement.setWest(theLabel);
         theElement.setCentre(theField);
         isVisible = true;
@@ -95,7 +95,7 @@ public class PrometheusFieldSetElement<V> {
      *
      * @return the component
      */
-    TethysComponent getComponent() {
+    TethysUIComponent getComponent() {
         return theElement;
     }
 
@@ -178,7 +178,7 @@ public class PrometheusFieldSetElement<V> {
      * @param pChanged is the field changed?
      */
     void adjustChanged(final boolean pChanged) {
-        theField.setTheAttributeState(TethysFieldAttribute.CHANGED, pChanged);
+        theField.setTheAttributeState(TethysUIFieldAttribute.CHANGED, pChanged);
         theField.adjustField();
     }
 }

@@ -111,6 +111,81 @@ public final class TethysUIValueKey {
     public static final String FONT_NUMERIC = STYLE_FONT + "-numeric";
 
     /**
+     * Standard colour default.
+     */
+    public static final String DEFAULT_COLOR_STANDARD = "#000000";
+
+    /**
+     * Error colour default.
+     */
+    public static final String DEFAULT_COLOR_ERROR = "#ff0000";
+
+    /**
+     * Background colour default.
+     */
+    public static final String DEFAULT_COLOR_BACKGROUND = "#f5f5f5";
+
+    /**
+     * Disabled colour default.
+     */
+    public static final String DEFAULT_COLOR_DISABLED = "#778899";
+
+    /**
+     * Zebra colour default.
+     */
+    public static final String DEFAULT_COLOR_ZEBRA = "#e3e4fa";
+
+    /**
+     * Changed colour default.
+     */
+    public static final String DEFAULT_COLOR_CHANGED = "#8b008b";
+
+    /**
+     * Progress colour default.
+     */
+    public static final String DEFAULT_COLOR_PROGRESS = "#32cd32";
+
+    /**
+     * Link colour default.
+     */
+    public static final String DEFAULT_COLOR_LINK = "#c71585";
+
+    /**
+     * Value colour default.
+     */
+    public static final String DEFAULT_COLOR_VALUE = "#0000ff";
+
+    /**
+     * Negative colour default.
+     */
+    public static final String DEFAULT_COLOR_NEGATIVE = "#b22222";
+
+    /**
+     * Security colour default.
+     */
+    public static final String DEFAULT_COLOR_SECURITY = "#daa520";
+
+    /**
+     * Header colour default.
+     */
+    public static final String DEFAULT_COLOR_HEADER = "#0000cd";
+
+    /**
+     * Standard Font default.
+     */
+    public static final String DEFAULT_FONT_STANDARD = "Arial";
+
+    /**
+     * Numeric Font default.
+     */
+    public static final String DEFAULT_FONT_NUMERIC = "Courier";
+
+    /**
+     * Font Pitch default.
+     */
+    public static final String DEFAULT_FONT_PITCH = "12";
+
+    /**
      * Private constructor.
      */
     private TethysUIValueKey() {

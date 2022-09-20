@@ -29,14 +29,15 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * TransactionTag Selection.
@@ -56,17 +57,17 @@ public class MoneyWiseTransactionTagSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The tag button.
      */
-    private final TethysScrollButtonManager<TransactionTagBucket> theTagButton;
+    private final TethysUIScrollButtonManager<TransactionTagBucket> theTagButton;
 
     /**
      * Tag menu.
      */
-    private final TethysScrollMenu<TransactionTagBucket> theTagMenu;
+    private final TethysUIScrollMenu<TransactionTagBucket> theTagMenu;
 
     /**
      * The active transaction tag list.
@@ -87,18 +88,18 @@ public class MoneyWiseTransactionTagSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTransactionTagSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseTransactionTagSelect(final TethysUIFactory<?> pFactory) {
         /* Create the tags button */
-        theTagButton = pFactory.newScrollButton(TransactionTagBucket.class);
+        theTagButton = pFactory.buttonFactory().newScrollButton(TransactionTagBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Create the label */
-        final TethysLabel myTagLabel = pFactory.newLabel(NLS_TAG + TethysLabel.STR_COLON);
+        final TethysUILabel myTagLabel = pFactory.controlFactory().newLabel(NLS_TAG + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myTagLabel);
         thePanel.addNode(theTagButton);
@@ -108,20 +109,15 @@ public class MoneyWiseTransactionTagSelect
         theState.applyState();
 
         /* Create the listener */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theTagButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewTag());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
         theTagButton.setMenuConfigurator(e -> buildTagMenu());
         theTagMenu = theTagButton.getMenu();
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -222,15 +218,15 @@ public class MoneyWiseTransactionTagSelect
 
         /* Record active item */
         final TransactionTagBucket myCurrent = theState.getTag();
-        TethysScrollMenuItem<TransactionTagBucket> myActive = null;
+        TethysUIScrollItem<TransactionTagBucket> myActive = null;
 
         /* Loop through the available tag values */
         final Iterator<TransactionTagBucket> myIterator = theTags.iterator();
         while (myIterator.hasNext()) {
             final TransactionTagBucket myTag = myIterator.next();
 
-            /* Create a new JMenuItem and add it to the popUp */
-            final TethysScrollMenuItem<TransactionTagBucket> myItem = theTagMenu.addItem(myTag);
+            /* Create a new MenuItem and add it to the popUp */
+            final TethysUIScrollItem<TransactionTagBucket> myItem = theTagMenu.addItem(myTag);
 
             /* If this is the active category */
             if (myTag.equals(myCurrent)) {

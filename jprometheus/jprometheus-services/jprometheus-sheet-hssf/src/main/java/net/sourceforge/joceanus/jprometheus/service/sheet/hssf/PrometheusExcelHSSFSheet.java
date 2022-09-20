@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetFormats
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing an Excel sheet within a workBook.
@@ -104,7 +104,7 @@ public class PrometheusExcelHSSFSheet
      * Obtain the data formatter.
      * @return the formatter
      */
-    protected TethysDataFormatter getDataFormatter() {
+    protected TethysUIDataFormatter getDataFormatter() {
         return theExcelBook.getDataFormatter();
     }
 

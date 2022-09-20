@@ -22,21 +22,21 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGenericWrapper;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Item Action buttons.
  * @param <G> the goto id type
  */
 public class PrometheusItemActions<G extends Enum<G>>
-        implements TethysEventProvider<PrometheusUIEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
      * The Border padding.
      */
@@ -55,29 +55,29 @@ public class PrometheusItemActions<G extends Enum<G>>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The GoTo button.
      */
-    private final TethysScrollButtonManager<TethysGenericWrapper> theGoToButton;
+    private final TethysUIScrollButtonManager<TethysUIGenericWrapper> theGoToButton;
 
     /**
      * The Edit button.
      */
-    private final TethysButton theEditButton;
+    private final TethysUIButton theEditButton;
 
     /**
      * The Delete button.
      */
-    private final TethysButton theDeleteButton;
+    private final TethysUIButton theDeleteButton;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    public PrometheusItemActions(final TethysGuiFactory pFactory,
+    public PrometheusItemActions(final TethysUIFactory<?> pFactory,
                                  final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
@@ -86,9 +86,10 @@ public class PrometheusItemActions<G extends Enum<G>>
         theEventManager = new TethysEventManager<>();
 
         /* Create the buttons */
-        theGoToButton = pFactory.newScrollButton(TethysGenericWrapper.class);
-        theEditButton = pFactory.newButton();
-        theDeleteButton = pFactory.newButton();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theGoToButton = myButtons.newScrollButton(TethysUIGenericWrapper.class);
+        theEditButton = myButtons.newButton();
+        theDeleteButton = myButtons.newButton();
 
         /* Configure the buttons */
         PrometheusIcon.configureGoToScrollButton(theGoToButton);
@@ -96,7 +97,7 @@ public class PrometheusItemActions<G extends Enum<G>>
         MetisIcon.configureDeleteIconButton(theDeleteButton);
 
         /* Create the panel */
-        thePanel = pFactory.newVBoxPane();
+        thePanel = pFactory.paneFactory().newVBoxPane();
         thePanel.setBorderPadding(BORDER_PADDING);
 
         /* Create the layout */
@@ -105,9 +106,9 @@ public class PrometheusItemActions<G extends Enum<G>>
         thePanel.addNode(theDeleteButton);
 
         /* Add the listener for item changes */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
         theGoToButton.setMenuConfigurator(c -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue().getData()));
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue().getData()));
         theEditButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.EDIT));
         theDeleteButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.DELETE));
 
@@ -116,23 +117,13 @@ public class PrometheusItemActions<G extends Enum<G>>
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
     public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     @Override

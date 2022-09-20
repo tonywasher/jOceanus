@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Template for a Static Data item and List.
@@ -166,7 +166,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         super(pList, pValues);
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -229,7 +229,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
@@ -942,7 +942,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

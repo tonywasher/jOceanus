@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.pane;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -29,6 +30,11 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 public abstract class TethysUICoreTabPaneManager
         extends TethysUICoreComponent
         implements TethysUITabPaneManager {
+    /**
+     * The gui factory.
+     */
+    private final TethysUICoreFactory<?> theGuiFactory;
+
     /**
      * The id.
      */
@@ -59,6 +65,7 @@ public abstract class TethysUICoreTabPaneManager
      * @param pFactory the factory
      */
     protected TethysUICoreTabPaneManager(final TethysUICoreFactory<?> pFactory) {
+        theGuiFactory = pFactory;
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         isEnabled = true;
@@ -181,6 +188,11 @@ public abstract class TethysUICoreTabPaneManager
         private final String theName;
 
         /**
+         * The id of this item.
+         */
+        private final Integer theId;
+
+        /**
          * The previous sibling of this item.
          */
         private TethysUICoreTabItem thePrevSibling;
@@ -213,6 +225,9 @@ public abstract class TethysUICoreTabPaneManager
             isVisible = true;
             isEnabled = true;
 
+            /* Create id */
+            theId = pPane.theGuiFactory.getNextId();
+
             /* If the pane already has children */
             final TethysUICoreTabItem myChild = thePane.theLastChild;
             if (myChild != null) {
@@ -232,6 +247,11 @@ public abstract class TethysUICoreTabPaneManager
         @Override
         public String getName() {
             return theName;
+        }
+
+        @Override
+        public Integer getId() {
+            return theId;
         }
 
         @Override

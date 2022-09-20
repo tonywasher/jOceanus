@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Values for a bucket.
@@ -80,7 +80,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 

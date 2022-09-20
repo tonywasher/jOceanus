@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 
 /**
  * Viewer Icon IDs.
  */
-public enum MetisViewerIcon implements TethysIconId {
+public enum MetisViewerIcon
+        implements TethysUIIconId {
     /**
      * Parent.
      */

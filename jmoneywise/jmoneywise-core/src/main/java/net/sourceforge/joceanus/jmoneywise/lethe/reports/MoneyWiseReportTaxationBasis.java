@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Taxation Basis report builder.
@@ -67,7 +67,7 @@ public class MoneyWiseReportTaxationBasis
     /**
      * The Formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.

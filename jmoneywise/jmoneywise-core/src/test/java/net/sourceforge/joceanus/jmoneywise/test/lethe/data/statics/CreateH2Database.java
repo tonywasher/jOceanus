@@ -8,7 +8,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * H2 Database Create Test.
@@ -53,7 +53,7 @@ public final class CreateH2Database {
      * Report status.
      */
     public static class NullStatusReport
-            implements TethysThreadStatusReport {
+            implements TethysUIThreadStatusReport {
         /**
          * Profile.
          */

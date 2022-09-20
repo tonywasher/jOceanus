@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Cash class.
@@ -911,7 +911,7 @@ public class Cash
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

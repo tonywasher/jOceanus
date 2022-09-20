@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
-import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -33,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a QIF Event record.
@@ -108,7 +107,7 @@ public class QIFEvent
      * @param pLines the data lines
      */
     protected QIFEvent(final QIFFile pFile,
-                       final TethysDataFormatter pFormatter,
+                       final TethysUIDataFormatter pFormatter,
                        final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, QEventLineType.class);
@@ -125,10 +124,7 @@ public class QIFEvent
         final TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
-        final Iterator<String> myIterator = pLines.iterator();
-        while (myIterator.hasNext()) {
-            final String myLine = myIterator.next();
-
+        for (String myLine : pLines) {
             /* Determine the category */
             final QEventLineType myType = QEventLineType.parseLine(myLine);
             if (myType != null) {
@@ -406,7 +402,7 @@ public class QIFEvent
     /**
      * The Event Date line.
      */
-    public class QIFEventDateLine
+    public static class QIFEventDateLine
             extends QIFDateLine<QEventLineType> {
         /**
          * Constructor.
@@ -426,7 +422,7 @@ public class QIFEvent
     /**
      * The Event Reference line.
      */
-    public class QIFEventReferenceLine
+    public static class QIFEventReferenceLine
             extends QIFStringLine<QEventLineType> {
         /**
          * Constructor.
@@ -454,7 +450,7 @@ public class QIFEvent
     /**
      * The Event Comment line.
      */
-    public class QIFEventCommentLine
+    public static class QIFEventCommentLine
             extends QIFStringLine<QEventLineType> {
         /**
          * Constructor.
@@ -482,7 +478,7 @@ public class QIFEvent
     /**
      * The Event Cleared line.
      */
-    public class QIFEventClearedLine
+    public static class QIFEventClearedLine
             extends QIFClearedLine<QEventLineType> {
         /**
          * Constructor.
@@ -502,7 +498,7 @@ public class QIFEvent
     /**
      * The Event Payee Account line.
      */
-    public class QIFEventPayeeLine
+    public static class QIFEventPayeeLine
             extends QIFPayeeLine<QEventLineType> {
         /**
          * Constructor.
@@ -522,7 +518,7 @@ public class QIFEvent
     /**
      * The Event Payee Description line.
      */
-    public class QIFEventPayeeDescLine
+    public static class QIFEventPayeeDescLine
             extends QIFStringLine<QEventLineType> {
         /**
          * Constructor.
@@ -542,7 +538,7 @@ public class QIFEvent
     /**
      * The Event Amount line.
      */
-    public class QIFEventAmountLine
+    public static class QIFEventAmountLine
             extends QIFMoneyLine<QEventLineType> {
         /**
          * Constructor.
@@ -570,7 +566,7 @@ public class QIFEvent
     /**
      * The Event Account line.
      */
-    public class QIFEventAccountLine
+    public static class QIFEventAccountLine
             extends QIFXferAccountLine<QEventLineType> {
         /**
          * Constructor.
@@ -601,7 +597,7 @@ public class QIFEvent
     /**
      * The Event Category line.
      */
-    public class QIFEventCategoryLine
+    public static class QIFEventCategoryLine
             extends QIFCategoryLine<QEventLineType> {
         /**
          * Constructor.

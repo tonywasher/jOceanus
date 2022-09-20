@@ -36,7 +36,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Load control for spreadsheets.
@@ -45,9 +46,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
  */
 public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
+     * Gui Factory.
+     */
+    private final TethysUIFactory<?> theGuiFactory;
+
+    /**
      * Report.
      */
-    private final TethysThreadStatusReport theReport;
+    private final TethysUIThreadStatusReport theReport;
 
     /**
      * The password manager.
@@ -71,11 +77,14 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      * @param pReport the report
      * @param pPasswordMgr the password manager
      */
-    protected PrometheusSheetReader(final TethysThreadStatusReport pReport,
+    protected PrometheusSheetReader(final TethysUIFactory<?> pFactory,
+                                    final TethysUIThreadStatusReport pReport,
                                     final GordianPasswordManager pPasswordMgr) {
+        theGuiFactory = pFactory;
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
     }
@@ -84,7 +93,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * get report.
      * @return the report
      */
-    protected TethysThreadStatusReport getReport() {
+    protected TethysUIThreadStatusReport getReport() {
         return theReport;
     }
 
@@ -219,7 +228,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         theReport.setNewStage("Loading");
 
         /* Access the workbook from the stream */
-        theWorkBook = PrometheusSheetProvider.loadFromStream(pType, pStream);
+        theWorkBook = PrometheusSheetProvider.loadFromStream(pType, theGuiFactory, pStream);
     }
 
     /**
@@ -234,11 +243,8 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        final Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
-        while (myIterator.hasNext()) {
+        for (PrometheusSheetDataItem<?, ?> mySheet : theSheets) {
             /* Access the next sheet */
-            final PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
-
             /* Load data for the sheet */
             myTask.startTask(mySheet.toString());
             mySheet.loadSpreadSheet();

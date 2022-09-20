@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Region for a Unit Trust.
@@ -136,7 +136,7 @@ public class Region
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 

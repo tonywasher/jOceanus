@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Scheduled event.
@@ -127,7 +127,7 @@ public class Schedule
         super(pList, pValues);
 
         /* Access parsers */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
         final TethysDateFormatter myParser = myFormatter.getDateFormatter();
 
         /* Protect against exceptions */
@@ -566,7 +566,7 @@ public class Schedule
 
         /* Access data */
         final MoneyWiseData myData = getDataSet();
-        final TethysDataFormatter myFormatter = myData.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
         final FrequencyList myFreqs = myData.getFrequencys();
         final MetisValueSet myValues = getValueSet();
 

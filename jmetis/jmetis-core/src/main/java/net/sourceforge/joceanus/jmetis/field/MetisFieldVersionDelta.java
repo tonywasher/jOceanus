@@ -21,7 +21,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Set of dataValue Deltas.
@@ -76,7 +76,7 @@ public class MetisFieldVersionDelta
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         /* Initialise number of differences */
         int myNumDiffs = theOldSet.isDeletion() == theNewSet.isDeletion()
                                                                           ? 0

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Representation of an information set extension of a DataItem.
@@ -125,7 +125,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getDataFields().getName();
     }
 

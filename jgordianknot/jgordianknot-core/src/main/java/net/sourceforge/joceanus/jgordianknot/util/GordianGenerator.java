@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCoreDialo
 import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCorePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Factory generator.
@@ -97,7 +97,7 @@ public final class GordianGenerator {
      * @return the password Manager
      * @throws OceanusException on error
      */
-    public static GordianPasswordManager newPasswordManager(final TethysGuiFactory pFactory,
+    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pFactory,
                                                             final GordianFactoryType pFactoryType,
                                                             final char[] pSecurityPhrase,
                                                             final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {

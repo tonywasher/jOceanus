@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.jmoneywise.lethe.reports;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Report StyleSheets.
  */
-public enum MoneyWiseReportStyleSheet implements TethysStyleSheetId {
+public enum MoneyWiseReportStyleSheet implements TethysUIStyleSheetId {
     /**
      * Report StyleSheet.
      */

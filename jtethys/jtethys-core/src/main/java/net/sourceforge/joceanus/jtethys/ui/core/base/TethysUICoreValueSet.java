@@ -41,81 +41,6 @@ public class TethysUICoreValueSet
     private static final String VAR_TRL = "}";
 
     /**
-     * Standard colour default.
-     */
-    private static final String DEFAULT_COLOR_STANDARD = "#000000";
-
-    /**
-     * Error colour default.
-     */
-    private static final String DEFAULT_COLOR_ERROR = "#ff0000";
-
-    /**
-     * Background colour default.
-     */
-    private static final String DEFAULT_COLOR_BACKGROUND = "#f5f5f5";
-
-    /**
-     * Disabled colour default.
-     */
-    private static final String DEFAULT_COLOR_DISABLED = "#778899";
-
-    /**
-     * Zebra colour default.
-     */
-    private static final String DEFAULT_COLOR_ZEBRA = "#e3e4fa";
-
-    /**
-     * Changed colour default.
-     */
-    private static final String DEFAULT_COLOR_CHANGED = "#8b008b";
-
-    /**
-     * Progress colour default.
-     */
-    private static final String DEFAULT_COLOR_PROGRESS = "#32cd32";
-
-    /**
-     * Link colour default.
-     */
-    private static final String DEFAULT_COLOR_LINK = "#c71585";
-
-    /**
-     * Value colour default.
-     */
-    private static final String DEFAULT_COLOR_VALUE = "#0000ff";
-
-    /**
-     * Negative colour default.
-     */
-    private static final String DEFAULT_COLOR_NEGATIVE = "#b22222";
-
-    /**
-     * Security colour default.
-     */
-    private static final String DEFAULT_COLOR_SECURITY = "#daa520";
-
-    /**
-     * Header colour default.
-     */
-    private static final String DEFAULT_COLOR_HEADER = "#0000cd";
-
-    /**
-     * Standard Font default.
-     */
-    private static final String DEFAULT_FONT_STANDARD = "Arial";
-
-    /**
-     * Numeric Font default.
-     */
-    private static final String DEFAULT_FONT_NUMERIC = "Courier";
-
-    /**
-     * Font Pitch default.
-     */
-    private static final String DEFAULT_FONT_PITCH = "12";
-
-    /**
      * The event manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
@@ -141,23 +66,23 @@ public class TethysUICoreValueSet
         theDefaultMap = new HashMap<>();
 
         /* Create the default colour values */
-        theDefaultMap.put(TethysUIValueKey.COLOR_STANDARD, DEFAULT_COLOR_STANDARD);
-        theDefaultMap.put(TethysUIValueKey.COLOR_ERROR, DEFAULT_COLOR_ERROR);
-        theDefaultMap.put(TethysUIValueKey.COLOR_BACKGROUND, DEFAULT_COLOR_BACKGROUND);
-        theDefaultMap.put(TethysUIValueKey.COLOR_DISABLED, DEFAULT_COLOR_DISABLED);
-        theDefaultMap.put(TethysUIValueKey.COLOR_ZEBRA, DEFAULT_COLOR_ZEBRA);
-        theDefaultMap.put(TethysUIValueKey.COLOR_CHANGED, DEFAULT_COLOR_CHANGED);
-        theDefaultMap.put(TethysUIValueKey.COLOR_PROGRESS, DEFAULT_COLOR_PROGRESS);
-        theDefaultMap.put(TethysUIValueKey.COLOR_LINK, DEFAULT_COLOR_LINK);
-        theDefaultMap.put(TethysUIValueKey.COLOR_VALUE, DEFAULT_COLOR_VALUE);
-        theDefaultMap.put(TethysUIValueKey.COLOR_NEGATIVE, DEFAULT_COLOR_NEGATIVE);
-        theDefaultMap.put(TethysUIValueKey.COLOR_SECURITY, DEFAULT_COLOR_SECURITY);
-        theDefaultMap.put(TethysUIValueKey.COLOR_HEADER, DEFAULT_COLOR_HEADER);
+        theDefaultMap.put(TethysUIValueKey.COLOR_STANDARD, TethysUIValueKey.DEFAULT_COLOR_STANDARD);
+        theDefaultMap.put(TethysUIValueKey.COLOR_ERROR, TethysUIValueKey.DEFAULT_COLOR_ERROR);
+        theDefaultMap.put(TethysUIValueKey.COLOR_BACKGROUND, TethysUIValueKey.DEFAULT_COLOR_BACKGROUND);
+        theDefaultMap.put(TethysUIValueKey.COLOR_DISABLED, TethysUIValueKey.DEFAULT_COLOR_DISABLED);
+        theDefaultMap.put(TethysUIValueKey.COLOR_ZEBRA, TethysUIValueKey.DEFAULT_COLOR_ZEBRA);
+        theDefaultMap.put(TethysUIValueKey.COLOR_CHANGED, TethysUIValueKey.DEFAULT_COLOR_CHANGED);
+        theDefaultMap.put(TethysUIValueKey.COLOR_PROGRESS, TethysUIValueKey.DEFAULT_COLOR_PROGRESS);
+        theDefaultMap.put(TethysUIValueKey.COLOR_LINK, TethysUIValueKey.DEFAULT_COLOR_LINK);
+        theDefaultMap.put(TethysUIValueKey.COLOR_VALUE, TethysUIValueKey.DEFAULT_COLOR_VALUE);
+        theDefaultMap.put(TethysUIValueKey.COLOR_NEGATIVE, TethysUIValueKey.DEFAULT_COLOR_NEGATIVE);
+        theDefaultMap.put(TethysUIValueKey.COLOR_SECURITY, TethysUIValueKey.DEFAULT_COLOR_SECURITY);
+        theDefaultMap.put(TethysUIValueKey.COLOR_HEADER, TethysUIValueKey.DEFAULT_COLOR_HEADER);
 
         /* Create the default font values */
-        theDefaultMap.put(TethysUIValueKey.FONT_STANDARD, DEFAULT_FONT_STANDARD);
-        theDefaultMap.put(TethysUIValueKey.FONT_NUMERIC, DEFAULT_FONT_NUMERIC);
-        theDefaultMap.put(TethysUIValueKey.FONT_PITCH, DEFAULT_FONT_PITCH);
+        theDefaultMap.put(TethysUIValueKey.FONT_STANDARD, TethysUIValueKey.DEFAULT_FONT_STANDARD);
+        theDefaultMap.put(TethysUIValueKey.FONT_NUMERIC, TethysUIValueKey.DEFAULT_FONT_NUMERIC);
+        theDefaultMap.put(TethysUIValueKey.FONT_PITCH, TethysUIValueKey.DEFAULT_FONT_PITCH);
 
         /* Initialise values from defaults */
         theValueMap = new HashMap<>(theDefaultMap);

@@ -32,11 +32,12 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Panel to display/edit/create a LoanCategory.
@@ -49,7 +50,7 @@ public class MoneyWiseLoanCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseLoanCategoryPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseLoanCategoryPanel(final TethysUIFactory<?> pFactory,
                                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                       final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -59,13 +60,14 @@ public class MoneyWiseLoanCategoryPanel
         final PrometheusFieldSet<LoanCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField mySubName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField mySubName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<LoanCategoryType> myTypeButton = pFactory.newScrollField(LoanCategoryType.class);
-        final TethysScrollButtonField<LoanCategory> myParentButton = pFactory.newScrollField(LoanCategory.class);
+        final TethysUIScrollButtonField<LoanCategoryType> myTypeButton = myFields.newScrollField(LoanCategoryType.class);
+        final TethysUIScrollButtonField<LoanCategory> myParentButton = myFields.newScrollField(LoanCategory.class);
 
         /* Assign the fields to the panel */
         myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, LoanCategory::getName);
@@ -162,14 +164,14 @@ public class MoneyWiseLoanCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysScrollMenu<LoanCategoryType> pMenu,
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<LoanCategoryType> pMenu,
                                       final LoanCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final LoanCategoryType myCurr = pCategory.getCategoryType();
-        TethysScrollMenuItem<LoanCategoryType> myActive = null;
+        TethysUIScrollItem<LoanCategoryType> myActive = null;
 
         /* Access Loan Category types */
         final LoanCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
@@ -189,7 +191,7 @@ public class MoneyWiseLoanCategoryPanel
             }
 
             /* Create a new action for the type */
-            final TethysScrollMenuItem<LoanCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<LoanCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -209,14 +211,14 @@ public class MoneyWiseLoanCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private static void buildParentMenu(final TethysScrollMenu<LoanCategory> pMenu,
+    private static void buildParentMenu(final TethysUIScrollMenu<LoanCategory> pMenu,
                                         final LoanCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final LoanCategory myCurr = pCategory.getParentCategory();
-        TethysScrollMenuItem<LoanCategory> myActive = null;
+        TethysUIScrollItem<LoanCategory> myActive = null;
 
         /* Loop through the LoanCategories */
         final LoanCategoryList myCategories = pCategory.getList();
@@ -231,7 +233,7 @@ public class MoneyWiseLoanCategoryPanel
             }
 
             /* Create a new action for the parent */
-            final TethysScrollMenuItem<LoanCategory> myItem = pMenu.addItem(myCat);
+            final TethysUIScrollItem<LoanCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

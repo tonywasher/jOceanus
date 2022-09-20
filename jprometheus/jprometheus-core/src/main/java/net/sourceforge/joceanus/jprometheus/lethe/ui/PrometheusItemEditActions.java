@@ -21,17 +21,17 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Item Edit Action buttons.
  */
 public class PrometheusItemEditActions
-        implements TethysEventProvider<PrometheusUIEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
      * ItemEditParent interface.
      */
@@ -70,7 +70,7 @@ public class PrometheusItemEditActions
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The Event Manager.
@@ -85,29 +85,29 @@ public class PrometheusItemEditActions
     /**
      * The Commit button.
      */
-    private final TethysButton theCommitButton;
+    private final TethysUIButton theCommitButton;
 
     /**
      * The Undo button.
      */
-    private final TethysButton theUndoButton;
+    private final TethysUIButton theUndoButton;
 
     /**
      * The Reset button.
      */
-    private final TethysButton theResetButton;
+    private final TethysUIButton theResetButton;
 
     /**
      * The Cancel button.
      */
-    private final TethysButton theCancelButton;
+    private final TethysUIButton theCancelButton;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    public PrometheusItemEditActions(final TethysGuiFactory pFactory,
+    public PrometheusItemEditActions(final TethysUIFactory<?> pFactory,
                                      final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
@@ -116,10 +116,11 @@ public class PrometheusItemEditActions
         theEventManager = new TethysEventManager<>();
 
         /* Create the buttons */
-        theCommitButton = pFactory.newButton();
-        theUndoButton = pFactory.newButton();
-        theResetButton = pFactory.newButton();
-        theCancelButton = pFactory.newButton();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theCommitButton = myButtons.newButton();
+        theUndoButton = myButtons.newButton();
+        theResetButton = myButtons.newButton();
+        theCancelButton = myButtons.newButton();
 
         /* Configure the buttons */
         MetisIcon.configureCommitIconButton(theCommitButton);
@@ -128,7 +129,7 @@ public class PrometheusItemEditActions
         MetisIcon.configureCancelIconButton(theCancelButton);
 
         /* Create the panel */
-        thePanel = pFactory.newVBoxPane();
+        thePanel = pFactory.paneFactory().newVBoxPane();
         thePanel.setBorderPadding(PrometheusItemActions.BORDER_PADDING);
 
         /* Create the layout */
@@ -148,23 +149,13 @@ public class PrometheusItemEditActions
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
     public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override

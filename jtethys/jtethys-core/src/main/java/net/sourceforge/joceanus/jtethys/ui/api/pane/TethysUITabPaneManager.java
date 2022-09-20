@@ -73,6 +73,12 @@ public interface TethysUITabPaneManager
         String getName();
 
         /**
+         * Obtain the name.
+         * @return the name
+         */
+        Integer getId();
+
+        /**
          * Obtain the pane.
          * @return the pane
          */

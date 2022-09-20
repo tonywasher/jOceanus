@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBuilder;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Analysis Filter Classes.
@@ -106,7 +106,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getName();
     }
 

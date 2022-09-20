@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
@@ -52,11 +53,6 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
         extends TethysUICoreComponent
         implements TethysUIListButtonManager<T> {
-    /**
-     * Item separator.
-     */
-    public static final String ITEM_SEP = ",";
-
     /**
      * The GUI Manager.
      */
@@ -406,7 +402,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
             /* If this is not the first item */
             if (!isFirst) {
                 /* add separator */
-                myBuilder.append(ITEM_SEP);
+                myBuilder.append(TethysUIConstant.LIST_SEP);
             }
 
             /* Append the name */

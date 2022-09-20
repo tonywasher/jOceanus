@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Viewer StyleSheets.
  */
-public enum MetisViewerStyleSheet implements TethysStyleSheetId {
+public enum MetisViewerStyleSheet
+        implements TethysUIStyleSheetId {
     /**
      * Viewer StyleSheet.
      */

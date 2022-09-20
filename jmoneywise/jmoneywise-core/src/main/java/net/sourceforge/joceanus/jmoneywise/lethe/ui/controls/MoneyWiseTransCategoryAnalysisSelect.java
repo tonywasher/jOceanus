@@ -33,15 +33,16 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Transaction Category Analysis Selection.
@@ -61,17 +62,17 @@ public class MoneyWiseTransCategoryAnalysisSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<TransactionCategoryBucket> theButton;
+    private final TethysUIScrollButtonManager<TransactionCategoryBucket> theButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<TransactionCategoryBucket> theCategoryMenu;
+    private final TethysUIScrollMenu<TransactionCategoryBucket> theCategoryMenu;
 
     /**
      * The active transaction categories bucket list.
@@ -92,18 +93,18 @@ public class MoneyWiseTransCategoryAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTransCategoryAnalysisSelect(final TethysGuiFactory pFactory) {
+    protected MoneyWiseTransCategoryAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the button */
-        theButton = pFactory.newScrollButton(TransactionCategoryBucket.class);
+        theButton = pFactory.buttonFactory().newScrollButton(TransactionCategoryBucket.class);
 
         /* Create the label */
-        final TethysLabel myLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysUILabel myLabel = pFactory.controlFactory().newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
         /* Define the layout */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
         thePanel.addNode(myLabel);
         thePanel.addNode(theButton);
@@ -116,19 +117,14 @@ public class MoneyWiseTransCategoryAnalysisSelect
         theCategoryMenu = theButton.getMenu();
 
         /* Create the listeners */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = theButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewCategory());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theButton.setMenuConfigurator(e -> buildCategoryMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -236,11 +232,11 @@ public class MoneyWiseTransCategoryAnalysisSelect
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<TransactionCategoryBucket>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<TransactionCategoryBucket>> myMap = new HashMap<>();
 
         /* Record active item */
         final TransactionCategoryBucket myCurrent = theState.getEventCategory();
-        TethysScrollMenuItem<TransactionCategoryBucket> myActive = null;
+        TethysUIScrollItem<TransactionCategoryBucket> myActive = null;
 
         /* Loop through the available category values */
         final Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
@@ -257,7 +253,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
             final TransactionCategory myCategory = myBucket.getTransactionCategory();
             final TransactionCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<TransactionCategoryBucket> myMenu = myMap.get(myParentName);
+            TethysUIScrollSubMenu<TransactionCategoryBucket> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -267,7 +263,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<TransactionCategoryBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myCategory.getSubCategory());
+            final TethysUIScrollItem<TransactionCategoryBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myBucket.equals(myCurrent)) {

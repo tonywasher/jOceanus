@@ -1,7 +1,6 @@
 /* Dependencies */
 dependencies {
     implementation project(':jcoeus-core')
-    implementation project(':jmetis-swing')
     implementation project(':jmetis-core')
     implementation project(':jgordianknot-core')
     implementation project(':jtethys-swing')

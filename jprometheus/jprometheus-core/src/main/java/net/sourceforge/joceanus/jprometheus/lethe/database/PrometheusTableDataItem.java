@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
@@ -300,7 +300,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @param pData the data
      * @throws OceanusException on error
      */
-    protected void loadItems(final TethysThreadStatusReport pReport,
+    protected void loadItems(final TethysUIThreadStatusReport pReport,
                              final DataSet<?, ?> pData) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage(getTableName());
@@ -375,7 +375,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @param pBatch the batch control
      * @throws OceanusException on error
      */
-    protected void insertItems(final TethysThreadStatusReport pReport,
+    protected void insertItems(final TethysUIThreadStatusReport pReport,
                                final DataSet<?, ?> pData,
                                final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
@@ -455,7 +455,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @param pBatch the batch control
      * @throws OceanusException on error
      */
-    protected void updateItems(final TethysThreadStatusReport pReport,
+    protected void updateItems(final TethysUIThreadStatusReport pReport,
                                final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Updating " + getTableName());
@@ -557,7 +557,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @param pBatch the batch control
      * @throws OceanusException on error
      */
-    protected void deleteItems(final TethysThreadStatusReport pReport,
+    protected void deleteItems(final TethysUIThreadStatusReport pReport,
                                final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Deleting " + getTableName());

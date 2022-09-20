@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Payee Table.
@@ -75,8 +75,8 @@ public class MoneyWisePayeeTable
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.PAYEEINFO);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Payee> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Payee> myTable = getTable();
 
         /* Create a payee panel */
         theActivePayee = new MoneyWisePayeePanel(myGuiFactory, pUpdateSet, pError);
@@ -174,7 +174,7 @@ public class MoneyWisePayeeTable
 
     @Override
     protected void buildCategoryMenu(final Payee pPayee,
-                                     final TethysScrollMenu<PayeeType> pMenu) {
+                                     final TethysUIScrollMenu<PayeeType> pMenu) {
         /* Build the menu */
         theActivePayee.buildPayeeTypeMenu(pMenu, pPayee);
     }

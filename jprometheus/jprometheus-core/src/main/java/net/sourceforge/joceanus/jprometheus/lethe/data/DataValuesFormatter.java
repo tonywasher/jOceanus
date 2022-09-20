@@ -53,8 +53,8 @@ import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -70,7 +70,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * The report.
      */
-    private final TethysThreadStatusReport theReport;
+    private final TethysUIThreadStatusReport theReport;
 
     /**
      * The password manager.
@@ -98,7 +98,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pPasswordMgr the password manager
      * @throws PrometheusIOException on error
      */
-    public DataValuesFormatter(final TethysThreadStatusReport pReport,
+    public DataValuesFormatter(final TethysUIThreadStatusReport pReport,
                                final GordianPasswordManager pPasswordMgr) throws PrometheusIOException {
         /* Store values */
         theReport = pReport;
@@ -280,7 +280,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         pDocument.appendChild(myElement);
 
         /* Access the Data formatter */
-        final TethysDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         final int myTotal = pList.size();
@@ -460,7 +460,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final MetisFields myFields = pList.getItemFields();
 
         /* Access the Data formatter */
-        final TethysDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         final int myTotal = getListCount(myFormatter, myElement);
@@ -494,7 +494,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @return the list count
      * @throws OceanusException on error
      */
-    private static Integer getListCount(final TethysDataFormatter pFormatter,
+    private static Integer getListCount(final TethysUIDataFormatter pFormatter,
                                         final Element pElement) throws OceanusException {
         try {
             /* Access the list count */

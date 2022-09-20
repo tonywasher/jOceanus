@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+
 /**
  * Prometheus Thread Ids.
  */
-public enum PrometheusThreadId {
+public enum PrometheusThreadId
+        implements TethysUIMenuId {
     /**
      * Create Database.
      */

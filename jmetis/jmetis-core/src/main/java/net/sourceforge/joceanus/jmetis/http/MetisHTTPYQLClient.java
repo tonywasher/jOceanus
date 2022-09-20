@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Client to query YQL.
@@ -139,7 +139,7 @@ public class MetisHTTPYQLClient
      * Constructor.
      * @param pFormatter the data formatter
      */
-    public MetisHTTPYQLClient(final TethysDataFormatter pFormatter) {
+    public MetisHTTPYQLClient(final TethysUIDataFormatter pFormatter) {
         super(YQL_WEBSITE);
         theParser = pFormatter.getDecimalParser();
     }

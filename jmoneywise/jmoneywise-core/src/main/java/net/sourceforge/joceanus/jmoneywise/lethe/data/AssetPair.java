@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHo
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a debit/credit pair of assets.
@@ -107,7 +107,7 @@ public final class AssetPair
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 

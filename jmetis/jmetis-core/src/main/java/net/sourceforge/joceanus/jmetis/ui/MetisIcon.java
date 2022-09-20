@@ -18,16 +18,17 @@ package net.sourceforge.joceanus.jmetis.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Metis Icon IDs.
  */
-public enum MetisIcon implements TethysIconId {
+public enum MetisIcon
+        implements TethysUIIconId {
     /**
      * Delete.
      */
@@ -154,6 +155,11 @@ public enum MetisIcon implements TethysIconId {
     public static final int ICON_SIZE = 24;
 
     /**
+     * Default icon size.
+     */
+    public static final int DEFAULT_ICONWIDTH = 16;
+
+    /**
      * Source name.
      */
     private final String theSource;
@@ -180,7 +186,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure button.
      * @param pButton the button
      */
-    public static void configureButton(final TethysButton pButton) {
+    public static void configureButton(final TethysUIButton pButton) {
         pButton.setIconOnly();
         pButton.setIconWidth(ICON_SIZE);
         pButton.setNullMargins();
@@ -190,15 +196,15 @@ public enum MetisIcon implements TethysIconId {
      * Configure new scroll button.
      * @param pButton the button manager
      */
-    public static void configureNewScrollButton(final TethysScrollButtonManager<?> pButton) {
-        pButton.setSimpleDetails(NEW, TethysIconButtonManager.DEFAULT_ICONWIDTH, TIP_NEW);
+    public static void configureNewScrollButton(final TethysUIScrollButtonManager<?> pButton) {
+        pButton.setSimpleDetails(NEW, DEFAULT_ICONWIDTH, TIP_NEW);
     }
 
     /**
      * Configure new icon button.
      * @param pButton the button manager
      */
-    public static void configureNewIconButton(final TethysButton pButton) {
+    public static void configureNewIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(NEW);
         pButton.setToolTip(TIP_NEW);
@@ -208,7 +214,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure edit icon button.
      * @param pButton the button manager
      */
-    public static void configureEditIconButton(final TethysButton pButton) {
+    public static void configureEditIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(EDIT);
         pButton.setToolTip(TIP_EDIT);
@@ -218,7 +224,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure delete icon button.
      * @param pButton the button manager
      */
-    public static void configureDeleteIconButton(final TethysButton pButton) {
+    public static void configureDeleteIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(DELETE);
         pButton.setToolTip(TIP_DELETE);
@@ -228,7 +234,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure commit icon button.
      * @param pButton the button manager
      */
-    public static void configureCommitIconButton(final TethysButton pButton) {
+    public static void configureCommitIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(COMMIT);
         pButton.setToolTip(TIP_COMMIT);
@@ -238,7 +244,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure undo icon button.
      * @param pButton the button manager
      */
-    public static void configureUndoIconButton(final TethysButton pButton) {
+    public static void configureUndoIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(UNDO);
         pButton.setToolTip(TIP_UNDO);
@@ -248,7 +254,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure reset icon button.
      * @param pButton the button manager
      */
-    public static void configureResetIconButton(final TethysButton pButton) {
+    public static void configureResetIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(RESET);
         pButton.setToolTip(TIP_RESET);
@@ -258,7 +264,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure cancel icon button.
      * @param pButton the button manager
      */
-    public static void configureCancelIconButton(final TethysButton pButton) {
+    public static void configureCancelIconButton(final TethysUIButton pButton) {
         MetisIcon.configureButton(pButton);
         pButton.setIcon(CANCEL);
         pButton.setToolTip(TIP_CANCEL);
@@ -268,7 +274,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure print icon button.
      * @param pButton the button manager
      */
-    public static void configurePrintIconButton(final TethysButton pButton) {
+    public static void configurePrintIconButton(final TethysUIButton pButton) {
         configureButton(pButton);
         pButton.setIcon(PRINT);
         pButton.setToolTip(TIP_PRINT);
@@ -278,7 +284,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure download icon button.
      * @param pButton the button manager
      */
-    public static void configureDownloadIconButton(final TethysButton pButton) {
+    public static void configureDownloadIconButton(final TethysUIButton pButton) {
         configureButton(pButton);
         pButton.setIcon(DOWNLOAD);
         pButton.setToolTip(TIP_DOWNLOAD);
@@ -288,7 +294,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure save icon button.
      * @param pButton the button manager
      */
-    public static void configureSaveIconButton(final TethysButton pButton) {
+    public static void configureSaveIconButton(final TethysUIButton pButton) {
         configureButton(pButton);
         pButton.setIcon(SAVE);
         pButton.setToolTip(TIP_SAVE);
@@ -298,7 +304,7 @@ public enum MetisIcon implements TethysIconId {
      * Configure viewer icon button.
      * @param pButton the button manager
      */
-    public static void configureViewerIconButton(final TethysButton pButton) {
+    public static void configureViewerIconButton(final TethysUIButton pButton) {
         configureButton(pButton);
         pButton.setIcon(VIEWER);
         pButton.setToolTip(TIP_VIEWER);
@@ -308,8 +314,8 @@ public enum MetisIcon implements TethysIconId {
      * Configure status icon button.
      * @return the mapSet configuration
      */
-    public static TethysIconMapSet<MetisAction> configureStatusIconButton() {
-        final TethysIconMapSet<MetisAction> myMapSet = new TethysIconMapSet<>();
+    public static TethysUIIconMapSet<MetisAction> configureStatusIconButton(final TethysUIFactory<?> pFactory) {
+        final TethysUIIconMapSet<MetisAction> myMapSet = pFactory.buttonFactory().newIconMapSet();
         myMapSet.setMappingsForValue(MetisAction.ACTIVE, MetisAction.ACTIVE, ACTIVE, TIP_ACTIVE);
         myMapSet.setMappingsForValue(MetisAction.DELETE, MetisAction.DO, MetisIcon.DELETE, MetisIcon.TIP_DELETE);
         myMapSet.setMappingsForValue(MetisAction.INSERT, MetisAction.DO, MetisIcon.NEW, MetisIcon.TIP_NEW);

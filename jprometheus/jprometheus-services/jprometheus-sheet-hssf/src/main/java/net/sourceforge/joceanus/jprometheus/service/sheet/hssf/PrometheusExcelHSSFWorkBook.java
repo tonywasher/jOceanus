@@ -51,7 +51,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * The Excel WorkBook.
@@ -71,7 +72,7 @@ public class PrometheusExcelHSSFWorkBook
     /**
      * JDataFormatter.
      */
-    private final TethysDataFormatter theDataFormatter;
+    private final TethysUIDataFormatter theDataFormatter;
 
     /**
      * FormulaEvaluator.
@@ -120,10 +121,12 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      * @param pInput the input stream
      * @throws OceanusException on error
      */
-    PrometheusExcelHSSFWorkBook(final InputStream pInput) throws OceanusException {
+    PrometheusExcelHSSFWorkBook(final TethysUIFactory<?> pFactory,
+                                final InputStream pInput) throws OceanusException {
         try {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
@@ -136,7 +139,7 @@ public class PrometheusExcelHSSFWorkBook
             theHeaderFont = null;
 
             /* Allocate the formatter */
-            theDataFormatter = createFormatter();
+            theDataFormatter = createFormatter(pFactory);
 
             /* Create evaluator and formatter */
             theEvaluator = new HSSFFormulaEvaluator(theBook);
@@ -152,8 +155,9 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      */
-    PrometheusExcelHSSFWorkBook() {
+    PrometheusExcelHSSFWorkBook(final TethysUIFactory<?> pFactory) {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
         theStyleMap = new HashMap<>();
@@ -161,7 +165,7 @@ public class PrometheusExcelHSSFWorkBook
         theValueConstraintMap = new HashMap<>();
 
         /* Allocate the formatter */
-        theDataFormatter = createFormatter();
+        theDataFormatter = createFormatter(pFactory);
 
         /* Create evaluator and formatter */
         theEvaluator = new HSSFFormulaEvaluator(theBook);
@@ -213,7 +217,7 @@ public class PrometheusExcelHSSFWorkBook
      * Obtain the data formatter.
      * @return the formatter
      */
-    protected TethysDataFormatter getDataFormatter() {
+    protected TethysUIDataFormatter getDataFormatter() {
         return theDataFormatter;
     }
 

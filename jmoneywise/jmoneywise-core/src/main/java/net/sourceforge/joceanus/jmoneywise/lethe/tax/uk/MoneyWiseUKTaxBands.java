@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * UK TaxBands.
@@ -154,7 +154,7 @@ public class MoneyWiseUKTaxBands
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 

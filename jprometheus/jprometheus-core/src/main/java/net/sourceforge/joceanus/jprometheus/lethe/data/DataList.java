@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Generic implementation of a DataList for DataItems.
@@ -174,7 +174,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public abstract MetisFields getItemFields();
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * The TransactionTag Bucket class.
@@ -143,7 +143,7 @@ public final class TransactionTagBucket
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
@@ -336,7 +336,7 @@ public final class TransactionTagBucket
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

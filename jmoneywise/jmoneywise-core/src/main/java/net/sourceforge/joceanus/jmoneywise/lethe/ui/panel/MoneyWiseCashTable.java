@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Cash Table.
@@ -76,8 +76,8 @@ public class MoneyWiseCashTable
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.CASHINFO);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, Cash> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, Cash> myTable = getTable();
 
         /* Create a Cash panel */
         theActiveCash = new MoneyWiseCashPanel(myGuiFactory, pUpdateSet, pError);
@@ -175,14 +175,14 @@ public class MoneyWiseCashTable
 
     @Override
     protected void buildCategoryMenu(final Cash pCash,
-                                     final TethysScrollMenu<CashCategory> pMenu) {
+                                     final TethysUIScrollMenu<CashCategory> pMenu) {
         /* Build the menu */
         theActiveCash.buildCategoryMenu(pMenu, pCash);
     }
 
     @Override
     protected void buildCurrencyMenu(final Cash pCash,
-                                     final TethysScrollMenu<AssetCurrency> pMenu) {
+                                     final TethysUIScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveCash.buildCurrencyMenu(pMenu, pCash);
     }

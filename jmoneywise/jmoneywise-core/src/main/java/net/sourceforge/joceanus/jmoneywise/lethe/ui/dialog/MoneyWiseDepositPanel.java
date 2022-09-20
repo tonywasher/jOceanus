@@ -44,18 +44,19 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysMoneyEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
 
 /**
  * Panel to display/edit/create a Deposit.
@@ -89,7 +90,7 @@ public class MoneyWiseDepositPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseDepositPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseDepositPanel(final TethysUIFactory<?> pFactory,
                                  final MoneyWiseView pView,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final MetisErrorPanel pError) {
@@ -123,16 +124,17 @@ public class MoneyWiseDepositPanel
      * Build Main subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildMainPanel(final TethysGuiFactory pFactory) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<DepositCategory> myCategoryButton = pFactory.newScrollField(DepositCategory.class);
-        final TethysScrollButtonField<Payee> myParentButton = pFactory.newScrollField(Payee.class);
-        final TethysScrollButtonField<AssetCurrency> myCurrencyButton = pFactory.newScrollField(AssetCurrency.class);
-        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
+        final TethysUIScrollButtonField<DepositCategory> myCategoryButton = myFields.newScrollField(DepositCategory.class);
+        final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
+        final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
+        final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Deposit::getName);
@@ -146,7 +148,7 @@ public class MoneyWiseDepositPanel
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
     }
 
@@ -154,16 +156,17 @@ public class MoneyWiseDepositPanel
      * Build extras subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildXtrasPanel(final TethysGuiFactory pFactory) {
+    private void buildXtrasPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysDateButtonField myMaturity = pFactory.newDateField();
-        final TethysCharArrayEditField mySortCode = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myAccount = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myReference = pFactory.newCharArrayField();
-        final TethysMoneyEditField myOpening = pFactory.newMoneyField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIDateButtonField myMaturity = myFields.newDateField();
+        final TethysUICharArrayEditField mySortCode = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myAccount = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
+        final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITMATURITY, myMaturity, Deposit::getMaturity);
@@ -180,9 +183,10 @@ public class MoneyWiseDepositPanel
      * Build Notes subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildNotesPanel(final TethysGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
         /* Allocate fields */
-        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.DEPOSITNOTES, myNotes, Deposit::getNotes);
@@ -338,20 +342,20 @@ public class MoneyWiseDepositPanel
      * @param pMenu the menu
      * @param pDeposit the deposit to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<DepositCategory> pMenu,
+    public void buildCategoryMenu(final TethysUIScrollMenu<DepositCategory> pMenu,
                                   final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final DepositCategory myCurr = pDeposit.getCategory();
-        TethysScrollMenuItem<DepositCategory> myActive = null;
+        TethysUIScrollItem<DepositCategory> myActive = null;
 
         /* Access Deposit Categories */
         final DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         final Iterator<DepositCategory> myIterator = myCategories.iterator();
@@ -367,10 +371,10 @@ public class MoneyWiseDepositPanel
             /* Determine menu to add to */
             final DepositCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysUIScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -389,7 +393,7 @@ public class MoneyWiseDepositPanel
      * @param pMenu the menu
      * @param pDeposit the deposit to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
+    public void buildParentMenu(final TethysUIScrollMenu<Payee> pMenu,
                                 final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -397,7 +401,7 @@ public class MoneyWiseDepositPanel
         /* Record active item */
         final DepositCategoryClass myType = pDeposit.getCategoryClass();
         final Payee myCurr = pDeposit.getParent();
-        TethysScrollMenuItem<Payee> myActive = null;
+        TethysUIScrollItem<Payee> myActive = null;
 
         /* Access Payees */
         final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -415,7 +419,7 @@ public class MoneyWiseDepositPanel
             }
 
             /* Create a new action for the payee */
-            final TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysUIScrollItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -435,14 +439,14 @@ public class MoneyWiseDepositPanel
      * @param pMenu the menu
      * @param pDeposit the deposit to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
+    public void buildCurrencyMenu(final TethysUIScrollMenu<AssetCurrency> pMenu,
                                   final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final AssetCurrency myCurr = pDeposit.getAssetCurrency();
-        TethysScrollMenuItem<AssetCurrency> myActive = null;
+        TethysUIScrollItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -459,7 +463,7 @@ public class MoneyWiseDepositPanel
             }
 
             /* Create a new action for the currency */
-            final TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysUIScrollItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

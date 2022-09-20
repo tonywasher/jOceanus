@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
 
 /**
  * Report Select State.
@@ -128,7 +128,7 @@ public final class CoeusReportState {
      * @param pSelect the Panel with the new date
      * @return true/false did a change occur
      */
-    boolean setDate(final TethysDateButtonManager pSelect) {
+    boolean setDate(final TethysUIDateButtonManager pSelect) {
         /* Obtain the date and adjust it */
         final TethysDate mySelected = pSelect.getSelectedDate();
         final TethysDate myDate = mySelected == null

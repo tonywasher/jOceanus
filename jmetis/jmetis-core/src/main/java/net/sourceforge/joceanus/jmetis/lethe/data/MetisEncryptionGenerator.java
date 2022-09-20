@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Encrypted field generator.
@@ -69,7 +69,7 @@ public class MetisEncryptionGenerator {
     /**
      * Data formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor.
@@ -77,7 +77,7 @@ public class MetisEncryptionGenerator {
      * @param pFormatter the formatter
      */
     public MetisEncryptionGenerator(final GordianKeySet pKeySet,
-                                    final TethysDataFormatter pFormatter) {
+                                    final TethysUIDataFormatter pFormatter) {
         /* Store Parameter */
         theKeySet = pKeySet;
         theFormatter = pFormatter;

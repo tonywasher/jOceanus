@@ -32,11 +32,12 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Panel to display/edit/create a DepositCategory.
@@ -49,7 +50,7 @@ public class MoneyWiseDepositCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseDepositCategoryPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseDepositCategoryPanel(final TethysUIFactory<?> pFactory,
                                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                          final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -59,13 +60,14 @@ public class MoneyWiseDepositCategoryPanel
         final PrometheusFieldSet<DepositCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField mySubName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField mySubName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<DepositCategoryType> myTypeButton = pFactory.newScrollField(DepositCategoryType.class);
-        final TethysScrollButtonField<DepositCategory> myParentButton = pFactory.newScrollField(DepositCategory.class);
+        final TethysUIScrollButtonField<DepositCategoryType> myTypeButton = myFields.newScrollField(DepositCategoryType.class);
+        final TethysUIScrollButtonField<DepositCategory> myParentButton = myFields.newScrollField(DepositCategory.class);
 
         /* Assign the fields to the panel */
         myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, DepositCategory::getName);
@@ -162,14 +164,14 @@ public class MoneyWiseDepositCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysScrollMenu<DepositCategoryType> pMenu,
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<DepositCategoryType> pMenu,
                                       final DepositCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final DepositCategoryType myCurr = pCategory.getCategoryType();
-        TethysScrollMenuItem<DepositCategoryType> myActive = null;
+        TethysUIScrollItem<DepositCategoryType> myActive = null;
 
         /* Access Deposit Category types */
         final DepositCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
@@ -189,7 +191,7 @@ public class MoneyWiseDepositCategoryPanel
             }
 
             /* Create a new action for the type */
-            final TethysScrollMenuItem<DepositCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<DepositCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -209,14 +211,14 @@ public class MoneyWiseDepositCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private static void buildParentMenu(final TethysScrollMenu<DepositCategory> pMenu,
+    private static void buildParentMenu(final TethysUIScrollMenu<DepositCategory> pMenu,
                                         final DepositCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final DepositCategory myCurr = pCategory.getParentCategory();
-        TethysScrollMenuItem<DepositCategory> myActive = null;
+        TethysUIScrollItem<DepositCategory> myActive = null;
 
         /* Loop through the DepositCategories */
         final DepositCategoryList myCategories = pCategory.getList();
@@ -231,7 +233,7 @@ public class MoneyWiseDepositCategoryPanel
             }
 
             /* Create a new action for the parent */
-            final TethysScrollMenuItem<DepositCategory> myItem = pMenu.addItem(myCat);
+            final TethysUIScrollItem<DepositCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

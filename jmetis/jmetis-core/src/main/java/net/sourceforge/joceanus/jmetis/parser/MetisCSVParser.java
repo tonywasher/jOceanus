@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * CSV Parser.
@@ -84,7 +84,7 @@ public abstract class MetisCSVParser {
      * @param pFormatter the formatter
      * @param pHeaders the expected headers
      */
-    protected MetisCSVParser(final TethysDataFormatter pFormatter,
+    protected MetisCSVParser(final TethysUIDataFormatter pFormatter,
                              final String[] pHeaders) {
         /* Store the headers */
         theHeaders = Arrays.copyOf(pHeaders, pHeaders.length);

@@ -33,24 +33,24 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Report selection panel.
  */
 public class MoneyWiseReportSelect
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for Report Label.
      */
@@ -69,32 +69,32 @@ public class MoneyWiseReportSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * Reports scroll button.
      */
-    private final TethysScrollButtonManager<MoneyWiseReportType> theReportButton;
+    private final TethysUIScrollButtonManager<MoneyWiseReportType> theReportButton;
 
     /**
      * Holding scroll button.
      */
-    private final TethysScrollButtonManager<SecurityBucket> theHoldingButton;
+    private final TethysUIScrollButtonManager<SecurityBucket> theHoldingButton;
 
     /**
      * Range select.
      */
-    private final TethysDateRangeSelector theRangeSelect;
+    private final TethysUIDateRangeSelector theRangeSelect;
 
     /**
      * Print button.
      */
-    private final TethysButton thePrintButton;
+    private final TethysUIButton thePrintButton;
 
     /**
      * Save button.
      */
-    private final TethysButton theSaveButton;
+    private final TethysUIButton theSaveButton;
 
     /**
      * Current state.
@@ -115,23 +115,24 @@ public class MoneyWiseReportSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public MoneyWiseReportSelect(final TethysGuiFactory pFactory) {
+    public MoneyWiseReportSelect(final TethysUIFactory<?> pFactory) {
         /* Create the buttons */
-        theReportButton = pFactory.newScrollButton(MoneyWiseReportType.class);
-        theHoldingButton = pFactory.newScrollButton(SecurityBucket.class);
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theReportButton = myButtons.newScrollButton(MoneyWiseReportType.class);
+        theHoldingButton = myButtons.newScrollButton(SecurityBucket.class);
 
         /* Create the Range Select and disable its border */
-        theRangeSelect = pFactory.newDateRangeSelector();
+        theRangeSelect = myButtons.newDateRangeSelector();
 
         /* Create the labels */
-        final TethysLabel myRepLabel = pFactory.newLabel(NLS_REPORT);
+        final TethysUILabel myRepLabel = pFactory.controlFactory().newLabel(NLS_REPORT);
 
         /* Create the print button */
-        thePrintButton = pFactory.newButton();
+        thePrintButton = myButtons.newButton();
         MetisIcon.configurePrintIconButton(thePrintButton);
 
         /* Create the save button */
-        theSaveButton = pFactory.newButton();
+        theSaveButton = myButtons.newButton();
         MetisIcon.configureSaveIconButton(theSaveButton);
 
         /* Create initial state */
@@ -143,7 +144,7 @@ public class MoneyWiseReportSelect
         theEventManager = new TethysEventManager<>();
 
         /* Create the selection panel */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
@@ -158,23 +159,18 @@ public class MoneyWiseReportSelect
         thePanel.addNode(theSaveButton);
 
         /* Add the listeners */
-        theReportButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewReport());
+        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
         theReportButton.setMenuConfigurator(e -> buildReportMenu());
-        theHoldingButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewSecurity());
+        theHoldingButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewSecurity());
         theHoldingButton.setMenuConfigurator(e -> buildHoldingMenu());
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
         theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
-        theRangeSelect.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewRange());
+        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -210,7 +206,7 @@ public class MoneyWiseReportSelect
      * Obtain the date range selection control.
      * @return the date range selection
      */
-    public TethysDateRangeSelector getDateRangeSelector() {
+    public TethysUIDateRangeSelector getDateRangeSelector() {
         return theRangeSelect;
     }
 
@@ -220,7 +216,7 @@ public class MoneyWiseReportSelect
     private void buildReportMenu() {
         /* Access builder */
         final boolean hasSecurities = theState.hasSecurities();
-        final TethysScrollMenu<MoneyWiseReportType> myBuilder = theReportButton.getMenu();
+        final TethysUIScrollMenu<MoneyWiseReportType> myBuilder = theReportButton.getMenu();
         myBuilder.removeAllItems();
 
         /* Loop through the reports */
@@ -244,9 +240,9 @@ public class MoneyWiseReportSelect
         final PortfolioBucketList myPortfolios = myAnalysis.getPortfolios();
 
         /* Access builder */
-        final TethysScrollMenu<SecurityBucket> myBuilder = theHoldingButton.getMenu();
+        final TethysUIScrollMenu<SecurityBucket> myBuilder = theHoldingButton.getMenu();
         myBuilder.removeAllItems();
-        TethysScrollMenuItem<SecurityBucket> myActive = null;
+        TethysUIScrollItem<SecurityBucket> myActive = null;
 
         /* Loop through the Portfolio Buckets */
         final Iterator<PortfolioBucket> myPortIterator = myPortfolios.iterator();
@@ -255,7 +251,7 @@ public class MoneyWiseReportSelect
 
             /* Create subMenu */
             final String myName = myPortBucket.getName();
-            final TethysScrollSubMenu<SecurityBucket> myMenu = myBuilder.addSubMenu(myName);
+            final TethysUIScrollSubMenu<SecurityBucket> myMenu = myBuilder.addSubMenu(myName);
 
             /* Loop through the Security Buckets */
             final SecurityBucketList mySecurities = myPortBucket.getSecurities();
@@ -264,7 +260,7 @@ public class MoneyWiseReportSelect
                 final SecurityBucket myBucket = myIterator.next();
 
                 /* Add menuItem */
-                final TethysScrollMenuItem<SecurityBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myBucket.getSecurityName());
+                final TethysUIScrollItem<SecurityBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myBucket.getSecurityName());
 
                 /* Record active item */
                 if (myBucket.equals(mySecurity)) {
@@ -510,7 +506,7 @@ public class MoneyWiseReportSelect
          * @param pSelect the Panel with the new range
          * @return true/false did a change occur
          */
-        private boolean setRange(final TethysDateRangeSelector pSelect) {
+        private boolean setRange(final TethysUIDateRangeSelector pSelect) {
             /* Adjust the date and build the new range */
             final TethysDateRange myRange = pSelect.getRange();
             if (!MetisDataDifference.isEqual(myRange, theRange)) {

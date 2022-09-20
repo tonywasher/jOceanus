@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -246,7 +246,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         /* Access Info Type Value */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
@@ -258,7 +258,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         final I myInfoType = getInfoType();
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
         final S myInfoClass = myInfoType.getStaticClass();
 
         /* Switch on type of Data */
@@ -578,7 +578,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
 
         /* Access the DataSet and parser */
         final DataSet<?, ?> myDataSet = getDataSet();
-        final TethysDataFormatter myFormatter = myDataSet.getDataFormatter();
+        final TethysUIDataFormatter myFormatter = myDataSet.getDataFormatter();
         final TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
@@ -665,7 +665,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setIntegerValue(final TethysDataFormatter pFormatter,
+    private boolean setIntegerValue(final TethysUIDataFormatter pFormatter,
                                     final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */

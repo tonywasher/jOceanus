@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTa
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * LoanBook Report.
@@ -90,7 +90,7 @@ public class CoeusReportLoanBook
     /**
      * The Formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Market.

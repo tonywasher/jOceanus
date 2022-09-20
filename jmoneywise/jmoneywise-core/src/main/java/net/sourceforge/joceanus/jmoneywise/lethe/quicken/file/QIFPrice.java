@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a QIF Price record.
@@ -95,7 +95,7 @@ public class QIFPrice
      * @param pLine the line
      */
     private QIFPrice(final QIFFile pFile,
-                     final TethysDataFormatter pFormatter,
+                     final TethysUIDataFormatter pFormatter,
                      final String pLine) {
         /* Split out the parts */
         final String[] myParts = pLine.split(QIF_COMMA);
@@ -124,7 +124,7 @@ public class QIFPrice
      * @param pLines the lines
      */
     protected QIFPrice(final QIFFile pFile,
-                       final TethysDataFormatter pFormatter,
+                       final TethysUIDataFormatter pFormatter,
                        final List<String> pLines) {
         /* Build the price list */
         thePrices = new ArrayList<>();
@@ -182,7 +182,7 @@ public class QIFPrice
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatRecord(final TethysDataFormatter pFormatter,
+    protected void formatRecord(final TethysUIDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Format the security */
         pBuilder.append(QIF_QUOTE);

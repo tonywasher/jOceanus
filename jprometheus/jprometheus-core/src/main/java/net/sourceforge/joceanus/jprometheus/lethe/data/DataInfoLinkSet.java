@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Representation of an set of DataInfo links for a DataItem.
@@ -49,7 +49,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * Item separator.
      */
-    public static final String ITEM_SEP = TethysListButtonManager.ITEM_SEP;
+    public static final String ITEM_SEP = TethysUIConstant.LIST_SEP;
 
     /**
      * The local fields.
@@ -156,7 +156,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return theActive.toString();
     }
 
@@ -626,7 +626,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return toString();
         }
 

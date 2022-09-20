@@ -79,7 +79,7 @@
     <PostGreSQLVersion>42.5.0</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>2.1.214</H2Version>
-    <ApachePOIVersion>5.2.2</ApachePOIVersion>
+    <ApachePOIVersion>5.2.3</ApachePOIVersion>
     <JSoupVersion>1.15.3</JSoupVersion>
     <JFreeChartVersion>1.5.3</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

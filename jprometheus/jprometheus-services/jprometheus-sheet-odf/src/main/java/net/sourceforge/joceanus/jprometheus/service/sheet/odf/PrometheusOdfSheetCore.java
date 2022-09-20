@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCellRan
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCellStyleType;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Sheet definition.
@@ -60,7 +60,7 @@ class PrometheusOdfSheetCore {
     /**
      * The formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * The Columns for the sheet.
@@ -171,7 +171,7 @@ class PrometheusOdfSheetCore {
      * Obtain the formatter.
      * @return the formatter
      */
-    TethysDataFormatter getFormatter() {
+    TethysUIDataFormatter getFormatter() {
         return theFormatter;
     }
 

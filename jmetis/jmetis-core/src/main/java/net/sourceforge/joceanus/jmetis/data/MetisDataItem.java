@@ -22,7 +22,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Standard item interfaces.
@@ -43,7 +43,7 @@ public final class MetisDataItem {
          * @param pFormatter the data formatter
          * @return the display summary of the object
          */
-        default String formatObject(TethysDataFormatter pFormatter) {
+        default String formatObject(TethysUIDataFormatter pFormatter) {
             return toString();
         }
     }

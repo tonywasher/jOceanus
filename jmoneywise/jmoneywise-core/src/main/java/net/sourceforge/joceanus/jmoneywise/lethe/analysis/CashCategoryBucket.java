@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Cash Category Bucket.
@@ -182,7 +182,7 @@ public final class CashCategoryBucket
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

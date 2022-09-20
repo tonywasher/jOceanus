@@ -80,7 +80,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Class to load an archive SpreadSheet.
@@ -113,9 +114,9 @@ public class ArchiveLoader {
     private static final String AREA_YEARRANGE = "AssetsYears";
 
     /**
-     * The last event.
+     * The gui Factory.
      */
-    private TethysDate theLastEvent;
+    private final TethysUIFactory<?> theGuiFactory;
 
     /**
      * The list of years.
@@ -133,6 +134,11 @@ public class ArchiveLoader {
     private final Map<String, TransactionCategory> theCategoryMap;
 
     /**
+     * The last event.
+     */
+    private TethysDate theLastEvent;
+
+    /**
      * The ParentCache.
      */
     private ParentCache theParentCache;
@@ -144,8 +150,12 @@ public class ArchiveLoader {
 
     /**
      * Constructor.
+     * @param pFactory the Gui factory
      */
-    public ArchiveLoader() {
+    public ArchiveLoader(final TethysUIFactory<?> pFactory) {
+        /* Store parameters */
+        theGuiFactory = pFactory;
+
         /* Create the Years Array */
         theYears = new ArrayList<>();
 
@@ -211,7 +221,7 @@ public class ArchiveLoader {
      * @param pPreferences the backup preferences
      * @throws OceanusException on error
      */
-    public void loadArchive(final TethysThreadStatusReport pReport,
+    public void loadArchive(final TethysUIThreadStatusReport pReport,
                             final MoneyWiseData pData,
                             final PrometheusBackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
@@ -247,7 +257,7 @@ public class ArchiveLoader {
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    private void loadArchive(final TethysThreadStatusReport pReport,
+    private void loadArchive(final TethysUIThreadStatusReport pReport,
                              final PrometheusSheetWorkBook pWorkBook,
                              final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
@@ -281,7 +291,7 @@ public class ArchiveLoader {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    private void loadArchiveStream(final TethysThreadStatusReport pReport,
+    private void loadArchiveStream(final TethysUIThreadStatusReport pReport,
                                    final MoneyWiseData pData,
                                    final InputStream pStream,
                                    final PrometheusSheetWorkBookType pType) throws OceanusException {
@@ -296,7 +306,7 @@ public class ArchiveLoader {
             theParentCache = new ParentCache(pData);
 
             /* Access the workbook from the stream */
-            final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, pStream);
+            final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, theGuiFactory, pStream);
             pReport.checkForCancellation();
 
             /* Determine Year Range */

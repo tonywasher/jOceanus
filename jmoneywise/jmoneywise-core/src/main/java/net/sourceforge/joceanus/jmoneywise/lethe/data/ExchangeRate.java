@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * ExchangeRate class.
@@ -133,7 +133,7 @@ public class ExchangeRate
         super(pList, pValues);
 
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -193,14 +193,14 @@ public class ExchangeRate
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return toString();
     }
 
     @Override
     public String toString() {
         /* Access formatter */
-        final TethysDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -971,7 +971,7 @@ public class ExchangeRate
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1188,7 +1188,7 @@ public class ExchangeRate
             }
 
             @Override
-            public String formatObject(final TethysDataFormatter pFormatter) {
+            public String formatObject(final TethysUIDataFormatter pFormatter) {
                 return theCurrency.formatObject(pFormatter)
                        + "("
                        + size()

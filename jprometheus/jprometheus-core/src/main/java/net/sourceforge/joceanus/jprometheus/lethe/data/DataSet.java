@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -154,7 +154,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * General formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Constructor for new empty DataSet.
@@ -207,7 +207,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return DataSet.class.getSimpleName();
     }
 
@@ -215,7 +215,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain the data formatter.
      * @return the formatter
      */
-    public TethysDataFormatter getDataFormatter() {
+    public TethysUIDataFormatter getDataFormatter() {
         return theFormatter;
     }
 
@@ -400,7 +400,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the difference set
      * @throws OceanusException on error
      */
-    public abstract T getDifferenceSet(TethysThreadStatusReport pReport,
+    public abstract T getDifferenceSet(TethysUIThreadStatusReport pReport,
                                        T pOld) throws OceanusException;
 
     /**
@@ -413,7 +413,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pOld The old list to compare
      * @throws OceanusException on error
      */
-    protected void deriveDifferences(final TethysThreadStatusReport pReport,
+    protected void deriveDifferences(final TethysUIThreadStatusReport pReport,
                                      final T pNew,
                                      final T pOld) throws OceanusException {
         /* Access current profile */
@@ -453,7 +453,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pOld The old data to reBase against
      * @throws OceanusException on error
      */
-    public void reBase(final TethysThreadStatusReport pReport,
+    public void reBase(final TethysUIThreadStatusReport pReport,
                        final T pOld) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
@@ -788,7 +788,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pBase the database data
      * @throws OceanusException on error
      */
-    public void initialiseSecurity(final TethysThreadStatusReport pReport,
+    public void initialiseSecurity(final TethysUIThreadStatusReport pReport,
                                    final T pBase) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
@@ -831,7 +831,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void renewSecurity(final TethysThreadStatusReport pReport) throws OceanusException {
+    public void renewSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_SECRENEW);
@@ -857,7 +857,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void checkSecurity(final TethysThreadStatusReport pReport) throws OceanusException {
+    public void checkSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_SECCHECK);
@@ -883,7 +883,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pReport the report
      * @throws OceanusException on error
      */
-    public void updateSecurity(final TethysThreadStatusReport pReport) throws OceanusException {
+    public void updateSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the control key */
         final ControlKey myControl = getControlKey();
 
@@ -930,7 +930,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pSource the source of the data
      * @throws OceanusException on error
      */
-    public void updatePasswordHash(final TethysThreadStatusReport pReport,
+    public void updatePasswordHash(final TethysUIThreadStatusReport pReport,
                                    final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
         final GordianKeySetHash myHash = thePasswordMgr.newKeySetHash(pSource);

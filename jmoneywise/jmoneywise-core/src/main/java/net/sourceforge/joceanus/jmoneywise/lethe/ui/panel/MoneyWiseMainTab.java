@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
-import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -42,22 +41,23 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
-import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAboutBox;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Main Window for MoneyWise.
  */
 public class MoneyWiseMainTab
         extends PrometheusNewMainWindow<MoneyWiseData, MoneyWiseDataType>
-        implements MetisMainPanel {
+        implements TethysUIMainPanel {
     /**
      * Report tab title.
      */
@@ -91,7 +91,7 @@ public class MoneyWiseMainTab
     /**
      * The tabs.
      */
-    private TethysTabPaneManager theTabs;
+    private TethysUITabPaneManager theTabs;
 
     /**
      * The register panel.
@@ -116,16 +116,17 @@ public class MoneyWiseMainTab
     /**
      * The aboutBox.
      */
-    private TethysAbout theAboutBox;
+    private TethysUIAboutBox theAboutBox;
 
     /**
      * Constructor.
-     * @param pToolkit the toolkit
+     * @param pFactory the factory
      * @throws OceanusException on error
      */
-    public MoneyWiseMainTab(final MetisToolkit pToolkit) throws OceanusException {
+    public MoneyWiseMainTab(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create prometheus toolkit */
-        final PrometheusToolkit myToolkit = new PrometheusToolkit(pToolkit);
+        final MetisToolkit myMetisToolkit = new MetisToolkit(pFactory);
+        final PrometheusToolkit myToolkit = new PrometheusToolkit(myMetisToolkit);
 
         /* create the view */
         theView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());
@@ -149,14 +150,14 @@ public class MoneyWiseMainTab
     }
 
     @Override
-    protected TethysComponent buildMainPanel() throws OceanusException {
+    protected TethysUIComponent buildMainPanel() throws OceanusException {
         /* Obtain the active profile */
         TethysProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        final TethysGuiFactory myFactory = theView.getGuiFactory();
-        theTabs = myFactory.newTabPane();
+        final TethysUIFactory<?> myFactory = theView.getGuiFactory();
+        theTabs = myFactory.paneFactory().newTabPane();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
@@ -184,10 +185,10 @@ public class MoneyWiseMainTab
         theTabs.addTabItem(TITLE_MAINT, theMaint);
 
         /* Create the log tab */
-        final TethysLogTextArea myLog = myFactory.getLogSink();
-        final TethysTabItem myLogTab = theTabs.addTabItem(MoneyWiseUIResource.MAIN_LOG.getValue(), myLog);
-        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> myLogTab.setVisible(true));
-        myLog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> myLogTab.setVisible(false));
+        final TethysUILogTextArea myLog = myFactory.getLogSink();
+        final TethysUITabItem myLogTab = theTabs.addTabItem(MoneyWiseUIResource.MAIN_LOG.getValue(), myLog);
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> myLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> myLogTab.setVisible(false));
         myLogTab.setVisible(myLog.isActive());
 
         /* Create listeners */
@@ -223,7 +224,7 @@ public class MoneyWiseMainTab
      * @param pMenu the menu
      */
     @Override
-    protected void addDataMenuItems(final TethysMenuSubMenu<?> pMenu) {
+    protected void addDataMenuItems(final TethysUIMenuSubMenu pMenu) {
         /* Create the data menu items */
         pMenu.newMenuItem(MoneyWiseThreadId.LOADARCHIVE, e -> loadSpreadsheet());
         pMenu.newMenuItem(MoneyWiseThreadId.CREATEQIF, e -> createQIF());
@@ -315,7 +316,7 @@ public class MoneyWiseMainTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        final TethysTabItem myItem = theTabs.findItemByName(pTabName);
+        final TethysUITabItem myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }
@@ -336,7 +337,7 @@ public class MoneyWiseMainTab
         final boolean hasControl = theView.getData().getControl() != null;
 
         /* Obtain the menuBar */
-        final TethysMenuBarManager myMenuBar = getMenuBar();
+        final TethysUIMenuBarManager myMenuBar = getMenuBar();
 
         /* Disable menus if we have no data */
         myMenuBar.setEnabled(MoneyWiseThreadId.CREATEQIF, !hasWorker && hasControl);
@@ -351,7 +352,7 @@ public class MoneyWiseMainTab
 
         /* Enable/Disable/Hide the spotPrices tab */
         doEnabled = !hasWorker && (!hasSession || theSpotPrices.hasSession());
-        TethysTabItem myItem = theTabs.findItemByName(TITLE_SPOTPRICES);
+        TethysUITabItem myItem = theTabs.findItemByName(TITLE_SPOTPRICES);
         myItem.setEnabled(doEnabled);
         myItem.setVisible(theView.hasActiveSecurities());
 
@@ -377,7 +378,7 @@ public class MoneyWiseMainTab
      */
     private void determineFocus() {
         /* Access the selected component */
-        final TethysTabItem myItem = theTabs.getSelectedTab();
+        final TethysUITabItem myItem = theTabs.getSelectedTab();
         final Integer myId = myItem.getId();
 
         /* If the selected component is Register */
@@ -406,7 +407,7 @@ public class MoneyWiseMainTab
     protected void displayAbout() {
         /* Create about box if it does not exist */
         if (theAboutBox == null) {
-            theAboutBox = theView.getGuiFactory().newAboutBox();
+            theAboutBox = theView.getGuiFactory().dialogFactory().newAboutBox();
         }
         theAboutBox.showDialog();
     }

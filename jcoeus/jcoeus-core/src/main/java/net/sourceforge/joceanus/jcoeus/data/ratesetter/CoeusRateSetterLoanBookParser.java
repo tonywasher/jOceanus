@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * RateSetter LoanBook Parser.
@@ -61,7 +61,7 @@ public class CoeusRateSetterLoanBookParser {
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusRateSetterLoanBookParser(final TethysDataFormatter pFormatter) {
+    CoeusRateSetterLoanBookParser(final TethysUIDataFormatter pFormatter) {
         /* Create the loan list */
         theLoans = new ArrayList<>();
 

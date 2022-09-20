@@ -17,14 +17,14 @@
 package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 
 /**
  * FieldSet Panel.
  * @param <T> the item type
  */
 public interface PrometheusFieldSetPanel<T>
-    extends TethysComponent {
+    extends TethysUIComponent {
     /**
      * Are there any visible elements?
      * @return true/false

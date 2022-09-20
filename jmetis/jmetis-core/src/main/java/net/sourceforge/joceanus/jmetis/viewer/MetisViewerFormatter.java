@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Data Viewer Formatter.
@@ -98,7 +98,7 @@ public class MetisViewerFormatter {
      * @param pFormatter the data formatter
      * @throws OceanusException on error
      */
-    protected MetisViewerFormatter(final TethysDataFormatter pFormatter) throws OceanusException {
+    protected MetisViewerFormatter(final TethysUIDataFormatter pFormatter) throws OceanusException {
         theBuilder = new MetisViewerBuilder(pFormatter);
     }
 

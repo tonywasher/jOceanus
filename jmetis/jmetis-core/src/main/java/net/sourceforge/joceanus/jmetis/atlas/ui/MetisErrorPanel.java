@@ -27,18 +27,17 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Error panel.
  */
 public class MetisErrorPanel
-        implements TethysEventProvider<MetisUIEvent>, TethysComponent {
+        implements TethysEventProvider<MetisUIEvent>, TethysUIComponent {
     /**
      * Text for Clear Button.
      */
@@ -57,17 +56,17 @@ public class MetisErrorPanel
     /**
      * The Panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The error field.
      */
-    private final TethysLabel theErrorField;
+    private final TethysUILabel theErrorField;
 
     /**
      * The clear button.
      */
-    private final TethysButton theClearButton;
+    private final TethysUIButton theClearButton;
 
     /**
      * The viewer entry for the error.
@@ -85,7 +84,7 @@ public class MetisErrorPanel
      * @param pViewerMgr the Viewer manager
      * @param pParent the parent viewer entry
      */
-    public MetisErrorPanel(final TethysGuiFactory pFactory,
+    public MetisErrorPanel(final TethysUIFactory<?> pFactory,
                            final MetisViewerManager pViewerMgr,
                            final MetisViewerEntry pParent) {
         /* Create the error viewer entry for this view */
@@ -100,11 +99,11 @@ public class MetisErrorPanel
         theViewerError.setObject(theErrors);
 
         /* Create the error field */
-        theErrorField = pFactory.newLabel();
+        theErrorField = pFactory.controlFactory().newLabel();
         theErrorField.setErrorText();
 
         /* Create the clear button */
-        theClearButton = pFactory.newButton();
+        theClearButton = pFactory.buttonFactory().newButton();
         theClearButton.setTextOnly();
         theClearButton.setText(NLS_CLEAR);
 
@@ -112,7 +111,7 @@ public class MetisErrorPanel
         theClearButton.getEventRegistrar().addEventListener(e -> clearErrors());
 
         /* Create the error panel */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
@@ -124,23 +123,13 @@ public class MetisErrorPanel
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
     public TethysEventRegistrar<MetisUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
     @Override
-    public void setVisible(final boolean bVisible) {
-        thePanel.setVisible(bVisible);
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override

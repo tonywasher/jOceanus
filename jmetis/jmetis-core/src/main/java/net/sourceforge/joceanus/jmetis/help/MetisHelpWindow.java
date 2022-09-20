@@ -23,21 +23,21 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysChildDialog;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
-import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager.TethysUITreeItem;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 
 /**
  * Help Manager class, responsible for displaying the help.
  */
 public class MetisHelpWindow
-        implements TethysEventProvider<TethysXUIEvent> {
+        implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
      */
@@ -51,38 +51,38 @@ public class MetisHelpWindow
     /**
      * The Factory.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysXUIEvent> theEventManager;
+    private final TethysEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The split tree.
      */
-    private final TethysSplitTreeManager<MetisHelpEntry> theSplitTree;
+    private final TethysUISplitTreeManager<MetisHelpEntry> theSplitTree;
 
     /**
      * The tree manager.
      */
-    private final TethysTreeManager<MetisHelpEntry> theTree;
+    private final TethysUITreeManager<MetisHelpEntry> theTree;
 
     /**
      * The help dialog.
      */
-    private TethysChildDialog theDialog;
+    private TethysUIChildDialog theDialog;
 
     /**
      * The HTML manager.
      */
-    private final TethysHTMLManager theHtml;
+    private final TethysUIHTMLManager theHtml;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public MetisHelpWindow(final TethysGuiFactory pFactory) {
+    public MetisHelpWindow(final TethysUIFactory<?> pFactory) {
         /* Store parameters */
         theFactory = pFactory;
 
@@ -90,7 +90,7 @@ public class MetisHelpWindow
         theEventManager = new TethysEventManager<>();
 
         /* Create the splitTree manager and obtain details */
-        theSplitTree = pFactory.newSplitTreeManager();
+        theSplitTree = pFactory.controlFactory().newSplitTreeManager();
         theTree = theSplitTree.getTreeManager();
         theHtml = theSplitTree.getHTMLManager();
 
@@ -99,7 +99,7 @@ public class MetisHelpWindow
     }
 
     @Override
-    public TethysEventRegistrar<TethysXUIEvent> getEventRegistrar() {
+    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -107,7 +107,7 @@ public class MetisHelpWindow
      * Obtain the SplitTree Manager.
      * @return the tree manager
      */
-    public TethysSplitTreeManager<MetisHelpEntry> getSplitTreeManager() {
+    public TethysUISplitTreeManager<MetisHelpEntry> getSplitTreeManager() {
         return theSplitTree;
     }
 
@@ -115,7 +115,7 @@ public class MetisHelpWindow
      * Obtain the Tree Manager.
      * @return the tree manager
      */
-    public TethysTreeManager<MetisHelpEntry> getTreeManager() {
+    public TethysUITreeManager<MetisHelpEntry> getTreeManager() {
         return theTree;
     }
 
@@ -123,7 +123,7 @@ public class MetisHelpWindow
      * Obtain the HTML Manager.
      * @return the HTML manager
      */
-    public TethysHTMLManager getHTMLManager() {
+    public TethysUIHTMLManager getHTMLManager() {
         return theHtml;
     }
 
@@ -132,7 +132,7 @@ public class MetisHelpWindow
      * @param pEventId the eventId
      * @param pValue the relevant value
      */
-    protected void fireEvent(final TethysXUIEvent pEventId,
+    protected void fireEvent(final TethysUIEvent pEventId,
                              final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
     }
@@ -144,20 +144,20 @@ public class MetisHelpWindow
         /* If the dialog does not exist */
         if (theDialog == null) {
             /* Create a new dialog */
-            theDialog = theFactory.newChildDialog();
+            theDialog = theFactory.dialogFactory().newChildDialog();
             theDialog.setTitle(MetisHelpResource.TITLE.getValue());
 
             /* Create the help panel */
-            final TethysBorderPaneManager myPanel = theFactory.newBorderPane();
+            final TethysUIBorderPaneManager myPanel = theFactory.paneFactory().newBorderPane();
             myPanel.setCentre(theSplitTree);
             myPanel.setPreferredWidth(WINDOW_WIDTH);
             myPanel.setPreferredHeight(WINDOW_HEIGHT);
             theDialog.setContent(myPanel);
 
             /* Set listener */
-            theDialog.getEventRegistrar().addEventListener(TethysXUIEvent.WINDOWCLOSED, e -> {
+            theDialog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> {
                 theTree.setVisible(false);
-                fireEvent(TethysXUIEvent.WINDOWCLOSED, null);
+                fireEvent(TethysUIEvent.WINDOWCLOSED, null);
             });
         }
 
@@ -201,7 +201,7 @@ public class MetisHelpWindow
         final List<MetisHelpEntry> myEntries = pModule.getHelpEntries();
 
         /* Declare CSS */
-        final TethysStyleSheetId myCSS = pModule.getCSS();
+        final TethysUIStyleSheetId myCSS = pModule.getCSS();
         if (myCSS != null) {
             theHtml.setCSSContent(myCSS);
         }
@@ -214,7 +214,7 @@ public class MetisHelpWindow
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysXUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 handleNewTreeItem(pEvent.getDetails(MetisHelpEntry.class));
@@ -244,10 +244,10 @@ public class MetisHelpWindow
      * @param pEntries the help entries
      * @return the Tree node
      */
-    private TethysTreeItem<MetisHelpEntry> createTree(final String pTitle,
-                                                      final List<MetisHelpEntry> pEntries) {
+    private TethysUITreeItem<MetisHelpEntry> createTree(final String pTitle,
+                                                        final List<MetisHelpEntry> pEntries) {
         /* Obtain the root node */
-        final TethysTreeItem<MetisHelpEntry> myRoot = theTree.getRoot();
+        final TethysUITreeItem<MetisHelpEntry> myRoot = theTree.getRoot();
         theTree.setRootName(pTitle);
         theTree.setRootVisible();
 
@@ -266,12 +266,12 @@ public class MetisHelpWindow
      * @param pParent the parent to add to
      * @param pEntries the entries to add
      */
-    private void addHelpEntries(final TethysTreeItem<MetisHelpEntry> pParent,
+    private void addHelpEntries(final TethysUITreeItem<MetisHelpEntry> pParent,
                                 final List<MetisHelpEntry> pEntries) {
         /* Loop through the entries */
         for (MetisHelpEntry myEntry : pEntries) {
             /* Create the entry */
-            final TethysTreeItem<MetisHelpEntry> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
+            final TethysUITreeItem<MetisHelpEntry> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
 
             /* If we have children */
             final List<MetisHelpEntry> myChildren = myEntry.getChildren();

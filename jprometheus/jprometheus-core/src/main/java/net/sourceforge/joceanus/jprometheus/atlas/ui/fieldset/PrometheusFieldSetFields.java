@@ -21,12 +21,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * FieldSet Panel.
@@ -37,7 +38,7 @@ public class PrometheusFieldSetFields<T>
     /**
      * The gui factory.
      */
-    private final TethysGuiFactory theFactory;
+    private final TethysUIFactory<?> theFactory;
 
     /**
      * The fieldSet.
@@ -47,12 +48,12 @@ public class PrometheusFieldSetFields<T>
     /**
      * The holding panel.
      */
-    private final TethysBorderPaneManager thePane;
+    private final TethysUIBorderPaneManager thePane;
 
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The map of elements.
@@ -74,15 +75,16 @@ public class PrometheusFieldSetFields<T>
      * @param pFactory the factory
      * @param pFieldSet the fieldSet
      */
-    PrometheusFieldSetFields(final TethysGuiFactory pFactory,
+    PrometheusFieldSetFields(final TethysUIFactory<?> pFactory,
                              final PrometheusFieldSet<T> pFieldSet) {
         /* Store the factory */
         theFactory = pFactory;
         theFieldSet = pFieldSet;
 
         /* Create the panel */
-        thePane = theFactory.newBorderPane();
-        thePanel = theFactory.newVBoxPane();
+        final TethysUIPaneFactory myPanes = pFactory.paneFactory();
+        thePane = myPanes.newBorderPane();
+        thePanel = myPanes.newVBoxPane();
         thePane.setNorth(thePanel);
 
         /* Create the maps */
@@ -92,23 +94,8 @@ public class PrometheusFieldSetFields<T>
 
 
     @Override
-    public TethysNode getNode() {
-        return thePane.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePane.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePane.setVisible(pVisible);
-    }
-
-    @Override
-    public Integer getId() {
-        return thePane.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePane;
     }
 
     /**
@@ -118,7 +105,7 @@ public class PrometheusFieldSetFields<T>
      * @param pValueFactory the valueFactory
      */
     public void addField(final PrometheusDataFieldId pFieldId,
-                         final TethysDataEditField<?> pField,
+                         final TethysUIDataEditField<?> pField,
                          final Function<T, Object> pValueFactory) {
         /* create the element */
         final PrometheusFieldSetElement<?> myElement = new PrometheusFieldSetElement<>(theFactory, pFieldId, pField);
@@ -133,7 +120,7 @@ public class PrometheusFieldSetFields<T>
         theFieldSet.registerField(pFieldId, this);
 
         /* Pass newData event to fieldSet */
-        pField.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> theFieldSet.newData(pFieldId, e.getDetails()));
+        pField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theFieldSet.newData(pFieldId, e.getDetails()));
     }
 
     /**

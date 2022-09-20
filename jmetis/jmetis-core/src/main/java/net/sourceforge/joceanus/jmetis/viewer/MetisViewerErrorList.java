@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Report-able error list.
@@ -61,7 +61,7 @@ public class MetisViewerErrorList
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getDataFieldSet().getName();
     }
 

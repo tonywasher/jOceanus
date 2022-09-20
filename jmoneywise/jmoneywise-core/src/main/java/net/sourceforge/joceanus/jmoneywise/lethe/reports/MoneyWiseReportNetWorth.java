@@ -66,7 +66,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PortfolioC
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * NetWorth report builder.
@@ -126,7 +126,7 @@ public class MoneyWiseReportNetWorth
     /**
      * The Formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * Data Analysis.

@@ -22,7 +22,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -138,7 +139,7 @@ public class MetisViewerBuilder {
     /**
      * The data formatter.
      */
-    private final TethysDataFormatter theFormatter;
+    private final TethysUIDataFormatter theFormatter;
 
     /**
      * The document builder.
@@ -190,7 +191,7 @@ public class MetisViewerBuilder {
      * @param pFormatter the data formatter
      * @throws OceanusException on error
      */
-    protected MetisViewerBuilder(final TethysDataFormatter pFormatter) throws OceanusException {
+    protected MetisViewerBuilder(final TethysUIDataFormatter pFormatter) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store parameters */

@@ -18,12 +18,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QLineType;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * QIF File record representation.
@@ -164,7 +163,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    public void formatRecord(final TethysDataFormatter pFormatter,
+    public void formatRecord(final TethysUIDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format the standard lines */
         formatLines(pFormatter, pBuilder);
@@ -172,10 +171,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         /* If we have subLists */
         if (theSubList != null) {
             /* Loop through the subList */
-            final Iterator<QIFRecord<T>> myIterator = theSubList.iterator();
-            while (myIterator.hasNext()) {
-                final QIFRecord<T> myRecord = myIterator.next();
-
+            for (QIFRecord<T> myRecord : theSubList) {
                 /* Format the lines of the subRecord */
                 myRecord.formatLines(pFormatter, pBuilder);
             }
@@ -191,7 +187,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    private void formatLines(final TethysDataFormatter pFormatter,
+    private void formatLines(final TethysUIDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Loop through the map in ordinal order */
         for (T myType : theClass.getEnumConstants()) {

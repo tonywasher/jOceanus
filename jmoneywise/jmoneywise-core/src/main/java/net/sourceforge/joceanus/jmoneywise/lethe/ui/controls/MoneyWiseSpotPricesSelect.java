@@ -34,25 +34,27 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * SpotPrice selection panel.
  */
 public class MoneyWiseSpotPricesSelect
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for Date Label.
      */
@@ -61,7 +63,7 @@ public class MoneyWiseSpotPricesSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + TethysLabel.STR_COLON;
+    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + TethysUIConstant.STR_COLON;
 
     /**
      * Text for Show Closed.
@@ -91,7 +93,7 @@ public class MoneyWiseSpotPricesSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The data view.
@@ -101,37 +103,37 @@ public class MoneyWiseSpotPricesSelect
     /**
      * The date button.
      */
-    private final TethysDateButtonManager theDateButton;
+    private final TethysUIDateButtonManager theDateButton;
 
     /**
      * The showClosed checkBox.
      */
-    private final TethysCheckBox theShowClosed;
+    private final TethysUICheckBox theShowClosed;
 
     /**
      * The next button.
      */
-    private final TethysButton theNext;
+    private final TethysUIButton theNext;
 
     /**
      * The previous button.
      */
-    private final TethysButton thePrev;
+    private final TethysUIButton thePrev;
 
     /**
      * The download button.
      */
-    private final TethysButton theDownloadButton;
+    private final TethysUIButton theDownloadButton;
 
     /**
      * The portfolio button.
      */
-    private final TethysScrollButtonManager<PortfolioBucket> thePortButton;
+    private final TethysUIScrollButtonManager<PortfolioBucket> thePortButton;
 
     /**
      * The portfolio menu.
      */
-    private final TethysScrollMenu<PortfolioBucket> thePortMenu;
+    private final TethysUIScrollMenu<PortfolioBucket> thePortMenu;
 
     /**
      * The Portfolio list.
@@ -158,7 +160,7 @@ public class MoneyWiseSpotPricesSelect
      * @param pFactory the GUI factory
      * @param pView the data view
      */
-    public MoneyWiseSpotPricesSelect(final TethysGuiFactory pFactory,
+    public MoneyWiseSpotPricesSelect(final TethysUIFactory<?> pFactory,
                                      final MoneyWiseView pView) {
         /* Store table and view details */
         theView = pView;
@@ -167,35 +169,37 @@ public class MoneyWiseSpotPricesSelect
         theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
-        final TethysLabel myDate = pFactory.newLabel(NLS_DATE);
-        final TethysLabel myPort = pFactory.newLabel(NLS_PORT);
+        final TethysUIControlFactory myControls = pFactory.controlFactory();
+        final TethysUILabel myDate = myControls.newLabel(NLS_DATE);
+        final TethysUILabel myPort = myControls.newLabel(NLS_PORT);
 
         /* Create the check box */
-        theShowClosed = pFactory.newCheckBox(NLS_CLOSED);
+        theShowClosed = myControls.newCheckBox(NLS_CLOSED);
 
         /* Create the DateButton */
-        theDateButton = pFactory.newDateButton();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theDateButton = myButtons.newDateButton();
 
         /* Create the Download Button */
-        theDownloadButton = pFactory.newButton();
+        theDownloadButton = myButtons.newButton();
         MetisIcon.configureDownloadIconButton(theDownloadButton);
 
         /* Create the Buttons */
-        theNext = pFactory.newButton();
-        theNext.setIcon(TethysArrowIconId.RIGHT);
+        theNext = myButtons.newButton();
+        theNext.setIcon(TethysUIArrowIconId.RIGHT);
         theNext.setToolTip(NLS_NEXTTIP);
-        thePrev = pFactory.newButton();
-        thePrev.setIcon(TethysArrowIconId.LEFT);
+        thePrev = myButtons.newButton();
+        thePrev.setIcon(TethysUIArrowIconId.LEFT);
         thePrev.setToolTip(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = pFactory.newScrollButton(PortfolioBucket.class);
+        thePortButton = myButtons.newScrollButton(PortfolioBucket.class);
 
         /* Create initial state */
         theState = new SpotPricesState();
 
         /* Create the panel */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
@@ -221,11 +225,11 @@ public class MoneyWiseSpotPricesSelect
         thePortMenu = thePortButton.getMenu();
 
         /* Add the listeners */
-        final TethysEventRegistrar<TethysXUIEvent> myRegistrar = thePortButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewPortfolio());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
         thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
-        theDownloadButton.getEventRegistrar().addEventListener(TethysXUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
-        theDateButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewDate());
+        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
         theShowClosed.getEventRegistrar().addEventListener(e -> handleNewClosed());
         theNext.getEventRegistrar().addEventListener(e -> {
             theState.setNext();
@@ -238,13 +242,8 @@ public class MoneyWiseSpotPricesSelect
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -383,7 +382,7 @@ public class MoneyWiseSpotPricesSelect
         thePortMenu.removeAllItems();
 
         /* Record active item */
-        TethysScrollMenuItem<PortfolioBucket> myActive = null;
+        TethysUIScrollItem<PortfolioBucket> myActive = null;
         final PortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
@@ -398,7 +397,7 @@ public class MoneyWiseSpotPricesSelect
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<PortfolioBucket> myItem = thePortMenu.addItem(myBucket);
+            final TethysUIScrollItem<PortfolioBucket> myItem = thePortMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -555,7 +554,7 @@ public class MoneyWiseSpotPricesSelect
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final TethysDateButtonManager pButton) {
+        private boolean setDate(final TethysUIDateButtonManager pButton) {
             /* Adjust the date and build the new range */
             final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!MetisDataDifference.isEqual(myDate, theDate)) {

@@ -16,59 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.javafx;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-
-import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXMain;
-import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXLaunch;
 
 /**
  * MoneyWise javaFX StartUp.
  */
 public class MoneyWise4FX
-        extends Application
-        implements MetisFXMain {
-    /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWise4FX.class);
-
-    /**
-     * javaFXState.
-     */
-    private MetisFXState theState;
-
+        extends TethysUIFXLaunch {
     @Override
-    public void setProgramInfo(final MetisFXState pState) {
-        theState = pState;
-    }
-
-    @Override
-    public void init() {
-        /* Protect against exceptions */
-        try {
-            /* Create a timer */
-            if (theState == null) {
-                theState = new MetisFXState(new MoneyWiseApp());
-            }
-
-            /* Create the main panel */
-            theState.createMain();
-
-            /* Handle Exceptions */
-        } catch (OceanusException e) {
-            LOGGER.error("createPanel didn't complete successfully", e);
-            System.exit(1);
-        }
-    }
-
-    @Override
-    public void start(final Stage pStage) {
-        /* Start the program */
-        theState.startMain(pStage);
+    protected TethysUILaunchProgram getProgramInfo() {
+        return new MoneyWiseApp();
     }
 }

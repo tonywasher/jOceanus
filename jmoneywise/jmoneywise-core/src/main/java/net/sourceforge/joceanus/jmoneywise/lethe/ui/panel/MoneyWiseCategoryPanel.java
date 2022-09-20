@@ -41,19 +41,19 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 public class MoneyWiseCategoryPanel
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for DataEntry Title.
      */
@@ -82,27 +82,27 @@ public class MoneyWiseCategoryPanel
     /**
      * The Panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<PanelName> theSelectButton;
+    private final TethysUIScrollButtonManager<PanelName> theSelectButton;
 
     /**
      * The card panel.
      */
-    private final TethysCardPaneManager<TethysComponent> theCardPanel;
+    private final TethysUICardPaneManager<TethysUIComponent> theCardPanel;
 
     /**
      * The select panel.
      */
-    private final TethysBoxPaneManager theSelectPanel;
+    private final TethysUIBoxPaneManager theSelectPanel;
 
     /**
      * The filter card panel.
      */
-    private final TethysCardPaneManager<TethysComponent> theFilterCardPanel;
+    private final TethysUICardPaneManager<TethysUIComponent> theFilterCardPanel;
 
     /**
      * Deposit Categories Table.
@@ -173,7 +173,7 @@ public class MoneyWiseCategoryPanel
         theView = pView;
 
         /* Access GUI Factory */
-        final TethysGuiFactory myFactory = pView.getGuiFactory();
+        final TethysUIFactory<?> myFactory = pView.getGuiFactory();
         final MetisViewerManager myViewer = pView.getViewerManager();
 
         /* Create the event manager */
@@ -183,7 +183,8 @@ public class MoneyWiseCategoryPanel
         theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
 
         /* Create the Panel */
-        thePanel = myFactory.newBorderPane();
+        final TethysUIPaneFactory myPanes = myFactory.paneFactory();
+        thePanel = myPanes.newBorderPane();
 
         /* Create the top level viewer entry for this view */
         final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
@@ -205,12 +206,12 @@ public class MoneyWiseCategoryPanel
         theRegionTable = new MoneyWiseRegionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
-        final TethysLabel myLabel = myFactory.newLabel(NLS_DATA);
-        theSelectButton = myFactory.newScrollButton(PanelName.class);
+        final TethysUILabel myLabel = myFactory.controlFactory().newLabel(NLS_DATA);
+        theSelectButton = myFactory.buttonFactory().newScrollButton(PanelName.class);
         buildSelectMenu();
 
         /* Create the card panel */
-        theCardPanel = myFactory.newCardPane();
+        theCardPanel = myPanes.newCardPane();
 
         /* Add to the card panels */
         theCardPanel.addCard(PanelName.DEPOSITS.toString(), theDepositTable);
@@ -223,7 +224,7 @@ public class MoneyWiseCategoryPanel
         theSelectButton.setValue(theActive);
 
         /* Create the card panel */
-        theFilterCardPanel = myFactory.newCardPane();
+        theFilterCardPanel = myPanes.newCardPane();
 
         /* Add to the card panels */
         theFilterCardPanel.addCard(PanelName.DEPOSITS.toString(), theDepositTable.getFilterPanel());
@@ -234,7 +235,7 @@ public class MoneyWiseCategoryPanel
         theFilterCardPanel.addCard(PanelName.REGIONS.toString(), theRegionTable.getFilterPanel());
 
         /* Create the selection panel */
-        theSelectPanel = myFactory.newHBoxPane();
+        theSelectPanel = myPanes.newHBoxPane();
         theSelectPanel.setBorderTitle(NLS_SELECT);
 
         /* Create the layout for the selection panel */
@@ -244,7 +245,7 @@ public class MoneyWiseCategoryPanel
         theSelectPanel.addNode(theFilterCardPanel);
 
         /* Create the header panel */
-        final TethysBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();
         myHeader.setCentre(theSelectPanel);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -257,7 +258,7 @@ public class MoneyWiseCategoryPanel
         theActionButtons.setVisible(false);
 
         /* Create the listeners */
-        theSelectButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleSelection());
+        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleSelection());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         setChildListeners(theDepositTable.getEventRegistrar());
@@ -269,8 +270,8 @@ public class MoneyWiseCategoryPanel
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -292,11 +293,6 @@ public class MoneyWiseCategoryPanel
     }
 
     @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
     public void setEnabled(final boolean pEnabled) {
         theSelectButton.setEnabled(pEnabled);
         theCardPanel.setEnabled(pEnabled);
@@ -313,7 +309,7 @@ public class MoneyWiseCategoryPanel
      */
     private void buildSelectMenu() {
         /* Create builder */
-        final TethysScrollMenu<PanelName> myMenu = theSelectButton.getMenu();
+        final TethysUIScrollMenu<PanelName> myMenu = theSelectButton.getMenu();
 
         /* Loop through the panels */
         for (PanelName myPanel : PanelName.values()) {

@@ -38,15 +38,16 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Panel to display/edit/create a Portfolio.
@@ -69,7 +70,7 @@ public class MoneyWisePortfolioPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWisePortfolioPanel(final TethysGuiFactory pFactory,
+    public MoneyWisePortfolioPanel(final TethysUIFactory<?> pFactory,
                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                    final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -92,16 +93,17 @@ public class MoneyWisePortfolioPanel
      * Build Main subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildMainPanel(final TethysGuiFactory pFactory) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<PortfolioType> myTypeButton = pFactory.newScrollField(PortfolioType.class);
-        final TethysScrollButtonField<Payee> myParentButton = pFactory.newScrollField(Payee.class);
-        final TethysScrollButtonField<AssetCurrency> myCurrencyButton = pFactory.newScrollField(AssetCurrency.class);
-        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
+        final TethysUIScrollButtonField<PortfolioType> myTypeButton = myFields.newScrollField(PortfolioType.class);
+        final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
+        final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
+        final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Portfolio::getName);
@@ -115,7 +117,7 @@ public class MoneyWisePortfolioPanel
         myTypeButton.setMenuConfigurator(c -> buildTypeMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
     }
 
@@ -123,18 +125,19 @@ public class MoneyWisePortfolioPanel
      * Build extras subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildXtrasPanel(final TethysGuiFactory pFactory) {
+    private void buildXtrasPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysCharArrayEditField mySortCode = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myAccount = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myReference = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myWebSite = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myCustNo = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myUserId = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myPassWord = pFactory.newCharArrayField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUICharArrayEditField mySortCode = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myAccount = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myWebSite = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myCustNo = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myUserId = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myPassWord = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOSORTCODE, mySortCode, Portfolio::getSortCode);
@@ -150,9 +153,10 @@ public class MoneyWisePortfolioPanel
      * Build Notes subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildNotesPanel(final TethysGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
         /* Allocate fields */
-        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.PORTFOLIONOTES, myNotes, Portfolio::getNotes);
@@ -289,14 +293,14 @@ public class MoneyWisePortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildTypeMenu(final TethysScrollMenu<PortfolioType> pMenu,
+    public void buildTypeMenu(final TethysUIScrollMenu<PortfolioType> pMenu,
                               final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final PortfolioType myCurr = pPortfolio.getCategory();
-        TethysScrollMenuItem<PortfolioType> myActive = null;
+        TethysUIScrollItem<PortfolioType> myActive = null;
 
         /* Access PortfolioTypes */
         final PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
@@ -307,7 +311,7 @@ public class MoneyWisePortfolioPanel
             final PortfolioType myType = myIterator.next();
 
             /* Create a new action for the type */
-            final TethysScrollMenuItem<PortfolioType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<PortfolioType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -327,14 +331,14 @@ public class MoneyWisePortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
+    public void buildParentMenu(final TethysUIScrollMenu<Payee> pMenu,
                                 final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final Payee myCurr = pPortfolio.getParent();
-        TethysScrollMenuItem<Payee> myActive = null;
+        TethysUIScrollItem<Payee> myActive = null;
 
         /* Access Payees */
         final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -352,7 +356,7 @@ public class MoneyWisePortfolioPanel
             }
 
             /* Create a new action for the payee */
-            final TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysUIScrollItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -372,14 +376,14 @@ public class MoneyWisePortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
+    public void buildCurrencyMenu(final TethysUIScrollMenu<AssetCurrency> pMenu,
                                   final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final AssetCurrency myCurr = pPortfolio.getAssetCurrency();
-        TethysScrollMenuItem<AssetCurrency> myActive = null;
+        TethysUIScrollItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -396,7 +400,7 @@ public class MoneyWisePortfolioPanel
             }
 
             /* Create a new action for the currency */
-            final TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysUIScrollItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

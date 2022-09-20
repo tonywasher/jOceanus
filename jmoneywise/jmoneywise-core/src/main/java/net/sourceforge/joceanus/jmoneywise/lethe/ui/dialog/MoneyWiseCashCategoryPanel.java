@@ -32,11 +32,12 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Panel to display/edit/create a CashCategory.
@@ -49,7 +50,7 @@ public class MoneyWiseCashCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseCashCategoryPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseCashCategoryPanel(final TethysUIFactory<?> pFactory,
                                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                       final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -59,13 +60,14 @@ public class MoneyWiseCashCategoryPanel
         final PrometheusFieldSet<CashCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField mySubName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField mySubName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<CashCategoryType> myTypeButton = pFactory.newScrollField(CashCategoryType.class);
-        final TethysScrollButtonField<CashCategory> myParentButton = pFactory.newScrollField(CashCategory.class);
+        final TethysUIScrollButtonField<CashCategoryType> myTypeButton = myFields.newScrollField(CashCategoryType.class);
+        final TethysUIScrollButtonField<CashCategory> myParentButton = myFields.newScrollField(CashCategory.class);
 
         /* Assign the fields to the panel */
         myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, CashCategory::getName);
@@ -162,14 +164,14 @@ public class MoneyWiseCashCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysScrollMenu<CashCategoryType> pMenu,
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<CashCategoryType> pMenu,
                                       final CashCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final CashCategoryType myCurr = pCategory.getCategoryType();
-        TethysScrollMenuItem<CashCategoryType> myActive = null;
+        TethysUIScrollItem<CashCategoryType> myActive = null;
 
         /* Access Cash Category types */
         final CashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
@@ -189,7 +191,7 @@ public class MoneyWiseCashCategoryPanel
             }
 
             /* Create a new action for the type */
-            final TethysScrollMenuItem<CashCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<CashCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -209,14 +211,14 @@ public class MoneyWiseCashCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private static void buildParentMenu(final TethysScrollMenu<CashCategory> pMenu,
+    private static void buildParentMenu(final TethysUIScrollMenu<CashCategory> pMenu,
                                         final CashCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final CashCategory myCurr = pCategory.getParentCategory();
-        TethysScrollMenuItem<CashCategory> myActive = null;
+        TethysUIScrollItem<CashCategory> myActive = null;
 
         /* Loop through the CashCategories */
         final CashCategoryList myCategories = pCategory.getList();
@@ -231,7 +233,7 @@ public class MoneyWiseCashCategoryPanel
             }
 
             /* Create a new action for the type */
-            final TethysScrollMenuItem<CashCategory> myItem = pMenu.addItem(myCat);
+            final TethysUIScrollItem<CashCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

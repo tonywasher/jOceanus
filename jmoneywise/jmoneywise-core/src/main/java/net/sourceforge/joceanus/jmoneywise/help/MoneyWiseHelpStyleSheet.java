@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jmoneywise.help;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * StyleSheetIds.
  */
-public enum MoneyWiseHelpStyleSheet implements TethysStyleSheetId {
+public enum MoneyWiseHelpStyleSheet
+        implements TethysUIStyleSheetId {
     /**
      * Help StyleSheet.
      */

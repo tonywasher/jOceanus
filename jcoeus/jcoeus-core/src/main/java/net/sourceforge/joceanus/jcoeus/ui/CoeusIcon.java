@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.jcoeus.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 
 /**
  * Coeus Icon IDs.
  */
-public enum CoeusIcon implements TethysIconId {
+public enum CoeusIcon implements TethysUIIconId {
     /**
      * The small program icon.
      */

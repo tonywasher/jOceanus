@@ -38,9 +38,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * Security Price Table.
@@ -61,7 +61,7 @@ public class MoneyWiseSecurityPriceTable
     /**
      * The active column.
      */
-    private final TethysTableColumn<MetisAction, PrometheusDataFieldId, SecurityPrice> theActiveColumn;
+    private final TethysUITableColumn<MetisAction, PrometheusDataFieldId, SecurityPrice> theActiveColumn;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class MoneyWiseSecurityPriceTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITYPRICE);
 
         /* Access Gui factory */
-        final TethysTableManager<PrometheusDataFieldId, SecurityPrice> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, SecurityPrice> myTable = getTable();
 
         /* Set table configuration */
         myTable.setDisabled(SecurityPrice::isDisabled)
@@ -97,7 +97,7 @@ public class MoneyWiseSecurityPriceTable
                .setOnCommit((r, v) -> updateField(SecurityPrice::setPrice, r, v));
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(pView.getGuiFactory());
         theActiveColumn = myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
@@ -108,7 +108,8 @@ public class MoneyWiseSecurityPriceTable
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Set standard size */
-        getTable().setPreferredWidthAndHeight(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2);
+        myTable.setPreferredWidth(WIDTH_PANEL >> 1);
+        myTable.setPreferredHeight(HEIGHT_PANEL >> 2);
     }
 
     @Override

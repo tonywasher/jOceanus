@@ -29,9 +29,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * LoaderThread extension to load an XML backup.
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
  * @param <E> the Data list type
  */
 public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysThread<T> {
+        implements TethysUIThread<T> {
     /**
      * Select Backup Task.
      */
@@ -64,7 +64,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     }
 
     @Override
-    public T performTask(final TethysThreadManager pManager) throws OceanusException {
+    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
@@ -80,7 +80,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         final File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
 
         /* Determine the name of the file to load */
-        final TethysFileSelector myDialog = myPromToolkit.getToolkit().getGuiFactory().newFileSelector();
+        final TethysUIFileSelector myDialog = myPromToolkit.getToolkit().getGuiFactory().dialogFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);

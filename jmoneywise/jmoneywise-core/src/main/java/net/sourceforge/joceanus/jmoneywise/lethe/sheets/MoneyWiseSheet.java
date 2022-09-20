@@ -21,7 +21,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetWriter;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SpreadSheet extension for MoneyWiseData.
@@ -29,16 +30,29 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
  */
 public class MoneyWiseSheet
         extends PrometheusSpreadSheet<MoneyWiseData> {
-    @Override
-    protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final TethysThreadStatusReport pReport,
-                                                                  final GordianPasswordManager pPasswordMgr) {
-        /* Create a MoneyWise Reader object and return it */
-        return new MoneyWiseReader(pReport, pPasswordMgr);
+    /**
+     * The Data file name.
+     */
+    private final TethysUIFactory<?> theGuiFactory;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     */
+    public MoneyWiseSheet(final TethysUIFactory<?> pFactory) {
+        theGuiFactory = pFactory;
     }
 
     @Override
-    protected PrometheusSheetWriter<MoneyWiseData> getSheetWriter(final TethysThreadStatusReport pReport) {
+    protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final TethysUIThreadStatusReport pReport,
+                                                                  final GordianPasswordManager pPasswordMgr) {
+        /* Create a MoneyWise Reader object and return it */
+        return new MoneyWiseReader(theGuiFactory, pReport, pPasswordMgr);
+    }
+
+    @Override
+    protected PrometheusSheetWriter<MoneyWiseData> getSheetWriter(final TethysUIThreadStatusReport pReport) {
         /* Create a MoneyWise Writer object and return it */
-        return new MoneyWiseWriter(pReport);
+        return new MoneyWiseWriter(theGuiFactory, pReport);
     }
 }

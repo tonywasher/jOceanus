@@ -35,15 +35,16 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCharArrayTextAreaField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Panel to display/edit/create a Payee.
@@ -66,7 +67,7 @@ public class MoneyWisePayeePanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWisePayeePanel(final TethysGuiFactory pFactory,
+    public MoneyWisePayeePanel(final TethysUIFactory<?> pFactory,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -89,14 +90,15 @@ public class MoneyWisePayeePanel
      * Build Main subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildMainPanel(final TethysGuiFactory pFactory) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<PayeeType> myTypeButton = pFactory.newScrollField(PayeeType.class);
-        final TethysIconButtonField<Boolean> myClosedButton = pFactory.newIconField(Boolean.class);
+        final TethysUIScrollButtonField<PayeeType> myTypeButton = myFields.newScrollField(PayeeType.class);
+        final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Payee::getName);
@@ -106,7 +108,7 @@ public class MoneyWisePayeePanel
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildPayeeTypeMenu(c, getItem()));
-        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
     }
 
@@ -114,18 +116,19 @@ public class MoneyWisePayeePanel
      * Build extras subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildXtrasPanel(final TethysGuiFactory pFactory) {
+    private void buildXtrasPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
         /* Allocate fields */
-        final TethysCharArrayEditField mySortCode = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myAccount = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myReference = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myWebSite = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myCustNo = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myUserId = pFactory.newCharArrayField();
-        final TethysCharArrayEditField myPassWord = pFactory.newCharArrayField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUICharArrayEditField mySortCode = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myAccount = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myWebSite = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myCustNo = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myUserId = myFields.newCharArrayField();
+        final TethysUICharArrayEditField myPassWord = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAssetDataId.PAYEESORTCODE, mySortCode, Payee::getSortCode);
@@ -141,9 +144,10 @@ public class MoneyWisePayeePanel
      * Build Notes subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildNotesPanel(final TethysGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
         /* Allocate fields */
-        final TethysCharArrayTextAreaField myNotes = pFactory.newCharArrayAreaField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.PAYEENOTES, myNotes, Payee::getNotes);
@@ -267,7 +271,7 @@ public class MoneyWisePayeePanel
      * @param pMenu the menu
      * @param pPayee the payee to build for
      */
-    public void buildPayeeTypeMenu(final TethysScrollMenu<PayeeType> pMenu,
+    public void buildPayeeTypeMenu(final TethysUIScrollMenu<PayeeType> pMenu,
                                    final Payee pPayee) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -275,7 +279,7 @@ public class MoneyWisePayeePanel
         /* Record active item */
         final PayeeType myCurr = pPayee.getCategory();
         final PayeeList myList = pPayee.getList();
-        TethysScrollMenuItem<PayeeType> myActive = null;
+        TethysUIScrollItem<PayeeType> myActive = null;
 
         /* Access PayeeTypes */
         final PayeeTypeList myTypes = getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
@@ -305,7 +309,7 @@ public class MoneyWisePayeePanel
             }
 
             /* Create a new action for the payeeType */
-            final TethysScrollMenuItem<PayeeType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<PayeeType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {

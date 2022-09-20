@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -830,7 +830,7 @@ public final class ControlKey
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

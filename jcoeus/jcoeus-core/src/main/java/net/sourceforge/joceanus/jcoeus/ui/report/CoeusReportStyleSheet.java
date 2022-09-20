@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jcoeus.ui.report;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Report StyleSheets.
  */
-public enum CoeusReportStyleSheet implements TethysStyleSheetId {
+public enum CoeusReportStyleSheet
+        implements TethysUIStyleSheetId {
     /**
      * Report StyleSheet.
      */
@@ -32,7 +33,7 @@ public enum CoeusReportStyleSheet implements TethysStyleSheetId {
     /**
      * The Source.
      */
-    private String theSource;
+    private final String theSource;
 
     /**
      * Constructor.

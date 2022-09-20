@@ -32,11 +32,12 @@ import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStringEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
@@ -49,7 +50,7 @@ public class MoneyWiseTransactionCategoryPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseTransactionCategoryPanel(final TethysGuiFactory pFactory,
+    public MoneyWiseTransactionCategoryPanel(final TethysUIFactory<?> pFactory,
                                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                              final MetisErrorPanel pError) {
         /* Initialise the panel */
@@ -59,13 +60,14 @@ public class MoneyWiseTransactionCategoryPanel
         final PrometheusFieldSet<TransactionCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
-        final TethysStringEditField myName = pFactory.newStringField();
-        final TethysStringEditField mySubName = pFactory.newStringField();
-        final TethysStringEditField myDesc = pFactory.newStringField();
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIStringEditField myName = myFields.newStringField();
+        final TethysUIStringEditField mySubName = myFields.newStringField();
+        final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysScrollButtonField<TransactionCategoryType> myTypeButton = pFactory.newScrollField(TransactionCategoryType.class);
-        final TethysScrollButtonField<TransactionCategory> myParentButton = pFactory.newScrollField(TransactionCategory.class);
+        final TethysUIScrollButtonField<TransactionCategoryType> myTypeButton = myFields.newScrollField(TransactionCategoryType.class);
+        final TethysUIScrollButtonField<TransactionCategory> myParentButton = myFields.newScrollField(TransactionCategory.class);
 
         /* Assign the fields to the panel */
         myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, TransactionCategory::getName);
@@ -160,7 +162,7 @@ public class MoneyWiseTransactionCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysScrollMenu<TransactionCategoryType> pMenu,
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<TransactionCategoryType> pMenu,
                                       final TransactionCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -168,7 +170,7 @@ public class MoneyWiseTransactionCategoryPanel
         /* Record active item */
         final TransactionCategoryType myCurr = pCategory.getCategoryType();
         final CategoryType myCurrType = CategoryType.determineType(myCurr);
-        TethysScrollMenuItem<TransactionCategoryType> myActive = null;
+        TethysUIScrollItem<TransactionCategoryType> myActive = null;
 
         /* Access Transaction Category types */
         final TransactionCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
@@ -188,7 +190,7 @@ public class MoneyWiseTransactionCategoryPanel
             }
 
             /* Create a new action for the type */
-            final TethysScrollMenuItem<TransactionCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<TransactionCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -208,7 +210,7 @@ public class MoneyWiseTransactionCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final TethysScrollMenu<TransactionCategory> pMenu,
+    private void buildParentMenu(final TethysUIScrollMenu<TransactionCategory> pMenu,
                                  final TransactionCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -216,7 +218,7 @@ public class MoneyWiseTransactionCategoryPanel
         /* Record active item */
         final TransactionCategory myCurr = pCategory.getParentCategory();
         final CategoryType myCurrType = CategoryType.determineType(pCategory);
-        TethysScrollMenuItem<TransactionCategory> myActive = null;
+        TethysUIScrollItem<TransactionCategory> myActive = null;
 
         /* Loop through the TransactionCategories */
         final TransactionCategoryList myCategories = getItem().getList();
@@ -233,7 +235,7 @@ public class MoneyWiseTransactionCategoryPanel
             /* If we are interested */
             if (myCurrType.isParentMatch(myClass)) {
                 /* Create a new action for the type */
-                final TethysScrollMenuItem<TransactionCategory> myItem = pMenu.addItem(myCat);
+                final TethysUIScrollItem<TransactionCategory> myItem = pMenu.addItem(myCat);
 
                 /* If this is the active parent */
                 if (myCat.equals(myCurr)) {

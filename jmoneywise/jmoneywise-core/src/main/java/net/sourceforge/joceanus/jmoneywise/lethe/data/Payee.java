@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Payee class.
@@ -1004,7 +1004,7 @@ public class Payee
         }
 
         @Override
-        public String formatObject(final TethysDataFormatter pFormatter) {
+        public String formatObject(final TethysUIDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

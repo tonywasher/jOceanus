@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+
 /**
  * Prometheus Thread Ids.
  */
-public enum PrometheusMenuId {
+public enum PrometheusMenuId
+        implements TethysUIMenuId {
     /**
      * Data Menu.
      */

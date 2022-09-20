@@ -130,6 +130,11 @@ public abstract class TethysUICoreFactory<C>
     }
 
     @Override
+    public TethysUIDataFormatter newDataFormatter() {
+        return new TethysUICoreDataFormatter();
+    }
+
+    @Override
     public TethysUIProgram getProgramDefinitions() {
         return theProgram;
     }

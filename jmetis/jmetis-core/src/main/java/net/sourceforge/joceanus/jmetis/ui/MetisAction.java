@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmetis.ui;
 
 /**
- * Prometheus Actions.
+ * Metis Actions.
  */
 public enum MetisAction {
     /**

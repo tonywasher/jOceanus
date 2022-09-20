@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadCancelException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetStaticData extension for TransactionInfoType.
@@ -81,7 +81,7 @@ public class SheetTransInfoType
      * @param pData the data set to load into
      * @throws OceanusException on error
      */
-    protected static void loadArchive(final TethysThreadStatusReport pReport,
+    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
                                       final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of InfoTypes */
@@ -118,7 +118,7 @@ public class SheetTransInfoType
             myList.postProcessOnLoad();
 
             /* Handle Exceptions */
-        } catch (TethysThreadCancelException e) {
+        } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
             throw new MoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);

@@ -28,21 +28,22 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysXUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
  * SpotRates selection panel.
  */
 public class MoneyWiseSpotRatesSelect
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for Currency Prompt.
      */
@@ -76,7 +77,7 @@ public class MoneyWiseSpotRatesSelect
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager thePanel;
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The data view.
@@ -86,27 +87,27 @@ public class MoneyWiseSpotRatesSelect
     /**
      * The currency label.
      */
-    private final TethysLabel theCurrLabel;
+    private final TethysUILabel theCurrLabel;
 
     /**
      * The date button.
      */
-    private final TethysDateButtonManager theDateButton;
+    private final TethysUIDateButtonManager theDateButton;
 
     /**
      * The next button.
      */
-    private final TethysButton theNext;
+    private final TethysUIButton theNext;
 
     /**
      * The previous button.
      */
-    private final TethysButton thePrev;
+    private final TethysUIButton thePrev;
 
     /**
      * The download button.
      */
-    private final TethysButton theDownloadButton;
+    private final TethysUIButton theDownloadButton;
 
     /**
      * The current state.
@@ -123,7 +124,7 @@ public class MoneyWiseSpotRatesSelect
      * @param pFactory the GUI factory
      * @param pView the data view
      */
-    public MoneyWiseSpotRatesSelect(final TethysGuiFactory pFactory,
+    public MoneyWiseSpotRatesSelect(final TethysUIFactory<?> pFactory,
                                     final MoneyWiseView pView) {
         /* Store table and view details */
         theView = pView;
@@ -132,32 +133,34 @@ public class MoneyWiseSpotRatesSelect
         theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
-        final TethysLabel myCurr = pFactory.newLabel(NLS_CURRENCY);
-        final TethysLabel myDate = pFactory.newLabel(NLS_DATE);
+        final TethysUIControlFactory myControls = pFactory.controlFactory();
+        final TethysUILabel myCurr = myControls.newLabel(NLS_CURRENCY);
+        final TethysUILabel myDate = myControls.newLabel(NLS_DATE);
 
         /* Create the DateButton */
-        theDateButton = pFactory.newDateButton();
+        final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
+        theDateButton = myButtons.newDateButton();
 
         /* Create the Download Button */
-        theDownloadButton = pFactory.newButton();
+        theDownloadButton = myButtons.newButton();
         MetisIcon.configureDownloadIconButton(theDownloadButton);
 
         /* Create the Currency indication */
-        theCurrLabel = pFactory.newLabel();
+        theCurrLabel = myControls.newLabel();
 
         /* Create the Buttons */
-        theNext = pFactory.newButton();
-        theNext.setIcon(TethysArrowIconId.RIGHT);
+        theNext = myButtons.newButton();
+        theNext.setIcon(TethysUIArrowIconId.RIGHT);
         theNext.setToolTip(NLS_NEXTTIP);
-        thePrev = pFactory.newButton();
-        thePrev.setIcon(TethysArrowIconId.LEFT);
+        thePrev = myButtons.newButton();
+        thePrev.setIcon(TethysUIArrowIconId.LEFT);
         thePrev.setToolTip(NLS_PREVTIP);
 
         /* Create initial state */
         theState = new SpotRatesState();
 
         /* Create the panel */
-        thePanel = pFactory.newHBoxPane();
+        thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.setBorderTitle(NLS_TITLE);
 
         /* Define the layout */
@@ -178,8 +181,8 @@ public class MoneyWiseSpotRatesSelect
         theState.applyState();
 
         /* Add the listeners */
-        theDateButton.getEventRegistrar().addEventListener(TethysXUIEvent.NEWVALUE, e -> handleNewDate());
-        theDownloadButton.getEventRegistrar().addEventListener(TethysXUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
+        theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
+        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
         theNext.getEventRegistrar().addEventListener(e -> {
             theState.setNext();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
@@ -191,13 +194,8 @@ public class MoneyWiseSpotRatesSelect
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
@@ -370,7 +368,7 @@ public class MoneyWiseSpotRatesSelect
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final TethysDateButtonManager pButton) {
+        private boolean setDate(final TethysUIDateButtonManager pButton) {
             /* Adjust the date and build the new range */
             final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!MetisDataDifference.isEqual(myDate, theDate)) {

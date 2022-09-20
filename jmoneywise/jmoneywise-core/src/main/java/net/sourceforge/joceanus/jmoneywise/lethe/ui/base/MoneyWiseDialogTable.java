@@ -23,12 +23,13 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Dialog Base Table.
@@ -39,12 +40,12 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
     /**
      * The panel.
      */
-    private final TethysBorderPaneManager thePanel;
+    private final TethysUIBorderPaneManager thePanel;
 
     /**
      * The add panel.
      */
-    private final TethysBoxPaneManager theAddPanel;
+    private final TethysUIBoxPaneManager theAddPanel;
 
     /**
      * Constructor.
@@ -61,20 +62,21 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
         super(pView, pUpdateSet, pError, pDataType);
 
         /* Access Gui factory */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
+        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a filter panel */
-        theAddPanel = myGuiFactory.newHBoxPane();
+        final TethysUIPaneFactory myPanes = myGuiFactory.paneFactory();
+        theAddPanel = myPanes.newHBoxPane();
         theAddPanel.addSpacer();
         theAddPanel.addNode(myNewButton);
 
         /* Create panel */
-        thePanel = myGuiFactory.newBorderPane();
+        thePanel = myPanes.newBorderPane();
         thePanel.setCentre(myTable);
         thePanel.setNorth(theAddPanel);
 
@@ -83,23 +85,8 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     /**

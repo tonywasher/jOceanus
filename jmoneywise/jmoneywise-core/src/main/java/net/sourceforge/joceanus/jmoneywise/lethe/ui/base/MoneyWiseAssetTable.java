@@ -34,14 +34,14 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Asset Table.
@@ -58,17 +58,17 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
     /**
      * The filter panel.
      */
-    private final TethysBoxPaneManager theFilterPanel;
+    private final TethysUIBoxPaneManager theFilterPanel;
 
     /**
      * The locked check box.
      */
-    private final TethysCheckBox theLockedCheckBox;
+    private final TethysUICheckBox theLockedCheckBox;
 
     /**
      * The closed column.
      */
-    private TethysTableColumn<Boolean, PrometheusDataFieldId, T> theClosedColumn;
+    private TethysUITableColumn<Boolean, PrometheusDataFieldId, T> theClosedColumn;
 
     /**
      * Are we showing closed accounts?
@@ -92,18 +92,18 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
         super(pView, pUpdateSet, pError, pDataType);
 
         /* Access Gui factory and table */
-        final TethysGuiFactory myGuiFactory = pView.getGuiFactory();
-        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
+        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
+        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create the CheckBox */
-        theLockedCheckBox = myGuiFactory.newCheckBox(PROMPT_CLOSED);
+        theLockedCheckBox = myGuiFactory.controlFactory().newCheckBox(PROMPT_CLOSED);
 
         /* Create a filter panel */
-        theFilterPanel = myGuiFactory.newHBoxPane();
+        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();
         theFilterPanel.addSpacer();
         theFilterPanel.addNode(theLockedCheckBox);
         theFilterPanel.addSpacer();
@@ -153,7 +153,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                                final boolean pCurrency,
                                final boolean pEvent) {
         /* Access Table */
-        final TethysTableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
 
         /* Create the parent column */
         if (pParent) {
@@ -178,8 +178,8 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
         }
 
         /* Create the Closed column */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, PrometheusDataFieldId, T> myClosedColumn
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton(getView().getGuiFactory());
+        final TethysUITableColumn<Boolean, PrometheusDataFieldId, T> myClosedColumn
                 = myTable.declareIconColumn(MoneyWiseAssetDataId.CLOSED, Boolean.class)
                 .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
                 .setCellValueFactory(AssetBase::isClosed)
@@ -191,7 +191,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
         setShowAll(false);
 
         /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
+        final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(getView().getGuiFactory());
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
@@ -214,7 +214,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * Obtain the filter panel.
      * @return the filter panel
      */
-    public TethysBoxPaneManager getFilterPanel() {
+    public TethysUIBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -222,7 +222,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * Declare the closed column.
      * @param pColumn the column
      */
-    protected void declareClosedColumn(final TethysTableColumn<Boolean, PrometheusDataFieldId, T> pColumn) {
+    protected void declareClosedColumn(final TethysUITableColumn<Boolean, PrometheusDataFieldId, T> pColumn) {
         theClosedColumn = pColumn;
     }
 
@@ -276,7 +276,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pMenu the menu to build
      */
     protected abstract void buildCategoryMenu(T pAsset,
-                                              TethysScrollMenu<C> pMenu);
+                                              TethysUIScrollMenu<C> pMenu);
 
     /**
      * Build the Parent list for the item.
@@ -284,7 +284,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pMenu the menu to build
      */
     protected void buildParentMenu(final T pAsset,
-                                   final TethysScrollMenu<Payee> pMenu) {
+                                   final TethysUIScrollMenu<Payee> pMenu) {
         /* No-Op */
     }
 
@@ -294,7 +294,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pMenu the menu to build
      */
     protected void buildCurrencyMenu(final T pAsset,
-                                     final TethysScrollMenu<AssetCurrency> pMenu) {
+                                     final TethysUIScrollMenu<AssetCurrency> pMenu) {
         /* No-Op */
     }
 

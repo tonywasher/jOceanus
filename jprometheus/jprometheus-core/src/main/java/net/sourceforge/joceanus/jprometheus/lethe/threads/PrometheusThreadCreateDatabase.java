@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysThread;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadManager;
  * @param <E> the data type enum class
  */
 public class PrometheusThreadCreateDatabase<T extends DataSet<T, E>, E extends Enum<E>>
-        implements TethysThread<Void> {
+        implements TethysUIThread<Void> {
     /**
      * Data Control.
      */
@@ -51,7 +51,7 @@ public class PrometheusThreadCreateDatabase<T extends DataSet<T, E>, E extends E
     }
 
     @Override
-    public Void performTask(final TethysThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
         pManager.initTask(getTaskName());
 

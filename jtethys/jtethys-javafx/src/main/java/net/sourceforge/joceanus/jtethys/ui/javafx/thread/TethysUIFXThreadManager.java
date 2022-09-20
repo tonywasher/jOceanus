@@ -21,7 +21,7 @@ import javafx.concurrent.Worker.State;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUICoreThreadManager;
 import net.sourceforge.joceanus.jtethys.ui.core.thread.TethysUICoreThreadStatus;

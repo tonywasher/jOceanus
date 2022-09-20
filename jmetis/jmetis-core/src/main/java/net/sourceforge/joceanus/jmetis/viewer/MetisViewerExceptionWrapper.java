@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmetis.viewer;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Wrapper class to facilitate reporting of exception.
@@ -69,7 +69,7 @@ public class MetisViewerExceptionWrapper
     }
 
     @Override
-    public String formatObject(final TethysDataFormatter pFormatter) {
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
         return getMessage();
     }
 

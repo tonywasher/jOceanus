@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -36,7 +35,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Write control for spreadsheets.
@@ -45,9 +45,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysThreadStatusReport;
  */
 public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
     /**
+     * Gui Factory.
+     */
+    private final TethysUIFactory<?> theGuiFactory;
+
+    /**
      * Report.
      */
-    private final TethysThreadStatusReport theReport;
+    private final TethysUIThreadStatusReport theReport;
 
     /**
      * Writable spreadsheet.
@@ -66,9 +71,12 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
     /**
      * Constructor.
+     * @param pFactory the gui factory
      * @param pReport the report
      */
-    protected PrometheusSheetWriter(final TethysThreadStatusReport pReport) {
+    protected PrometheusSheetWriter(final TethysUIFactory<?> pFactory,
+                                    final TethysUIThreadStatusReport pReport) {
+        theGuiFactory = pFactory;
         theReport = pReport;
     }
 
@@ -76,7 +84,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * get report.
      * @return the report
      */
-    protected TethysThreadStatusReport getReport() {
+    protected TethysUIThreadStatusReport getReport() {
         return theReport;
     }
 
@@ -168,7 +176,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      */
     private void initialiseWorkBook(final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create the workbook attached to the output stream */
-        theWorkBook = PrometheusSheetProvider.newWorkBook(pType);
+        theWorkBook = PrometheusSheetProvider.newWorkBook(pType, theGuiFactory);
 
         /* Initialise the list */
         theSheets = new ArrayList<>();
@@ -195,11 +203,8 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        final Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
-        while (myIterator.hasNext()) {
+        for (PrometheusSheetDataItem<?, ?> mySheet : theSheets) {
             /* Access the next sheet */
-            final PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
-
             /* Write data for the sheet */
             myTask.startTask(mySheet.toString());
             mySheet.writeSpreadSheet();

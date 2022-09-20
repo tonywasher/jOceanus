@@ -22,7 +22,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * The help module that is implemented by each Help System.
@@ -62,7 +62,7 @@ public abstract class MetisHelpModule {
     /**
      * The CSS of the help system.
      */
-    private TethysStyleSheetId theCSS;
+    private TethysUIStyleSheetId theCSS;
 
     /**
      * The initial entry of the help system.
@@ -109,7 +109,7 @@ public abstract class MetisHelpModule {
      * Obtain the CSS.
      * @return the CSS
      */
-    protected TethysStyleSheetId getCSS() {
+    protected TethysUIStyleSheetId getCSS() {
         return theCSS;
     }
 
@@ -191,7 +191,7 @@ public abstract class MetisHelpModule {
      * @param pKey the styleSheetKey
      * @throws OceanusException on error
      */
-    protected <K extends Enum<K> & TethysStyleSheetId> void loadCSS(final K pKey) throws OceanusException {
+    protected <K extends Enum<K> & TethysUIStyleSheetId> void loadCSS(final K pKey) throws OceanusException {
         theCSS = pKey;
     }
 

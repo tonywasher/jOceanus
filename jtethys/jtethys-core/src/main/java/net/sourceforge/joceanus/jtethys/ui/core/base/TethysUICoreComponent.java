@@ -57,5 +57,10 @@ public abstract class TethysUICoreComponent
     public void setBorderTitle(final String pTitle) {
         theTitle = pTitle;
     }
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+        return null;
+    }
 }
 

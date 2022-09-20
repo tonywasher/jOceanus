@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
-import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFLine.QIFStringLine;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing a QIF Category record.
@@ -97,10 +96,7 @@ public class QIFEventCategory
         boolean bIsIncome = false;
 
         /* Loop through the lines */
-        final Iterator<String> myIterator = pLines.iterator();
-        while (myIterator.hasNext()) {
-            final String myLine = myIterator.next();
-
+        for (String myLine : pLines) {
             /* Determine the category */
             final QCategoryLineType myType = QCategoryLineType.parseLine(myLine);
             if (myType != null) {
@@ -183,7 +179,7 @@ public class QIFEventCategory
     /**
      * The Category Name line.
      */
-    public class QIFCategoryNameLine
+    public static class QIFCategoryNameLine
             extends QIFStringLine<QCategoryLineType> {
         /**
          * Constructor.
@@ -211,7 +207,7 @@ public class QIFEventCategory
     /**
      * The Category Description line.
      */
-    public class QIFCategoryDescLine
+    public static class QIFCategoryDescLine
             extends QIFStringLine<QCategoryLineType> {
         /**
          * Constructor.
@@ -258,7 +254,7 @@ public class QIFEventCategory
         }
 
         @Override
-        protected void formatData(final TethysDataFormatter pFormatter,
+        protected void formatData(final TethysUIDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
@@ -286,7 +282,7 @@ public class QIFEventCategory
         }
 
         @Override
-        protected void formatData(final TethysDataFormatter pFormatter,
+        protected void formatData(final TethysUIDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
@@ -314,7 +310,7 @@ public class QIFEventCategory
         }
 
         @Override
-        protected void formatData(final TethysDataFormatter pFormatter,
+        protected void formatData(final TethysUIDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
