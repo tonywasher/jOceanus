@@ -74,7 +74,7 @@ public class TethysUIFXDialogFactory
     @Override
     public TethysUIPasswordDialog newPasswordDialog(final String pTitle,
                                                     final boolean pNeedConfirm) {
-        return new TethysUIFXPasswordDialog(theFactory, theStage, pTitle, pNeedConfirm);
+        return TethysUIFXPasswordDialog.createTheDialog(theFactory, theStage, pTitle, pNeedConfirm);
     }
 
     @Override

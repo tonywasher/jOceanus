@@ -75,6 +75,7 @@ public class TethysUIFXProgressBar
         theStack = new StackPane();
         theNode = new TethysUIFXNode(theStack);
         theProgress.getStyleClass().add(STYLE_PROGRESS);
+        theProgress.setMaxWidth(Double.MAX_VALUE);
 
         /* Build the stack Pane */
         theStack.getChildren().addAll(theProgress, thePercent);
