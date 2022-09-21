@@ -79,6 +79,7 @@ public final class TethysUIFXScrollButtonManager<T>
     public void setIcon(final TethysUIIconId pId,
                         final int pWidth) {
         getButton().setIcon(TethysUIFXUtils.getIconAtSize(pId, pWidth));
+        getButton().setIconWidth(pWidth);
     }
 
     @Override

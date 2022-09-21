@@ -121,6 +121,7 @@ public class TethysUIFXTableManager<C, R>
         theColumns = theTable.getColumns();
         theCellFactory = new TethysUIFXTableCellFactory<>(pFactory);
         theTable.getStyleClass().add(CSS_STYLE_BASE);
+        theTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         theNode = new TethysUIFXNode(theTable);
 
         /* Configure the table */
@@ -275,14 +276,7 @@ public class TethysUIFXTableManager<C, R>
 
     @Override
     public void fireTableDataChanged() {
-        /* Apply sort if specified */
-        final Comparator<R> myComparator = getComparator();
-        if (myComparator != null) {
-            theCompValue.setValue(null);
-            theCompValue.setValue(myComparator);
-        } else {
-            setTheItems();
-        }
+        setTheItems();
     }
 
     /**

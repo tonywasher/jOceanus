@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollIcon;
@@ -55,7 +56,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollToggle;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.menu.TethysUICoreScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingIcon;
@@ -1093,7 +1093,7 @@ public class TethysUISwingScrollMenu<T>
             /* Create a Label for the graphic */
             theIcon = new JLabel();
             theIcon.setIcon(TethysUISwingIcon.getIcon(pGraphic));
-            final Dimension myDim = new Dimension(TethysUICoreComponent.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
+            final Dimension myDim = new Dimension(TethysUIConstant.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
             theIcon.setMaximumSize(myDim);
@@ -1297,7 +1297,7 @@ public class TethysUISwingScrollMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                    ? TethysUISwingUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUICoreComponent.DEFAULT_ICONWIDTH)
+                    ? TethysUISwingUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUIConstant.DEFAULT_ICONWIDTH)
                     : null);
         }
 

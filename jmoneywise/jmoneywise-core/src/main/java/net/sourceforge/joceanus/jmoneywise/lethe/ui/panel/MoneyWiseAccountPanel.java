@@ -108,7 +108,7 @@ public class MoneyWiseAccountPanel
     /**
      * The select panel.
      */
-    private final TethysUIBoxPaneManager theSelectPanel;
+    private final TethysUIBorderPaneManager theSelectPanel;
 
     /**
      * The filter card panel.
@@ -247,16 +247,16 @@ public class MoneyWiseAccountPanel
         theFilterCardPanel.addCard(PanelName.SECURITIES.toString(), theSecurityTable.getFilterPanel());
         theFilterCardPanel.addCard(PanelName.PAYEES.toString(), thePayeeTable.getFilterPanel());
 
-        /* Create the selection panel */
-        theSelectPanel = myPanes.newHBoxPane();
-        theSelectPanel.setBorderTitle(NLS_SELECT);
+        /* Create the select prompt */
+        final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();
+        mySelect.addNode(myLabel);
+        mySelect.addNode(theSelectButton);
 
-        /* Create the layout for the selection panel */
-        theSelectPanel.addNode(myLabel);
-        theSelectPanel.addNode(theSelectButton);
-        theSelectPanel.addSpacer();
-        theSelectPanel.addNode(theFilterCardPanel);
-        theSelectPanel.addSpacer();
+        /* Create the selection panel */
+        theSelectPanel = myPanes.newBorderPane();
+        theSelectPanel.setBorderTitle(NLS_SELECT);
+        theSelectPanel.setWest(mySelect);
+        theSelectPanel.setCentre(theFilterCardPanel);
 
         /* Create the header panel */
         final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();

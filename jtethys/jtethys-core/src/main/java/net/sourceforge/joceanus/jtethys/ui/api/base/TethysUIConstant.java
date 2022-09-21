@@ -16,4 +16,9 @@ public final class TethysUIConstant {
      * The colon indicator.
      */
     public static final String STR_COLON = ":";
+
+    /**
+     * Default icon width.
+     */
+    public static final int DEFAULT_ICONWIDTH = 16;
 }

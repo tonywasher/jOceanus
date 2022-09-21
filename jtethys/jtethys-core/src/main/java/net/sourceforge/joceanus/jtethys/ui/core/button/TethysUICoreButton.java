@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.button;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
@@ -32,7 +33,7 @@ public abstract class TethysUICoreButton
     /**
      * Default icon width.
      */
-    protected static final int DEFAULT_ICONWIDTH = TethysUICoreComponent.DEFAULT_ICONWIDTH;
+    protected static final int DEFAULT_ICONWIDTH = TethysUIConstant.DEFAULT_ICONWIDTH;
 
     /**
      * Event Manager.
@@ -79,6 +80,7 @@ public abstract class TethysUICoreButton
         /* Store the width */
         theWidth = pWidth;
     }
+
     /**
      * handle pressed.
      */

@@ -185,13 +185,13 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
         /* Create the TRUE state */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
+        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, UNLOCKABLE, TIP_UNLOCK);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, LOCKABLE, TIP_LOCK);
         myMap.put(Boolean.TRUE, myMapSet);
 
         /* Create the FALSE state */
-        myMapSet = myButtons.newIconMapSet();
+        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, LOCKED, TIP_LOCKED);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, MetisIcon.TIP_ACTIVE);
         myMap.put(Boolean.FALSE, myMapSet);
@@ -211,13 +211,13 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
         /* Create the FALSE state */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
+        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, MetisIcon.COMMIT, TIP_RELEASE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);
         myMap.put(Boolean.FALSE, myMapSet);
 
         /* Create the TRUE state */
-        myMapSet = myButtons.newIconMapSet();
+        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENRECONCILED, TIP_FROZEN);
         myMap.put(Boolean.TRUE, myMapSet);
 
@@ -236,13 +236,13 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
         /* Create the FALSE state */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        TethysUIIconMapSet<AssetDirection> myMapSet = myButtons.newIconMapSet();
+        TethysUIIconMapSet<AssetDirection> myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.FROM, DIRTO, TIP_DIRTO);
         myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.TO, DIRFROM, TIP_DIRFROM);
         myMap.put(Boolean.FALSE, myMapSet);
 
         /* Create the TRUE state */
-        myMapSet = myButtons.newIconMapSet();
+        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.TO, DIRTOLOCKED, TIP_DIRTO);
         myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.FROM, DIRFROMLOCKED, TIP_DIRFROM);
         myMap.put(Boolean.TRUE, myMapSet);
@@ -262,13 +262,13 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
         /* Create the TRUE state */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet();
+        TethysUIIconMapSet<Boolean> myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, BOXCHECK);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, BOXCLEAR);
         myMap.put(Boolean.TRUE, myMapSet);
 
         /* Create the FALSE state */
-        myMapSet = myButtons.newIconMapSet();
+        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENBOXCHECK);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, FROZENBOXCLEAR);
         myMap.put(Boolean.FALSE, myMapSet);
