@@ -31,7 +31,6 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.logger;
     exports net.sourceforge.joceanus.jtethys.profile;
     exports net.sourceforge.joceanus.jtethys.resource;
-    exports net.sourceforge.joceanus.jtethys.ui;
 
     /* New exports */
     exports net.sourceforge.joceanus.jtethys.ui.api.base;
