@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * MoneyWise: Finance Application
  * Copyright 2012,2022 Tony Washer
  *
@@ -14,22 +14,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import net.sourceforge.joceanus.jmoneywise.launch.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 
 /**
- * MoneyWise Swing StartUp.
+ * Analysis Filter Selection.
  */
-public final class MoneyWise4Swing
-        extends TethysUISwingLaunch {
+public interface MoneyWiseAnalysisFilterSelection
+        extends TethysUIComponent {
     /**
-     * launch program.
-     *
-     * @param pArgs the arguments
+     * Is selection available?
+     * @return true/false
      */
-    public static void main(final String[] pArgs) {
-        launch(new MoneyWiseApp());
-    }
+    boolean isAvailable();
+
+    /**
+     * Obtain analysis filter.
+     * @return the filter
+     */
+    AnalysisFilter<?, ?> getFilter();
+
+    /**
+     * Set analysis filter.
+     * @param pFilter the filter
+     */
+    void setFilter(AnalysisFilter<?, ?> pFilter);
 }

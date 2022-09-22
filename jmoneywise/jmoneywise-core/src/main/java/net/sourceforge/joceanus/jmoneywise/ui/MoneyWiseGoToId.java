@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * MoneyWise: Finance Application
  * Copyright 2012,2022 Tony Washer
  *
@@ -14,22 +14,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
-
-import net.sourceforge.joceanus.jmoneywise.launch.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 /**
- * MoneyWise Swing StartUp.
+ * GoTo Ids.
  */
-public final class MoneyWise4Swing
-        extends TethysUISwingLaunch {
+public enum MoneyWiseGoToId {
     /**
-     * launch program.
-     *
-     * @param pArgs the arguments
+     * Statement.
      */
-    public static void main(final String[] pArgs) {
-        launch(new MoneyWiseApp());
-    }
+    STATEMENT,
+
+    /**
+     * Account.
+     */
+    ACCOUNT,
+
+    /**
+     * Category.
+     */
+    CATEGORY,
+
+    /**
+     * Tag.
+     */
+    TAG,
+
+    /**
+     * Region.
+     */
+    REGION,
+
+    /**
+     * Static.
+     */
+    STATIC;
 }

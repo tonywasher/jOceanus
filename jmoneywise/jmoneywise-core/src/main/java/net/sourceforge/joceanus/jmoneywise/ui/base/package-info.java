@@ -14,22 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
-
-import net.sourceforge.joceanus.jmoneywise.launch.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
 
 /**
- * MoneyWise Swing StartUp.
+ * New Gui base.
  */
-public final class MoneyWise4Swing
-        extends TethysUISwingLaunch {
-    /**
-     * launch program.
-     *
-     * @param pArgs the arguments
-     */
-    public static void main(final String[] pArgs) {
-        launch(new MoneyWiseApp());
-    }
-}
+package net.sourceforge.joceanus.jmoneywise.ui.base;
