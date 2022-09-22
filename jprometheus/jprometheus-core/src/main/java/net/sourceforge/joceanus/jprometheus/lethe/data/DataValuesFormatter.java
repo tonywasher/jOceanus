@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.views;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;

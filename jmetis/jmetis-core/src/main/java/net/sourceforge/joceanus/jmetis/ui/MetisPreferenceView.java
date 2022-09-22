@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.ui;
+package net.sourceforge.joceanus.jmetis.ui;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

@@ -14,7 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+
 /**
- * Java Metis User Interface.
+ * Launch classes.
  */
-package net.sourceforge.joceanus.jmetis.atlas.ui;
+package net.sourceforge.joceanus.jmetis.toolkit;

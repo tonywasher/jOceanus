@@ -14,10 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.ui;
+package net.sourceforge.joceanus.jmetis.ui;
 
-import net.sourceforge.joceanus.jmetis.ui.MetisUIEvent;
-import net.sourceforge.joceanus.jmetis.ui.MetisUIResource;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;

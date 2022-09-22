@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;

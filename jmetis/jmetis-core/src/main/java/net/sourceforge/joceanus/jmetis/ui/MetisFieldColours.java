@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.ui;
+package net.sourceforge.joceanus.jmetis.ui;
 
 import java.util.HashMap;
 

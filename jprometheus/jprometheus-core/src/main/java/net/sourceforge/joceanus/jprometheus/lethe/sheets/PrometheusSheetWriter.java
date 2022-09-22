@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvider;

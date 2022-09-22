@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.panel;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jmetis.launch.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;

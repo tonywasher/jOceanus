@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.launch;
+package net.sourceforge.joceanus.jmetis.toolkit;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;

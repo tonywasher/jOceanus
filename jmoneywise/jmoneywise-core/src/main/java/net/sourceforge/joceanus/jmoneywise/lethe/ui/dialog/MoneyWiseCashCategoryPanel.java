@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
