@@ -112,9 +112,8 @@ public class PrometheusFieldSetFields<T>
         theElements.put(pFieldId, myElement);
         theValues.put(pFieldId, pValueFactory);
 
-        /* Add to the panel and adjust label widths */
+        /* Add to the panel */
         thePanel.addNode(myElement.getComponent());
-        adjustLabelWidth();
 
         /* Register the field with the fieldSet */
         theFieldSet.registerField(pFieldId, this);
@@ -123,10 +122,8 @@ public class PrometheusFieldSetFields<T>
         pField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theFieldSet.newData(pFieldId, e.getDetails()));
     }
 
-    /**
-     * Adjust the label width.
-     */
-    private void adjustLabelWidth() {
+    @Override
+    public void adjustLabelWidth() {
         /* Initialise counters */
         int myWidth = 0;
         int myHeight = 0;

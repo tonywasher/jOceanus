@@ -219,7 +219,7 @@ public class MoneyWiseDepositRateTable
 
     @Override
     public boolean isVisible() {
-        return !isViewEmpty();
+        return isViewActive();
     }
 
     @Override

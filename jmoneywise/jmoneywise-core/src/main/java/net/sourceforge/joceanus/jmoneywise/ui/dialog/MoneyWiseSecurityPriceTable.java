@@ -202,7 +202,7 @@ public class MoneyWiseSecurityPriceTable
 
     @Override
     public boolean isVisible() {
-        return !isViewEmpty();
+        return isViewActive();
     }
 
     @Override

@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIType;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
@@ -37,6 +38,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadFactory;
  * @param <C> the color
  */
 public interface TethysUIFactory<C> {
+    /**
+     * Obtain the gui type.
+     * @return the type
+     */
+    TethysUIType getGUIType();
+
     /**
      * Obtain the formatter.
      * @return the formatter

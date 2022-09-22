@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIType;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
@@ -134,6 +135,11 @@ public class TethysUISwingFactory
         return pIconId == null
                 ? null
                 : TethysUISwingUtils.getIconAtSize(pIconId, pWidth);
+    }
+
+    @Override
+    public TethysUIType getGUIType() {
+        return TethysUIType.SWING;
     }
 
     @Override

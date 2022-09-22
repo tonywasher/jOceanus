@@ -63,4 +63,11 @@ public interface PrometheusFieldSetPanel<T>
      */
     void setVisible(PrometheusDataFieldId pFieldId,
                     boolean pVisible);
+
+    /**
+     * Adjust the label width.
+     */
+    default void adjustLabelWidth() {
+        /* NoOp */
+    }
 }

@@ -308,7 +308,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
             thePanel.setVisible(true);
             theFieldSet.setEditable(isEditable);
             adjustFields(isEditable);
-            theFieldSet.adjustTabVisibility();
 
             /* Set panel visibility */
             theItemActions.setVisible(!isEditable);
@@ -316,6 +315,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
             /* Render the FieldSet */
             theFieldSet.setItem(theItem);
+            theFieldSet.adjustTabVisibility();
 
             /* ensure that the actions are updated */
             updateActions();

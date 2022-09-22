@@ -90,11 +90,11 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
     }
 
     /**
-     * is the table empty?
+     * is the table active?
      * @return true/false
      */
-    public boolean isViewEmpty() {
-        return !getTable().viewIterator().hasNext();
+    public boolean isViewActive() {
+        return getTable().viewIterator().hasNext();
     }
 
     @Override

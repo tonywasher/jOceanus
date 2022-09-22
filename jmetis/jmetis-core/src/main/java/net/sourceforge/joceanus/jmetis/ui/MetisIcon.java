@@ -153,7 +153,7 @@ public enum MetisIcon
     /**
      * Default icon size.
      */
-    public static final int ICON_SIZE = 32;
+    public static final int ICON_SIZE = 24;
 
     /**
      * Source name.

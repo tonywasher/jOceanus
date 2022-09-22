@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * FieldSet Element.
@@ -74,9 +75,14 @@ public class PrometheusFieldSetElement<V> {
         theLabel = pFactory.controlFactory().newLabel(theFieldId.toString() + ":");
         theLabel.setAlignment(TethysUIAlignment.EAST);
 
+        /* Create border pane to centre the label */
+        final TethysUIPaneFactory myPanes = pFactory.paneFactory();
+        final TethysUIBorderPaneManager myPane = myPanes.newBorderPane();
+        myPane.setCentre(theLabel);
+
         /* Create the element */
-        theElement = pFactory.paneFactory().newBorderPane();
-        theElement.setWest(theLabel);
+        theElement = myPanes.newBorderPane();
+        theElement.setWest(myPane);
         theElement.setCentre(theField);
         isVisible = true;
     }

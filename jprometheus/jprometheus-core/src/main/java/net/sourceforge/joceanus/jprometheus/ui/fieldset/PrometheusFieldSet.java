@@ -87,6 +87,11 @@ public class PrometheusFieldSet<T>
     private boolean isRefreshing;
 
     /**
+     * Labels adjusted?
+     */
+    private boolean areLabelsAdjusted;
+
+    /**
      * Constructor.
      * @param pFactory the gui factory
      */
@@ -256,10 +261,14 @@ public class PrometheusFieldSet<T>
         /* Update all the panels */
         for (PrometheusFieldSetPanel<T> myPanel : thePanels) {
             myPanel.setItem(pItem);
+            if (!areLabelsAdjusted) {
+                myPanel.adjustLabelWidth();
+            }
         }
 
         /* Note that we have finished refreshing */
         isRefreshing = false;
+        areLabelsAdjusted = true;
     }
 
     /**
