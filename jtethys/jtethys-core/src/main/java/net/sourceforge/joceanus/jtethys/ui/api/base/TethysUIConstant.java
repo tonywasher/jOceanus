@@ -4,7 +4,7 @@ public final class TethysUIConstant {
     /**
      * Private constructor.
      */
-    TethysUIConstant() {
+    private TethysUIConstant() {
     }
 
     /**

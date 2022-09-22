@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice.SpotSec
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;

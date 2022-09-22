@@ -308,6 +308,7 @@ public enum MetisIcon
 
     /**
      * Configure status icon button.
+     * @param pFactory the gui factory
      * @return the mapSet configuration
      */
     public static TethysUIIconMapSet<MetisAction> configureStatusIconButton(final TethysUIFactory<?> pFactory) {

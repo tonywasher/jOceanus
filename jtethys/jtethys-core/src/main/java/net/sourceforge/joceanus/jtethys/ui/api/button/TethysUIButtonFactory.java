@@ -71,7 +71,7 @@ public interface TethysUIButtonFactory<C> {
      * @param pWidth the icon width for the map set
      * @return the new mapSet
      */
-    <T> TethysUIIconMapSet<T> newIconMapSet(final int pWidth);
+    <T> TethysUIIconMapSet<T> newIconMapSet(int pWidth);
 
     /**
      * Obtain a new scroll button manager.
