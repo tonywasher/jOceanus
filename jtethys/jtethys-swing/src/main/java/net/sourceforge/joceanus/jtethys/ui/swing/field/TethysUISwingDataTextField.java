@@ -189,7 +189,7 @@ public abstract class TethysUISwingDataTextField<T>
             theCard.add(theEditNode, NAME_EDIT);
             ((JTextArea) theEditControl).setEditable(false);
 
-            /* Else for TextArea */
+            /* Else for non-TextArea */
         } else {
             /* Add cards, defaulting to readOnly */
             theCard.add(theLabel, NAME_LABEL);
@@ -233,10 +233,16 @@ public abstract class TethysUISwingDataTextField<T>
         final boolean isChanged = pDataField.isAttributeSet(TethysUIFieldAttribute.CHANGED);
         final boolean isDisabled = pDataField.isAttributeSet(TethysUIFieldAttribute.DISABLED);
         final boolean isAlternate = pDataField.isAttributeSet(TethysUIFieldAttribute.ALTERNATE);
+        final boolean isFieldSet = pDataField.isAttributeSet(TethysUIFieldAttribute.FIELDSET);
 
         /* Obtain the label and the edit control */
         final JLabel myLabel = pDataField.getLabel();
         final JComponent myControl = pDataField.getEditControl();
+
+        /* FieldSet is always left-aligned on the label */
+        if (isFieldSet) {
+            myLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        }
 
         /* Access font and colorSets */
         final TethysUISwingFontSet myFontSet = theAdjuster.getFontSet();

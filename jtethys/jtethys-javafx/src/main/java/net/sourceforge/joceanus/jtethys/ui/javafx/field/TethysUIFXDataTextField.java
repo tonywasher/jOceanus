@@ -107,6 +107,11 @@ public abstract class TethysUIFXDataTextField<T>
     private static final String STYLE_DISABLED = STYLE_FIELD + "-disabled";
 
     /**
+     * The fieldset style class.
+     */
+    private static final String STYLE_FIELDSET = STYLE_FIELD + "-fieldset";
+
+    /**
      * The error style class.
      */
     static final String STYLE_ERROR = STYLE_FIELD + "-error";
@@ -301,6 +306,9 @@ public abstract class TethysUIFXDataTextField<T>
         if (!isAttributeSet(pAttr)) {
             super.setTheAttribute(pAttr);
             theLabel.getStyleClass().add(getStyleForAttribute(pAttr));
+            if (TethysUIFieldAttribute.FIELDSET.equals(pAttr)) {
+                theLabel.setAlignment(Pos.CENTER_LEFT);
+            }
         }
     }
 
@@ -333,6 +341,8 @@ public abstract class TethysUIFXDataTextField<T>
                 return STYLE_CHANGED;
             case DISABLED:
                 return STYLE_DISABLED;
+            case FIELDSET:
+                return STYLE_FIELDSET;
             case ALTERNATE:
             default:
                 return STYLE_ALTERNATE;

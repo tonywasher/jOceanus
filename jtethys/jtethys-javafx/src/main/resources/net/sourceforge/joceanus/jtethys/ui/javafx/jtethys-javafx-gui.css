@@ -68,9 +68,14 @@
 /**
  * DataField Values
  */
+
 .-jtethys .-jtethys-datafield .-jtethys-datafield-numeric {
   -fx-font-family: Courier;
   -fx-text-alignment: right;
+}
+
+.-jtethys .-jtethys-datafield .-jtethys-datafield-fieldset {
+  -fx-text-alignment: left;
 }
 
 .-jtethys .-jtethys-datafield .-jtethys-datafield-changed {
