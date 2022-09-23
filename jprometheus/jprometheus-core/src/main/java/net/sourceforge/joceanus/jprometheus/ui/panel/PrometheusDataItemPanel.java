@@ -72,6 +72,11 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     protected static final int FIELD_HEIGHT = 20;
 
     /**
+     * The Panel.
+     */
+    private final TethysUIFactory<?> theFactory;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -152,6 +157,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
                                       final UpdateSet<E> pUpdateSet,
                                       final MetisErrorPanel pError) {
         /* Store parameters */
+        theFactory = pFactory;
         theUpdateSet = pUpdateSet;
         theError = pError;
 
@@ -197,6 +203,14 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         myRegistrar.addEventListener(PrometheusUIEvent.GOTO, e -> processGoToRequest(e.getDetails(PrometheusGoToEvent.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.EDIT, e -> requestEdit());
         myRegistrar.addEventListener(PrometheusUIEvent.DELETE, e -> requestDelete());
+    }
+
+    /**
+     * Obtain the factory.
+     * @return the factory
+     */
+    protected TethysUIFactory<?> getFactory() {
+        return theFactory;
     }
 
     @Override

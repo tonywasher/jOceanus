@@ -62,16 +62,6 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseBaseTable.class);
 
     /**
-     * Panel height.
-     */
-    protected static final int HEIGHT_PANEL = 200;
-
-    /**
-     * Panel width.
-     */
-    protected static final int WIDTH_PANEL = 1100;
-
-    /**
      * Date column standard width.
      */
     protected static final int WIDTH_DATE = 100;
@@ -212,10 +202,6 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
                 .setRepaintRowOnCommit(true)
                 .setEditable(true);
 
-        /* Set standard size */
-        theTable.setPreferredWidth(WIDTH_PANEL);
-        theTable.setPreferredHeight(HEIGHT_PANEL);
-
         /* Add listeners */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
     }
@@ -230,6 +216,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
             setTableEnabled(!pPanel.isEditing());
         });
+        pPanel.setPreferredSize();
     }
 
     @Override

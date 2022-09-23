@@ -332,4 +332,30 @@ public class PrometheusFieldSet<T>
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myUpdate);
         }
     }
+
+    /**
+     * Set preferred width and height.
+     * @param pWidth the width.
+     * @param pHeight the height
+     */
+    public void setPreferredWidthAndHeight(final int pWidth,
+                                           final int pHeight) {
+        /* If we have Tabs */
+        int myWidth = pWidth;
+        if (theTabs != null) {
+            /* Everything is half width */
+            myWidth >>= 1;
+
+            /* Set the tab size */
+            final TethysUIComponent myComponent = theTabs.getComponent();
+            myComponent.setPreferredWidth(myWidth);
+            myComponent.setPreferredHeight(pHeight);
+        }
+
+        /* Update the initial panel */
+        final PrometheusFieldSetPanel<T> myPanel = thePanels.iterator().next();
+        final TethysUIComponent myComponent = myPanel.getUnderlying();
+        myComponent.setPreferredWidth(myWidth);
+        myComponent.setPreferredHeight(pHeight);
+    }
 }

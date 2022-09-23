@@ -80,6 +80,15 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     }
 
     /**
+     * Set preferred Size.
+     */
+    void setPreferredSize() {
+        /* we should take up a quarter if the standard panel; dimensions */
+        final int[] mySize = getFactory().getProgramDefinitions().getPanelDimensions();
+        getFieldSet().setPreferredWidthAndHeight(mySize[0], mySize[1] >> 2);
+    }
+
+    /**
      * is field changed?
      *
      * @param pField the field

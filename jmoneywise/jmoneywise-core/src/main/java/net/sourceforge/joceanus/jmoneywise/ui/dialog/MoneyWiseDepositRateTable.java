@@ -113,10 +113,6 @@ public class MoneyWiseDepositRateTable
                 .setCellEditable(r -> !r.isActive())
                 .setColumnWidth(WIDTH_ICON)
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
-
-        /* Set standard size */
-        myTable.setPreferredWidth(WIDTH_PANEL >> 1);
-        myTable.setPreferredHeight(HEIGHT_PANEL >> 2);
     }
 
     @Override
