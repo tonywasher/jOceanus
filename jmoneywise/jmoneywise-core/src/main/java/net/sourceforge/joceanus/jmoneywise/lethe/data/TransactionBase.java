@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetPairManager
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -249,6 +250,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
     @Override
     public String toString() {
+        /* Handle header */
+        if (isHeader()) {
+            return PrometheusDataResource.DATAITEM_HEADER.getValue();
+        }
+
         /* Access Key Values */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myAccount = myValues.getValue(FIELD_ACCOUNT);
