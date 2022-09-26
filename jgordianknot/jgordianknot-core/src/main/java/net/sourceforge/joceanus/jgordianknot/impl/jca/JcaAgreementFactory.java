@@ -88,6 +88,7 @@ public class JcaAgreementFactory
             case FRODO:
             case SABER:
             case KYBER:
+            case HQC:
             case BIKE:
             case NTRU:
             case NTRULPRIME:
@@ -282,6 +283,7 @@ public class JcaAgreementFactory
             case FRODO:
             case SABER:
             case KYBER:
+            case HQC:
             case BIKE:
             case NTRU:
             case NTRULPRIME:

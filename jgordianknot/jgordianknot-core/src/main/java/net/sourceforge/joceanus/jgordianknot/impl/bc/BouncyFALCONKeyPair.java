@@ -91,7 +91,7 @@ public final class BouncyFALCONKeyPair {
          */
         private static boolean compareKeys(final FalconPublicKeyParameters pFirst,
                                            final FalconPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            return Arrays.equals(pFirst.getH(), pSecond.getH());
         }
     }
 

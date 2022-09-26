@@ -42,6 +42,7 @@ import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
@@ -778,6 +779,58 @@ public abstract class JcaKeyPairGenerator
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
+
+    /**
+     * Jca HQC KeyPair generator.
+     */
+    public static class JcaHQCKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * BIKE algorithm.
+         */
+        private static final String HQC_ALGO = "HQC";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaHQCKeyPairGenerator(final JcaFactory pFactory,
+                               final GordianKeyPairSpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(HQC_ALGO, true);
+                final HQCParameterSpec myParms = pKeySpec.getHQCKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(HQC_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create HQCgenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
 
     /**
      * Jca BIKE KeyPair generator.

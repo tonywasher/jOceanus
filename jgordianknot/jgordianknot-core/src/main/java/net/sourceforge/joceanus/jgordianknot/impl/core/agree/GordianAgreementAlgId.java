@@ -230,6 +230,9 @@ public class GordianAgreementAlgId {
             case KYBER:
                 myId = myId.branch(Integer.toString(pSpec.getKyberKeySpec().ordinal() + 1));
                 break;
+            case HQC:
+                myId = myId.branch(Integer.toString(pSpec.getHQCKeySpec().ordinal() + 1));
+                break;
             case BIKE:
                 myId = myId.branch(Integer.toString(pSpec.getBIKEKeySpec().ordinal() + 1));
                 break;

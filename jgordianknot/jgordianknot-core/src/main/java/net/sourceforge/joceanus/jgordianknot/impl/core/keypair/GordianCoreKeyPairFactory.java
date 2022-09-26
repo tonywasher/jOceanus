@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -291,6 +292,7 @@ public abstract class GordianCoreKeyPairFactory
         EnumSet.allOf(GordianSABERSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.saber(t)));
         EnumSet.allOf(GordianKYBERSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.kyber(t)));
         EnumSet.allOf(GordianDILITHIUMSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.dilithium(t)));
+        EnumSet.allOf(GordianHQCSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.hqc(t)));
         EnumSet.allOf(GordianBIKESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.bike(t)));
         EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.ntru(t)));
         EnumSet.allOf(GordianNTRULPrimeSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.ntrulprime(t)));

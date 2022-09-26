@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
@@ -181,6 +182,7 @@ public class KeyStoreTest {
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.frodo(GordianFRODOSpec.AES640)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512)),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.hqc(GordianHQCSpec.HQC128)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.bike(GordianBIKESpec.BIKE128)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS821)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR653)),

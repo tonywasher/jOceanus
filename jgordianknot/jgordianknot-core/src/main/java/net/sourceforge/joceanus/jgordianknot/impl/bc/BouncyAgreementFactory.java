@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKYBERKeyPair.BouncyKYBERAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreement;
@@ -103,6 +104,8 @@ public class BouncyAgreementFactory
                 return new BouncySABERAgreement(getFactory(), pSpec);
             case KYBER:
                 return new BouncyKYBERAgreement(getFactory(), pSpec);
+            case HQC:
+                return new BouncyHQCAgreement(getFactory(), pSpec);
             case BIKE:
                 return new BouncyBIKEAgreement(getFactory(), pSpec);
             case NTRU:

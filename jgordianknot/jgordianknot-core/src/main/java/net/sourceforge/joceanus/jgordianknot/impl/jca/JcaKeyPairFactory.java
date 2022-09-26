@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaEdK
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaFALCONKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaKYBERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
@@ -159,6 +160,8 @@ public class JcaKeyPairFactory
                 return new JcaKYBERKeyPairGenerator(getFactory(), pKeySpec);
             case DILITHIUM:
                 return new JcaDILITHIUMKeyPairGenerator(getFactory(), pKeySpec);
+            case HQC:
+                return new JcaHQCKeyPairGenerator(getFactory(), pKeySpec);
             case BIKE:
                 return new JcaBIKEKeyPairGenerator(getFactory(), pKeySpec);
             case NTRU:

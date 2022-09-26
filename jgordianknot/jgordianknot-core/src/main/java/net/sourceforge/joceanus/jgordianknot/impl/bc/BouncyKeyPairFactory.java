@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFALCONKeyPair.BouncyFALCONKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKYBERKeyPair.BouncyKYBERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSKeyPairGenerator;
@@ -171,6 +172,8 @@ public class BouncyKeyPairFactory
                 return new BouncyKYBERKeyPairGenerator(getFactory(), pKeySpec);
             case DILITHIUM:
                 return new BouncyDILITHIUMKeyPairGenerator(getFactory(), pKeySpec);
+            case HQC:
+                return new BouncyHQCKeyPairGenerator(getFactory(), pKeySpec);
             case BIKE:
                 return new BouncyBIKEKeyPairGenerator(getFactory(), pKeySpec);
             case NTRU:

@@ -272,6 +272,15 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Create HQCKey.
+     * @param pSpec the HQC Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec hqc(final GordianHQCSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.HQC, pSpec);
+    }
+
+    /**
      * Create BIKEKey.
      * @param pSpec the BIKE Spec
      * @return the KeySpec
@@ -530,6 +539,17 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Obtain the HQC keySpec.
+     * @return the keySpec.
+     */
+    public GordianHQCSpec getHQCKeySpec() {
+        if (!(theSubKeyType instanceof GordianHQCSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianHQCSpec) theSubKeyType;
+    }
+
+    /**
      * Obtain the Bike keySpec.
      * @return the keySpec.
      */
@@ -735,6 +755,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianKYBERSpec;
             case DILITHIUM:
                 return theSubKeyType instanceof GordianDILITHIUMSpec;
+            case HQC:
+                return theSubKeyType instanceof GordianHQCSpec;
             case BIKE:
                 return theSubKeyType instanceof GordianBIKESpec;
             case NTRU:

@@ -36,7 +36,22 @@ public enum GordianKYBERSpec {
     /**
      * Kyber 1024.
      */
-    KYBER1024;
+    KYBER1024,
+
+    /**
+     * Kyber 512 AES.
+     */
+    KYBER512AES,
+
+    /**
+     * Kyber 768 AES.
+     */
+    KYBER768AES,
+
+    /**
+     * Kyber 1024 AES.
+     */
+    KYBER1024AES;
 
     /**
      * Obtain KYBER Parameters.
@@ -44,9 +59,12 @@ public enum GordianKYBERSpec {
      */
     public KyberParameters getParameters() {
         switch (this) {
-            case KYBER512:  return KyberParameters.kyber512;
-            case KYBER768:  return KyberParameters.kyber768;
-            case KYBER1024: return KyberParameters.kyber1024;
+            case KYBER512:     return KyberParameters.kyber512;
+            case KYBER768:     return KyberParameters.kyber768;
+            case KYBER1024:    return KyberParameters.kyber1024;
+            case KYBER512AES:  return KyberParameters.kyber512_aes;
+            case KYBER768AES:  return KyberParameters.kyber768_aes;
+            case KYBER1024AES: return KyberParameters.kyber1024_aes;
             default: throw new IllegalArgumentException();
         }
     }
@@ -57,9 +75,12 @@ public enum GordianKYBERSpec {
      */
     public KyberParameterSpec getParameterSpec() {
         switch (this) {
-            case KYBER512:  return KyberParameterSpec.kyber512;
-            case KYBER768:  return KyberParameterSpec.kyber768;
-            case KYBER1024: return KyberParameterSpec.kyber1024;
+            case KYBER512:     return KyberParameterSpec.kyber512;
+            case KYBER768:     return KyberParameterSpec.kyber768;
+            case KYBER1024:    return KyberParameterSpec.kyber1024;
+            case KYBER512AES:  return KyberParameterSpec.kyber512_aes;
+            case KYBER768AES:  return KyberParameterSpec.kyber768_aes;
+            case KYBER1024AES: return KyberParameterSpec.kyber1024_aes;
             default: throw new IllegalArgumentException();
         }
     }

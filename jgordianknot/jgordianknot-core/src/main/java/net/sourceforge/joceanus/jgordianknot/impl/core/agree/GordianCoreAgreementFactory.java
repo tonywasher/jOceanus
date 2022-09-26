@@ -273,6 +273,7 @@ public abstract class GordianCoreAgreementFactory
             case FRODO:
             case SABER:
             case KYBER:
+            case HQC:
             case BIKE:
             case NTRU:
             case NTRULPRIME:

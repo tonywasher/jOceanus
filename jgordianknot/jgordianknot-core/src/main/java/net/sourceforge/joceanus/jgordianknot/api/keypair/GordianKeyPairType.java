@@ -111,6 +111,11 @@ public enum GordianKeyPairType {
     DILITHIUM,
 
     /**
+     * HQC.
+     */
+    HQC,
+
+    /**
      * BIKE.
      */
     BIKE,
