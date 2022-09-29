@@ -311,7 +311,7 @@ public class MetisReportManager<F>
             /* Transform the new document */
             final StringWriter myWriter = new StringWriter();
             theXformer.transform(new DOMSource(theDocument), new StreamResult(myWriter));
-            theText = myWriter.getBuffer().toString().replaceAll("\n|\r", "");
+            theText = myWriter.getBuffer().toString().replaceAll("[\n\r]", "");
 
             /* Return the new text */
             return theText;

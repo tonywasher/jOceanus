@@ -92,8 +92,7 @@ public class MoneyWiseRegionTable
 
         /* Set table configuration */
         myTable.setDisabled(Region::isDisabled)
-               .setComparator(Region::compareTo)
-               .setOnSelect(theActiveRegion::setItem);
+               .setComparator(Region::compareTo);
 
         /* Create the name column */
         myTable.declareStringColumn(MoneyWiseRegionDataId.NAME)
@@ -155,6 +154,7 @@ public class MoneyWiseRegionTable
 
         /* Notify panel of refresh */
         theActiveRegion.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -172,7 +172,7 @@ public class MoneyWiseRegionTable
      */
     void selectRegion(final Region pRegion) {
         /* Select the row and ensure that it is visible */
-        getTable().selectRowWithScroll(pRegion);
+        getTable().selectRow(pRegion);
     }
 
     @Override
@@ -181,8 +181,7 @@ public class MoneyWiseRegionTable
         if (!theActiveRegion.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectRegion(theActiveRegion.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -198,7 +197,12 @@ public class MoneyWiseRegionTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectRegion(theActiveRegion.getSelectedItem());
+            final Region myRegion = theActiveRegion.getSelectedItem();
+            if (myRegion != null) {
+                selectRegion(myRegion);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

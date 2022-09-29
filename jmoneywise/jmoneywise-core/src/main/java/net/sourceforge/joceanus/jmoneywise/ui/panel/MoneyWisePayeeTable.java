@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -37,7 +36,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Payee Table.
@@ -76,14 +74,10 @@ public class MoneyWisePayeeTable
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, Payee> myTable = getTable();
 
         /* Create a payee panel */
         theActivePayee = new MoneyWisePayeePanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActivePayee);
-
-        /* Set table configuration */
-        myTable.setOnSelect(theActivePayee::setItem);
 
         /* Finish the table */
         finishTable(false, false, true);
@@ -114,6 +108,7 @@ public class MoneyWisePayeeTable
 
         /* Notify panel of refresh */
         theActivePayee.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -137,8 +132,7 @@ public class MoneyWisePayeeTable
         final Payee myCurrent = theActivePayee.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pPayee)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pPayee);
-            theActivePayee.setItem(pPayee);
+            getTable().selectRow(pPayee);
         }
     }
 
@@ -148,8 +142,7 @@ public class MoneyWisePayeeTable
         if (!theActivePayee.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectPayee(theActivePayee.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -165,7 +158,12 @@ public class MoneyWisePayeeTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectPayee(theActivePayee.getSelectedItem());
+            final Payee myPayee = theActivePayee.getSelectedItem();
+            if (myPayee != null) {
+                selectPayee(myPayee);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

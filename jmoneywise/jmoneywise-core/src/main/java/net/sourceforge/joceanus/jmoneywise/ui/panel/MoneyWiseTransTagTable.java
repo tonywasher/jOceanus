@@ -92,8 +92,7 @@ public class MoneyWiseTransTagTable
 
         /* Set table configuration */
         myTable.setDisabled(TransactionTag::isDisabled)
-               .setComparator(TransactionTag::compareTo)
-               .setOnSelect(theActiveTag::setItem);
+               .setComparator(TransactionTag::compareTo);
 
         /* Create the name column */
         myTable.declareStringColumn(MoneyWiseTagDataId.NAME)
@@ -155,6 +154,7 @@ public class MoneyWiseTransTagTable
 
         /* Notify panel of refresh */
         theActiveTag.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -171,8 +171,8 @@ public class MoneyWiseTransTagTable
      * @param pTag the tag to select
      */
     void selectTag(final TransactionTag pTag) {
-        /* Select the row and ensure that it is visible */
-        getTable().selectRowWithScroll(pTag);
+        /* Select the row */
+        getTable().selectRow(pTag);
     }
 
     @Override
@@ -181,8 +181,7 @@ public class MoneyWiseTransTagTable
         if (!theActiveTag.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectTag(theActiveTag.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -198,7 +197,12 @@ public class MoneyWiseTransTagTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectTag(theActiveTag.getSelectedItem());
+            final TransactionTag myTag = theActiveTag.getSelectedItem();
+            if (myTag != null) {
+                selectTag(myTag);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

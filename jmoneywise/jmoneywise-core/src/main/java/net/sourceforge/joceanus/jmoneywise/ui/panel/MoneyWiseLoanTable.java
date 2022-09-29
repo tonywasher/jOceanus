@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseLoanPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -39,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Loan Table.
@@ -78,14 +76,10 @@ public class MoneyWiseLoanTable
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, Loan> myTable = getTable();
 
         /* Create a Loan panel */
         theActiveLoan = new MoneyWiseLoanPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveLoan);
-
-        /* Set table configuration */
-        myTable.setOnSelect(theActiveLoan::setItem);
 
         /* Finish the table */
         finishTable(true, true, true);
@@ -116,6 +110,7 @@ public class MoneyWiseLoanTable
 
         /* Notify panel of refresh */
         theActiveLoan.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -139,8 +134,7 @@ public class MoneyWiseLoanTable
         final Loan myCurrent = theActiveLoan.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pLoan)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pLoan);
-            theActiveLoan.setItem(pLoan);
+            getTable().selectRow(pLoan);
         }
     }
 
@@ -150,8 +144,7 @@ public class MoneyWiseLoanTable
         if (!theActiveLoan.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectLoan(theActiveLoan.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -167,7 +160,12 @@ public class MoneyWiseLoanTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectLoan(theActiveLoan.getSelectedItem());
+            final Loan myLoan = theActiveLoan.getSelectedItem();
+            if (myLoan != null) {
+                selectLoan(myLoan);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

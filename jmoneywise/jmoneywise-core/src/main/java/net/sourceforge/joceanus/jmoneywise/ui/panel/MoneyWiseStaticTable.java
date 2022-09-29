@@ -177,6 +177,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         theStatic.mapData();
         getTable().setItems(theStatic.getUnderlyingList());
         getUpdateEntry().setDataList(theStatic);
+        restoreSelected();
     }
 
     /**
@@ -209,6 +210,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
             /* Update the table */
             getUpdateSet().incrementVersion();
             getTable().fireTableDataChanged();
+            selectItem(myValue);
             notifyChanges();
 
             /* Handle exceptions */
@@ -238,7 +240,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      */
     @SuppressWarnings("unchecked")
     void selectStatic(final StaticData<?, ?, MoneyWiseDataType> pStatic) {
-        getTable().selectRowWithScroll((T) pStatic);
+        getTable().selectRow((T) pStatic);
     }
 
     /**
@@ -259,6 +261,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         cancelEditing();
         getTable().setFilter(this::isFiltered);
         theEnabledColumn.setVisible(showAll);
+        restoreSelected();
     }
 
     @Override

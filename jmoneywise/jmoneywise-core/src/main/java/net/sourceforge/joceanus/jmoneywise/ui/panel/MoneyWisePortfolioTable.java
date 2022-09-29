@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -39,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Portfolio Table.
@@ -78,14 +76,10 @@ public class MoneyWisePortfolioTable
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, Portfolio> myTable = getTable();
 
         /* Create a portfolio panel */
         theActivePortfolio = new MoneyWisePortfolioPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActivePortfolio);
-
-        /* Set table configuration */
-        myTable.setOnSelect(theActivePortfolio::setItem);
 
         /* Finish the table */
         finishTable(true, true, true);
@@ -116,6 +110,7 @@ public class MoneyWisePortfolioTable
 
         /* Notify panel of refresh */
         theActivePortfolio.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -139,8 +134,7 @@ public class MoneyWisePortfolioTable
         final Portfolio myCurrent = theActivePortfolio.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pPortfolio)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pPortfolio);
-            theActivePortfolio.setItem(pPortfolio);
+            getTable().selectRow(pPortfolio);
         }
     }
 
@@ -150,8 +144,7 @@ public class MoneyWisePortfolioTable
         if (!theActivePortfolio.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectPortfolio(theActivePortfolio.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -167,7 +160,12 @@ public class MoneyWisePortfolioTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectPortfolio(theActivePortfolio.getSelectedItem());
+            final Portfolio myPortfolio = theActivePortfolio.getSelectedItem();
+            if (myPortfolio != null) {
+                selectPortfolio(myPortfolio);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

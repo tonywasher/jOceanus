@@ -444,10 +444,27 @@ public class TethysUISwingTableManager<C, R>
     }
 
     @Override
-    public void selectRowWithScroll(final R pItem) {
+    public void selectRow(final R pItem) {
         /* Determine the index of the item */
-        final int iModel = getItems().indexOf(pItem);
+        final List<R> myItems = getItems();
+        final int iModel = myItems == null ? -1 : myItems.indexOf(pItem);
         final int iView = iModel == -1 ? -1 : theTable.convertRowIndexToView(iModel);
+
+        /* If we have a row to display */
+        if (iView != -1) {
+            /* Select the row */
+            theTable.setRowSelectionInterval(iView, iView);
+
+            /* else clear the selection */
+        } else {
+            theTable.clearSelection();
+        }
+    }
+
+    @Override
+    public void scrollSelectedToView() {
+        /* Determine the index of the item */
+        final int iView = theTable.getSelectedRow();
 
         /* If we have a row to display */
         if (iView != -1) {
@@ -457,14 +474,16 @@ public class TethysUISwingTableManager<C, R>
             final Point pt = viewport.getViewPosition();
             rect.setLocation(rect.x - pt.x, rect.y - pt.y);
             viewport.scrollRectToVisible(rect);
-
-            /* Select the row */
-            theTable.setRowSelectionInterval(iView, iView);
-
-            /* else clear the selection */
-        } else {
-            theTable.clearSelection();
         }
+    }
+
+    @Override
+    public void selectRowWithScroll(final R pItem) {
+        /* Select the row */
+        selectRow(pItem);
+
+        /* Scroll the selected item to view */
+        scrollSelectedToView();
     }
 
     /**

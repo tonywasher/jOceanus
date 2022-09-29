@@ -157,6 +157,16 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     private final TethysUITableManager<PrometheusDataFieldId, T> theTable;
 
     /**
+     * The selection control.
+     */
+    private final MoneyWiseTableSelect<T> theSelect;
+
+    /**
+     * The item panel.
+     */
+    private MoneyWiseItemPanel<T> theItemPanel;
+
+    /**
      * is the table editing?
      */
     private boolean isEditing;
@@ -199,11 +209,15 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
                 .setChanged(this::isFieldChanged)
                 .setError(this::isFieldInError)
                 .setFilter(this::isFiltered)
+                .setOnSelect(this::selectItem)
                 .setRepaintRowOnCommit(true)
                 .setEditable(true);
 
         /* Add listeners */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+
+        /* Create the selection control */
+        theSelect = new MoneyWiseTableSelect<>(theTable, this::isFiltered);
     }
 
     /**
@@ -211,11 +225,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pPanel the item panel
      */
     protected void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
+        theItemPanel = pPanel;
         thePanel.setSouth(pPanel);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
-        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
-            setTableEnabled(!pPanel.isEditing());
-        });
+        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> setTableEnabled(!pPanel.isEditing()));
         pPanel.setPreferredSize();
     }
 
@@ -315,6 +328,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      */
     protected void handleRewind() {
         theTable.fireTableDataChanged();
+        restoreSelected();
     }
 
     /**
@@ -326,6 +340,24 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     protected void deleteRow(final T pRow,
                              final Object pValue) throws OceanusException {
         pRow.setDeleted(true);
+    }
+
+    /**
+     * Handle updateSet rewind.
+     */
+    protected void restoreSelected() {
+        theSelect.restoreSelected();
+    }
+
+    /**
+     * Select an item.
+     * @param pItem the item
+     */
+    protected void selectItem(final T pItem) {
+        if (theItemPanel != null) {
+            theItemPanel.setItem(pItem);
+        }
+        theSelect.recordSelection(pItem);
     }
 
     /**

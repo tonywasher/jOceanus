@@ -70,14 +70,10 @@ public class MoneyWiseCashCategoryTable
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, CashCategory> myTable = getTable();
 
         /* Create a category panel */
         theActiveCategory = new MoneyWiseCashCategoryPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
-
-        /* Set table configuration */
-        myTable.setOnSelect(theActiveCategory::setItem);
 
         /* Add listeners */
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
@@ -133,6 +129,7 @@ public class MoneyWiseCashCategoryTable
 
         /* Notify panel of refresh */
         theActiveCategory.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -162,8 +159,7 @@ public class MoneyWiseCashCategoryTable
             }
 
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pCategory);
-            theActiveCategory.setItem(pCategory);
+            getTable().selectRow(pCategory);
         }
     }
 
@@ -173,8 +169,7 @@ public class MoneyWiseCashCategoryTable
         if (!theActiveCategory.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectCategory(theActiveCategory.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -190,7 +185,12 @@ public class MoneyWiseCashCategoryTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectCategory(theActiveCategory.getSelectedItem());
+            final CashCategory myCategory = theActiveCategory.getSelectedItem();
+            if (myCategory != null) {
+                selectCategory(myCategory);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

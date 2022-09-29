@@ -237,7 +237,7 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
-     * Rewind items to the require version.
+     * Rewind items to the required version.
      * @param pVersion the version to rewind to
      */
     private void rewindToVersion(final int pVersion) {

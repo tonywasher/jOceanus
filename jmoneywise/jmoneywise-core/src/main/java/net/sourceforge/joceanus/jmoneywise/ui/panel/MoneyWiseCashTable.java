@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseCashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -38,7 +37,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Cash Table.
@@ -77,14 +75,10 @@ public class MoneyWiseCashTable
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, Cash> myTable = getTable();
 
         /* Create a Cash panel */
         theActiveCash = new MoneyWiseCashPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveCash);
-
-        /* Set table configuration */
-        myTable.setOnSelect(theActiveCash::setItem);
 
         /* Finish the table */
         finishTable(false, true, true);
@@ -115,6 +109,7 @@ public class MoneyWiseCashTable
 
         /* Notify panel of refresh */
         theActiveCash.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -138,8 +133,7 @@ public class MoneyWiseCashTable
         final Cash myCurrent = theActiveCash.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pCash)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pCash);
-            theActiveCash.setItem(pCash);
+            getTable().selectRow(pCash);
         }
     }
 
@@ -149,8 +143,7 @@ public class MoneyWiseCashTable
         if (!theActiveCash.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectCash(theActiveCash.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -166,7 +159,12 @@ public class MoneyWiseCashTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectCash(theActiveCash.getSelectedItem());
+            final Cash myCash = theActiveCash.getSelectedItem();
+            if (myCash != null) {
+                selectCash(myCash);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

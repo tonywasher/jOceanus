@@ -194,8 +194,7 @@ public class MoneyWiseTransactionTable
 
         /* Set table configuration */
         myTable.setDisabled(Transaction::isDisabled)
-               .setComparator(Transaction::compareTo)
-               .setOnSelect(this::selectItem);
+               .setComparator(Transaction::compareTo);
 
         /* Create the date column */
         myTable.declareDateColumn(MoneyWiseTransDataId.DATE)
@@ -399,7 +398,6 @@ public class MoneyWiseTransactionTable
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
-        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
         pView.getEventRegistrar().addEventListener(e -> refreshData());
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         theNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
@@ -552,11 +550,8 @@ public class MoneyWiseTransactionTable
         return (pTrans.isHeader() || pTrans.isReconciled()) ? MetisAction.DO : MetisAction.DELETE;
     }
 
-    /**
-     * Select item.
-     * @param pTrans the transaction
-     */
-    private void selectItem(final Transaction pTrans) {
+    @Override
+    protected void selectItem(final Transaction pTrans) {
         final Transaction myTrans = pTrans != null && !pTrans.isHeader() ? pTrans : null;
         theActiveTran.setItem(myTrans);
     }
@@ -714,6 +709,7 @@ public class MoneyWiseTransactionTable
         /* Touch the filter and updateSet */
         theViewerFilter.setObject(theFilter);
         theViewerAnalysis.setTreeObject(getUpdateSet());
+        restoreSelected();
     }
 
     @Override
@@ -727,8 +723,8 @@ public class MoneyWiseTransactionTable
      * @param pTran the transaction to select
      */
     void selectTran(final Transaction pTran) {
-        /* Select the row and ensure that it is visible */
-        getTable().selectRowWithScroll(pTran);
+        /* Select the row */
+        getTable().selectRow(pTran);
     }
 
     @Override
@@ -737,8 +733,7 @@ public class MoneyWiseTransactionTable
         if (!theActiveTran.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectTran(theActiveTran.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -769,7 +764,12 @@ public class MoneyWiseTransactionTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectTran(theActiveTran.getSelectedItem());
+            final Transaction myTrans = theActiveTran.getSelectedItem();
+            if (myTrans != null) {
+                selectTran(myTrans);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

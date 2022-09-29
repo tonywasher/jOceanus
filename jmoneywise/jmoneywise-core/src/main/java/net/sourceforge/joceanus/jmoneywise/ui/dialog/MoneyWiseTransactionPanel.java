@@ -796,7 +796,7 @@ public class MoneyWiseTransactionPanel
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted()
-                    || myPortfolio.isClosed()) {
+                    || Boolean.TRUE.equals(myPortfolio.isClosed())) {
                 continue;
             }
 
@@ -926,14 +926,7 @@ public class MoneyWiseTransactionPanel
             /* If we have a parent */
             if (myParent != null) {
                 final String myParentName = myParent.getName();
-                TethysUIScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
-
-                /* If this is a new subMenu */
-                if (myMenu == null) {
-                    /* Create a new subMenu and add it to the popUp */
-                    myMenu = pMenu.addSubMenu(myParentName);
-                    myMap.put(myParentName, myMenu);
-                }
+                final TethysUIScrollSubMenu<TransactionCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
                 /* Create a new MenuItem and add it to the subMenu */
                 myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());

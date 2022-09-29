@@ -177,14 +177,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         for (DataItem<MoneyWiseDataType> myItem : theGoToItemList) {
             /* Determine DataType and obtain parent menu */
             final MoneyWiseDataType myType = myItem.getItemType();
-            TethysUIScrollSubMenu<TethysUIGenericWrapper> myMenu = myMap.get(myType);
-
-            /* If this is a new menu */
-            if (myMenu == null) {
-                /* Create a new JMenu and add it to the popUp */
-                myMenu = pMenu.addSubMenu(myType.getItemName());
-                myMap.put(myType, myMenu);
-            }
+            final TethysUIScrollSubMenu<TethysUIGenericWrapper> myMenu = myMap.computeIfAbsent(myType, t -> pMenu.addSubMenu(myType.getItemName()));
 
             /* set default values */
             MoneyWiseGoToId myId = null;

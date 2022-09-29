@@ -313,14 +313,7 @@ public class MoneyWiseCashAnalysisSelect
             /* Determine menu to add to */
             final CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysUIScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
-
-            /* If this is a new menu */
-            if (myMenu == null) {
-                /* Create a new JMenu and add it to the popUp */
-                myMenu = theCategoryMenu.addSubMenu(myParentName);
-                myMap.put(myParentName, myMenu);
-            }
+            final TethysUIScrollSubMenu<CashCategory> myMenu = myMap.computeIfAbsent(myParentName, theCategoryMenu::addSubMenu);
 
             /* Create a new JMenuItem and add it to the popUp */
             final CashCategory myCategory = myBucket.getAccountCategory();

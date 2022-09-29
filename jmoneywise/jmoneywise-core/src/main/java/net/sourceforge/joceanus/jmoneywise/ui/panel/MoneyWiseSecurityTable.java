@@ -93,9 +93,6 @@ public class MoneyWiseSecurityTable
         theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pUpdateSet, pError);
         declareItemPanel(theActiveSecurity);
 
-        /* Set table configuration */
-        myTable.setOnSelect(theActiveSecurity::setItem);
-
         /* Create the symbol column */
         myTable.declareStringColumn(MoneyWiseAssetDataId.SECURITYSYMBOL)
                 .setValidator(this::isValidDesc)
@@ -138,6 +135,7 @@ public class MoneyWiseSecurityTable
 
         /* Notify panel of refresh */
         theActiveSecurity.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -160,9 +158,8 @@ public class MoneyWiseSecurityTable
         /* If we are changing the selection */
         final Security myCurrent = theActiveSecurity.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pSecurity)) {
-            /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pSecurity);
-            theActiveSecurity.setItem(pSecurity);
+            /* Select the row */
+            getTable().selectRow(pSecurity);
         }
     }
 
@@ -172,8 +169,7 @@ public class MoneyWiseSecurityTable
         if (!theActiveSecurity.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectSecurity(theActiveSecurity.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -189,7 +185,12 @@ public class MoneyWiseSecurityTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectSecurity(theActiveSecurity.getSelectedItem());
+            final Security mySecurity = theActiveSecurity.getSelectedItem();
+            if (mySecurity != null) {
+                selectSecurity(mySecurity);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */

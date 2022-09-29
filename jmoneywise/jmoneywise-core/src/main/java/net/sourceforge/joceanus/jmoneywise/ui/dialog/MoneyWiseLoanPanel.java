@@ -314,14 +314,7 @@ public class MoneyWiseLoanPanel
             /* Determine menu to add to */
             final LoanCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysUIScrollSubMenu<LoanCategory> myMenu = myMap.get(myParentName);
-
-            /* If this is a new subMenu */
-            if (myMenu == null) {
-                /* Create a new subMenu and add it to the popUp */
-                myMenu = pMenu.addSubMenu(myParentName);
-                myMap.put(myParentName, myMenu);
-            }
+            final TethysUIScrollSubMenu<LoanCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
             final TethysUIScrollItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());

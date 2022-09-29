@@ -62,16 +62,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     protected static final int VERSION_READONLY = -1;
 
     /**
-     * Padding size.
-     */
-    protected static final int PADDING_SIZE = 5;
-
-    /**
-     * Field Height.
-     */
-    protected static final int FIELD_HEIGHT = 20;
-
-    /**
      * The Panel.
      */
     private final TethysUIFactory<?> theFactory;
@@ -542,6 +532,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     private void requestDelete() {
         /* Mark the item as deleted */
         theItem.setDeleted(true);
+        theItem = null;
 
         /* Increment version */
         theUpdateSet.incrementVersion();

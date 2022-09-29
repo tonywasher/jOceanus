@@ -220,6 +220,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
 
             /* Notify table of change */
             getTable().fireTableDataChanged();
+            restoreSelected();
         }
     }
 

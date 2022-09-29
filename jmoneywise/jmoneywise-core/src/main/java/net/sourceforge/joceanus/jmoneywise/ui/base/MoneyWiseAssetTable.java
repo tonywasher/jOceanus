@@ -254,6 +254,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
         cancelEditing();
         getTable().setFilter(this::isFiltered);
         theClosedColumn.setVisible(pShowAll);
+        restoreSelected();
     }
 
     /**

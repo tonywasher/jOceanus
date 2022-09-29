@@ -416,9 +416,9 @@ public class MetisViewerBuilder {
     private static boolean needsWrapping(final Object pObject) {
         /* Determine whether we need wrapping */
         Object myObject = pObject;
-        if (MetisDataDelta.class.isInstance(myObject)) {
+        if (myObject instanceof MetisDataDelta) {
             myObject = ((MetisDataDelta) pObject).getObject();
         }
-        return byte[].class.isInstance(myObject);
+        return myObject instanceof byte[];
     }
 }

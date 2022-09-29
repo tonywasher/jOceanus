@@ -387,8 +387,22 @@ public class TethysUIFXTableManager<C, R>
     }
 
     @Override
-    public void selectRowWithScroll(final R pItem) {
+    public void selectRow(final R pItem) {
         theTable.getSelectionModel().select(pItem);
-        theTable.scrollTo(pItem);
+    }
+
+    @Override
+    public void scrollSelectedToView() {
+        final List<R> mySelected = theTable.getSelectionModel().getSelectedItems();
+        final Iterator<R> myIterator = mySelected.iterator();
+        if (myIterator.hasNext()) {
+            theTable.scrollTo(myIterator.next());
+        }
+    }
+
+    @Override
+    public void selectRowWithScroll(final R pItem) {
+        selectRow(pItem);
+        scrollSelectedToView();
     }
 }

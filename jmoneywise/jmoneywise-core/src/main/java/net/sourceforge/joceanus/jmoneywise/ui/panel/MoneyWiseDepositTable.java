@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseDepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -41,7 +40,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Deposit Table.
@@ -86,14 +84,10 @@ public class MoneyWiseDepositTable
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, Deposit> myTable = getTable();
 
         /* Create a Deposit panel */
         theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, pUpdateSet, pError);
         declareItemPanel(theActiveDeposit);
-
-        /* Set table configuration */
-        myTable.setOnSelect(theActiveDeposit::setItem);
 
         /* Finish the table */
         finishTable(true, true, true);
@@ -129,6 +123,7 @@ public class MoneyWiseDepositTable
 
         /* Notify panel of refresh */
         theActiveDeposit.refreshData();
+        restoreSelected();
 
         /* Complete the task */
         myTask.end();
@@ -152,8 +147,7 @@ public class MoneyWiseDepositTable
         final Deposit myCurrent = theActiveDeposit.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pDeposit)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pDeposit);
-            theActiveDeposit.setItem(pDeposit);
+            getTable().selectRow(pDeposit);
         }
     }
 
@@ -163,8 +157,7 @@ public class MoneyWiseDepositTable
         if (!theActiveDeposit.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
-            getTable().fireTableDataChanged();
-            selectDeposit(theActiveDeposit.getSelectedItem());
+            super.handleRewind();
         }
 
         /* Adjust for changes */
@@ -180,7 +173,12 @@ public class MoneyWiseDepositTable
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectDeposit(theActiveDeposit.getSelectedItem());
+            final Deposit myDeposit = theActiveDeposit.getSelectedItem();
+            if (myDeposit != null) {
+                selectDeposit(myDeposit);
+            } else {
+                restoreSelected();
+            }
         }
 
         /* Note changes */
