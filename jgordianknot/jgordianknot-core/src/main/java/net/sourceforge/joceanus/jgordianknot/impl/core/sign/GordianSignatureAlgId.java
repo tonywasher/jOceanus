@@ -396,6 +396,12 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.picnic(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.sha2(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.sha3(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha3_512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.shake256(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
 
         /* Add SPHINCSPlus signatures */
         addSPHINCSPlusSignatures();
@@ -613,13 +619,13 @@ public class GordianSignatureAlgId {
         myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));
 
         /* If we have a digestSpec */
-        if (!myKeyType.nullDigestForSignatures()) {
+        if (pSigSpec.getSignatureSpec() instanceof GordianDigestSpec) {
             /* Create a branch for digest based on the DigestType/Length/State */
             final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
 
-            /* Add an additional branch if there is a stateLength */
+            /* Add a branch if there is a stateLength */
             final GordianLength myState = myDigestSpec.getStateLength();
             if (myState != null) {
                 myId = myId.branch(Integer.toString(myState.ordinal() + 1));

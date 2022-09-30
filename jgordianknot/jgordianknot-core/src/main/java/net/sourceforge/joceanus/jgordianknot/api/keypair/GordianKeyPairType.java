@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianRequired;
+
 /**
  * Asymmetric KeyPairTypes.
  */
@@ -168,21 +170,22 @@ public enum GordianKeyPairType {
     }
 
     /**
-     * null digest for signatures?
-     * @return true/false
+     * Do we need a digest for signatures?
+     * @return ALWAYS/POSSIBLE/NEVER
      */
-    public boolean nullDigestForSignatures() {
+    public GordianRequired useDigestForSignatures() {
         switch (this) {
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
-            case PICNIC:
             case XMSS:
             case EDDSA:
             case LMS:
-                return true;
+                return GordianRequired.NEVER;
+            case PICNIC:
+                return GordianRequired.POSSIBLE;
             default:
-                return false;
+                return GordianRequired.ALWAYS;
         }
     }
 
@@ -191,11 +194,6 @@ public enum GordianKeyPairType {
      * @return true/false
      */
     public boolean subTypeForSignatures() {
-        switch (this) {
-            case XMSS:
-                return true;
-            default:
-                return false;
-        }
+        return this == GordianKeyPairType.XMSS;
     }
 }

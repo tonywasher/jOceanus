@@ -197,6 +197,15 @@ public final class GordianSignatureSpec {
     }
 
     /**
+     * Create picnicSpec.
+     * @param pDigest the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
+        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);
+    }
+
+    /**
      * Create xmssSpec.
      * @return the SignatureSpec
      */
@@ -316,10 +325,11 @@ public final class GordianSignatureSpec {
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
-            case PICNIC:
             case XMSS:
             case LMS:
                 return theSignatureSpec == null;
+            case PICNIC:
+                return theSignatureSpec == null || checkPICNICDigest();
             case COMPOSITE:
                 return theSignatureSpec instanceof List && checkComposite();
             default:
@@ -341,6 +351,28 @@ public final class GordianSignatureSpec {
             }
         }
         return true;
+    }
+
+    /**
+     * Check picnic spec validity.
+     * @return valid true/false
+     */
+    private boolean checkPICNICDigest() {
+        /* Check that signature length is 512 */
+        final GordianDigestSpec myDigest = getDigestSpec();
+        if (!GordianLength.LEN_512.equals(myDigest.getDigestLength())) {
+            return false;
+        }
+
+        /* Switch on DigestType */
+        switch (myDigest.getDigestType()) {
+            case SHA2:
+            case SHA3:
+            case SHAKE:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

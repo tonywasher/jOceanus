@@ -666,6 +666,7 @@ public class GordianKeyPairAlgId {
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256, new GordianSPHINCSPlusEncodedParser());
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha_512, new GordianSPHINCSPlusEncodedParser());
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha_256, new GordianSPHINCSPlusEncodedParser());
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka, new GordianSPHINCSPlusEncodedParser());
         }
 
         @Override

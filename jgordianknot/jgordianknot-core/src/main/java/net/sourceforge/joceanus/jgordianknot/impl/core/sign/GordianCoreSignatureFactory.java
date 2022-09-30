@@ -172,8 +172,12 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Don't worry about digestSpec if it is irrelevant */
-        if (myType.nullDigestForSignatures()) {
+        if (myType.useDigestForSignatures().mustNotExist()) {
             return pSignSpec.getSignatureSpec() == null;
+        }
+        if (myType.useDigestForSignatures().canNotExist()
+            && pSignSpec.getSignatureSpec() == null) {
+            return true;
         }
 
         /* Composite signatures */
@@ -258,7 +262,7 @@ public abstract class GordianCoreSignatureFactory
         /* Otherwise OK */
         return true;
     }
-
+    
     /**
      * Obtain Identifier for SignatureSpec.
      * @param pSpec the signatureSpec.
@@ -314,16 +318,18 @@ public abstract class GordianCoreSignatureFactory
             /* Skip if the signatureType is not valid */
             if (mySignType.isSupported(pKeyType)) {
                 /* If we need null-digestSpec */
-                if (pKeyType.nullDigestForSignatures()) {
+                if (pKeyType.useDigestForSignatures().canNotExist()) {
                     /* Add the signature */
                     mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType));
-                    continue;
                 }
 
-                /* For each possible digestSpec */
-                for (GordianDigestSpec mySpec : myDigests) {
-                    /* Add the signature */
-                    mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
+                /* If we need digestSpec */
+                if (pKeyType.useDigestForSignatures().canExist()) {
+                    /* For each possible digestSpec */
+                    for (GordianDigestSpec mySpec : myDigests) {
+                        /* Add the signature */
+                        mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
+                    }
                 }
             }
         }

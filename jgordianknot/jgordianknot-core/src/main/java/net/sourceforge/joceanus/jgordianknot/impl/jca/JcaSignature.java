@@ -449,6 +449,11 @@ public abstract class JcaSignature
     static class JcaPicnicSignature
             extends JcaSignature {
         /**
+         * SIgnature base.
+         */
+        private static final String BASE_NAME = "PICNIC";
+
+        /**
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
@@ -460,8 +465,34 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("PICNIC", true));
+            final String myName = determineSignatureName(pSignatureSpec);
+            setSigner(JcaSignatureFactory.getJavaSignature(myName, true));
         }
+
+        /**
+         * Determine signatureName.
+         * @param pSignatureSpec the signatureSpec
+         * @return the algorithm name
+         */
+        private static String determineSignatureName(final GordianSignatureSpec pSignatureSpec) {
+            /* If we do not have a digest */
+            if (pSignatureSpec.getSignatureSpec() == null) {
+                return BASE_NAME;
+            }
+
+            /* Switch on digest Type */
+            switch (pSignatureSpec.getDigestSpec().getDigestType()) {
+                case SHA2:
+                    return "SHA512With" + BASE_NAME;
+                case SHA3:
+                    return "SHA3-512With" + BASE_NAME;
+                case SHAKE:
+                    return "SHAKE256With" + BASE_NAME;
+                default:
+                    throw new IllegalArgumentException("Bad SignatureSpec");
+            }
+        }
+
     }
 
     /**

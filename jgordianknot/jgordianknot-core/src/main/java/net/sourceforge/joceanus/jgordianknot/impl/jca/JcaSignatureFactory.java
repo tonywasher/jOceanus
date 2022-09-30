@@ -81,7 +81,7 @@ public class JcaSignatureFactory
                                       final boolean postQuantum) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Return a KeyPairGenerator for the algorithm */
+            /* Return a Signature for the algorithm */
             return Signature.getInstance(pAlgorithm, postQuantum
                                                      ? JcaFactory.BCPQPROV
                                                      : JcaFactory.BCPROV);
