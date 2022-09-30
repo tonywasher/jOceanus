@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -87,33 +88,38 @@ public class ZipFileTest {
 
         /* Create the keyPair */
         final GordianKeyPairFactory myAsymFactory = myFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpec.x448());
-        final GordianKeyPair myKeyPair = myPairGenerator.generateKeyPair();
+        GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpec.x448());
+        final GordianKeyPair myKeyPair1 = myPairGenerator.generateKeyPair();
+        myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512));
+        final GordianKeyPair myKeyPair2 = myPairGenerator.generateKeyPair();
 
         /* Return the stream */
         final String myName = pType.toString();
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
                 DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, null, null)),
-                DynamicContainer.dynamicContainer("encrypted128", lockedZipFileTests(myFactory, myKeyPair, GordianLength.LEN_128)),
-                DynamicContainer.dynamicContainer("encrypted192", lockedZipFileTests(myFactory, myKeyPair, GordianLength.LEN_192)),
-                DynamicContainer.dynamicContainer("encrypted256", lockedZipFileTests(myFactory, myKeyPair, GordianLength.LEN_256))
+                DynamicContainer.dynamicContainer("encrypted128", lockedZipFileTests(myFactory, myKeyPair1, myKeyPair2, GordianLength.LEN_128)),
+                DynamicContainer.dynamicContainer("encrypted192", lockedZipFileTests(myFactory, myKeyPair1, myKeyPair2, GordianLength.LEN_192)),
+                DynamicContainer.dynamicContainer("encrypted256", lockedZipFileTests(myFactory, myKeyPair1, myKeyPair2, GordianLength.LEN_256))
         )));
     }
 
     /**
      * Test security.
      * @param pFactory the factory.
-     * @param pKeyPair the keyPair
+     * @param pKeyPair1 the first keyPair
+     * @param pKeyPair2 the second keyPair
      * @param pKeyLen the keyLength
      * @throws OceanusException on error
      */
     private Stream<DynamicNode> lockedZipFileTests(final GordianFactory pFactory,
-                                                   final GordianKeyPair pKeyPair,
+                                                   final GordianKeyPair pKeyPair1,
+                                                   final GordianKeyPair pKeyPair2,
                                                    final GordianLength pKeyLen) throws OceanusException {
         return Stream.of(
                 DynamicTest.dynamicTest("password", () -> testZipFile(pFactory,null, pKeyLen)),
                 DynamicTest.dynamicTest("key/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),
-                DynamicTest.dynamicTest("keyPair/password", () -> testZipFile(pFactory, pKeyPair, pKeyLen))
+                DynamicTest.dynamicTest("keyPair1/password", () -> testZipFile(pFactory, pKeyPair1, pKeyLen)),
+                DynamicTest.dynamicTest("keyPair2/password", () -> testZipFile(pFactory, pKeyPair2, pKeyLen))
         );
     }
 

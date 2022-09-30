@@ -345,13 +345,22 @@ public class GordianCoreLock
      * Obtain AgreementSpec for asymKeySpec.
      * @param pKeySpec the keySpec
      * @return the agreementSpec
+     * @throws OceanusException on error
      */
-    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
-        final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
-        final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)
+    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        /* Determine KDF type */
+        final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(pKeySpec.getSubKeyType())
                     ? GordianKDFType.SHA256KDF
                     : GordianKDFType.SHA512KDF;
-        return new GordianAgreementSpec(pKeySpec, GordianAgreementType.ANON, myKDFType);
+
+        /* Determine AgreementType - either ANON or KEM */
+        if (GordianAgreementType.ANON.isSupported(pKeySpec.getKeyPairType())) {
+            return new GordianAgreementSpec(pKeySpec, GordianAgreementType.ANON, myKDFType);
+        }
+        if (GordianAgreementType.KEM.isSupported(pKeySpec.getKeyPairType())) {
+            return new GordianAgreementSpec(pKeySpec, GordianAgreementType.KEM, GordianKDFType.NONE);
+        }
+        throw new GordianLogicException("Invalid KeyPair type");
     }
 
     @Override

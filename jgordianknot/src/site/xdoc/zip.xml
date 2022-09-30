@@ -26,6 +26,21 @@
             <p>The keySetHash used to encrypt the final file entry is recorded as additionalData for the directory entry</p>
             <p>Note that updating of ZipFiles is not supported, only creation and extraction.</p>
         </section>
+        <section name="ZipLocks">
+            <p>Each zip file is secured using a zipLock structure, which at its core is a keySetHash. This can come in three forms</p>
+            <dl>
+                <dt>Password-only.</dt>
+                <dd>The lock is a simple keySetHash, secured by the password, and only accessible from the currently configured factory. This should
+                be used to secure local backup files.</dd>
+                <dt>Password and key</dt>
+                <dd>The lock is a simple keySetHash, secured by the password, and a factory which is created using a randomly generated key.
+                The key is stored with the lock enabling the factory to be recreated by the recipient. This should be used to transport files between machines.</dd>
+                <dt>Password and keyPair.</dt>
+                <dd>The lock is a simple keySetHash, secured by the password, and a factory that is created using an anonymous agreement for the keyPair.
+                The clientHello message is stored with the lock enabling the factory to be recreated by the owner of the relevant private key. This should be used
+                for fully secure transportation of files between machines.</dd>
+            </dl>
+        </section>
         <section name="Sample Creation of Encrypted ZipFile">
             <p>The following sample reads a designated file directory and creates an encrypted zipFile of the contents</p>
             <source>

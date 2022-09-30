@@ -262,7 +262,7 @@ public abstract class GordianCoreSignatureFactory
         /* Otherwise OK */
         return true;
     }
-    
+
     /**
      * Obtain Identifier for SignatureSpec.
      * @param pSpec the signatureSpec.
