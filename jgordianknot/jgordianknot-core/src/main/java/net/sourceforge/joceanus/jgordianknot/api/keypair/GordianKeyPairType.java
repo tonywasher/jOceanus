@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianRequired;
+
 /**
  * Asymmetric KeyPairTypes.
  */
@@ -71,29 +73,9 @@ public enum GordianKeyPairType {
     EDDSA,
 
     /**
-     * SPHINCS.
-     */
-    SPHINCS,
-
-    /**
-     * McEliece.
-     */
-    MCELIECE,
-
-    /**
-     * Rainbow.
-     */
-    RAINBOW,
-
-    /**
      * XMSS.
      */
     XMSS,
-
-    /**
-     * NewHope.
-     */
-    NEWHOPE,
 
     /**
      * LMS.
@@ -121,6 +103,51 @@ public enum GordianKeyPairType {
     SABER,
 
     /**
+     * Kyber.
+     */
+    KYBER,
+
+    /**
+     * Dilithium.
+     */
+    DILITHIUM,
+
+    /**
+     * HQC.
+     */
+    HQC,
+
+    /**
+     * BIKE.
+     */
+    BIKE,
+
+    /**
+     * NTRU.
+     */
+    NTRU,
+
+    /**
+     * NTRULPRIME.
+     */
+    NTRULPRIME,
+
+    /**
+     * SNTRUPRIME.
+     */
+    SNTRUPRIME,
+
+    /**
+     * Falcon.
+     */
+    FALCON,
+
+    /**
+     * Picnic.
+     */
+    PICNIC,
+
+    /**
      * Composite.
      */
     COMPOSITE;
@@ -131,8 +158,9 @@ public enum GordianKeyPairType {
      */
     public boolean useRandomForSignatures() {
         switch (this) {
-            case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
             case XMSS:
             case EDDSA:
                 return false;
@@ -142,19 +170,22 @@ public enum GordianKeyPairType {
     }
 
     /**
-     * null digest for signatures?
-     * @return true/false
+     * Do we need a digest for signatures?
+     * @return ALWAYS/POSSIBLE/NEVER
      */
-    public boolean nullDigestForSignatures() {
+    public GordianRequired useDigestForSignatures() {
         switch (this) {
-            case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
             case XMSS:
             case EDDSA:
             case LMS:
-                return true;
+                return GordianRequired.NEVER;
+            case PICNIC:
+                return GordianRequired.POSSIBLE;
             default:
-                return false;
+                return GordianRequired.ALWAYS;
         }
     }
 
@@ -163,12 +194,6 @@ public enum GordianKeyPairType {
      * @return true/false
      */
     public boolean subTypeForSignatures() {
-        switch (this) {
-            case SPHINCS:
-            case XMSS:
-                return true;
-            default:
-                return false;
-        }
+        return this == GordianKeyPairType.XMSS;
     }
 }

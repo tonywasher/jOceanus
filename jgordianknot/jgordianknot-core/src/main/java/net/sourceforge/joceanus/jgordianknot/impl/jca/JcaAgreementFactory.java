@@ -87,9 +87,13 @@ public class JcaAgreementFactory
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
                 return getPostQuantumAgreement(pAgreementSpec);
-            case NEWHOPE:
-                return getNHAgreement(pAgreementSpec);
             case EC:
             case GOST2012:
             case DSTU4145:
@@ -275,10 +279,15 @@ public class JcaAgreementFactory
 
         /* Switch on KeyType */
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case NEWHOPE:
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
             case COMPOSITE:
                 return true;
             case EC:

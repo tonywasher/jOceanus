@@ -174,8 +174,8 @@ public final class GordianAgreementSpec {
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec uUnifiedConfirm(final GordianKeyPairSpec pKeyPairSpec,
-                                                       final GordianKDFType pKDFType) {
+    public static GordianAgreementSpec unifiedConfirm(final GordianKeyPairSpec pKeyPairSpec,
+                                                      final GordianKDFType pKDFType) {
         return new GordianAgreementSpec(pKeyPairSpec, GordianAgreementType.MQV, pKDFType, Boolean.TRUE);
     }
 

@@ -71,6 +71,12 @@ public enum GordianKDFType {
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
                 return pAgreeType == GordianAgreementType.KEM && this == NONE;
             default:
                 return true;

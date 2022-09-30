@@ -832,7 +832,7 @@ class AsymmetricStore {
         myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1),
                                                   GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1)));
         myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488),
-                                                  GordianKeyPairSpec.frodo(GordianFRODOSpec.AES19888),
+                                                  GordianKeyPairSpec.frodo(GordianFRODOSpec.AES640),
                                                   GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)));
         myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
                                                   GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048),

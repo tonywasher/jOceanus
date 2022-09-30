@@ -24,25 +24,22 @@ import java.util.Arrays;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA3Digest;
-import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyPairGenerator;
-import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256Signer;
-import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPublicKeyParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.falcon.FalconKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -52,35 +49,35 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairVal
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * SPHINCS KeyPair classes.
+ * FALCON KeyPair classes.
  */
-public final class BouncySPHINCSKeyPair {
+public final class BouncyFALCONKeyPair {
     /**
      * Private constructor.
      */
-    private BouncySPHINCSKeyPair() {
+    private BouncyFALCONKeyPair() {
     }
 
     /**
-     * Bouncy SPHINCS PublicKey.
+     * Bouncy Falcon PublicKey.
      */
-    public static class BouncySPHINCSPublicKey
-            extends BouncyPublicKey<SPHINCSPublicKeyParameters> {
+    public static class BouncyFALCONPublicKey
+            extends BouncyPublicKey<FalconPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncySPHINCSPublicKey(final GordianKeyPairSpec pKeySpec,
-                               final SPHINCSPublicKeyParameters pPublicKey) {
+        BouncyFALCONPublicKey(final GordianKeyPairSpec pKeySpec,
+                              final FalconPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final SPHINCSPublicKeyParameters myThis = getPublicKey();
-            final SPHINCSPublicKeyParameters myThat = (SPHINCSPublicKeyParameters) pThat;
+            final FalconPublicKeyParameters myThis = getPublicKey();
+            final FalconPublicKeyParameters myThat = (FalconPublicKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -92,24 +89,24 @@ public final class BouncySPHINCSKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final SPHINCSPublicKeyParameters pFirst,
-                                           final SPHINCSPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getKeyData(), pSecond.getKeyData());
+        private static boolean compareKeys(final FalconPublicKeyParameters pFirst,
+                                           final FalconPublicKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getH(), pSecond.getH());
         }
     }
 
     /**
-     * Bouncy SPHINCS PrivateKey.
+     * Bouncy Falcon PrivateKey.
      */
-    public static class BouncySPHINCSPrivateKey
-            extends BouncyPrivateKey<SPHINCSPrivateKeyParameters> {
+    public static class BouncyFALCONPrivateKey
+            extends BouncyPrivateKey<FalconPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncySPHINCSPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                final SPHINCSPrivateKeyParameters pPrivateKey) {
+        BouncyFALCONPrivateKey(final GordianKeyPairSpec pKeySpec,
+                               final FalconPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -117,8 +114,8 @@ public final class BouncySPHINCSKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final SPHINCSPrivateKeyParameters myThis = getPrivateKey();
-            final SPHINCSPrivateKeyParameters myThat = (SPHINCSPrivateKeyParameters) pThat;
+            final FalconPrivateKeyParameters myThis = getPrivateKey();
+            final FalconPrivateKeyParameters myThat = (FalconPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -130,43 +127,38 @@ public final class BouncySPHINCSKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final SPHINCSPrivateKeyParameters pFirst,
-                                           final SPHINCSPrivateKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getKeyData(), pSecond.getKeyData());
+        private static boolean compareKeys(final FalconPrivateKeyParameters pFirst,
+                                           final FalconPrivateKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle SPHINCS256 KeyPair generator.
+     * BouncyCastle Falcon KeyPair generator.
      */
-    public static class BouncySPHINCSKeyPairGenerator
+    public static class BouncyFALCONKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final SPHINCS256KeyPairGenerator theGenerator;
+        private final FalconKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncySPHINCSKeyPairGenerator(final BouncyFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) {
+        BouncyFALCONKeyPairGenerator(final BouncyFactory pFactory,
+                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
-            /* Determine the algorithm Id */
-            final GordianSPHINCSDigestType myDigestType = pKeySpec.getSPHINCSDigestType();
-
-            /* Determine the digest */
-            final Digest myDigest = GordianSPHINCSDigestType.SHA3.equals(myDigestType)
-                                    ? new SHA3Digest(GordianLength.LEN_256.getLength())
-                                    : new SHA512tDigest(GordianLength.LEN_256.getLength());
+            /* Determine the parameters */
+            final FalconParameters myParms = pKeySpec.getFalconKeySpec().getParameters();
 
             /* Create and initialise the generator */
-            theGenerator = new SPHINCS256KeyPairGenerator();
-            final SPHINCS256KeyGenerationParameters myParams = new SPHINCS256KeyGenerationParameters(getRandom(), myDigest);
+            theGenerator = new FalconKeyPairGenerator();
+            final FalconKeyGenerationParameters myParams = new FalconKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -174,8 +166,8 @@ public final class BouncySPHINCSKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncySPHINCSPublicKey myPublic = new BouncySPHINCSPublicKey(getKeySpec(), (SPHINCSPublicKeyParameters) myPair.getPublic());
-            final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), (SPHINCSPrivateKeyParameters) myPair.getPrivate());
+            final BouncyFALCONPublicKey myPublic = new BouncyFALCONPublicKey(getKeySpec(), (FalconPublicKeyParameters) myPair.getPublic());
+            final BouncyFALCONPrivateKey myPrivate = new BouncyFALCONPrivateKey(getKeySpec(), (FalconPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -187,8 +179,8 @@ public final class BouncySPHINCSKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncySPHINCSPrivateKey myPrivateKey = (BouncySPHINCSPrivateKey) getPrivateKey(pKeyPair);
-                final SPHINCSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyFALCONPrivateKey myPrivateKey = (BouncyFALCONPrivateKey) getPrivateKey(pKeyPair);
+                final FalconPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -206,10 +198,10 @@ public final class BouncySPHINCSKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncySPHINCSPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyFALCONPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final SPHINCSPrivateKeyParameters myParms = (SPHINCSPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), myParms);
+                final FalconPrivateKeyParameters myParms = (FalconPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyFALCONPrivateKey myPrivate = new BouncyFALCONPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -231,8 +223,8 @@ public final class BouncySPHINCSKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncySPHINCSPublicKey myPublicKey = (BouncySPHINCSPublicKey) getPublicKey(pKeyPair);
-                final SPHINCSPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyFALCONPublicKey myPublicKey = (BouncyFALCONPublicKey) getPublicKey(pKeyPair);
+                final FalconPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -243,7 +235,7 @@ public final class BouncySPHINCSKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            final BouncySPHINCSPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyFALCONPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -253,7 +245,7 @@ public final class BouncySPHINCSKeyPair {
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncySPHINCSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyFALCONPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -261,8 +253,8 @@ public final class BouncySPHINCSKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final SPHINCSPublicKeyParameters myParms = (SPHINCSPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncySPHINCSPublicKey(getKeySpec(), myParms);
+                final FalconPublicKeyParameters myParms = (FalconPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyFALCONPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -271,14 +263,14 @@ public final class BouncySPHINCSKeyPair {
     }
 
     /**
-     * SPHINCS signer.
+     * Falcon signer.
      */
-    public static class BouncySPHINCSSignature
+    public static class BouncyFALCONSignature
             extends BouncyDigestSignature {
         /**
-         * The SPHINCS Signer.
+         * The SPHINCSPlus Signer.
          */
-        private SPHINCS256Signer theSigner;
+        private final FalconSigner theSigner;
 
         /**
          * Constructor.
@@ -286,32 +278,11 @@ public final class BouncySPHINCSKeyPair {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        BouncySPHINCSSignature(final BouncyFactory pFactory,
-                               final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyFALCONSignature(final BouncyFactory pFactory,
+                              final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-        }
-
-        /**
-         * Set the signer according to the keyPair.
-         * @param pKeyPair the keyPair
-         * @throws OceanusException on error
-         */
-        private void setSigner(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Access the SPHINCS keyType */
-            final GordianSPHINCSDigestType myKeyType = pKeyPair.getKeyPairSpec().getSPHINCSDigestType();
-
-            /* Create the internal digests */
-            final BouncyDigestFactory myDigests = getFactory().getDigestFactory();
-            final BouncyDigest myTreeDigest = myDigests.createDigest(GordianSPHINCSDigestType.SHA3.equals(myKeyType)
-                                                                        ? GordianDigestSpec.sha3(GordianLength.LEN_256)
-                                                                        : GordianDigestSpec.sha2Alt(GordianLength.LEN_256));
-            final BouncyDigest myMsgDigest = myDigests.createDigest(GordianSPHINCSDigestType.SHA3.equals(myKeyType)
-                                                                       ? GordianDigestSpec.sha3(GordianLength.LEN_512)
-                                                                       : GordianDigestSpec.sha2(GordianLength.LEN_512));
-
-            /* Create the signer */
-            theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
+            theSigner = new FalconSigner();
         }
 
         @Override
@@ -320,14 +291,10 @@ public final class BouncySPHINCSKeyPair {
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
-            /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeyPairSpec().getSPHINCSDigestType().getDigestSpec();
-            setDigest(myDigestSpec);
-
             /* Initialise and set the signer */
-            setSigner(pKeyPair);
-            final BouncySPHINCSPrivateKey myPrivate = (BouncySPHINCSPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
+            final BouncyFALCONPrivateKey myPrivate = (BouncyFALCONPrivateKey) getKeyPair().getPrivateKey();
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            theSigner.init(true, myParms);
         }
 
         @Override
@@ -336,13 +303,8 @@ public final class BouncySPHINCSKeyPair {
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
-            /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeyPairSpec().getSPHINCSDigestType().getDigestSpec();
-            setDigest(myDigestSpec);
-
             /* Initialise and set the signer */
-            setSigner(pKeyPair);
-            final BouncySPHINCSPublicKey myPublic = (BouncySPHINCSPublicKey) getKeyPair().getPublicKey();
+            final BouncyFALCONPublicKey myPublic = (BouncyFALCONPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

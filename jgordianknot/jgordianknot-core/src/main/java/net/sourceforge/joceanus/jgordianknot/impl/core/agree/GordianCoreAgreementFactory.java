@@ -269,12 +269,15 @@ public abstract class GordianCoreAgreementFactory
             case RSA:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
-            case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
-                break;
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
                 myAgreements.add(GordianAgreementSpec.kem(pKeyPairSpec, GordianKDFType.NONE));
                 break;
             case EC:

@@ -174,40 +174,6 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Create SPHINCSKey.
-     * @param pDigestType the SPHINCS digestType
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec sphincs(final GordianSPHINCSDigestType pDigestType) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SPHINCS, pDigestType);
-    }
-
-    /**
-     * Create McElieceKey.
-     * @param pKeySpec the McEliece keySpec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec mcEliece(final GordianMcElieceKeySpec pKeySpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.MCELIECE, pKeySpec);
-    }
-
-    /**
-     * Create RainbowKey.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec rainbow() {
-        return new GordianKeyPairSpec(GordianKeyPairType.RAINBOW, null);
-    }
-
-    /**
-     * Create NewHopeKey.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec newHope() {
-        return new GordianKeyPairSpec(GordianKeyPairType.NEWHOPE, null);
-    }
-
-    /**
      * Create xmssKey.
      * @param pDigestType the xmss digestType
      * @param pHeight the height
@@ -285,6 +251,87 @@ public class GordianKeyPairSpec {
      */
     public static GordianKeyPairSpec saber(final GordianSABERSpec pSpec) {
         return new GordianKeyPairSpec(GordianKeyPairType.SABER, pSpec);
+    }
+
+    /**
+     * Create KYBERKey.
+     * @param pSpec the KYBER Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec kyber(final GordianKYBERSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.KYBER, pSpec);
+    }
+
+    /**
+     * Create DILITHIUMKey.
+     * @param pSpec the DILITHIUM Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec dilithium(final GordianDILITHIUMSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.DILITHIUM, pSpec);
+    }
+
+    /**
+     * Create HQCKey.
+     * @param pSpec the HQC Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec hqc(final GordianHQCSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.HQC, pSpec);
+    }
+
+    /**
+     * Create BIKEKey.
+     * @param pSpec the BIKE Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec bike(final GordianBIKESpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.BIKE, pSpec);
+    }
+
+    /**
+     * Create NTRUKey.
+     * @param pSpec the NTRU Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec ntru(final GordianNTRUSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.NTRU, pSpec);
+    }
+
+    /**
+     * Create NTRULPRIMEKey.
+     * @param pSpec the NTRULPRIME Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec ntrulprime(final GordianNTRULPrimeSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.NTRULPRIME, pSpec);
+    }
+
+    /**
+     * Create SNTRUPRIMEKey.
+     * @param pSpec the SNTRUPRIME Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec sntruprime(final GordianSNTRUPrimeSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.SNTRUPRIME, pSpec);
+    }
+
+    /**
+     * Create FalconKey.
+     * @param pSpec the FALCON Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec falcon(final GordianFALCONSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.FALCON, pSpec);
+    }
+
+    /**
+     * Create PicnicKey.
+     * @param pSpec the Picnic Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec picnic(final GordianPICNICSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.PICNIC, pSpec);
     }
 
     /**
@@ -385,28 +432,6 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the SPHINCS digestType.
-     * @return the digestType.
-     */
-    public GordianSPHINCSDigestType getSPHINCSDigestType() {
-        if (!(theSubKeyType instanceof GordianSPHINCSDigestType)) {
-            throw new IllegalArgumentException();
-        }
-        return (GordianSPHINCSDigestType) theSubKeyType;
-    }
-
-    /**
-     * Obtain the mcEliece keySpec.
-     * @return the keySpec.
-     */
-    public GordianMcElieceKeySpec getMcElieceKeySpec() {
-        if (!(theSubKeyType instanceof GordianMcElieceKeySpec)) {
-            throw new IllegalArgumentException();
-        }
-        return (GordianMcElieceKeySpec) theSubKeyType;
-    }
-
-    /**
      * Obtain the lms keySpec.
      * @return the keySpec.
      */
@@ -489,6 +514,105 @@ public class GordianKeyPairSpec {
             throw new IllegalArgumentException();
         }
         return (GordianSABERSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Kyber keySpec.
+     * @return the keySpec.
+     */
+    public GordianKYBERSpec getKyberKeySpec() {
+        if (!(theSubKeyType instanceof GordianKYBERSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianKYBERSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Bike keySpec.
+     * @return the keySpec.
+     */
+    public GordianDILITHIUMSpec getDilithiumKeySpec() {
+        if (!(theSubKeyType instanceof GordianDILITHIUMSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianDILITHIUMSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the HQC keySpec.
+     * @return the keySpec.
+     */
+    public GordianHQCSpec getHQCKeySpec() {
+        if (!(theSubKeyType instanceof GordianHQCSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianHQCSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Bike keySpec.
+     * @return the keySpec.
+     */
+    public GordianBIKESpec getBIKEKeySpec() {
+        if (!(theSubKeyType instanceof GordianBIKESpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianBIKESpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the NTRU keySpec.
+     * @return the keySpec.
+     */
+    public GordianNTRUSpec getNTRUKeySpec() {
+        if (!(theSubKeyType instanceof GordianNTRUSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianNTRUSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the NTRUPRIME keySpec.
+     * @return the keySpec.
+     */
+    public GordianNTRULPrimeSpec getNTRULPrimeKeySpec() {
+        if (!(theSubKeyType instanceof GordianNTRULPrimeSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianNTRULPrimeSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the NTRUPRIME keySpec.
+     * @return the keySpec.
+     */
+    public GordianSNTRUPrimeSpec getSNTRUPrimeKeySpec() {
+        if (!(theSubKeyType instanceof GordianSNTRUPrimeSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianSNTRUPrimeSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Falcon keySpec.
+     * @return the keySpec.
+     */
+    public GordianFALCONSpec getFalconKeySpec() {
+        if (!(theSubKeyType instanceof GordianFALCONSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianFALCONSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Picnic keySpec.
+     * @return the keySpec.
+     */
+    public GordianPICNICSpec getPicnicKeySpec() {
+        if (!(theSubKeyType instanceof GordianPICNICSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianPICNICSpec) theSubKeyType;
     }
 
     /**
@@ -616,11 +740,6 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianGOSTElliptic;
             case DSTU4145:
                 return theSubKeyType instanceof GordianDSTU4145Elliptic;
-            case SPHINCS:
-                return theSubKeyType instanceof GordianSPHINCSDigestType;
-            case MCELIECE:
-                return theSubKeyType instanceof GordianMcElieceKeySpec
-                        && ((GordianMcElieceKeySpec) theSubKeyType).isValid();
             case XMSS:
                 return theSubKeyType instanceof GordianXMSSKeySpec
                         && ((GordianXMSSKeySpec) theSubKeyType).isValid();
@@ -632,6 +751,24 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianFRODOSpec;
             case SABER:
                 return theSubKeyType instanceof GordianSABERSpec;
+            case KYBER:
+                return theSubKeyType instanceof GordianKYBERSpec;
+            case DILITHIUM:
+                return theSubKeyType instanceof GordianDILITHIUMSpec;
+            case HQC:
+                return theSubKeyType instanceof GordianHQCSpec;
+            case BIKE:
+                return theSubKeyType instanceof GordianBIKESpec;
+            case NTRU:
+                return theSubKeyType instanceof GordianNTRUSpec;
+            case NTRULPRIME:
+                return theSubKeyType instanceof GordianNTRULPrimeSpec;
+            case SNTRUPRIME:
+                return theSubKeyType instanceof GordianSNTRUPrimeSpec;
+            case FALCON:
+                return theSubKeyType instanceof GordianFALCONSpec;
+            case PICNIC:
+                return theSubKeyType instanceof GordianPICNICSpec;
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
                          && ((GordianLMSKeySpec) theSubKeyType).isValid())
@@ -640,9 +777,6 @@ public class GordianKeyPairSpec {
             case EDDSA:
             case XDH:
                 return theSubKeyType instanceof GordianEdwardsElliptic;
-            case RAINBOW:
-            case NEWHOPE:
-                return theSubKeyType == null;
             case COMPOSITE:
                 return theSubKeyType instanceof List && checkComposite();
             default:

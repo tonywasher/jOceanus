@@ -137,6 +137,12 @@ public enum GordianAgreementType {
             case CMCE:
             case FRODO:
             case SABER:
+            case KYBER:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRULPRIME:
+            case SNTRUPRIME:
                 return true;
             default:
                 return false;
@@ -150,7 +156,6 @@ public enum GordianAgreementType {
      */
     public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
-            case NEWHOPE:
             case DH:
             case EC:
             case SM2:

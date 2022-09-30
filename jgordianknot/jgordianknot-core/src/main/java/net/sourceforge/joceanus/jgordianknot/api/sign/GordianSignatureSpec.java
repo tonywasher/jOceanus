@@ -165,14 +165,6 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create SPHINCSSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec sphincs() {
-        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.NATIVE);
-    }
-
-    /**
      * Create SPHINCSPlusSpec.
      * @return the SignatureSpec
      */
@@ -181,12 +173,36 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create RainbowSpec.
-     * @param pDigestSpec the digestSpec
+     * Create DilithiumSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec rainbow(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, pDigestSpec);
+    public static GordianSignatureSpec dilithium() {
+        return new GordianSignatureSpec(GordianKeyPairType.DILITHIUM, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create falconSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec falcon() {
+        return new GordianSignatureSpec(GordianKeyPairType.FALCON, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create picnicSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec picnic() {
+        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create picnicSpec.
+     * @param pDigest the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
+        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);
     }
 
     /**
@@ -300,18 +316,20 @@ public final class GordianSignatureSpec {
             case DSTU4145:
             case GOST2012:
             case SM2:
-            case RAINBOW:
                 if (!(theSignatureSpec instanceof GordianDigestSpec)) {
                     return false;
                 }
                 final GordianDigestSpec mySpec = getDigestSpec();
                 return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
             case EDDSA:
-            case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
             case XMSS:
             case LMS:
                 return theSignatureSpec == null;
+            case PICNIC:
+                return theSignatureSpec == null || checkPICNICDigest();
             case COMPOSITE:
                 return theSignatureSpec instanceof List && checkComposite();
             default:
@@ -333,6 +351,28 @@ public final class GordianSignatureSpec {
             }
         }
         return true;
+    }
+
+    /**
+     * Check picnic spec validity.
+     * @return valid true/false
+     */
+    private boolean checkPICNICDigest() {
+        /* Check that signature length is 512 */
+        final GordianDigestSpec myDigest = getDigestSpec();
+        if (!GordianLength.LEN_512.equals(myDigest.getDigestLength())) {
+            return false;
+        }
+
+        /* Switch on DigestType */
+        switch (myDigest.getDigestType()) {
+            case SHA2:
+            case SHA3:
+            case SHAKE:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

@@ -57,10 +57,7 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.ec.CustomNamedCurves;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
-import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
-import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
 import org.bouncycastle.pqc.asn1.XMSSKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
 import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
@@ -78,23 +75,29 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
 import org.bouncycastle.util.Integers;
 import org.bouncycastle.util.Pack;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDILITHIUMSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSOtsType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSSigType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec.GordianMcElieceDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
@@ -159,18 +162,21 @@ public class GordianKeyPairAlgId {
         GordianDSTUEncodedParser.register(this);
         GordianGOSTEncodedParser.register(this);
         GordianEdwardsEncodedParser.register(this);
-        GordianRainbowEncodedParser.register(this);
-        GordianNewHopeEncodedParser.register(this);
-        GordianSPHINCSEncodedParser.register(this);
         GordianSPHINCSPlusEncodedParser.register(this);
         GordianXMSSEncodedParser.register(this);
         GordianXMSSMTEncodedParser.register(this);
-        GordianMcElieceEncodedParser.register(this);
-        GordianMcElieceCCA2EncodedParser.register(this);
         GordianLMSEncodedParser.register(this);
         GordianCMCEEncodedParser.register(this);
         GordianFrodoEncodedParser.register(this);
         GordianSABEREncodedParser.register(this);
+        GordianKyberEncodedParser.register(this);
+        GordianDilithiumEncodedParser.register(this);
+        GordianHQCEncodedParser.register(this);
+        GordianBIKEEncodedParser.register(this);
+        GordianNTRUEncodedParser.register(this);
+        GordianNTRUPrimeEncodedParser.register(this);
+        GordianFalconEncodedParser.register(this);
+        GordianPicnicEncodedParser.register(this);
         GordianCompositeEncodedParser.register(this);
     }
 
@@ -649,98 +655,6 @@ public class GordianKeyPairAlgId {
     }
 
     /**
-     * Rainbow Encoded parser.
-     */
-    private static class GordianRainbowEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.rainbow, new GordianRainbowEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.rainbow();
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.rainbow();
-        }
-    }
-
-    /**
-     * NewHope Encoded parser.
-     */
-    private static class GordianNewHopeEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.newHope, new GordianNewHopeEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.newHope();
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.newHope();
-        }
-    }
-
-    /**
-     * SPHINCS Encoded parser.
-     */
-    private static class GordianSPHINCSEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.sphincs256, new GordianSPHINCSEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
-            final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
-            return determineKeyPairSpec(myParms);
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
-            final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
-            return determineKeyPairSpec(myParms);
-        }
-
-        /**
-         * Obtain keySpec from Parameters.
-         * @param pParms the parameters
-         * @return the keySpec
-         * @throws OceanusException on error
-         */
-        private static GordianKeyPairSpec determineKeyPairSpec(final SPHINCS256KeyParams pParms) throws OceanusException {
-            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-            if (myDigest.equals(NISTObjectIdentifiers.id_sha512_256)) {
-                return GordianKeyPairSpec.sphincs(GordianSPHINCSDigestType.SHA2);
-            }
-            if (myDigest.equals(NISTObjectIdentifiers.id_sha3_256)) {
-                return GordianKeyPairSpec.sphincs(GordianSPHINCSDigestType.SHA3);
-            }
-
-            /* Tree Digest is not supported */
-            throw new GordianDataException(ERROR_TREEDIGEST + myDigest);
-        }
-    }
-
-    /**
      * SPHINCSPlus Encoded parser.
      */
     private static class GordianSPHINCSPlusEncodedParser implements GordianEncodedParser {
@@ -752,6 +666,7 @@ public class GordianKeyPairAlgId {
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256, new GordianSPHINCSPlusEncodedParser());
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha_512, new GordianSPHINCSPlusEncodedParser());
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha_256, new GordianSPHINCSPlusEncodedParser());
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka, new GordianSPHINCSPlusEncodedParser());
         }
 
         @Override
@@ -815,16 +730,16 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece348864_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece348864f_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT3488)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece460896_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE4608)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece460896f_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT4608)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6688128_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE6688)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6688128f_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT6688)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6960119_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE6960)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6960119f_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT6960)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece8192128_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE8192)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece8192128f_r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT8192)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece348864_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece348864f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT3488)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece460896_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE4608)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece460896f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT4608)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece6688128_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE6688)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece6688128f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT6688)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece6960119_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE6960)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece6960119f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT6960)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece8192128_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE8192)));
+            pIdManager.registerParser(BCObjectIdentifiers.mceliece8192128f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpec.cmce(GordianCMCESpec.PIVOT8192)));
         }
 
         @Override
@@ -860,12 +775,12 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem19888r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.AES19888)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem19888shaker3, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.SHAKE19888)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem31296r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.AES31296)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem31296shaker3, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.SHAKE31296)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem43088r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.AES43088)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem43088shaker3, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.SHAKE43088)));
+            pIdManager.registerParser(BCObjectIdentifiers.frodokem640aes, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.AES640)));
+            pIdManager.registerParser(BCObjectIdentifiers.frodokem640shake, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.SHAKE640)));
+            pIdManager.registerParser(BCObjectIdentifiers.frodokem976aes, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.AES976)));
+            pIdManager.registerParser(BCObjectIdentifiers.frodokem976shake, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.SHAKE976)));
+            pIdManager.registerParser(BCObjectIdentifiers.frodokem1344aes, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.AES1344)));
+            pIdManager.registerParser(BCObjectIdentifiers.frodokem1344shake, new GordianFrodoEncodedParser(GordianKeyPairSpec.frodo(GordianFRODOSpec.SHAKE1344)));
         }
 
         @Override
@@ -901,15 +816,343 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem128r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.LIGHT128)));
-            pIdManager.registerParser(BCObjectIdentifiers.saberkem128r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)));
-            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem128r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.FIRE128)));
-            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem192r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.LIGHT192)));
-            pIdManager.registerParser(BCObjectIdentifiers.saberkem192r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.BASE192)));
-            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem192r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.FIRE192)));
-            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem256r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.LIGHT256)));
-            pIdManager.registerParser(BCObjectIdentifiers.saberkem256r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.BASE256)));
-            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem256r3, new GordianFrodoEncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.FIRE256)));
+            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem128r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.LIGHT128)));
+            pIdManager.registerParser(BCObjectIdentifiers.saberkem128r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)));
+            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem128r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.FIRE128)));
+            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem192r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.LIGHT192)));
+            pIdManager.registerParser(BCObjectIdentifiers.saberkem192r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.BASE192)));
+            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem192r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.FIRE192)));
+            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem256r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.LIGHT256)));
+            pIdManager.registerParser(BCObjectIdentifiers.saberkem256r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.BASE256)));
+            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem256r3, new GordianSABEREncodedParser(GordianKeyPairSpec.saber(GordianSABERSpec.FIRE256)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * Kyber Encoded parser.
+     */
+    private static class GordianKyberEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianKyberEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.kyber512, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512)));
+            pIdManager.registerParser(BCObjectIdentifiers.kyber768, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER768)));
+            pIdManager.registerParser(BCObjectIdentifiers.kyber1024, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER1024)));
+            pIdManager.registerParser(BCObjectIdentifiers.kyber512_aes, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512AES)));
+            pIdManager.registerParser(BCObjectIdentifiers.kyber768_aes, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER768AES)));
+            pIdManager.registerParser(BCObjectIdentifiers.kyber1024_aes, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER1024AES)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * Dilithium Encoded parser.
+     */
+    private static class GordianDilithiumEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianDilithiumEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.dilithium2, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM2)));
+            pIdManager.registerParser(BCObjectIdentifiers.dilithium3, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM3)));
+            pIdManager.registerParser(BCObjectIdentifiers.dilithium5, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM5)));
+            pIdManager.registerParser(BCObjectIdentifiers.dilithium2_aes, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM2AES)));
+            pIdManager.registerParser(BCObjectIdentifiers.dilithium3_aes, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM3AES)));
+            pIdManager.registerParser(BCObjectIdentifiers.dilithium5_aes, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM5AES)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * HQC Encoded parser.
+     */
+    private static class GordianHQCEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianHQCEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.hqc128, new GordianDilithiumEncodedParser(GordianKeyPairSpec.hqc(GordianHQCSpec.HQC128)));
+            pIdManager.registerParser(BCObjectIdentifiers.hqc192, new GordianDilithiumEncodedParser(GordianKeyPairSpec.hqc(GordianHQCSpec.HQC192)));
+            pIdManager.registerParser(BCObjectIdentifiers.hqc256, new GordianDilithiumEncodedParser(GordianKeyPairSpec.hqc(GordianHQCSpec.HQC256)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * BIKE Encoded parser.
+     */
+    private static class GordianBIKEEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianBIKEEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.bike128, new GordianBIKEEncodedParser(GordianKeyPairSpec.bike(GordianBIKESpec.BIKE128)));
+            pIdManager.registerParser(BCObjectIdentifiers.bike192, new GordianBIKEEncodedParser(GordianKeyPairSpec.bike(GordianBIKESpec.BIKE192)));
+            pIdManager.registerParser(BCObjectIdentifiers.bike256, new GordianBIKEEncodedParser(GordianKeyPairSpec.bike(GordianBIKESpec.BIKE256)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * NTRU Encoded parser.
+     */
+    private static class GordianNTRUEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianNTRUEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.ntruhps2048509, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS509)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntruhps2048677, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS677)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntruhps4096821, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS821)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntruhrss701, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HRSS701)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * NTRUPrime Encoded parser.
+     */
+    private static class GordianNTRUPrimeEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianNTRUPrimeEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr653, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR653)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr761, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR761)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr857, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR857)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr953, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR953)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1013, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR1013)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1277, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR1277)));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup653, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR653)));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup761, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR761)));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup857, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR857)));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup953, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR953)));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup1013, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR1013)));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup1277, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR1277)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * Falcon Encoded parser.
+     */
+    private static class GordianFalconEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianFalconEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.falcon_512, new GordianFalconEncodedParser(GordianKeyPairSpec.falcon(GordianFALCONSpec.FALCON512)));
+            pIdManager.registerParser(BCObjectIdentifiers.falcon_1024, new GordianFalconEncodedParser(GordianKeyPairSpec.falcon(GordianFALCONSpec.FALCON1024)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * Picnic Encoded parser.
+     */
+    private static class GordianPicnicEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianPicnicEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl1ur, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L1UR)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl1fs, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L1FS)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl1full, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L1FULL)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnic3l1, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L13)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl3ur, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L3UR)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl3fs, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L3FS)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl3full, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L3FULL)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnic3l3, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L33)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl5ur, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L5UR)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl5fs, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L5FS)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnicl5full, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L5FULL)));
+            pIdManager.registerParser(BCObjectIdentifiers.picnic3l5, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L53)));
         }
 
         @Override
@@ -1088,109 +1331,6 @@ public class GordianKeyPairAlgId {
 
             /* Layers is not supported */
             throw new GordianDataException("Invalid layers: " + pLayers);
-        }
-    }
-
-    /**
-     * McEliece Encoded parser.
-     */
-    private static class GordianMcElieceEncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.mcEliece, new GordianMcElieceEncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            return GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard());
-        }
-    }
-
-    /**
-     * McEliece Encoded parser.
-     */
-    private static class GordianMcElieceCCA2EncodedParser implements GordianEncodedParser {
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.mcElieceCca2, new GordianMcElieceCCA2EncodedParser());
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Parse public key */
-                final McElieceCCA2PublicKey myPublic = McElieceCCA2PublicKey.getInstance(pInfo.parsePublicKey());
-                return determineKeyPairSpec(myPublic.getDigest());
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianIOException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Parse public key */
-                final McElieceCCA2PrivateKey myPrivate = McElieceCCA2PrivateKey.getInstance(pInfo.parsePrivateKey());
-                return determineKeyPairSpec(myPrivate.getDigest());
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianIOException(ERROR_PARSE, e);
-            }
-        }
-
-        /**
-         * Obtain keySpec from digestId.
-         * @param pDigest the digest
-         * @return the keySpec
-         * @throws OceanusException on error
-         */
-        private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pDigest) throws OceanusException {
-            final GordianMcElieceDigestType myDigest = determineDigestType(pDigest);
-            return GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.cca2(myDigest));
-        }
-
-        /**
-         * Obtain digestType from digest.
-         * @param pDigest the treeDigest
-         * @return the keyType
-         * @throws OceanusException on error
-         */
-        static  GordianMcElieceDigestType determineDigestType(final AlgorithmIdentifier pDigest) throws OceanusException {
-            final ASN1ObjectIdentifier myId = pDigest.getAlgorithm();
-            if (myId.equals(OIWObjectIdentifiers.idSHA1)) {
-                return GordianMcElieceDigestType.SHA1;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha224)) {
-                return GordianMcElieceDigestType.SHA224;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha256)) {
-                return GordianMcElieceDigestType.SHA256;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha384)) {
-                return GordianMcElieceDigestType.SHA384;
-            }
-            if (myId.equals(NISTObjectIdentifiers.id_sha512)) {
-                return GordianMcElieceDigestType.SHA512;
-            }
-
-            /* Tree Digest is not supported */
-            throw new GordianDataException(ERROR_TREEDIGEST + pDigest);
         }
     }
 

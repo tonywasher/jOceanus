@@ -140,9 +140,10 @@ public enum GordianSignatureType {
             case EDDSA:
             case DSTU4145:
             case GOST2012:
-            case RAINBOW:
-            case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case XMSS:
             case LMS:
             case COMPOSITE:

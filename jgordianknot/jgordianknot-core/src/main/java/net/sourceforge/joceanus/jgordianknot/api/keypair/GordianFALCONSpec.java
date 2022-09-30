@@ -16,35 +16,44 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
+import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 
 /**
- * SPHINCS digestTypes.
+ * FALCON KeySpec.
  */
-public enum GordianSPHINCSDigestType {
+public enum GordianFALCONSpec {
     /**
-     * sha2.
+     * Falcon 512.
      */
-    SHA2,
+    FALCON512,
 
     /**
-     * sha3.
+     * Falcon 1024.
      */
-    SHA3;
+    FALCON1024;
 
     /**
-     * Obtain the required digestSpec.
-     * @return the digestSpec
+     * Obtain FALCON Parameters.
+     * @return the parameters.
      */
-    public GordianDigestSpec getDigestSpec() {
+    public FalconParameters getParameters() {
         switch (this) {
-            case SHA2:
-                return GordianDigestSpec.sha2(GordianLength.LEN_512);
-            case SHA3:
-                return GordianDigestSpec.sha3(GordianLength.LEN_512);
-            default:
-                throw new IllegalStateException();
+            case FALCON512:  return FalconParameters.falcon_512;
+            case FALCON1024: return FalconParameters.falcon_1024;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain Falcon ParameterSpec.
+     * @return the parameters.
+     */
+    public FalconParameterSpec getParameterSpec() {
+        switch (this) {
+            case FALCON512:  return FalconParameterSpec.falcon_512;
+            case FALCON1024: return FalconParameterSpec.falcon_1024;
+            default: throw new IllegalArgumentException();
         }
     }
 }

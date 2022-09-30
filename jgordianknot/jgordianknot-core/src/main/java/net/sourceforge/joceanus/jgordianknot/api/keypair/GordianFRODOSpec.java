@@ -24,34 +24,34 @@ import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
  */
 public enum GordianFRODOSpec {
     /**
-     * AES 19888.
+     * AES 640.
      */
-    AES19888,
+    AES640,
 
     /**
-     * SHAKE 19888.
+     * SHAKE 640.
      */
-    SHAKE19888,
+    SHAKE640,
 
     /**
-     * AES 31296.
+     * AES 976.
      */
-    AES31296,
+    AES976,
 
     /**
-     * SHAKE 31296.
+     * SHAKE 976.
      */
-    SHAKE31296,
+    SHAKE976,
 
     /**
-     * AES 42088.
+     * AES 1344.
      */
-    AES43088,
+    AES1344,
 
     /**
-     * SHAKE 43088.
+     * SHAKE 1344.
      */
-    SHAKE43088;
+    SHAKE1344;
 
     /**
      * Obtain Frodo Parameters.
@@ -59,12 +59,12 @@ public enum GordianFRODOSpec {
      */
     public FrodoParameters getParameters() {
         switch (this) {
-            case AES19888:   return FrodoParameters.frodokem19888r3;
-            case SHAKE19888: return FrodoParameters.frodokem19888shaker3;
-            case AES31296:   return FrodoParameters.frodokem31296r3;
-            case SHAKE31296: return FrodoParameters.frodokem31296shaker3;
-            case AES43088:   return FrodoParameters.frodokem43088r3;
-            case SHAKE43088: return FrodoParameters.frodokem43088shaker3;
+            case AES640:    return FrodoParameters.frodokem640aes;
+            case SHAKE640:  return FrodoParameters.frodokem640shake;
+            case AES976:    return FrodoParameters.frodokem976aes;
+            case SHAKE976:  return FrodoParameters.frodokem976shake;
+            case AES1344:   return FrodoParameters.frodokem1344aes;
+            case SHAKE1344: return FrodoParameters.frodokem1344shake;
             default: throw new IllegalArgumentException();
         }
     }
@@ -75,12 +75,12 @@ public enum GordianFRODOSpec {
      */
     public FrodoParameterSpec getParameterSpec() {
         switch (this) {
-            case AES19888:   return FrodoParameterSpec.frodokem19888r3;
-            case SHAKE19888: return FrodoParameterSpec.frodokem19888shaker3;
-            case AES31296:   return FrodoParameterSpec.frodokem31296r3;
-            case SHAKE31296: return FrodoParameterSpec.frodokem31296shaker3;
-            case AES43088:   return FrodoParameterSpec.frodokem43088r3;
-            case SHAKE43088: return FrodoParameterSpec.frodokem43088shaker3;
+            case AES640:    return FrodoParameterSpec.frodokem640aes;
+            case SHAKE640:  return FrodoParameterSpec.frodokem640shake;
+            case AES976:    return FrodoParameterSpec.frodokem976aes;
+            case SHAKE976:  return FrodoParameterSpec.frodokem976shake;
+            case AES1344:   return FrodoParameterSpec.frodokem1344aes;
+            case SHAKE1344: return FrodoParameterSpec.frodokem1344shake;
             default: throw new IllegalArgumentException();
         }
     }

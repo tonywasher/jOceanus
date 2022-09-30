@@ -115,11 +115,6 @@ public abstract class JcaSignature
     static final String SPHINCS_ALGOBASE = "withSPHINCS256";
 
     /**
-     * The Rainbow Signature.
-     */
-    static final String RAINBOW_ALGOBASE = "withRainbow";
-
-    /**
      * The DSTU Signature.
      */
     private static final String DSTU_SIGN = "DSTU4145";
@@ -386,66 +381,6 @@ public abstract class JcaSignature
     }
 
     /**
-     * SPHINCS signature.
-     */
-    static class JcaSPHINCSSignature
-            extends JcaSignature {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
-         */
-        JcaSPHINCSSignature(final GordianCoreFactory pFactory,
-                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Initialise class */
-            super(pFactory, pSignatureSpec);
-        }
-
-        @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
-
-            /* pass on call */
-            super.initForSigning(pKeyPair);
-        }
-
-        @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
-
-            /* pass on call */
-            super.initForVerify(pKeyPair);
-        }
-
-        /**
-         * Obtain algorithmName for keyPair.
-         * @param pKeyPair the keyPair
-         * @return the name
-         * @throws OceanusException on error
-         */
-        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Determine the required signer */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeyPairSpec().getSPHINCSDigestType().getDigestSpec();
-            final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
-
-            /* Create builder */
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(myDigest)
-                    .append(SPHINCS_ALGOBASE);
-
-            /* Build the algorithm */
-            return myBuilder.toString();
-        }
-    }
-
-    /**
      * SPHINCSPlus signature.
      */
     static class JcaSPHINCSPlusSignature
@@ -467,9 +402,9 @@ public abstract class JcaSignature
     }
 
     /**
-     * Rainbow signature.
+     * SPHINCSPlus signature.
      */
-    static class JcaRainbowSignature
+    static class JcaDilithiumSignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -477,15 +412,87 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws OceanusException on error
          */
-        JcaRainbowSignature(final GordianCoreFactory pFactory,
-                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        JcaDilithiumSignature(final GordianCoreFactory pFactory,
+                              final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-            setSigner(JcaSignatureFactory.getJavaSignature(myDigest + RAINBOW_ALGOBASE, true));
+            setSigner(JcaSignatureFactory.getJavaSignature("DILITHIUM", true));
         }
+    }
+
+    /**
+     * Falcon signature.
+     */
+    static class JcaFalconSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaFalconSignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("FALCON", true));
+        }
+    }
+
+    /**
+     * Picnic signature.
+     */
+    static class JcaPicnicSignature
+            extends JcaSignature {
+        /**
+         * SIgnature base.
+         */
+        private static final String BASE_NAME = "PICNIC";
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaPicnicSignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            final String myName = determineSignatureName(pSignatureSpec);
+            setSigner(JcaSignatureFactory.getJavaSignature(myName, true));
+        }
+
+        /**
+         * Determine signatureName.
+         * @param pSignatureSpec the signatureSpec
+         * @return the algorithm name
+         */
+        private static String determineSignatureName(final GordianSignatureSpec pSignatureSpec) {
+            /* If we do not have a digest */
+            if (pSignatureSpec.getSignatureSpec() == null) {
+                return BASE_NAME;
+            }
+
+            /* Switch on digest Type */
+            switch (pSignatureSpec.getDigestSpec().getDigestType()) {
+                case SHA2:
+                    return "SHA512With" + BASE_NAME;
+                case SHA3:
+                    return "SHA3-512With" + BASE_NAME;
+                case SHAKE:
+                    return "SHAKE256With" + BASE_NAME;
+                default:
+                    throw new IllegalArgumentException("Bad SignatureSpec");
+            }
+        }
+
     }
 
     /**

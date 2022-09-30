@@ -21,7 +21,6 @@ import java.security.Signature;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -31,13 +30,14 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDilithiumSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaFalconSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -81,7 +81,7 @@ public class JcaSignatureFactory
                                       final boolean postQuantum) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Return a KeyPairGenerator for the algorithm */
+            /* Return a Signature for the algorithm */
             return Signature.getInstance(pAlgorithm, postQuantum
                                                      ? JcaFactory.BCPQPROV
                                                      : JcaFactory.BCPROV);
@@ -114,12 +114,14 @@ public class JcaSignatureFactory
                 return new JcaGOSTSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
-            case SPHINCS:
-                return new JcaSPHINCSSignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
-            case RAINBOW:
-                return new JcaRainbowSignature(getFactory(), pSignatureSpec);
+            case DILITHIUM:
+                return new JcaDilithiumSignature(getFactory(), pSignatureSpec);
+            case FALCON:
+                return new JcaFalconSignature(getFactory(), pSignatureSpec);
+            case PICNIC:
+                return new JcaPicnicSignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             case COMPOSITE:
@@ -148,18 +150,16 @@ public class JcaSignatureFactory
                 return true;
             case DSA:
                 return validDSASignature(pSpec);
-            case RAINBOW:
-                return validRainbowSignature(pSpec.getDigestSpec());
             case XMSS:
-            case SPHINCS:
             case SPHINCSPLUS:
+            case DILITHIUM:
+            case FALCON:
+            case PICNIC:
             case EDDSA:
             case LMS:
             case COMPOSITE:
                 return true;
             case DH:
-            case NEWHOPE:
-            case MCELIECE:
             case XDH:
             default:
                 return false;
@@ -255,15 +255,5 @@ public class JcaSignatureFactory
             default:
                 return false;
         }
-    }
-
-    /**
-     * Check RainbowSignature.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
-        return pSpec.getDigestType() == GordianDigestType.SHA2
-                && pSpec.getStateLength() == null;
     }
 }

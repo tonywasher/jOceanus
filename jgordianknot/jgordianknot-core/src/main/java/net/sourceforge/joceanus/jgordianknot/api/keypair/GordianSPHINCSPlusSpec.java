@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusParameters;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 
@@ -24,124 +26,184 @@ import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
  */
 public enum GordianSPHINCSPlusSpec {
     /**
-     * SHA256 128 f simple.
+     * SHA2 128 f simple.
      */
     SHA128FS,
 
     /**
-     * SHA256 128 s simple.
+     * SHA2 128 s simple.
      */
     SHA128SS,
 
     /**
-     * SHA256 128 f robust.
+     * SHA2 128 f robust.
      */
     SHA128FR,
 
     /**
-     * SHA256 128 s robust.
+     * SHA2 128 s robust.
      */
     SHA128SR,
 
     /**
-     * SHA256 192 f simple.
+     * SHA2 192 f simple.
      */
     SHA192FS,
 
     /**
-     * SHA256 192 s simple.
+     * SHA2 192 s simple.
      */
     SHA192SS,
 
     /**
-     * SHA256 128 f robust.
+     * SHA2 128 f robust.
      */
     SHA192FR,
 
     /**
-     * SHA256 128 s robust.
+     * SHA2 128 s robust.
      */
     SHA192SR,
 
     /**
-     * SHA256 256 f simple.
+     * SHA2 256 f simple.
      */
     SHA256FS,
 
     /**
-     * SHA256 256 s simple.
+     * SHA2 256 s simple.
      */
     SHA256SS,
 
     /**
-     * SHA256 256 f robust.
+     * SHA2 256 f robust.
      */
     SHA256FR,
 
     /**
-     * SHA256 256 s robust.
+     * SHA2 256 s robust.
      */
     SHA256SR,
 
     /**
-     * SHAKE256 128 f simple.
+     * SHAKE 128 f simple.
      */
     SHAKE128FS,
 
     /**
-     * SHAKE256 128 s simple.
+     * SHAKE 128 s simple.
      */
     SHAKE128SS,
 
     /**
-     * SHAKE256 128 f robust.
+     * SHAKE 128 f robust.
      */
     SHAKE128FR,
 
     /**
-     * SHAKE256 128 s robust.
+     * SHAKE 128 s robust.
      */
     SHAKE128SR,
 
     /**
-     * SHAKE256 192 f simple.
+     * SHAKE 192 f simple.
      */
     SHAKE192FS,
 
     /**
-     * SHAKE256 192 s simple.
+     * SHAKE 192 s simple.
      */
     SHAKE192SS,
 
     /**
-     * SHAKE256 192 f robust.
+     * SHAKE 192 f robust.
      */
     SHAKE192FR,
 
     /**
-     * SHAKE256 192 s robust.
+     * SHAKE 192 s robust.
      */
     SHAKE192SR,
 
     /**
-     * SHAKE256 256 f simple.
+     * SHAKE 256 f simple.
      */
     SHAKE256FS,
 
     /**
-     * SHAKE256 256 s simple.
+     * SHAKE 256 s simple.
      */
     SHAKE256SS,
 
     /**
-     * SHAKE256 256 f robust.
+     * SHAKE 256 f robust.
      */
     SHAKE256FR,
 
     /**
-     * SHAKE256 256 s robust.
+     * SHAKE 256 s robust.
      */
-    SHAKE256SR;
+    SHAKE256SR,
+
+    /**
+     * HARAKA 128 f simple.
+     */
+    HARAKA128FS,
+
+    /**
+     * HARAKA 128 s simple.
+     */
+    HARAKA128SS,
+
+    /**
+     * HARAKA 128 f robust.
+     */
+    HARAKA128FR,
+
+    /**
+     * HARAKA 128 s robust.
+     */
+    HARAKA128SR,
+
+    /**
+     * HARAKA 192 f simple.
+     */
+    HARAKA192FS,
+
+    /**
+     * HARAKA 192 s simple.
+     */
+    HARAKA192SS,
+
+    /**
+     * HARAKA 192 f robust.
+     */
+    HARAKA192FR,
+
+    /**
+     * HARAKA 192 s robust.
+     */
+    HARAKA192SR,
+
+    /**
+     * HARAKA 256 f simple.
+     */
+    HARAKA256FS,
+
+    /**
+     * HARAKA 256 s simple.
+     */
+    HARAKA256SS,
+
+    /**
+     * HARAKA 256 f robust.
+     */
+    HARAKA256FR,
+
+    /**
+     * HARAKA 256 s robust.
+     */
+    HARAKA256SR;
 
     /**
      * Obtain SPHINCSPlus Parameters.
@@ -149,30 +211,42 @@ public enum GordianSPHINCSPlusSpec {
      */
     public SPHINCSPlusParameters getParameters() {
         switch (this) {
-            case SHA128FR:   return SPHINCSPlusParameters.sha256_128f;
-            case SHA128SR:   return SPHINCSPlusParameters.sha256_128s;
-            case SHA192FR:   return SPHINCSPlusParameters.sha256_192f;
-            case SHA192SR:   return SPHINCSPlusParameters.sha256_192s;
-            case SHA256FR:   return SPHINCSPlusParameters.sha256_256f;
-            case SHA256SR:   return SPHINCSPlusParameters.sha256_256s;
-            case SHA128FS:   return SPHINCSPlusParameters.sha256_128f_simple;
-            case SHA128SS:   return SPHINCSPlusParameters.sha256_128s_simple;
-            case SHA192FS:   return SPHINCSPlusParameters.sha256_192f_simple;
-            case SHA192SS:   return SPHINCSPlusParameters.sha256_192s_simple;
-            case SHA256FS:   return SPHINCSPlusParameters.sha256_256f_simple;
-            case SHA256SS:   return SPHINCSPlusParameters.sha256_256s_simple;
-            case SHAKE128FR: return SPHINCSPlusParameters.shake256_128f;
-            case SHAKE128SR: return SPHINCSPlusParameters.shake256_128s;
-            case SHAKE192FR: return SPHINCSPlusParameters.shake256_192f;
-            case SHAKE192SR: return SPHINCSPlusParameters.shake256_192s;
-            case SHAKE256FR: return SPHINCSPlusParameters.shake256_256f;
-            case SHAKE256SR: return SPHINCSPlusParameters.shake256_256s;
-            case SHAKE128FS: return SPHINCSPlusParameters.shake256_128f_simple;
-            case SHAKE128SS: return SPHINCSPlusParameters.shake256_128s_simple;
-            case SHAKE192FS: return SPHINCSPlusParameters.shake256_192f_simple;
-            case SHAKE192SS: return SPHINCSPlusParameters.shake256_192s_simple;
-            case SHAKE256FS: return SPHINCSPlusParameters.shake256_256f_simple;
-            case SHAKE256SS: return SPHINCSPlusParameters.shake256_256s_simple;
+            case SHA128FR:     return SPHINCSPlusParameters.sha2_128f;
+            case SHA128SR:     return SPHINCSPlusParameters.sha2_128s;
+            case SHA192FR:     return SPHINCSPlusParameters.sha2_192f;
+            case SHA192SR:     return SPHINCSPlusParameters.sha2_192s;
+            case SHA256FR:     return SPHINCSPlusParameters.sha2_256f;
+            case SHA256SR:     return SPHINCSPlusParameters.sha2_256s;
+            case SHA128FS:     return SPHINCSPlusParameters.sha2_128f_simple;
+            case SHA128SS:     return SPHINCSPlusParameters.sha2_128s_simple;
+            case SHA192FS:     return SPHINCSPlusParameters.sha2_192f_simple;
+            case SHA192SS:     return SPHINCSPlusParameters.sha2_192s_simple;
+            case SHA256FS:     return SPHINCSPlusParameters.sha2_256f_simple;
+            case SHA256SS:     return SPHINCSPlusParameters.sha2_256s_simple;
+            case SHAKE128FR:   return SPHINCSPlusParameters.shake_128f;
+            case SHAKE128SR:   return SPHINCSPlusParameters.shake_128s;
+            case SHAKE192FR:   return SPHINCSPlusParameters.shake_192f;
+            case SHAKE192SR:   return SPHINCSPlusParameters.shake_192s;
+            case SHAKE256FR:   return SPHINCSPlusParameters.shake_256f;
+            case SHAKE256SR:   return SPHINCSPlusParameters.shake_256s;
+            case SHAKE128FS:   return SPHINCSPlusParameters.shake_128f_simple;
+            case SHAKE128SS:   return SPHINCSPlusParameters.shake_128s_simple;
+            case SHAKE192FS:   return SPHINCSPlusParameters.shake_192f_simple;
+            case SHAKE192SS:   return SPHINCSPlusParameters.shake_192s_simple;
+            case SHAKE256FS:   return SPHINCSPlusParameters.shake_256f_simple;
+            case SHAKE256SS:   return SPHINCSPlusParameters.shake_256s_simple;
+            case HARAKA128FR:  return SPHINCSPlusParameters.haraka_128f;
+            case HARAKA128SR:  return SPHINCSPlusParameters.haraka_128s;
+            case HARAKA192FR:  return SPHINCSPlusParameters.haraka_192f;
+            case HARAKA192SR:  return SPHINCSPlusParameters.haraka_192s;
+            case HARAKA256FR:  return SPHINCSPlusParameters.haraka_256f;
+            case HARAKA256SR:  return SPHINCSPlusParameters.haraka_256s;
+            case HARAKA128FS:  return SPHINCSPlusParameters.haraka_128f_simple;
+            case HARAKA128SS:  return SPHINCSPlusParameters.haraka_128s_simple;
+            case HARAKA192FS:  return SPHINCSPlusParameters.haraka_192f_simple;
+            case HARAKA192SS:  return SPHINCSPlusParameters.haraka_192s_simple;
+            case HARAKA256FS:  return SPHINCSPlusParameters.haraka_256f_simple;
+            case HARAKA256SS:  return SPHINCSPlusParameters.haraka_256s_simple;
             default: throw new IllegalArgumentException();
         }
     }
@@ -183,30 +257,92 @@ public enum GordianSPHINCSPlusSpec {
      */
     public SPHINCSPlusParameterSpec getParameterSpec() {
         switch (this) {
-            case SHA128FR:   return SPHINCSPlusParameterSpec.sha256_128f;
-            case SHA128SR:   return SPHINCSPlusParameterSpec.sha256_128s;
-            case SHA192FR:   return SPHINCSPlusParameterSpec.sha256_192f;
-            case SHA192SR:   return SPHINCSPlusParameterSpec.sha256_192s;
-            case SHA256FR:   return SPHINCSPlusParameterSpec.sha256_256f;
-            case SHA256SR:   return SPHINCSPlusParameterSpec.sha256_256s;
-            case SHA128FS:   return SPHINCSPlusParameterSpec.sha256_128f_simple;
-            case SHA128SS:   return SPHINCSPlusParameterSpec.sha256_128s_simple;
-            case SHA192FS:   return SPHINCSPlusParameterSpec.sha256_192f_simple;
-            case SHA192SS:   return SPHINCSPlusParameterSpec.sha256_192s_simple;
-            case SHA256FS:   return SPHINCSPlusParameterSpec.sha256_256f_simple;
-            case SHA256SS:   return SPHINCSPlusParameterSpec.sha256_256s_simple;
-            case SHAKE128FR: return SPHINCSPlusParameterSpec.shake256_128f;
-            case SHAKE128SR: return SPHINCSPlusParameterSpec.shake256_128s;
-            case SHAKE192FR: return SPHINCSPlusParameterSpec.shake256_192f;
-            case SHAKE192SR: return SPHINCSPlusParameterSpec.shake256_192s;
-            case SHAKE256FR: return SPHINCSPlusParameterSpec.shake256_256f;
-            case SHAKE256SR: return SPHINCSPlusParameterSpec.shake256_256s;
-            case SHAKE128FS: return SPHINCSPlusParameterSpec.shake256_128f_simple;
-            case SHAKE128SS: return SPHINCSPlusParameterSpec.shake256_128s_simple;
-            case SHAKE192FS: return SPHINCSPlusParameterSpec.shake256_192f_simple;
-            case SHAKE192SS: return SPHINCSPlusParameterSpec.shake256_192s_simple;
-            case SHAKE256FS: return SPHINCSPlusParameterSpec.shake256_256f_simple;
-            case SHAKE256SS: return SPHINCSPlusParameterSpec.shake256_256s_simple;
+            case SHA128FR:    return SPHINCSPlusParameterSpec.sha2_128f;
+            case SHA128SR:    return SPHINCSPlusParameterSpec.sha2_128s;
+            case SHA192FR:    return SPHINCSPlusParameterSpec.sha2_192f;
+            case SHA192SR:    return SPHINCSPlusParameterSpec.sha2_192s;
+            case SHA256FR:    return SPHINCSPlusParameterSpec.sha2_256f;
+            case SHA256SR:    return SPHINCSPlusParameterSpec.sha2_256s;
+            case SHA128FS:    return SPHINCSPlusParameterSpec.sha2_128f_simple;
+            case SHA128SS:    return SPHINCSPlusParameterSpec.sha2_128s_simple;
+            case SHA192FS:    return SPHINCSPlusParameterSpec.sha2_192f_simple;
+            case SHA192SS:    return SPHINCSPlusParameterSpec.sha2_192s_simple;
+            case SHA256FS:    return SPHINCSPlusParameterSpec.sha2_256f_simple;
+            case SHA256SS:    return SPHINCSPlusParameterSpec.sha2_256s_simple;
+            case SHAKE128FR:  return SPHINCSPlusParameterSpec.shake_128f;
+            case SHAKE128SR:  return SPHINCSPlusParameterSpec.shake_128s;
+            case SHAKE192FR:  return SPHINCSPlusParameterSpec.shake_192f;
+            case SHAKE192SR:  return SPHINCSPlusParameterSpec.shake_192s;
+            case SHAKE256FR:  return SPHINCSPlusParameterSpec.shake_256f;
+            case SHAKE256SR:  return SPHINCSPlusParameterSpec.shake_256s;
+            case SHAKE128FS:  return SPHINCSPlusParameterSpec.shake_128f_simple;
+            case SHAKE128SS:  return SPHINCSPlusParameterSpec.shake_128s_simple;
+            case SHAKE192FS:  return SPHINCSPlusParameterSpec.shake_192f_simple;
+            case SHAKE192SS:  return SPHINCSPlusParameterSpec.shake_192s_simple;
+            case SHAKE256FS:  return SPHINCSPlusParameterSpec.shake_256f_simple;
+            case SHAKE256SS:  return SPHINCSPlusParameterSpec.shake_256s_simple;
+            case HARAKA128FR: return SPHINCSPlusParameterSpec.haraka_128f;
+            case HARAKA128SR: return SPHINCSPlusParameterSpec.haraka_128s;
+            case HARAKA192FR: return SPHINCSPlusParameterSpec.haraka_192f;
+            case HARAKA192SR: return SPHINCSPlusParameterSpec.haraka_192s;
+            case HARAKA256FR: return SPHINCSPlusParameterSpec.haraka_256f;
+            case HARAKA256SR: return SPHINCSPlusParameterSpec.haraka_256s;
+            case HARAKA128FS: return SPHINCSPlusParameterSpec.haraka_128f_simple;
+            case HARAKA128SS: return SPHINCSPlusParameterSpec.haraka_128s_simple;
+            case HARAKA192FS: return SPHINCSPlusParameterSpec.haraka_192f_simple;
+            case HARAKA192SS: return SPHINCSPlusParameterSpec.haraka_192s_simple;
+            case HARAKA256FS: return SPHINCSPlusParameterSpec.haraka_256f_simple;
+            case HARAKA256SS: return SPHINCSPlusParameterSpec.haraka_256s_simple;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain SPHINCSPlus ParameterSpec.
+     * @return the parameters.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case SHA128FR:
+            case SHA128SR:
+            case SHA128FS:
+            case SHA128SS:
+                return BCObjectIdentifiers.sphincsPlus_sha_256;
+            case SHA192FR:
+            case SHA192SR:
+            case SHA256FR:
+            case SHA256SR:
+            case SHA192FS:
+            case SHA192SS:
+            case SHA256FS:
+            case SHA256SS:
+                return BCObjectIdentifiers.sphincsPlus_sha_512;
+            case SHAKE128FR:
+            case SHAKE128SR:
+            case SHAKE192FR:
+            case SHAKE192SR:
+            case SHAKE256FR:
+            case SHAKE256SR:
+            case SHAKE128FS:
+            case SHAKE128SS:
+            case SHAKE192FS:
+            case SHAKE192SS:
+            case SHAKE256FS:
+            case SHAKE256SS:
+                return BCObjectIdentifiers.sphincsPlus_shake_256;
+            case HARAKA128FR:
+            case HARAKA128SR:
+            case HARAKA192FR:
+            case HARAKA192SR:
+            case HARAKA256FR:
+            case HARAKA256SR:
+            case HARAKA128FS:
+            case HARAKA128SS:
+            case HARAKA192FS:
+            case HARAKA192SS:
+            case HARAKA256FS:
+            case HARAKA256SS:
+                return BCObjectIdentifiers.sphincsPlus_haraka;
             default: throw new IllegalArgumentException();
         }
     }

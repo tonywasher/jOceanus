@@ -172,8 +172,12 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Don't worry about digestSpec if it is irrelevant */
-        if (myType.nullDigestForSignatures()) {
+        if (myType.useDigestForSignatures().mustNotExist()) {
             return pSignSpec.getSignatureSpec() == null;
+        }
+        if (myType.useDigestForSignatures().canNotExist()
+            && pSignSpec.getSignatureSpec() == null) {
+            return true;
         }
 
         /* Composite signatures */
@@ -314,16 +318,18 @@ public abstract class GordianCoreSignatureFactory
             /* Skip if the signatureType is not valid */
             if (mySignType.isSupported(pKeyType)) {
                 /* If we need null-digestSpec */
-                if (pKeyType.nullDigestForSignatures()) {
+                if (pKeyType.useDigestForSignatures().canNotExist()) {
                     /* Add the signature */
                     mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType));
-                    continue;
                 }
 
-                /* For each possible digestSpec */
-                for (GordianDigestSpec mySpec : myDigests) {
-                    /* Add the signature */
-                    mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
+                /* If we need digestSpec */
+                if (pKeyType.useDigestForSignatures().canExist()) {
+                    /* For each possible digestSpec */
+                    for (GordianDigestSpec mySpec : myDigests) {
+                        /* Add the signature */
+                        mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
+                    }
                 }
             }
         }
@@ -349,12 +355,14 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpec.gost2012(GordianLength.LEN_512);
             case EDDSA:
                 return GordianSignatureSpec.edDSA();
-            case RAINBOW:
-                return GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
-            case SPHINCS:
-                return GordianSignatureSpec.sphincs();
             case SPHINCSPLUS:
                 return GordianSignatureSpec.sphincsPlus();
+            case DILITHIUM:
+                return GordianSignatureSpec.dilithium();
+            case FALCON:
+                return GordianSignatureSpec.falcon();
+            case PICNIC:
+                return GordianSignatureSpec.picnic();
             case XMSS:
                 return GordianSignatureSpec.xmss();
             case LMS:

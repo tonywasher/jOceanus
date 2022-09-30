@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
@@ -48,7 +49,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
@@ -385,25 +386,44 @@ public class GordianSignatureAlgId {
      * Add postQuantum signatures.
      */
     private void addPostQuantumSignatures() {
-        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha1()),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha1, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_224)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha224, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_384)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha384, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.lms(),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
 
-        /* Note that we have multiple signatures oids per spec */
-        addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSDigestType.SHA2,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSDigestType.SHA3,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512, DERNull.INSTANCE));
+        /* Add new PQC signatures */
+        addToMaps(GordianSignatureSpec.dilithium(),
+                  new AlgorithmIdentifier(BCObjectIdentifiers.dilithium, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.falcon(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.sha2(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.sha3(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha3_512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.shake256(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
 
+        /* Add SPHINCSPlus signatures */
+        addSPHINCSPlusSignatures();
+
+        /* Add XMSS signatures */
+        addXMSSSignatures();
+    }
+
+    /**
+     * Add XMSS signatures.
+     */
+    private void addSPHINCSPlusSignatures() {
+        for(GordianSPHINCSPlusSpec mySpec : GordianSPHINCSPlusSpec.values()) {
+            addToMaps(GordianSignatureSpec.sphincsPlus(), GordianKeyPairSpec.sphincsPlus(mySpec),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add XMSS signatures.
+     */
+    private void addXMSSSignatures() {
         /* List XMSS Sha256 signatures */
         for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA256)) {
             /* If this is an XMSSMT spec */
@@ -599,13 +619,13 @@ public class GordianSignatureAlgId {
         myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));
 
         /* If we have a digestSpec */
-        if (!myKeyType.nullDigestForSignatures()) {
+        if (pSigSpec.getSignatureSpec() instanceof GordianDigestSpec) {
             /* Create a branch for digest based on the DigestType/Length/State */
             final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
 
-            /* Add an additional branch if there is a stateLength */
+            /* Add a branch if there is a stateLength */
             final GordianLength myState = myDigestSpec.getStateLength();
             if (myState != null) {
                 myId = myId.branch(Integer.toString(myState.ordinal() + 1));

@@ -70,7 +70,7 @@ public final class JcaEncryptor {
                           final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType()));
+            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), false);
         }
 
         @Override
@@ -196,11 +196,6 @@ public final class JcaEncryptor {
          * @return the algorithm name
          */
         private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
-            /* If this is a McEliece encryptor */
-            if (GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType())) {
-                return "McEliece";
-            }
-
             /* Determine the base algorithm */
             final String myBase = pSpec.getKeyPairType().name();
 
@@ -239,7 +234,7 @@ public final class JcaEncryptor {
                            final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType()));
+            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), false);
         }
 
         @Override
@@ -319,20 +314,6 @@ public final class JcaEncryptor {
          * @return the algorithm name
          */
         private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
-            /* If this is a McEliece encryptor */
-            if (GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType())) {
-                /* Switch on encryptor type */
-                switch (pSpec.getMcElieceType()) {
-                    case FUJISAKI:
-                        return "McElieceFujisaki";
-                    case KOBARAIMAI:
-                        return "McElieceKobaraImai";
-                    case POINTCHEVAL:
-                    default:
-                        return "McEliecePointcheval";
-                }
-            }
-
             /* Switch on encryptor type */
             final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
             final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();

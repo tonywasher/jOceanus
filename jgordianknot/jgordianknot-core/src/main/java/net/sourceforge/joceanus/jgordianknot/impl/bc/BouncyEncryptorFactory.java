@@ -18,11 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceKeyPair.BouncyMcElieceCCA2Encryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceKeyPair.BouncyMcElieceEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -77,10 +74,6 @@ public class BouncyEncryptorFactory
                 return new BouncyECEncryptor(getFactory(), pSpec);
             case SM2:
                 return new BouncySM2Encryptor(getFactory(), pSpec);
-            case MCELIECE:
-                return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
-                       ? new BouncyMcElieceEncryptor(getFactory(), pSpec)
-                       : new BouncyMcElieceCCA2Encryptor(getFactory(), pSpec);
             case COMPOSITE:
                 return new GordianCompositeEncryptor(getFactory(), pSpec);
             default:
