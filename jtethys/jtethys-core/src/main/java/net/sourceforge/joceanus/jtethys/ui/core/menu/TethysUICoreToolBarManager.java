@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIToolBarManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
@@ -57,7 +58,7 @@ public abstract class TethysUICoreToolBarManager
         /* Create the map */
         theElementMap = new HashMap<>();
         theId = pFactory.getNextId();
-        theWidth = DEFAULT_ICONWIDTH;
+        theWidth = TethysUIConstant.DEFAULT_ICONWIDTH;
     }
 
     @Override

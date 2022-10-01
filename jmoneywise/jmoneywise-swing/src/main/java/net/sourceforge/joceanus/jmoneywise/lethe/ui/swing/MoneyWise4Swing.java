@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
+import net.sourceforge.joceanus.jmoneywise.launch.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
 
 /**

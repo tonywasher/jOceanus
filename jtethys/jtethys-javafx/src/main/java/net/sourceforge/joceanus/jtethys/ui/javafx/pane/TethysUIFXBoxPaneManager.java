@@ -48,6 +48,11 @@ public class TethysUIFXBoxPaneManager
     private final Pane theBoxPane;
 
     /**
+     * Is the Box horizontal?
+     */
+    private final boolean isHorizontal;
+
+    /**
      * Constructor.
      *
      * @param pFactory    the factory
@@ -56,7 +61,8 @@ public class TethysUIFXBoxPaneManager
     TethysUIFXBoxPaneManager(final TethysUICoreFactory<?> pFactory,
                              final boolean pHorizontal) {
         super(pFactory);
-        if (pHorizontal) {
+        isHorizontal = pHorizontal;
+        if (isHorizontal) {
             final HBox myBox = new HBox(getGap());
             myBox.setAlignment(Pos.CENTER);
             theBoxPane = myBox;
@@ -181,7 +187,7 @@ public class TethysUIFXBoxPaneManager
         /**
          * The Node.
          */
-        private TethysUIFXNode theNode;
+        private final TethysUIFXNode theNode;
 
         /**
          * Region.
@@ -198,8 +204,13 @@ public class TethysUIFXBoxPaneManager
             theRegion.setPrefWidth(getGap());
             theRegion.setPrefHeight(getGap());
             if (pExpand) {
-                HBox.setHgrow(theRegion, Priority.ALWAYS);
-                VBox.setVgrow(theRegion, Priority.ALWAYS);
+                if (isHorizontal) {
+                    HBox.setHgrow(theRegion, Priority.ALWAYS);
+                    theRegion.setMaxWidth(Double.MAX_VALUE);
+                } else {
+                    VBox.setVgrow(theRegion, Priority.ALWAYS);
+                    theRegion.setMaxHeight(Double.MAX_VALUE);
+                }
             }
             theNode = new TethysUIFXNode(theRegion);
         }

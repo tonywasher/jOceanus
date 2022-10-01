@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUINode;
@@ -291,7 +292,7 @@ public abstract class TethysUICoreIconButtonManager<T>
          * Constructor.
          */
         public TethysUICoreIconMapSet() {
-            this(DEFAULT_ICONWIDTH);
+            this(TethysUIConstant.DEFAULT_ICONWIDTH);
         }
 
         /**

@@ -30,4 +30,9 @@ public abstract class TethysUICoreButtonFactory<C>
     public <T> TethysUIIconMapSet<T> newIconMapSet() {
         return new TethysUICoreIconMapSet<>();
     }
+
+    @Override
+    public <T> TethysUIIconMapSet<T> newIconMapSet(final int pWidth) {
+        return new TethysUICoreIconMapSet<>(pWidth);
+    }
 }

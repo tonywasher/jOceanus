@@ -455,6 +455,7 @@ public abstract class TethysUICoreTreeManager<T>
 
                 /* deRegister the item */
                 theTree.deRegisterItem(theFirstChild);
+                theFirstChild.detachFromTree();
 
                 /* Unlink the child */
                 final TethysUICoreTreeItem<T> myCurr = theFirstChild;

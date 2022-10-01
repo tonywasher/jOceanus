@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 
 /**

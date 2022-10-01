@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.javafx;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
+import net.sourceforge.joceanus.jmoneywise.launch.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXPreLoader;
 

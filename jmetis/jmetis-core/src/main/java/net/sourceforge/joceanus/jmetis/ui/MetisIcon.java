@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jmetis.ui;
 
 import java.io.InputStream;
 
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
@@ -155,11 +156,6 @@ public enum MetisIcon
     public static final int ICON_SIZE = 24;
 
     /**
-     * Default icon size.
-     */
-    public static final int DEFAULT_ICONWIDTH = 16;
-
-    /**
      * Source name.
      */
     private final String theSource;
@@ -197,7 +193,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureNewScrollButton(final TethysUIScrollButtonManager<?> pButton) {
-        pButton.setSimpleDetails(NEW, DEFAULT_ICONWIDTH, TIP_NEW);
+        pButton.setSimpleDetails(NEW, TethysUIConstant.DEFAULT_ICONWIDTH, TIP_NEW);
     }
 
     /**
@@ -312,6 +308,7 @@ public enum MetisIcon
 
     /**
      * Configure status icon button.
+     * @param pFactory the gui factory
      * @return the mapSet configuration
      */
     public static TethysUIIconMapSet<MetisAction> configureStatusIconButton(final TethysUIFactory<?> pFactory) {

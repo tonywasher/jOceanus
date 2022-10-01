@@ -310,8 +310,8 @@ public class TransactionAnalyser
         while (myIterator.hasNext()) {
             final Transaction myCurr = myIterator.next();
 
-            /* Ignore deleted transactions */
-            if (myCurr.isDeleted()) {
+            /* Ignore deleted/header transactions */
+            if (myCurr.isDeleted() || myCurr.isHeader()) {
                 continue;
             }
 

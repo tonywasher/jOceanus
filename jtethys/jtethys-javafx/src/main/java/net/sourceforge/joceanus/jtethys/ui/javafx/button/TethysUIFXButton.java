@@ -38,6 +38,10 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 public class TethysUIFXButton
         extends TethysUICoreButton {
     /**
+     * The "Null" Margins for a button.
+     */
+    private static final int NULL_MARGIN = 5;
+    /**
      * The node.
      */
     private final TethysUIFXNode theNode;
@@ -105,7 +109,7 @@ public class TethysUIFXButton
 
     @Override
     public void setNullMargins() {
-        theButton.setPadding(Insets.EMPTY);
+        theButton.setPadding(new Insets(NULL_MARGIN, NULL_MARGIN, NULL_MARGIN, NULL_MARGIN));
     }
 
     @Override

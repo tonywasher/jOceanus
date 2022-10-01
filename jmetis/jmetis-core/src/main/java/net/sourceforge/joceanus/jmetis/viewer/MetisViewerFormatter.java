@@ -326,11 +326,11 @@ public class MetisViewerFormatter {
         MetisValueSet myValues = null;
         MetisDataValues myValueCtl = null;
         MetisFieldSetItem myItem = null;
-        if (MetisDataValues.class.isInstance(pContents)) {
+        if (pContents instanceof MetisDataValues) {
             myValueCtl = (MetisDataValues) pContents;
             myValues = myValueCtl.getValueSet();
         }
-        if (MetisFieldSetItem.class.isInstance(pContents)) {
+        if (pContents instanceof MetisFieldSetItem) {
             myItem = (MetisFieldSetItem) pContents;
         }
 

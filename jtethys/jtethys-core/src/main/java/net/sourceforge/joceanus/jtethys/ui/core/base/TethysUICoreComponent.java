@@ -24,11 +24,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 public abstract class TethysUICoreComponent
         implements TethysUIComponent {
     /**
-     * Default icon width.
-     */
-    public static final int DEFAULT_ICONWIDTH = 16;
-
-    /**
      * The Padding.
      */
     private Integer thePadding;

@@ -156,6 +156,17 @@ public interface TethysUITableManager<C, R>
     TethysUITableManager<C, R> setOnSelect(TethysUIOnRowSelect<R> pOnSelect);
 
     /**
+     * Select a row.
+     * @param pItem the row to select
+     */
+    void selectRow(R pItem);
+
+    /**
+     * Scroll the selected item (if any) to view.
+     */
+    void scrollSelectedToView();
+
+    /**
      * Select a row and ensure that it is visible.
      * @param pItem the row to select
      */

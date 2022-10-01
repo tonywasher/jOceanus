@@ -66,6 +66,14 @@ public interface TethysUIButtonFactory<C> {
     <T> TethysUIIconMapSet<T> newIconMapSet();
 
     /**
+     * Obtain a new icon MapSet.
+     * @param <T> the item type
+     * @param pWidth the icon width for the map set
+     * @return the new mapSet
+     */
+    <T> TethysUIIconMapSet<T> newIconMapSet(int pWidth);
+
+    /**
      * Obtain a new scroll button manager.
      * @param <T> the item type
      * @param pClazz the item class

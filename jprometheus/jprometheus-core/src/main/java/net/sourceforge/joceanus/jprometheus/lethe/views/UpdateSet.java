@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.views;
 
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -237,7 +237,7 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
-     * Rewind items to the require version.
+     * Rewind items to the required version.
      * @param pVersion the version to rewind to
      */
     private void rewindToVersion(final int pVersion) {

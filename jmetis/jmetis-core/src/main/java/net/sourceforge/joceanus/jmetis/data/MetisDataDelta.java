@@ -16,10 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+
 /**
  * Delta class.
  */
-public class MetisDataDelta {
+public class MetisDataDelta
+    implements MetisDataObjectFormat {
     /**
      * The object itself.
      */
@@ -55,5 +59,12 @@ public class MetisDataDelta {
      */
     public MetisDataDifference getDifference() {
         return theDifference;
+    }
+
+    @Override
+    public String formatObject(final TethysUIDataFormatter pFormatter) {
+        return theDifference.isDifferent()
+                ? theDifference + "(" + pFormatter.formatObject(theObject) + ")"
+                : pFormatter.formatObject(theObject);
     }
 }

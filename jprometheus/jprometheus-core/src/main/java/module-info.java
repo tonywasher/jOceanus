@@ -31,13 +31,13 @@ module net.sourceforge.joceanus.jprometheus.core {
     exports net.sourceforge.joceanus.jprometheus;
     exports net.sourceforge.joceanus.jprometheus.atlas.data;
     exports net.sourceforge.joceanus.jprometheus.atlas.preference;
-    exports net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
-    exports net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
+    exports net.sourceforge.joceanus.jprometheus.ui.fieldset;
+    exports net.sourceforge.joceanus.jprometheus.ui.panel;
     exports net.sourceforge.joceanus.jprometheus.lethe;
     exports net.sourceforge.joceanus.jprometheus.lethe.data;
     exports net.sourceforge.joceanus.jprometheus.lethe.database;
     exports net.sourceforge.joceanus.jprometheus.lethe.sheets;
-    exports net.sourceforge.joceanus.jprometheus.lethe.threads;
-    exports net.sourceforge.joceanus.jprometheus.lethe.ui;
+    exports net.sourceforge.joceanus.jprometheus.threads;
+    exports net.sourceforge.joceanus.jprometheus.ui;
     exports net.sourceforge.joceanus.jprometheus.lethe.views;
 }

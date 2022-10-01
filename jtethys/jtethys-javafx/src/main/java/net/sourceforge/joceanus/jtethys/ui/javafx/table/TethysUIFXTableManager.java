@@ -121,6 +121,7 @@ public class TethysUIFXTableManager<C, R>
         theColumns = theTable.getColumns();
         theCellFactory = new TethysUIFXTableCellFactory<>(pFactory);
         theTable.getStyleClass().add(CSS_STYLE_BASE);
+        theTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         theNode = new TethysUIFXNode(theTable);
 
         /* Configure the table */
@@ -275,14 +276,7 @@ public class TethysUIFXTableManager<C, R>
 
     @Override
     public void fireTableDataChanged() {
-        /* Apply sort if specified */
-        final Comparator<R> myComparator = getComparator();
-        if (myComparator != null) {
-            theCompValue.setValue(null);
-            theCompValue.setValue(myComparator);
-        } else {
-            setTheItems();
-        }
+        setTheItems();
     }
 
     /**
@@ -393,8 +387,22 @@ public class TethysUIFXTableManager<C, R>
     }
 
     @Override
-    public void selectRowWithScroll(final R pItem) {
+    public void selectRow(final R pItem) {
         theTable.getSelectionModel().select(pItem);
-        theTable.scrollTo(pItem);
+    }
+
+    @Override
+    public void scrollSelectedToView() {
+        final List<R> mySelected = theTable.getSelectionModel().getSelectedItems();
+        final Iterator<R> myIterator = mySelected.iterator();
+        if (myIterator.hasNext()) {
+            theTable.scrollTo(myIterator.next());
+        }
+    }
+
+    @Override
+    public void selectRowWithScroll(final R pItem) {
+        selectRow(pItem);
+        scrollSelectedToView();
     }
 }

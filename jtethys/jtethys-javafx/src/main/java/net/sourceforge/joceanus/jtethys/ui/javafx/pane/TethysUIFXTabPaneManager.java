@@ -65,7 +65,7 @@ public class TethysUIFXTabPaneManager
         theTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
         /* Listen to selections */
-        theModel.selectedItemProperty().addListener((v, o, n) -> notifySelection(n.getUserData()));
+        theModel.selectedItemProperty().addListener((v, o, n) -> notifySelection(n == null ? null : n.getUserData()));
     }
 
     @Override

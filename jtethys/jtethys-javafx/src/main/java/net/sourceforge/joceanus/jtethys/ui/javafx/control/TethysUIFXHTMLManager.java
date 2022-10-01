@@ -25,6 +25,7 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
+import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.print.PageLayout;
@@ -177,7 +178,7 @@ public class TethysUIFXHTMLManager
     protected void loadHTMLContent(final String pHTMLString) {
         /* Load the content */
         if (theWebView != null) {
-            theWebEngine.loadContent(pHTMLString);
+            Platform.runLater(() -> theWebEngine.loadContent(pHTMLString));
         }
     }
 

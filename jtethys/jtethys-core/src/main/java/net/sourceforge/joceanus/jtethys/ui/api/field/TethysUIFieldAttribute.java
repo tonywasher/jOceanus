@@ -46,6 +46,11 @@ public enum TethysUIFieldAttribute {
     ALTERNATE,
 
     /**
+     * FieldSet.
+     */
+    FIELDSET,
+
+    /**
      * Error flag.
      */
     ERROR;

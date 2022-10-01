@@ -183,7 +183,7 @@ public class MoneyWiseAnalysisHistory<E extends Enum<E> & MoneyWiseAnalysisAttri
      */
     MoneyWiseAnalysisSnapShot<E> newSnapShot(final MoneyWiseAnalysisEvent pEvent) {
         /* Create the new snapshot */
-        final MoneyWiseAnalysisSnapShot<E> mySnapShot = new MoneyWiseAnalysisSnapShot<E>(pEvent, theTotal);
+        final MoneyWiseAnalysisSnapShot<E> mySnapShot = new MoneyWiseAnalysisSnapShot<>(pEvent, theTotal);
         theSnapShots.add(mySnapShot);
         theTotal = mySnapShot.getValues();
         return mySnapShot;
