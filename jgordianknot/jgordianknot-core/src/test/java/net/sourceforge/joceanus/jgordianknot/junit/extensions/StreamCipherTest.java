@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Stream Cipher Tests.
  */
-public class StreamCipherTest {
+class StreamCipherTest {
     /**
      * The TestCase.
      */
@@ -157,7 +157,7 @@ public class StreamCipherTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> streamCipherTests() throws OceanusException {
+    Stream<DynamicNode> streamCipherTests() throws OceanusException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("streamCiphers", Stream.of(
                 DynamicContainer.dynamicContainer("Rabbit", Stream.of(
@@ -192,7 +192,7 @@ public class StreamCipherTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> streamMacTests() throws OceanusException {
+    Stream<DynamicNode> streamMacTests() throws OceanusException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("streamMacs", Stream.of(
                 DynamicContainer.dynamicContainer("Zuc128Mac", Stream.of(
@@ -900,40 +900,6 @@ public class StreamCipherTest {
         void testTheCipher() throws OceanusException {
             final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new XChaCha20Engine());
             testAADCipher(myEngine, TEST);
-        }
-    }
-
-    /**
-     * The KMAC TestCase.
-     */
-    private static class KMACTestCase {
-        /**
-         * The testCase.
-         */
-        private final int theStrength;
-        private final String theNameSpace;
-        private final String theKey;
-        private final String theData;
-        private final String theExpected;
-
-        /**
-         * Constructor.
-         * @param pStrength the strength
-         * @param pNameSpace the NameSpace
-         * @param pKey the key
-         * @param pData the data
-         * @param pExpected the expected results.
-         */
-        KMACTestCase(final int pStrength,
-                     final String pNameSpace,
-                     final String pKey,
-                     final String pData,
-                     final String pExpected) {
-            theStrength = pStrength;
-            theNameSpace = pNameSpace;
-            theKey = pKey;
-            theData = pData;
-            theExpected = pExpected;
         }
     }
 }

@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Security Test suite - Zip File.
  */
-public class ZipFileTest {
+class ZipFileTest {
     /**
      * Default password.
      */
@@ -70,7 +70,7 @@ public class ZipFileTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> zipFileTests() throws OceanusException {
+    Stream<DynamicNode> zipFileTests() throws OceanusException {
         /* Create tests */
         Stream<DynamicNode> myStream = zipFileTests(GordianFactoryType.BC);
         return Stream.concat(myStream, zipFileTests(GordianFactoryType.JCA));

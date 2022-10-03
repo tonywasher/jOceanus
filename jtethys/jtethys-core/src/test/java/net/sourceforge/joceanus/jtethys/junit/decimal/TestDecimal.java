@@ -31,14 +31,14 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 /**
  * Decimal JUnit Tests.
  */
-public class TestDecimal {
+class TestDecimal {
     /**
      * Create the analysis test suite.
      * @return the test stream
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> decimalTests() throws OceanusException {
+    Stream<DynamicNode> decimalTests() throws OceanusException {
         return Stream.of(
                 DynamicTest.dynamicTest("checkAdd", TestDecimal::additions),
                 DynamicTest.dynamicTest("checkSubtract", TestDecimal::subtractions),

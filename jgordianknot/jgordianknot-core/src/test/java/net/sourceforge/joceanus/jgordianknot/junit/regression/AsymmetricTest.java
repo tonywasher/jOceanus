@@ -75,7 +75,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Security Test suite - Test Asymmetric functionality.
  */
-public class AsymmetricTest {
+class AsymmetricTest {
     /**
      * The factories.
      */
@@ -163,7 +163,7 @@ public class AsymmetricTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> asymmetricTests() throws OceanusException {
+    Stream<DynamicNode> asymmetricTests() throws OceanusException {
         /* Create tests */
         final Stream<DynamicNode> myBC = asymmetricTests(BCFACTORY, JCAFACTORY);
         final Stream<DynamicNode> myJCA = asymmetricTests(JCAFACTORY, BCFACTORY);

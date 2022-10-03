@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Digest Tests.
  */
-public class DigestTest {
+class DigestTest {
     /**
      * The test inputs.
     */
@@ -82,7 +82,7 @@ public class DigestTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> digestTests() throws OceanusException {
+    Stream<DynamicNode> digestTests() throws OceanusException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("Digests", Stream.of(
                 DynamicContainer.dynamicContainer("Groestl", Stream.of(

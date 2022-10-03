@@ -230,9 +230,7 @@ public class TethysTestButtons {
         myGrid.newRow();
 
         /* Add listener */
-        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setScrollValue(e.getDetails(String.class));
-        });
+        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setScrollValue(e.getDetails(String.class)));
         theScrollButtonMgr.setMenuConfigurator(theHelper::buildContextMenu);
         theScrollButtonMgr.setValue("First");
 
@@ -247,9 +245,7 @@ public class TethysTestButtons {
         myGrid.newRow();
 
         /* Add listener */
-        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setListValue();
-        });
+        theListButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setListValue());
         theListButtonMgr.setSelectables(theHelper::buildSelectableList);
         theListButtonMgr.setValue(theHelper.buildSelectedList());
 
@@ -264,9 +260,7 @@ public class TethysTestButtons {
         myGrid.newRow();
 
         /* Add listener */
-        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setDateValue(e.getDetails(TethysDate.class));
-        });
+        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(TethysDate.class)));
         theDateButtonMgr.setSelectedDate(new TethysDate());
 
         /* Create simple icon button line */
@@ -283,9 +277,7 @@ public class TethysTestButtons {
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
-        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setSimpleIconValue(e.getDetails(Boolean.class));
-        });
+        theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setSimpleIconValue(e.getDetails(Boolean.class)));
 
         /* Create state icon button line */
         final TethysUIBoxPaneManager myBox = myPanes.newHBoxPane();
@@ -307,9 +299,7 @@ public class TethysTestButtons {
         theStateIconButtonMgr.setVisible(false);
 
         /* Add listener */
-        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setStateIconValue(e.getDetails(Boolean.class));
-        });
+        theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setStateIconValue(e.getDetails(Boolean.class)));
 
         /* Add listener */
         theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -330,9 +320,7 @@ public class TethysTestButtons {
         myGrid.newRow();
 
         /* Add listener */
-        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setColorValue(e.getDetails(String.class));
-        });
+        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setColorValue(e.getDetails(String.class)));
 
         /* Configure the grid */
         myGrid.setBorderPadding(2);

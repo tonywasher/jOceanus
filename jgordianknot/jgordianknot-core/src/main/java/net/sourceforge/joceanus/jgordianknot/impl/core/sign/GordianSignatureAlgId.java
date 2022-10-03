@@ -414,7 +414,7 @@ public class GordianSignatureAlgId {
      * Add XMSS signatures.
      */
     private void addSPHINCSPlusSignatures() {
-        for(GordianSPHINCSPlusSpec mySpec : GordianSPHINCSPlusSpec.values()) {
+        for (GordianSPHINCSPlusSpec mySpec : GordianSPHINCSPlusSpec.values()) {
             addToMaps(GordianSignatureSpec.sphincsPlus(), GordianKeyPairSpec.sphincsPlus(mySpec),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
         }

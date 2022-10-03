@@ -33,7 +33,7 @@ import org.junit.jupiter.api.TestFactory;
 /**
  * CurrencyCode checker.
  */
-public final class CurrencyTest {
+final class CurrencyTest {
     /**
      * List of irrelevant currency codes.
      */
@@ -50,11 +50,12 @@ public final class CurrencyTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> checkCurrencies() throws OceanusException {
+    Stream<DynamicNode> checkCurrencies() throws OceanusException {
         return Stream.of(
                 DynamicTest.dynamicTest("checkCurrency", CurrencyTest::checkCurrency)
         );
     }
+
     /**
      * Main test.
      */

@@ -573,7 +573,7 @@ public class ThemisAnalysisParser
      * @param pLine the line
      * @return the statement
      */
-    private ThemisAnalysisKeyWord determineStatementKeyWord(final ThemisAnalysisLine pLine) {
+    private static ThemisAnalysisKeyWord determineStatementKeyWord(final ThemisAnalysisLine pLine) {
         /* Look for a control keyWord */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);
