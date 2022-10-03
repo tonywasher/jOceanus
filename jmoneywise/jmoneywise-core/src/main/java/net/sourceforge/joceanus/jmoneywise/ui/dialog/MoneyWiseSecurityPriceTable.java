@@ -120,7 +120,7 @@ public class MoneyWiseSecurityPriceTable
         /* Store the security */
         if (!MetisDataDifference.isEqual(pSecurity, theSecurity)) {
             theSecurity = pSecurity;
-            getTable().fireTableDataChanged();
+            updateTableData();
         }
     }
 
@@ -132,8 +132,8 @@ public class MoneyWiseSecurityPriceTable
             final SecurityPrice myPrice = addNewPrice(theSecurity);
 
             /* Shift display to line */
-            getTable().fireTableDataChanged();
-            getTable().selectRowWithScroll(myPrice);
+            updateTableData();
+            selectItem(myPrice);
             getUpdateSet().incrementVersion();
             notifyChanges();
 

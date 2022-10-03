@@ -39,9 +39,19 @@ public class MoneyWiseTableSelect<T extends DataItem<MoneyWiseDataType> & Compar
     private final Predicate<T> theFilter;
 
     /**
+     * The item panel.
+     */
+    private MoneyWiseItemPanel<T> theItemPanel;
+
+    /**
      * The most recent selection.
      */
     private T theSelected;
+
+    /**
+     * Are we refreshing?
+     */
+    private boolean isRefreshing;
 
     /**
      * Constructor.
@@ -55,14 +65,27 @@ public class MoneyWiseTableSelect<T extends DataItem<MoneyWiseDataType> & Compar
     }
 
     /**
+     * Declare item panel.
+     * @param pPanel the item panel
+     */
+    void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
+        theItemPanel = pPanel;
+    }
+
+    /**
      * Record the selected item.
      * @param pItem the selected item
      */
     public void recordSelection(final T pItem) {
-        /* Ignore null selection */
-        if (pItem != null) {
+        /* Only handle if we are not refreshing */
+        if (!isRefreshing && pItem != null) {
             /* Record the selection */
             theSelected = pItem;
+
+            /* Notify the item panel */
+            if (theItemPanel != null) {
+                theItemPanel.setItem(pItem);
+            }
 
             /* Scroll it into view */
             theTable.scrollSelectedToView();
@@ -90,6 +113,19 @@ public class MoneyWiseTableSelect<T extends DataItem<MoneyWiseDataType> & Compar
 
         /* Select the item */
         theTable.selectRow(myItem);
+    }
+
+    /**
+     * Update Table data.
+     */
+    public void updateTableData() {
+        /* Update the table and restore the selected item */
+        isRefreshing = true;
+        theTable.fireTableDataChanged();
+        isRefreshing = false;
+
+        /* Restore the actual selection */
+        restoreSelected();
     }
 
     /**

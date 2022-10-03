@@ -196,13 +196,15 @@ public class MoneyWiseRegionTable
         if (!theActiveRegion.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Region myRegion = theActiveRegion.getSelectedItem();
+            updateTableData();
             if (myRegion != null) {
-                selectRegion(myRegion);
+                getTable().selectRow(myRegion);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

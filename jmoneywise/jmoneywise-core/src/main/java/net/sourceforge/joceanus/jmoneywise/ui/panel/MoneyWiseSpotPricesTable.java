@@ -148,7 +148,7 @@ public class MoneyWiseSpotPricesTable
         theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleNewSelection());
         theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.DOWNLOAD, e -> downloadPrices());
         pView.getEventRegistrar().addEventListener(e -> refreshData());
-        pUpdateSet.getEventRegistrar().addEventListener(e -> myTable.fireTableDataChanged());
+        pUpdateSet.getEventRegistrar().addEventListener(e -> updateTableData());
     }
 
     /**
@@ -282,7 +282,7 @@ public class MoneyWiseSpotPricesTable
                 getUpdateSet().incrementVersion();
 
                 /* Update components to reflect changes */
-                getTable().fireTableDataChanged();
+                updateTableData();
                 notifyChanges();
             }
         } catch (OceanusException e) {

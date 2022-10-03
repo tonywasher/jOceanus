@@ -118,6 +118,6 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
      * Refresh the table after an updateSet reWind.
      */
     public void refreshAfterUpdate() {
-        getTable().fireTableDataChanged();
+        updateTableData();
     }
 }

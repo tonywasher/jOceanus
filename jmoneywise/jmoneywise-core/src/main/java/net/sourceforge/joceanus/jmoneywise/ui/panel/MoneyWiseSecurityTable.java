@@ -184,13 +184,15 @@ public class MoneyWiseSecurityTable
         if (!theActiveSecurity.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Security mySecurity = theActiveSecurity.getSelectedItem();
+            updateTableData();
             if (mySecurity != null) {
-                selectSecurity(mySecurity);
+                getTable().selectRow(mySecurity);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

@@ -90,7 +90,7 @@ public class TethysUIFXTableManager<C, R>
     /**
      * The Items.
      */
-    private ObservableList<R> theItems;
+    private ObservableList<R> theObservableItems;
 
     /**
      * The Sorted Items.
@@ -163,16 +163,9 @@ public class TethysUIFXTableManager<C, R>
 
     @Override
     public Iterator<R> itemIterator() {
-        return theItems == null
+        return theObservableItems == null
                 ? Collections.emptyIterator()
-                : theItems.iterator();
-    }
-
-    @Override
-    public Iterator<R> sortedIterator() {
-        return theSorted == null
-                ? Collections.emptyIterator()
-                : theSorted.iterator();
+                : theObservableItems.iterator();
     }
 
     @Override
@@ -215,7 +208,6 @@ public class TethysUIFXTableManager<C, R>
     @Override
     public void setItems(final List<R> pItems) {
         super.setItems(pItems);
-        theItems = FXCollections.observableArrayList(pItems);
         setTheItems();
     }
 
@@ -243,29 +235,29 @@ public class TethysUIFXTableManager<C, R>
      */
     private void setTheItems() {
         /* Access the underlying copy */
-        ObservableList<R> myItems = theItems;
-        theSorted = myItems;
+        final List<R> myItems = super.getItems();
+        theObservableItems = myItems == null ? null : FXCollections.observableArrayList(super.getItems());
+        theSorted = theObservableItems;
 
         /* If we have any items */
-        if (myItems != null) {
+        if (theSorted != null) {
             /* Apply filter if specified */
             final Predicate<R> myFilter = getFilter();
             if (myFilter != null) {
-                myItems = myItems.filtered(myFilter);
+                theSorted = theSorted.filtered(myFilter);
             }
 
             /* Apply sort if specified */
             final Comparator<R> myComparator = getComparator();
             if (myComparator != null) {
-                myItems = myItems.sorted(myComparator);
-                theSorted = myItems;
+                theSorted = theSorted.sorted(myComparator);
                 theCompValue.setValue(myComparator);
                 ((SortedList<R>) theSorted).comparatorProperty().bind(theCompValue);
             }
         }
 
         /* Declare the items */
-        theTable.setItems(myItems);
+        theTable.setItems(theSorted);
     }
 
     @Override

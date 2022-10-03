@@ -184,13 +184,15 @@ public class MoneyWiseTransCategoryTable
         if (!theActiveCategory.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final TransactionCategory myCategory = theActiveCategory.getSelectedItem();
+            updateTableData();
             if (myCategory != null) {
-                selectCategory(myCategory);
+                getTable().selectRow(myCategory);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

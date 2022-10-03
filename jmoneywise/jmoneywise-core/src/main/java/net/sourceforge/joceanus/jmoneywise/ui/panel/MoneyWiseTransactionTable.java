@@ -629,7 +629,7 @@ public class MoneyWiseTransactionTable
         if (MetisDataDifference.isEqual(myRange, theRange)) {
             /* Handle a simple filter change */
             theViewerFilter.setObject(theFilter);
-            getTable().fireTableDataChanged();
+            updateTableData();
         } else {
             /* Update new lists */
             updateList();
@@ -763,13 +763,15 @@ public class MoneyWiseTransactionTable
         if (!theActiveTran.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Transaction myTrans = theActiveTran.getSelectedItem();
+            updateTableData();
             if (myTrans != null) {
-                selectTran(myTrans);
+                getTable().selectRow(myTrans);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

@@ -172,13 +172,15 @@ public class MoneyWiseDepositTable
         if (!theActiveDeposit.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Deposit myDeposit = theActiveDeposit.getSelectedItem();
+            updateTableData();
             if (myDeposit != null) {
-                selectDeposit(myDeposit);
+                getTable().selectRow(myDeposit);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

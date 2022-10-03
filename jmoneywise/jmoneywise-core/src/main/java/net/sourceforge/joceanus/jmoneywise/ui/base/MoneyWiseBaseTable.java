@@ -162,11 +162,6 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     private final MoneyWiseTableSelect<T> theSelect;
 
     /**
-     * The item panel.
-     */
-    private MoneyWiseItemPanel<T> theItemPanel;
-
-    /**
      * is the table editing?
      */
     private boolean isEditing;
@@ -225,7 +220,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pPanel the item panel
      */
     protected void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
-        theItemPanel = pPanel;
+        theSelect.declareItemPanel(pPanel);
         thePanel.setSouth(pPanel);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> setTableEnabled(!pPanel.isEditing()));
@@ -327,8 +322,14 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Handle updateSet rewind.
      */
     protected void handleRewind() {
-        theTable.fireTableDataChanged();
-        restoreSelected();
+        updateTableData();
+    }
+
+    /**
+     * Handle updateSet rewind.
+     */
+    protected void updateTableData() {
+        theSelect.updateTableData();
     }
 
     /**
@@ -354,9 +355,6 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pItem the item
      */
     protected void selectItem(final T pItem) {
-        if (theItemPanel != null) {
-            theItemPanel.setItem(pItem);
-        }
         theSelect.recordSelection(pItem);
     }
 
@@ -394,7 +392,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
             theUpdateSet.incrementVersion();
 
             /* Update components to reflect changes */
-            theTable.fireTableDataChanged();
+            updateTableData();
             notifyChanges();
         }
     }

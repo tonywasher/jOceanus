@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx.pane;
 
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
@@ -38,7 +39,7 @@ public class TethysUIFXCardPaneManager<P extends TethysUIComponent>
     /**
      * The panel.
      */
-    private final BorderPane theCardPane;
+    private final StackPane theCardPane;
 
     /**
      * Constructor.
@@ -47,7 +48,7 @@ public class TethysUIFXCardPaneManager<P extends TethysUIComponent>
      */
     TethysUIFXCardPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
-        theCardPane = new BorderPane();
+        theCardPane = new StackPane();
         theNode = new TethysUIFXNode(theCardPane);
     }
 
@@ -73,19 +74,20 @@ public class TethysUIFXCardPaneManager<P extends TethysUIComponent>
                         final P pCard) {
         final boolean isActiveCard = getActiveCard() == null;
         super.addCard(pName, pCard);
-        if (isActiveCard) {
-            theCardPane.setCenter(TethysUIFXNode.getNode(pCard));
-        }
+        theCardPane.getChildren().add(0, TethysUIFXNode.getNode(pCard));
+        pCard.setVisible(isActiveCard);
     }
 
     @Override
     public boolean selectCard(final String pName) {
         /* Determine the card to select */
+        getActiveCard().setVisible(false);
         final boolean isSelected = super.selectCard(pName);
-        if (isSelected) {
-            /* Show selected card */
-            theCardPane.setCenter(TethysUIFXNode.getNode(getActiveCard()));
-        }
+        getActiveCard().setVisible(true);
+        //if (isSelected) {
+        //    /* Show selected card */
+        //    theCardPane.setCenter(TethysUIFXNode.getNode(getActiveCard()));
+        //}
         return isSelected;
     }
 

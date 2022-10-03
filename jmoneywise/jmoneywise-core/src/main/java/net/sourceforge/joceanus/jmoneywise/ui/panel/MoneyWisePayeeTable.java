@@ -157,13 +157,15 @@ public class MoneyWisePayeeTable
         if (!theActivePayee.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Payee myPayee = theActivePayee.getSelectedItem();
+            updateTableData();
             if (myPayee != null) {
-                selectPayee(myPayee);
+                getTable().selectRow(myPayee);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

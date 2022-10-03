@@ -184,13 +184,15 @@ public class MoneyWiseCashCategoryTable
         if (!theActiveCategory.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final CashCategory myCategory = theActiveCategory.getSelectedItem();
+            updateTableData();
             if (myCategory != null) {
-                selectCategory(myCategory);
+                getTable().selectRow(myCategory);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */
