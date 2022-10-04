@@ -159,13 +159,15 @@ public class MoneyWisePortfolioTable
         if (!theActivePortfolio.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Portfolio myPortfolio = theActivePortfolio.getSelectedItem();
+            updateTableData();
             if (myPortfolio != null) {
-                selectPortfolio(myPortfolio);
+                getTable().selectRow(myPortfolio);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

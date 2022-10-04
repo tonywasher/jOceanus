@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Security Test suite - Test SecurityManager functionality.
  */
-public class PasswordManagerTest {
+class PasswordManagerTest {
     /**
      * The List of password names.
      */
@@ -244,7 +244,7 @@ public class PasswordManagerTest {
      * @throws OceanusException on error
      */
     @Test
-    public void PasswordManagerTest() throws OceanusException {
+    void PasswordManagerTests() throws OceanusException {
         /* Create the security manager */
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final DialogController myController = new DialogController();

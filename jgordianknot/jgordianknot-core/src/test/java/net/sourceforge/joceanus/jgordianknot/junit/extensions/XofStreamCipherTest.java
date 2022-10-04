@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Test Cases for Xof-based Stream Ciphers.
  */
-public class XofStreamCipher {
+class XofStreamCipherTest {
     /**
      * KeyStream length.
      */
@@ -88,7 +88,7 @@ public class XofStreamCipher {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> streamCipherTests() throws OceanusException {
+    Stream<DynamicNode> streamCipherTests() throws OceanusException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("XofStreams", Stream.of(
                 DynamicContainer.dynamicContainer("Blake2X", Stream.of(

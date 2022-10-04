@@ -33,7 +33,7 @@ public class GordianKeySetHashSpec {
     /**
      * Default iterations.
      */
-    public static final Integer DEFAULT_ITERATIONS = 4;
+    public static final Integer DEFAULT_ITERATIONS = 8;
 
     /**
      * 1K Multiplier.
@@ -43,12 +43,12 @@ public class GordianKeySetHashSpec {
     /**
      * The Number of iterations (x 1K).
      */
-    private int theKIterations;
+    private final int theKIterations;
 
     /**
      * The KeySetSpec.
      */
-    private GordianKeySetSpec theKeySetSpec;
+    private final GordianKeySetSpec theKeySetSpec;
 
     /**
      * Is the Spec valid?.

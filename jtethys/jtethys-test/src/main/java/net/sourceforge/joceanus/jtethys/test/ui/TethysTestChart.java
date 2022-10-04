@@ -68,9 +68,7 @@ public class TethysTestChart {
                 c.addItem(myType);
             }
         });
-        myButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            myCards.selectCard(e.getDetails(TethysChartType.class).toString());
-        });
+        myButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> myCards.selectCard(e.getDetails(TethysChartType.class).toString()));
         myButton.setValue(TethysChartType.AREA);
 
         /* Create the button pane */

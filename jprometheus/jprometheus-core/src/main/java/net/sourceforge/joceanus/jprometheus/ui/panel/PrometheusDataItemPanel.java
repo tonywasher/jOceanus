@@ -57,6 +57,21 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     protected static final String TAB_DETAILS = PrometheusUIResource.PANEL_TAB_DETAILS.getValue();
 
     /**
+     * Account Tab Title.
+     */
+    protected static final String TAB_ACCOUNT = PrometheusUIResource.PANEL_TAB_ACCOUNT.getValue();
+
+    /**
+     * Web Tab Title.
+     */
+    protected static final String TAB_WEB = PrometheusUIResource.PANEL_TAB_WEB.getValue();
+
+    /**
+     * Notes Tab Title.
+     */
+    protected static final String TAB_NOTES = PrometheusUIResource.PANEL_TAB_NOTES.getValue();
+
+    /**
      * ReadOnly EditVersion.
      */
     protected static final int VERSION_READONLY = -1;

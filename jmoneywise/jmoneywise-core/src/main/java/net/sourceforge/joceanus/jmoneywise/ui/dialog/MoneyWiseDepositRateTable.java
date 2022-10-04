@@ -127,7 +127,7 @@ public class MoneyWiseDepositRateTable
         /* Store the security */
         if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {
             theDeposit = pDeposit;
-            getTable().fireTableDataChanged();
+            updateTableData();
         }
     }
 
@@ -139,8 +139,8 @@ public class MoneyWiseDepositRateTable
             final DepositRate myRate = addNewRate();
 
             /* Shift display to line */
-            getTable().fireTableDataChanged();
-            getTable().selectRowWithScroll(myRate);
+            updateTableData();
+            selectItem(myRate);
             getUpdateSet().incrementVersion();
             notifyChanges();
 

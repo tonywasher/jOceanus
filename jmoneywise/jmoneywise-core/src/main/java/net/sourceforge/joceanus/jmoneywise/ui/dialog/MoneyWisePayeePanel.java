@@ -79,8 +79,11 @@ public class MoneyWisePayeePanel
         /* Build the main panel */
         buildMainPanel(pFactory);
 
-        /* Build the detail panel */
-        buildXtrasPanel(pFactory);
+        /* Build the account panel */
+        buildAccountPanel(pFactory);
+
+        /* Build the web panel */
+        buildWebPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
@@ -113,27 +116,41 @@ public class MoneyWisePayeePanel
     }
 
     /**
-     * Build extras subPanel.
+     * Build account subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildXtrasPanel(final TethysUIFactory<?> pFactory) {
+    private void buildAccountPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
-        theFieldSet.newPanel(TAB_DETAILS);
+        theFieldSet.newPanel(TAB_ACCOUNT);
 
         /* Allocate fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUICharArrayEditField mySortCode = myFields.newCharArrayField();
         final TethysUICharArrayEditField myAccount = myFields.newCharArrayField();
         final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
+
+        /* Assign the fields to the panel */
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEESORTCODE, mySortCode, Payee::getSortCode);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEACCOUNT, myAccount, Payee::getAccount);
+        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEREFERENCE, myReference, Payee::getReference);
+    }
+
+    /**
+     * Build web subPanel.
+     * @param pFactory the GUI factory
+     */
+    private void buildWebPanel(final TethysUIFactory<?> pFactory) {
+        /* Create a new panel */
+        theFieldSet.newPanel(TAB_WEB);
+
+        /* Allocate fields */
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUICharArrayEditField myWebSite = myFields.newCharArrayField();
         final TethysUICharArrayEditField myCustNo = myFields.newCharArrayField();
         final TethysUICharArrayEditField myUserId = myFields.newCharArrayField();
         final TethysUICharArrayEditField myPassWord = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.PAYEESORTCODE, mySortCode, Payee::getSortCode);
-        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEACCOUNT, myAccount, Payee::getAccount);
-        theFieldSet.addField(MoneyWiseAssetDataId.PAYEEREFERENCE, myReference, Payee::getReference);
         theFieldSet.addField(MoneyWiseAssetDataId.PAYEEWEBSITE, myWebSite, Payee::getWebSite);
         theFieldSet.addField(MoneyWiseAssetDataId.PAYEECUSTNO, myCustNo, Payee::getCustNo);
         theFieldSet.addField(MoneyWiseAssetDataId.PAYEEUSERID, myUserId, Payee::getUserId);
@@ -150,7 +167,7 @@ public class MoneyWisePayeePanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.PAYEENOTES, myNotes, Payee::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.PAYEENOTES, myNotes, Payee::getNotes);
     }
 
     @Override

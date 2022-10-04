@@ -159,13 +159,15 @@ public class MoneyWiseLoanTable
         if (!theActiveLoan.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Loan myLoan = theActiveLoan.getSelectedItem();
+            updateTableData();
             if (myLoan != null) {
-                selectLoan(myLoan);
+                getTable().selectRow(myLoan);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

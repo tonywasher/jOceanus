@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.
  */
-public class RandomSpecTest {
+class RandomSpecTest {
     /**
      * The factories.
      */
@@ -71,7 +71,7 @@ public class RandomSpecTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> randomSpecTests() throws OceanusException {
+    Stream<DynamicNode> randomSpecTests() throws OceanusException {
         /* Create tests */
         final Stream<DynamicNode> myBC = randomSpecTests(BCFACTORY);
         final Stream<DynamicNode> myJCA = randomSpecTests(JCAFACTORY);

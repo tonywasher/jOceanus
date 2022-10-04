@@ -166,13 +166,6 @@ public class TethysUISwingTableManager<C, R>
     }
 
     @Override
-    public Iterator<R> sortedIterator() {
-        return getItems() == null
-                ? Collections.emptyIterator()
-                : theSorter.sortIterator();
-    }
-
-    @Override
     public Iterator<R> viewIterator() {
         return getItems() == null
                 ? Collections.emptyIterator()

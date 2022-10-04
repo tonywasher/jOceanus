@@ -140,14 +140,13 @@ public class TethysUIFXBarChart
         super.createSection(pName, pSection);
 
         /* Access the series */
-        Series<String, Number> mySeries = theSeries.get(pName);
-        if (mySeries == null) {
-            mySeries = new Series<>();
-            mySeries.setName(pName);
+        final Series<String, Number> mySeries = theSeries.computeIfAbsent(pName, n -> {
+            final Series<String, Number> s = new Series<>();
+            s.setName(n);
             final ObservableList<Series<String, Number>> myData = theChart.getData();
-            myData.add(mySeries);
-            theSeries.put(pName, mySeries);
-        }
+            myData.add(s);
+            return s;
+        });
 
         /* Create section */
         final ObservableList<Data<String, Number>> mySections = mySeries.getData();

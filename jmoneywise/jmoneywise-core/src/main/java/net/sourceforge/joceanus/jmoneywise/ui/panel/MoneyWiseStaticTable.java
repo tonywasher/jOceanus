@@ -209,7 +209,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
             /* Update the table */
             getUpdateSet().incrementVersion();
-            getTable().fireTableDataChanged();
+            updateTableData();
             selectItem(myValue);
             notifyChanges();
 

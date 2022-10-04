@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
@@ -56,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * GordianKnot DRBG testCases.
  */
-public class RandomTest {
+class RandomTest {
     /**
      * The standard test name.
      */
@@ -173,7 +172,7 @@ public class RandomTest {
     /**
      * Entropy Source Provider.
      */
-    public class GordianEntropySourceProvider
+    public static class GordianEntropySourceProvider
             implements EntropySourceProvider {
         /**
          * The entropy data.
@@ -206,7 +205,7 @@ public class RandomTest {
     /**
      * Entropy Source Provider.
      */
-    public class GordianEntropySource
+    public static class GordianEntropySource
             implements EntropySource {
         /**
          * The entropy data.
@@ -279,7 +278,7 @@ public class RandomTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> drbgTests() throws OceanusException {
+    Stream<DynamicNode> drbgTests() throws OceanusException {
         /* Create tests */
         DynamicNode myHash = DynamicContainer.dynamicContainer("Hash", Stream.of(
                 testSHA1HashDRBG(),
@@ -869,6 +868,7 @@ public class RandomTest {
      * @return the test
      * @throws OceanusException on error
      */
+    @SuppressWarnings("unchecked")
     private DynamicNode testAES128CtrDRBG() throws OceanusException {
         /* The AES128 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy);
@@ -934,6 +934,7 @@ public class RandomTest {
      * @return the test
      * @throws OceanusException on error
      */
+    @SuppressWarnings("unchecked")
     private DynamicNode testAES128X931DRBG() throws OceanusException {
         /* The AES128 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, "259e67249288597a4d61e7c0e690afae", "35cc0ea481fc8a4f5f05c7d4667233b2");
@@ -978,9 +979,9 @@ public class RandomTest {
      * @return the test
      * @throws OceanusException on error
      */
+    @SuppressWarnings("unchecked")
     private DynamicNode testAES256CtrDRBG() throws OceanusException {
         /* The AES256 Init */
-        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, aes256Nonce, aes256Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes256Nonce, aes256Entropy, aes256Personal);
         final GordianDRBGInit myInitT =  new GordianDRBGInit(true, aes256Nonce, aes256Entropy);
         final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, aes256Nonce, aes256Entropy, aes256Personal);

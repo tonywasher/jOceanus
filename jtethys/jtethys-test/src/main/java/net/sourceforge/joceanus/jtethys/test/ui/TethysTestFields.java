@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;

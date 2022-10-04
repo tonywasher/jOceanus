@@ -148,7 +148,7 @@ public class TethysUISwingBorderPaneManager
      * @param pLocation the location
      * @return the layout
      */
-    private String getLayoutForLocation(final TethysUIBorderLocation pLocation) {
+    private static String getLayoutForLocation(final TethysUIBorderLocation pLocation) {
         switch (pLocation) {
             case NORTH:
                 return BorderLayout.PAGE_START;

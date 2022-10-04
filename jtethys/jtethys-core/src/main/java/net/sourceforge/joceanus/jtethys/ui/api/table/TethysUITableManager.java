@@ -223,12 +223,6 @@ public interface TethysUITableManager<C, R>
     Iterator<R> itemIterator();
 
     /**
-     * Obtain an iterator over the sorted items.
-     * @return the iterator.
-     */
-    Iterator<R> sortedIterator();
-
-    /**
      * Obtain an iterator over the sorted and filtered items.
      * @return the iterator.
      */

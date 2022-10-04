@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 /**
  * Security Test suite - Test KeySet functionality.
  */
-public class KeySetTest {
+class KeySetTest {
     /**
      * Default password.
      */
@@ -317,7 +317,7 @@ public class KeySetTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> keySetTests() throws OceanusException {
+    Stream<DynamicNode> keySetTests() throws OceanusException {
         /* Create tests */
         Stream<DynamicNode> myStream = keySetTests(GordianFactoryType.BC);
         return Stream.concat(myStream, keySetTests(GordianFactoryType.JCA));

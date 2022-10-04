@@ -227,7 +227,7 @@ public class MoneyWiseTransactionTable
         final Map<Boolean, TethysUIIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(myGuiFactory);
         myTable.declareIconColumn(MoneyWiseTransDataId.DIRECTION, AssetDirection.class)
                .setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)))
-               .setCellValueFactory(this::getFilteredDirection)
+               .setCellValueFactory(MoneyWiseTransactionTable::getFilteredDirection)
                .setEditable(true)
                .setCellEditable(r -> !r.isHeader() && !r.isReconciled() && r.canSwitchDirection())
                .setColumnWidth(WIDTH_ICON)
@@ -254,7 +254,7 @@ public class MoneyWiseTransactionTable
 
         /* Create the comments column */
         myTable.declareStringColumn(MoneyWiseTransDataId.COMMENTS)
-               .setCellValueFactory(this::getFilteredComments)
+               .setCellValueFactory(MoneyWiseTransactionTable::getFilteredComments)
                .setEditable(true)
                .setCellEditable(r -> !r.isHeader())
                .setColumnWidth(WIDTH_DESC)
@@ -390,7 +390,7 @@ public class MoneyWiseTransactionTable
         final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
         myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
-               .setCellValueFactory(this::getFilteredAction)
+               .setCellValueFactory(MoneyWiseTransactionTable::getFilteredAction)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                .setEditable(true)
                .setCellEditable(r -> !r.isHeader() && !r.isReconciled())
@@ -466,7 +466,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the state
      */
-    private boolean determineReconciledState(final Transaction pTrans) {
+    private static boolean determineReconciledState(final Transaction pTrans) {
         return pTrans.isLocked();
     }
 
@@ -475,7 +475,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the state
      */
-    private boolean determineDirectionState(final Transaction pTrans) {
+    private static boolean determineDirectionState(final Transaction pTrans) {
          return pTrans.isReconciled();
     }
 
@@ -528,7 +528,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the date value
      */
-    private String getFilteredComments(final Transaction pTrans) {
+    private static String getFilteredComments(final Transaction pTrans) {
         return pTrans.isHeader() ? MoneyWiseUIResource.STATEMENT_OPENINGBALANCE.getValue() : pTrans.getComments();
     }
 
@@ -537,7 +537,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the direction value
      */
-    private AssetDirection getFilteredDirection(final Transaction pTrans) {
+    private static AssetDirection getFilteredDirection(final Transaction pTrans) {
         return pTrans.isHeader() ? null : pTrans.getDirection();
     }
 
@@ -546,7 +546,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the date value
      */
-    private MetisAction getFilteredAction(final Transaction pTrans) {
+    private static MetisAction getFilteredAction(final Transaction pTrans) {
         return (pTrans.isHeader() || pTrans.isReconciled()) ? MetisAction.DO : MetisAction.DELETE;
     }
 
@@ -629,7 +629,7 @@ public class MoneyWiseTransactionTable
         if (MetisDataDifference.isEqual(myRange, theRange)) {
             /* Handle a simple filter change */
             theViewerFilter.setObject(theFilter);
-            getTable().fireTableDataChanged();
+            updateTableData();
         } else {
             /* Update new lists */
             updateList();
@@ -763,13 +763,15 @@ public class MoneyWiseTransactionTable
         if (!theActiveTran.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Transaction myTrans = theActiveTran.getSelectedItem();
+            updateTableData();
             if (myTrans != null) {
-                selectTran(myTrans);
+                getTable().selectRow(myTrans);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

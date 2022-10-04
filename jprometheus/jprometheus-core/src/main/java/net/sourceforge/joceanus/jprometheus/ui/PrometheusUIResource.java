@@ -146,9 +146,24 @@ public enum PrometheusUIResource implements TethysBundleId {
     TABLE_TITLE_ROW("Table.Title.Row"),
 
     /**
-     * Pane; Details Tab.
+     * Panel Details Tab.
      */
     PANEL_TAB_DETAILS("Panel.Tab.Details"),
+
+    /**
+     * Panel Account Tab.
+     */
+    PANEL_TAB_ACCOUNT("Panel.Tab.Account"),
+
+    /**
+     * Panel Web Tab.
+     */
+    PANEL_TAB_WEB("Panel.Tab.Web"),
+
+    /**
+     * Panel Notes Tab.
+     */
+    PANEL_TAB_NOTES("Panel.Tab.Notes"),
 
     /**
      * Static Select Title.

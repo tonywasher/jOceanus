@@ -86,7 +86,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.
  */
-public class SymmetricTest {
+class SymmetricTest {
     /**
      * NanoSeconds in milliSeconds.
      */
@@ -154,7 +154,7 @@ public class SymmetricTest {
      * @return the test stream
      */
     @TestFactory
-    public Stream<DynamicNode> symmetricTests() {
+    Stream<DynamicNode> symmetricTests() {
         /* Create tests */
         final Stream<DynamicNode> myBC = symmetricTests(BCFACTORY, JCAFACTORY);
         final Stream<DynamicNode> myJCA = symmetricTests(JCAFACTORY, BCFACTORY);

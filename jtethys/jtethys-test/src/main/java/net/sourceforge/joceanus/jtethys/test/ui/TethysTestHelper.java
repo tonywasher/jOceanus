@@ -99,7 +99,7 @@ public class TethysTestHelper {
     /**
      * Constructor.
      */
-    TethysTestHelper(final TethysUIFactory pFactory) {
+    TethysTestHelper(final TethysUIFactory<?> pFactory) {
         theFactory = pFactory;
     }
 

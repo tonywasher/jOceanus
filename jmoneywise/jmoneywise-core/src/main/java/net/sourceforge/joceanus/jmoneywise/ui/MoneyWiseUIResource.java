@@ -200,6 +200,11 @@ public enum MoneyWiseUIResource
     TRANSPANEL_TAB_SECURITIES("TransPanel.Tab.Securities"),
 
     /**
+     * Transaction Returned Tab.
+     */
+    TRANSPANEL_TAB_RETURNED("TransPanel.Tab.Returned"),
+
+    /**
      * Balance ColumnSet.
      */
     COLUMNSET_BALANCE("analysisColumnSet.Balance"),

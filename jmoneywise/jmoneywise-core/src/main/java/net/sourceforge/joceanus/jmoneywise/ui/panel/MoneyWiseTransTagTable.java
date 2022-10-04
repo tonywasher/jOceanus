@@ -196,13 +196,15 @@ public class MoneyWiseTransTagTable
         if (!theActiveTag.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final TransactionTag myTag = theActiveTag.getSelectedItem();
+            updateTableData();
             if (myTag != null) {
-                selectTag(myTag);
+                getTable().selectRow(myTag);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */

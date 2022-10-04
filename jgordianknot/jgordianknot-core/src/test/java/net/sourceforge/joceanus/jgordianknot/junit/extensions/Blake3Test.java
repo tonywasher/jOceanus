@@ -17,7 +17,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Blake3 tests.
  */
-public class Blake3Test {
+class Blake3Test {
     /**
      * The Blake3 Data Modulus.
      */
@@ -225,7 +225,7 @@ public class Blake3Test {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> blake3Tests() throws OceanusException {
+    Stream<DynamicNode> blake3Tests() throws OceanusException {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = buildTests(TEST0);
         myStream = Stream.concat(myStream, buildTests(TEST1));

@@ -111,6 +111,11 @@ public class MoneyWiseTransactionPanel
     private static final String TAB_SECURITIES = MoneyWiseUIResource.TRANSPANEL_TAB_SECURITIES.getValue();
 
     /**
+     * Returned Tab Title.
+     */
+    private static final String TAB_RETURNED = MoneyWiseUIResource.TRANSPANEL_TAB_RETURNED.getValue();
+
+    /**
      * The fieldSet.
      */
     private final PrometheusFieldSet<Transaction> theFieldSet;
@@ -172,6 +177,9 @@ public class MoneyWiseTransactionPanel
 
         /* Build the securities panel */
         buildSecuritiesPanel(pFactory);
+
+        /* Build the returned panel */
+        buildReturnedPanel(pFactory);
     }
 
     /**
@@ -292,10 +300,6 @@ public class MoneyWiseTransactionPanel
         final TethysUIMoneyEditField myCommission = myFields.newMoneyField();
         final TethysUIPriceEditField myPrice = myFields.newPriceField();
         final TethysUIDilutionEditField myDilution = myFields.newDilutionField();
-        final TethysUIMoneyEditField myReturnedCash = myFields.newMoneyField();
-
-        /* Create the buttons */
-        final TethysUIScrollButtonField<TransactionAsset> myReturnedAccountButton = myFields.newScrollField(TransactionAsset.class);
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.ACCOUNTDELTAUNITS, myAccountUnits, Transaction::getAccountDeltaUnits);
@@ -303,6 +307,28 @@ public class MoneyWiseTransactionPanel
         theFieldSet.addField(MoneyWiseTransDataId.PRICE, myPrice, Transaction::getPrice);
         theFieldSet.addField(MoneyWiseTransDataId.COMMISSION, myCommission, Transaction::getCommission);
         theFieldSet.addField(MoneyWiseTransDataId.DILUTION, myDilution, Transaction::getDilution);
+
+        /* Set currency */
+        myCommission.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
+        myPrice.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
+    }
+
+    /**
+     * Build returned subPanel.
+     * @param pFactory the GUI factory
+     */
+    private void buildReturnedPanel(final TethysUIFactory<?> pFactory) {
+        /* Create a new panel */
+        theFieldSet.newPanel(TAB_RETURNED);
+
+        /* Allocate fields */
+        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIMoneyEditField myReturnedCash = myFields.newMoneyField();
+
+        /* Create the buttons */
+        final TethysUIScrollButtonField<TransactionAsset> myReturnedAccountButton = myFields.newScrollField(TransactionAsset.class);
+
+        /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.RETURNEDCASHACCOUNT, myReturnedAccountButton, Transaction::getReturnedCashAccount);
         theFieldSet.addField(MoneyWiseTransDataId.RETURNEDCASH, myReturnedCash, Transaction::getReturnedCash);
 
@@ -310,8 +336,6 @@ public class MoneyWiseTransactionPanel
         myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem()));
 
         /* Set currency */
-        myCommission.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
-        myPrice.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
         myReturnedCash.setDeemedCurrency(() -> getItem().getReturnedCashAccount().getCurrency());
     }
 

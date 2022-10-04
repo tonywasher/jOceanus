@@ -39,7 +39,7 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.71"
+        bouncyCastleVersion = "1.72"
         jUnitVersion = "5.9.1"
         jsonVersion = "20220924"
         mySQLVersion = "8.0.30"
@@ -62,7 +62,7 @@ allprojects {
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "6.49.0"
+        pmdVersion = "6.50.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.8"

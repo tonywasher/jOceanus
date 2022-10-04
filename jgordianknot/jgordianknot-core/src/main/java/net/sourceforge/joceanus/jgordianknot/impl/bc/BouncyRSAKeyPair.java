@@ -61,7 +61,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;

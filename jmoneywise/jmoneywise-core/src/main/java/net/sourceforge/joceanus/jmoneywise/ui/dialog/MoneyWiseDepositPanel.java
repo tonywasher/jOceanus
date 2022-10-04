@@ -103,8 +103,8 @@ public class MoneyWiseDepositPanel
         /* Build the main panel */
         buildMainPanel(pFactory);
 
-        /* Build the detail panel */
-        buildXtrasPanel(pFactory);
+        /* Build the account panel */
+        buildAccountPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
@@ -153,12 +153,12 @@ public class MoneyWiseDepositPanel
     }
 
     /**
-     * Build extras subPanel.
+     * Build account subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildXtrasPanel(final TethysUIFactory<?> pFactory) {
+    private void buildAccountPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
-        theFieldSet.newPanel(TAB_DETAILS);
+        theFieldSet.newPanel(TAB_ACCOUNT);
 
         /* Allocate fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -189,7 +189,7 @@ public class MoneyWiseDepositPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.DEPOSITNOTES, myNotes, Deposit::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.DEPOSITNOTES, myNotes, Deposit::getNotes);
     }
 
     @Override

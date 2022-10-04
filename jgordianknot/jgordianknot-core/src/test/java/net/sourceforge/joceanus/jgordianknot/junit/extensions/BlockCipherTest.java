@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * BlockCipher Tests.
  */
-public class BlockCipherTest {
+class BlockCipherTest {
     /**
      * The 128 byte key.
      */
@@ -67,7 +67,7 @@ public class BlockCipherTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> blockCipherTests() throws OceanusException {
+    Stream<DynamicNode> blockCipherTests() throws OceanusException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("BlockCiphers", Stream.of(
                 DynamicContainer.dynamicContainer("Anubis", Stream.of(

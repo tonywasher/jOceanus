@@ -158,13 +158,15 @@ public class MoneyWiseCashTable
         if (!theActiveCash.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
-            getTable().fireTableDataChanged();
             final Cash myCash = theActiveCash.getSelectedItem();
+            updateTableData();
             if (myCash != null) {
-                selectCash(myCash);
+                getTable().selectRow(myCash);
             } else {
                 restoreSelected();
             }
+        } else {
+            getTable().cancelEditing();
         }
 
         /* Note changes */
