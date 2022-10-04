@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx.pane;
 
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;

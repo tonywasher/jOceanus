@@ -24,7 +24,7 @@ allprojects {
 
     /* general identity */
     group = 'net.sourceforge.joceanus'
-    version = '1.6.2-SNAPSHOT'
+    version = '1.6.2-b2'
 
     /* java compatibility */
     java.sourceCompatibility = JavaVersion.VERSION_11
