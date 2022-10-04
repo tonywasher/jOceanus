@@ -160,29 +160,12 @@ public class GordianPersonalisation {
 
             /* Loop the required amount of times to cross-fertilise */
             for (int i = 0; i < myIterations; i++) {
-                /* Update all the digests */
-                for (final GordianDigest myDigest : myDigests) {
-                    /* Update with the results */
-                    for (int k = 0; k < myDigests.length; k++) {
-                        myDigest.update(myHashes[k]);
-                    }
-                }
-
-                /* Finish all the digests */
-                for (int j = 0; j < myDigests.length; j++) {
-                    /* Update with the results */
-                    final GordianDigest myDigest = myDigests[j];
-                    final byte[] myResult = myHashes[j];
-                    myDigest.finish(myResult, 0);
-                    buildHashResult(myConfig, myResult);
-                }
+                iterateHashes(myDigests, myHashes, myConfig);
             }
 
             /* Finally build the initVector mask */
             final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
-            for (int i = 0; i < myDigests.length; i++) {
-                buildHashResult(myInitVec, myHashes[i]);
-            }
+            iterateHashes(myDigests, myHashes, myInitVec);
 
             /* Return the array */
             return new byte[][]
@@ -193,6 +176,34 @@ public class GordianPersonalisation {
             for (int i = 0; i < myDigests.length; i++) {
                 Arrays.fill(myHashes[i], (byte) 0);
             }
+        }
+    }
+
+    /**
+     * Iterate the hashes.
+     * @param pDigests the digest array
+     * @param pHashes the hashes array
+     * @param pResult the result array
+     * @throws OceanusException on error
+     */
+    private static void iterateHashes(final GordianDigest[] pDigests,
+                                      final byte[][] pHashes,
+                                      final byte[] pResult) throws OceanusException {
+        /* Update all the digests */
+        for (final GordianDigest myDigest : pDigests) {
+            /* Update with the results */
+            for (int k = 0; k < pDigests.length; k++) {
+                myDigest.update(pHashes[k]);
+            }
+        }
+
+        /* Finish all the digests */
+        for (int j = 0; j < pDigests.length; j++) {
+            /* Update with the results */
+            final GordianDigest myDigest = pDigests[j];
+            final byte[] myResult = pHashes[j];
+            myDigest.finish(myResult, 0);
+            buildHashResult(pResult, myResult);
         }
     }
 
