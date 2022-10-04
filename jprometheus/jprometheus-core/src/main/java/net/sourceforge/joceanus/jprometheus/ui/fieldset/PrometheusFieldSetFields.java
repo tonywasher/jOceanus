@@ -39,6 +39,11 @@ public class PrometheusFieldSetFields<T>
     /**
      * The gui factory.
      */
+    private static final int FIELD_HEIGHT = 20;
+
+    /**
+     * The gui factory.
+     */
     private final TethysUIFactory<?> theFactory;
 
     /**
@@ -131,20 +136,17 @@ public class PrometheusFieldSetFields<T>
     public void adjustLabelWidth() {
         /* Initialise counters */
         int myWidth = 0;
-        int myHeight = 0;
 
         /* Loop through the elements getting the max width */
         for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             final int myLabelWidth = myElement.getLabelWidth();
-            final int myFieldHeight = myElement.getFieldHeight();
             myWidth = Math.max(myWidth, myLabelWidth);
-            myHeight = Math.max(myHeight, myFieldHeight);
         }
 
         /* Loop through the elements setting the width */
         for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
             myElement.setLabelWidth(myWidth);
-            myElement.setFieldHeight(myHeight);
+            myElement.setFieldHeight(FIELD_HEIGHT);
         }
     }
 

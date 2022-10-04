@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.field;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -407,11 +408,22 @@ public abstract class TethysUISwingDataTextField<T>
     @Override
     public void setPreferredWidth(final Integer pWidth) {
         theNode.setPreferredWidth(pWidth);
+        adjustSubFields();
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
         theNode.setPreferredHeight(pHeight);
+        adjustSubFields();
+    }
+
+    /**
+     * Adjust subFields to container size.
+     */
+    private void adjustSubFields() {
+        final Dimension myBounds = theNode.getNode().getPreferredSize();
+        theLabel.setPreferredSize(myBounds);
+        theEditControl.setPreferredSize(myBounds);
     }
 
     /**

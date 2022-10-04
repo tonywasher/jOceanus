@@ -102,8 +102,8 @@ public class MoneyWiseSecurityPanel
         /* Build the main panel */
         buildMainPanel(pFactory);
 
-        /* Build the info panel */
-        buildInfoPanel(pFactory);
+        /* Build the details panel */
+        buildDetailsPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
@@ -152,10 +152,10 @@ public class MoneyWiseSecurityPanel
     }
 
     /**
-     * Build info subPanel.
+     * Build details subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildInfoPanel(final TethysUIFactory<?> pFactory) {
+    private void buildDetailsPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
@@ -190,7 +190,7 @@ public class MoneyWiseSecurityPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(AccountInfoClass.NOTES.toString(), MoneyWiseAssetDataId.SECURITYNOTES, myNotes, Security::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.SECURITYNOTES, myNotes, Security::getNotes);
     }
 
     @Override

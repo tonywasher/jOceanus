@@ -252,11 +252,15 @@ public abstract class TethysUIFXDataTextField<T>
     @Override
     public void setPreferredWidth(final Integer pWidth) {
         thePane.setPrefWidth(pWidth);
+        theLabel.setPrefWidth(pWidth);
+        theEditControl.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
         thePane.setPrefHeight(pHeight);
+        theLabel.setPrefHeight(pHeight);
+        theEditControl.setPrefHeight(pHeight);
     }
 
     @Override
