@@ -93,11 +93,6 @@ public class TethysUIFXTableManager<C, R>
     private ObservableList<R> theObservableItems;
 
     /**
-     * The Sorted Items.
-     */
-    private ObservableList<R> theSorted;
-
-    /**
      * The Active Cell.
      */
     private TethysUIFXTableCell<?, C, R> theActiveCell;
@@ -105,7 +100,7 @@ public class TethysUIFXTableManager<C, R>
     /**
      * The Sort Comparator.
      */
-    private ObjectProperty<Comparator<R>> theCompValue;
+    private final ObjectProperty<Comparator<R>> theCompValue;
 
     /**
      * Constructor.
@@ -237,27 +232,27 @@ public class TethysUIFXTableManager<C, R>
         /* Access the underlying copy */
         final List<R> myItems = super.getItems();
         theObservableItems = myItems == null ? null : FXCollections.observableArrayList(super.getItems());
-        theSorted = theObservableItems;
+        ObservableList<R> mySorted = theObservableItems;
 
         /* If we have any items */
-        if (theSorted != null) {
+        if (mySorted != null) {
             /* Apply filter if specified */
             final Predicate<R> myFilter = getFilter();
             if (myFilter != null) {
-                theSorted = theSorted.filtered(myFilter);
+                mySorted = mySorted.filtered(myFilter);
             }
 
             /* Apply sort if specified */
             final Comparator<R> myComparator = getComparator();
             if (myComparator != null) {
-                theSorted = theSorted.sorted(myComparator);
+                mySorted = mySorted.sorted(myComparator);
                 theCompValue.setValue(myComparator);
-                ((SortedList<R>) theSorted).comparatorProperty().bind(theCompValue);
+                ((SortedList<R>) mySorted).comparatorProperty().bind(theCompValue);
             }
         }
 
         /* Declare the items */
-        theTable.setItems(theSorted);
+        theTable.setItems(mySorted);
     }
 
     @Override

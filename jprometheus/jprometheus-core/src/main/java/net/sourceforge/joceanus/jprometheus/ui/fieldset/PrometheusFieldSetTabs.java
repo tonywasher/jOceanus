@@ -93,7 +93,6 @@ public class PrometheusFieldSetTabs {
         /* Update visibility for all the panels */
         for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
             final TethysUITabItem myItem = theTabs.findItemByName(myEntry.getKey());
-            final PrometheusFieldSetPanel<?> myPanel = myEntry.getValue();
             myItem.setVisible(true);
         }
 

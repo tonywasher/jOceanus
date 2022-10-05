@@ -83,10 +83,6 @@ public class TethysUIFXCardPaneManager<P extends TethysUIComponent>
         getActiveCard().setVisible(false);
         final boolean isSelected = super.selectCard(pName);
         getActiveCard().setVisible(true);
-        //if (isSelected) {
-        //    /* Show selected card */
-        //    theCardPane.setCenter(TethysUIFXNode.getNode(getActiveCard()));
-        //}
         return isSelected;
     }
 
