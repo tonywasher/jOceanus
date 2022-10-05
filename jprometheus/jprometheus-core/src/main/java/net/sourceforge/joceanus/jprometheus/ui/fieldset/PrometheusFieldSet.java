@@ -347,7 +347,7 @@ public class PrometheusFieldSet<T>
             myWidth >>= 1;
 
             /* Set all tabs visible */
-            theTabs.setAllVisibile();
+            theTabs.setAllVisible();
 
             /* Set the tab size */
             final TethysUIComponent myComponent = theTabs.getComponent();
