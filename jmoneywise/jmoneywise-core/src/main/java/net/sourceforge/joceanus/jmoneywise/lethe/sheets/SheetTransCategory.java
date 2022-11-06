@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
@@ -36,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTransCategory
-        extends PrometheusSheetEncrypted<TransactionCategory, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<TransactionCategory> {
     /**
      * NamedArea for TransactionCategories.
      */
@@ -89,9 +88,9 @@ public class SheetTransCategory
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
+        final DataValues myValues = getRowValues(TransactionCategory.OBJECT_NAME);
         myValues.addValue(TransactionCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
         myValues.addValue(TransactionCategory.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(TransactionCategory.FIELD_NAME, loadBytes(COL_NAME));
@@ -168,7 +167,7 @@ public class SheetTransCategory
                 }
 
                 /* Build data values */
-                final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionCategory.OBJECT_NAME);
+                final DataValues myValues = new DataValues(TransactionCategory.OBJECT_NAME);
                 myValues.addValue(TransactionCategory.FIELD_CATTYPE, myType);
                 myValues.addValue(TransactionCategory.FIELD_PARENT, myParent);
                 myValues.addValue(TransactionCategory.FIELD_NAME, myName);

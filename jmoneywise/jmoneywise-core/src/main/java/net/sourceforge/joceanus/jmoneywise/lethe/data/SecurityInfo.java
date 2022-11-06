@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityInfo
-        extends DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -87,7 +87,7 @@ public class SecurityInfo
      * @throws OceanusException on error
      */
     private SecurityInfo(final SecurityInfoList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -183,7 +183,7 @@ public class SecurityInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink();
+        final DataItem myItem = getLink();
         if (myItem instanceof Region) {
             return ((Region) myItem).getName();
         }
@@ -222,7 +222,7 @@ public class SecurityInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -314,7 +314,7 @@ public class SecurityInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from SecurityInfo */
         if (!(pInfo instanceof SecurityInfo)) {
             return false;
@@ -357,7 +357,7 @@ public class SecurityInfo
      * SecurityInfoList.
      */
     public static class SecurityInfoList
-            extends DataInfoList<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<SecurityInfo, Security, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -417,7 +417,7 @@ public class SecurityInfo
         }
 
         @Override
-        public SecurityInfo addCopyItem(final DataItem<?> pItem) {
+        public SecurityInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a SecurityInfo */
             if (!(pItem instanceof SecurityInfo)) {
                 throw new UnsupportedOperationException();
@@ -464,7 +464,7 @@ public class SecurityInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(SecurityInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pSecurity);
@@ -484,7 +484,7 @@ public class SecurityInfo
         }
 
         @Override
-        public SecurityInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public SecurityInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final SecurityInfo myInfo = new SecurityInfo(this, pValues);
 

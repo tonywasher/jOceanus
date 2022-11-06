@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -33,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * TableEncrypted extension for Loan.
  */
 public class TableLoan
-        extends PrometheusTableEncrypted<Loan, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Loan> {
     /**
      * The name of the table.
      */
@@ -60,18 +59,18 @@ public class TableLoan
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getLoans());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Loan.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Loan.OBJECT_NAME);
         myValues.addValue(Loan.FIELD_NAME, myTableDef.getBinaryValue(Loan.FIELD_NAME));
         myValues.addValue(Loan.FIELD_DESC, myTableDef.getBinaryValue(Loan.FIELD_DESC));
         myValues.addValue(Loan.FIELD_CATEGORY, myTableDef.getIntegerValue(Loan.FIELD_CATEGORY));

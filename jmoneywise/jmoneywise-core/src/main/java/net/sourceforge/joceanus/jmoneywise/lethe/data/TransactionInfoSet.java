@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @author Tony Washer
  */
 public class TransactionInfoSet
-        extends DataInfoSet<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> {
     /**
      * Report fields.
      */
@@ -772,7 +772,7 @@ public class TransactionInfoSet
     }
 
     @Override
-    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
+    protected void setDefaultValue(final DataListSet pUpdateSet,
                                    final TransactionInfoClass pClass) throws OceanusException {
         /* Switch on the class */
         switch (pClass) {

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -28,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetSecurityInfo
-        extends PrometheusSheetDataInfo<SecurityInfo, MoneyWiseDataType> {
+        extends PrometheusSheetDataInfo<SecurityInfo> {
     /**
      * NamedArea for SecurityInfo.
      */
@@ -61,7 +60,7 @@ public class SheetSecurityInfo
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(SecurityInfo.OBJECT_NAME);
     }

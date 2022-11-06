@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PrometheusSheetControlKey
-        extends PrometheusSheetDataItem<ControlKey, CryptographyDataType> {
+        extends PrometheusSheetDataItem<ControlKey> {
     /**
      * SheetName for Keys.
      */
@@ -57,7 +56,7 @@ public class PrometheusSheetControlKey
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        final DataSet<?, ?> myData = pReader.getData();
+        final DataSet<?> myData = pReader.getData();
         setDataList(myData.getControlKeys());
     }
 
@@ -70,14 +69,14 @@ public class PrometheusSheetControlKey
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        final DataSet<?, ?> myData = pWriter.getData();
+        final DataSet<?> myData = pWriter.getData();
         setDataList(myData.getControlKeys());
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
+        final DataValues myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
         myValues.addValue(ControlKey.FIELD_PRIMEBYTES, loadBytes(COL_PRIMEKEYDATA));
         myValues.addValue(ControlKey.FIELD_ALTBYTES, loadBytes(COL_ALTKEYDATA));

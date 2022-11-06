@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
@@ -38,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetCash
-        extends PrometheusSheetEncrypted<Cash, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Cash> {
     /**
      * NamedArea for Cash.
      */
@@ -96,9 +95,9 @@ public class SheetCash
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Cash.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Cash.FIELD_NAME, loadBytes(COL_NAME));
@@ -188,7 +187,7 @@ public class SheetCash
         }
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Cash.OBJECT_NAME);
+        final DataValues myValues = new DataValues(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_NAME, myName);
         myValues.addValue(Cash.FIELD_CATEGORY, myType);
         myValues.addValue(Cash.FIELD_CURRENCY, myCurrency);
@@ -254,7 +253,7 @@ public class SheetCash
             final String myAutoPayee = myName + "Expense";
 
             /* Build values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
+            final DataValues myValues = new DataValues(Payee.OBJECT_NAME);
             myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
             myValues.addValue(Payee.FIELD_CATEGORY, PayeeTypeClass.PAYEE.toString());
             myValues.addValue(Payee.FIELD_CLOSED, isClosed);

@@ -38,14 +38,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info type class
- * @param <E> the data type enum class
  */
-public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
-                             O extends DataItem<E>,
-                             I extends StaticData<I, S, E>,
-                             S extends Enum<S> & DataInfoClass,
-                             E extends Enum<E>>
-        extends DataInfo<T, O, I, S, E> {
+public class DataInfoLinkSet<T extends DataInfo<T, O, I, S>,
+                             O extends DataItem,
+                             I extends StaticData<I, S>,
+                             S extends Enum<S> & DataInfoClass>
+        extends DataInfo<T, O, I, S> {
     /**
      * Item separator.
      */
@@ -74,7 +72,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * List of underlying items.
      */
-    private final DataList<T, E> theLinkSet;
+    private final DataList<T> theLinkSet;
 
     /**
      * The owner.
@@ -89,7 +87,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * The infoType.
      */
-    private final DataInfoList<T, O, I, S, E> theInfoList;
+    private final DataInfoList<T, O, I, S> theInfoList;
 
     /**
      * Constructor.
@@ -97,7 +95,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pOwner the set owner
      * @param pInfoType the info type
      */
-    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
+    protected DataInfoLinkSet(final DataInfoList<T, O, I, S> pList,
                               final O pOwner,
                               final I pInfoType) {
         /* Call super-constructor */
@@ -118,8 +116,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pList the infoList
      * @param pSet the infoLinkSet to clone
      */
-    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
-                              final DataInfoLinkSet<T, O, I, S, E> pSet) {
+    protected DataInfoLinkSet(final DataInfoList<T, O, I, S> pList,
+                              final DataInfoLinkSet<T, O, I, S> pSet) {
         /* Call standard constructor */
         this(pList, pSet.getOwner(), pSet.getInfoType());
 
@@ -233,7 +231,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pValue the value to check
      * @return true/false
      */
-    public T getItemForValue(final DataItem<E> pValue) {
+    public T getItemForValue(final DataItem pValue) {
         /* Loop through the list */
         T myItem = null;
         final Iterator<T> myIterator = theLinkSet.iterator();
@@ -276,11 +274,11 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pActive the active items
      * @throws OceanusException on error
      */
-    public void addNewLinks(final List<? extends DataItem<E>> pActive) throws OceanusException {
+    public void addNewLinks(final List<? extends DataItem> pActive) throws OceanusException {
         /* For each existing value */
-        final Iterator<? extends DataItem<E>> myIterator = pActive.iterator();
+        final Iterator<? extends DataItem> myIterator = pActive.iterator();
         while (myIterator.hasNext()) {
-            final DataItem<E> myItem = myIterator.next();
+            final DataItem myItem = myIterator.next();
 
             /* Link the item if it is not currently selected */
             if (!theActive.getUnderlyingList().contains(myItem)) {
@@ -306,12 +304,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * Clear all unnecessary links.
      * @param pActive the active items
      */
-    public void clearUnnecessaryLinks(final List<? extends DataItem<E>> pActive) {
+    public void clearUnnecessaryLinks(final List<? extends DataItem> pActive) {
         /* For each existing link */
         final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
-            final DataItem<E> myItem = myLink.getLink();
+            final DataItem myItem = myLink.getLink();
 
             /* Link the item if it is not currently selected */
             if (!myLink.isDeleted()
@@ -578,7 +576,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public int compareTo(final DataInfo<T, O, I, S, E> pThat) {
+    public int compareTo(final DataInfo<T, O, I, S> pThat) {
         return getInfoType().compareTo(pThat.getInfoType());
     }
 

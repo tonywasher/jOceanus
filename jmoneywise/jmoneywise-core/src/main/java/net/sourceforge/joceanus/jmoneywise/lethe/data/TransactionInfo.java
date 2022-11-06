@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+        extends DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> {
     /**
      * Object name.
      */
@@ -89,7 +89,7 @@ public class TransactionInfo
      * @throws OceanusException on error
      */
     private TransactionInfo(final TransactionInfoList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -185,7 +185,7 @@ public class TransactionInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink();
+        final DataItem myItem = getLink();
         if (myItem instanceof Deposit) {
             return ((Deposit) myItem).getName();
         }
@@ -234,7 +234,7 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -326,7 +326,7 @@ public class TransactionInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pTransInfo) {
+    public boolean applyChanges(final DataItem pTransInfo) {
         /* Can only update from TransactionInfo */
         if (!(pTransInfo instanceof TransactionInfo)) {
             return false;
@@ -372,7 +372,7 @@ public class TransactionInfo
      * TransactionInfoList.
      */
     public static class TransactionInfoList
-            extends DataInfoList<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> {
         /**
          * Report fields.
          */
@@ -432,7 +432,7 @@ public class TransactionInfo
         }
 
         @Override
-        public TransactionInfo addCopyItem(final DataItem<?> pItem) {
+        public TransactionInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a TransactionInfo */
             if (!(pItem instanceof TransactionInfo)) {
                 throw new UnsupportedOperationException();
@@ -479,7 +479,7 @@ public class TransactionInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(TransactionInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pTransaction);
@@ -499,7 +499,7 @@ public class TransactionInfo
         }
 
         @Override
-        public TransactionInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final TransactionInfo myInfo = new TransactionInfo(this, pValues);
 

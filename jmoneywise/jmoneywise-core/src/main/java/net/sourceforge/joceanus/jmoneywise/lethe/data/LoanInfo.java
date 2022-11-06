@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanInfo
-        extends DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -87,7 +87,7 @@ public class LoanInfo
      * @throws OceanusException on error
      */
     private LoanInfo(final LoanInfoList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                     final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -169,7 +169,7 @@ public class LoanInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -215,7 +215,7 @@ public class LoanInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from LoanInfo */
         if (!(pInfo instanceof LoanInfo)) {
             return false;
@@ -240,7 +240,7 @@ public class LoanInfo
      * LoanInfoList.
      */
     public static class LoanInfoList
-            extends DataInfoList<LoanInfo, Loan, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<LoanInfo, Loan, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -300,7 +300,7 @@ public class LoanInfo
         }
 
         @Override
-        public LoanInfo addCopyItem(final DataItem<?> pItem) {
+        public LoanInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a LoanInfo */
             if (!(pItem instanceof LoanInfo)) {
                 throw new UnsupportedOperationException();
@@ -347,7 +347,7 @@ public class LoanInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pLoan);
@@ -367,7 +367,7 @@ public class LoanInfo
         }
 
         @Override
-        public LoanInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public LoanInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final LoanInfo myInfo = new LoanInfo(this, pValues);
 

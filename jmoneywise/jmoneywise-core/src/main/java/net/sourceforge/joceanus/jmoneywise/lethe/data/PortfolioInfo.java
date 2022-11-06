@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PortfolioInfo
-        extends DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -87,7 +87,7 @@ public class PortfolioInfo
      * @throws OceanusException on error
      */
     private PortfolioInfo(final PortfolioInfoList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                          final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -169,7 +169,7 @@ public class PortfolioInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -215,7 +215,7 @@ public class PortfolioInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from PortfolioInfo */
         if (!(pInfo instanceof PortfolioInfo)) {
             return false;
@@ -240,7 +240,7 @@ public class PortfolioInfo
      * PortfolioInfoList.
      */
     public static class PortfolioInfoList
-            extends DataInfoList<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -300,7 +300,7 @@ public class PortfolioInfo
         }
 
         @Override
-        public PortfolioInfo addCopyItem(final DataItem<?> pItem) {
+        public PortfolioInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a PortfolioInfo */
             if (!(pItem instanceof PortfolioInfo)) {
                 throw new UnsupportedOperationException();
@@ -347,7 +347,7 @@ public class PortfolioInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(PortfolioInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(PortfolioInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pPortfolio);
@@ -367,7 +367,7 @@ public class PortfolioInfo
         }
 
         @Override
-        public PortfolioInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PortfolioInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final PortfolioInfo myInfo = new PortfolioInfo(this, pValues);
 

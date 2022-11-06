@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DilutionEvent.DilutionEventMap;
@@ -41,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
  * Data Control for MoneyWiseApp.
  */
 public class MoneyWiseView
-        extends DataControl<MoneyWiseData, MoneyWiseDataType> {
+        extends DataControl<MoneyWiseData> {
     /**
      * The TaxFactory.
      */

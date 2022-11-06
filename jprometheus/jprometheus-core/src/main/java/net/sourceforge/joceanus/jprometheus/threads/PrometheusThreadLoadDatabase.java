@@ -26,20 +26,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * Thread to load data from the database.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadLoadDatabase<T extends DataSet<T>>
         implements TethysUIThread<T> {
     /**
      * Data control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadDatabase(final DataControl<T, E> pControl) {
+    public PrometheusThreadLoadDatabase(final DataControl<T> pControl) {
         theControl = pControl;
     }
 

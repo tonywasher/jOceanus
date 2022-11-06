@@ -24,10 +24,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public abstract class PrometheusSheetStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
-        extends PrometheusSheetEncrypted<T, E> {
+public abstract class PrometheusSheetStaticData<T extends StaticData<T, ?>>
+        extends PrometheusSheetEncrypted<T> {
     /**
      * Enabled column.
      */
@@ -87,9 +86,9 @@ public abstract class PrometheusSheetStaticData<T extends StaticData<T, ?, E>, E
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
+    protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        final DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
         myValues.addValue(StaticData.FIELD_NAME, loadBytes(COL_NAME));

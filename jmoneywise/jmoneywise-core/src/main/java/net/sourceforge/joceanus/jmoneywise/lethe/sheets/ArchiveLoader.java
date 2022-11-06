@@ -727,7 +727,7 @@ public class ArchiveLoader {
         protected Transaction buildTransaction(final String pAmount,
                                                final boolean pReconciled) throws OceanusException {
             /* Build data values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Transaction.OBJECT_NAME);
+            final DataValues myValues = new DataValues(Transaction.OBJECT_NAME);
             myValues.addValue(Transaction.FIELD_DATE, theDate);
             myValues.addValue(Transaction.FIELD_CATEGORY, theCategory);
             myValues.addValue(Transaction.FIELD_PAIR, thePair);

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
@@ -36,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTransCategoryType
-        extends PrometheusSheetStaticData<TransactionCategoryType, MoneyWiseDataType> {
+        extends PrometheusSheetStaticData<TransactionCategoryType> {
 
     /**
      * NamedArea for Category Types.
@@ -70,7 +69,7 @@ public class SheetTransCategoryType
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(TransactionCategoryType.OBJECT_NAME);
     }

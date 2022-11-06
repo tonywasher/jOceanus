@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
+        extends StaticData<Frequency, FrequencyClass> {
     /**
      * Object name.
      */
@@ -86,7 +86,7 @@ public class Frequency
      * @throws OceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -168,7 +168,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
+            extends StaticList<Frequency, FrequencyClass> {
         /**
          * Report fields.
          */
@@ -178,7 +178,7 @@ public class Frequency
          * Construct an empty CORE frequency list.
          * @param pData the DataSet for the list
          */
-        public FrequencyList(final DataSet<?, ?> pData) {
+        public FrequencyList(final DataSet<?> pData) {
             super(Frequency.class, pData, MoneyWiseDataType.FREQUENCY, ListStyle.CORE);
         }
 
@@ -231,7 +231,7 @@ public class Frequency
          * @return the newly added item
          */
         @Override
-        public Frequency addCopyItem(final DataItem<?> pItem) {
+        public Frequency addCopyItem(final DataItem pItem) {
             /* Can only clone a Frequency */
             if (!(pItem instanceof Frequency)) {
                 throw new UnsupportedOperationException();
@@ -271,7 +271,7 @@ public class Frequency
         }
 
         @Override
-        public Frequency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Frequency addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the frequency */
             final Frequency myFreq = new Frequency(this, pValues);
 

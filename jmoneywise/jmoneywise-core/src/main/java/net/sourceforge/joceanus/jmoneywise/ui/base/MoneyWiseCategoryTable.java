@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * @param <S> the Static Data type
  * @param <C> the Static Data class
  */
-public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
+public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S extends StaticData<S, C>, C extends Enum<C> & CategoryInterface>
         extends MoneyWiseBaseTable<T> {
     /**
      * Filter Prompt.
@@ -86,7 +86,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pDataType the dataType
      */
     protected MoneyWiseCategoryTable(final MoneyWiseView pView,
-                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                     final UpdateSet pUpdateSet,
                                      final MetisErrorPanel pError,
                                      final Class<T> pClazz,
                                      final MoneyWiseDataType pDataType) {

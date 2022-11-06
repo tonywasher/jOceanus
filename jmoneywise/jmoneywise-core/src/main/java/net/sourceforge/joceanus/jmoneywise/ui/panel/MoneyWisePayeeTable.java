@@ -45,7 +45,7 @@ public class MoneyWisePayeeTable
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<PayeeInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<PayeeInfo> theInfoEntry;
 
     /**
      * The Payee dialog.
@@ -64,7 +64,7 @@ public class MoneyWisePayeeTable
      * @param pError the error panel
      */
     MoneyWisePayeeTable(final MoneyWiseView pView,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                        final UpdateSet pUpdateSet,
                         final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.PAYEE, PayeeType.class);

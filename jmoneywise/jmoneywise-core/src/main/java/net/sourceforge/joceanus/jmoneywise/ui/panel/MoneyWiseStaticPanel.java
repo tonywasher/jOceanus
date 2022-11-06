@@ -83,7 +83,7 @@ public class MoneyWiseStaticPanel
     /**
      * The UpdateSet associated with the panel.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The ViewerEntry.
@@ -153,7 +153,7 @@ public class MoneyWiseStaticPanel
         theEventManager = new TethysEventManager<>();
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet(theView);
 
         /* Create the top level viewer entry for this view */
         theViewerEntry = pView.getViewerEntry(PrometheusViewerEntryId.STATIC);
@@ -342,7 +342,7 @@ public class MoneyWiseStaticPanel
      * @param <S> the static class
      * @param <T> the data type
      */
-    private <L extends StaticList<T, S, MoneyWiseDataType>, T extends StaticData<T, S, MoneyWiseDataType>, S extends Enum<S> & StaticInterface> void addStatic(final MoneyWiseDataType pItemType,
+    private <L extends StaticList<T, S>, T extends StaticData<T, S>, S extends Enum<S> & StaticInterface> void addStatic(final MoneyWiseDataType pItemType,
                                                                                                                                                                final Class<L> pListClass) {
         /* Create the new panel */
         final MoneyWiseStaticTable<L, T, S> myPanel = new MoneyWiseStaticTable<>(theView, theUpdateSet, theError, pItemType, pListClass);
@@ -368,9 +368,9 @@ public class MoneyWiseStaticPanel
      * Select static data.
      * @param pStatic the static data to select
      */
-    public void selectStatic(final StaticData<?, ?, MoneyWiseDataType> pStatic) {
+    public void selectStatic(final StaticData<?, ?> pStatic) {
         /* Access the item type */
-        final MoneyWiseDataType myType = pStatic.getItemType();
+        final MoneyWiseDataType myType = (MoneyWiseDataType) pStatic.getItemType();
         final String myName = myType.getFieldName();
 
         /* Access the panel */

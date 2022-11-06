@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -34,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableCashCategory
-        extends PrometheusTableEncrypted<CashCategory, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<CashCategory> {
     /**
      * The name of the Category table.
      */
@@ -60,18 +59,18 @@ public class TableCashCategory
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getCashCategories());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(CashCategory.OBJECT_NAME);
+        final DataValues myValues = getRowValues(CashCategory.OBJECT_NAME);
         myValues.addValue(CashCategory.FIELD_CATTYPE, myTableDef.getIntegerValue(CashCategory.FIELD_CATTYPE));
         myValues.addValue(CashCategory.FIELD_PARENT, myTableDef.getIntegerValue(CashCategory.FIELD_PARENT));
         myValues.addValue(CashCategory.FIELD_NAME, myTableDef.getBinaryValue(CashCategory.FIELD_NAME));

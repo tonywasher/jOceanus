@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PayeeType data type.
  */
 public class PayeeType
-        extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
+        extends StaticData<PayeeType, PayeeTypeClass> {
     /**
      * Object name.
      */
@@ -87,7 +87,7 @@ public class PayeeType
      * @throws OceanusException on error
      */
     private PayeeType(final PayeeTypeList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -118,7 +118,7 @@ public class PayeeType
      * Represents a list of {@link PayeeType} objects.
      */
     public static class PayeeTypeList
-            extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
+            extends StaticList<PayeeType, PayeeTypeClass> {
         /**
          * Report fields.
          */
@@ -128,7 +128,7 @@ public class PayeeType
          * Construct an empty CORE payeeType list.
          * @param pData the DataSet for the list
          */
-        public PayeeTypeList(final DataSet<?, ?> pData) {
+        public PayeeTypeList(final DataSet<?> pData) {
             super(PayeeType.class, pData, MoneyWiseDataType.PAYEETYPE, ListStyle.CORE);
         }
 
@@ -168,7 +168,7 @@ public class PayeeType
         }
 
         @Override
-        public PayeeType addCopyItem(final DataItem<?> pItem) {
+        public PayeeType addCopyItem(final DataItem pItem) {
             /* Can only clone a PayeeType */
             if (!(pItem instanceof PayeeType)) {
                 throw new UnsupportedOperationException();
@@ -212,7 +212,7 @@ public class PayeeType
         }
 
         @Override
-        public PayeeType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PayeeType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final PayeeType myType = new PayeeType(this, pValues);
 

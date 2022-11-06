@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PortfolioType data type.
  */
 public class PortfolioType
-        extends StaticData<PortfolioType, PortfolioTypeClass, MoneyWiseDataType> {
+        extends StaticData<PortfolioType, PortfolioTypeClass> {
     /**
      * Object name.
      */
@@ -85,7 +85,7 @@ public class PortfolioType
      * @throws OceanusException on error
      */
     private PortfolioType(final PortfolioTypeList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                          final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -116,7 +116,7 @@ public class PortfolioType
      * Represents a list of {@link PortfolioType} objects.
      */
     public static class PortfolioTypeList
-            extends StaticList<PortfolioType, PortfolioTypeClass, MoneyWiseDataType> {
+            extends StaticList<PortfolioType, PortfolioTypeClass> {
         /**
          * Report fields.
          */
@@ -126,7 +126,7 @@ public class PortfolioType
          * Construct an empty CORE portfolioType list.
          * @param pData the DataSet for the list
          */
-        public PortfolioTypeList(final DataSet<?, ?> pData) {
+        public PortfolioTypeList(final DataSet<?> pData) {
             super(PortfolioType.class, pData, MoneyWiseDataType.PORTFOLIOTYPE, ListStyle.CORE);
         }
 
@@ -166,7 +166,7 @@ public class PortfolioType
         }
 
         @Override
-        public PortfolioType addCopyItem(final DataItem<?> pItem) {
+        public PortfolioType addCopyItem(final DataItem pItem) {
             /* Can only clone a PortfolioType */
             if (!(pItem instanceof PortfolioType)) {
                 throw new UnsupportedOperationException();
@@ -210,7 +210,7 @@ public class PortfolioType
         }
 
         @Override
-        public PortfolioType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PortfolioType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final PortfolioType myType = new PortfolioType(this, pValues);
 

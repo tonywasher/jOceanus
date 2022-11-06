@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashInfo
-        extends DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -89,7 +89,7 @@ public class CashInfo
      * @throws OceanusException on error
      */
     private CashInfo(final CashInfoList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                     final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -185,7 +185,7 @@ public class CashInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink();
+        final DataItem myItem = getLink();
         if (myItem instanceof Payee) {
             return ((Payee) myItem).getName();
         }
@@ -224,7 +224,7 @@ public class CashInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -306,7 +306,7 @@ public class CashInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from CashInfo */
         if (!(pInfo instanceof CashInfo)) {
             return false;
@@ -364,7 +364,7 @@ public class CashInfo
      * CashInfoList.
      */
     public static class CashInfoList
-            extends DataInfoList<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<CashInfo, Cash, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -424,7 +424,7 @@ public class CashInfo
         }
 
         @Override
-        public CashInfo addCopyItem(final DataItem<?> pItem) {
+        public CashInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a CashInfo */
             if (!(pItem instanceof CashInfo)) {
                 throw new UnsupportedOperationException();
@@ -471,7 +471,7 @@ public class CashInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pCash);
@@ -491,7 +491,7 @@ public class CashInfo
         }
 
         @Override
-        public CashInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public CashInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final CashInfo myInfo = new CashInfo(this, pValues);
 

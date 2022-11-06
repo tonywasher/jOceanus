@@ -85,7 +85,7 @@ public final class TransactionCategory
      * @throws OceanusException on error
      */
     private TransactionCategory(final TransactionCategoryList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                                final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -372,7 +372,7 @@ public final class TransactionCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pCategory) {
+    public boolean applyChanges(final DataItem pCategory) {
         /* Can only update from a transaction category */
         if (!(pCategory instanceof TransactionCategory)) {
             return false;
@@ -494,7 +494,7 @@ public final class TransactionCategory
          * @return the newly added item
          */
         @Override
-        public TransactionCategory addCopyItem(final DataItem<?> pCategory) {
+        public TransactionCategory addCopyItem(final DataItem pCategory) {
             /* Can only clone a TransactionCategory */
             if (!(pCategory instanceof TransactionCategory)) {
                 throw new UnsupportedOperationException();
@@ -550,7 +550,7 @@ public final class TransactionCategory
         }
 
         @Override
-        public TransactionCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionCategory addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the category */
             final TransactionCategory myCategory = new TransactionCategory(this, pValues);
 

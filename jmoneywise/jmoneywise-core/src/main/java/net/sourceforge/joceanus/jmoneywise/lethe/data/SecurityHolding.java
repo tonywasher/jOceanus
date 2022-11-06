@@ -288,7 +288,7 @@ public final class SecurityHolding
     }
 
     @Override
-    public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
+    public void touchItem(final DataItem pSource) {
         /* Touch references */
         thePortfolio.touchItem(pSource);
         theSecurity.touchItem(pSource);
@@ -395,7 +395,7 @@ public final class SecurityHolding
          * Constructor.
          * @param pUpdateSet the updateSet
          */
-        public SecurityHoldingMap(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        public SecurityHoldingMap(final UpdateSet pUpdateSet) {
             /* Access lists */
             thePortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
             theSecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);

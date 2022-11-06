@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class ControlData
-        extends DataItem<CryptographyDataType>
+        extends DataItem
         implements Comparable<ControlData> {
     /**
      * Object name.
@@ -88,7 +88,7 @@ public class ControlData
      * @throws OceanusException on error
      */
     private ControlData(final ControlDataList pList,
-                        final DataValues<CryptographyDataType> pValues) throws OceanusException {
+                        final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -108,7 +108,7 @@ public class ControlData
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
         }
     }
@@ -220,7 +220,7 @@ public class ControlData
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
     }
 
@@ -250,7 +250,7 @@ public class ControlData
      * Control Data List.
      */
     public static class ControlDataList
-            extends DataList<ControlData, CryptographyDataType> {
+            extends DataList<ControlData> {
         /**
          * Report fields.
          */
@@ -260,7 +260,7 @@ public class ControlData
          * Construct an empty CORE Control Data list.
          * @param pData the DataSet for the list
          */
-        protected ControlDataList(final DataSet<?, ?> pData) {
+        protected ControlDataList(final DataSet<?> pData) {
             this(pData, ListStyle.CORE);
         }
 
@@ -269,7 +269,7 @@ public class ControlData
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlDataList(final DataSet<?, ?> pData,
+        protected ControlDataList(final DataSet<?> pData,
                                   final ListStyle pStyle) {
             super(ControlData.class, pData, CryptographyDataType.CONTROLDATA, pStyle);
         }
@@ -325,13 +325,13 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                 final DataList<?, CryptographyDataType> pOld) {
+        public ControlDataList deriveDifferences(final DataSet<?> pDataSet,
+                                                 final DataList<?> pOld) {
             return (ControlDataList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
-        public ControlData addCopyItem(final DataItem<?> pItem) {
+        public ControlData addCopyItem(final DataItem pItem) {
             /* Can only clone a ControlData */
             if (!(pItem instanceof ControlData)) {
                 return null;
@@ -355,7 +355,7 @@ public class ControlData
          */
         public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
-            final DataValues<CryptographyDataType> myValues = new DataValues<>(ControlData.OBJECT_NAME);
+            final DataValues myValues = new DataValues(ControlData.OBJECT_NAME);
             myValues.addValue(FIELD_DATAVERSION, pVersion);
 
             /* Add the item */
@@ -363,7 +363,7 @@ public class ControlData
         }
 
         @Override
-        public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
+        public ControlData addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the controlData */
             final ControlData myControl = new ControlData(this, pValues);
 
@@ -387,7 +387,7 @@ public class ControlData
         }
 
         @Override
-        protected DataMapItem<ControlData, CryptographyDataType> allocateDataMap() {
+        protected DataMapItem<ControlData> allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

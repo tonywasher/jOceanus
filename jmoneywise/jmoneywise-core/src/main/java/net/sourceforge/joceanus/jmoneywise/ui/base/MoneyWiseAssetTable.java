@@ -84,7 +84,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pCategoryClass the class of the category type
      */
     protected MoneyWiseAssetTable(final MoneyWiseView pView,
-                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                  final UpdateSet pUpdateSet,
                                   final MetisErrorPanel pError,
                                   final MoneyWiseDataType pDataType,
                                   final Class<C> pCategoryClass) {

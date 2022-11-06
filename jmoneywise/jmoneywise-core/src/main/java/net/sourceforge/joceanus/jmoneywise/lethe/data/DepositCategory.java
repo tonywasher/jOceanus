@@ -76,7 +76,7 @@ public class DepositCategory
      * @throws OceanusException on error
      */
     private DepositCategory(final DepositCategoryList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -288,7 +288,7 @@ public class DepositCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pCategory) {
+    public boolean applyChanges(final DataItem pCategory) {
         /* Can only update from a deposit category */
         if (!(pCategory instanceof DepositCategory)) {
             return false;
@@ -395,7 +395,7 @@ public class DepositCategory
          * @return the newly added item
          */
         @Override
-        public DepositCategory addCopyItem(final DataItem<?> pCategory) {
+        public DepositCategory addCopyItem(final DataItem pCategory) {
             /* Can only clone a DepositCategory */
             if (!(pCategory instanceof DepositCategory)) {
                 throw new UnsupportedOperationException();
@@ -418,7 +418,7 @@ public class DepositCategory
         }
 
         @Override
-        public DepositCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public DepositCategory addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the category */
             final DepositCategory myCategory = new DepositCategory(this, pValues);
 

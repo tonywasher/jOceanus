@@ -28,14 +28,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Report-able error list.
- * @param <E> the data type enum class
  */
-public class DataErrorList<E extends Enum<E>>
-        implements MetisFieldItem, MetisDataList<DataItem<E>> {
+public class DataErrorList
+        implements MetisFieldItem, MetisDataList<DataItem> {
     /**
      * Report fields.
      */
-    @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<DataErrorList> FIELD_DEFS = MetisFieldSet.newFieldSet(DataErrorList.class);
 
     /*
@@ -48,7 +46,7 @@ public class DataErrorList<E extends Enum<E>>
     /**
      * The list.
      */
-    private final List<DataItem<E>> theList;
+    private final List<DataItem> theList;
 
     /**
      * Constructor.
@@ -57,7 +55,6 @@ public class DataErrorList<E extends Enum<E>>
         theList = new ArrayList<>();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public MetisFieldSet<DataErrorList> getDataFieldSet() {
         return FIELD_DEFS;
@@ -75,9 +72,9 @@ public class DataErrorList<E extends Enum<E>>
      * Add elements.
      * @param pValues the list of values to add
      */
-    public void addList(final DataErrorList<E> pValues) {
+    public void addList(final DataErrorList pValues) {
         /* Loop through the new values */
-        final Iterator<DataItem<E>> myIterator = pValues.iterator();
+        final Iterator<DataItem> myIterator = pValues.iterator();
         while (myIterator.hasNext()) {
             /* Add the value */
             theList.add(myIterator.next());
@@ -85,7 +82,7 @@ public class DataErrorList<E extends Enum<E>>
     }
 
     @Override
-    public List<DataItem<E>> getUnderlyingList() {
+    public List<DataItem> getUnderlyingList() {
         return theList;
     }
 

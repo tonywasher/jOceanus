@@ -16,20 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+
 /**
- * Interface for a Data Instance Map.
- * @author Tony Washer
- * @param <T> the data type
+ * ListKey.
  */
-public interface DataMapItem<T extends DataItem> {
+public interface PrometheusListKey {
     /**
-     * adjust maps for item.
-     * @param pItem the item to map
+     * Obtain the item key.
+     * @return the item key
      */
-    void adjustForItem(T pItem);
+    Integer getItemKey();
 
     /**
-     * Reset the map.
+     * Obtain the list name.
+     * @return the list name
      */
-    void resetMap();
+    String getListName();
+
+    /**
+     * Obtain the item name.
+     * @return the item name
+     */
+    String getItemName();
 }

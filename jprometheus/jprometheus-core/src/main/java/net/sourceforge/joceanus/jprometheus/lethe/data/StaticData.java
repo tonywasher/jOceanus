@@ -40,10 +40,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  * @param <T> the data type
  * @param <S> the static class
- * @param <E> the data type enum class
  */
-public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
-        extends EncryptedItem<E>
+public abstract class StaticData<T extends StaticData<T, S>, S extends Enum<S> & StaticInterface>
+        extends EncryptedItem
         implements Comparable<T>, MetisDataNamedItem {
     /**
      * Report fields.
@@ -95,7 +94,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pList The list to associate the Static Data with
      * @param pSource The static data to copy
      */
-    protected StaticData(final StaticList<T, S, E> pList,
+    protected StaticData(final StaticList<T, S> pList,
                          final T pSource) {
         super(pList, pSource);
         theEnumClass = pSource.getEnumClass();
@@ -108,7 +107,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValue the name of the new item
      * @throws OceanusException on error
      */
-    protected StaticData(final StaticList<T, S, E> pList,
+    protected StaticData(final StaticList<T, S> pList,
                          final String pValue) throws OceanusException {
         /* Call super constructor */
         super(pList, 0);
@@ -128,7 +127,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pClass the class of the new item
      * @throws OceanusException on error
      */
-    protected StaticData(final StaticList<T, S, E> pList,
+    protected StaticData(final StaticList<T, S> pList,
                          final S pClass) throws OceanusException {
         /* Call super constructor */
         super(pList, 0);
@@ -160,8 +159,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected StaticData(final StaticList<T, S, E> pList,
-                         final DataValues<E> pValues) throws OceanusException {
+    protected StaticData(final StaticList<T, S> pList,
+                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -534,10 +533,10 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     @Override
     public void validate() {
-        final StaticList<T, S, E> myList = getList();
+        final StaticList<T, S> myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();
-        final StaticDataMap<T, S, E> myMap = myList.getDataMap();
+        final StaticDataMap<T, S> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -585,8 +584,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     @Override
     @SuppressWarnings("unchecked")
-    public StaticList<T, S, E> getList() {
-        return (StaticList<T, S, E>) super.getList();
+    public StaticList<T, S> getList() {
+        return (StaticList<T, S>) super.getList();
     }
 
     /**
@@ -685,14 +684,14 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     @Override
-    public boolean applyChanges(final DataItem<?> pData) {
+    public boolean applyChanges(final DataItem pData) {
         /* Can only apply changes for Static Data */
         if (!(pData instanceof StaticData)) {
             return false;
         }
 
         /* Access the data */
-        final StaticData<?, ?, ?> myData = (StaticData<?, ?, ?>) pData;
+        final StaticData<?, ?> myData = (StaticData<?, ?>) pData;
 
         /* Store the current detail into history */
         pushHistory();
@@ -708,7 +707,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Apply basic changes.
      * @param pData the changed element
      */
-    protected void applyBasicChanges(final StaticData<?, ?, ?> pData) {
+    protected void applyBasicChanges(final StaticData<?, ?> pData) {
         /* Update the name if required */
         if (!MetisDataDifference.isEqual(getName(), pData.getName())) {
             setValueName(pData.getNameField());
@@ -732,8 +731,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     @Override
     public void adjustMapForItem() {
-        final StaticList<T, S, E> myList = getList();
-        final StaticDataMap<T, S, E> myMap = myList.getDataMap();
+        final StaticList<T, S> myList = getList();
+        final StaticDataMap<T, S> myMap = myList.getDataMap();
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
@@ -741,10 +740,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Represents a list of StaticData objects.
      * @param <T> the item type
      * @param <S> the static data class
-     * @param <E> the data type enum class
-     */
-    public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
-            extends EncryptedList<T, E> {
+      */
+    public abstract static class StaticList<T extends StaticData<T, S>, S extends Enum<S> & StaticInterface>
+            extends EncryptedList<T> {
         /*
          * Report fields.
          */
@@ -760,8 +758,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @param pStyle the style of the list
          */
         protected StaticList(final Class<T> pBaseClass,
-                             final DataSet<?, ?> pData,
-                             final E pItemType,
+                             final DataSet<?> pData,
+                             final PrometheusListKey pItemType,
                              final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }
@@ -770,7 +768,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected StaticList(final StaticList<T, S, E> pSource) {
+        protected StaticList(final StaticList<T, S> pSource) {
             super(pSource);
         }
 
@@ -782,8 +780,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
         @Override
         @SuppressWarnings("unchecked")
-        protected StaticDataMap<T, S, E> getDataMap() {
-            return (StaticDataMap<T, S, E>) super.getDataMap();
+        protected StaticDataMap<T, S> getDataMap() {
+            return (StaticDataMap<T, S>) super.getDataMap();
         }
 
         /**
@@ -896,7 +894,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         @Override
-        protected DataMapItem<T, E> allocateDataMap() {
+        protected DataMapItem<T> allocateDataMap() {
             return new StaticDataMap<>();
         }
     }
@@ -905,10 +903,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * The dataMap class.
      * @param <T> the item type
      * @param <S> the static data class
-     * @param <E> the data type enum class
      */
-    protected static class StaticDataMap<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
-            extends DataInstanceMap<T, E, String> {
+    protected static class StaticDataMap<T extends StaticData<T, S>, S extends Enum<S> & StaticInterface>
+            extends DataInstanceMap<T, String> {
         /**
          * Report fields.
          */

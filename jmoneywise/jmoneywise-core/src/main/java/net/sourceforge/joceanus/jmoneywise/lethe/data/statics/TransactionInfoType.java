@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfoType
-        extends StaticData<TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+        extends StaticData<TransactionInfoType, TransactionInfoClass> {
     /**
      * Object name.
      */
@@ -97,7 +97,7 @@ public class TransactionInfoType
      * @throws OceanusException on error
      */
     private TransactionInfoType(final TransactionInfoTypeList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                                final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -144,7 +144,7 @@ public class TransactionInfoType
      * Represents a list of {@link TransactionInfoType} objects.
      */
     public static class TransactionInfoTypeList
-            extends StaticList<TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+            extends StaticList<TransactionInfoType, TransactionInfoClass> {
         /**
          * Report fields.
          */
@@ -154,7 +154,7 @@ public class TransactionInfoType
          * Construct an empty CORE Info list.
          * @param pData the DataSet for the list
          */
-        public TransactionInfoTypeList(final DataSet<?, ?> pData) {
+        public TransactionInfoTypeList(final DataSet<?> pData) {
             super(TransactionInfoType.class, pData, MoneyWiseDataType.TRANSINFOTYPE, ListStyle.CORE);
         }
 
@@ -194,7 +194,7 @@ public class TransactionInfoType
         }
 
         @Override
-        public TransactionInfoType addCopyItem(final DataItem<?> pItem) {
+        public TransactionInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone a TransactioonInfoType */
             if (!(pItem instanceof TransactionInfoType)) {
                 throw new UnsupportedOperationException();
@@ -238,7 +238,7 @@ public class TransactionInfoType
         }
 
         @Override
-        public TransactionInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionInfoType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final TransactionInfoType myType = new TransactionInfoType(this, pValues);
 

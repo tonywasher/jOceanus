@@ -57,9 +57,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManage
  * Main window for application.
  *
  * @param <T> the data set type
- * @param <E> the data list enum class
  */
-public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends Enum<E>>
+public abstract class PrometheusMainWindow<T extends DataSet<T>>
         implements TethysUIMainPanel {
     /**
      * Logger.
@@ -89,7 +88,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * The data view.
      */
-    private DataControl<T, E> theView;
+    private DataControl<T> theView;
 
     /**
      * The panel.
@@ -121,7 +120,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      *
      * @return the data view
      */
-    public DataControl<T, E> getView() {
+    public DataControl<T> getView() {
         return theView;
     }
 
@@ -158,7 +157,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public void buildMainWindow(final DataControl<T, E> pView,
+    public void buildMainWindow(final DataControl<T> pView,
                                 final PrometheusToolkit pToolkit) throws OceanusException {
         /* Store the view */
         theView = pView;
@@ -384,7 +383,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void loadDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadLoadDatabase<T, E> myThread = new PrometheusThreadLoadDatabase<>(theView);
+        final PrometheusThreadLoadDatabase<T> myThread = new PrometheusThreadLoadDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -393,7 +392,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void storeDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadStoreDatabase<T, E> myThread = new PrometheusThreadStoreDatabase<>(theView);
+        final PrometheusThreadStoreDatabase<T> myThread = new PrometheusThreadStoreDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -402,7 +401,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadCreateDatabase<T, E> myThread = new PrometheusThreadCreateDatabase<>(theView);
+        final PrometheusThreadCreateDatabase<T> myThread = new PrometheusThreadCreateDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -411,7 +410,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void purgeDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadPurgeDatabase<T, E> myThread = new PrometheusThreadPurgeDatabase<>(theView);
+        final PrometheusThreadPurgeDatabase<T> myThread = new PrometheusThreadPurgeDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -454,7 +453,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void writeBackup() {
         /* Create the worker thread */
-        final PrometheusThreadCreateBackup<T, E> myThread = new PrometheusThreadCreateBackup<>(theView);
+        final PrometheusThreadCreateBackup<T> myThread = new PrometheusThreadCreateBackup<>(theView);
         startThread(myThread);
     }
 
@@ -463,7 +462,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void restoreBackup() {
         /* Create the worker thread */
-        final PrometheusThreadLoadBackup<T, E> myThread = new PrometheusThreadLoadBackup<>(theView);
+        final PrometheusThreadLoadBackup<T> myThread = new PrometheusThreadLoadBackup<>(theView);
         startThread(myThread);
     }
 
@@ -472,7 +471,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createXmlBackup() {
         /* Create the worker thread */
-        final PrometheusThreadCreateXmlFile<T, E> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
+        final PrometheusThreadCreateXmlFile<T> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
         startThread(myThread);
     }
 
@@ -481,7 +480,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createXmlXtract() {
         /* Create the worker thread */
-        final PrometheusThreadCreateXmlFile<T, E> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
+        final PrometheusThreadCreateXmlFile<T> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
         startThread(myThread);
     }
 
@@ -490,7 +489,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void loadXmlFile() {
         /* Create the worker thread */
-        final PrometheusThreadLoadXmlFile<T, E> myThread = new PrometheusThreadLoadXmlFile<>(theView);
+        final PrometheusThreadLoadXmlFile<T> myThread = new PrometheusThreadLoadXmlFile<>(theView);
         startThread(myThread);
     }
 
@@ -499,7 +498,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void updatePassword() {
         /* Create the worker thread */
-        final PrometheusThreadUpdatePassword<T, E> myThread = new PrometheusThreadUpdatePassword<>(theView);
+        final PrometheusThreadUpdatePassword<T> myThread = new PrometheusThreadUpdatePassword<>(theView);
         startThread(myThread);
     }
 
@@ -508,7 +507,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void reNewSecurity() {
         /* Create the worker thread */
-        final PrometheusThreadRenewSecurity<T, E> myThread = new PrometheusThreadRenewSecurity<>(theView);
+        final PrometheusThreadRenewSecurity<T> myThread = new PrometheusThreadRenewSecurity<>(theView);
         startThread(myThread);
     }
 

@@ -148,7 +148,7 @@ public class MoneyWiseAccountPanel
     /**
      * The UpdateSet.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The data entry.
@@ -191,7 +191,7 @@ public class MoneyWiseAccountPanel
         theEventManager = new TethysEventManager<>();
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet(pView);
 
         /* Create the Panel */
         final TethysUIPaneFactory myPanes = myFactory.paneFactory();

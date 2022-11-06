@@ -44,9 +44,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * SheetDataItem class for accessing a sheet that is related to a data type.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
+public abstract class PrometheusSheetDataItem<T extends DataItem & Comparable<? super T>> {
     /**
      * ID column.
      */
@@ -70,7 +69,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     /**
      * The DataList.
      */
-    private DataList<T, E> theList;
+    private DataList<T> theList;
 
     /**
      * The name of the related range.
@@ -150,7 +149,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      * Set the DataList.
      * @param pList the Data list
      */
-    protected void setDataList(final DataList<T, E> pList) {
+    protected void setDataList(final DataList<T> pList) {
         /* Store parameters */
         theList = pList;
     }
@@ -186,7 +185,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
                     theActiveRow = myIterator.next();
 
                     /* load the item */
-                    final DataValues<E> myValues = loadSecureValues();
+                    final DataValues myValues = loadSecureValues();
                     theLastItem = theList.addValuesItem(myValues);
 
                     /* Report the progress */
@@ -263,7 +262,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      * @return the secure values
      * @throws OceanusException on error
      */
-    protected abstract DataValues<E> loadSecureValues() throws OceanusException;
+    protected abstract DataValues loadSecureValues() throws OceanusException;
 
     /**
      * Insert secure item into spreadsheet.
@@ -814,9 +813,9 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      * @return the row values.
      * @throws OceanusException on error
      */
-    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
+    protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        final DataValues<E> myValues = new DataValues<>(pName);
+        final DataValues myValues = new DataValues(pName);
 
         /* Add the id and return the new values */
         myValues.addValue(DataItem.FIELD_ID, loadInteger(COL_ID));

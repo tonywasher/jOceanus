@@ -41,9 +41,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * interface means that this object can only be held in one list at a time and is unique within that
  * list
  * @see DataList
- * @param <E> the data type enum class
  */
-public abstract class DataItem<E extends Enum<E>>
+public abstract class DataItem
         implements PrometheusTableItem {
     /**
      * Report fields.
@@ -208,12 +207,12 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * The list to which this item belongs.
      */
-    private DataList<?, E> theList;
+    private DataList<?> theList;
 
     /**
      * The item that this DataItem is based upon.
      */
-    private DataItem<?> theBase;
+    private DataItem theBase;
 
     /**
      * The Edit state of this item {@link MetisDataEditState}.
@@ -243,14 +242,14 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Status.
      */
-    private final DataTouch<E> theTouchStatus;
+    private final DataTouch theTouchStatus;
 
     /**
      * Construct a new item.
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    protected DataItem(final DataList<?, E> pList,
+    protected DataItem(final DataList<?> pList,
                        final Integer uId) {
         /* Record list and item references */
         theId = uId;
@@ -276,10 +275,7 @@ public abstract class DataItem<E extends Enum<E>>
         pList.setNewId(this);
 
         /* Create the touch status */
-        @SuppressWarnings("unchecked")
-        final DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
-        final Class<E> myClass = myData.getEnumClass();
-        theTouchStatus = new DataTouch<>(myClass);
+        theTouchStatus = new DataTouch();
     }
 
     /**
@@ -287,8 +283,8 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pValues the data values
      */
-    protected DataItem(final DataList<?, E> pList,
-                       final DataValues<E> pValues) {
+    protected DataItem(final DataList<?> pList,
+                       final DataValues pValues) {
         /* Record list and item references */
         this(pList, pValues.getValue(FIELD_ID, Integer.class));
     }
@@ -298,8 +294,8 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
-    protected DataItem(final DataList<?, E> pList,
-                       final DataItem<E> pBase) {
+    protected DataItem(final DataList<?> pList,
+                       final DataItem pBase) {
         /* Initialise using standard constructor */
         this(pList, pBase.getId());
 
@@ -500,7 +496,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Obtain the list.
      * @return the list
      */
-    public DataList<?, E> getList() {
+    public DataList<?> getList() {
         return theList;
     }
 
@@ -508,7 +504,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Obtain the dataSet.
      * @return the dataSet
      */
-    public DataSet<?, ?> getDataSet() {
+    public DataSet<?> getDataSet() {
         return getTheDataSet();
     }
 
@@ -516,7 +512,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Obtain the dataSet.
      * @return the dataSet
      */
-    private DataSet<?, ?> getTheDataSet() {
+    private DataSet<?> getTheDataSet() {
         return theList.getDataSet();
     }
 
@@ -532,7 +528,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the type of the item.
      * @return the item type
      */
-    public E getItemType() {
+    public PrometheusListKey getItemType() {
         return theList.getItemType();
     }
 
@@ -563,7 +559,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Obtain the touchStatus.
      * @return the touch status
      */
-    public DataTouch<E> getTouchStatus() {
+    public DataTouch getTouchStatus() {
         return theTouchStatus;
     }
 
@@ -681,7 +677,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Clear the item touches.
      * @param pItemType the item type
      */
-    public void clearTouches(final E pItemType) {
+    public void clearTouches(final PrometheusListKey pItemType) {
         theTouchStatus.resetTouches(pItemType);
     }
 
@@ -689,7 +685,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Touch the item.
      * @param pObject object that references the item
      */
-    public void touchItem(final DataItem<E> pObject) {
+    public void touchItem(final DataItem pObject) {
         theTouchStatus.touchItem(pObject.getItemType());
     }
 
@@ -727,7 +723,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the base item for this item.
      * @return the Base item or <code>null</code>
      */
-    public DataItem<?> getBase() {
+    public DataItem getBase() {
         return theBase;
     }
 
@@ -735,7 +731,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Set the base item for this item.
      * @param pBase the Base item
      */
-    public void setBase(final DataItem<?> pBase) {
+    public void setBase(final DataItem pBase) {
         theBase = pBase;
     }
 
@@ -781,7 +777,7 @@ public abstract class DataItem<E extends Enum<E>>
      * the original values of the base.
      * @param pBase the base item
      */
-    public final void setHistory(final DataItem<?> pBase) {
+    public final void setHistory(final DataItem pBase) {
         theHistory.setHistory(pBase.getOriginalValues());
     }
 
@@ -944,7 +940,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Copy flags.
      * @param pItem the original item
      */
-    private void copyFlags(final DataItem<E> pItem) {
+    private void copyFlags(final DataItem pItem) {
         theTouchStatus.copyMap(pItem.theTouchStatus);
     }
 
@@ -962,7 +958,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @throws OceanusException on error
      */
     protected void resolveDataLink(final MetisLetheField pField,
-                                   final DataList<?, ?> pList) throws OceanusException {
+                                   final DataList<?> pList) throws OceanusException {
         /* Access the values */
         final MetisValueSet myValues = getValueSet();
 
@@ -971,12 +967,12 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Convert dataItem reference to Id */
         if (myValue instanceof DataItem) {
-            myValue = ((DataItem<?>) myValue).getId();
+            myValue = ((DataItem) myValue).getId();
         }
 
         /* Lookup Id reference */
         if (myValue instanceof Integer) {
-            final DataItem<?> myItem = pList.findItemById((Integer) myValue);
+            final DataItem myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pField);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -985,7 +981,7 @@ public abstract class DataItem<E extends Enum<E>>
 
             /* Lookup Name reference */
         } else if (myValue instanceof String) {
-            final DataItem<?> myItem = pList.findItemByName((String) myValue);
+            final DataItem myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pField);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -1019,7 +1015,7 @@ public abstract class DataItem<E extends Enum<E>>
         }
 
         /* Access the object as a DataItem */
-        final DataItem<?> myItem = (DataItem<?>) pThat;
+        final DataItem myItem = (DataItem) pThat;
 
         /* Check the id */
         if (compareId(myItem) != 0) {
@@ -1062,7 +1058,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pThat the DataItem to compare
      * @return the order
      */
-    protected int compareId(final DataItem<?> pThat) {
+    protected int compareId(final DataItem pThat) {
         return theId - pThat.theId;
     }
 
@@ -1071,7 +1067,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return the underlying state
      */
     protected MetisDataState getBaseState() {
-        final DataItem<?> myBase = getBase();
+        final DataItem myBase = getBase();
         return (myBase == null)
                                 ? MetisDataState.NOSTATE
                                 : myBase.getState();
@@ -1091,7 +1087,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pElement the changed element.
      * @return were changes made?
      */
-    public boolean applyChanges(final DataItem<?> pElement) {
+    public boolean applyChanges(final DataItem pElement) {
         return false;
     }
 

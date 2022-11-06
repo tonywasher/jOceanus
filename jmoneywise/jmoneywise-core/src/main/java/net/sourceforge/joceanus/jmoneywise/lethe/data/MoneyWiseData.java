@@ -67,6 +67,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoTyp
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -76,7 +77,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * MoneyWise dataSet.
  */
 public class MoneyWiseData
-        extends DataSet<MoneyWiseData, MoneyWiseDataType> {
+        extends DataSet<MoneyWiseData> {
     /**
      * Local Report fields.
      */
@@ -119,7 +120,7 @@ public class MoneyWiseData
     public MoneyWiseData(final PrometheusToolkit pUtilitySet,
                          final MoneyWiseTaxFactory pTaxFactory) {
         /* Call Super-constructor */
-        super(MoneyWiseDataType.class, pUtilitySet);
+        super(pUtilitySet);
 
         /* Record the tax factory */
         theTaxFactory = pTaxFactory;
@@ -524,7 +525,7 @@ public class MoneyWiseData
      * @param pListType the list type
      * @return the new list
      */
-    private DataList<?, MoneyWiseDataType> newList(final MoneyWiseDataType pListType) {
+    private DataList<?> newList(final MoneyWiseDataType pListType) {
         /* Switch on list Type */
         switch (pListType) {
             case DEPOSITTYPE:
@@ -659,12 +660,12 @@ public class MoneyWiseData
      */
     public void initialiseAnalysis() {
         /* Loop through the list types */
-        final Iterator<Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>>> myIterator = entryIterator();
+        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>> myEntry = myIterator.next();
+            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
 
             /* Prepare list for analysis */
-            final DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
+            final DataList<?> myList = myEntry.getValue();
             myList.prepareForAnalysis();
         }
     }

@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
+public abstract class PrometheusSheetWriter<T extends DataSet<T>> {
     /**
      * Gui Factory.
      */
@@ -67,7 +67,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
     /**
      * The WorkSheets.
      */
-    private List<PrometheusSheetDataItem<?, ?>> theSheets;
+    private List<PrometheusSheetDataItem<?>> theSheets;
 
     /**
      * Constructor.
@@ -108,7 +108,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * Add Sheet to list.
      * @param pSheet the sheet
      */
-    protected void addSheet(final PrometheusSheetDataItem<?, ?> pSheet) {
+    protected void addSheet(final PrometheusSheetDataItem<?> pSheet) {
         theSheets.add(pSheet);
     }
 
@@ -203,7 +203,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        for (PrometheusSheetDataItem<?, ?> mySheet : theSheets) {
+        for (PrometheusSheetDataItem<?> mySheet : theSheets) {
             /* Access the next sheet */
             /* Write data for the sheet */
             myTask.startTask(mySheet.toString());

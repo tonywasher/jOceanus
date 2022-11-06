@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
  * @author Tony Washer
  */
 public class PayeeInfoSet
-        extends DataInfoSet<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */

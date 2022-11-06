@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Portfolio
         extends AssetBase<Portfolio, PortfolioType>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -146,7 +146,7 @@ public class Portfolio
      * @throws OceanusException on error
      */
     private Portfolio(final PortfolioList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -507,7 +507,7 @@ public class Portfolio
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultPortfolioType());
@@ -521,7 +521,7 @@ public class Portfolio
      * @param pUpdateSet the update set
      * @return the default parent
      */
-    private static Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private static Payee getDefaultParent(final UpdateSet pUpdateSet) {
         /* loop through the payees */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         final Iterator<Payee> myIterator = myPayees.iterator();
@@ -601,7 +601,7 @@ public class Portfolio
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent/holding within list */
         final MoneyWiseData myData = getDataSet();
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -829,7 +829,7 @@ public class Portfolio
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pPortfolio) {
+    public boolean applyChanges(final DataItem pPortfolio) {
         /* Can only update from a portfolio */
         if (!(pPortfolio instanceof Portfolio)) {
             return false;
@@ -944,7 +944,7 @@ public class Portfolio
          * @return the edit list
          * @throws OceanusException on error
          */
-        public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+        public PortfolioList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final PortfolioList myList = getEmptyList(ListStyle.EDIT);
             final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -1004,7 +1004,7 @@ public class Portfolio
          * @return the newly added item
          */
         @Override
-        public Portfolio addCopyItem(final DataItem<?> pPortfolio) {
+        public Portfolio addCopyItem(final DataItem pPortfolio) {
             /* Can only clone a Portfolio */
             if (!(pPortfolio instanceof Portfolio)) {
                 throw new UnsupportedOperationException();
@@ -1037,7 +1037,7 @@ public class Portfolio
         }
 
         @Override
-        public Portfolio addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Portfolio addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the portfolio */
             final Portfolio myPortfolio = new Portfolio(this, pValues);
 
@@ -1053,12 +1053,12 @@ public class Portfolio
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPortfolio);
+                    final DataValues myValues = myItem.getValues(myPortfolio);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1092,7 +1092,7 @@ public class Portfolio
      * The dataMap class.
      */
     protected static class PortfolioDataMap
-            implements DataMapItem<Portfolio, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<Portfolio>, MetisFieldItem {
         /**
          * Report fields.
          */

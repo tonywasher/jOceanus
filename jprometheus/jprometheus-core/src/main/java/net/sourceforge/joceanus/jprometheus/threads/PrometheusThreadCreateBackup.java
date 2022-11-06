@@ -39,9 +39,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * Thread to create an encrypted backup of a data set.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadCreateBackup<T extends DataSet<T>>
         implements TethysUIThread<Void> {
     /**
      * Buffer length.
@@ -56,13 +55,13 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateBackup(final DataControl<T, E> pControl) {
+    public PrometheusThreadCreateBackup(final DataControl<T> pControl) {
         theControl = pControl;
     }
 
@@ -134,7 +133,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+            final DataSet<T> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

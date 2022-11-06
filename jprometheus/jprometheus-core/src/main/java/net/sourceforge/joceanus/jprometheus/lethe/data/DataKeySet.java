@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class DataKeySet
-        extends DataItem<CryptographyDataType>
+        extends DataItem
         implements Comparable<DataKeySet> {
     /**
      * Object name.
@@ -131,12 +131,12 @@ public class DataKeySet
      * @throws OceanusException on error
      */
     private DataKeySet(final DataKeySetList pList,
-                       final DataValues<CryptographyDataType> pValues) throws OceanusException {
+                       final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
         /* Access the Password manager */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         final GordianPasswordManager mySecure = myData.getPasswordMgr();
         final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -204,7 +204,7 @@ public class DataKeySet
             setValueControlKey(pControlKey);
 
             /* Access the Security manager */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final GordianPasswordManager mySecure = myData.getPasswordMgr();
             final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -414,7 +414,7 @@ public class DataKeySet
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
         final ControlKey myControlKey = getControlKey();
 
@@ -461,7 +461,7 @@ public class DataKeySet
      * DataKeySet List.
      */
     public static class DataKeySetList
-            extends DataList<DataKeySet, CryptographyDataType> {
+            extends DataList<DataKeySet> {
         /**
          * Report fields.
          */
@@ -471,7 +471,7 @@ public class DataKeySet
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
-        protected DataKeySetList(final DataSet<?, ?> pData) {
+        protected DataKeySetList(final DataSet<?> pData) {
             this(pData, ListStyle.CORE);
         }
 
@@ -480,7 +480,7 @@ public class DataKeySet
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected DataKeySetList(final DataSet<?, ?> pData,
+        protected DataKeySetList(final DataSet<?> pData,
                                  final ListStyle pStyle) {
             super(DataKeySet.class, pData, CryptographyDataType.DATAKEYSET, pStyle);
         }
@@ -526,13 +526,13 @@ public class DataKeySet
         }
 
         @Override
-        public DataKeySetList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                final DataList<?, CryptographyDataType> pOld) {
+        public DataKeySetList deriveDifferences(final DataSet<?> pDataSet,
+                                                final DataList<?> pOld) {
             return (DataKeySetList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
-        public DataKeySet addCopyItem(final DataItem<?> pItem) {
+        public DataKeySet addCopyItem(final DataItem pItem) {
             /* Can only clone a DataKeySet */
             if (!(pItem instanceof DataKeySet)) {
                 return null;
@@ -550,7 +550,7 @@ public class DataKeySet
         }
 
         @Override
-        public DataKeySet addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
+        public DataKeySet addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the dataKeySet */
             final DataKeySet mySet = new DataKeySet(this, pValues);
 
@@ -577,7 +577,7 @@ public class DataKeySet
         protected DataKeySet cloneDataKeySet(final ControlKey pControlKey,
                                              final DataKeySet pKeySet) throws OceanusException {
             /* Build data values */
-            final DataValues<CryptographyDataType> myValues = new DataValues<>(DataKeySet.OBJECT_NAME);
+            final DataValues myValues = new DataValues(DataKeySet.OBJECT_NAME);
             myValues.addValue(DataKeySet.FIELD_ID, pKeySet.getId());
             myValues.addValue(DataKeySet.FIELD_CONTROLKEY, pControlKey);
             myValues.addValue(DataKeySet.FIELD_HASHPRIME, pKeySet.isHashPrime());
@@ -595,7 +595,7 @@ public class DataKeySet
         }
 
         @Override
-        protected DataMapItem<DataKeySet, CryptographyDataType> allocateDataMap() {
+        protected DataMapItem<DataKeySet> allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

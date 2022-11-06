@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashCategoryType
-        extends StaticData<CashCategoryType, CashCategoryClass, MoneyWiseDataType> {
+        extends StaticData<CashCategoryType, CashCategoryClass> {
     /**
      * Object name.
      */
@@ -86,7 +86,7 @@ public class CashCategoryType
      * @throws OceanusException on error
      */
     private CashCategoryType(final CashCategoryTypeList pList,
-                             final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                             final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -127,7 +127,7 @@ public class CashCategoryType
      * Represents a list of {@link CashCategoryType} objects.
      */
     public static class CashCategoryTypeList
-            extends StaticList<CashCategoryType, CashCategoryClass, MoneyWiseDataType> {
+            extends StaticList<CashCategoryType, CashCategoryClass> {
         /**
          * Report fields.
          */
@@ -137,7 +137,7 @@ public class CashCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public CashCategoryTypeList(final DataSet<?, ?> pData) {
+        public CashCategoryTypeList(final DataSet<?> pData) {
             super(CashCategoryType.class, pData, MoneyWiseDataType.CASHTYPE, ListStyle.CORE);
         }
 
@@ -177,7 +177,7 @@ public class CashCategoryType
         }
 
         @Override
-        public CashCategoryType addCopyItem(final DataItem<?> pItem) {
+        public CashCategoryType addCopyItem(final DataItem pItem) {
             /* Can only clone a CashCategoryType */
             if (!(pItem instanceof CashCategoryType)) {
                 throw new UnsupportedOperationException();
@@ -221,7 +221,7 @@ public class CashCategoryType
         }
 
         @Override
-        public CashCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public CashCategoryType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final CashCategoryType myType = new CashCategoryType(this, pValues);
 

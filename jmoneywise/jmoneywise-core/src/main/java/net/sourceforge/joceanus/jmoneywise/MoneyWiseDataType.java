@@ -19,191 +19,198 @@ package net.sourceforge.joceanus.jmoneywise;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 
 /**
  * MoneyWise Item Types.
  */
 public enum MoneyWiseDataType
-        implements MetisLetheFieldEnum, MetisDataFieldId {
+        implements MetisLetheFieldEnum, MetisDataFieldId, PrometheusListKey {
     /**
      * DepositType.
      */
-    DEPOSITTYPE,
+    DEPOSITTYPE(CryptographyDataType.MAXKEYID + 1),
 
     /**
      * CashType.
      */
-    CASHTYPE,
+    CASHTYPE(CryptographyDataType.MAXKEYID + 2),
 
     /**
      * LoanType.
      */
-    LOANTYPE,
+    LOANTYPE(CryptographyDataType.MAXKEYID + 3),
 
     /**
      * PortfolioType.
      */
-    PORTFOLIOTYPE,
+    PORTFOLIOTYPE(CryptographyDataType.MAXKEYID + 4),
 
     /**
      * SecurityType.
      */
-    SECURITYTYPE,
+    SECURITYTYPE(CryptographyDataType.MAXKEYID + 5),
 
     /**
      * PayeeType.
      */
-    PAYEETYPE,
+    PAYEETYPE(CryptographyDataType.MAXKEYID + 6),
 
     /**
      * TransactionType.
      */
-    TRANSTYPE,
+    TRANSTYPE(CryptographyDataType.MAXKEYID + 7),
 
     /**
      * TaxBasis.
      */
-    TAXBASIS,
+    TAXBASIS(CryptographyDataType.MAXKEYID + 8),
 
     /**
      * Currency.
      */
-    CURRENCY,
+    CURRENCY(CryptographyDataType.MAXKEYID + 9),
 
     /**
      * Frequency.
      */
-    FREQUENCY,
+    FREQUENCY(CryptographyDataType.MAXKEYID + 10),
 
     /**
      * AccountInfoType.
      */
-    ACCOUNTINFOTYPE,
+    ACCOUNTINFOTYPE(CryptographyDataType.MAXKEYID + 11),
 
     /**
      * TransactionInfoType.
      */
-    TRANSINFOTYPE,
+    TRANSINFOTYPE(CryptographyDataType.MAXKEYID + 12),
 
     /**
      * TransactionTag.
      */
-    TRANSTAG,
+    TRANSTAG(CryptographyDataType.MAXKEYID + 13),
 
     /**
      * Region.
      */
-    REGION,
+    REGION(CryptographyDataType.MAXKEYID + 14),
 
     /**
      * DepositCategory.
      */
-    DEPOSITCATEGORY,
+    DEPOSITCATEGORY(CryptographyDataType.MAXKEYID + 15),
 
     /**
      * CashCategory.
      */
-    CASHCATEGORY,
+    CASHCATEGORY(CryptographyDataType.MAXKEYID + 16),
 
     /**
      * LoanCategory.
      */
-    LOANCATEGORY,
+    LOANCATEGORY(CryptographyDataType.MAXKEYID + 17),
 
     /**
      * TransactionCategory.
      */
-    TRANSCATEGORY,
+    TRANSCATEGORY(CryptographyDataType.MAXKEYID + 18),
 
     /**
      * ExchangeRate.
      */
-    EXCHANGERATE,
+    EXCHANGERATE(CryptographyDataType.MAXKEYID + 19),
 
     /**
      * Payee.
      */
-    PAYEE,
+    PAYEE(CryptographyDataType.MAXKEYID + 20),
 
     /**
      * PayeeInfo.
      */
-    PAYEEINFO,
+    PAYEEINFO(CryptographyDataType.MAXKEYID + 21),
 
     /**
      * Securities.
      */
-    SECURITY,
+    SECURITY(CryptographyDataType.MAXKEYID + 22),
 
     /**
      * SecurityInfo.
      */
-    SECURITYINFO,
+    SECURITYINFO(CryptographyDataType.MAXKEYID + 23),
 
     /**
      * SecurityPrice.
      */
-    SECURITYPRICE,
+    SECURITYPRICE(CryptographyDataType.MAXKEYID + 24),
 
     /**
      * Deposit.
      */
-    DEPOSIT,
+    DEPOSIT(CryptographyDataType.MAXKEYID + 25),
 
     /**
      * DepositInfo.
      */
-    DEPOSITINFO,
+    DEPOSITINFO(CryptographyDataType.MAXKEYID + 26),
 
     /**
      * DepositRate.
      */
-    DEPOSITRATE,
+    DEPOSITRATE(CryptographyDataType.MAXKEYID + 27),
 
     /**
      * Cash.
      */
-    CASH,
+    CASH(CryptographyDataType.MAXKEYID + 28),
 
     /**
      * CashInfo.
      */
-    CASHINFO,
+    CASHINFO(CryptographyDataType.MAXKEYID + 29),
 
     /**
      * Loan.
      */
-    LOAN,
+    LOAN(CryptographyDataType.MAXKEYID + 30),
 
     /**
      * LoanInfo.
      */
-    LOANINFO,
+    LOANINFO(CryptographyDataType.MAXKEYID + 31),
 
     /**
      * Portfolio.
      */
-    PORTFOLIO,
+    PORTFOLIO(CryptographyDataType.MAXKEYID + 32),
 
     /**
      * PortfolioInfo.
      */
-    PORTFOLIOINFO,
+    PORTFOLIOINFO(CryptographyDataType.MAXKEYID + 33),
 
     /**
      * Transaction.
      */
-    TRANSACTION,
+    TRANSACTION(CryptographyDataType.MAXKEYID + 34),
 
     /**
      * TransactionInfo.
      */
-    TRANSACTIONINFO,
+    TRANSACTIONINFO(CryptographyDataType.MAXKEYID + 35),
 
     /**
      * Schedule.
      */
-    SCHEDULE;
+    SCHEDULE(CryptographyDataType.MAXKEYID + 36);
+
+    /**
+     * The list key.
+     */
+    private final Integer theKey;
 
     /**
      * The String id.
@@ -214,6 +221,14 @@ public enum MoneyWiseDataType
      * The List id.
      */
     private MetisDataFieldId theListId;
+
+    /**
+     * Constructor.
+     * @param pKey the keyId
+     */
+    MoneyWiseDataType(final Integer pKey) {
+        theKey = pKey;
+    }
 
     @Override
     public String toString() {
@@ -240,6 +255,7 @@ public enum MoneyWiseDataType
      * Obtain Name of item.
      * @return the item name
      */
+    @Override
     public String getItemName() {
         return toString();
     }
@@ -259,10 +275,7 @@ public enum MoneyWiseDataType
         return theListId;
     }
 
-    /**
-     * Obtain Name of list for item.
-     * @return the list name
-     */
+    @Override
     public String getListName() {
         return getFieldName();
     }
@@ -275,5 +288,10 @@ public enum MoneyWiseDataType
     @Override
     public String getId() {
         return getItemName();
+    }
+
+    @Override
+    public Integer getItemKey() {
+        return theKey;
     }
 }

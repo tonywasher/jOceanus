@@ -25,10 +25,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Database table class for DataInfo Items. Each data type that represents DataInfo should extend
  * this class.
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
-        extends PrometheusTableEncrypted<T, E> {
+public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?>>
+        extends PrometheusTableEncrypted<T> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -66,9 +65,9 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?, E>,
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
+    protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        final DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues myValues = super.getRowValues(pName);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */

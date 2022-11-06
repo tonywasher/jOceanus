@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jprometheus.ui.panel;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
@@ -47,9 +48,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
  * Class to enable display/editing of and individual dataItem.
  * @param <T> the item type
  * @param <G> the goto id type
- * @param <E> the data type enum class
  */
-public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
+public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent, PrometheusItemEditParent {
     /**
      * Details Tab Title.
@@ -104,7 +104,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The Update Set.
      */
-    private final UpdateSet<E> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The ErrorPanel.
@@ -159,7 +159,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      */
     @SuppressWarnings("unchecked")
     protected PrometheusDataItemPanel(final TethysUIFactory<?> pFactory,
-                                      final UpdateSet<E> pUpdateSet,
+                                      final UpdateSet pUpdateSet,
                                       final MetisErrorPanel pError) {
         /* Store parameters */
         theFactory = pFactory;
@@ -255,7 +255,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Obtain the Update Set.
      * @return the UpdateSet
      */
-    protected UpdateSet<E> getUpdateSet() {
+    protected UpdateSet getUpdateSet() {
         return theUpdateSet;
     }
 
@@ -429,8 +429,8 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pClass the list class
      * @return the list
      */
-    public <L extends DataList<X, E>, X extends DataItem<E> & Comparable<? super X>> L getDataList(final E pDataType,
-                                                                                                   final Class<L> pClass) {
+    public <L extends DataList<X>, X extends DataItem & Comparable<? super X>> L getDataList(final PrometheusListKey pDataType,
+                                                                                             final Class<L> pClass) {
         /* Look up the base list */
         return theUpdateSet.getDataList(pDataType, pClass);
     }

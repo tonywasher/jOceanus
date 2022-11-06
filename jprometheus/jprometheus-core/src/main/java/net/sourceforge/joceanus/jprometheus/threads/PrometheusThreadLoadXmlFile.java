@@ -36,9 +36,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * LoaderThread extension to load an XML backup.
  * @param <T> the DataSet type
- * @param <E> the Data list type
  */
-public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadLoadXmlFile<T extends DataSet<T>>
         implements TethysUIThread<T> {
     /**
      * Select Backup Task.
@@ -48,13 +47,13 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     /**
      * Data control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadXmlFile(final DataControl<T, E> pControl) {
+    public PrometheusThreadLoadXmlFile(final DataControl<T> pControl) {
         theControl = pControl;
     }
 
@@ -93,7 +92,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         }
 
         /* Create a new formatter */
-        final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
+        final DataValuesFormatter<T> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
 
         /* Load data */
         final T myNewData = theControl.getNewData();

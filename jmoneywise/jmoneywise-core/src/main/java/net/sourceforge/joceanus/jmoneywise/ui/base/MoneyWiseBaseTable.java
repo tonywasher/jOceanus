@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Base Table.
  * @param <T> the data type
  */
-public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
+public abstract class MoneyWiseBaseTable<T extends DataItem & Comparable<? super T>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * The logger.
@@ -134,12 +134,12 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     /**
      * The UpdateSet associated with the table.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The UpdateEntry.
      */
-    private final UpdateEntry<T, MoneyWiseDataType> theUpdateEntry;
+    private final UpdateEntry<T> theUpdateEntry;
 
     /**
      * The error panel.
@@ -174,7 +174,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pDataType the dataType
      */
     protected MoneyWiseBaseTable(final MoneyWiseView pView,
-                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                 final UpdateSet pUpdateSet,
                                  final MetisErrorPanel pError,
                                  final MoneyWiseDataType pDataType) {
         /* Store parameters */
@@ -273,7 +273,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the updateSet.
      * @return the set
      */
-    protected UpdateSet<MoneyWiseDataType> getUpdateSet() {
+    protected UpdateSet getUpdateSet() {
         return theUpdateSet;
     }
 
@@ -281,7 +281,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the updateEntry.
      * @return the entry
      */
-    protected UpdateEntry<T, MoneyWiseDataType> getUpdateEntry() {
+    protected UpdateEntry<T> getUpdateEntry() {
         return theUpdateEntry;
     }
 

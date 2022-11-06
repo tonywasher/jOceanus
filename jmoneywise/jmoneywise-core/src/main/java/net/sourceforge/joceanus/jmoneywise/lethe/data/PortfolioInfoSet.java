@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
  * @author Tony Washer
  */
 public class PortfolioInfoSet
-        extends DataInfoSet<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */

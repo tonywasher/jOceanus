@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class LoanInfoSet
-        extends DataInfoSet<LoanInfo, Loan, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<LoanInfo, Loan, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */

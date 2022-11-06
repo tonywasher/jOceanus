@@ -42,9 +42,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 /**
  * Provides top-level control of data.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
+public abstract class DataControl<T extends DataSet<T>>
         implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * The Event Manager.

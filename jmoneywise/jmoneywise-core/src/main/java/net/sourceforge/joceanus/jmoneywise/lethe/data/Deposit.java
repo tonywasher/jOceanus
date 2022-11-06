@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Deposit
         extends AssetBase<Deposit, DepositCategory>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -137,7 +137,7 @@ public class Deposit
      * @throws OceanusException on error
      */
     private Deposit(final DepositList pList,
-                    final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                    final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -471,7 +471,7 @@ public class Deposit
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
@@ -485,7 +485,7 @@ public class Deposit
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void autoCorrect(final UpdateSet pUpdateSet) throws OceanusException {
         /* Access category class */
         final DepositCategoryClass myClass = getCategoryClass();
         final Payee myParent = getParent();
@@ -537,7 +537,7 @@ public class Deposit
      * @param pUpdateSet the update set
      * @return the default parent
      */
-    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private Payee getDefaultParent(final UpdateSet pUpdateSet) {
         /* Access details */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         final DepositCategoryClass myClass = getCategoryClass();
@@ -602,7 +602,7 @@ public class Deposit
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -805,7 +805,7 @@ public class Deposit
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pDeposit) {
+    public boolean applyChanges(final DataItem pDeposit) {
         /* Can only update from a deposit */
         if (!(pDeposit instanceof Deposit)) {
             return false;
@@ -920,7 +920,7 @@ public class Deposit
          * @return the edit list
          * @throws OceanusException on error
          */
-        public DepositList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+        public DepositList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final DepositList myList = getEmptyList(ListStyle.EDIT);
             final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -975,7 +975,7 @@ public class Deposit
         }
 
         @Override
-        public Deposit addCopyItem(final DataItem<?> pDeposit) {
+        public Deposit addCopyItem(final DataItem pDeposit) {
             /* Can only clone a Deposit */
             if (!(pDeposit instanceof Deposit)) {
                 throw new UnsupportedOperationException();
@@ -994,7 +994,7 @@ public class Deposit
         }
 
         @Override
-        public Deposit addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Deposit addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the deposit */
             final Deposit myDeposit = new Deposit(this, pValues);
 
@@ -1010,12 +1010,12 @@ public class Deposit
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myDeposit);
+                    final DataValues myValues = myItem.getValues(myDeposit);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1075,7 +1075,7 @@ public class Deposit
      * The dataMap class.
      */
     protected static class DepositDataMap
-            implements DataMapItem<Deposit, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<Deposit>, MetisFieldItem {
         /**
          * Report fields.
          */

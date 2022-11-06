@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class CashInfoSet
-        extends DataInfoSet<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<CashInfo, Cash, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */
@@ -317,7 +317,7 @@ public class CashInfoSet
     }
 
     @Override
-    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
+    protected void setDefaultValue(final DataListSet pUpdateSet,
                                    final AccountInfoClass pClass) throws OceanusException {
         /* Switch on the class */
         switch (pClass) {
@@ -337,7 +337,7 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default expense
      */
-    private static TransactionCategory getDefaultAutoExpense(final DataListSet<MoneyWiseDataType> pUpdateSet) {
+    private static TransactionCategory getDefaultAutoExpense(final DataListSet pUpdateSet) {
         /* Access the category list */
         final TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
@@ -367,7 +367,7 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default payee
      */
-    private static Payee getDefaultAutoPayee(final DataListSet<MoneyWiseDataType> pUpdateSet) {
+    private static Payee getDefaultAutoPayee(final DataListSet pUpdateSet) {
         /* Access the payee list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 

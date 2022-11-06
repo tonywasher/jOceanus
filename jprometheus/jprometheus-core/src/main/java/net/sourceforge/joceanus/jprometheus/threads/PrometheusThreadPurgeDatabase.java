@@ -27,20 +27,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be
  * marked as new so that it will be written to the database via the store command.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadPurgeDatabase<T extends DataSet<T>>
         implements TethysUIThread<Void> {
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadPurgeDatabase(final DataControl<T, E> pControl) {
+    public PrometheusThreadPurgeDatabase(final DataControl<T> pControl) {
         theControl = pControl;
     }
 

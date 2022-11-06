@@ -63,7 +63,7 @@ public class MoneyWiseTransCategoryTable
      * @param pError the error panel
      */
     MoneyWiseTransCategoryTable(final MoneyWiseView pView,
-                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                final UpdateSet pUpdateSet,
                                 final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, TransactionCategory.class, MoneyWiseDataType.TRANSCATEGORY);

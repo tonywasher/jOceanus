@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -44,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTransaction
-        extends PrometheusSheetEncrypted<Transaction, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Transaction> {
     /**
      * NamedArea for Transactions.
      */
@@ -112,9 +111,9 @@ public class SheetTransaction
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Transaction.OBJECT_NAME);
         myValues.addValue(Transaction.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Transaction.FIELD_PAIR, loadInteger(COL_PAIR));
         myValues.addValue(Transaction.FIELD_CATEGORY, loadInteger(COL_CATEGORY));

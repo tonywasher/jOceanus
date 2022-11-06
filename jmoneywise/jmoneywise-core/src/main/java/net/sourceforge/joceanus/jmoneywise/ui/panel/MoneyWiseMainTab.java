@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -56,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.Tethy
  * Main Window for MoneyWise.
  */
 public class MoneyWiseMainTab
-        extends PrometheusMainWindow<MoneyWiseData, MoneyWiseDataType>
+        extends PrometheusMainWindow<MoneyWiseData>
         implements TethysUIMainPanel {
     /**
      * Report tab title.

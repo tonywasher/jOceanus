@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends StaticData<AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -107,7 +107,7 @@ public class AccountInfoType
      * @throws OceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                            final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -154,7 +154,7 @@ public class AccountInfoType
      * Represents a list of {@link AccountInfoType} objects.
      */
     public static class AccountInfoTypeList
-            extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends StaticList<AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -164,7 +164,7 @@ public class AccountInfoType
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public AccountInfoTypeList(final DataSet<?, ?> pData) {
+        public AccountInfoTypeList(final DataSet<?> pData) {
             super(AccountInfoType.class, pData, MoneyWiseDataType.ACCOUNTINFOTYPE, ListStyle.CORE);
         }
 
@@ -204,7 +204,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoType addCopyItem(final DataItem<?> pItem) {
+        public AccountInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone an AccountInfoType */
             if (!(pItem instanceof AccountInfoType)) {
                 throw new UnsupportedOperationException();
@@ -248,7 +248,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public AccountInfoType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final AccountInfoType myType = new AccountInfoType(this, pValues);
 

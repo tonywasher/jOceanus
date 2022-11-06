@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+        extends StaticData<SecurityType, SecurityTypeClass> {
     /**
      * Object name.
      */
@@ -90,7 +90,7 @@ public class SecurityType
      * @throws OceanusException on error
      */
     private SecurityType(final SecurityTypeList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -121,7 +121,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+            extends StaticList<SecurityType, SecurityTypeClass> {
         /**
          * Report fields.
          */
@@ -131,7 +131,7 @@ public class SecurityType
          * Construct an empty CORE securityType list.
          * @param pData the DataSet for the list
          */
-        public SecurityTypeList(final DataSet<?, ?> pData) {
+        public SecurityTypeList(final DataSet<?> pData) {
             super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
         }
 
@@ -171,7 +171,7 @@ public class SecurityType
         }
 
         @Override
-        public SecurityType addCopyItem(final DataItem<?> pItem) {
+        public SecurityType addCopyItem(final DataItem pItem) {
             /* Can only clone a SecurityType */
             if (!(pItem instanceof SecurityType)) {
                 throw new UnsupportedOperationException();
@@ -215,7 +215,7 @@ public class SecurityType
         }
 
         @Override
-        public SecurityType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public SecurityType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final SecurityType myType = new SecurityType(this, pValues);
 

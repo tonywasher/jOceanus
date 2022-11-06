@@ -38,9 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
  * @param <T> the DataType
- * @param <E> the data type enum class
  */
-public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
+public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? super T>> {
     /**
      * The Database control.
      */
@@ -54,7 +53,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
     /**
      * The list of items for this table.
      */
-    private DataList<T, E> theList;
+    private DataList<T> theList;
 
     /**
      * The prepared statement.
@@ -246,13 +245,13 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * Declare DataSet.
      * @param pData the Data set
      */
-    protected abstract void declareData(DataSet<?, ?> pData);
+    protected abstract void declareData(DataSet<?> pData);
 
     /**
      * Set the list of items.
      * @param pList the list of items
      */
-    protected void setList(final DataList<T, E> pList) {
+    protected void setList(final DataList<T> pList) {
         theList = pList;
     }
 
@@ -260,7 +259,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * Obtain the list of items.
      * @return the list of items
      */
-    protected DataList<T, E> getList() {
+    protected DataList<T> getList() {
         return theList;
     }
 
@@ -269,7 +268,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @return the values for the row
      * @throws OceanusException on error
      */
-    protected abstract DataValues<E> loadValues() throws OceanusException;
+    protected abstract DataValues loadValues() throws OceanusException;
 
     /**
      * Set a field value for an item.
@@ -301,7 +300,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws OceanusException on error
      */
     protected void loadItems(final TethysUIThreadStatusReport pReport,
-                             final DataSet<?, ?> pData) throws OceanusException {
+                             final DataSet<?> pData) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage(getTableName());
 
@@ -376,7 +375,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws OceanusException on error
      */
     protected void insertItems(final TethysUIThreadStatusReport pReport,
-                               final DataSet<?, ?> pData,
+                               final DataSet<?> pData,
                                final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Inserting " + getTableName());
@@ -696,9 +695,9 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @return the row values.
      * @throws OceanusException on error
      */
-    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
+    protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        final DataValues<E> myValues = new DataValues<>(pName);
+        final DataValues myValues = new DataValues(pName);
 
         /* Add the id and return the new values */
         myValues.addValue(DataItem.FIELD_ID, theTable.getIntegerValue(DataItem.FIELD_ID));

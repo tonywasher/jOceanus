@@ -87,7 +87,7 @@ public class MoneyWiseSpotPricesTable
      * @param pError the error panel
      */
     MoneyWiseSpotPricesTable(final MoneyWiseView pView,
-                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final UpdateSet pUpdateSet,
                              final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITYPRICE);
@@ -309,7 +309,7 @@ public class MoneyWiseSpotPricesTable
         /**
          * The updateSet.
          */
-        private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+        private final UpdateSet theUpdateSet;
 
         /**
          * The error panel.
@@ -343,7 +343,7 @@ public class MoneyWiseSpotPricesTable
          */
         public MoneyWiseSpotPricesPanel(final MoneyWiseView pView) {
             /* Build the Update set and entry */
-            theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
+            theUpdateSet = new UpdateSet(pView);
 
             /* Create the event manager */
             theEventManager = new TethysEventManager<>();

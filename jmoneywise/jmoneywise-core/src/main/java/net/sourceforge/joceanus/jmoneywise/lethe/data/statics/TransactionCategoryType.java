@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionCategoryType
-        extends StaticData<TransactionCategoryType, TransactionCategoryClass, MoneyWiseDataType> {
+        extends StaticData<TransactionCategoryType, TransactionCategoryClass> {
     /**
      * Object name.
      */
@@ -86,7 +86,7 @@ public class TransactionCategoryType
      * @throws OceanusException on error
      */
     private TransactionCategoryType(final TransactionCategoryTypeList pList,
-                                    final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                                    final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -122,7 +122,7 @@ public class TransactionCategoryType
      * Represents a list of {@link TransactionCategoryType} objects.
      */
     public static class TransactionCategoryTypeList
-            extends StaticList<TransactionCategoryType, TransactionCategoryClass, MoneyWiseDataType> {
+            extends StaticList<TransactionCategoryType, TransactionCategoryClass> {
         /**
          * Report fields.
          */
@@ -132,7 +132,7 @@ public class TransactionCategoryType
          * Construct an empty CORE category type list.
          * @param pData the DataSet for the list
          */
-        public TransactionCategoryTypeList(final DataSet<?, ?> pData) {
+        public TransactionCategoryTypeList(final DataSet<?> pData) {
             super(TransactionCategoryType.class, pData, MoneyWiseDataType.TRANSTYPE, ListStyle.CORE);
         }
 
@@ -177,7 +177,7 @@ public class TransactionCategoryType
          * @return the newly added item
          */
         @Override
-        public TransactionCategoryType addCopyItem(final DataItem<?> pItem) {
+        public TransactionCategoryType addCopyItem(final DataItem pItem) {
             /* Can only clone a TransactionCategoryType */
             if (!(pItem instanceof TransactionCategoryType)) {
                 throw new UnsupportedOperationException();
@@ -225,7 +225,7 @@ public class TransactionCategoryType
         }
 
         @Override
-        public TransactionCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionCategoryType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final TransactionCategoryType myType = new TransactionCategoryType(this, pValues);
 

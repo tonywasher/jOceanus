@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class DepositRate
-        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem
         implements Comparable<DepositRate> {
     /**
      * Object name.
@@ -122,7 +122,7 @@ public class DepositRate
      * @throws OceanusException on error
      */
     private DepositRate(final DepositRateList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                        final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -571,7 +571,7 @@ public class DepositRate
      * @param pUpdateSet the update Set
      * @throws OceanusException on error
      */
-    private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    private void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
         resolveDataLink(FIELD_DEPOSIT, myDeposits);
@@ -672,7 +672,7 @@ public class DepositRate
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pRate) {
+    public boolean applyChanges(final DataItem pRate) {
         /* Can only update from an DepositRate */
         if (!(pRate instanceof DepositRate)) {
             return false;
@@ -712,7 +712,7 @@ public class DepositRate
      * List class.
      */
     public static class DepositRateList
-            extends EncryptedList<DepositRate, MoneyWiseDataType> {
+            extends EncryptedList<DepositRate> {
         /**
          * Report fields.
          */
@@ -772,7 +772,7 @@ public class DepositRate
          * @return the edit list
          * @throws OceanusException on error
          */
-        public DepositRateList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+        public DepositRateList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final DepositRateList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -801,7 +801,7 @@ public class DepositRate
          * @return the newly added item
          */
         @Override
-        public DepositRate addCopyItem(final DataItem<?> pRate) {
+        public DepositRate addCopyItem(final DataItem pRate) {
             /* Can only clone a DepositRate */
             if (!(pRate instanceof DepositRate)) {
                 throw new UnsupportedOperationException();
@@ -824,7 +824,7 @@ public class DepositRate
         }
 
         @Override
-        public DepositRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public DepositRate addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the rate */
             final DepositRate myRate = new DepositRate(this, pValues);
 
@@ -851,7 +851,7 @@ public class DepositRate
      * The dataMap class.
      */
     public static class DepositRateDataMap
-            implements DataMapItem<DepositRate, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<DepositRate>, MetisFieldItem {
         /**
          * Report fields.
          */

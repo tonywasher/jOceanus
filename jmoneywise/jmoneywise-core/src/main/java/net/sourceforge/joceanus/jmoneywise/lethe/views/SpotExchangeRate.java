@@ -389,7 +389,7 @@ public final class SpotExchangeRate
 
         /* Disable Add a new item */
         @Override
-        public SpotExchangeRate addCopyItem(final DataItem<?> pElement) {
+        public SpotExchangeRate addCopyItem(final DataItem pElement) {
             throw new UnsupportedOperationException();
         }
 
@@ -399,7 +399,7 @@ public final class SpotExchangeRate
         }
 
         @Override
-        public SpotExchangeRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
+        public SpotExchangeRate addValuesItem(final DataValues pValues) {
             throw new UnsupportedOperationException();
         }
     }

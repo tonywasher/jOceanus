@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -31,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * TableEncrypted extension Region.
  */
 public class TableRegion
-        extends PrometheusTableEncrypted<Region, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<Region> {
     /**
      * The name of the region table.
      */
@@ -51,18 +50,18 @@ public class TableRegion
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getRegions());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Region.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Region.OBJECT_NAME);
         myValues.addValue(Region.FIELD_NAME, myTableDef.getBinaryValue(Region.FIELD_NAME));
         myValues.addValue(Region.FIELD_DESC, myTableDef.getBinaryValue(Region.FIELD_DESC));
 

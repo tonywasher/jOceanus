@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
+        extends StaticData<TaxBasis, TaxBasisClass> {
     /**
      * Object name.
      */
@@ -86,7 +86,7 @@ public class TaxBasis
      * @throws OceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                     final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -131,7 +131,7 @@ public class TaxBasis
      * Represents a list of {@link TaxBasis} objects.
      */
     public static class TaxBasisList
-            extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
+            extends StaticList<TaxBasis, TaxBasisClass> {
         /**
          * Report fields.
          */
@@ -141,7 +141,7 @@ public class TaxBasis
          * Construct an empty CORE tax bucket list.
          * @param pData the DataSet for the list
          */
-        public TaxBasisList(final DataSet<?, ?> pData) {
+        public TaxBasisList(final DataSet<?> pData) {
             super(TaxBasis.class, pData, MoneyWiseDataType.TAXBASIS, ListStyle.CORE);
         }
 
@@ -186,7 +186,7 @@ public class TaxBasis
          * @return the newly added item
          */
         @Override
-        public TaxBasis addCopyItem(final DataItem<?> pItem) {
+        public TaxBasis addCopyItem(final DataItem pItem) {
             /* Can only clone a TaxBasis */
             if (!(pItem instanceof TaxBasis)) {
                 throw new UnsupportedOperationException();
@@ -234,7 +234,7 @@ public class TaxBasis
         }
 
         @Override
-        public TaxBasis addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TaxBasis addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the basis */
             final TaxBasis myBasis = new TaxBasis(this, pValues);
 

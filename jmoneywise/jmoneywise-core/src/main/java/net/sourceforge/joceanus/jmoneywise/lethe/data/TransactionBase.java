@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the transaction data type
  */
 public abstract class TransactionBase<T extends TransactionBase<T>>
-        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem
         implements Comparable<T> {
     /**
      * Object name.
@@ -140,7 +140,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @throws OceanusException on error
      */
     protected TransactionBase(final TransactionBaseList<T> pList,
-                              final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                              final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -1045,7 +1045,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param <T> the dataType
      */
     public abstract static class TransactionBaseList<T extends TransactionBase<T>>
-            extends EncryptedList<T, MoneyWiseDataType> {
+            extends EncryptedList<T> {
         /*
          * Report fields.
          */

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PayeeInfo
-        extends DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -87,7 +87,7 @@ public class PayeeInfo
      * @throws OceanusException on error
      */
     private PayeeInfo(final PayeeInfoList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -169,7 +169,7 @@ public class PayeeInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -215,7 +215,7 @@ public class PayeeInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from PayeeInfo */
         if (!(pInfo instanceof PayeeInfo)) {
             return false;
@@ -240,7 +240,7 @@ public class PayeeInfo
      * PayeeInfoList.
      */
     public static class PayeeInfoList
-            extends DataInfoList<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -300,7 +300,7 @@ public class PayeeInfo
         }
 
         @Override
-        public PayeeInfo addCopyItem(final DataItem<?> pItem) {
+        public PayeeInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a PayeeInfo */
             if (!(pItem instanceof PayeeInfo)) {
                 throw new UnsupportedOperationException();
@@ -347,7 +347,7 @@ public class PayeeInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(PayeeInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(PayeeInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pPayee);
@@ -367,7 +367,7 @@ public class PayeeInfo
         }
 
         @Override
-        public PayeeInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PayeeInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final PayeeInfo myInfo = new PayeeInfo(this, pValues);
 

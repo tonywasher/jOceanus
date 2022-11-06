@@ -68,7 +68,7 @@ public class MoneyWiseTransTagTable
      * @param pError the error panel
      */
     MoneyWiseTransTagTable(final MoneyWiseView pView,
-                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                           final UpdateSet pUpdateSet,
                            final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.TRANSTAG);

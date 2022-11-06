@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
  * @author Tony Washer
  */
 public class SecurityInfoSet
-        extends DataInfoSet<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<SecurityInfo, Security, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */

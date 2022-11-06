@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.database;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Database table class for ControlKey.
  */
 public class PrometheusTableDataKeySet
-        extends PrometheusTableDataItem<DataKeySet, CryptographyDataType> {
+        extends PrometheusTableDataItem<DataKeySet> {
     /**
      * The name of the DataKeySet table.
      */
@@ -49,17 +48,17 @@ public class PrometheusTableDataKeySet
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         setList(pData.getDataKeySets());
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
+        final DataValues myValues = getRowValues(DataKeySet.OBJECT_NAME);
         myValues.addValue(DataKeySet.FIELD_CONTROLKEY, myTableDef.getIntegerValue(DataKeySet.FIELD_CONTROLKEY));
         myValues.addValue(DataKeySet.FIELD_CREATEDATE, myTableDef.getDateValue(DataKeySet.FIELD_CREATEDATE));
         myValues.addValue(DataKeySet.FIELD_HASHPRIME, myTableDef.getBooleanValue(DataKeySet.FIELD_HASHPRIME));

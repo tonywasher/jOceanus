@@ -37,9 +37,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * LoaderThread extension to create an XML backup.
  * @param <T> the DataSet type
- * @param <E> the Data list type
  */
-public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
         implements TethysUIThread<Void> {
     /**
      * Buffer length.
@@ -59,7 +58,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Is this a Secure backup?
@@ -71,7 +70,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
      * @param pControl data control
      * @param pSecure is this a secure backup
      */
-    public PrometheusThreadCreateXmlFile(final DataControl<T, E> pControl,
+    public PrometheusThreadCreateXmlFile(final DataControl<T> pControl,
                                          final boolean pSecure) {
         isSecure = pSecure;
         theControl = pControl;
@@ -138,7 +137,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             final T myOldData = theControl.getData();
 
             /* Create a new formatter */
-            final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
+            final DataValuesFormatter<T> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
 
             /* Create backup */
             if (isSecure) {
@@ -168,7 +167,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
                 pManager.initTask("Verifying Backup");
 
                 /* Create a difference set between the two data copies */
-                final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+                final DataSet<T> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {

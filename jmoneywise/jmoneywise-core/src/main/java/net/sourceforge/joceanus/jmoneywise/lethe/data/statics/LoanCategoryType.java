@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanCategoryType
-        extends StaticData<LoanCategoryType, LoanCategoryClass, MoneyWiseDataType> {
+        extends StaticData<LoanCategoryType, LoanCategoryClass> {
     /**
      * Object name.
      */
@@ -86,7 +86,7 @@ public class LoanCategoryType
      * @throws OceanusException on error
      */
     private LoanCategoryType(final LoanCategoryTypeList pList,
-                             final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                             final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -127,7 +127,7 @@ public class LoanCategoryType
      * Represents a list of {@link LoanCategoryType} objects.
      */
     public static class LoanCategoryTypeList
-            extends StaticList<LoanCategoryType, LoanCategoryClass, MoneyWiseDataType> {
+            extends StaticList<LoanCategoryType, LoanCategoryClass> {
         /**
          * Report fields.
          */
@@ -137,7 +137,7 @@ public class LoanCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public LoanCategoryTypeList(final DataSet<?, ?> pData) {
+        public LoanCategoryTypeList(final DataSet<?> pData) {
             super(LoanCategoryType.class, pData, MoneyWiseDataType.LOANTYPE, ListStyle.CORE);
         }
 
@@ -177,7 +177,7 @@ public class LoanCategoryType
         }
 
         @Override
-        public LoanCategoryType addCopyItem(final DataItem<?> pItem) {
+        public LoanCategoryType addCopyItem(final DataItem pItem) {
             /* Can only clone a LoanCategoryType */
             if (!(pItem instanceof LoanCategoryType)) {
                 throw new UnsupportedOperationException();
@@ -221,7 +221,7 @@ public class LoanCategoryType
         }
 
         @Override
-        public LoanCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public LoanCategoryType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final LoanCategoryType myType = new LoanCategoryType(this, pValues);
 

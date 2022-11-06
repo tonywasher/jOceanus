@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo.DepositInfoList;
@@ -36,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class SheetDeposit
-        extends PrometheusSheetEncrypted<Deposit, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Deposit> {
     /**
      * NamedArea for Deposits.
      */
@@ -99,9 +98,9 @@ public class SheetDeposit
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Deposit.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Deposit.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Deposit.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
@@ -192,7 +191,7 @@ public class SheetDeposit
         }
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Deposit.OBJECT_NAME);
+        final DataValues myValues = new DataValues(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_NAME, myName);
         myValues.addValue(Deposit.FIELD_CATEGORY, myType);
         myValues.addValue(Deposit.FIELD_CURRENCY, myCurrency);

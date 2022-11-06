@@ -43,7 +43,7 @@ public class MoneyWiseTagPanel
      * @param pError the error panel
      */
     public MoneyWiseTagPanel(final TethysUIFactory<?> pFactory,
-                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final UpdateSet pUpdateSet,
                              final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);

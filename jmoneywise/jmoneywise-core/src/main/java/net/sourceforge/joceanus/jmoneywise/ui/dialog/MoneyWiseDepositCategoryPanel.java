@@ -51,7 +51,7 @@ public class MoneyWiseDepositCategoryPanel
      * @param pError the error panel
      */
     public MoneyWiseDepositCategoryPanel(final TethysUIFactory<?> pFactory,
-                                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                         final UpdateSet pUpdateSet,
                                          final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);

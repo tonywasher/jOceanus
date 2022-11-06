@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Tag for a transaction.
  */
 public class TransactionTag
-        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem
         implements MetisDataNamedItem, Comparable<TransactionTag> {
     /**
      * Object name.
@@ -92,7 +92,7 @@ public class TransactionTag
      * @throws OceanusException on error
      */
     private TransactionTag(final TransactionTagList pList,
-                           final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                           final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -418,7 +418,7 @@ public class TransactionTag
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pTag) {
+    public boolean applyChanges(final DataItem pTag) {
         /* Can only update from a transaction tag */
         if (!(pTag instanceof TransactionTag)) {
             return false;
@@ -453,7 +453,7 @@ public class TransactionTag
      * The Transaction Tag List class.
      */
     public static class TransactionTagList
-            extends EncryptedList<TransactionTag, MoneyWiseDataType> {
+            extends EncryptedList<TransactionTag> {
         /**
          * Report fields.
          */
@@ -545,7 +545,7 @@ public class TransactionTag
          * @return the newly added item
          */
         @Override
-        public TransactionTag addCopyItem(final DataItem<?> pTag) {
+        public TransactionTag addCopyItem(final DataItem pTag) {
             /* Can only clone a TransactionTag */
             if (!(pTag instanceof TransactionTag)) {
                 throw new UnsupportedOperationException();
@@ -596,7 +596,7 @@ public class TransactionTag
         }
 
         @Override
-        public TransactionTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionTag addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the tag */
             final TransactionTag myTag = new TransactionTag(this, pValues);
 
@@ -623,7 +623,7 @@ public class TransactionTag
      * The dataMap class.
      */
     protected static class TagDataMap
-            extends DataInstanceMap<TransactionTag, MoneyWiseDataType, String> {
+            extends DataInstanceMap<TransactionTag, String> {
         @Override
         public void adjustForItem(final TransactionTag pItem) {
             /* Adjust name count */

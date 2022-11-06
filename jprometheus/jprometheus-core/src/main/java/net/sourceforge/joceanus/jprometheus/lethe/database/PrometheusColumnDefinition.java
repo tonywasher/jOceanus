@@ -269,7 +269,7 @@ public abstract class PrometheusColumnDefinition {
      * Locate reference.
      * @param pTables the list of defined tables
      */
-    protected void locateReference(final List<PrometheusTableDataItem<?, ?>> pTables) {
+    protected void locateReference(final List<PrometheusTableDataItem<?>> pTables) {
     }
 
     /**
@@ -404,15 +404,15 @@ public abstract class PrometheusColumnDefinition {
         }
 
         @Override
-        protected void locateReference(final List<PrometheusTableDataItem<?, ?>> pTables) {
+        protected void locateReference(final List<PrometheusTableDataItem<?>> pTables) {
             /* Access the Iterator */
-            final ListIterator<PrometheusTableDataItem<?, ?>> myIterator;
+            final ListIterator<PrometheusTableDataItem<?>> myIterator;
             myIterator = pTables.listIterator();
 
             /* Loop through the Tables */
             while (myIterator.hasNext()) {
                 /* Access Table */
-                final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+                final PrometheusTableDataItem<?> myTable = myIterator.next();
 
                 /* If this is the referenced table */
                 if (theReference.compareTo(myTable.getTableName()) == 0) {

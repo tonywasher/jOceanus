@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * ExchangeRate class.
  */
 public class ExchangeRate
-        extends DataItem<MoneyWiseDataType>
+        extends DataItem
         implements Comparable<ExchangeRate> {
     /**
      * Object name.
@@ -128,7 +128,7 @@ public class ExchangeRate
      * @throws OceanusException on error
      */
     private ExchangeRate(final ExchangeRateList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -605,7 +605,7 @@ public class ExchangeRate
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pRate) {
+    public boolean applyChanges(final DataItem pRate) {
         /* Can only update from an event exchange rate */
         if (!(pRate instanceof ExchangeRate)) {
             return false;
@@ -652,7 +652,7 @@ public class ExchangeRate
      * @param <T> the data type
      */
     public abstract static class ExchangeRateBaseList<T extends ExchangeRate>
-            extends DataList<T, MoneyWiseDataType> {
+            extends DataList<T> {
         /*
          * Report fields.
          */
@@ -772,7 +772,7 @@ public class ExchangeRate
          * @return the newly added item
          */
         @Override
-        public ExchangeRate addCopyItem(final DataItem<?> pRate) {
+        public ExchangeRate addCopyItem(final DataItem pRate) {
             /* Can only clone an ExchangeRate */
             if (!(pRate instanceof ExchangeRate)) {
                 throw new UnsupportedOperationException();
@@ -795,7 +795,7 @@ public class ExchangeRate
         }
 
         @Override
-        public ExchangeRate addValuesItem(final DataValues<MoneyWiseDataType> pValues)
+        public ExchangeRate addValuesItem(final DataValues pValues)
                 throws OceanusException {
             /* Create the rate */
             final ExchangeRate myRate = new ExchangeRate(this, pValues);
@@ -930,7 +930,7 @@ public class ExchangeRate
      * @param <T> the data type
      */
     public static class ExchangeRateDataMap<T extends ExchangeRate>
-            implements DataMapItem<T, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<T>, MetisFieldItem {
         /**
          * Report fields.
          */

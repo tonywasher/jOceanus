@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
@@ -36,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetDepositCategoryType
-        extends PrometheusSheetStaticData<DepositCategoryType, MoneyWiseDataType> {
+        extends PrometheusSheetStaticData<DepositCategoryType> {
     /**
      * NamedArea for DepositCategoryTypes.
      */
@@ -69,7 +68,7 @@ public class SheetDepositCategoryType
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(DepositCategoryType.OBJECT_NAME);
     }

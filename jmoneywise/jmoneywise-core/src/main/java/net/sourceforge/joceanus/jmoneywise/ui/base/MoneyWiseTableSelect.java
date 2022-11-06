@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.base;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * Table Selection control.
  * @param <T> the item type
  */
-public class MoneyWiseTableSelect<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>> {
+public class MoneyWiseTableSelect<T extends DataItem & Comparable<? super T>> {
     /**
      * The table.
      */

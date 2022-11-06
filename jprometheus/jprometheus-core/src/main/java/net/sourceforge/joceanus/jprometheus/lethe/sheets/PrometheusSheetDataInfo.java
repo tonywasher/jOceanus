@@ -24,10 +24,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Extension of SheetDataItem class for accessing a sheet that is related to a data info type.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
-        extends PrometheusSheetEncrypted<T, E> {
+public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
+        extends PrometheusSheetEncrypted<T> {
     /**
      * InfoType column.
      */
@@ -81,9 +80,9 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>,
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
+    protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        final DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
         myValues.addValue(DataInfo.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));

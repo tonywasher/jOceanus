@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositCategoryType
-        extends StaticData<DepositCategoryType, DepositCategoryClass, MoneyWiseDataType> {
+        extends StaticData<DepositCategoryType, DepositCategoryClass> {
     /**
      * Object name.
      */
@@ -86,7 +86,7 @@ public class DepositCategoryType
      * @throws OceanusException on error
      */
     private DepositCategoryType(final DepositCategoryTypeList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                                final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -127,7 +127,7 @@ public class DepositCategoryType
      * Represents a list of {@link DepositCategoryType} objects.
      */
     public static class DepositCategoryTypeList
-            extends StaticList<DepositCategoryType, DepositCategoryClass, MoneyWiseDataType> {
+            extends StaticList<DepositCategoryType, DepositCategoryClass> {
         /**
          * Report fields.
          */
@@ -137,7 +137,7 @@ public class DepositCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public DepositCategoryTypeList(final DataSet<?, ?> pData) {
+        public DepositCategoryTypeList(final DataSet<?> pData) {
             super(DepositCategoryType.class, pData, MoneyWiseDataType.DEPOSITTYPE, ListStyle.CORE);
         }
 
@@ -177,7 +177,7 @@ public class DepositCategoryType
         }
 
         @Override
-        public DepositCategoryType addCopyItem(final DataItem<?> pItem) {
+        public DepositCategoryType addCopyItem(final DataItem pItem) {
             /* Can only clone a DepositCategoryType */
             if (!(pItem instanceof DepositCategoryType)) {
                 throw new UnsupportedOperationException();
@@ -221,7 +221,7 @@ public class DepositCategoryType
         }
 
         @Override
-        public DepositCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public DepositCategoryType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final DepositCategoryType myType = new DepositCategoryType(this, pValues);
 

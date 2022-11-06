@@ -24,10 +24,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Extension of SheetDataItem class for accessing a sheet that is related to an encrypted data type.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public abstract class PrometheusSheetEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends PrometheusSheetDataItem<T, E> {
+public abstract class PrometheusSheetEncrypted<T extends EncryptedItem & Comparable<? super T>>
+        extends PrometheusSheetDataItem<T> {
     /**
      * KeySetId column.
      */
@@ -62,9 +61,9 @@ public abstract class PrometheusSheetEncrypted<T extends EncryptedItem<E> & Comp
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws OceanusException {
+    protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        final DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues myValues = super.getRowValues(pName);
 
         /* Add the control id and return the new values */
         myValues.addValue(EncryptedItem.FIELD_KEYSET, loadInteger(COL_KEYSETID));

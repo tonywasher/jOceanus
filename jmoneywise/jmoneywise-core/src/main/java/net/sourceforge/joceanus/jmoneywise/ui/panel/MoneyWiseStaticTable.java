@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * @param <T> the data type
  * @param <S> the static class
  */
-public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>, T extends StaticData<T, S, MoneyWiseDataType>, S extends Enum<S> & StaticInterface>
+public class MoneyWiseStaticTable<L extends StaticList<T, S>, T extends StaticData<T, S>, S extends Enum<S> & StaticInterface>
         extends MoneyWiseBaseTable<T> {
     /**
      * Class column width.
@@ -90,7 +90,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pListClass the listClass
      */
     MoneyWiseStaticTable(final MoneyWiseView pView,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                         final UpdateSet pUpdateSet,
                          final MetisErrorPanel pError,
                          final MoneyWiseDataType pDataType,
                          final Class<L> pListClass) {
@@ -172,7 +172,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     @Override
     protected void refreshData() throws OceanusException {
         final MoneyWiseData myData = getView().getData();
-        final StaticList<T, S, MoneyWiseDataType> myStatic = myData.getDataList(theClass);
+        final StaticList<T, S> myStatic = myData.getDataList(theClass);
         theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
         theStatic.mapData();
         getTable().setItems(theStatic.getUnderlyingList());
@@ -239,7 +239,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pStatic the static data
      */
     @SuppressWarnings("unchecked")
-    void selectStatic(final StaticData<?, ?, MoneyWiseDataType> pStatic) {
+    void selectStatic(final StaticData<?, ?> pStatic) {
         getTable().selectRow((T) pStatic);
     }
 

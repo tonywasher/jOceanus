@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public final class ControlKey
-        extends DataItem<CryptographyDataType>
+        extends DataItem
         implements Comparable<ControlKey> {
     /**
      * Object name.
@@ -123,7 +123,7 @@ public final class ControlKey
      * @param pValues the values constructor
      */
     private ControlKey(final ControlKeyList pList,
-                       final DataValues<CryptographyDataType> pValues) {
+                       final DataValues pValues) {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -158,7 +158,7 @@ public final class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* Create a new keySetHash with new password */
@@ -192,7 +192,7 @@ public final class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* ReSeed the security generator */
@@ -258,7 +258,7 @@ public final class ControlKey
      * @return the prime keySetHash
      * @throws OceanusException on error
      */
-    protected GordianKeySetHash getPrimeKeySetHash() throws OceanusException {
+    GordianKeySetHash getPrimeKeySetHash() throws OceanusException {
         final GordianKeySetHash myHash = getPrimeKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolvePrimeHash()
@@ -270,7 +270,7 @@ public final class ControlKey
      * @return the alternate keySetHash
      * @throws OceanusException on error
      */
-    protected GordianKeySetHash getAltKeySetHash() throws OceanusException {
+    GordianKeySetHash getAltKeySetHash() throws OceanusException {
         final GordianKeySetHash myHash = getAltKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolveAltHash()
@@ -309,7 +309,7 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the keySetHash
      */
-    protected static GordianKeySetHash getPrimeKeySetHash(final MetisValueSet pValueSet) {
+    static GordianKeySetHash getPrimeKeySetHash(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PRIMEHASH, GordianKeySetHash.class);
     }
 
@@ -318,7 +318,7 @@ public final class ControlKey
      * @param pValueSet the ValueSet
      * @return the keySetHash
      */
-    protected static GordianKeySetHash getAltKeySetHash(final MetisValueSet pValueSet) {
+    static GordianKeySetHash getAltKeySetHash(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ALTHASH, GordianKeySetHash.class);
     }
 
@@ -382,7 +382,7 @@ public final class ControlKey
      * Obtain the next DataKeySet.
      * @return the next dataKeySet
      */
-    protected DataKeySet getNextDataKeySet() {
+    DataKeySet getNextDataKeySet() {
         return theDataKeySet.getNextDataKeySet();
     }
 
@@ -391,7 +391,7 @@ public final class ControlKey
      * @return the active keySetHash
      * @throws OceanusException on error
      */
-    protected GordianKeySetHash getKeySetHash() throws OceanusException {
+    GordianKeySetHash getKeySetHash() throws OceanusException {
         return getKeySetHash(isHashPrime());
     }
 
@@ -401,8 +401,8 @@ public final class ControlKey
      * @return the requested keySetHash
      * @throws OceanusException on error
      */
-    protected GordianKeySetHash getKeySetHash(final Boolean pUsePrime) throws OceanusException {
-        return pUsePrime
+    GordianKeySetHash getKeySetHash(final Boolean pUsePrime) throws OceanusException {
+        return Boolean.TRUE.equals(pUsePrime)
                          ? getPrimeKeySetHash()
                          : getAltKeySetHash();
     }
@@ -411,8 +411,8 @@ public final class ControlKey
      * Resolve the active Hash.
      * @throws OceanusException on error
      */
-    protected void resolveHash() throws OceanusException {
-        if (isHashPrime()) {
+    void resolveHash() throws OceanusException {
+        if (Boolean.TRUE.equals(isHashPrime())) {
             resolvePrimeHash();
         } else {
             resolveAltHash();
@@ -426,7 +426,7 @@ public final class ControlKey
      */
     private GordianKeySetHash resolvePrimeHash() throws OceanusException {
         /* Access the Security manager */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Resolve the keySetHash */
@@ -444,7 +444,7 @@ public final class ControlKey
      */
     private GordianKeySetHash resolveAltHash() throws OceanusException {
         /* Access the Security manager */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Resolve the keySetHash */
@@ -474,7 +474,7 @@ public final class ControlKey
      * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private void allocateDataKeySets(final DataSet<?, ?> pData) throws OceanusException {
+    private void allocateDataKeySets(final DataSet<?> pData) throws OceanusException {
         /* Access the DataKeySet List */
         final DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
@@ -495,7 +495,7 @@ public final class ControlKey
     /**
      * Delete the old set of ControlKey and DataKeys.
      */
-    protected void deleteControlSet() {
+    void deleteControlSet() {
         /* Delete the DataKeySet */
         theDataKeySet.deleteDataKeySets();
 
@@ -508,7 +508,7 @@ public final class ControlKey
      * @param pHash the new keySetHash
      * @throws OceanusException on error
      */
-    protected void updatePasswordHash(final GordianKeySetHash pHash) throws OceanusException {
+    void updatePasswordHash(final GordianKeySetHash pHash) throws OceanusException {
         /* Access current mode */
         Boolean isHashPrime = isHashPrime();
 
@@ -520,7 +520,7 @@ public final class ControlKey
         setValueHashPrime(isHashPrime);
 
         /* Update the keySetHash */
-        if (isHashPrime) {
+        if (Boolean.TRUE.equals(isHashPrime)) {
             setValuePrimeKeySetHash(pHash);
         } else {
             setValueAltKeySetHash(pHash);
@@ -537,14 +537,14 @@ public final class ControlKey
      * Ensure keySetHash is updated.
      * @throws OceanusException on error
      */
-    protected void ensureKeySetHash() throws OceanusException {
+    void ensureKeySetHash() throws OceanusException {
         /* Access current mode */
         final Boolean isHashPrime = isHashPrime();
         final GordianKeySetHash myHash = getKeySetHash();
 
         /* Update the hash for the KeySet */
         if (theDataKeySet.updateKeySetHash(isHashPrime, myHash)) {
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             myData.setVersion(myData.getVersion() + 1);
         }
     }
@@ -553,7 +553,7 @@ public final class ControlKey
      * Register DataKeySet.
      * @param pKeySet the DataKeySet to register
      */
-    protected void registerDataKeySet(final DataKeySet pKeySet) {
+    void registerDataKeySet(final DataKeySet pKeySet) {
         /* Store the DataKey into the map */
         theDataKeySet.registerKeySet(pKeySet);
     }
@@ -562,7 +562,7 @@ public final class ControlKey
      * ControlKey List.
      */
     public static class ControlKeyList
-            extends DataList<ControlKey, CryptographyDataType> {
+            extends DataList<ControlKey> {
         /**
          * Report fields.
          */
@@ -572,7 +572,7 @@ public final class ControlKey
          * Construct an empty CORE ControlKey list.
          * @param pData the DataSet for the list
          */
-        protected ControlKeyList(final DataSet<?, ?> pData) {
+        protected ControlKeyList(final DataSet<?> pData) {
             this(pData, ListStyle.CORE);
         }
 
@@ -581,7 +581,7 @@ public final class ControlKey
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlKeyList(final DataSet<?, ?> pData,
+        protected ControlKeyList(final DataSet<?> pData,
                                  final ListStyle pStyle) {
             super(ControlKey.class, pData, CryptographyDataType.CONTROLKEY, pStyle);
         }
@@ -627,13 +627,13 @@ public final class ControlKey
         }
 
         @Override
-        public ControlKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                final DataList<?, CryptographyDataType> pOld) {
+        public ControlKeyList deriveDifferences(final DataSet<?> pDataSet,
+                                                final DataList<?> pOld) {
             return (ControlKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
-        public ControlKey addCopyItem(final DataItem<?> pItem) {
+        public ControlKey addCopyItem(final DataItem pItem) {
             /* Can only clone a ControlKey */
             if (!(pItem instanceof ControlKey)) {
                 return null;
@@ -651,7 +651,7 @@ public final class ControlKey
         }
 
         @Override
-        public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
+        public ControlKey addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the controlKey */
             final ControlKey myKey = new ControlKey(this, pValues);
 
@@ -702,9 +702,9 @@ public final class ControlKey
          * @param pDatabase the DataSet for the Database
          * @throws OceanusException on error
          */
-        protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws OceanusException {
+        protected void initialiseSecurity(final DataSet<?> pDatabase) throws OceanusException {
             /* Access the active control key from the database */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final ControlKey myDatabaseKey = pDatabase.getControlKey();
             final ControlKey myKey;
 
@@ -728,7 +728,7 @@ public final class ControlKey
          */
         protected void purgeOldControlKeys() {
             /* Access the current control Key */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final ControlKey myKey = myData.getControlKey();
 
             /* Loop through the controlKeys */
@@ -751,7 +751,7 @@ public final class ControlKey
          */
         private ControlKey cloneControlKey(final ControlKey pControlKey) throws OceanusException {
             /* Build data values */
-            final DataValues<CryptographyDataType> myValues = new DataValues<>(ControlKey.OBJECT_NAME);
+            final DataValues myValues = new DataValues(ControlKey.OBJECT_NAME);
             myValues.addValue(ControlKey.FIELD_ID, pControlKey.getId());
             myValues.addValue(ControlKey.FIELD_HASHPRIME, pControlKey.isHashPrime());
             myValues.addValue(ControlKey.FIELD_PRIMEBYTES, pControlKey.getPrimeHashBytes());
@@ -761,7 +761,7 @@ public final class ControlKey
             final ControlKey myControl = addValuesItem(myValues);
 
             /* Access the DataKey List */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final DataKeySetList myKeySets = myData.getDataKeySets();
 
             /* Create a new DataKeySet for this ControlKey */
@@ -779,7 +779,7 @@ public final class ControlKey
         }
 
         @Override
-        protected DataMapItem<ControlKey, CryptographyDataType> allocateDataMap() {
+        protected DataMapItem<ControlKey> allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }
@@ -815,7 +815,7 @@ public final class ControlKey
         /**
          * Constructor.
          */
-        protected DataKeySetResource() {
+        DataKeySetResource() {
             theList = new ArrayList<>();
         }
 

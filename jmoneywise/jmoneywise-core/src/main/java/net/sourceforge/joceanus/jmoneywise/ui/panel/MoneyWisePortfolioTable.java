@@ -47,7 +47,7 @@ public class MoneyWisePortfolioTable
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<PortfolioInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<PortfolioInfo> theInfoEntry;
 
     /**
      * The Portfolio dialog.
@@ -66,7 +66,7 @@ public class MoneyWisePortfolioTable
      * @param pError the error panel
      */
     MoneyWisePortfolioTable(final MoneyWiseView pView,
-                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO, PortfolioType.class);

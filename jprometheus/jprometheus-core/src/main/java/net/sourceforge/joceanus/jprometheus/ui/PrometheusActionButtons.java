@@ -52,7 +52,7 @@ public class PrometheusActionButtons
     /**
      * The update set.
      */
-    private final UpdateSet<?> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The panel.
@@ -80,7 +80,7 @@ public class PrometheusActionButtons
      * @param pUpdateSet the update set
      */
     public PrometheusActionButtons(final TethysUIFactory<?> pFactory,
-                                   final UpdateSet<?> pUpdateSet) {
+                                   final UpdateSet pUpdateSet) {
         this(pFactory, pUpdateSet, true);
     }
 
@@ -91,7 +91,7 @@ public class PrometheusActionButtons
      * @param pHorizontal is this horizontal panel?
      */
     public PrometheusActionButtons(final TethysUIFactory<?> pFactory,
-                                   final UpdateSet<?> pUpdateSet,
+                                   final UpdateSet pUpdateSet,
                                    final boolean pHorizontal) {
         /* Record the update set */
         theUpdateSet = pUpdateSet;

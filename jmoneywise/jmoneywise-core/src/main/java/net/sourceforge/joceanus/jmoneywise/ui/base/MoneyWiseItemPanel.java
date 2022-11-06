@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * MoneyWise Data Item Panel.
  * @param <T> the item type
  */
-public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
-        extends PrometheusDataItemPanel<T, MoneyWiseGoToId, MoneyWiseDataType> {
+public abstract class MoneyWiseItemPanel<T extends DataItem & Comparable<? super T>>
+        extends PrometheusDataItemPanel<T, MoneyWiseGoToId> {
     /**
      * Filter text.
      */
@@ -57,7 +57,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     /**
      * The DataItem GoToMenuMap.
      */
-    private final List<DataItem<MoneyWiseDataType>> theGoToItemList;
+    private final List<DataItem> theGoToItemList;
 
     /**
      * The Filter GoToMenuMap.
@@ -71,7 +71,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * @param pError the error panel
      */
     protected MoneyWiseItemPanel(final TethysUIFactory<?> pFactory,
-                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                 final UpdateSet pUpdateSet,
                                  final MetisErrorPanel pError) {
         super(pFactory, pUpdateSet, pError);
         theGoToFilterList = new ArrayList<>();
@@ -128,7 +128,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * Declare GoTo Item.
      * @param pItem the item to declare
      */
-    protected void declareGoToItem(final DataItem<MoneyWiseDataType> pItem) {
+    protected void declareGoToItem(final DataItem pItem) {
         /* Ignore null items */
         if (pItem == null) {
             return;
@@ -174,9 +174,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         final Map<MoneyWiseDataType, TethysUIScrollSubMenu<TethysUIGenericWrapper>> myMap = new EnumMap<>(MoneyWiseDataType.class);
 
         /* Loop through the items */
-        for (DataItem<MoneyWiseDataType> myItem : theGoToItemList) {
+        for (DataItem myItem : theGoToItemList) {
             /* Determine DataType and obtain parent menu */
-            final MoneyWiseDataType myType = myItem.getItemType();
+            final MoneyWiseDataType myType = (MoneyWiseDataType) myItem.getItemType();
             final TethysUIScrollSubMenu<TethysUIGenericWrapper> myMenu = myMap.computeIfAbsent(myType, t -> pMenu.addSubMenu(myType.getItemName()));
 
             /* set default values */
@@ -185,7 +185,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
             /* Handle differing items */
             if (myItem instanceof StaticData) {
-                final StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) myItem;
+                final StaticData<?, ?> myStatic = (StaticData<?, ?>) myItem;
                 myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
             } else if (myItem instanceof AssetBase) {

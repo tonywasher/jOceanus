@@ -76,7 +76,7 @@ public class CashCategory
      * @throws OceanusException on error
      */
     private CashCategory(final CashCategoryList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -288,7 +288,7 @@ public class CashCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pCategory) {
+    public boolean applyChanges(final DataItem pCategory) {
         /* Can only update from a cash category */
         if (!(pCategory instanceof CashCategory)) {
             return false;
@@ -395,7 +395,7 @@ public class CashCategory
          * @return the newly added item
          */
         @Override
-        public CashCategory addCopyItem(final DataItem<?> pCategory) {
+        public CashCategory addCopyItem(final DataItem pCategory) {
             /* Can only clone a CashCategory */
             if (!(pCategory instanceof CashCategory)) {
                 throw new UnsupportedOperationException();
@@ -418,7 +418,7 @@ public class CashCategory
         }
 
         @Override
-        public CashCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public CashCategory addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the category */
             final CashCategory myCategory = new CashCategory(this, pValues);
 

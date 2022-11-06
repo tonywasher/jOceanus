@@ -311,8 +311,7 @@ public class MoneyWiseMaintenance
             /* View the requested static */
             case STATIC:
                 /* Select the requested tag */
-                @SuppressWarnings("unchecked")
-                final StaticData<?, ?, MoneyWiseDataType> myData = pEvent.getDetails(StaticData.class);
+                final StaticData<?, ?> myData = pEvent.getDetails(StaticData.class);
                 theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */

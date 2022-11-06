@@ -46,15 +46,13 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info Class that applies to this item
- * @param <E> the data type enum class
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
-                               O extends DataItem<E>,
-                               I extends StaticData<I, S, E>,
-                               S extends Enum<S> & DataInfoClass,
-                               E extends Enum<E>>
-        extends EncryptedItem<E>
-        implements Comparable<DataInfo<T, O, I, S, E>> {
+public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
+                               O extends DataItem,
+                               I extends StaticData<I, S>,
+                               S extends Enum<S> & DataInfoClass>
+        extends EncryptedItem
+        implements Comparable<DataInfo<T, O, I, S>> {
     /**
      * Maximum DataLength.
      */
@@ -105,8 +103,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final DataInfo<T, O, I, S, E> pInfo) {
+    protected DataInfo(final DataInfoList<T, O, I, S> pList,
+                       final DataInfo<T, O, I, S> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -115,7 +113,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList) {
+    protected DataInfo(final DataInfoList<T, O, I, S> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -129,7 +127,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param uOwnerId the owner id
      * @throws OceanusException on error
      */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+    protected DataInfo(final DataInfoList<T, O, I, S> pList,
                        final Integer uId,
                        final Integer uKeySetId,
                        final Integer uInfoTypeId,
@@ -152,7 +150,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+    protected DataInfo(final DataInfoList<T, O, I, S> pList,
                        final Integer uId,
                        final I pInfoType,
                        final O pOwner) {
@@ -171,8 +169,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @throws OceanusException on error
      */
     @SuppressWarnings("unchecked")
-    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
-                       final DataValues<E> pValues) throws OceanusException {
+    protected DataInfo(final DataInfoList<T, O, I, S> pList,
+                       final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -239,7 +237,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         }
 
         /* Access InfoType */
-        final StaticData<?, ?, ?> myInfoType = (StaticData<?, ?, ?>) myType;
+        final StaticData<?, ?> myInfoType = (StaticData<?, ?>) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + super.toString();
@@ -311,7 +309,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pClass the class of the link
      * @return the Link
      */
-    public <X extends DataItem<E>> X getLink(final Class<X> pClass) {
+    public <X extends DataItem> X getLink(final Class<X> pClass) {
         return getLink(getValueSet(), pClass);
     }
 
@@ -327,7 +325,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * Obtain Link.
      * @return the Link
      */
-    protected DataItem<E> getLink() {
+    protected DataItem getLink() {
         return getLink(getValueSet());
     }
 
@@ -418,13 +416,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     /**
      * Obtain Associated Link.
      * @param <X> the link type
-     * @param <E> the data type enum class
      * @param pValueSet the valueSet
      * @param pClass the class of the link
      * @return the Link
      */
-    public static <X extends DataItem<E>, E extends Enum<E>> X getLink(final MetisValueSet pValueSet,
-                                                                       final Class<X> pClass) {
+    public static <X extends DataItem> X getLink(final MetisValueSet pValueSet,
+                                                 final Class<X> pClass) {
         return pValueSet.isDeletion()
                                       ? null
                                       : pValueSet.getValue(FIELD_LINK, pClass);
@@ -432,12 +429,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
 
     /**
      * Obtain Associated Link.
-     * @param <E> the data type enum class
      * @param pValueSet the valueSet
      * @return the Link
      */
-    @SuppressWarnings("unchecked")
-    protected static <E extends Enum<E>> DataItem<E> getLink(final MetisValueSet pValueSet) {
+    protected static DataItem getLink(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_LINK, DataItem.class);
     }
 
@@ -525,7 +520,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * Set link.
      * @param pLink the link
      */
-    protected void setValueLink(final DataItem<?> pLink) {
+    protected void setValueLink(final DataItem pLink) {
         final MetisValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_LINK, pLink);
@@ -577,7 +572,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         final S myClass = myType.getStaticClass();
 
         /* Access the DataSet and parser */
-        final DataSet<?, ?> myDataSet = getDataSet();
+        final DataSet<?> myDataSet = getDataSet();
         final TethysUIDataFormatter myFormatter = myDataSet.getDataFormatter();
         final TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -705,8 +700,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
             } else if (pValue instanceof String) {
                 setValueLink((String) pValue);
                 return true;
-            } else if (pValue instanceof DataItem<?>) {
-                final DataItem<?> myItem = (DataItem<?>) pValue;
+            } else if (pValue instanceof DataItem) {
+                final DataItem myItem = (DataItem) pValue;
                 setValueValue(myItem.getId());
                 setValueLink(myItem);
                 return true;
@@ -945,14 +940,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
      * @param <S> the Info Class that applies to this item
-     * @param <E> the data type enum class
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<DataInfo<T, O, I, S, E>>,
-                                              O extends DataItem<E>,
-                                              I extends StaticData<I, S, E>,
-                                              S extends Enum<S> & DataInfoClass,
-                                              E extends Enum<E>>
-            extends EncryptedList<T, E> {
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S> & Comparable<DataInfo<T, O, I, S>>,
+                                              O extends DataItem,
+                                              I extends StaticData<I, S>,
+                                              S extends Enum<S> & DataInfoClass>
+            extends EncryptedList<T> {
         /*
          * Report fields.
          */
@@ -968,8 +961,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
          * @param pStyle the style of the list
          */
         protected DataInfoList(final Class<T> pBaseClass,
-                               final DataSet<?, ?> pData,
-                               final E pItemType,
+                               final DataSet<?> pData,
+                               final PrometheusListKey pItemType,
                                final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }
@@ -978,7 +971,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected DataInfoList(final DataInfoList<T, O, I, S, E> pSource) {
+        protected DataInfoList(final DataInfoList<T, O, I, S> pSource) {
             super(pSource);
         }
 
@@ -988,7 +981,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         }
 
         @Override
-        protected abstract DataInfoList<T, O, I, S, E> getEmptyList(ListStyle pStyle);
+        protected abstract DataInfoList<T, O, I, S> getEmptyList(ListStyle pStyle);
 
         /**
          * Add new item to the list.
@@ -1018,7 +1011,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         }
 
         @Override
-        protected DataMapItem<T, E> allocateDataMap() {
+        protected DataMapItem<T> allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

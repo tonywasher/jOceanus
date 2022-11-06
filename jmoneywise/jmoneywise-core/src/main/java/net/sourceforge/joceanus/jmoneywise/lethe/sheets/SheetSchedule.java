@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Schedule;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -28,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetSchedule
-        extends PrometheusSheetDataItem<Schedule, MoneyWiseDataType> {
+        extends PrometheusSheetDataItem<Schedule> {
     /**
      * NamedArea for Schedules.
      */
@@ -91,9 +90,9 @@ public class SheetSchedule
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Schedule.OBJECT_NAME);
         myValues.addValue(Schedule.FIELD_STARTDATE, loadDate(COL_STARTDATE));
         myValues.addValue(Schedule.FIELD_ENDDATE, loadDate(COL_ENDDATE));
         myValues.addValue(Schedule.FIELD_FREQ, loadInteger(COL_FREQ));
