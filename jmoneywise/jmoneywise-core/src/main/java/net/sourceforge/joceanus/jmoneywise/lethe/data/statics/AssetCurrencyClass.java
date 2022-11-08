@@ -20,13 +20,13 @@ import java.util.Currency;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of AssetCurrency Classes.
  */
-public enum AssetCurrencyClass implements StaticInterface {
+public enum AssetCurrencyClass implements StaticDataClass {
     /**
      * British Pounds.
      */

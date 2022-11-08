@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
@@ -342,8 +342,8 @@ public class MoneyWiseStaticPanel
      * @param <S> the static class
      * @param <T> the data type
      */
-    private <L extends StaticList<T, S>, T extends StaticData<T, S>, S extends Enum<S> & StaticInterface> void addStatic(final MoneyWiseDataType pItemType,
-                                                                                                                                                               final Class<L> pListClass) {
+    private <L extends StaticList<T, S>, T extends StaticDataItem<T, S>, S extends Enum<S> & StaticDataClass> void addStatic(final MoneyWiseDataType pItemType,
+                                                                                                                             final Class<L> pListClass) {
         /* Create the new panel */
         final MoneyWiseStaticTable<L, T, S> myPanel = new MoneyWiseStaticTable<>(theView, theUpdateSet, theError, pItemType, pListClass);
 
@@ -368,7 +368,7 @@ public class MoneyWiseStaticPanel
      * Select static data.
      * @param pStatic the static data to select
      */
-    public void selectStatic(final StaticData<?, ?> pStatic) {
+    public void selectStatic(final StaticDataItem<?, ?> pStatic) {
         /* Access the item type */
         final MoneyWiseDataType myType = (MoneyWiseDataType) pStatic.getItemType();
         final String myName = myType.getFieldName();

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetStaticData<T extends StaticData<T, ?>>
+public abstract class PrometheusSheetStaticData<T extends StaticDataItem<T, ?>>
         extends PrometheusSheetEncrypted<T> {
     /**
      * Enabled column.
@@ -91,10 +91,10 @@ public abstract class PrometheusSheetStaticData<T extends StaticData<T, ?>>
         final DataValues myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
-        myValues.addValue(StaticData.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(StaticData.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
-        myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
+        myValues.addValue(StaticDataItem.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(StaticDataItem.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(StaticDataItem.FIELD_ORDER, loadInteger(COL_ORDER));
+        myValues.addValue(StaticDataItem.FIELD_ENABLED, loadBoolean(COL_ENABLED));
         return myValues;
     }
 }

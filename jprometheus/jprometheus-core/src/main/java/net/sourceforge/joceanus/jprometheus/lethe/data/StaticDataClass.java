@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 /**
  * Interfaces for static classes.
  */
-public interface StaticInterface {
+public interface StaticDataClass {
     /**
      * Obtain the class Id.
      * @return the class id

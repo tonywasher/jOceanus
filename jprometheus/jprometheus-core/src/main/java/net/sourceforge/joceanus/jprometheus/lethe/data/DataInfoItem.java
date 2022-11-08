@@ -46,11 +46,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info Class that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, I, S>,
-                               I extends StaticData<I, S>,
+public abstract class DataInfoItem<T extends DataInfoItem<T, I, S>,
+                               I extends StaticDataItem<I, S>,
                                S extends Enum<S> & DataInfoClass>
         extends EncryptedItem
-        implements Comparable<DataInfo<T, I, S>> {
+        implements Comparable<DataInfoItem<T, I, S>> {
     /**
      * Maximum DataLength.
      */
@@ -101,8 +101,8 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfo(final DataInfoList<T, I, S> pList,
-                       final DataInfo<T, I, S> pInfo) {
+    protected DataInfoItem(final DataInfoList<T, I, S> pList,
+                           final DataInfoItem<T, I, S> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -111,7 +111,7 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfo(final DataInfoList<T, I, S> pList) {
+    protected DataInfoItem(final DataInfoList<T, I, S> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -125,11 +125,11 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
      * @param uOwnerId the owner id
      * @throws OceanusException on error
      */
-    protected DataInfo(final DataInfoList<T, I, S> pList,
-                       final Integer uId,
-                       final Integer uKeySetId,
-                       final Integer uInfoTypeId,
-                       final Integer uOwnerId) throws OceanusException {
+    protected DataInfoItem(final DataInfoList<T, I, S> pList,
+                           final Integer uId,
+                           final Integer uKeySetId,
+                           final Integer uInfoTypeId,
+                           final Integer uOwnerId) throws OceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -148,10 +148,10 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfo(final DataInfoList<T, I, S> pList,
-                       final Integer uId,
-                       final I pInfoType,
-                       final DataItem pOwner) {
+    protected DataInfoItem(final DataInfoList<T, I, S> pList,
+                           final Integer uId,
+                           final I pInfoType,
+                           final DataItem pOwner) {
         /* Initialise the item */
         super(pList, uId);
 
@@ -167,8 +167,8 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
      * @throws OceanusException on error
      */
     @SuppressWarnings("unchecked")
-    protected DataInfo(final DataInfoList<T, I, S> pList,
-                       final DataValues pValues) throws OceanusException {
+    protected DataInfoItem(final DataInfoList<T, I, S> pList,
+                           final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -178,7 +178,7 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
             setValueInfoType((Integer) myValue);
         } else if (myValue instanceof String) {
             setValueInfoType((String) myValue);
-        } else if (myValue instanceof StaticData) {
+        } else if (myValue instanceof StaticDataItem) {
             setValueInfoType((I) myValue);
         }
 
@@ -217,7 +217,7 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
         /* Access Info Class Value */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
-        if (!(myType instanceof StaticData)) {
+        if (!(myType instanceof StaticDataItem)) {
             return false;
         }
 
@@ -230,12 +230,12 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
         /* Access Info Type Value */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
-        if (!(myType instanceof StaticData)) {
+        if (!(myType instanceof StaticDataItem)) {
             return super.toString();
         }
 
         /* Access InfoType */
-        final StaticData<?, ?> myInfoType = (StaticData<?, ?>) myType;
+        final StaticDataItem<?, ?> myInfoType = (StaticDataItem<?, ?>) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + super.toString();
@@ -246,7 +246,7 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
         /* Access Info Type Value */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
-        if (!(myType instanceof StaticData)) {
+        if (!(myType instanceof StaticDataItem)) {
             return super.formatObject(pFormatter);
         }
 
@@ -938,8 +938,8 @@ public abstract class DataInfo<T extends DataInfo<T, I, S>,
      * @param <I> the DataInfo Type
      * @param <S> the Info Class that applies to this item
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, I, S> & Comparable<DataInfo<T, I, S>>,
-                                              I extends StaticData<I, S>,
+    public abstract static class DataInfoList<T extends DataInfoItem<T, I, S> & Comparable<DataInfoItem<T, I, S>>,
+                                              I extends StaticDataItem<I, S>,
                                               S extends Enum<S> & DataInfoClass>
             extends EncryptedList<T> {
         /*

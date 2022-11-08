@@ -173,9 +173,9 @@ public class DataValues {
                     final Object myCurr = myInfoIterator.next();
 
                     /* If this is a DataInfo item */
-                    if (myCurr instanceof DataInfo) {
+                    if (myCurr instanceof DataInfoItem) {
                         /* Access as DataArguments */
-                        final DataInfo<?, ?, ?> myItem = (DataInfo<?, ?, ?>) myCurr;
+                        final DataInfoItem<?, ?, ?> myItem = (DataInfoItem<?, ?, ?>) myCurr;
 
                         /* Add item to the list */
                         final InfoItem myInfo = new InfoItem(myItem);
@@ -237,13 +237,13 @@ public class DataValues {
         }
 
         /* Store the Info Type */
-        theFields.put(DataInfo.FIELD_INFOTYPE, pInfo.getName());
+        theFields.put(DataInfoItem.FIELD_INFOTYPE, pInfo.getName());
 
         /* Store the Owner */
-        theFields.put(DataInfo.FIELD_OWNER, pOwner.getId());
+        theFields.put(DataInfoItem.FIELD_OWNER, pOwner.getId());
 
         /* Store the value */
-        theFields.put(DataInfo.FIELD_VALUE, pInfo.getValue());
+        theFields.put(DataInfoItem.FIELD_VALUE, pInfo.getValue());
 
         /* Set other fields to null */
         theInfoItems = null;
@@ -594,7 +594,7 @@ public class DataValues {
          * Constructor.
          * @param pInfo the info Item
          */
-        private InfoItem(final DataInfo<?, ?, ?> pInfo) {
+        private InfoItem(final DataInfoItem<?, ?, ?> pInfo) {
             /* Access the infoClass */
             final DataInfoClass myClass = pInfo.getInfoClass();
 

@@ -38,10 +38,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info type class
  */
-public class DataInfoLinkSet<T extends DataInfo<T, I, S>,
-                             I extends StaticData<I, S>,
+public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
+                             I extends StaticDataItem<I, S>,
                              S extends Enum<S> & DataInfoClass>
-        extends DataInfo<T, I, S> {
+        extends DataInfoItem<T, I, S> {
     /**
      * Item separator.
      */
@@ -574,7 +574,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, I, S>,
     }
 
     @Override
-    public int compareTo(final DataInfo<T, I, S> pThat) {
+    public int compareTo(final DataInfoItem<T, I, S> pThat) {
         return getInfoType().compareTo(pThat.getInfoType());
     }
 

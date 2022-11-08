@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
@@ -26,7 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -311,7 +310,7 @@ public class MoneyWiseMaintenance
             /* View the requested static */
             case STATIC:
                 /* Select the requested tag */
-                final StaticData<?, ?> myData = pEvent.getDetails(StaticData.class);
+                final StaticDataItem<?, ?> myData = pEvent.getDetails(StaticDataItem.class);
                 theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */

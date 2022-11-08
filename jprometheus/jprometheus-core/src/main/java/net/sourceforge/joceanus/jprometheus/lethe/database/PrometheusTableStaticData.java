@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * extend this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableStaticData<T extends StaticData<T, ?>>
+public abstract class PrometheusTableStaticData<T extends StaticDataItem<T, ?>>
         extends PrometheusTableEncrypted<T> {
     /**
      * Constructor.
@@ -40,10 +40,10 @@ public abstract class PrometheusTableStaticData<T extends StaticData<T, ?>>
 
         /* Define the columns */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        myTableDef.addBooleanColumn(StaticData.FIELD_ENABLED);
-        final PrometheusColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticData.FIELD_ORDER);
-        myTableDef.addEncryptedColumn(StaticData.FIELD_NAME, StaticData.NAMELEN);
-        myTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.DESCLEN);
+        myTableDef.addBooleanColumn(StaticDataItem.FIELD_ENABLED);
+        final PrometheusColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticDataItem.FIELD_ORDER);
+        myTableDef.addEncryptedColumn(StaticDataItem.FIELD_NAME, StaticDataItem.NAMELEN);
+        myTableDef.addNullEncryptedColumn(StaticDataItem.FIELD_DESC, StaticDataItem.DESCLEN);
 
         /* Declare the sort order */
         mySortCol.setSortOrder(SortOrder.ASCENDING);
@@ -54,13 +54,13 @@ public abstract class PrometheusTableStaticData<T extends StaticData<T, ?>>
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (StaticData.FIELD_ENABLED.equals(iField)) {
+        if (StaticDataItem.FIELD_ENABLED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.getEnabled());
-        } else if (StaticData.FIELD_ORDER.equals(iField)) {
+        } else if (StaticDataItem.FIELD_ORDER.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getOrder());
-        } else if (StaticData.FIELD_NAME.equals(iField)) {
+        } else if (StaticDataItem.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (StaticData.FIELD_DESC.equals(iField)) {
+        } else if (StaticDataItem.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);
@@ -74,10 +74,10 @@ public abstract class PrometheusTableStaticData<T extends StaticData<T, ?>>
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */
-        myValues.addValue(StaticData.FIELD_NAME, myTableDef.getBinaryValue(StaticData.FIELD_NAME));
-        myValues.addValue(StaticData.FIELD_DESC, myTableDef.getBinaryValue(StaticData.FIELD_DESC));
-        myValues.addValue(StaticData.FIELD_ORDER, myTableDef.getIntegerValue(StaticData.FIELD_ORDER));
-        myValues.addValue(StaticData.FIELD_ENABLED, myTableDef.getBooleanValue(StaticData.FIELD_ENABLED));
+        myValues.addValue(StaticDataItem.FIELD_NAME, myTableDef.getBinaryValue(StaticDataItem.FIELD_NAME));
+        myValues.addValue(StaticDataItem.FIELD_DESC, myTableDef.getBinaryValue(StaticDataItem.FIELD_DESC));
+        myValues.addValue(StaticDataItem.FIELD_ORDER, myTableDef.getIntegerValue(StaticDataItem.FIELD_ORDER));
+        myValues.addValue(StaticDataItem.FIELD_ENABLED, myTableDef.getBooleanValue(StaticDataItem.FIELD_ENABLED));
         return myValues;
     }
 }

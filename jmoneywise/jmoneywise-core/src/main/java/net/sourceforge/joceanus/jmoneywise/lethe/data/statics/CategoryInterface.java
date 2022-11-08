@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 
 /**
  * Interface for Category statics.
  */
 public interface CategoryInterface
-        extends StaticInterface {
+        extends StaticDataClass {
     /**
      * Is this class a totals class?
      * @return true/false

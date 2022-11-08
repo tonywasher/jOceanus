@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?>>
+public abstract class PrometheusSheetDataInfo<T extends DataInfoItem<T, ?, ?>>
         extends PrometheusSheetEncrypted<T> {
     /**
      * InfoType column.
@@ -85,9 +85,9 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?>>
         final DataValues myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
-        myValues.addValue(DataInfo.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));
-        myValues.addValue(DataInfo.FIELD_OWNER, loadInteger(COL_OWNER));
-        myValues.addValue(DataInfo.FIELD_VALUE, loadBytes(COL_VALUE));
+        myValues.addValue(DataInfoItem.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));
+        myValues.addValue(DataInfoItem.FIELD_OWNER, loadInteger(COL_OWNER));
+        myValues.addValue(DataInfoItem.FIELD_VALUE, loadBytes(COL_VALUE));
         return myValues;
     }
 }

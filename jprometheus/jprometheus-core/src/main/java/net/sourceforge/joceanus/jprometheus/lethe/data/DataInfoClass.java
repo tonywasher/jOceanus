@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
  * DataInfoClass interface.
  */
 public interface DataInfoClass
-        extends StaticInterface {
+        extends StaticDataClass {
     /**
      * Obtain Data Type.
      * @return the date type

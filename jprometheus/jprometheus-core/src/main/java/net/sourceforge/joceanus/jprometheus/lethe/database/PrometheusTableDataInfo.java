@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?>>
+public abstract class PrometheusTableDataInfo<T extends DataInfoItem<T, ?, ?>>
         extends PrometheusTableEncrypted<T> {
     /**
      * Constructor.
@@ -43,9 +43,9 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?>>
 
         /* Define the columns */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        myTableDef.addReferenceColumn(DataInfo.FIELD_INFOTYPE, pInfoTable);
-        myTableDef.addReferenceColumn(DataInfo.FIELD_OWNER, pOwnerTable);
-        myTableDef.addEncryptedColumn(DataInfo.FIELD_VALUE, DataInfo.DATALEN);
+        myTableDef.addReferenceColumn(DataInfoItem.FIELD_INFOTYPE, pInfoTable);
+        myTableDef.addReferenceColumn(DataInfoItem.FIELD_OWNER, pOwnerTable);
+        myTableDef.addEncryptedColumn(DataInfoItem.FIELD_VALUE, DataInfoItem.DATALEN);
     }
 
     @Override
@@ -53,11 +53,11 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?>>
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (DataInfo.FIELD_INFOTYPE.equals(iField)) {
+        if (DataInfoItem.FIELD_INFOTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());
-        } else if (DataInfo.FIELD_OWNER.equals(iField)) {
+        } else if (DataInfoItem.FIELD_OWNER.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getOwnerId());
-        } else if (DataInfo.FIELD_VALUE.equals(iField)) {
+        } else if (DataInfoItem.FIELD_VALUE.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getValueBytes());
         } else {
             super.setFieldValue(pItem, iField);
@@ -71,9 +71,9 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?>>
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */
-        myValues.addValue(DataInfo.FIELD_INFOTYPE, myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE));
-        myValues.addValue(DataInfo.FIELD_OWNER, myTableDef.getIntegerValue(DataInfo.FIELD_OWNER));
-        myValues.addValue(DataInfo.FIELD_VALUE, myTableDef.getBinaryValue(DataInfo.FIELD_VALUE));
+        myValues.addValue(DataInfoItem.FIELD_INFOTYPE, myTableDef.getIntegerValue(DataInfoItem.FIELD_INFOTYPE));
+        myValues.addValue(DataInfoItem.FIELD_OWNER, myTableDef.getIntegerValue(DataInfoItem.FIELD_OWNER));
+        myValues.addValue(DataInfoItem.FIELD_VALUE, myTableDef.getBinaryValue(DataInfoItem.FIELD_VALUE));
         return myValues;
     }
 }

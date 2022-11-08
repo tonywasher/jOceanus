@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.ui.panel.PrometheusDataItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
@@ -184,8 +184,8 @@ public abstract class MoneyWiseItemPanel<T extends DataItem & Comparable<? super
             String myName = null;
 
             /* Handle differing items */
-            if (myItem instanceof StaticData) {
-                final StaticData<?, ?> myStatic = (StaticData<?, ?>) myItem;
+            if (myItem instanceof StaticDataItem) {
+                final StaticDataItem<?, ?> myStatic = (StaticDataItem<?, ?>) myItem;
                 myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
             } else if (myItem instanceof AssetBase) {
