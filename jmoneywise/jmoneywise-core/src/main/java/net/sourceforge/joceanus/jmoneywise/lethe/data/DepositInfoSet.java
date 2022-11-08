@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
@@ -37,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class DepositInfoSet
-        extends DataInfoSet<DepositInfo, Deposit, AccountInfoType, AccountInfoClass> {
+        extends DataInfoSet<DepositInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */
@@ -74,6 +73,11 @@ public class DepositInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Deposit getOwner() {
+        return (Deposit) super.getOwner();
     }
 
     @Override

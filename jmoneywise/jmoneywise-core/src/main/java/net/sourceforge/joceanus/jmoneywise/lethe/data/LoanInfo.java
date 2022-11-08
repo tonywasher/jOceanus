@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanInfo
-        extends DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<LoanInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -169,7 +170,7 @@ public class LoanInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<LoanInfo, Loan, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfo<LoanInfo, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -178,8 +179,14 @@ public class LoanInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Loans */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Loan) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -240,7 +247,7 @@ public class LoanInfo
      * LoanInfoList.
      */
     public static class LoanInfoList
-            extends DataInfoList<LoanInfo, Loan, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<LoanInfo, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -317,10 +324,10 @@ public class LoanInfo
         }
 
         @Override
-        protected LoanInfo addNewItem(final Loan pOwner,
+        protected LoanInfo addNewItem(final DataItem pOwner,
                                       final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final LoanInfo myInfo = new LoanInfo(this, pOwner, pInfoType);
+            final LoanInfo myInfo = new LoanInfo(this, (Loan) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -329,7 +336,7 @@ public class LoanInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Loan pLoan,
+                                final DataItem pLoan,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */

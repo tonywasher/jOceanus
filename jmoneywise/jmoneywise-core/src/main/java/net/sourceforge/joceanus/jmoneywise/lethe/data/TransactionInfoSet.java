@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
@@ -47,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @author Tony Washer
  */
 public class TransactionInfoSet
-        extends DataInfoSet<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> {
+        extends DataInfoSet<TransactionInfo, TransactionInfoType, TransactionInfoClass> {
     /**
      * Report fields.
      */
@@ -79,6 +78,11 @@ public class TransactionInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Transaction getOwner() {
+        return (Transaction) super.getOwner();
     }
 
     @Override

@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PayeeInfo
-        extends DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<PayeeInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -169,7 +170,7 @@ public class PayeeInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfo<PayeeInfo, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -178,8 +179,14 @@ public class PayeeInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Payees */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Payee) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -240,7 +247,7 @@ public class PayeeInfo
      * PayeeInfoList.
      */
     public static class PayeeInfoList
-            extends DataInfoList<PayeeInfo, Payee, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<PayeeInfo, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -317,10 +324,10 @@ public class PayeeInfo
         }
 
         @Override
-        protected PayeeInfo addNewItem(final Payee pOwner,
+        protected PayeeInfo addNewItem(final DataItem pOwner,
                                        final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final PayeeInfo myInfo = new PayeeInfo(this, pOwner, pInfoType);
+            final PayeeInfo myInfo = new PayeeInfo(this, (Payee) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -329,7 +336,7 @@ public class PayeeInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Payee pPayee,
+                                final DataItem pPayee,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */

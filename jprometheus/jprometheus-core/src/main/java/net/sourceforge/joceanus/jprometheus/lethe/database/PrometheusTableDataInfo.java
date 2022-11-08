@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?>>
+public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?>>
         extends PrometheusTableEncrypted<T> {
     /**
      * Constructor.

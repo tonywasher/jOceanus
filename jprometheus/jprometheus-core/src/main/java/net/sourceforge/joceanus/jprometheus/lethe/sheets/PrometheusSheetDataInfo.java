@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
+public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?>>
         extends PrometheusSheetEncrypted<T> {
     /**
      * InfoType column.

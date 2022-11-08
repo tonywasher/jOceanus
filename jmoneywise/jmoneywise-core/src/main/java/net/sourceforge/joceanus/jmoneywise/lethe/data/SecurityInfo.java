@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityInfo
-        extends DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<SecurityInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -222,7 +223,7 @@ public class SecurityInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfo<SecurityInfo, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -231,8 +232,14 @@ public class SecurityInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Securities */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Security) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -357,7 +364,7 @@ public class SecurityInfo
      * SecurityInfoList.
      */
     public static class SecurityInfoList
-            extends DataInfoList<SecurityInfo, Security, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<SecurityInfo, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -434,10 +441,10 @@ public class SecurityInfo
         }
 
         @Override
-        protected SecurityInfo addNewItem(final Security pOwner,
+        protected SecurityInfo addNewItem(final DataItem pOwner,
                                           final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final SecurityInfo myInfo = new SecurityInfo(this, pOwner, pInfoType);
+            final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -446,7 +453,7 @@ public class SecurityInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Security pSecurity,
+                                final DataItem pSecurity,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */

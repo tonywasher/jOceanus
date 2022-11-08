@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoTyp
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> {
+        extends DataInfo<TransactionInfo, TransactionInfoType, TransactionInfoClass> {
     /**
      * Object name.
      */
@@ -234,7 +235,7 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> pThat) {
+    public int compareTo(final DataInfo<TransactionInfo, TransactionInfoType, TransactionInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -243,8 +244,14 @@ public class TransactionInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Transactions */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Transaction) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -372,7 +379,7 @@ public class TransactionInfo
      * TransactionInfoList.
      */
     public static class TransactionInfoList
-            extends DataInfoList<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass> {
+            extends DataInfoList<TransactionInfo, TransactionInfoType, TransactionInfoClass> {
         /**
          * Report fields.
          */
@@ -449,10 +456,10 @@ public class TransactionInfo
         }
 
         @Override
-        protected TransactionInfo addNewItem(final Transaction pOwner,
+        protected TransactionInfo addNewItem(final DataItem pOwner,
                                              final TransactionInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final TransactionInfo myInfo = new TransactionInfo(this, pOwner, pInfoType);
+            final TransactionInfo myInfo = new TransactionInfo(this, (Transaction) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -461,7 +468,7 @@ public class TransactionInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Transaction pTransaction,
+                                final DataItem pTransaction,
                                 final TransactionInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */

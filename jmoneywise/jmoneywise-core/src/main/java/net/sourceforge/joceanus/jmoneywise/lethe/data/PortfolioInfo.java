@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PortfolioInfo
-        extends DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<PortfolioInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -169,7 +170,7 @@ public class PortfolioInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfo<PortfolioInfo, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -178,8 +179,14 @@ public class PortfolioInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Portfolios */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Portfolio) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -240,7 +247,7 @@ public class PortfolioInfo
      * PortfolioInfoList.
      */
     public static class PortfolioInfoList
-            extends DataInfoList<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<PortfolioInfo, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -317,10 +324,10 @@ public class PortfolioInfo
         }
 
         @Override
-        protected PortfolioInfo addNewItem(final Portfolio pOwner,
+        protected PortfolioInfo addNewItem(final DataItem pOwner,
                                            final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final PortfolioInfo myInfo = new PortfolioInfo(this, pOwner, pInfoType);
+            final PortfolioInfo myInfo = new PortfolioInfo(this, (Portfolio) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -329,7 +336,7 @@ public class PortfolioInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Portfolio pPortfolio,
+                                final DataItem pPortfolio,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */

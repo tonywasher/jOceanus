@@ -43,16 +43,14 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Representation of an information extension of a DataItem.
  * @author Tony Washer
  * @param <T> the data type
- * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info Class that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
-                               O extends DataItem,
+public abstract class DataInfo<T extends DataInfo<T, I, S>,
                                I extends StaticData<I, S>,
                                S extends Enum<S> & DataInfoClass>
         extends EncryptedItem
-        implements Comparable<DataInfo<T, O, I, S>> {
+        implements Comparable<DataInfo<T, I, S>> {
     /**
      * Maximum DataLength.
      */
@@ -103,8 +101,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfo(final DataInfoList<T, O, I, S> pList,
-                       final DataInfo<T, O, I, S> pInfo) {
+    protected DataInfo(final DataInfoList<T, I, S> pList,
+                       final DataInfo<T, I, S> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -113,7 +111,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfo(final DataInfoList<T, O, I, S> pList) {
+    protected DataInfo(final DataInfoList<T, I, S> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -127,7 +125,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * @param uOwnerId the owner id
      * @throws OceanusException on error
      */
-    protected DataInfo(final DataInfoList<T, O, I, S> pList,
+    protected DataInfo(final DataInfoList<T, I, S> pList,
                        final Integer uId,
                        final Integer uKeySetId,
                        final Integer uInfoTypeId,
@@ -150,10 +148,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfo(final DataInfoList<T, O, I, S> pList,
+    protected DataInfo(final DataInfoList<T, I, S> pList,
                        final Integer uId,
                        final I pInfoType,
-                       final O pOwner) {
+                       final DataItem pOwner) {
         /* Initialise the item */
         super(pList, uId);
 
@@ -169,7 +167,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * @throws OceanusException on error
      */
     @SuppressWarnings("unchecked")
-    protected DataInfo(final DataInfoList<T, O, I, S> pList,
+    protected DataInfo(final DataInfoList<T, I, S> pList,
                        final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -191,7 +189,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
         } else if (myValue instanceof String) {
             setValueOwner((String) myValue);
         } else if (myValue instanceof DataItem) {
-            setValueOwner((O) myValue);
+            setValueOwner((DataItem) myValue);
         }
     }
 
@@ -293,7 +291,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * Obtain Owner.
      * @return the Owner
      */
-    public abstract O getOwner();
+    public abstract DataItem getOwner();
 
     /**
      * Obtain OwnerId.
@@ -464,7 +462,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
      * Set Owner.
      * @param pValue the owner
      */
-    protected final void setValueOwner(final O pValue) {
+    protected final void setValueOwner(final DataItem pValue) {
         getValueSet().setValue(FIELD_OWNER, pValue);
     }
 
@@ -892,7 +890,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
     @Override
     public void validate() {
         final I myType = getInfoType();
-        final O myOwner = getOwner();
+        final DataItem myOwner = getOwner();
         final Object myValue = getValue(Object.class);
 
         /* InfoType must be non-null */
@@ -937,12 +935,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
     /**
      * List class for DataInfo.
      * @param <T> the DataType
-     * @param <O> the Owner Type
      * @param <I> the DataInfo Type
      * @param <S> the Info Class that applies to this item
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S> & Comparable<DataInfo<T, O, I, S>>,
-                                              O extends DataItem,
+    public abstract static class DataInfoList<T extends DataInfo<T, I, S> & Comparable<DataInfo<T, I, S>>,
                                               I extends StaticData<I, S>,
                                               S extends Enum<S> & DataInfoClass>
             extends EncryptedList<T> {
@@ -971,7 +967,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected DataInfoList(final DataInfoList<T, O, I, S> pSource) {
+        protected DataInfoList(final DataInfoList<T, I, S> pSource) {
             super(pSource);
         }
 
@@ -981,7 +977,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
         }
 
         @Override
-        protected abstract DataInfoList<T, O, I, S> getEmptyList(ListStyle pStyle);
+        protected abstract DataInfoList<T, I, S> getEmptyList(ListStyle pStyle);
 
         /**
          * Add new item to the list.
@@ -989,7 +985,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
          * @param pInfoType the information
          * @return the new info item
          */
-        protected abstract T addNewItem(O pOwner,
+        protected abstract T addNewItem(DataItem pOwner,
                                         I pInfoType);
 
         /**
@@ -1001,7 +997,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S>,
          * @throws OceanusException on error
          */
         public abstract void addInfoItem(Integer pId,
-                                         O pOwner,
+                                         DataItem pOwner,
                                          S pInfoClass,
                                          Object pValue) throws OceanusException;
 

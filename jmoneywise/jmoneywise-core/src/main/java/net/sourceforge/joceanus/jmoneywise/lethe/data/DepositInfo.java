@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositInfo
-        extends DataInfo<DepositInfo, Deposit, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<DepositInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -169,7 +170,7 @@ public class DepositInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<DepositInfo, Deposit, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfo<DepositInfo, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -178,8 +179,14 @@ public class DepositInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Deposits */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Deposit) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -240,7 +247,7 @@ public class DepositInfo
      * DepositInfoList.
      */
     public static class DepositInfoList
-            extends DataInfoList<DepositInfo, Deposit, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<DepositInfo, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -317,10 +324,10 @@ public class DepositInfo
         }
 
         @Override
-        protected DepositInfo addNewItem(final Deposit pOwner,
+        protected DepositInfo addNewItem(final DataItem pOwner,
                                          final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final DepositInfo myInfo = new DepositInfo(this, pOwner, pInfoType);
+            final DepositInfo myInfo = new DepositInfo(this, (Deposit) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -329,7 +336,7 @@ public class DepositInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Deposit pDeposit,
+                                final DataItem pDeposit,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */

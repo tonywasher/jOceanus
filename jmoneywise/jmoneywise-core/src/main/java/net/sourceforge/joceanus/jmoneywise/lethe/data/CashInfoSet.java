@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class CashInfoSet
-        extends DataInfoSet<CashInfo, Cash, AccountInfoType, AccountInfoClass> {
+        extends DataInfoSet<CashInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */
@@ -79,6 +79,11 @@ public class CashInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Cash getOwner() {
+        return (Cash) super.getOwner();
     }
 
     @Override

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashInfo
-        extends DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<CashInfo, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -224,7 +225,7 @@ public class CashInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<CashInfo, Cash, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfo<CashInfo, AccountInfoType, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -233,8 +234,14 @@ public class CashInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Cash */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Cash) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -364,7 +371,7 @@ public class CashInfo
      * CashInfoList.
      */
     public static class CashInfoList
-            extends DataInfoList<CashInfo, Cash, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<CashInfo, AccountInfoType, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -441,10 +448,10 @@ public class CashInfo
         }
 
         @Override
-        protected CashInfo addNewItem(final Cash pOwner,
+        protected CashInfo addNewItem(final DataItem pOwner,
                                       final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            final CashInfo myInfo = new CashInfo(this, pOwner, pInfoType);
+            final CashInfo myInfo = new CashInfo(this, (Cash) pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -453,7 +460,7 @@ public class CashInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Cash pCash,
+                                final DataItem pCash,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
