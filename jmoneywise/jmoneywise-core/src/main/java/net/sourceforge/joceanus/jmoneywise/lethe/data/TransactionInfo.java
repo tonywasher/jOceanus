@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -38,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfoItem<TransactionInfo, TransactionInfoType, TransactionInfoClass> {
+        extends DataInfoItem<TransactionInfo, TransactionInfoClass> {
     /**
      * Object name.
      */
@@ -235,7 +236,7 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<TransactionInfo, TransactionInfoType, TransactionInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<TransactionInfo, TransactionInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -379,7 +380,7 @@ public class TransactionInfo
      * TransactionInfoList.
      */
     public static class TransactionInfoList
-            extends DataInfoList<TransactionInfo, TransactionInfoType, TransactionInfoClass> {
+            extends DataInfoList<TransactionInfo, TransactionInfoClass> {
         /**
          * Report fields.
          */
@@ -457,9 +458,9 @@ public class TransactionInfo
 
         @Override
         protected TransactionInfo addNewItem(final DataItem pOwner,
-                                             final TransactionInfoType pInfoType) {
+                                             final StaticDataItem<?, TransactionInfoClass> pInfoType) {
             /* Allocate the new entry and add to list */
-            final TransactionInfo myInfo = new TransactionInfo(this, (Transaction) pOwner, pInfoType);
+            final TransactionInfo myInfo = new TransactionInfo(this, (Transaction) pOwner, (TransactionInfoType) pInfoType);
             add(myInfo);
 
             /* return it */

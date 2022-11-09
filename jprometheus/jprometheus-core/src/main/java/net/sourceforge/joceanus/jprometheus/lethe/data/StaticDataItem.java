@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public abstract class StaticDataItem<T extends StaticDataItem<T, S>, S extends Enum<S> & StaticDataClass>
         extends EncryptedItem
-        implements Comparable<T>, MetisDataNamedItem {
+        implements Comparable<StaticDataItem<?, S>>, MetisDataNamedItem {
     /**
      * Report fields.
      */
@@ -500,7 +500,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T, S>, S extends E
     }
 
     @Override
-    public int compareTo(final T pThat) {
+    public int compareTo(final StaticDataItem<?, S> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;

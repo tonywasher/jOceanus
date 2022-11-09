@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositInfo
-        extends DataInfoItem<DepositInfo, AccountInfoType, AccountInfoClass> {
+        extends DataInfoItem<DepositInfo, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -170,7 +171,7 @@ public class DepositInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<DepositInfo, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<DepositInfo, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -247,7 +248,7 @@ public class DepositInfo
      * DepositInfoList.
      */
     public static class DepositInfoList
-            extends DataInfoList<DepositInfo, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<DepositInfo, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -325,9 +326,9 @@ public class DepositInfo
 
         @Override
         protected DepositInfo addNewItem(final DataItem pOwner,
-                                         final AccountInfoType pInfoType) {
+                                         final StaticDataItem<?, AccountInfoClass> pInfoType) {
             /* Allocate the new entry and add to list */
-            final DepositInfo myInfo = new DepositInfo(this, (Deposit) pOwner, pInfoType);
+            final DepositInfo myInfo = new DepositInfo(this, (Deposit) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */

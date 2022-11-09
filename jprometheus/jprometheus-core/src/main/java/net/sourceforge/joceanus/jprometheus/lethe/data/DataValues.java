@@ -46,7 +46,7 @@ public class DataValues {
          * Obtain infoSet.
          * @return the infoSet
          */
-        DataInfoSet<?, ?, ?> getInfoSet();
+        DataInfoSet<?, ?> getInfoSet();
     }
 
     /**
@@ -156,8 +156,7 @@ public class DataValues {
         /* If the item is an infoSet item */
         if (pItem instanceof InfoSetItem) {
             /* Access InfoSet */
-            @SuppressWarnings("unchecked")
-            final DataInfoSet<?, ?, ?> myInfoSet = ((InfoSetItem) pItem).getInfoSet();
+            final DataInfoSet<?, ?> myInfoSet = ((InfoSetItem) pItem).getInfoSet();
 
             /* If the InfoSet is non-empty */
             if (myInfoSet.isEmpty()) {
@@ -175,7 +174,7 @@ public class DataValues {
                     /* If this is a DataInfo item */
                     if (myCurr instanceof DataInfoItem) {
                         /* Access as DataArguments */
-                        final DataInfoItem<?, ?, ?> myItem = (DataInfoItem<?, ?, ?>) myCurr;
+                        final DataInfoItem<?, ?> myItem = (DataInfoItem<?, ?>) myCurr;
 
                         /* Add item to the list */
                         final InfoItem myInfo = new InfoItem(myItem);
@@ -594,7 +593,7 @@ public class DataValues {
          * Constructor.
          * @param pInfo the info Item
          */
-        private InfoItem(final DataInfoItem<?, ?, ?> pInfo) {
+        private InfoItem(final DataInfoItem<?, ?> pInfo) {
             /* Access the infoClass */
             final DataInfoClass myClass = pInfo.getInfoClass();
 

@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityInfo
-        extends DataInfoItem<SecurityInfo, AccountInfoType, AccountInfoClass> {
+        extends DataInfoItem<SecurityInfo, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -223,7 +224,7 @@ public class SecurityInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<SecurityInfo, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<SecurityInfo, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -364,7 +365,7 @@ public class SecurityInfo
      * SecurityInfoList.
      */
     public static class SecurityInfoList
-            extends DataInfoList<SecurityInfo, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<SecurityInfo, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -442,9 +443,9 @@ public class SecurityInfo
 
         @Override
         protected SecurityInfo addNewItem(final DataItem pOwner,
-                                          final AccountInfoType pInfoType) {
+                                          final StaticDataItem<?, AccountInfoClass> pInfoType) {
             /* Allocate the new entry and add to list */
-            final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, pInfoType);
+            final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */

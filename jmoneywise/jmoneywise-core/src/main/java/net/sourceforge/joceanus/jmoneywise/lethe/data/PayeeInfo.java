@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PayeeInfo
-        extends DataInfoItem<PayeeInfo, AccountInfoType, AccountInfoClass> {
+        extends DataInfoItem<PayeeInfo, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -170,7 +171,7 @@ public class PayeeInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<PayeeInfo, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<PayeeInfo, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -247,7 +248,7 @@ public class PayeeInfo
      * PayeeInfoList.
      */
     public static class PayeeInfoList
-            extends DataInfoList<PayeeInfo, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<PayeeInfo, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -325,9 +326,9 @@ public class PayeeInfo
 
         @Override
         protected PayeeInfo addNewItem(final DataItem pOwner,
-                                       final AccountInfoType pInfoType) {
+                                       final StaticDataItem<?, AccountInfoClass> pInfoType) {
             /* Allocate the new entry and add to list */
-            final PayeeInfo myInfo = new PayeeInfo(this, (Payee) pOwner, pInfoType);
+            final PayeeInfo myInfo = new PayeeInfo(this, (Payee) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */

@@ -190,7 +190,7 @@ public class AssetCurrency
     }
 
     @Override
-    public int compareTo(final AssetCurrency pThat) {
+    public int compareTo(final StaticDataItem<?, AssetCurrencyClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -200,7 +200,8 @@ public class AssetCurrency
         }
 
         /* Handle differences in default value */
-        if (!isDefault().equals(pThat.isDefault())) {
+        final AssetCurrency myThat = (AssetCurrency) pThat;
+        if (!isDefault().equals(myThat.isDefault())) {
             return isDefault()
                                ? -1
                                : 1;

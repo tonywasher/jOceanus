@@ -26,7 +26,8 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 /**
  * Table Item interface.
  */
-public interface PrometheusTableItem extends MetisDataIndexedItem, MetisDataValues, MetisFieldSetItem, MetisDataDeletable, MetisDataUpdatable {
+public interface PrometheusTableItem
+        extends MetisDataIndexedItem, MetisDataValues, MetisFieldSetItem, MetisDataDeletable, MetisDataUpdatable {
     /**
      * Is this a header?
      * @return true/false

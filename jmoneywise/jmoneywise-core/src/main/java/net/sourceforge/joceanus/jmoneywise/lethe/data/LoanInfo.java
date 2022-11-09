@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanInfo
-        extends DataInfoItem<LoanInfo, AccountInfoType, AccountInfoClass> {
+        extends DataInfoItem<LoanInfo, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -170,7 +171,7 @@ public class LoanInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<LoanInfo, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<LoanInfo, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -247,7 +248,7 @@ public class LoanInfo
      * LoanInfoList.
      */
     public static class LoanInfoList
-            extends DataInfoList<LoanInfo, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<LoanInfo, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -325,9 +326,9 @@ public class LoanInfo
 
         @Override
         protected LoanInfo addNewItem(final DataItem pOwner,
-                                      final AccountInfoType pInfoType) {
+                                      final StaticDataItem<?, AccountInfoClass> pInfoType) {
             /* Allocate the new entry and add to list */
-            final LoanInfo myInfo = new LoanInfo(this, (Loan) pOwner, pInfoType);
+            final LoanInfo myInfo = new LoanInfo(this, (Loan) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */

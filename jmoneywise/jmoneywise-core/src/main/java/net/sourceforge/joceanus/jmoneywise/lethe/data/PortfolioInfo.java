@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PortfolioInfo
-        extends DataInfoItem<PortfolioInfo, AccountInfoType, AccountInfoClass> {
+        extends DataInfoItem<PortfolioInfo, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -170,7 +171,7 @@ public class PortfolioInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<PortfolioInfo, AccountInfoType, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<PortfolioInfo, AccountInfoClass> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -247,7 +248,7 @@ public class PortfolioInfo
      * PortfolioInfoList.
      */
     public static class PortfolioInfoList
-            extends DataInfoList<PortfolioInfo, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<PortfolioInfo, AccountInfoClass> {
         /**
          * Report fields.
          */
@@ -325,9 +326,9 @@ public class PortfolioInfo
 
         @Override
         protected PortfolioInfo addNewItem(final DataItem pOwner,
-                                           final AccountInfoType pInfoType) {
+                                           final StaticDataItem<?, AccountInfoClass> pInfoType) {
             /* Allocate the new entry and add to list */
-            final PortfolioInfo myInfo = new PortfolioInfo(this, (Portfolio) pOwner, pInfoType);
+            final PortfolioInfo myInfo = new PortfolioInfo(this, (Portfolio) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */

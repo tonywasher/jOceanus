@@ -35,13 +35,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Representation of a set of DataInfo links for a DataItem.
  * @author Tony Washer
  * @param <T> the data type
- * @param <I> the Info Type that applies to this item
  * @param <S> the Info type class
  */
-public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
-                             I extends StaticDataItem<I, S>,
+public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
                              S extends Enum<S> & DataInfoClass>
-        extends DataInfoItem<T, I, S> {
+        extends DataInfoItem<T, S> {
     /**
      * Item separator.
      */
@@ -80,12 +78,12 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
     /**
      * The infoType.
      */
-    private final I theInfoType;
+    private final StaticDataItem<?, S> theInfoType;
 
     /**
      * The infoType.
      */
-    private final DataInfoList<T, I, S> theInfoList;
+    private final DataInfoList<T, S> theInfoList;
 
     /**
      * Constructor.
@@ -93,9 +91,9 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
      * @param pOwner the set owner
      * @param pInfoType the info type
      */
-    protected DataInfoLinkSet(final DataInfoList<T, I, S> pList,
+    protected DataInfoLinkSet(final DataInfoList<T, S> pList,
                               final DataItem pOwner,
-                              final I pInfoType) {
+                              final StaticDataItem<?, S> pInfoType) {
         /* Call super-constructor */
         super(pList);
 
@@ -114,8 +112,8 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
      * @param pList the infoList
      * @param pSet the infoLinkSet to clone
      */
-    protected DataInfoLinkSet(final DataInfoList<T, I, S> pList,
-                              final DataInfoLinkSet<T, I, S> pSet) {
+    protected DataInfoLinkSet(final DataInfoList<T, S> pList,
+                              final DataInfoLinkSet<T, S> pSet) {
         /* Call standard constructor */
         this(pList, pSet.getOwner(), pSet.getInfoType());
 
@@ -162,7 +160,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
     }
 
     @Override
-    public I getInfoType() {
+    public StaticDataItem<?, S> getInfoType() {
         return theInfoType;
     }
 
@@ -574,8 +572,8 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, I, S>,
     }
 
     @Override
-    public int compareTo(final DataInfoItem<T, I, S> pThat) {
-        return getInfoType().compareTo(pThat.getInfoType());
+    public int compareTo(final DataInfoItem<T, S> pThat) {
+        return getInfoType().compareTo((StaticDataItem<?, S>) pThat.getInfoType());
     }
 
     /**
