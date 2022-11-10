@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class AssetCurrency
-        extends StaticDataItem<AssetCurrency, AssetCurrencyClass> {
+        extends StaticDataItem<AssetCurrency> {
     /**
      * Object name.
      */
@@ -168,7 +169,7 @@ public class AssetCurrency
      * @return the class
      */
     public AssetCurrencyClass getCurrencyClass() {
-        return super.getStaticClass();
+        return (AssetCurrencyClass) super.getStaticClass();
     }
 
     @Override
@@ -190,7 +191,7 @@ public class AssetCurrency
     }
 
     @Override
-    public int compareTo(final StaticDataItem<?, AssetCurrencyClass> pThat) {
+    public int compareTo(final StaticDataItem<?> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -289,7 +290,7 @@ public class AssetCurrency
      * Represents a list of {@link AssetCurrency} objects.
      */
     public static class AssetCurrencyList
-            extends StaticList<AssetCurrency, AssetCurrencyClass> {
+            extends StaticList<AssetCurrency> {
         /**
          * Report fields.
          */
@@ -462,9 +463,9 @@ public class AssetCurrency
         }
 
         @Override
-        protected AssetCurrency newItem(final AssetCurrencyClass pClass) throws OceanusException {
+        protected AssetCurrency newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the currency */
-            final AssetCurrency myCurr = new AssetCurrency(this, pClass);
+            final AssetCurrency myCurr = new AssetCurrency(this, (AssetCurrencyClass) pClass);
 
             /* Check that this CurrId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
@@ -512,7 +513,7 @@ public class AssetCurrency
      * The dataMap class.
      */
     protected static final class CurrencyDataMap
-            extends StaticDataMap<AssetCurrency, AssetCurrencyClass> {
+            extends StaticDataMap<AssetCurrency> {
         /**
          * Report fields.
          */

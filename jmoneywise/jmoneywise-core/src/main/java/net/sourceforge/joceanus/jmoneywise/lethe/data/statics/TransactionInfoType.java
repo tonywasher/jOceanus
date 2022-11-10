@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfoType
-        extends StaticDataItem<TransactionInfoType, TransactionInfoClass> {
+        extends StaticDataItem<TransactionInfoType> {
     /**
      * Object name.
      */
@@ -111,7 +112,7 @@ public class TransactionInfoType
      * @return the class
      */
     public TransactionInfoClass getInfoClass() {
-        return super.getStaticClass();
+        return (TransactionInfoClass) super.getStaticClass();
     }
 
     /**
@@ -144,7 +145,7 @@ public class TransactionInfoType
      * Represents a list of {@link TransactionInfoType} objects.
      */
     public static class TransactionInfoTypeList
-            extends StaticList<TransactionInfoType, TransactionInfoClass> {
+            extends StaticList<TransactionInfoType> {
         /**
          * Report fields.
          */
@@ -256,9 +257,9 @@ public class TransactionInfoType
         }
 
         @Override
-        protected TransactionInfoType newItem(final TransactionInfoClass pClass) throws OceanusException {
+        protected TransactionInfoType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final TransactionInfoType myType = new TransactionInfoType(this, pClass);
+            final TransactionInfoType myType = new TransactionInfoType(this, (TransactionInfoClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

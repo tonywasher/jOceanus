@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
  * @author Tony Washer
  */
 public class SecurityInfoSet
-        extends DataInfoSet<SecurityInfo, AccountInfoClass> {
+        extends DataInfoSet<SecurityInfo> {
     /**
      * Report fields.
      */
@@ -193,7 +194,7 @@ public class SecurityInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Security */
         final Security mySec = getOwner();
         final SecurityTypeClass myType = mySec.getCategoryClass();
@@ -203,7 +204,7 @@ public class SecurityInfoSet
             return MetisFieldRequired.NOTALLOWED;
         }
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
                 return MetisFieldRequired.CANEXIST;

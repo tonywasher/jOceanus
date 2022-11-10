@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashCategoryType
-        extends StaticDataItem<CashCategoryType, CashCategoryClass> {
+        extends StaticDataItem<CashCategoryType> {
     /**
      * Object name.
      */
@@ -100,7 +101,7 @@ public class CashCategoryType
      * @return the class
      */
     public CashCategoryClass getCashClass() {
-        return super.getStaticClass();
+        return (CashCategoryClass) super.getStaticClass();
     }
 
     /**
@@ -127,7 +128,7 @@ public class CashCategoryType
      * Represents a list of {@link CashCategoryType} objects.
      */
     public static class CashCategoryTypeList
-            extends StaticList<CashCategoryType, CashCategoryClass> {
+            extends StaticList<CashCategoryType> {
         /**
          * Report fields.
          */
@@ -239,9 +240,9 @@ public class CashCategoryType
         }
 
         @Override
-        protected CashCategoryType newItem(final CashCategoryClass pClass) throws OceanusException {
+        protected CashCategoryType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final CashCategoryType myType = new CashCategoryType(this, pClass);
+            final CashCategoryType myType = new CashCategoryType(this, (CashCategoryClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

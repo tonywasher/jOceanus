@@ -47,9 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Static Table.
  * @param <L> the list type
  * @param <T> the data type
- * @param <S> the static class
  */
-public class MoneyWiseStaticTable<L extends StaticList<T, S>, T extends StaticDataItem<T, S>, S extends Enum<S> & StaticDataClass>
+public class MoneyWiseStaticTable<L extends StaticList<T>, T extends StaticDataItem<T>>
         extends MoneyWiseBaseTable<T> {
     /**
      * Class column width.
@@ -172,7 +171,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S>, T extends StaticDa
     @Override
     protected void refreshData() throws OceanusException {
         final MoneyWiseData myData = getView().getData();
-        final StaticList<T, S> myStatic = myData.getDataList(theClass);
+        final StaticList<T> myStatic = myData.getDataList(theClass);
         theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
         theStatic.mapData();
         getTable().setItems(theStatic.getUnderlyingList());
@@ -183,11 +182,10 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S>, T extends StaticDa
     /**
      * handle new static class.
      */
-    @SuppressWarnings("unchecked")
     private void handleNewClass() {
         /* Access the new class */
         cancelEditing();
-        final S myClass = (S) theNewButton.getValue().getData();
+        final StaticDataClass myClass = (StaticDataClass) theNewButton.getValue().getData();
 
         /* Protect the action */
         try {
@@ -228,7 +226,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S>, T extends StaticDa
         myMenu.removeAllItems();
 
         /* Loop through the missing classes */
-        for (S myValue : theStatic.getMissingClasses()) {
+        for (StaticDataClass myValue : theStatic.getMissingClasses()) {
             /* Create a new MenuItem and add it to the popUp */
             myMenu.addItem(new TethysUIGenericWrapper(myValue));
         }
@@ -239,7 +237,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S>, T extends StaticDa
      * @param pStatic the static data
      */
     @SuppressWarnings("unchecked")
-    void selectStatic(final StaticDataItem<?, ?> pStatic) {
+    void selectStatic(final StaticDataItem<?> pStatic) {
         getTable().selectRow((T) pStatic);
     }
 

@@ -31,4 +31,10 @@ public interface StaticDataClass {
      * @return the order
      */
     int getOrder();
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    String name();
 }

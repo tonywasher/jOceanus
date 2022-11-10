@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityInfo
-        extends DataInfoItem<SecurityInfo, AccountInfoClass> {
+        extends DataInfoItem<SecurityInfo> {
     /**
      * Object name.
      */
@@ -224,7 +225,7 @@ public class SecurityInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<SecurityInfo, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<SecurityInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -365,7 +366,7 @@ public class SecurityInfo
      * SecurityInfoList.
      */
     public static class SecurityInfoList
-            extends DataInfoList<SecurityInfo, AccountInfoClass> {
+            extends DataInfoList<SecurityInfo> {
         /**
          * Report fields.
          */
@@ -443,7 +444,7 @@ public class SecurityInfo
 
         @Override
         protected SecurityInfo addNewItem(final DataItem pOwner,
-                                          final StaticDataItem<?, AccountInfoClass> pInfoType) {
+                                          final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
             final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
@@ -455,7 +456,7 @@ public class SecurityInfo
         @Override
         public void addInfoItem(final Integer pId,
                                 final DataItem pSecurity,
-                                final AccountInfoClass pInfoClass,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {

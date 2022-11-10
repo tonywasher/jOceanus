@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.Transa
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class CashInfoSet
-        extends DataInfoSet<CashInfo, AccountInfoClass> {
+        extends DataInfoSet<CashInfo> {
     /**
      * Report fields.
      */
@@ -204,7 +205,7 @@ public class CashInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Cash */
         final Cash myCash = getOwner();
         final CashCategory myCategory = myCash.getCategory();
@@ -215,7 +216,7 @@ public class CashInfoSet
         }
 
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
                 return MetisFieldRequired.CANEXIST;
@@ -322,9 +323,9 @@ public class CashInfoSet
 
     @Override
     protected void setDefaultValue(final DataListSet pUpdateSet,
-                                   final AccountInfoClass pClass) throws OceanusException {
+                                   final DataInfoClass pClass) throws OceanusException {
         /* Switch on the class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             case AUTOEXPENSE:
                 setValue(pClass, getDefaultAutoExpense(pUpdateSet));
                 break;

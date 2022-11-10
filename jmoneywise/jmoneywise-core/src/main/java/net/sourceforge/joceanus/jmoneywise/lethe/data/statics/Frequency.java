@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticDataItem<Frequency, FrequencyClass> {
+        extends StaticDataItem<Frequency> {
     /**
      * Object name.
      */
@@ -100,7 +101,7 @@ public class Frequency
      * @return the class
      */
     public FrequencyClass getFrequency() {
-        return super.getStaticClass();
+        return (FrequencyClass) super.getStaticClass();
     }
 
     /**
@@ -168,7 +169,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FrequencyClass> {
+            extends StaticList<Frequency> {
         /**
          * Report fields.
          */
@@ -289,9 +290,9 @@ public class Frequency
         }
 
         @Override
-        protected Frequency newItem(final FrequencyClass pClass) throws OceanusException {
+        protected Frequency newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the frequency */
-            final Frequency myFreq = new Frequency(this, pClass);
+            final Frequency myFreq = new Frequency(this, (FrequencyClass) pClass);
 
             /* Check that this FreqId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {

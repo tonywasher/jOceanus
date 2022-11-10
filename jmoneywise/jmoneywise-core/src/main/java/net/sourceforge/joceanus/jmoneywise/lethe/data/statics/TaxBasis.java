@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticDataItem<TaxBasis, TaxBasisClass> {
+        extends StaticDataItem<TaxBasis> {
     /**
      * Object name.
      */
@@ -100,7 +101,7 @@ public class TaxBasis
      * @return the class
      */
     public TaxBasisClass getTaxClass() {
-        return super.getStaticClass();
+        return (TaxBasisClass) super.getStaticClass();
     }
 
     @Override
@@ -131,7 +132,7 @@ public class TaxBasis
      * Represents a list of {@link TaxBasis} objects.
      */
     public static class TaxBasisList
-            extends StaticList<TaxBasis, TaxBasisClass> {
+            extends StaticList<TaxBasis> {
         /**
          * Report fields.
          */
@@ -252,9 +253,9 @@ public class TaxBasis
         }
 
         @Override
-        protected TaxBasis newItem(final TaxBasisClass pClass) throws OceanusException {
+        protected TaxBasis newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the basis */
-            final TaxBasis myBasis = new TaxBasis(this, pClass);
+            final TaxBasis myBasis = new TaxBasis(this, (TaxBasisClass) pClass);
 
             /* Check that this BasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanCategoryType
-        extends StaticDataItem<LoanCategoryType, LoanCategoryClass> {
+        extends StaticDataItem<LoanCategoryType> {
     /**
      * Object name.
      */
@@ -100,7 +101,7 @@ public class LoanCategoryType
      * @return the class
      */
     public LoanCategoryClass getLoanClass() {
-        return super.getStaticClass();
+        return (LoanCategoryClass) super.getStaticClass();
     }
 
     /**
@@ -127,7 +128,7 @@ public class LoanCategoryType
      * Represents a list of {@link LoanCategoryType} objects.
      */
     public static class LoanCategoryTypeList
-            extends StaticList<LoanCategoryType, LoanCategoryClass> {
+            extends StaticList<LoanCategoryType> {
         /**
          * Report fields.
          */
@@ -239,9 +240,9 @@ public class LoanCategoryType
         }
 
         @Override
-        protected LoanCategoryType newItem(final LoanCategoryClass pClass) throws OceanusException {
+        protected LoanCategoryType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final LoanCategoryType myType = new LoanCategoryType(this, pClass);
+            final LoanCategoryType myType = new LoanCategoryType(this, (LoanCategoryClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

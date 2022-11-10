@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositCategoryType
-        extends StaticDataItem<DepositCategoryType, DepositCategoryClass> {
+        extends StaticDataItem<DepositCategoryType> {
     /**
      * Object name.
      */
@@ -100,7 +101,7 @@ public class DepositCategoryType
      * @return the class
      */
     public DepositCategoryClass getDepositClass() {
-        return super.getStaticClass();
+        return (DepositCategoryClass) super.getStaticClass();
     }
 
     /**
@@ -127,7 +128,7 @@ public class DepositCategoryType
      * Represents a list of {@link DepositCategoryType} objects.
      */
     public static class DepositCategoryTypeList
-            extends StaticList<DepositCategoryType, DepositCategoryClass> {
+            extends StaticList<DepositCategoryType> {
         /**
          * Report fields.
          */
@@ -239,9 +240,9 @@ public class DepositCategoryType
         }
 
         @Override
-        protected DepositCategoryType newItem(final DepositCategoryClass pClass) throws OceanusException {
+        protected DepositCategoryType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final DepositCategoryType myType = new DepositCategoryType(this, pClass);
+            final DepositCategoryType myType = new DepositCategoryType(this, (DepositCategoryClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 
@@ -33,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
  * @author Tony Washer
  */
 public class PayeeInfoSet
-        extends DataInfoSet<PayeeInfo, AccountInfoClass> {
+        extends DataInfoSet<PayeeInfo> {
     /**
      * Report fields.
      */
@@ -139,9 +140,9 @@ public class PayeeInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
             case SORTCODE:

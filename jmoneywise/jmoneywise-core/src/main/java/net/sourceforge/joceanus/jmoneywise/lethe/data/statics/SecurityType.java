@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -30,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticDataItem<SecurityType, SecurityTypeClass> {
+        extends StaticDataItem<SecurityType> {
     /**
      * Object name.
      */
@@ -104,7 +105,7 @@ public class SecurityType
      * @return the class
      */
     public SecurityTypeClass getSecurityClass() {
-        return super.getStaticClass();
+        return (SecurityTypeClass) super.getStaticClass();
     }
 
     @Override
@@ -121,7 +122,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-            extends StaticList<SecurityType, SecurityTypeClass> {
+            extends StaticList<SecurityType> {
         /**
          * Report fields.
          */
@@ -233,9 +234,9 @@ public class SecurityType
         }
 
         @Override
-        protected SecurityType newItem(final SecurityTypeClass pClass) throws OceanusException {
+        protected SecurityType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final SecurityType myType = new SecurityType(this, pClass);
+            final SecurityType myType = new SecurityType(this, (SecurityTypeClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

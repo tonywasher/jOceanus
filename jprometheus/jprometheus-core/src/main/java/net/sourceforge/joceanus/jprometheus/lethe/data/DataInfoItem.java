@@ -43,12 +43,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Representation of an information extension of a DataItem.
  * @author Tony Washer
  * @param <T> the data type
- * @param <S> the Info Class that applies to this item
  */
-public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
-                                   S extends Enum<S> & DataInfoClass>
+public abstract class DataInfoItem<T extends DataInfoItem<T>>
         extends EncryptedItem
-        implements Comparable<DataInfoItem<T, S>> {
+        implements Comparable<DataInfoItem<T>> {
     /**
      * Maximum DataLength.
      */
@@ -99,8 +97,8 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfoItem(final DataInfoList<T, S> pList,
-                           final DataInfoItem<T, S> pInfo) {
+    protected DataInfoItem(final DataInfoList<T> pList,
+                           final DataInfoItem<T> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -109,7 +107,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfoItem(final DataInfoList<T, S> pList) {
+    protected DataInfoItem(final DataInfoList<T> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -123,7 +121,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * @param uOwnerId the owner id
      * @throws OceanusException on error
      */
-    protected DataInfoItem(final DataInfoList<T, S> pList,
+    protected DataInfoItem(final DataInfoList<T> pList,
                            final Integer uId,
                            final Integer uKeySetId,
                            final Integer uInfoTypeId,
@@ -146,9 +144,9 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfoItem(final DataInfoList<T, S> pList,
+    protected DataInfoItem(final DataInfoList<T> pList,
                            final Integer uId,
-                           final StaticDataItem<?, S> pInfoType,
+                           final StaticDataItem<?> pInfoType,
                            final DataItem pOwner) {
         /* Initialise the item */
         super(pList, uId);
@@ -164,8 +162,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * @param pValues the values
      * @throws OceanusException on error
      */
-    @SuppressWarnings("unchecked")
-    protected DataInfoItem(final DataInfoList<T, S> pList,
+    protected DataInfoItem(final DataInfoList<T> pList,
                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -177,7 +174,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
         } else if (myValue instanceof String) {
             setValueInfoType((String) myValue);
         } else if (myValue instanceof StaticDataItem) {
-            setValueInfoType((StaticDataItem<?, S>) myValue);
+            setValueInfoType((StaticDataItem<?>) myValue);
         }
 
         /* Store the Owner */
@@ -233,7 +230,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
         }
 
         /* Access InfoType */
-        final StaticDataItem<?, ?> myInfoType = (StaticDataItem<?, ?>) myType;
+        final StaticDataItem<?> myInfoType = (StaticDataItem<?>) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + super.toString();
@@ -249,11 +246,11 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
         }
 
         /* Access InfoType */
-        final StaticDataItem<?, S> myInfoType = getInfoType();
+        final StaticDataItem<?> myInfoType = getInfoType();
 
         /* Access formatter */
         final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
-        final S myInfoClass = myInfoType.getStaticClass();
+        final DataInfoClass myInfoClass = (DataInfoClass) myInfoType.getStaticClass();
 
         /* Switch on type of Data */
         switch (myInfoClass.getDataType()) {
@@ -269,13 +266,13 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * Obtain InfoType.
      * @return the InfoTypeId
      */
-    public abstract StaticDataItem<?, S> getInfoType();
+    public abstract StaticDataItem<?> getInfoType();
 
     /**
      * Obtain InfoClass.
      * @return the InfoClass
      */
-    public abstract S getInfoClass();
+    public abstract DataInfoClass getInfoClass();
 
     /**
      * Obtain InfoTypeId.
@@ -436,7 +433,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      * Set InfoType.
      * @param pValue the info Type
      */
-    protected final void setValueInfoType(final StaticDataItem<?, S> pValue) {
+    protected final void setValueInfoType(final StaticDataItem<?> pValue) {
         getValueSet().setValue(FIELD_INFOTYPE, pValue);
     }
 
@@ -564,8 +561,8 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
      */
     protected void setValue(final Object pValue) throws OceanusException {
         /* Access the info Type */
-        final StaticDataItem<?, S> myType = getInfoType();
-        final S myClass = myType.getStaticClass();
+        final StaticDataItem<?> myType = getInfoType();
+        final DataInfoClass myClass = (DataInfoClass) myType.getStaticClass();
 
         /* Access the DataSet and parser */
         final DataSet<?> myDataSet = getDataSet();
@@ -887,7 +884,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
 
     @Override
     public void validate() {
-        final StaticDataItem<?, S> myType = getInfoType();
+        final StaticDataItem<?> myType = getInfoType();
         final DataItem myOwner = getOwner();
         final Object myValue = getValue(Object.class);
 
@@ -933,10 +930,8 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
     /**
      * List class for DataInfo.
      * @param <T> the DataType
-     * @param <S> the Info Class that applies to this item
      */
-    public abstract static class DataInfoList<T extends DataInfoItem<T, S> & Comparable<DataInfoItem<T, S>>,
-                                              S extends Enum<S> & DataInfoClass>
+    public abstract static class DataInfoList<T extends DataInfoItem<T> & Comparable<DataInfoItem<T>>>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -963,7 +958,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected DataInfoList(final DataInfoList<T, S> pSource) {
+        protected DataInfoList(final DataInfoList<T> pSource) {
             super(pSource);
         }
 
@@ -973,7 +968,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
         }
 
         @Override
-        protected abstract DataInfoList<T, S> getEmptyList(ListStyle pStyle);
+        protected abstract DataInfoList<T> getEmptyList(ListStyle pStyle);
 
         /**
          * Add new item to the list.
@@ -982,7 +977,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
          * @return the new info item
          */
         protected abstract T addNewItem(DataItem pOwner,
-                                        StaticDataItem<?, S> pInfoType);
+                                        StaticDataItem<?> pInfoType);
 
         /**
          * Add an info Item to the list.
@@ -994,7 +989,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T, S>,
          */
         public abstract void addInfoItem(Integer pId,
                                          DataItem pOwner,
-                                         S pInfoClass,
+                                         DataInfoClass pInfoClass,
                                          Object pValue) throws OceanusException;
 
         @Override

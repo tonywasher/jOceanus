@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositInfo
-        extends DataInfoItem<DepositInfo, AccountInfoClass> {
+        extends DataInfoItem<DepositInfo> {
     /**
      * Object name.
      */
@@ -171,7 +172,7 @@ public class DepositInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<DepositInfo, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<DepositInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -248,7 +249,7 @@ public class DepositInfo
      * DepositInfoList.
      */
     public static class DepositInfoList
-            extends DataInfoList<DepositInfo, AccountInfoClass> {
+            extends DataInfoList<DepositInfo> {
         /**
          * Report fields.
          */
@@ -326,7 +327,7 @@ public class DepositInfo
 
         @Override
         protected DepositInfo addNewItem(final DataItem pOwner,
-                                         final StaticDataItem<?, AccountInfoClass> pInfoType) {
+                                         final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
             final DepositInfo myInfo = new DepositInfo(this, (Deposit) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
@@ -338,7 +339,7 @@ public class DepositInfo
         @Override
         public void addInfoItem(final Integer pId,
                                 final DataItem pDeposit,
-                                final AccountInfoClass pInfoClass,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {

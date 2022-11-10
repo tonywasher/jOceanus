@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionCategoryType
-        extends StaticDataItem<TransactionCategoryType, TransactionCategoryClass> {
+        extends StaticDataItem<TransactionCategoryType> {
     /**
      * Object name.
      */
@@ -100,7 +101,7 @@ public class TransactionCategoryType
      * @return the class
      */
     public TransactionCategoryClass getCategoryClass() {
-        return super.getStaticClass();
+        return (TransactionCategoryClass) super.getStaticClass();
     }
 
     @Override
@@ -122,7 +123,7 @@ public class TransactionCategoryType
      * Represents a list of {@link TransactionCategoryType} objects.
      */
     public static class TransactionCategoryTypeList
-            extends StaticList<TransactionCategoryType, TransactionCategoryClass> {
+            extends StaticList<TransactionCategoryType> {
         /**
          * Report fields.
          */
@@ -243,9 +244,9 @@ public class TransactionCategoryType
         }
 
         @Override
-        protected TransactionCategoryType newItem(final TransactionCategoryClass pClass) throws OceanusException {
+        protected TransactionCategoryType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final TransactionCategoryType myType = new TransactionCategoryType(this, pClass);
+            final TransactionCategoryType myType = new TransactionCategoryType(this, (TransactionCategoryClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

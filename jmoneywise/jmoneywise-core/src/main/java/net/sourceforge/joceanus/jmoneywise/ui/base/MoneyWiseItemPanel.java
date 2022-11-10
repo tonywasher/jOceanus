@@ -185,7 +185,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem & Comparable<? super
 
             /* Handle differing items */
             if (myItem instanceof StaticDataItem) {
-                final StaticDataItem<?, ?> myStatic = (StaticDataItem<?, ?>) myItem;
+                final StaticDataItem<?> myStatic = (StaticDataItem<?>) myItem;
                 myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
             } else if (myItem instanceof AssetBase) {

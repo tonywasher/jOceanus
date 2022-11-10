@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class DepositInfoSet
-        extends DataInfoSet<DepositInfo, AccountInfoClass> {
+        extends DataInfoSet<DepositInfo> {
     /**
      * Report fields.
      */
@@ -147,7 +148,7 @@ public class DepositInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Deposit */
         final Deposit myDeposit = getOwner();
         final DepositCategory myCategory = myDeposit.getCategory();
@@ -159,7 +160,7 @@ public class DepositInfoSet
         final DepositCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
             case SORTCODE:

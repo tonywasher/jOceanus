@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <S> the Static Data type
  * @param <C> the Static Data class
  */
-public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends StaticDataItem<S, C>, C extends Enum<C> & CategoryInterface>
+public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends StaticDataItem<S>, C extends Enum<C> & CategoryInterface>
         extends EncryptedItem
         implements MetisDataNamedItem, Comparable<T> {
     /**
@@ -713,7 +713,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param <S> the Static Data type
      * @param <C> the Static Data class
      */
-    public abstract static class CategoryBaseList<T extends CategoryBase<T, S, C>, S extends StaticDataItem<S, C>, C extends Enum<C> & CategoryInterface>
+    public abstract static class CategoryBaseList<T extends CategoryBase<T, S, C>, S extends StaticDataItem<S>, C extends Enum<C> & CategoryInterface>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -859,7 +859,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @param <S> the Static Data type
      * @param <C> the Static Data class
      */
-    protected static class CategoryDataMap<T extends CategoryBase<T, S, C>, S extends StaticDataItem<S, C>, C extends Enum<C> & CategoryInterface>
+    protected static class CategoryDataMap<T extends CategoryBase<T, S, C>, S extends StaticDataItem<S>, C extends Enum<C> & CategoryInterface>
             extends DataInstanceMap<T, String> {
         @Override
         public void adjustForItem(final T pItem) {

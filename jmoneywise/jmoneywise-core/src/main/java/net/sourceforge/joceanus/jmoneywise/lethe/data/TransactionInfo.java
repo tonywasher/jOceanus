@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfoItem<TransactionInfo, TransactionInfoClass> {
+        extends DataInfoItem<TransactionInfo> {
     /**
      * Object name.
      */
@@ -236,7 +237,7 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<TransactionInfo, TransactionInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<TransactionInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -380,7 +381,7 @@ public class TransactionInfo
      * TransactionInfoList.
      */
     public static class TransactionInfoList
-            extends DataInfoList<TransactionInfo, TransactionInfoClass> {
+            extends DataInfoList<TransactionInfo> {
         /**
          * Report fields.
          */
@@ -458,7 +459,7 @@ public class TransactionInfo
 
         @Override
         protected TransactionInfo addNewItem(final DataItem pOwner,
-                                             final StaticDataItem<?, TransactionInfoClass> pInfoType) {
+                                             final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
             final TransactionInfo myInfo = new TransactionInfo(this, (Transaction) pOwner, (TransactionInfoType) pInfoType);
             add(myInfo);
@@ -470,7 +471,7 @@ public class TransactionInfo
         @Override
         public void addInfoItem(final Integer pId,
                                 final DataItem pTransaction,
-                                final TransactionInfoClass pInfoClass,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -30,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PortfolioType data type.
  */
 public class PortfolioType
-        extends StaticDataItem<PortfolioType, PortfolioTypeClass> {
+        extends StaticDataItem<PortfolioType> {
     /**
      * Object name.
      */
@@ -99,7 +100,7 @@ public class PortfolioType
      * @return the class
      */
     public PortfolioTypeClass getPortfolioClass() {
-        return super.getStaticClass();
+        return (PortfolioTypeClass) super.getStaticClass();
     }
 
     @Override
@@ -116,7 +117,7 @@ public class PortfolioType
      * Represents a list of {@link PortfolioType} objects.
      */
     public static class PortfolioTypeList
-            extends StaticList<PortfolioType, PortfolioTypeClass> {
+            extends StaticList<PortfolioType> {
         /**
          * Report fields.
          */
@@ -228,9 +229,9 @@ public class PortfolioType
         }
 
         @Override
-        protected PortfolioType newItem(final PortfolioTypeClass pClass) throws OceanusException {
+        protected PortfolioType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final PortfolioType myType = new PortfolioType(this, pClass);
+            final PortfolioType myType = new PortfolioType(this, (PortfolioTypeClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

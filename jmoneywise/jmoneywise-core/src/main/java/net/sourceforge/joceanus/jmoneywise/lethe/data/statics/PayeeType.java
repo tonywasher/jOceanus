@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PayeeType data type.
  */
 public class PayeeType
-        extends StaticDataItem<PayeeType, PayeeTypeClass> {
+        extends StaticDataItem<PayeeType> {
     /**
      * Object name.
      */
@@ -101,7 +102,7 @@ public class PayeeType
      * @return the class
      */
     public PayeeTypeClass getPayeeClass() {
-        return super.getStaticClass();
+        return (PayeeTypeClass) super.getStaticClass();
     }
 
     @Override
@@ -118,7 +119,7 @@ public class PayeeType
      * Represents a list of {@link PayeeType} objects.
      */
     public static class PayeeTypeList
-            extends StaticList<PayeeType, PayeeTypeClass> {
+            extends StaticList<PayeeType> {
         /**
          * Report fields.
          */
@@ -230,9 +231,9 @@ public class PayeeType
         }
 
         @Override
-        protected PayeeType newItem(final PayeeTypeClass pClass) throws OceanusException {
+        protected PayeeType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final PayeeType myType = new PayeeType(this, pClass);
+            final PayeeType myType = new PayeeType(this, (PayeeTypeClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

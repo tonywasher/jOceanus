@@ -128,7 +128,7 @@ public class MoneyWiseStaticPanel
     /**
      * The table card panel.
      */
-    private final TethysUICardPaneManager<MoneyWiseStaticTable<?, ?, ?>> theTableCard;
+    private final TethysUICardPaneManager<MoneyWiseStaticTable<?, ?>> theTableCard;
 
     /**
      * The new card panel.
@@ -138,7 +138,7 @@ public class MoneyWiseStaticPanel
     /**
      * The list of panels.
      */
-    private final List<MoneyWiseStaticTable<?, ?, ?>> thePanels;
+    private final List<MoneyWiseStaticTable<?, ?>> thePanels;
 
     /**
      * Constructor.
@@ -286,7 +286,7 @@ public class MoneyWiseStaticPanel
         myTask = myTask.startTask("StaticData");
 
         /* Loop through the panels */
-        for (MoneyWiseStaticTable<?, ?, ?> myPanel : thePanels) {
+        for (MoneyWiseStaticTable<?, ?> myPanel : thePanels) {
             /* Note the stage */
             myTask.startTask(myPanel.getItemType().getFieldName());
 
@@ -316,7 +316,7 @@ public class MoneyWiseStaticPanel
         final String myActiveName = theTableCard.getActiveName();
 
         /* Loop through the panels */
-        for (MoneyWiseStaticTable<?, ?, ?> myTable : thePanels) {
+        for (MoneyWiseStaticTable<?, ?> myTable : thePanels) {
             /* Create a new MenuItem and add it to the popUp */
             final String myName = myTable.getItemType().getFieldName();
             final TethysUIScrollItem<TethysUIGenericWrapper> myItem = theDataMenu.addItem(new TethysUIGenericWrapper(myTable), myName);
@@ -339,13 +339,12 @@ public class MoneyWiseStaticPanel
      * @param pItemType the type of the list
      * @param pListClass the class of the list
      * @param <L> the list type
-     * @param <S> the static class
      * @param <T> the data type
      */
-    private <L extends StaticList<T, S>, T extends StaticDataItem<T, S>, S extends Enum<S> & StaticDataClass> void addStatic(final MoneyWiseDataType pItemType,
-                                                                                                                             final Class<L> pListClass) {
+    private <L extends StaticList<T>, T extends StaticDataItem<T>> void addStatic(final MoneyWiseDataType pItemType,
+                                                                                  final Class<L> pListClass) {
         /* Create the new panel */
-        final MoneyWiseStaticTable<L, T, S> myPanel = new MoneyWiseStaticTable<>(theView, theUpdateSet, theError, pItemType, pListClass);
+        final MoneyWiseStaticTable<L, T> myPanel = new MoneyWiseStaticTable<>(theView, theUpdateSet, theError, pItemType, pListClass);
 
         /* Add the listener for the panel */
         myPanel.getEventRegistrar().addEventListener(e -> setVisibility());
@@ -368,7 +367,7 @@ public class MoneyWiseStaticPanel
      * Select static data.
      * @param pStatic the static data to select
      */
-    public void selectStatic(final StaticDataItem<?, ?> pStatic) {
+    public void selectStatic(final StaticDataItem<?> pStatic) {
         /* Access the item type */
         final MoneyWiseDataType myType = (MoneyWiseDataType) pStatic.getItemType();
         final String myName = myType.getFieldName();
@@ -376,7 +375,7 @@ public class MoneyWiseStaticPanel
         /* Access the panel */
         if (theTableCard.selectCard(myName)) {
             /* Update selection */
-            final MoneyWiseStaticTable<?, ?, ?> myPanel = theTableCard.getActiveCard();
+            final MoneyWiseStaticTable<?, ?> myPanel = theTableCard.getActiveCard();
             theSelectButton.setValue(new TethysUIGenericWrapper(myPanel), myName);
             myPanel.selectStatic(pStatic);
             setSelection(myName);
@@ -399,7 +398,7 @@ public class MoneyWiseStaticPanel
      */
     public void determineFocus() {
         /* Request the focus */
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = theTableCard.getActiveCard();
+        final MoneyWiseStaticTable<?, ?> myPanel = theTableCard.getActiveCard();
         if (myPanel != null) {
             myPanel.determineFocus(theViewerEntry);
         }
@@ -410,7 +409,7 @@ public class MoneyWiseStaticPanel
      */
     private void showNewButton() {
         /* Set visibility of New Button */
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = (MoneyWiseStaticTable<?, ?, ?>) theSelectButton.getValue().getData();
+        final MoneyWiseStaticTable<?, ?> myPanel = (MoneyWiseStaticTable<?, ?>) theSelectButton.getValue().getData();
         final boolean showNew = myPanel != null
                 && !myPanel.isFull();
         theNewCard.setVisible(showNew);
@@ -470,7 +469,7 @@ public class MoneyWiseStaticPanel
      * Handle panel selection.
      */
     private void handlePanelSelection() {
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = (MoneyWiseStaticTable<?, ?, ?>) theSelectButton.getValue().getData();
+        final MoneyWiseStaticTable<?, ?> myPanel = (MoneyWiseStaticTable<?, ?>) theSelectButton.getValue().getData();
         final String myName = myPanel.getItemType().getFieldName();
         theTableCard.selectCard(myName);
         theNewCard.selectCard(myName);
@@ -484,7 +483,7 @@ public class MoneyWiseStaticPanel
      */
     public void showDisabled(final boolean pShow) {
         /* Loop through the panels */
-        for (MoneyWiseStaticTable<?, ?, ?> myPanel : thePanels) {
+        for (MoneyWiseStaticTable<?, ?> myPanel : thePanels) {
             myPanel.setShowAll(pShow);
         }
     }
@@ -494,7 +493,7 @@ public class MoneyWiseStaticPanel
      */
     private void cancelEditing() {
         /* Loop through the panels */
-        for (MoneyWiseStaticTable<?, ?, ?> myPanel : thePanels) {
+        for (MoneyWiseStaticTable<?, ?> myPanel : thePanels) {
             myPanel.cancelEditing();
         }
     }
@@ -504,7 +503,7 @@ public class MoneyWiseStaticPanel
      * @return true/false
      */
     private boolean isEditing() {
-        final MoneyWiseStaticTable<?, ?, ?> myPanel = (MoneyWiseStaticTable<?, ?, ?>) theSelectButton.getValue().getData();
+        final MoneyWiseStaticTable<?, ?> myPanel = (MoneyWiseStaticTable<?, ?>) theSelectButton.getValue().getData();
         return myPanel.isEditing();
     }
 }

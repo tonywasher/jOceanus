@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PayeeInfo
-        extends DataInfoItem<PayeeInfo, AccountInfoClass> {
+        extends DataInfoItem<PayeeInfo> {
     /**
      * Object name.
      */
@@ -171,7 +172,7 @@ public class PayeeInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<PayeeInfo, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<PayeeInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -248,7 +249,7 @@ public class PayeeInfo
      * PayeeInfoList.
      */
     public static class PayeeInfoList
-            extends DataInfoList<PayeeInfo, AccountInfoClass> {
+            extends DataInfoList<PayeeInfo> {
         /**
          * Report fields.
          */
@@ -326,7 +327,7 @@ public class PayeeInfo
 
         @Override
         protected PayeeInfo addNewItem(final DataItem pOwner,
-                                       final StaticDataItem<?, AccountInfoClass> pInfoType) {
+                                       final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
             final PayeeInfo myInfo = new PayeeInfo(this, (Payee) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
@@ -338,7 +339,7 @@ public class PayeeInfo
         @Override
         public void addInfoItem(final Integer pId,
                                 final DataItem pPayee,
-                                final AccountInfoClass pInfoClass,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {

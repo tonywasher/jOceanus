@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticDataItem<AccountInfoType, AccountInfoClass> {
+        extends StaticDataItem<AccountInfoType> {
     /**
      * Object name.
      */
@@ -121,7 +122,7 @@ public class AccountInfoType
      * @return the class
      */
     public AccountInfoClass getInfoClass() {
-        return super.getStaticClass();
+        return (AccountInfoClass) super.getStaticClass();
     }
 
     /**
@@ -154,7 +155,7 @@ public class AccountInfoType
      * Represents a list of {@link AccountInfoType} objects.
      */
     public static class AccountInfoTypeList
-            extends StaticList<AccountInfoType, AccountInfoClass> {
+            extends StaticList<AccountInfoType> {
         /**
          * Report fields.
          */
@@ -266,9 +267,9 @@ public class AccountInfoType
         }
 
         @Override
-        protected AccountInfoType newItem(final AccountInfoClass pClass) throws OceanusException {
+        protected AccountInfoType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final AccountInfoType myType = new AccountInfoType(this, pClass);
+            final AccountInfoType myType = new AccountInfoType(this, (AccountInfoClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

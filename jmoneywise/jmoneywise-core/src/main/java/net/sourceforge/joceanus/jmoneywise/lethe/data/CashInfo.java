@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashInfo
-        extends DataInfoItem<CashInfo, AccountInfoClass> {
+        extends DataInfoItem<CashInfo> {
     /**
      * Object name.
      */
@@ -226,7 +227,7 @@ public class CashInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<CashInfo, AccountInfoClass> pThat) {
+    public int compareTo(final DataInfoItem<CashInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -372,7 +373,7 @@ public class CashInfo
      * CashInfoList.
      */
     public static class CashInfoList
-            extends DataInfoList<CashInfo, AccountInfoClass> {
+            extends DataInfoList<CashInfo> {
         /**
          * Report fields.
          */
@@ -450,7 +451,7 @@ public class CashInfo
 
         @Override
         protected CashInfo addNewItem(final DataItem pOwner,
-                                      final StaticDataItem<?, AccountInfoClass> pInfoType) {
+                                      final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
             final CashInfo myInfo = new CashInfo(this, (Cash) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
@@ -462,7 +463,7 @@ public class CashInfo
         @Override
         public void addInfoItem(final Integer pId,
                                 final DataItem pCash,
-                                final AccountInfoClass pInfoClass,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {

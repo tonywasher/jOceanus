@@ -35,11 +35,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Representation of a set of DataInfo links for a DataItem.
  * @author Tony Washer
  * @param <T> the data type
- * @param <S> the Info type class
  */
-public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
-                             S extends Enum<S> & DataInfoClass>
-        extends DataInfoItem<T, S> {
+public class DataInfoLinkSet<T extends DataInfoItem<T>>
+        extends DataInfoItem<T> {
     /**
      * Item separator.
      */
@@ -78,12 +76,12 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
     /**
      * The infoType.
      */
-    private final StaticDataItem<?, S> theInfoType;
+    private final StaticDataItem<?> theInfoType;
 
     /**
      * The infoType.
      */
-    private final DataInfoList<T, S> theInfoList;
+    private final DataInfoList<T> theInfoList;
 
     /**
      * Constructor.
@@ -91,9 +89,9 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
      * @param pOwner the set owner
      * @param pInfoType the info type
      */
-    protected DataInfoLinkSet(final DataInfoList<T, S> pList,
+    protected DataInfoLinkSet(final DataInfoList<T> pList,
                               final DataItem pOwner,
-                              final StaticDataItem<?, S> pInfoType) {
+                              final StaticDataItem<?> pInfoType) {
         /* Call super-constructor */
         super(pList);
 
@@ -112,8 +110,8 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
      * @param pList the infoList
      * @param pSet the infoLinkSet to clone
      */
-    protected DataInfoLinkSet(final DataInfoList<T, S> pList,
-                              final DataInfoLinkSet<T, S> pSet) {
+    protected DataInfoLinkSet(final DataInfoList<T> pList,
+                              final DataInfoLinkSet<T> pSet) {
         /* Call standard constructor */
         this(pList, pSet.getOwner(), pSet.getInfoType());
 
@@ -160,13 +158,13 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
     }
 
     @Override
-    public StaticDataItem<?, S> getInfoType() {
+    public StaticDataItem<?> getInfoType() {
         return theInfoType;
     }
 
     @Override
-    public S getInfoClass() {
-        return theInfoType.getStaticClass();
+    public DataInfoClass getInfoClass() {
+        return (DataInfoClass) theInfoType.getStaticClass();
     }
 
     /**
@@ -572,8 +570,8 @@ public class DataInfoLinkSet<T extends DataInfoItem<T, S>,
     }
 
     @Override
-    public int compareTo(final DataInfoItem<T, S> pThat) {
-        return getInfoType().compareTo((StaticDataItem<?, S>) pThat.getInfoType());
+    public int compareTo(final DataInfoItem<T> pThat) {
+        return getInfoType().compareTo(pThat.getInfoType());
     }
 
     /**

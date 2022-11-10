@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
@@ -45,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @author Tony Washer
  */
 public class TransactionInfoSet
-        extends DataInfoSet<TransactionInfo, TransactionInfoClass> {
+        extends DataInfoSet<TransactionInfo> {
     /**
      * Report fields.
      */
@@ -185,7 +186,7 @@ public class TransactionInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final TransactionInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Transaction */
         final Transaction myTransaction = getOwner();
         final MoneyWiseData myData = myTransaction.getDataSet();
@@ -202,7 +203,7 @@ public class TransactionInfoSet
         final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
-        switch (pClass) {
+        switch ((TransactionInfoClass) pClass) {
             /* Reference and comments are always available */
             case REFERENCE:
             case COMMENTS:
@@ -776,9 +777,9 @@ public class TransactionInfoSet
 
     @Override
     protected void setDefaultValue(final DataListSet pUpdateSet,
-                                   final TransactionInfoClass pClass) throws OceanusException {
+                                   final DataInfoClass pClass) throws OceanusException {
         /* Switch on the class */
-        switch (pClass) {
+        switch ((TransactionInfoClass) pClass) {
             case ACCOUNTDELTAUNITS:
             case PARTNERDELTAUNITS:
                 setValue(pClass, TethysUnits.getWholeUnits(1));
