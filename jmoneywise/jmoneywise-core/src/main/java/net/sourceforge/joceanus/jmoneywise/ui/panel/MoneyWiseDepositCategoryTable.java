@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise DepositCategory Table.
  */
 public class MoneyWiseDepositCategoryTable
-        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType> {
     /**
      * The Category dialog.
      */

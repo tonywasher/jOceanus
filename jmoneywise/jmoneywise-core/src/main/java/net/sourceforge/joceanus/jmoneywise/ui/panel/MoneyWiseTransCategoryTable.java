@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise TransCategory Table.
  */
 public class MoneyWiseTransCategoryTable
-        extends MoneyWiseCategoryTable<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
+        extends MoneyWiseCategoryTable<TransactionCategory, TransactionCategoryType> {
     /**
      * The Category dialog.
      */

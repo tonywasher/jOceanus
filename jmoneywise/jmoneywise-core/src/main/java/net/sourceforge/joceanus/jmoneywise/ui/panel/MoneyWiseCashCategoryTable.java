@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise CashCategory Table.
  */
 public class MoneyWiseCashCategoryTable
-        extends MoneyWiseCategoryTable<CashCategory, CashCategoryType, CashCategoryClass> {
+        extends MoneyWiseCategoryTable<CashCategory, CashCategoryType> {
     /**
      * The Category dialog.
      */

@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cash Category class.
  */
 public class CashCategory
-        extends CategoryBase<CashCategory, CashCategoryType, CashCategoryClass> {
+        extends CategoryBase<CashCategory, CashCategoryType> {
     /**
      * Object name.
      */
@@ -314,7 +315,7 @@ public class CashCategory
      * The Cash Category List class.
      */
     public static class CashCategoryList
-            extends CategoryBaseList<CashCategory, CashCategoryType, CashCategoryClass> {
+            extends CategoryBaseList<CashCategory, CashCategoryType> {
         /**
          * Report fields.
          */

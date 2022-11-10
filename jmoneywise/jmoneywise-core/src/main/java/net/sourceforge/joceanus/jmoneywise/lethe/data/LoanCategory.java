@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Loan Category class.
  */
 public class LoanCategory
-        extends CategoryBase<LoanCategory, LoanCategoryType, LoanCategoryClass> {
+        extends CategoryBase<LoanCategory, LoanCategoryType> {
     /**
      * Object name.
      */
@@ -314,7 +315,7 @@ public class LoanCategory
      * The Loan Category List class.
      */
     public static class LoanCategoryList
-            extends CategoryBaseList<LoanCategory, LoanCategoryType, LoanCategoryClass> {
+            extends CategoryBaseList<LoanCategory, LoanCategoryType> {
         /**
          * Report fields.
          */

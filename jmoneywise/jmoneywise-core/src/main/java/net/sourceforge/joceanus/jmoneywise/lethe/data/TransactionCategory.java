@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Transaction Category class.
  */
 public final class TransactionCategory
-        extends CategoryBase<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
+        extends CategoryBase<TransactionCategory, TransactionCategoryType> {
     /**
      * Object name.
      */
@@ -135,9 +136,9 @@ public final class TransactionCategory
     @Override
     public TransactionCategoryClass getCategoryTypeClass() {
         final TransactionCategoryType myType = getCategoryType();
-        return (myType == null)
-                                ? null
-                                : myType.getCategoryClass();
+        return myType == null
+                              ? null
+                              : myType.getCategoryClass();
     }
 
     @Override
@@ -408,7 +409,7 @@ public final class TransactionCategory
      * The Transaction Category List class.
      */
     public static class TransactionCategoryList
-            extends CategoryBaseList<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
+            extends CategoryBaseList<TransactionCategory, TransactionCategoryType> {
         /**
          * Report fields.
          */
@@ -577,7 +578,7 @@ public final class TransactionCategory
      * The dataMap class.
      */
     protected static class TransCategoryDataMap
-            extends CategoryDataMap<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
+            extends CategoryDataMap<TransactionCategory, TransactionCategoryType> {
         /**
          * Report fields.
          */

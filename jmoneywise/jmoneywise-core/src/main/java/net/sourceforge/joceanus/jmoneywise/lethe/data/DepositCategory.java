@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Deposit Category class.
  */
 public class DepositCategory
-        extends CategoryBase<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+        extends CategoryBase<DepositCategory, DepositCategoryType> {
     /**
      * Object name.
      */
@@ -314,7 +315,7 @@ public class DepositCategory
      * The Deposit Category List class.
      */
     public static class DepositCategoryList
-            extends CategoryBaseList<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+            extends CategoryBaseList<DepositCategory, DepositCategoryType> {
         /**
          * Report fields.
          */
