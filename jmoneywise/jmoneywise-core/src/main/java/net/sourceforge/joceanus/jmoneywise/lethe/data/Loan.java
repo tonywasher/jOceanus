@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Loan
         extends AssetBase<Loan, LoanCategory>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -133,7 +133,7 @@ public class Loan
      * @throws OceanusException on error
      */
     private Loan(final LoanList pList,
-                 final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                 final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -441,7 +441,7 @@ public class Loan
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
@@ -455,7 +455,7 @@ public class Loan
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void autoCorrect(final UpdateSet pUpdateSet) throws OceanusException {
         /* Access category class and parent */
         final LoanCategoryClass myClass = getCategoryClass();
         final Payee myParent = getParent();
@@ -498,7 +498,7 @@ public class Loan
      * @param pUpdateSet the update set
      * @return the default parent
      */
-    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private Payee getDefaultParent(final UpdateSet pUpdateSet) {
         /* Access details */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         final LoanCategoryClass myClass = getCategoryClass();
@@ -563,7 +563,7 @@ public class Loan
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -711,7 +711,7 @@ public class Loan
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pLoan) {
+    public boolean applyChanges(final DataItem pLoan) {
         /* Can only update from a loan */
         if (!(pLoan instanceof Loan)) {
             return false;
@@ -826,7 +826,7 @@ public class Loan
          * @return the edit list
          * @throws OceanusException on error
          */
-        public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+        public LoanList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final LoanList myList = getEmptyList(ListStyle.EDIT);
             final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -881,7 +881,7 @@ public class Loan
         }
 
         @Override
-        public Loan addCopyItem(final DataItem<?> pLoan) {
+        public Loan addCopyItem(final DataItem pLoan) {
             /* Can only clone a Loan */
             if (!(pLoan instanceof Loan)) {
                 throw new UnsupportedOperationException();
@@ -900,7 +900,7 @@ public class Loan
         }
 
         @Override
-        public Loan addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Loan addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the loan */
             final Loan myLoan = new Loan(this, pValues);
 
@@ -916,12 +916,12 @@ public class Loan
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myLoan);
+                    final DataValues myValues = myItem.getValues(myLoan);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -955,7 +955,7 @@ public class Loan
      * The dataMap class.
      */
     protected static class LoanDataMap
-            implements DataMapItem<Loan, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<Loan>, MetisFieldItem {
         /**
          * Report fields.
          */

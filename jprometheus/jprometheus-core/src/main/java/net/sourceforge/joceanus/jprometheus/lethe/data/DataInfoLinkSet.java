@@ -32,20 +32,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
- * Representation of an set of DataInfo links for a DataItem.
+ * Representation of a set of DataInfo links for a DataItem.
  * @author Tony Washer
  * @param <T> the data type
- * @param <O> the Owner DataItem that is extended by this item
- * @param <I> the Info Type that applies to this item
- * @param <S> the Info type class
- * @param <E> the data type enum class
  */
-public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
-                             O extends DataItem<E>,
-                             I extends StaticData<I, S, E>,
-                             S extends Enum<S> & DataInfoClass,
-                             E extends Enum<E>>
-        extends DataInfo<T, O, I, S, E> {
+public class DataInfoLinkSet<T extends DataInfoItem<T>>
+        extends DataInfoItem<T> {
     /**
      * Item separator.
      */
@@ -74,22 +66,22 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * List of underlying items.
      */
-    private final DataList<T, E> theLinkSet;
+    private final DataList<T> theLinkSet;
 
     /**
      * The owner.
      */
-    private final O theOwner;
+    private final DataItem theOwner;
 
     /**
      * The infoType.
      */
-    private final I theInfoType;
+    private final StaticDataItem<?> theInfoType;
 
     /**
      * The infoType.
      */
-    private final DataInfoList<T, O, I, S, E> theInfoList;
+    private final DataInfoList<T> theInfoList;
 
     /**
      * Constructor.
@@ -97,9 +89,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pOwner the set owner
      * @param pInfoType the info type
      */
-    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
-                              final O pOwner,
-                              final I pInfoType) {
+    protected DataInfoLinkSet(final DataInfoList<T> pList,
+                              final DataItem pOwner,
+                              final StaticDataItem<?> pInfoType) {
         /* Call super-constructor */
         super(pList);
 
@@ -118,8 +110,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pList the infoList
      * @param pSet the infoLinkSet to clone
      */
-    protected DataInfoLinkSet(final DataInfoList<T, O, I, S, E> pList,
-                              final DataInfoLinkSet<T, O, I, S, E> pSet) {
+    protected DataInfoLinkSet(final DataInfoList<T> pList,
+                              final DataInfoLinkSet<T> pSet) {
         /* Call standard constructor */
         this(pList, pSet.getOwner(), pSet.getInfoType());
 
@@ -161,18 +153,18 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public O getOwner() {
+    public DataItem getOwner() {
         return theOwner;
     }
 
     @Override
-    public I getInfoType() {
+    public StaticDataItem<?> getInfoType() {
         return theInfoType;
     }
 
     @Override
-    public S getInfoClass() {
-        return theInfoType.getStaticClass();
+    public DataInfoClass getInfoClass() {
+        return (DataInfoClass) theInfoType.getStaticClass();
     }
 
     /**
@@ -233,7 +225,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pValue the value to check
      * @return true/false
      */
-    public T getItemForValue(final DataItem<E> pValue) {
+    public T getItemForValue(final DataItem pValue) {
         /* Loop through the list */
         T myItem = null;
         final Iterator<T> myIterator = theLinkSet.iterator();
@@ -276,11 +268,11 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @param pActive the active items
      * @throws OceanusException on error
      */
-    public void addNewLinks(final List<? extends DataItem<E>> pActive) throws OceanusException {
+    public void addNewLinks(final List<? extends DataItem> pActive) throws OceanusException {
         /* For each existing value */
-        final Iterator<? extends DataItem<E>> myIterator = pActive.iterator();
+        final Iterator<? extends DataItem> myIterator = pActive.iterator();
         while (myIterator.hasNext()) {
-            final DataItem<E> myItem = myIterator.next();
+            final DataItem myItem = myIterator.next();
 
             /* Link the item if it is not currently selected */
             if (!theActive.getUnderlyingList().contains(myItem)) {
@@ -306,12 +298,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * Clear all unnecessary links.
      * @param pActive the active items
      */
-    public void clearUnnecessaryLinks(final List<? extends DataItem<E>> pActive) {
+    public void clearUnnecessaryLinks(final List<? extends DataItem> pActive) {
         /* For each existing link */
         final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
-            final DataItem<E> myItem = myLink.getLink();
+            final DataItem myItem = myLink.getLink();
 
             /* Link the item if it is not currently selected */
             if (!myLink.isDeleted()
@@ -578,7 +570,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public int compareTo(final DataInfo<T, O, I, S, E> pThat) {
+    public int compareTo(final DataInfoItem<T> pThat) {
         return getInfoType().compareTo(pThat.getInfoType());
     }
 

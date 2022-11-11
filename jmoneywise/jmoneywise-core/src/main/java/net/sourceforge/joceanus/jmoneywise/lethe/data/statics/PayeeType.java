@@ -25,14 +25,15 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * PayeeType data type.
  */
 public class PayeeType
-        extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
+        extends StaticDataItem<PayeeType> {
     /**
      * Object name.
      */
@@ -46,7 +47,7 @@ public class PayeeType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -87,7 +88,7 @@ public class PayeeType
      * @throws OceanusException on error
      */
     private PayeeType(final PayeeTypeList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -101,7 +102,7 @@ public class PayeeType
      * @return the class
      */
     public PayeeTypeClass getPayeeClass() {
-        return super.getStaticClass();
+        return (PayeeTypeClass) super.getStaticClass();
     }
 
     @Override
@@ -118,7 +119,7 @@ public class PayeeType
      * Represents a list of {@link PayeeType} objects.
      */
     public static class PayeeTypeList
-            extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
+            extends StaticList<PayeeType> {
         /**
          * Report fields.
          */
@@ -128,7 +129,7 @@ public class PayeeType
          * Construct an empty CORE payeeType list.
          * @param pData the DataSet for the list
          */
-        public PayeeTypeList(final DataSet<?, ?> pData) {
+        public PayeeTypeList(final DataSet<?> pData) {
             super(PayeeType.class, pData, MoneyWiseDataType.PAYEETYPE, ListStyle.CORE);
         }
 
@@ -168,7 +169,7 @@ public class PayeeType
         }
 
         @Override
-        public PayeeType addCopyItem(final DataItem<?> pItem) {
+        public PayeeType addCopyItem(final DataItem pItem) {
             /* Can only clone a PayeeType */
             if (!(pItem instanceof PayeeType)) {
                 throw new UnsupportedOperationException();
@@ -212,7 +213,7 @@ public class PayeeType
         }
 
         @Override
-        public PayeeType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PayeeType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final PayeeType myType = new PayeeType(this, pValues);
 
@@ -230,9 +231,9 @@ public class PayeeType
         }
 
         @Override
-        protected PayeeType newItem(final PayeeTypeClass pClass) throws OceanusException {
+        protected PayeeType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final PayeeType myType = new PayeeType(this, pClass);
+            final PayeeType myType = new PayeeType(this, (PayeeTypeClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

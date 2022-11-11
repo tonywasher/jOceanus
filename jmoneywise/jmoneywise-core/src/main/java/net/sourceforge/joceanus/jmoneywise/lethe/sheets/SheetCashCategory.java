@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -28,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetCashCategory
-        extends PrometheusSheetEncrypted<CashCategory, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<CashCategory> {
     /**
      * NamedArea for Categories.
      */
@@ -81,9 +80,9 @@ public class SheetCashCategory
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(CashCategory.OBJECT_NAME);
+        final DataValues myValues = getRowValues(CashCategory.OBJECT_NAME);
         myValues.addValue(CashCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
         myValues.addValue(CashCategory.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(CashCategory.FIELD_NAME, loadBytes(COL_NAME));

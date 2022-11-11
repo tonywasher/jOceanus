@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate.ExchangeRateList;
@@ -37,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetExchangeRate
-        extends PrometheusSheetDataItem<ExchangeRate, MoneyWiseDataType> {
+        extends PrometheusSheetDataItem<ExchangeRate> {
     /**
      * NamedArea for Rates.
      */
@@ -90,9 +89,9 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        final DataValues myValues = getRowValues(ExchangeRate.OBJECT_NAME);
         myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(ExchangeRate.FIELD_FROM, loadInteger(COL_FROM));
         myValues.addValue(ExchangeRate.FIELD_TO, loadInteger(COL_TO));
@@ -184,7 +183,7 @@ public class SheetExchangeRate
                         final String myRate = myCell.getString();
 
                         /* Build data values */
-                        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(ExchangeRate.OBJECT_NAME);
+                        final DataValues myValues = new DataValues(ExchangeRate.OBJECT_NAME);
                         myValues.addValue(ExchangeRate.FIELD_FROM, myDefCurrency);
                         myValues.addValue(ExchangeRate.FIELD_TO, myCurrency);
                         myValues.addValue(ExchangeRate.FIELD_DATE, myDate);

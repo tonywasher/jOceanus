@@ -35,27 +35,24 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Arguments class for DataItem.
  * @author Tony Washer
- * @param <E> the data type enum class
  */
-public class DataValues<E extends Enum<E>> {
+public class DataValues {
     /**
      * Interface for an infoSet item.
-     * @param <E> the data type enum class
      */
     @FunctionalInterface
-    public interface InfoSetItem<E extends Enum<E>> {
+    public interface InfoSetItem {
         /**
          * Obtain infoSet.
          * @return the infoSet
          */
-        DataInfoSet<?, ?, ?, ?, E> getInfoSet();
+        DataInfoSet<?> getInfoSet();
     }
 
     /**
      * Interface for a grouped item.
-     * @param <E> the data type enum class
      */
-    public interface GroupedItem<E extends Enum<E>> {
+    public interface GroupedItem {
         /**
          * Is the item a child.
          * @return true/false
@@ -66,7 +63,7 @@ public class DataValues<E extends Enum<E>> {
          * Obtain the child iterator.
          * @return the iterator
          */
-        Iterator<? extends DataItem<E>> childIterator();
+        Iterator<? extends DataItem> childIterator();
     }
 
     /**
@@ -112,19 +109,19 @@ public class DataValues<E extends Enum<E>> {
     /**
      * InfoSet values.
      */
-    private final List<InfoItem<E>> theInfoItems;
+    private final List<InfoItem> theInfoItems;
 
     /**
      * Child values.
      */
-    private final List<DataValues<E>> theChildren;
+    private final List<DataValues> theChildren;
 
     /**
      * Constructor.
      * @param pItem the Item to obtain values from
      * @param pItemName the item name
      */
-    protected DataValues(final DataItem<?> pItem,
+    protected DataValues(final DataItem pItem,
                          final String pItemName) {
         /* Store Item type */
         theItemType = pItemName;
@@ -159,8 +156,7 @@ public class DataValues<E extends Enum<E>> {
         /* If the item is an infoSet item */
         if (pItem instanceof InfoSetItem) {
             /* Access InfoSet */
-            @SuppressWarnings("unchecked")
-            final DataInfoSet<?, ?, ?, ?, E> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
+            final DataInfoSet<?> myInfoSet = ((InfoSetItem) pItem).getInfoSet();
 
             /* If the InfoSet is non-empty */
             if (myInfoSet.isEmpty()) {
@@ -176,13 +172,12 @@ public class DataValues<E extends Enum<E>> {
                     final Object myCurr = myInfoIterator.next();
 
                     /* If this is a DataInfo item */
-                    if (myCurr instanceof DataInfo) {
+                    if (myCurr instanceof DataInfoItem) {
                         /* Access as DataArguments */
-                        @SuppressWarnings("unchecked")
-                        final DataInfo<?, ?, ?, ?, E> myItem = (DataInfo<?, ?, ?, ?, E>) myCurr;
+                        final DataInfoItem<?> myItem = (DataInfoItem<?>) myCurr;
 
                         /* Add item to the list */
-                        final InfoItem<E> myInfo = new InfoItem<>(myItem);
+                        final InfoItem myInfo = new InfoItem(myItem);
                         theInfoItems.add(myInfo);
                     }
                 }
@@ -196,8 +191,7 @@ public class DataValues<E extends Enum<E>> {
         /* If the item is a grouped item */
         if (pItem instanceof GroupedItem) {
             /* Access child iterator */
-            @SuppressWarnings("unchecked")
-            final Iterator<? extends DataItem<E>> myChildIterator = ((GroupedItem<E>) pItem).childIterator();
+            final Iterator<? extends DataItem> myChildIterator = ((GroupedItem) pItem).childIterator();
 
             /* If there are no children */
             if (myChildIterator == null) {
@@ -208,10 +202,10 @@ public class DataValues<E extends Enum<E>> {
 
                 /* Iterator over the values */
                 while (myChildIterator.hasNext()) {
-                    final DataItem<?> myCurr = myChildIterator.next();
+                    final DataItem myCurr = myChildIterator.next();
 
                     /* Add child to the list */
-                    final DataValues<E> myChild = new DataValues<>(myCurr, TAG_CHILD);
+                    final DataValues myChild = new DataValues(myCurr, TAG_CHILD);
                     theChildren.add(myChild);
                 }
             }
@@ -227,8 +221,8 @@ public class DataValues<E extends Enum<E>> {
      * @param pOwner the Owner of the DataInfo Item
      * @param pInfo the values of the DataInfo Item
      */
-    private DataValues(final DataItem<E> pOwner,
-                       final InfoItem<E> pInfo) {
+    private DataValues(final DataItem pOwner,
+                       final InfoItem pInfo) {
         /* Store Item type */
         theItemType = "";
 
@@ -242,13 +236,13 @@ public class DataValues<E extends Enum<E>> {
         }
 
         /* Store the Info Type */
-        theFields.put(DataInfo.FIELD_INFOTYPE, pInfo.getName());
+        theFields.put(DataInfoItem.FIELD_INFOTYPE, pInfo.getName());
 
         /* Store the Owner */
-        theFields.put(DataInfo.FIELD_OWNER, pOwner.getId());
+        theFields.put(DataInfoItem.FIELD_OWNER, pOwner.getId());
 
         /* Store the value */
-        theFields.put(DataInfo.FIELD_VALUE, pInfo.getValue());
+        theFields.put(DataInfoItem.FIELD_VALUE, pInfo.getValue());
 
         /* Set other fields to null */
         theInfoItems = null;
@@ -317,7 +311,7 @@ public class DataValues<E extends Enum<E>> {
                     final Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    final InfoItem<E> myInfo = new InfoItem<>(myChild);
+                    final InfoItem myInfo = new InfoItem(myChild);
                     theInfoItems.add(myInfo);
                 }
             }
@@ -341,7 +335,7 @@ public class DataValues<E extends Enum<E>> {
                     final Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    final DataValues<E> myValues = new DataValues<>(myChild, pFields, theItemType);
+                    final DataValues myValues = new DataValues(myChild, pFields, theItemType);
                     theChildren.add(myValues);
                 }
             }
@@ -372,7 +366,7 @@ public class DataValues<E extends Enum<E>> {
      * Constructor.
      * @param pItem the Item to obtain values from
      */
-    public DataValues(final DataItem<E> pItem) {
+    public DataValues(final DataItem pItem) {
         this(pItem, pItem.getDataFields().getName());
     }
 
@@ -404,7 +398,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain InfoItems iterator.
      * @return the iterator
      */
-    public final Iterator<InfoItem<E>> infoIterator() {
+    public final Iterator<InfoItem> infoIterator() {
         return theInfoItems.iterator();
     }
 
@@ -420,7 +414,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Child iterator.
      * @return the iterator
      */
-    public final Iterator<DataValues<E>> childIterator() {
+    public final Iterator<DataValues> childIterator() {
         return theChildren.iterator();
     }
 
@@ -540,7 +534,7 @@ public class DataValues<E extends Enum<E>> {
             myElement.appendChild(myInfoSet);
 
             /* Loop through the items */
-            for (InfoItem<E> myInfo : theInfoItems) {
+            for (InfoItem myInfo : theInfoItems) {
                 /* Create the element */
                 final Element myItem = pDocument.createElement(myInfo.getName());
                 myInfoSet.appendChild(myItem);
@@ -562,9 +556,9 @@ public class DataValues<E extends Enum<E>> {
             myElement.appendChild(myChildren);
 
             /* Loop through the children */
-            final Iterator<DataValues<E>> myIterator = theChildren.iterator();
+            final Iterator<DataValues> myIterator = theChildren.iterator();
             while (myIterator.hasNext()) {
-                final DataValues<E> myValues = myIterator.next();
+                final DataValues myValues = myIterator.next();
 
                 /* Create the subElement and append */
                 final Element myChild = myValues.createXML(pDocument, pFormatter, pStoreIds);
@@ -578,9 +572,8 @@ public class DataValues<E extends Enum<E>> {
 
     /**
      * InfoItem class.
-     * @param <E> the data type enum class
      */
-    public static final class InfoItem<E extends Enum<E>> {
+    public static final class InfoItem {
         /**
          * Name of item.
          */
@@ -600,7 +593,7 @@ public class DataValues<E extends Enum<E>> {
          * Constructor.
          * @param pInfo the info Item
          */
-        private InfoItem(final DataInfo<?, ?, ?, ?, ?> pInfo) {
+        private InfoItem(final DataInfoItem<?> pInfo) {
             /* Access the infoClass */
             final DataInfoClass myClass = pInfo.getInfoClass();
 
@@ -663,7 +656,7 @@ public class DataValues<E extends Enum<E>> {
             }
 
             /* Access the object as an InfoItem */
-            final InfoItem<?> myItem = (InfoItem<?>) pThat;
+            final InfoItem myItem = (InfoItem) pThat;
 
             if (!theName.equals(myItem.getName())) {
                 return false;
@@ -689,8 +682,8 @@ public class DataValues<E extends Enum<E>> {
          * @param pOwner the owner
          * @return the dataValues
          */
-        public DataValues<E> getValues(final DataItem<E> pOwner) {
-            return new DataValues<>(pOwner, this);
+        public DataValues getValues(final DataItem pOwner) {
+            return new DataValues(pOwner, this);
         }
     }
 }

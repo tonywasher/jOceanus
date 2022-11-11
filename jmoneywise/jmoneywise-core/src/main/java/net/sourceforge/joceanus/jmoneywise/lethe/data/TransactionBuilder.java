@@ -52,7 +52,7 @@ public class TransactionBuilder {
     /**
      * The updateSet.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The Date Range.
@@ -68,7 +68,7 @@ public class TransactionBuilder {
      * Constructor.
      * @param pUpdateSet the updateSet
      */
-    public TransactionBuilder(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    public TransactionBuilder(final UpdateSet pUpdateSet) {
         theUpdateSet = pUpdateSet;
     }
 
@@ -630,7 +630,7 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner
      */
-    private static SecurityHolding getDefaultHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+    private static SecurityHolding getDefaultHolding(final UpdateSet pUpdateSet,
                                                      final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
@@ -673,7 +673,7 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner
      */
-    private static SecurityHolding getDefaultPartnerHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
+    private static SecurityHolding getDefaultPartnerHolding(final UpdateSet pUpdateSet,
                                                             final TransactionAsset pAccount,
                                                             final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */

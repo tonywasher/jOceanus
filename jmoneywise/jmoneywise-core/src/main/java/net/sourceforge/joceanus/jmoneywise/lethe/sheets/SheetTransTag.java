@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
@@ -36,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTransTag
-        extends PrometheusSheetEncrypted<TransactionTag, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<TransactionTag> {
     /**
      * NamedArea for TransactionTags.
      */
@@ -79,9 +78,9 @@ public class SheetTransTag
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
+        final DataValues myValues = getRowValues(TransactionTag.OBJECT_NAME);
         myValues.addValue(TransactionTag.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(TransactionTag.FIELD_DESC, loadBytes(COL_DESC));
 
@@ -141,7 +140,7 @@ public class SheetTransTag
                 final String myName = myCell.getString();
 
                 /* Build data values */
-                final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionTag.OBJECT_NAME);
+                final DataValues myValues = new DataValues(TransactionTag.OBJECT_NAME);
                 myValues.addValue(TransactionTag.FIELD_NAME, myName);
 
                 /* Add the value into the list */

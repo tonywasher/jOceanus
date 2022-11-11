@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise DepositCategory Table.
  */
 public class MoneyWiseDepositCategoryTable
-        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType> {
     /**
      * The Category dialog.
      */
@@ -63,7 +63,7 @@ public class MoneyWiseDepositCategoryTable
      * @param pError the error panel
      */
     MoneyWiseDepositCategoryTable(final MoneyWiseView pView,
-                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                  final UpdateSet pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, DepositCategory.class, MoneyWiseDataType.DEPOSITCATEGORY);

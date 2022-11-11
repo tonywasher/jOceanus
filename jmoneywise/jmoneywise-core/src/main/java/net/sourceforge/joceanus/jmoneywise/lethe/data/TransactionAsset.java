@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 
@@ -77,7 +76,7 @@ public interface TransactionAsset
      * Touch underlying item.
      * @param pItem the object that is touching the item
      */
-    void touchItem(DataItem<MoneyWiseDataType> pItem);
+    void touchItem(DataItem pItem);
 
     /**
      * Is the account capital?

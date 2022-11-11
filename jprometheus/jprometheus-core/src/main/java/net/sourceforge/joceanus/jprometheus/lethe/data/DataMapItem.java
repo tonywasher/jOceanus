@@ -20,9 +20,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
  * Interface for a Data Instance Map.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public interface DataMapItem<T extends DataItem<E>, E extends Enum<E>> {
+public interface DataMapItem<T extends DataItem> {
     /**
      * adjust maps for item.
      * @param pItem the item to map

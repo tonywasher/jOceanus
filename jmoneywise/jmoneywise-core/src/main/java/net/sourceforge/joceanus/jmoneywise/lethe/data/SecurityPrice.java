@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class SecurityPrice
-        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem
         implements Comparable<SecurityPrice> {
     /**
      * Object name.
@@ -121,7 +121,7 @@ public class SecurityPrice
      * @throws OceanusException on error
      */
     private SecurityPrice(final SecurityPriceList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                          final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -455,7 +455,7 @@ public class SecurityPrice
      * @param pUpdateSet the update Set
      * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         resolveDataLink(FIELD_SECURITY, mySecurities);
@@ -561,7 +561,7 @@ public class SecurityPrice
     }
 
     @Override
-    public boolean applyChanges(final DataItem<?> pPrice) {
+    public boolean applyChanges(final DataItem pPrice) {
         /* Can only update from a SecurityPrice */
         if (!(pPrice instanceof SecurityPrice)) {
             return false;
@@ -598,7 +598,7 @@ public class SecurityPrice
      * @param <T> the data type
      */
     public abstract static class SecurityPriceBaseList<T extends SecurityPrice>
-            extends EncryptedList<T, MoneyWiseDataType> {
+            extends EncryptedList<T> {
         /*
          * Report fields.
          */
@@ -698,7 +698,7 @@ public class SecurityPrice
          * @return the edit list
          * @throws OceanusException on error
          */
-        public SecurityPriceList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+        public SecurityPriceList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final SecurityPriceList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -727,7 +727,7 @@ public class SecurityPrice
          * @return the newly added item
          */
         @Override
-        public SecurityPrice addCopyItem(final DataItem<?> pPrice) {
+        public SecurityPrice addCopyItem(final DataItem pPrice) {
             if (pPrice instanceof SecurityPrice) {
                 final SecurityPrice myPrice = new SecurityPrice(this, (SecurityPrice) pPrice);
                 add(myPrice);
@@ -747,7 +747,7 @@ public class SecurityPrice
         }
 
         @Override
-        public SecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public SecurityPrice addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the price */
             final SecurityPrice myPrice = new SecurityPrice(this, pValues);
 
@@ -770,7 +770,7 @@ public class SecurityPrice
      * @param <T> the data type
      */
     public static class SecurityPriceDataMap<T extends SecurityPrice>
-            implements DataMapItem<T, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<T>, MetisFieldItem {
         /**
          * Report fields.
          */

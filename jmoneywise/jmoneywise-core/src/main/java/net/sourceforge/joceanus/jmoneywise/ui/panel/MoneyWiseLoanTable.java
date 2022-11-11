@@ -47,7 +47,7 @@ public class MoneyWiseLoanTable
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<LoanInfo> theInfoEntry;
 
     /**
      * The Loan dialog.
@@ -66,7 +66,7 @@ public class MoneyWiseLoanTable
      * @param pError the error panel
      */
     MoneyWiseLoanTable(final MoneyWiseView pView,
-                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN, LoanCategory.class);

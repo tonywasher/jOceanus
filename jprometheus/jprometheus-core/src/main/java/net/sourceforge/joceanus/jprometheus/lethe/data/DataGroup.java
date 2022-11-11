@@ -27,9 +27,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Group class for data item.
  * @param <T> Item comprising group
- * @param <E> the data type enum class
  */
-public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+public abstract class DataGroup<T extends DataItem & Comparable<? super T>>
         implements MetisFieldItem, MetisDataList<T> {
     /**
      * Report fields.

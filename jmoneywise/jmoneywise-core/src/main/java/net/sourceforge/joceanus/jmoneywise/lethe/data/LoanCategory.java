@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Loan Category class.
  */
 public class LoanCategory
-        extends CategoryBase<LoanCategory, LoanCategoryType, LoanCategoryClass> {
+        extends CategoryBase<LoanCategory, LoanCategoryType> {
     /**
      * Object name.
      */
@@ -76,7 +77,7 @@ public class LoanCategory
      * @throws OceanusException on error
      */
     private LoanCategory(final LoanCategoryList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -288,7 +289,7 @@ public class LoanCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pCategory) {
+    public boolean applyChanges(final DataItem pCategory) {
         /* Can only update from a loan category */
         if (!(pCategory instanceof LoanCategory)) {
             return false;
@@ -314,7 +315,7 @@ public class LoanCategory
      * The Loan Category List class.
      */
     public static class LoanCategoryList
-            extends CategoryBaseList<LoanCategory, LoanCategoryType, LoanCategoryClass> {
+            extends CategoryBaseList<LoanCategory, LoanCategoryType> {
         /**
          * Report fields.
          */
@@ -395,7 +396,7 @@ public class LoanCategory
          * @return the newly added item
          */
         @Override
-        public LoanCategory addCopyItem(final DataItem<?> pCategory) {
+        public LoanCategory addCopyItem(final DataItem pCategory) {
             /* Can only clone a LoanCategory */
             if (!(pCategory instanceof LoanCategory)) {
                 throw new UnsupportedOperationException();
@@ -418,7 +419,7 @@ public class LoanCategory
         }
 
         @Override
-        public LoanCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public LoanCategory addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the category */
             final LoanCategory myCategory = new LoanCategory(this, pValues);
 

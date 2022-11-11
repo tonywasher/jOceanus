@@ -432,7 +432,7 @@ public final class SpotSecurityPrice
 
         /* Disable Add a new item */
         @Override
-        public SpotSecurityPrice addCopyItem(final DataItem<?> pElement) {
+        public SpotSecurityPrice addCopyItem(final DataItem pElement) {
             throw new UnsupportedOperationException();
         }
 
@@ -442,7 +442,7 @@ public final class SpotSecurityPrice
         }
 
         @Override
-        public SpotSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
+        public SpotSecurityPrice addValuesItem(final DataValues pValues) {
             throw new UnsupportedOperationException();
         }
     }

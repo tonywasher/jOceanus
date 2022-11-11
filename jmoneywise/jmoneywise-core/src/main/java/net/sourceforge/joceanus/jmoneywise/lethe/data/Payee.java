@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Payee
         extends AssetBase<Payee, PayeeType>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -134,7 +134,7 @@ public class Payee
      * @throws OceanusException on error
      */
     private Payee(final PayeeList pList,
-                  final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                  final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -705,7 +705,7 @@ public class Payee
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pPayee) {
+    public boolean applyChanges(final DataItem pPayee) {
         /* Can only update from a payee */
         if (!(pPayee instanceof Payee)) {
             return false;
@@ -876,7 +876,7 @@ public class Payee
          * @return the newly added item
          */
         @Override
-        public Payee addCopyItem(final DataItem<?> pPayee) {
+        public Payee addCopyItem(final DataItem pPayee) {
             /* Can only clone a Payee */
             if (!(pPayee instanceof Payee)) {
                 throw new UnsupportedOperationException();
@@ -909,7 +909,7 @@ public class Payee
         }
 
         @Override
-        public Payee addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Payee addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the payee */
             final Payee myPayee = new Payee(this, pValues);
 
@@ -925,12 +925,12 @@ public class Payee
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPayee);
+                    final DataValues myValues = myItem.getValues(myPayee);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -956,7 +956,7 @@ public class Payee
      * The dataMap class.
      */
     protected static class PayeeDataMap
-            implements DataMapItem<Payee, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<Payee>, MetisFieldItem {
         /**
          * Report fields.
          */

@@ -80,17 +80,17 @@ public class AnalysisView
     /**
      * The UpdateSet.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The event entry.
      */
-    private final UpdateEntry<Transaction, MoneyWiseDataType> theTransEntry;
+    private final UpdateEntry<Transaction> theTransEntry;
 
     /**
      * The info entry.
      */
-    private final UpdateEntry<TransactionInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<TransactionInfo> theInfoEntry;
 
     /**
      * The Underlying analysis.
@@ -123,7 +123,7 @@ public class AnalysisView
      * @param pUpdateSet the update set
      */
     public AnalysisView(final MoneyWiseView pView,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+                        final UpdateSet pUpdateSet) {
         /* Store update set */
         theView = pView;
         theUpdateSet = pUpdateSet;
@@ -171,7 +171,7 @@ public class AnalysisView
      * Obtain the updateSet.
      * @return the updateSet
      */
-    private UpdateSet<MoneyWiseDataType> getUpdateSet() {
+    private UpdateSet getUpdateSet() {
         return theUpdateSet;
     }
 

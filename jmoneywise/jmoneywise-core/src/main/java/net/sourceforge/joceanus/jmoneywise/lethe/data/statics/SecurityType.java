@@ -23,14 +23,15 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+        extends StaticDataItem<SecurityType> {
     /**
      * Object name.
      */
@@ -49,7 +50,7 @@ public class SecurityType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -90,7 +91,7 @@ public class SecurityType
      * @throws OceanusException on error
      */
     private SecurityType(final SecurityTypeList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -104,7 +105,7 @@ public class SecurityType
      * @return the class
      */
     public SecurityTypeClass getSecurityClass() {
-        return super.getStaticClass();
+        return (SecurityTypeClass) super.getStaticClass();
     }
 
     @Override
@@ -121,7 +122,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+            extends StaticList<SecurityType> {
         /**
          * Report fields.
          */
@@ -131,7 +132,7 @@ public class SecurityType
          * Construct an empty CORE securityType list.
          * @param pData the DataSet for the list
          */
-        public SecurityTypeList(final DataSet<?, ?> pData) {
+        public SecurityTypeList(final DataSet<?> pData) {
             super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
         }
 
@@ -171,7 +172,7 @@ public class SecurityType
         }
 
         @Override
-        public SecurityType addCopyItem(final DataItem<?> pItem) {
+        public SecurityType addCopyItem(final DataItem pItem) {
             /* Can only clone a SecurityType */
             if (!(pItem instanceof SecurityType)) {
                 throw new UnsupportedOperationException();
@@ -215,7 +216,7 @@ public class SecurityType
         }
 
         @Override
-        public SecurityType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public SecurityType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final SecurityType myType = new SecurityType(this, pValues);
 
@@ -233,9 +234,9 @@ public class SecurityType
         }
 
         @Override
-        protected SecurityType newItem(final SecurityTypeClass pClass) throws OceanusException {
+        protected SecurityType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final SecurityType myType = new SecurityType(this, pClass);
+            final SecurityType myType = new SecurityType(this, (SecurityTypeClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

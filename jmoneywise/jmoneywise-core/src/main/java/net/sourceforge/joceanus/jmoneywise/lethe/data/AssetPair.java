@@ -312,7 +312,7 @@ public final class AssetPair
      * @param pField the field
      * @throws OceanusException on error
      */
-    public static void resolveDataLink(final DataItem<?> pOwner,
+    public static void resolveDataLink(final DataItem pOwner,
                                        final SecurityHoldingMap pMap,
                                        final MetisLetheField pField) throws OceanusException {
         /* Access the values */

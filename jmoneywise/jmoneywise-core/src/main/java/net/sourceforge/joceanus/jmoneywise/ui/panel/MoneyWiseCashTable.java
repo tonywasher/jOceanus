@@ -46,7 +46,7 @@ public class MoneyWiseCashTable
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<CashInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<CashInfo> theInfoEntry;
 
     /**
      * The Cash dialog.
@@ -65,7 +65,7 @@ public class MoneyWiseCashTable
      * @param pError the error panel
      */
     MoneyWiseCashTable(final MoneyWiseView pView,
-                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH, CashCategory.class);

@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Region for a Unit Trust.
  */
 public class Region
-        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem
         implements MetisDataNamedItem, Comparable<Region> {
     /**
      * Object name.
@@ -92,7 +92,7 @@ public class Region
      * @throws OceanusException on error
      */
     private Region(final RegionList pList,
-                   final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                   final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -418,7 +418,7 @@ public class Region
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pTag) {
+    public boolean applyChanges(final DataItem pTag) {
         /* Can only update from a region */
         if (!(pTag instanceof Region)) {
             return false;
@@ -453,7 +453,7 @@ public class Region
      * The Region List class.
      */
     public static class RegionList
-            extends EncryptedList<Region, MoneyWiseDataType> {
+            extends EncryptedList<Region> {
         /**
          * Report fields.
          */
@@ -545,7 +545,7 @@ public class Region
          * @return the newly added item
          */
         @Override
-        public Region addCopyItem(final DataItem<?> pRegion) {
+        public Region addCopyItem(final DataItem pRegion) {
             /* Can only clone a Region */
             if (!(pRegion instanceof Region)) {
                 throw new UnsupportedOperationException();
@@ -596,7 +596,7 @@ public class Region
         }
 
         @Override
-        public Region addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Region addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the region */
             final Region myRegion = new Region(this, pValues);
 
@@ -623,7 +623,7 @@ public class Region
      * The dataMap class.
      */
     protected static class RegionDataMap
-            extends DataInstanceMap<Region, MoneyWiseDataType, String> {
+            extends DataInstanceMap<Region, String> {
         @Override
         public void adjustForItem(final Region pItem) {
             /* Adjust name count */

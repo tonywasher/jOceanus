@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Cash
         extends AssetBase<Cash, CashCategory>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -133,7 +133,7 @@ public class Cash
      * @throws OceanusException on error
      */
     private Cash(final CashList pList,
-                 final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                 final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -430,7 +430,7 @@ public class Cash
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
@@ -444,7 +444,7 @@ public class Cash
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void autoCorrect(final UpdateSet pUpdateSet) throws OceanusException {
         /* autoCorrect the infoSet */
         theInfoSet.autoCorrect(pUpdateSet);
     }
@@ -628,7 +628,7 @@ public class Cash
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pCash) {
+    public boolean applyChanges(final DataItem pCash) {
         /* Can only update from a cash */
         if (!(pCash instanceof Cash)) {
             return false;
@@ -742,7 +742,7 @@ public class Cash
          * @param pUpdateSet the updateSet
          * @return the edit list
          */
-        public CashList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+        public CashList deriveEditList(final UpdateSet pUpdateSet) {
             /* Build an empty List */
             final CashList myList = getEmptyList(ListStyle.EDIT);
             final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -782,7 +782,7 @@ public class Cash
          * @param pMap the map
          */
         @Override
-        protected void setDataMap(final DataMapItem<Cash, MoneyWiseDataType> pMap) {
+        protected void setDataMap(final DataMapItem<Cash> pMap) {
             super.setDataMap(pMap);
         }
 
@@ -805,7 +805,7 @@ public class Cash
         }
 
         @Override
-        public Cash addCopyItem(final DataItem<?> pCash) {
+        public Cash addCopyItem(final DataItem pCash) {
             /* Can only clone a Cash */
             if (!(pCash instanceof Cash)) {
                 throw new UnsupportedOperationException();
@@ -824,7 +824,7 @@ public class Cash
         }
 
         @Override
-        public Cash addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Cash addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the deposit */
             final Cash myCash = new Cash(this, pValues);
 
@@ -840,12 +840,12 @@ public class Cash
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myCash);
+                    final DataValues myValues = myItem.getValues(myCash);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -879,7 +879,7 @@ public class Cash
      * The dataMap class.
      */
     protected static class CashDataMap
-            implements DataMapItem<Cash, MoneyWiseDataType>, MetisFieldItem {
+            implements DataMapItem<Cash>, MetisFieldItem {
         /**
          * Report fields.
          */

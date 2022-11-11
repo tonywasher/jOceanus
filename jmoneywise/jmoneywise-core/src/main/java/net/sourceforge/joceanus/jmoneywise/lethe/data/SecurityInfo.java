@@ -25,9 +25,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityInfo
-        extends DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoItem<SecurityInfo> {
     /**
      * Object name.
      */
@@ -49,7 +52,7 @@ public class SecurityInfo
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfoItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -87,7 +90,7 @@ public class SecurityInfo
      * @throws OceanusException on error
      */
     private SecurityInfo(final SecurityInfoList pList,
-                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -183,7 +186,7 @@ public class SecurityInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink();
+        final DataItem myItem = getLink();
         if (myItem instanceof Region) {
             return ((Region) myItem).getName();
         }
@@ -222,7 +225,7 @@ public class SecurityInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfoItem<SecurityInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -231,8 +234,14 @@ public class SecurityInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Securities */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Security) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -314,7 +323,7 @@ public class SecurityInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from SecurityInfo */
         if (!(pInfo instanceof SecurityInfo)) {
             return false;
@@ -357,7 +366,7 @@ public class SecurityInfo
      * SecurityInfoList.
      */
     public static class SecurityInfoList
-            extends DataInfoList<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<SecurityInfo> {
         /**
          * Report fields.
          */
@@ -417,7 +426,7 @@ public class SecurityInfo
         }
 
         @Override
-        public SecurityInfo addCopyItem(final DataItem<?> pItem) {
+        public SecurityInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a SecurityInfo */
             if (!(pItem instanceof SecurityInfo)) {
                 throw new UnsupportedOperationException();
@@ -434,10 +443,10 @@ public class SecurityInfo
         }
 
         @Override
-        protected SecurityInfo addNewItem(final Security pOwner,
-                                          final AccountInfoType pInfoType) {
+        protected SecurityInfo addNewItem(final DataItem pOwner,
+                                          final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
-            final SecurityInfo myInfo = new SecurityInfo(this, pOwner, pInfoType);
+            final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */
@@ -446,8 +455,8 @@ public class SecurityInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Security pSecurity,
-                                final AccountInfoClass pInfoClass,
+                                final DataItem pSecurity,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
@@ -464,7 +473,7 @@ public class SecurityInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(SecurityInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pSecurity);
@@ -484,7 +493,7 @@ public class SecurityInfo
         }
 
         @Override
-        public SecurityInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public SecurityInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final SecurityInfo myInfo = new SecurityInfo(this, pValues);
 

@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class CashInfoSet
-        extends DataInfoSet<CashInfo, Cash, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<CashInfo> {
     /**
      * Report fields.
      */
@@ -79,6 +79,11 @@ public class CashInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Cash getOwner() {
+        return (Cash) super.getOwner();
     }
 
     @Override
@@ -200,7 +205,7 @@ public class CashInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Cash */
         final Cash myCash = getOwner();
         final CashCategory myCategory = myCash.getCategory();
@@ -211,7 +216,7 @@ public class CashInfoSet
         }
 
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
                 return MetisFieldRequired.CANEXIST;
@@ -317,10 +322,10 @@ public class CashInfoSet
     }
 
     @Override
-    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
-                                   final AccountInfoClass pClass) throws OceanusException {
+    protected void setDefaultValue(final DataListSet pUpdateSet,
+                                   final DataInfoClass pClass) throws OceanusException {
         /* Switch on the class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             case AUTOEXPENSE:
                 setValue(pClass, getDefaultAutoExpense(pUpdateSet));
                 break;
@@ -337,7 +342,7 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default expense
      */
-    private static TransactionCategory getDefaultAutoExpense(final DataListSet<MoneyWiseDataType> pUpdateSet) {
+    private static TransactionCategory getDefaultAutoExpense(final DataListSet pUpdateSet) {
         /* Access the category list */
         final TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
@@ -367,7 +372,7 @@ public class CashInfoSet
      * @param pUpdateSet the updateSet
      * @return the default payee
      */
-    private static Payee getDefaultAutoPayee(final DataListSet<MoneyWiseDataType> pUpdateSet) {
+    private static Payee getDefaultAutoPayee(final DataListSet pUpdateSet) {
         /* Access the payee list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 

@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Deposit Category class.
  */
 public class DepositCategory
-        extends CategoryBase<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+        extends CategoryBase<DepositCategory, DepositCategoryType> {
     /**
      * Object name.
      */
@@ -76,7 +77,7 @@ public class DepositCategory
      * @throws OceanusException on error
      */
     private DepositCategory(final DepositCategoryList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -288,7 +289,7 @@ public class DepositCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pCategory) {
+    public boolean applyChanges(final DataItem pCategory) {
         /* Can only update from a deposit category */
         if (!(pCategory instanceof DepositCategory)) {
             return false;
@@ -314,7 +315,7 @@ public class DepositCategory
      * The Deposit Category List class.
      */
     public static class DepositCategoryList
-            extends CategoryBaseList<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+            extends CategoryBaseList<DepositCategory, DepositCategoryType> {
         /**
          * Report fields.
          */
@@ -395,7 +396,7 @@ public class DepositCategory
          * @return the newly added item
          */
         @Override
-        public DepositCategory addCopyItem(final DataItem<?> pCategory) {
+        public DepositCategory addCopyItem(final DataItem pCategory) {
             /* Can only clone a DepositCategory */
             if (!(pCategory instanceof DepositCategory)) {
                 throw new UnsupportedOperationException();
@@ -418,7 +419,7 @@ public class DepositCategory
         }
 
         @Override
-        public DepositCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public DepositCategory addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the category */
             final DepositCategory myCategory = new DepositCategory(this, pValues);
 

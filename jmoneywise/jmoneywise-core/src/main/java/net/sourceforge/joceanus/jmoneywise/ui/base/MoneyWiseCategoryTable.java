@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
@@ -48,9 +48,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Category Table.
  * @param <T> the Category Data type
  * @param <S> the Static Data type
- * @param <C> the Static Data class
  */
-public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
+public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S>, S extends StaticDataItem<S>>
         extends MoneyWiseBaseTable<T> {
     /**
      * Filter Prompt.
@@ -86,7 +85,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pDataType the dataType
      */
     protected MoneyWiseCategoryTable(final MoneyWiseView pView,
-                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                     final UpdateSet pUpdateSet,
                                      final MetisErrorPanel pError,
                                      final Class<T> pClazz,
                                      final MoneyWiseDataType pDataType) {

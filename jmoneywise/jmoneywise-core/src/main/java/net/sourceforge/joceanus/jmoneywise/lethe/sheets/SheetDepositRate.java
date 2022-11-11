@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetDepositRate
-        extends PrometheusSheetEncrypted<DepositRate, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<DepositRate> {
     /**
      * NamedArea for Rates.
      */
@@ -90,9 +90,9 @@ public class SheetDepositRate
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
+        final DataValues myValues = getRowValues(DepositRate.OBJECT_NAME);
         myValues.addValue(DepositRate.FIELD_DEPOSIT, loadInteger(COL_DEPOSIT));
         myValues.addValue(DepositRate.FIELD_RATE, loadBytes(COL_RATE));
         myValues.addValue(DepositRate.FIELD_BONUS, loadBytes(COL_BONUS));
@@ -198,7 +198,7 @@ public class SheetDepositRate
             }
 
             /* Build data values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositRate.OBJECT_NAME);
+            final DataValues myValues = new DataValues(DepositRate.OBJECT_NAME);
             myValues.addValue(DepositRate.FIELD_DEPOSIT, myDeposit);
             myValues.addValue(DepositRate.FIELD_RATE, myRate);
             myValues.addValue(DepositRate.FIELD_BONUS, myBonus);

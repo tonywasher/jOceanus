@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class Schedule
-        extends DataItem<MoneyWiseDataType>
+        extends DataItem
         implements Comparable<Schedule> {
     /**
      * The name of the object.
@@ -122,7 +122,7 @@ public class Schedule
      * @throws OceanusException on error
      */
     private Schedule(final ScheduleList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                     final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -746,7 +746,7 @@ public class Schedule
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pSchedule) {
+    public boolean applyChanges(final DataItem pSchedule) {
         /* Can only update from Pattern */
         if (!(pSchedule instanceof Schedule)) {
             return false;
@@ -804,7 +804,7 @@ public class Schedule
      * The list.
      */
     public static class ScheduleList
-            extends DataList<Schedule, MoneyWiseDataType> {
+            extends DataList<Schedule> {
         /**
          * Report fields.
          */
@@ -879,7 +879,7 @@ public class Schedule
          * @return the newly added item
          */
         @Override
-        public Schedule addCopyItem(final DataItem<?> pSchedule) {
+        public Schedule addCopyItem(final DataItem pSchedule) {
             /* Can only clone from Schedule */
             if (!(pSchedule instanceof Schedule)) {
                 throw new UnsupportedOperationException();
@@ -891,7 +891,7 @@ public class Schedule
         }
 
         @Override
-        public Schedule addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Schedule addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the schedule */
             final Schedule mySchedule = new Schedule(this, pValues);
 
@@ -909,7 +909,7 @@ public class Schedule
         }
 
         @Override
-        protected DataMapItem<Schedule, MoneyWiseDataType> allocateDataMap() {
+        protected DataMapItem<Schedule> allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

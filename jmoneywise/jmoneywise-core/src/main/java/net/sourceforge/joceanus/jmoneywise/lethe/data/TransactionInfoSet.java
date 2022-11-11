@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
@@ -32,8 +31,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
@@ -47,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @author Tony Washer
  */
 public class TransactionInfoSet
-        extends DataInfoSet<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<TransactionInfo> {
     /**
      * Report fields.
      */
@@ -79,6 +78,11 @@ public class TransactionInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Transaction getOwner() {
+        return (Transaction) super.getOwner();
     }
 
     @Override
@@ -182,7 +186,7 @@ public class TransactionInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final TransactionInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Transaction */
         final Transaction myTransaction = getOwner();
         final MoneyWiseData myData = myTransaction.getDataSet();
@@ -199,7 +203,7 @@ public class TransactionInfoSet
         final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
-        switch (pClass) {
+        switch ((TransactionInfoClass) pClass) {
             /* Reference and comments are always available */
             case REFERENCE:
             case COMMENTS:
@@ -772,10 +776,10 @@ public class TransactionInfoSet
     }
 
     @Override
-    protected void setDefaultValue(final DataListSet<MoneyWiseDataType> pUpdateSet,
-                                   final TransactionInfoClass pClass) throws OceanusException {
+    protected void setDefaultValue(final DataListSet pUpdateSet,
+                                   final DataInfoClass pClass) throws OceanusException {
         /* Switch on the class */
-        switch (pClass) {
+        switch ((TransactionInfoClass) pClass) {
             case ACCOUNTDELTAUNITS:
             case PARTNERDELTAUNITS:
                 setValue(pClass, TethysUnits.getWholeUnits(1));

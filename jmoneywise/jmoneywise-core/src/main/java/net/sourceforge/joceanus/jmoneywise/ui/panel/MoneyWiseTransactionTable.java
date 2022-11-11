@@ -117,7 +117,7 @@ public class MoneyWiseTransactionTable
     /**
      * The UpdateSet.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The error panel.
@@ -153,7 +153,7 @@ public class MoneyWiseTransactionTable
      * @param pAnalysis the analysis viewer entry
      */
     MoneyWiseTransactionTable(final MoneyWiseView pView,
-                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                              final UpdateSet pUpdateSet,
                               final MetisErrorPanel pError,
                               final MetisViewerEntry pFilter,
                               final MetisViewerEntry pAnalysis) {
@@ -1005,7 +1005,7 @@ public class MoneyWiseTransactionTable
         /**
          * The updateSet.
          */
-        private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+        private final UpdateSet theUpdateSet;
 
         /**
          * The analysis data entry.
@@ -1034,7 +1034,7 @@ public class MoneyWiseTransactionTable
          */
         MoneyWiseStatementPanel(final MoneyWiseView pView) {
             /* Build the Update set and entry */
-            theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
+            theUpdateSet = new UpdateSet(pView);
 
             /* Create the event manager */
             theEventManager = new TethysEventManager<>();

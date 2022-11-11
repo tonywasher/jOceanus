@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositCategoryType
-        extends StaticData<DepositCategoryType, DepositCategoryClass, MoneyWiseDataType> {
+        extends StaticDataItem<DepositCategoryType> {
     /**
      * Object name.
      */
@@ -45,7 +46,7 @@ public class DepositCategoryType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -86,7 +87,7 @@ public class DepositCategoryType
      * @throws OceanusException on error
      */
     private DepositCategoryType(final DepositCategoryTypeList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                                final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -100,7 +101,7 @@ public class DepositCategoryType
      * @return the class
      */
     public DepositCategoryClass getDepositClass() {
-        return super.getStaticClass();
+        return (DepositCategoryClass) super.getStaticClass();
     }
 
     /**
@@ -127,7 +128,7 @@ public class DepositCategoryType
      * Represents a list of {@link DepositCategoryType} objects.
      */
     public static class DepositCategoryTypeList
-            extends StaticList<DepositCategoryType, DepositCategoryClass, MoneyWiseDataType> {
+            extends StaticList<DepositCategoryType> {
         /**
          * Report fields.
          */
@@ -137,7 +138,7 @@ public class DepositCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public DepositCategoryTypeList(final DataSet<?, ?> pData) {
+        public DepositCategoryTypeList(final DataSet<?> pData) {
             super(DepositCategoryType.class, pData, MoneyWiseDataType.DEPOSITTYPE, ListStyle.CORE);
         }
 
@@ -177,7 +178,7 @@ public class DepositCategoryType
         }
 
         @Override
-        public DepositCategoryType addCopyItem(final DataItem<?> pItem) {
+        public DepositCategoryType addCopyItem(final DataItem pItem) {
             /* Can only clone a DepositCategoryType */
             if (!(pItem instanceof DepositCategoryType)) {
                 throw new UnsupportedOperationException();
@@ -221,7 +222,7 @@ public class DepositCategoryType
         }
 
         @Override
-        public DepositCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public DepositCategoryType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final DepositCategoryType myType = new DepositCategoryType(this, pValues);
 
@@ -239,9 +240,9 @@ public class DepositCategoryType
         }
 
         @Override
-        protected DepositCategoryType newItem(final DepositCategoryClass pClass) throws OceanusException {
+        protected DepositCategoryType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final DepositCategoryType myType = new DepositCategoryType(this, pClass);
+            final DepositCategoryType myType = new DepositCategoryType(this, (DepositCategoryClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

@@ -24,7 +24,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfoType
-        extends StaticData<TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+        extends StaticDataItem<TransactionInfoType> {
     /**
      * Object name.
      */
@@ -46,7 +47,7 @@ public class TransactionInfoType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Data length.
@@ -97,7 +98,7 @@ public class TransactionInfoType
      * @throws OceanusException on error
      */
     private TransactionInfoType(final TransactionInfoTypeList pList,
-                                final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                                final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -111,7 +112,7 @@ public class TransactionInfoType
      * @return the class
      */
     public TransactionInfoClass getInfoClass() {
-        return super.getStaticClass();
+        return (TransactionInfoClass) super.getStaticClass();
     }
 
     /**
@@ -144,7 +145,7 @@ public class TransactionInfoType
      * Represents a list of {@link TransactionInfoType} objects.
      */
     public static class TransactionInfoTypeList
-            extends StaticList<TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+            extends StaticList<TransactionInfoType> {
         /**
          * Report fields.
          */
@@ -154,7 +155,7 @@ public class TransactionInfoType
          * Construct an empty CORE Info list.
          * @param pData the DataSet for the list
          */
-        public TransactionInfoTypeList(final DataSet<?, ?> pData) {
+        public TransactionInfoTypeList(final DataSet<?> pData) {
             super(TransactionInfoType.class, pData, MoneyWiseDataType.TRANSINFOTYPE, ListStyle.CORE);
         }
 
@@ -194,7 +195,7 @@ public class TransactionInfoType
         }
 
         @Override
-        public TransactionInfoType addCopyItem(final DataItem<?> pItem) {
+        public TransactionInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone a TransactioonInfoType */
             if (!(pItem instanceof TransactionInfoType)) {
                 throw new UnsupportedOperationException();
@@ -238,7 +239,7 @@ public class TransactionInfoType
         }
 
         @Override
-        public TransactionInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionInfoType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final TransactionInfoType myType = new TransactionInfoType(this, pValues);
 
@@ -256,9 +257,9 @@ public class TransactionInfoType
         }
 
         @Override
-        protected TransactionInfoType newItem(final TransactionInfoClass pClass) throws OceanusException {
+        protected TransactionInfoType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final TransactionInfoType myType = new TransactionInfoType(this, pClass);
+            final TransactionInfoType myType = new TransactionInfoType(this, (TransactionInfoClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

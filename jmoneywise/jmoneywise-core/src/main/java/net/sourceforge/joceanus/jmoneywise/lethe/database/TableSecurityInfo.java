@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -30,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableSecurityInfo
-        extends PrometheusTableDataInfo<SecurityInfo, MoneyWiseDataType> {
+        extends PrometheusTableDataInfo<SecurityInfo> {
     /**
      * The name of the table.
      */
@@ -45,13 +44,13 @@ public class TableSecurityInfo
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getSecurityInfo());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Build data values */
         return getRowValues(SecurityInfo.OBJECT_NAME);
     }

@@ -23,14 +23,15 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * PortfolioType data type.
  */
 public class PortfolioType
-        extends StaticData<PortfolioType, PortfolioTypeClass, MoneyWiseDataType> {
+        extends StaticDataItem<PortfolioType> {
     /**
      * Object name.
      */
@@ -44,7 +45,7 @@ public class PortfolioType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -85,7 +86,7 @@ public class PortfolioType
      * @throws OceanusException on error
      */
     private PortfolioType(final PortfolioTypeList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                          final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -99,7 +100,7 @@ public class PortfolioType
      * @return the class
      */
     public PortfolioTypeClass getPortfolioClass() {
-        return super.getStaticClass();
+        return (PortfolioTypeClass) super.getStaticClass();
     }
 
     @Override
@@ -116,7 +117,7 @@ public class PortfolioType
      * Represents a list of {@link PortfolioType} objects.
      */
     public static class PortfolioTypeList
-            extends StaticList<PortfolioType, PortfolioTypeClass, MoneyWiseDataType> {
+            extends StaticList<PortfolioType> {
         /**
          * Report fields.
          */
@@ -126,7 +127,7 @@ public class PortfolioType
          * Construct an empty CORE portfolioType list.
          * @param pData the DataSet for the list
          */
-        public PortfolioTypeList(final DataSet<?, ?> pData) {
+        public PortfolioTypeList(final DataSet<?> pData) {
             super(PortfolioType.class, pData, MoneyWiseDataType.PORTFOLIOTYPE, ListStyle.CORE);
         }
 
@@ -166,7 +167,7 @@ public class PortfolioType
         }
 
         @Override
-        public PortfolioType addCopyItem(final DataItem<?> pItem) {
+        public PortfolioType addCopyItem(final DataItem pItem) {
             /* Can only clone a PortfolioType */
             if (!(pItem instanceof PortfolioType)) {
                 throw new UnsupportedOperationException();
@@ -210,7 +211,7 @@ public class PortfolioType
         }
 
         @Override
-        public PortfolioType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PortfolioType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final PortfolioType myType = new PortfolioType(this, pValues);
 
@@ -228,9 +229,9 @@ public class PortfolioType
         }
 
         @Override
-        protected PortfolioType newItem(final PortfolioTypeClass pClass) throws OceanusException {
+        protected PortfolioType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final PortfolioType myType = new PortfolioType(this, pClass);
+            final PortfolioType myType = new PortfolioType(this, (PortfolioTypeClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

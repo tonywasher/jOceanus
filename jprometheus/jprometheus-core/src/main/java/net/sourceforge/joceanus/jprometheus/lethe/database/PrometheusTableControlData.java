@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.database;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Database table class for ControlData.
  */
 public class PrometheusTableControlData
-        extends PrometheusTableDataItem<ControlData, CryptographyDataType> {
+        extends PrometheusTableDataItem<ControlData> {
     /**
      * The name of the Static table.
      */
@@ -47,17 +46,17 @@ public class PrometheusTableControlData
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         setList(pData.getControlData());
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<CryptographyDataType> myValues = getRowValues(ControlData.OBJECT_NAME);
+        final DataValues myValues = getRowValues(ControlData.OBJECT_NAME);
         myValues.addValue(ControlData.FIELD_DATAVERSION, myTableDef.getIntegerValue(ControlData.FIELD_DATAVERSION));
         myValues.addValue(ControlData.FIELD_CONTROLKEY, myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY));
 

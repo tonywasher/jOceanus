@@ -16,19 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+
 /**
- * Interfaces for static classes.
+ * ListKey.
  */
-public interface StaticInterface {
+public interface PrometheusListKey {
     /**
-     * Obtain the class Id.
-     * @return the class id
+     * Obtain the item key.
+     * @return the item key
      */
-    int getClassId();
+    Integer getItemKey();
 
     /**
-     * Obtain the order.
-     * @return the order
+     * Obtain the list name.
+     * @return the list name
      */
-    int getOrder();
+    String getListName();
+
+    /**
+     * Obtain the item name.
+     * @return the item name
+     */
+    String getItemName();
 }

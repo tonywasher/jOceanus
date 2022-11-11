@@ -33,10 +33,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Encrypted Data Item and List.
  * @author Tony Washer
- * @param <E> the data type enum class
  */
-public abstract class EncryptedItem<E extends Enum<E>>
-        extends DataItem<E> {
+public abstract class EncryptedItem
+        extends DataItem {
     /**
      * Report fields.
      */
@@ -63,7 +62,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pId the Id of the new item (or 0 if not yet known)
      */
-    protected EncryptedItem(final EncryptedList<?, E> pList,
+    protected EncryptedItem(final EncryptedList<?> pList,
                             final Integer pId) {
         super(pList, pId);
         theGenerator = new MetisEncryptionGenerator(null, pList.getDataSet().getDataFormatter());
@@ -74,8 +73,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    protected EncryptedItem(final EncryptedList<?, E> pList,
-                            final EncryptedItem<E> pSource) {
+    protected EncryptedItem(final EncryptedList<?> pList,
+                            final EncryptedItem pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
@@ -87,8 +86,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValues the data values
      * @throws OceanusException on error
      */
-    protected EncryptedItem(final EncryptedList<?, E> pList,
-                            final DataValues<E> pValues) throws OceanusException {
+    protected EncryptedItem(final EncryptedList<?> pList,
+                            final DataValues pValues) throws OceanusException {
         super(pList, pValues);
 
         /* Access dataKeySet id */
@@ -158,8 +157,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
     }
 
     @Override
-    public EncryptedList<?, E> getList() {
-        return (EncryptedList<?, E>) super.getList();
+    public EncryptedList<?> getList() {
+        return (EncryptedList<?>) super.getList();
     }
 
     /**
@@ -187,7 +186,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         setValueDataKeySet(pKeySetId);
 
         /* Resolve the ControlKey */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
         theGenerator = getDataKeySet().getFieldGenerator();
     }
@@ -205,7 +204,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle switched usage */
-        if ((myCurrent != null) && (!MetisEncryptedField.class.isInstance(myCurrent))) {
+        if ((myCurrent != null) && (!(myCurrent instanceof MetisEncryptedField))) {
             myCurrent = null;
         }
 
@@ -261,7 +260,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final DataSet<?, ?> myData = getDataSet();
+        final DataSet<?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
     }
 
@@ -272,7 +271,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @throws OceanusException on error
      */
     protected void adoptSecurity(final DataKeySet pKeySet,
-                                 final EncryptedItem<E> pBase) throws OceanusException {
+                                 final EncryptedItem pBase) throws OceanusException {
         /* Set the DataKeySet */
         setValueDataKeySet(pKeySet);
 
@@ -320,10 +319,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Encrypted DataList.
      * @param <T> the item type
-     * @param <E> the data type enum class
      */
-    public abstract static class EncryptedList<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
-            extends DataList<T, E> {
+    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>>
+            extends DataList<T> {
         /*
          * Report fields.
          */
@@ -338,8 +336,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pItemType the item type
          */
         protected EncryptedList(final Class<T> pBaseClass,
-                                final DataSet<?, ?> pData,
-                                final E pItemType) {
+                                final DataSet<?> pData,
+                                final PrometheusListKey pItemType) {
             this(pBaseClass, pData, pItemType, ListStyle.CORE);
         }
 
@@ -351,8 +349,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @param pStyle the style of the list
          */
         protected EncryptedList(final Class<T> pBaseClass,
-                                final DataSet<?, ?> pData,
-                                final E pItemType,
+                                final DataSet<?> pData,
+                                final PrometheusListKey pItemType,
                                 final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }
@@ -361,7 +359,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EncryptedList(final EncryptedList<T, E> pSource) {
+        protected EncryptedList(final EncryptedList<T> pSource) {
             super(pSource);
         }
 
@@ -425,7 +423,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @throws OceanusException on error
          */
         protected void adoptSecurity(final TethysUIThreadStatusReport pReport,
-                                     final EncryptedList<?, E> pBase) throws OceanusException {
+                                     final EncryptedList<?> pBase) throws OceanusException {
             /* Declare the new stage */
             pReport.setNewStage(listName());
 
@@ -433,7 +431,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
             pReport.setNumSteps(size());
 
             /* Obtain DataKeySet list */
-            final DataSet<?, ?> myData = getDataSet();
+            final DataSet<?> myData = getDataSet();
             final DataKeySetList mySets = myData.getDataKeySets();
 
             /* Create an iterator for our new list */
@@ -443,8 +441,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
             /* Loop through this list */
             while (myIterator.hasNext()) {
                 /* Locate the item in the base list */
-                final EncryptedItem<E> myCurr = myIterator.next();
-                final EncryptedItem<E> myBase = pBase.findItemById(myCurr.getId());
+                final EncryptedItem myCurr = myIterator.next();
+                final EncryptedItem myBase = pBase.findItemById(myCurr.getId());
 
                 /* Access target correctly */
                 final T myTarget = myClass.cast(myCurr);

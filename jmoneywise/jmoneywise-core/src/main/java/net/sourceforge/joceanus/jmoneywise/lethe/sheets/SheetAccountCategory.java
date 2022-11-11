@@ -137,7 +137,7 @@ public final class SheetAccountCategory {
         /* If this is a Deposit Category */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
             /* Build data values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositCategory.OBJECT_NAME);
+            final DataValues myValues = new DataValues(DepositCategory.OBJECT_NAME);
             myValues.addValue(DepositCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(DepositCategory.FIELD_PARENT, myParent);
             myValues.addValue(DepositCategory.FIELD_NAME, myName);
@@ -149,7 +149,7 @@ public final class SheetAccountCategory {
             /* If this is a cash category */
         } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
             /* Build data values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(CashCategory.OBJECT_NAME);
+            final DataValues myValues = new DataValues(CashCategory.OBJECT_NAME);
             myValues.addValue(CashCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(CashCategory.FIELD_PARENT, myParent);
             myValues.addValue(CashCategory.FIELD_NAME, myName);
@@ -161,7 +161,7 @@ public final class SheetAccountCategory {
             /* If this is a loan category */
         } else if (myClass.equals(MoneyWiseDataType.LOAN.toString())) {
             /* Build data values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(LoanCategory.OBJECT_NAME);
+            final DataValues myValues = new DataValues(LoanCategory.OBJECT_NAME);
             myValues.addValue(LoanCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(LoanCategory.FIELD_PARENT, myParent);
             myValues.addValue(LoanCategory.FIELD_NAME, myName);

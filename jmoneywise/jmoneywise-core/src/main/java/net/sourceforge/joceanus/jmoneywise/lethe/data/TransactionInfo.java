@@ -27,9 +27,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+        extends DataInfoItem<TransactionInfo> {
     /**
      * Object name.
      */
@@ -51,7 +54,7 @@ public class TransactionInfo
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfoItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -89,7 +92,7 @@ public class TransactionInfo
      * @throws OceanusException on error
      */
     private TransactionInfo(final TransactionInfoList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -185,7 +188,7 @@ public class TransactionInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink();
+        final DataItem myItem = getLink();
         if (myItem instanceof Deposit) {
             return ((Deposit) myItem).getName();
         }
@@ -234,7 +237,7 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfoItem<TransactionInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -243,8 +246,14 @@ public class TransactionInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Transactions */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Transaction) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -326,7 +335,7 @@ public class TransactionInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pTransInfo) {
+    public boolean applyChanges(final DataItem pTransInfo) {
         /* Can only update from TransactionInfo */
         if (!(pTransInfo instanceof TransactionInfo)) {
             return false;
@@ -372,7 +381,7 @@ public class TransactionInfo
      * TransactionInfoList.
      */
     public static class TransactionInfoList
-            extends DataInfoList<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<TransactionInfo> {
         /**
          * Report fields.
          */
@@ -432,7 +441,7 @@ public class TransactionInfo
         }
 
         @Override
-        public TransactionInfo addCopyItem(final DataItem<?> pItem) {
+        public TransactionInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a TransactionInfo */
             if (!(pItem instanceof TransactionInfo)) {
                 throw new UnsupportedOperationException();
@@ -449,10 +458,10 @@ public class TransactionInfo
         }
 
         @Override
-        protected TransactionInfo addNewItem(final Transaction pOwner,
-                                             final TransactionInfoType pInfoType) {
+        protected TransactionInfo addNewItem(final DataItem pOwner,
+                                             final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
-            final TransactionInfo myInfo = new TransactionInfo(this, pOwner, pInfoType);
+            final TransactionInfo myInfo = new TransactionInfo(this, (Transaction) pOwner, (TransactionInfoType) pInfoType);
             add(myInfo);
 
             /* return it */
@@ -461,8 +470,8 @@ public class TransactionInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Transaction pTransaction,
-                                final TransactionInfoClass pInfoClass,
+                                final DataItem pTransaction,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
@@ -479,7 +488,7 @@ public class TransactionInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(TransactionInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pTransaction);
@@ -499,7 +508,7 @@ public class TransactionInfo
         }
 
         @Override
-        public TransactionInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TransactionInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final TransactionInfo myInfo = new TransactionInfo(this, pValues);
 

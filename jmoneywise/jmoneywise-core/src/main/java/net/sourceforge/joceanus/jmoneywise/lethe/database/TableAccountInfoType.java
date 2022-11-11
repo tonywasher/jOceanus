@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableAccountInfoType
-        extends PrometheusTableStaticData<AccountInfoType, MoneyWiseDataType> {
+        extends PrometheusTableStaticData<AccountInfoType> {
     /**
      * The name of the table.
      */
@@ -45,13 +45,13 @@ public class TableAccountInfoType
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getActInfoTypes());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Build data values */
         return getRowValues(AccountInfoType.OBJECT_NAME);
     }

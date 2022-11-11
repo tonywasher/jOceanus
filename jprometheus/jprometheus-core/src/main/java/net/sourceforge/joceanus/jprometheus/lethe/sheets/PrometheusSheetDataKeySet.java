@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PrometheusSheetDataKeySet
-        extends PrometheusSheetDataItem<DataKeySet, CryptographyDataType> {
+        extends PrometheusSheetDataItem<DataKeySet> {
     /**
      * SheetName for KeySets.
      */
@@ -62,7 +61,7 @@ public class PrometheusSheetDataKeySet
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        final DataSet<?, ?> myData = pReader.getData();
+        final DataSet<?> myData = pReader.getData();
         setDataList(myData.getDataKeySets());
     }
 
@@ -75,14 +74,14 @@ public class PrometheusSheetDataKeySet
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        final DataSet<?, ?> myData = pWriter.getData();
+        final DataSet<?> myData = pWriter.getData();
         setDataList(myData.getDataKeySets());
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
+        final DataValues myValues = getRowValues(DataKeySet.OBJECT_NAME);
         myValues.addValue(DataKeySet.FIELD_CONTROLKEY, loadInteger(COL_CONTROL));
         myValues.addValue(DataKeySet.FIELD_CREATEDATE, loadDate(COL_CREATEDATE));
         myValues.addValue(DataKeySet.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));

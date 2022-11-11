@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -30,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TablePortfolioType
-        extends PrometheusTableStaticData<PortfolioType, MoneyWiseDataType> {
+        extends PrometheusTableStaticData<PortfolioType> {
     /**
      * The table name.
      */
@@ -45,13 +44,13 @@ public class TablePortfolioType
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getPortfolioTypes());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Build data values */
         return getRowValues(PortfolioType.OBJECT_NAME);
     }

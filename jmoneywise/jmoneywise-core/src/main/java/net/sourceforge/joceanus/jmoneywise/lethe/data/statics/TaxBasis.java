@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
+        extends StaticDataItem<TaxBasis> {
     /**
      * Object name.
      */
@@ -45,7 +46,7 @@ public class TaxBasis
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -86,7 +87,7 @@ public class TaxBasis
      * @throws OceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                     final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -100,7 +101,7 @@ public class TaxBasis
      * @return the class
      */
     public TaxBasisClass getTaxClass() {
-        return super.getStaticClass();
+        return (TaxBasisClass) super.getStaticClass();
     }
 
     @Override
@@ -131,7 +132,7 @@ public class TaxBasis
      * Represents a list of {@link TaxBasis} objects.
      */
     public static class TaxBasisList
-            extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
+            extends StaticList<TaxBasis> {
         /**
          * Report fields.
          */
@@ -141,7 +142,7 @@ public class TaxBasis
          * Construct an empty CORE tax bucket list.
          * @param pData the DataSet for the list
          */
-        public TaxBasisList(final DataSet<?, ?> pData) {
+        public TaxBasisList(final DataSet<?> pData) {
             super(TaxBasis.class, pData, MoneyWiseDataType.TAXBASIS, ListStyle.CORE);
         }
 
@@ -186,7 +187,7 @@ public class TaxBasis
          * @return the newly added item
          */
         @Override
-        public TaxBasis addCopyItem(final DataItem<?> pItem) {
+        public TaxBasis addCopyItem(final DataItem pItem) {
             /* Can only clone a TaxBasis */
             if (!(pItem instanceof TaxBasis)) {
                 throw new UnsupportedOperationException();
@@ -234,7 +235,7 @@ public class TaxBasis
         }
 
         @Override
-        public TaxBasis addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public TaxBasis addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the basis */
             final TaxBasis myBasis = new TaxBasis(this, pValues);
 
@@ -252,9 +253,9 @@ public class TaxBasis
         }
 
         @Override
-        protected TaxBasis newItem(final TaxBasisClass pClass) throws OceanusException {
+        protected TaxBasis newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the basis */
-            final TaxBasis myBasis = new TaxBasis(this, pClass);
+            final TaxBasis myBasis = new TaxBasis(this, (TaxBasisClass) pClass);
 
             /* Check that this BasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {

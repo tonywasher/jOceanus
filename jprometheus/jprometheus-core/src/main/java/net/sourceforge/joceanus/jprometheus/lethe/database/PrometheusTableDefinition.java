@@ -486,7 +486,7 @@ public class PrometheusTableDefinition {
      * Locate reference.
      * @param pTables the list of defined tables
      */
-    protected void resolveReferences(final List<PrometheusTableDataItem<?, ?>> pTables) {
+    protected void resolveReferences(final List<PrometheusTableDataItem<?>> pTables) {
         /* Create the iterator */
         final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
 

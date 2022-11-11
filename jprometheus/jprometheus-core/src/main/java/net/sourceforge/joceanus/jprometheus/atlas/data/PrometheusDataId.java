@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 
 /**
  * Prometheus DataIds.
@@ -90,27 +90,27 @@ public enum PrometheusDataId
     /**
      * Name.
      */
-    NAME(PrometheusDataResource.DATAITEM_FIELD_NAME, StaticData.FIELD_NAME),
+    NAME(PrometheusDataResource.DATAITEM_FIELD_NAME, StaticDataItem.FIELD_NAME),
 
     /**
      * Description.
      */
-    DESC(PrometheusDataResource.DATAITEM_FIELD_DESC, StaticData.FIELD_DESC),
+    DESC(PrometheusDataResource.DATAITEM_FIELD_DESC, StaticDataItem.FIELD_DESC),
 
     /**
      * Enabled.
      */
-    ENABLED(PrometheusDataResource.STATICDATA_ENABLED, StaticData.FIELD_ENABLED),
+    ENABLED(PrometheusDataResource.STATICDATA_ENABLED, StaticDataItem.FIELD_ENABLED),
 
     /**
      * Order.
      */
-    ORDER(PrometheusDataResource.STATICDATA_SORT, StaticData.FIELD_ORDER),
+    ORDER(PrometheusDataResource.STATICDATA_SORT, StaticDataItem.FIELD_ORDER),
 
     /**
      * Class.
      */
-    CLASS(PrometheusDataResource.STATICDATA_CLASS, StaticData.FIELD_CLASS);
+    CLASS(PrometheusDataResource.STATICDATA_CLASS, StaticDataItem.FIELD_CLASS);
 
     /**
      * The Value.

@@ -154,7 +154,7 @@ public class MoneyWiseTransactionPanel
      * @param pError the error panel
      */
     public MoneyWiseTransactionPanel(final TethysUIFactory<?> pFactory,
-                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                     final UpdateSet pUpdateSet,
                                      final TransactionBuilder pBuilder,
                                      final MoneyWiseAnalysisSelect pAnalysisSelect,
                                      final MetisErrorPanel pError) {

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
+public abstract class PrometheusSpreadSheet<T extends DataSet<T>> {
     /**
      * The Data file name.
      */

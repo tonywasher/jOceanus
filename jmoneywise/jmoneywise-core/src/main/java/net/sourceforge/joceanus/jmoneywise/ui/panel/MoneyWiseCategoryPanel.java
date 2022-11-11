@@ -137,7 +137,7 @@ public class MoneyWiseCategoryPanel
     /**
      * The UpdateSet.
      */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The viewer entry.
@@ -180,7 +180,7 @@ public class MoneyWiseCategoryPanel
         theEventManager = new TethysEventManager<>();
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<>(pView, MoneyWiseDataType.class);
+        theUpdateSet = new UpdateSet(pView);
 
         /* Create the Panel */
         final TethysUIPaneFactory myPanes = myFactory.paneFactory();

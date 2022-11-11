@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Security
         extends AssetBase<Security, SecurityType>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -140,7 +140,7 @@ public class Security
      * @throws OceanusException on error
      */
     private Security(final SecurityList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                     final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -472,7 +472,7 @@ public class Security
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultSecurityType());
@@ -486,7 +486,7 @@ public class Security
      * autoCorrect values after change.
      * @param pUpdateSet the update set
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    public void autoCorrect(final UpdateSet pUpdateSet) {
         /* Access category class and parent */
         final SecurityTypeClass myClass = getCategoryClass();
         final Payee myParent = getParent();
@@ -524,7 +524,7 @@ public class Security
      * @param pUpdateSet the update set
      * @return the default parent
      */
-    private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
+    private Payee getDefaultParent(final UpdateSet pUpdateSet) {
         /* Access details */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         final SecurityTypeClass myClass = getCategoryClass();
@@ -589,7 +589,7 @@ public class Security
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
@@ -801,7 +801,7 @@ public class Security
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pSecurity) {
+    public boolean applyChanges(final DataItem pSecurity) {
         /* Can only update from a security */
         if (!(pSecurity instanceof Security)) {
             return false;
@@ -916,7 +916,7 @@ public class Security
          * @return the edit list
          * @throws OceanusException on error
          */
-        public SecurityList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+        public SecurityList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final SecurityList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
@@ -995,7 +995,7 @@ public class Security
          * @return the newly added item
          */
         @Override
-        public Security addCopyItem(final DataItem<?> pSecurity) {
+        public Security addCopyItem(final DataItem pSecurity) {
             /* Can only clone a Security */
             if (!(pSecurity instanceof Security)) {
                 throw new UnsupportedOperationException();
@@ -1028,7 +1028,7 @@ public class Security
         }
 
         @Override
-        public Security addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Security addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the security */
             final Security mySecurity = new Security(this, pValues);
 
@@ -1044,12 +1044,12 @@ public class Security
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(mySecurity);
+                    final DataValues myValues = myItem.getValues(mySecurity);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1075,7 +1075,7 @@ public class Security
      * The dataMap class.
      */
     protected static class SecurityDataMap
-            extends DataInstanceMap<Security, MoneyWiseDataType, String> {
+            extends DataInstanceMap<Security, String> {
         /**
          * Report fields.
          */

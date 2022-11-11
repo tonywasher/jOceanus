@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableSecurityPrice
-        extends PrometheusTableEncrypted<SecurityPrice, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<SecurityPrice> {
     /**
      * The name of the Prices table.
      */
@@ -60,18 +59,18 @@ public class TableSecurityPrice
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getSecurityPrices());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
+        final DataValues myValues = getRowValues(SecurityPrice.OBJECT_NAME);
         myValues.addValue(SecurityPrice.FIELD_SECURITY, myTableDef.getIntegerValue(SecurityPrice.FIELD_SECURITY));
         myValues.addValue(SecurityPrice.FIELD_DATE, myTableDef.getDateValue(SecurityPrice.FIELD_DATE));
         myValues.addValue(SecurityPrice.FIELD_PRICE, myTableDef.getBinaryValue(SecurityPrice.FIELD_PRICE));

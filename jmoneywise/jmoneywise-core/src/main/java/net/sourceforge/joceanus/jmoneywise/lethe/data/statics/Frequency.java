@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
+        extends StaticDataItem<Frequency> {
     /**
      * Object name.
      */
@@ -45,7 +46,7 @@ public class Frequency
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -86,7 +87,7 @@ public class Frequency
      * @throws OceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -100,7 +101,7 @@ public class Frequency
      * @return the class
      */
     public FrequencyClass getFrequency() {
-        return super.getStaticClass();
+        return (FrequencyClass) super.getStaticClass();
     }
 
     /**
@@ -168,7 +169,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
+            extends StaticList<Frequency> {
         /**
          * Report fields.
          */
@@ -178,7 +179,7 @@ public class Frequency
          * Construct an empty CORE frequency list.
          * @param pData the DataSet for the list
          */
-        public FrequencyList(final DataSet<?, ?> pData) {
+        public FrequencyList(final DataSet<?> pData) {
             super(Frequency.class, pData, MoneyWiseDataType.FREQUENCY, ListStyle.CORE);
         }
 
@@ -231,7 +232,7 @@ public class Frequency
          * @return the newly added item
          */
         @Override
-        public Frequency addCopyItem(final DataItem<?> pItem) {
+        public Frequency addCopyItem(final DataItem pItem) {
             /* Can only clone a Frequency */
             if (!(pItem instanceof Frequency)) {
                 throw new UnsupportedOperationException();
@@ -271,7 +272,7 @@ public class Frequency
         }
 
         @Override
-        public Frequency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Frequency addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the frequency */
             final Frequency myFreq = new Frequency(this, pValues);
 
@@ -289,9 +290,9 @@ public class Frequency
         }
 
         @Override
-        protected Frequency newItem(final FrequencyClass pClass) throws OceanusException {
+        protected Frequency newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the frequency */
-            final Frequency myFreq = new Frequency(this, pClass);
+            final Frequency myFreq = new Frequency(this, (FrequencyClass) pClass);
 
             /* Check that this FreqId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {

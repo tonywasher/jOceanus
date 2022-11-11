@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +33,9 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataConte
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -43,16 +43,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Representation of an information set extension of a DataItem.
  * @author Tony Washer
  * @param <T> the data type
- * @param <O> the Owner DataItem that is extended by this item
- * @param <I> the Info Type that applies to this item
- * @param <S> the Info type class
- * @param <E> the data type enum class
  */
-public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
-                                  O extends DataItem<E>,
-                                  I extends StaticData<I, S, E>,
-                                  S extends Enum<S> & DataInfoClass,
-                                  E extends Enum<E>>
+public abstract class DataInfoSet<T extends DataInfoItem<T>>
         implements MetisDataContents, Iterable<T> {
     /**
      * Report fields.
@@ -72,22 +64,22 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * The Owner to which this set belongs.
      */
-    private final O theOwner;
+    private final DataItem theOwner;
 
     /**
      * The InfoTypes for the InfoSet.
      */
-    private final StaticList<I, S, E> theTypeList;
+    private final StaticList<?> theTypeList;
 
     /**
      * The DataInfoList for the InfoSet.
      */
-    private final DataInfoList<T, O, I, S, E> theInfoList;
+    private final DataInfoList<T> theInfoList;
 
     /**
      * The Map of the DataInfo.
      */
-    private final Map<S, DataInfo<T, O, I, S, E>> theMap;
+    private final Map<DataInfoClass, DataInfoItem<T>> theMap;
 
     /**
      * The class of the entries.
@@ -100,9 +92,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the infoList for the set
      */
-    protected DataInfoSet(final O pOwner,
-                          final StaticList<I, S, E> pTypeList,
-                          final DataInfoList<T, O, I, S, E> pInfoList) {
+    protected DataInfoSet(final DataItem pOwner,
+                          final StaticList<?> pTypeList,
+                          final DataInfoList<T> pInfoList) {
         /* Store the Owner and InfoType List */
         theOwner = pOwner;
         theTypeList = pTypeList;
@@ -110,7 +102,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         theClass = theInfoList.getBaseClass();
 
         /* Create the Map */
-        theMap = new EnumMap<>(theTypeList.getEnumClass());
+        theMap = new HashMap<>();
     }
 
     @Override
@@ -133,7 +125,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * Obtain owner.
      * @return the owner
      */
-    public O getOwner() {
+    public DataItem getOwner() {
         return theOwner;
     }
 
@@ -141,23 +133,23 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
      */
-    protected void cloneTheDataInfoSet(final DataInfoSet<T, O, I, S, E> pSource) {
+    protected void cloneTheDataInfoSet(final DataInfoSet<T> pSource) {
         /* Clone the InfoSet for each Event in the underlying Map */
-        for (Entry<S, DataInfo<T, O, I, S, E>> myEntry : pSource.theMap.entrySet()) {
+        for (Entry<DataInfoClass, DataInfoItem<T>> myEntry : pSource.theMap.entrySet()) {
             /* Create the new value */
-            final DataInfo<T, O, I, S, E> myValue = myEntry.getValue();
+            final DataInfoItem<T> myValue = myEntry.getValue();
 
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Clone the infoLinkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
-                final DataInfo<T, O, I, S, E> myNew = new DataInfoLinkSet<>(theInfoList, mySet);
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
+                final DataInfoItem<T> myNew = new DataInfoLinkSet<>(theInfoList, mySet);
                 theMap.put(myEntry.getKey(), myNew);
 
                 /* else its a standard entry */
             } else {
                 /* Add to the map */
-                final DataInfo<T, O, I, S, E> myNew = theInfoList.addCopyItem(myValue);
+                final DataInfoItem<T> myNew = theInfoList.addCopyItem(myValue);
                 theMap.put(myEntry.getKey(), myNew);
             }
         }
@@ -170,7 +162,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pClass the Value Class
      * @return the value
      */
-    public <X> X getValue(final S pInfoClass,
+    public <X> X getValue(final DataInfoClass pInfoClass,
                           final Class<X> pClass) {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
@@ -178,7 +170,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         /* Access existing entry */
-        final DataInfo<T, O, I, S, E> myValue = theMap.get(pInfoClass);
+        final DataInfoItem<T> myValue = theMap.get(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -194,14 +186,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoClass the Info Class
      * @return the iterator
      */
-    public List<?> getListValue(final S pInfoClass) {
+    public List<?> getListValue(final DataInfoClass pInfoClass) {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Access existing entry */
-        final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+        final DataInfoLinkSet<T> mySet = getInfoLinkSet(pInfoClass);
 
         /* Return list if it is available */
         return mySet == null
@@ -214,12 +206,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoClass the info class
      * @return true/false
      */
-    public boolean isExisting(final S pInfoClass) {
+    public boolean isExisting(final DataInfoClass pInfoClass) {
         /* Access the value */
-        final DataInfo<T, O, I, S, E> myInfo = theMap.get(pInfoClass);
+        final DataInfoItem<T> myInfo = theMap.get(pInfoClass);
         if (myInfo instanceof DataInfoLinkSet) {
             /* Access the info */
-            final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+            final DataInfoLinkSet<T> mySet = getInfoLinkSet(pInfoClass);
             return mySet.isExisting();
         }
 
@@ -232,14 +224,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoClass the Info Class
      * @return the value
      */
-    public MetisEncryptedField<?> getField(final S pInfoClass) {
+    public MetisEncryptedField<?> getField(final DataInfoClass pInfoClass) {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Access existing entry */
-        final DataInfo<T, O, I, S, E> myValue = theMap.get(pInfoClass);
+        final DataInfoItem<T> myValue = theMap.get(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -255,37 +247,37 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoClass the Info Class
      * @return the value
      */
-    protected T getInfo(final S pInfoClass) {
+    protected T getInfo(final DataInfoClass pInfoClass) {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Return the info */
-        final DataInfo<T, O, I, S, E> myInfo = theMap.get(pInfoClass);
+        final DataInfoItem<T> myInfo = theMap.get(pInfoClass);
         return theClass.cast(myInfo);
     }
 
     /**
-     * link the value for the the infoClass.
+     * link the value for the infoClass.
      * @param pInfoClass the Info Class
      * @param pLink the link value
      * @throws OceanusException on error
      */
-    public void linkValue(final S pInfoClass,
-                          final DataItem<E> pLink) throws OceanusException {
+    public void linkValue(final DataInfoClass pInfoClass,
+                          final DataItem pLink) throws OceanusException {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Access existing set */
-        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+        DataInfoLinkSet<T> mySet = getInfoLinkSet(pInfoClass);
 
         /* If we have no set, create one */
         if (mySet == null) {
             /* Obtain infoType */
-            final I myInfoType = theTypeList.findItemByClass(pInfoClass);
+            final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Allocate the new set */
             mySet = new DataInfoLinkSet<>(theInfoList, theOwner, myInfoType);
@@ -300,7 +292,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         /* If this is a new link */
         if (myItem == null) {
             /* Obtain infoType */
-            final I myInfoType = theTypeList.findItemByClass(pInfoClass);
+            final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Create the entry and add to list */
             myItem = theInfoList.addNewItem(theOwner, myInfoType);
@@ -324,15 +316,15 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pLinks the links value
      * @throws OceanusException on error
      */
-    public void setListValue(final S pInfoClass,
-                             final List<? extends DataItem<E>> pLinks) throws OceanusException {
+    public void setListValue(final DataInfoClass pInfoClass,
+                             final List<? extends DataItem> pLinks) throws OceanusException {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Access existing set */
-        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+        DataInfoLinkSet<T> mySet = getInfoLinkSet(pInfoClass);
 
         /* If we now have no selected values */
         if (pLinks == null) {
@@ -347,7 +339,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
             /* If we do not currently have a set */
             if (mySet == null) {
                 /* Obtain infoType */
-                final I myInfoType = theTypeList.findItemByClass(pInfoClass);
+                final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
 
                 /* Allocate the new set */
                 mySet = new DataInfoLinkSet<>(theInfoList, theOwner, myInfoType);
@@ -371,14 +363,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @return the value
      */
     @SuppressWarnings("unchecked")
-    protected DataInfoLinkSet<T, O, I, S, E> getInfoLinkSet(final S pInfoClass) {
+    protected DataInfoLinkSet<T> getInfoLinkSet(final DataInfoClass pInfoClass) {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Return the info */
-        final DataInfo<T, O, I, S, E> myInfo = theMap.get(pInfoClass);
+        final DataInfoItem<T> myInfo = theMap.get(pInfoClass);
         return DataInfoLinkSet.class.cast(myInfo);
     }
 
@@ -387,11 +379,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoClass the class to test
      * @return <code>true/false</code>
      */
-    public MetisDataDifference fieldChanged(final S pInfoClass) {
+    public MetisDataDifference fieldChanged(final DataInfoClass pInfoClass) {
         /* If this is called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             /* Access the info */
-            final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+            final DataInfoLinkSet<T> mySet = getInfoLinkSet(pInfoClass);
             return mySet == null
                                  ? MetisDataDifference.IDENTICAL
                                  : mySet.fieldChanged();
@@ -416,7 +408,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pValue the Value
      * @throws OceanusException on error
      */
-    public void setValue(final S pInfoClass,
+    public void setValue(final DataInfoClass pInfoClass,
                          final Object pValue) throws OceanusException {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
@@ -427,7 +419,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         final boolean bDelete = pValue == null;
 
         /* Obtain the Map value */
-        DataInfo<T, O, I, S, E> myValue = theMap.get(pInfoClass);
+        DataInfoItem<T> myValue = theMap.get(pInfoClass);
 
         /* If we are deleting */
         if (bDelete) {
@@ -443,7 +435,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         /* If we have no entry */
         if (myValue == null) {
             /* Obtain infoType */
-            final I myInfoType = theTypeList.findItemByClass(pInfoClass);
+            final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Create the entry and add to list */
             myValue = theInfoList.addNewItem(theOwner, myInfoType);
@@ -462,11 +454,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void sortLinkSets() {
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 mySet.sortLinks();
             }
         }
@@ -479,12 +471,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void registerInfo(final T pInfo) throws OceanusException {
         /* Obtain the existing Map value */
-        final S myClass = pInfo.getInfoClass();
+        final DataInfoClass myClass = pInfo.getInfoClass();
 
         /* If this is an instance of a LinkSet */
         if (myClass.isLinkSet()) {
             /* Access existing entry */
-            DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(myClass);
+            DataInfoLinkSet<T> mySet = getInfoLinkSet(myClass);
             if (mySet == null) {
                 /* Allocate the new set */
                 mySet = new DataInfoLinkSet<>(theInfoList, theOwner, pInfo.getInfoType());
@@ -499,7 +491,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
             /* else it is a standard item */
         } else {
             /* Access existing entry */
-            final DataInfo<T, O, I, S, E> myValue = theMap.get(myClass);
+            final DataInfoItem<T> myValue = theMap.get(myClass);
 
             /* Reject if duplicate and not re-registration */
             if ((myValue != null) && !myValue.getId().equals(pInfo.getId())) {
@@ -517,12 +509,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void deRegisterInfo(final T pInfo) {
         /* Obtain the existing Map value */
-        final S myClass = pInfo.getInfoClass();
+        final DataInfoClass myClass = pInfo.getInfoClass();
 
         /* If this is an instance of a LinkSet */
         if (myClass.isLinkSet()) {
             /* Access existing entry */
-            final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(myClass);
+            final DataInfoLinkSet<T> mySet = getInfoLinkSet(myClass);
             if (mySet != null) {
                 /* Unlink the item */
                 mySet.unlinkItem(pInfo);
@@ -547,12 +539,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void rewindInfoLinkSet(final T pInfo) {
         /* Obtain the existing Map value */
-        final S myClass = pInfo.getInfoClass();
+        final DataInfoClass myClass = pInfo.getInfoClass();
 
         /* If this is an instance of a LinkSet */
         if (myClass.isLinkSet()) {
             /* Access existing entry */
-            final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(myClass);
+            final DataInfoLinkSet<T> mySet = getInfoLinkSet(myClass);
             if (mySet != null) {
                 /* reSort the links */
                 mySet.sortLinks();
@@ -568,9 +560,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * wipe information regarding the infoClass.
      * @param pInfoClass the Info Class
      */
-    public void wipeInfo(final S pInfoClass) {
+    public void wipeInfo(final DataInfoClass pInfoClass) {
         /* If we have an item for the class */
-        final DataInfo<T, O, I, S, E> myInfo = theMap.get(pInfoClass);
+        final DataInfoItem<T> myInfo = theMap.get(pInfoClass);
         if (myInfo != null) {
             /* Remove and unlink it */
             theMap.remove(pInfoClass);
@@ -583,11 +575,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void touchUnderlyingItems() {
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 mySet.touchUnderlyingItems();
 
                 /* else this is a standard DataInfo */
@@ -603,11 +595,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void touchOnUpdate() {
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 mySet.touchOnUpdate();
 
                 /* else this is a standard DataInfo */
@@ -626,11 +618,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         boolean bChanges = false;
 
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 bChanges |= mySet.hasHistory();
 
             } else {
@@ -648,11 +640,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void pushHistory() {
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 mySet.pushHistory();
 
             } else {
@@ -667,14 +659,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public void popHistory() {
         /* Iterate through table values */
-        final Iterator<DataInfo<T, O, I, S, E>> myIterator = theMap.values().iterator();
+        final Iterator<DataInfoItem<T>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            final DataInfo<T, O, I, S, E> myValue = myIterator.next();
+            final DataInfoItem<T> myValue = myIterator.next();
 
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 mySet.popHistory();
 
                 /* If the set is now empty */
@@ -706,11 +698,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     public boolean checkForHistory() {
         /* Loop through each existing value */
         boolean bChanges = false;
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myValue;
                 bChanges |= mySet.checkForHistory();
 
             } else {
@@ -743,7 +735,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         /* For each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If the value is active */
             if (!myValue.isDeleted()) {
                 /* Set the value as deleted */
@@ -767,7 +759,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         /* For each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If this is an instance of a LinkSet */
             if (myValue instanceof DataInfoLinkSet) {
                 /* Pass call to linkSet */
@@ -794,7 +786,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      */
     public MetisDataEditState getEditState() {
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If we have changes */
             if (myValue.hasHistory()) {
                 /* Note that new state is changed */
@@ -815,7 +807,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         final MetisDataState myState = MetisDataState.CLEAN;
 
         /* Loop through each existing value */
-        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+        for (DataInfoItem<T> myValue : theMap.values()) {
             /* If we have changes */
             if (myValue.getState() != MetisDataState.CLEAN) {
                 /* Note that new state is changed */
@@ -858,22 +850,23 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final DataListSet<E> pUpdateSet) throws OceanusException {
+    public void autoCorrect(final DataListSet pUpdateSet) throws OceanusException {
         /* Loop through the classes */
-        for (S myClass : theTypeList.getEnumClass().getEnumConstants()) {
+        for (StaticDataClass myClass : theTypeList.getEnumClass().getEnumConstants()) {
             /* Access value and requirement */
-            final MetisFieldRequired myState = isClassRequired(myClass);
+            final DataInfoClass myInfoClass = (DataInfoClass) myClass;
+            final MetisFieldRequired myState = isClassRequired(myInfoClass);
 
             /* Switch on required state */
             switch (myState) {
                 case MUSTEXIST:
-                    if (getInfo(myClass) == null) {
-                        setDefaultValue(pUpdateSet, myClass);
+                    if (getInfo(myInfoClass) == null) {
+                        setDefaultValue(pUpdateSet, myInfoClass);
                     }
                     break;
                 case NOTALLOWED:
-                    if (getInfo(myClass) != null) {
-                        setValue(myClass, null);
+                    if (getInfo(myInfoClass) != null) {
+                        setValue(myInfoClass, null);
                     }
                     break;
                 case CANEXIST:
@@ -888,7 +881,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pClass the infoSet class
      * @return the status
      */
-    public abstract MetisFieldRequired isClassRequired(S pClass);
+    public abstract MetisFieldRequired isClassRequired(DataInfoClass pClass);
 
     /**
      * set default value after update.
@@ -896,8 +889,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pClass the class
      * @throws OceanusException on error
      */
-    protected void setDefaultValue(final DataListSet<E> pUpdateSet,
-                                   final S pClass) throws OceanusException {
+    protected void setDefaultValue(final DataListSet pUpdateSet,
+                                   final DataInfoClass pClass) throws OceanusException {
         /* Overridden as necessary */
     }
 
@@ -909,7 +902,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         /**
          * Overall iterator.
          */
-        private final Iterator<DataInfo<T, O, I, S, E>> theIterator;
+        private final Iterator<DataInfoItem<T>> theIterator;
 
         /**
          * Local iterator.
@@ -953,12 +946,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
             theSetIterator = null;
 
             /* Obtain the next item */
-            final DataInfo<T, O, I, S, E> myItem = theIterator.next();
+            final DataInfoItem<T> myItem = theIterator.next();
 
             /* If this is an infoLinkSet */
             if (myItem instanceof DataInfoLinkSet) {
                 /* Access set iterator and return first element */
-                final DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myItem;
+                final DataInfoLinkSet<T> mySet = (DataInfoLinkSet<T>) myItem;
                 theSetIterator = mySet.iterator();
                 return theSetIterator.next();
             }

@@ -49,12 +49,12 @@ public class MoneyWiseDepositTable
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<DepositInfo> theInfoEntry;
 
     /**
      * The Rate UpdateEntry.
      */
-    private final UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
+    private final UpdateEntry<DepositRate> theRateEntry;
 
     /**
      * The Deposit dialog.
@@ -73,7 +73,7 @@ public class MoneyWiseDepositTable
      * @param pError the error panel
      */
     MoneyWiseDepositTable(final MoneyWiseView pView,
-                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                          final UpdateSet pUpdateSet,
                           final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT, DepositCategory.class);

@@ -22,12 +22,11 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -37,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
  * @author Tony Washer
  */
 public class SecurityInfoSet
-        extends DataInfoSet<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<SecurityInfo> {
     /**
      * Report fields.
      */
@@ -69,6 +68,11 @@ public class SecurityInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Security getOwner() {
+        return (Security) super.getOwner();
     }
 
     @Override
@@ -190,7 +194,7 @@ public class SecurityInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Access details about the Security */
         final Security mySec = getOwner();
         final SecurityTypeClass myType = mySec.getCategoryClass();
@@ -200,7 +204,7 @@ public class SecurityInfoSet
             return MetisFieldRequired.NOTALLOWED;
         }
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
                 return MetisFieldRequired.CANEXIST;

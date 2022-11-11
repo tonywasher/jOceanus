@@ -24,7 +24,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends StaticDataItem<AccountInfoType> {
     /**
      * Object name.
      */
@@ -46,7 +47,7 @@ public class AccountInfoType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * WebSite length.
@@ -107,7 +108,7 @@ public class AccountInfoType
      * @throws OceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                            final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -121,7 +122,7 @@ public class AccountInfoType
      * @return the class
      */
     public AccountInfoClass getInfoClass() {
-        return super.getStaticClass();
+        return (AccountInfoClass) super.getStaticClass();
     }
 
     /**
@@ -154,7 +155,7 @@ public class AccountInfoType
      * Represents a list of {@link AccountInfoType} objects.
      */
     public static class AccountInfoTypeList
-            extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends StaticList<AccountInfoType> {
         /**
          * Report fields.
          */
@@ -164,7 +165,7 @@ public class AccountInfoType
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public AccountInfoTypeList(final DataSet<?, ?> pData) {
+        public AccountInfoTypeList(final DataSet<?> pData) {
             super(AccountInfoType.class, pData, MoneyWiseDataType.ACCOUNTINFOTYPE, ListStyle.CORE);
         }
 
@@ -204,7 +205,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoType addCopyItem(final DataItem<?> pItem) {
+        public AccountInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone an AccountInfoType */
             if (!(pItem instanceof AccountInfoType)) {
                 throw new UnsupportedOperationException();
@@ -248,7 +249,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public AccountInfoType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final AccountInfoType myType = new AccountInfoType(this, pValues);
 
@@ -266,9 +267,9 @@ public class AccountInfoType
         }
 
         @Override
-        protected AccountInfoType newItem(final AccountInfoClass pClass) throws OceanusException {
+        protected AccountInfoType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final AccountInfoType myType = new AccountInfoType(this, pClass);
+            final AccountInfoType myType = new AccountInfoType(this, (AccountInfoClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

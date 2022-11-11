@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseLoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -45,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise LoanCategory Table.
  */
 public class MoneyWiseLoanCategoryTable
-        extends MoneyWiseCategoryTable<LoanCategory, LoanCategoryType, LoanCategoryClass> {
+        extends MoneyWiseCategoryTable<LoanCategory, LoanCategoryType> {
     /**
      * The Category dialog.
      */
@@ -63,7 +64,7 @@ public class MoneyWiseLoanCategoryTable
      * @param pError the error panel
      */
     MoneyWiseLoanCategoryTable(final MoneyWiseView pView,
-                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                               final UpdateSet pUpdateSet,
                                final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, LoanCategory.class, MoneyWiseDataType.LOANCATEGORY);

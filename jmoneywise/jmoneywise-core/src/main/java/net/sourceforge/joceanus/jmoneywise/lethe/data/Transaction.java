@@ -62,7 +62,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Transaction
         extends TransactionBase<Transaction>
-        implements InfoSetItem<MoneyWiseDataType> {
+        implements InfoSetItem {
     /**
      * The name of the object.
      */
@@ -170,7 +170,7 @@ public class Transaction
      * @throws OceanusException on error
      */
     private Transaction(final TransactionList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                        final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -974,7 +974,7 @@ public class Transaction
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pTrans) {
+    public boolean applyChanges(final DataItem pTrans) {
         /* Can only update from a transaction */
         if (!(pTrans instanceof Transaction)) {
             return false;
@@ -1118,7 +1118,7 @@ public class Transaction
          * @return the newly added item
          */
         @Override
-        public Transaction addCopyItem(final DataItem<?> pItem) {
+        public Transaction addCopyItem(final DataItem pItem) {
             if (pItem instanceof Transaction) {
                 final Transaction myTrans = new Transaction(this, (Transaction) pItem);
                 add(myTrans);
@@ -1153,7 +1153,7 @@ public class Transaction
         }
 
         @Override
-        public Transaction addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public Transaction addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the transaction */
             final Transaction myTrans = new Transaction(this, pValues);
 
@@ -1169,12 +1169,12 @@ public class Transaction
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myTrans);
+                    final DataValues myValues = myItem.getValues(myTrans);
                     getTransactionInfo().addValuesItem(myValues);
                 }
             }
@@ -1184,7 +1184,7 @@ public class Transaction
         }
 
         @Override
-        protected DataMapItem<Transaction, MoneyWiseDataType> allocateDataMap() {
+        protected DataMapItem<Transaction> allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

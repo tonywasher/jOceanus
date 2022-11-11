@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
@@ -37,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetSecurityPrice
-        extends PrometheusSheetEncrypted<SecurityPrice, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<SecurityPrice> {
     /**
      * NamedArea for Prices.
      */
@@ -85,9 +84,9 @@ public class SheetSecurityPrice
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
+        final DataValues myValues = getRowValues(SecurityPrice.OBJECT_NAME);
         myValues.addValue(SecurityPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
         myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(SecurityPrice.FIELD_PRICE, loadBytes(COL_PRICE));
@@ -175,7 +174,7 @@ public class SheetSecurityPrice
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
                         /* Build data values */
-                        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityPrice.OBJECT_NAME);
+                        final DataValues myValues = new DataValues(SecurityPrice.OBJECT_NAME);
                         myValues.addValue(SecurityPrice.FIELD_SECURITY, mySecurities[j]);
                         myValues.addValue(SecurityPrice.FIELD_DATE, myDate);
                         myValues.addValue(SecurityPrice.FIELD_PRICE, myCell.getString());

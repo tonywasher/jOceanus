@@ -52,12 +52,12 @@ public class MoneyWiseSecurityTable
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<SecurityInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<SecurityInfo> theInfoEntry;
 
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<SecurityPrice, MoneyWiseDataType> thePriceEntry;
+    private final UpdateEntry<SecurityPrice> thePriceEntry;
 
     /**
      * The Security dialog.
@@ -76,7 +76,7 @@ public class MoneyWiseSecurityTable
      * @param pError the error panel
      */
     MoneyWiseSecurityTable(final MoneyWiseView pView,
-                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                           final UpdateSet pUpdateSet,
                            final MetisErrorPanel pError) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITY, SecurityType.class);

@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -31,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashCategoryType
-        extends StaticData<CashCategoryType, CashCategoryClass, MoneyWiseDataType> {
+        extends StaticDataItem<CashCategoryType> {
     /**
      * Object name.
      */
@@ -45,7 +46,7 @@ public class CashCategoryType
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -86,7 +87,7 @@ public class CashCategoryType
      * @throws OceanusException on error
      */
     private CashCategoryType(final CashCategoryTypeList pList,
-                             final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                             final DataValues pValues) throws OceanusException {
         super(pList, pValues);
     }
 
@@ -100,7 +101,7 @@ public class CashCategoryType
      * @return the class
      */
     public CashCategoryClass getCashClass() {
-        return super.getStaticClass();
+        return (CashCategoryClass) super.getStaticClass();
     }
 
     /**
@@ -127,7 +128,7 @@ public class CashCategoryType
      * Represents a list of {@link CashCategoryType} objects.
      */
     public static class CashCategoryTypeList
-            extends StaticList<CashCategoryType, CashCategoryClass, MoneyWiseDataType> {
+            extends StaticList<CashCategoryType> {
         /**
          * Report fields.
          */
@@ -137,7 +138,7 @@ public class CashCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public CashCategoryTypeList(final DataSet<?, ?> pData) {
+        public CashCategoryTypeList(final DataSet<?> pData) {
             super(CashCategoryType.class, pData, MoneyWiseDataType.CASHTYPE, ListStyle.CORE);
         }
 
@@ -177,7 +178,7 @@ public class CashCategoryType
         }
 
         @Override
-        public CashCategoryType addCopyItem(final DataItem<?> pItem) {
+        public CashCategoryType addCopyItem(final DataItem pItem) {
             /* Can only clone a CashCategoryType */
             if (!(pItem instanceof CashCategoryType)) {
                 throw new UnsupportedOperationException();
@@ -221,7 +222,7 @@ public class CashCategoryType
         }
 
         @Override
-        public CashCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public CashCategoryType addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the type */
             final CashCategoryType myType = new CashCategoryType(this, pValues);
 
@@ -239,9 +240,9 @@ public class CashCategoryType
         }
 
         @Override
-        protected CashCategoryType newItem(final CashCategoryClass pClass) throws OceanusException {
+        protected CashCategoryType newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the type */
-            final CashCategoryType myType = new CashCategoryType(this, pClass);
+            final CashCategoryType myType = new CashCategoryType(this, (CashCategoryClass) pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

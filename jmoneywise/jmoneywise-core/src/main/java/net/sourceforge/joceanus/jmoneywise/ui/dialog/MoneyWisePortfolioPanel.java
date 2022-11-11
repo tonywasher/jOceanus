@@ -70,7 +70,7 @@ public class MoneyWisePortfolioPanel
      * @param pError the error panel
      */
     public MoneyWisePortfolioPanel(final TethysUIFactory<?> pFactory,
-                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                   final UpdateSet pUpdateSet,
                                    final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);

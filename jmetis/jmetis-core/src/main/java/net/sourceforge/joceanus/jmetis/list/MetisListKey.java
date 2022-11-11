@@ -65,7 +65,7 @@ public interface MetisListKey
     }
 
     /**
-     * Obtain the list of Dingular fieldIds (if any).
+     * Obtain the list of Singular fieldIds (if any).
      * @return the list of fieldIds
      */
     default List<MetisDataFieldId> getSingularFields() {

@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Enumeration of Security Type Classes.
  */
-public enum SecurityTypeClass implements StaticInterface {
+public enum SecurityTypeClass implements StaticDataClass {
     /**
      * Shares.
      * <p>

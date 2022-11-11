@@ -41,9 +41,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * database later.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadLoadBackup<T extends DataSet<T>>
         implements TethysUIThread<T> {
     /**
      * Select Backup Task.
@@ -53,13 +52,13 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
     /**
      * Data control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadBackup(final DataControl<T, E> pControl) {
+    public PrometheusThreadLoadBackup(final DataControl<T> pControl) {
         theControl = pControl;
     }
 

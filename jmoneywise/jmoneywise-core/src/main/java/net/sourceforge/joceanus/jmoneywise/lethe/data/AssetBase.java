@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <C> the category type
  */
 public abstract class AssetBase<T extends AssetBase<T, C>, C>
-        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem
         implements MetisDataNamedItem, TransactionAsset {
     /**
      * Local Report fields.
@@ -180,7 +180,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
      * @throws OceanusException on error
      */
     protected AssetBase(final AssetBaseList<T, C> pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                        final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -442,7 +442,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
 
     @Override
     public AssetType getAssetType() {
-        switch (getItemType()) {
+        switch ((MoneyWiseDataType) getItemType()) {
             case DEPOSIT:
                 return AssetType.DEPOSIT;
             case CASH:
@@ -785,7 +785,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
     }
 
     @Override
-    public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
+    public void touchItem(final DataItem pSource) {
         /* If we are being touched by a transaction */
         if (pSource instanceof Transaction) {
             /* Access as transaction */
@@ -844,7 +844,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
         final AssetBase<?, ?> myThat = (AssetBase<?, ?>) pThat;
 
         /* Check data type */
-        return getItemType().ordinal() - myThat.getItemType().ordinal();
+        return getItemType().getItemKey() - myThat.getItemType().getItemKey();
     }
 
     /**
@@ -883,7 +883,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
      * @param pUpdateSet the updateSet
      * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* No action by default */
     }
 
@@ -1024,7 +1024,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
      * @param <C> the category
      */
     public abstract static class AssetBaseList<T extends AssetBase<T, C>, C>
-            extends EncryptedList<T, MoneyWiseDataType> {
+            extends EncryptedList<T> {
         /*
          * Report fields.
          */
@@ -1111,7 +1111,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
      * The dataMap class.
      */
     protected static class AssetDataMap
-            extends DataInstanceMap<AssetBase<?, ?>, MoneyWiseDataType, String> {
+            extends DataInstanceMap<AssetBase<?, ?>, String> {
         @Override
         public void adjustForItem(final AssetBase<?, ?> pItem) {
             /* Adjust name count */

@@ -27,20 +27,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * Thread to store changes in the DataSet to a database.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadStoreDatabase<T extends DataSet<T>>
         implements TethysUIThread<Void> {
     /**
      * Data control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadStoreDatabase(final DataControl<T, E> pControl) {
+    public PrometheusThreadStoreDatabase(final DataControl<T> pControl) {
         theControl = pControl;
     }
 
@@ -68,7 +67,7 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
 
             /* Create a difference set between the two data copies */
             final T myData = theControl.getData();
-            final DataSet<T, ?> myDiff = myData.getDifferenceSet(pManager, myStore);
+            final DataSet<T> myDiff = myData.getDifferenceSet(pManager, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

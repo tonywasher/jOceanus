@@ -1,5 +1,5 @@
 /*******************************************************************************
- * MoneyWise: Finance Application
+ * Prometheus: Application Framework
  * Copyright 2012,2022 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,18 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
-
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 /**
- * Interface for Category statics.
+ * Interfaces for static classes.
  */
-public interface CategoryInterface
-        extends StaticDataClass {
+public interface StaticDataClass {
     /**
-     * Is this class a totals class?
-     * @return true/false
+     * Obtain the class Id.
+     * @return the class id
      */
-    boolean isTotals();
+    int getClassId();
+
+    /**
+     * Obtain the order.
+     * @return the order
+     */
+    int getOrder();
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    String name();
 }

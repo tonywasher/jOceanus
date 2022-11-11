@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Dialog Base Table.
  * @param <T> the data type
  */
-public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
+public abstract class MoneyWiseDialogTable<T extends DataItem & Comparable<? super T>>
         extends MoneyWiseBaseTable<T> {
     /**
      * The panel.
@@ -55,7 +55,7 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
      * @param pDataType  the dataType
      */
     protected MoneyWiseDialogTable(final MoneyWiseView pView,
-                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                   final UpdateSet pUpdateSet,
                                    final MetisErrorPanel pError,
                                    final MoneyWiseDataType pDataType) {
         /* Store parameters */

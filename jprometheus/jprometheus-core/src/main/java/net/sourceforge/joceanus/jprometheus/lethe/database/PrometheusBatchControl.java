@@ -47,7 +47,7 @@ public class PrometheusBatchControl {
     /**
      * The Currently active Database table.
      */
-    private PrometheusTableDataItem<?, ?> theCurrTable;
+    private PrometheusTableDataItem<?> theCurrTable;
 
     /**
      * The Currently active Mode.
@@ -92,7 +92,7 @@ public class PrometheusBatchControl {
      * @param pTable the Table being operated on
      * @param pMode the Mode that is in operation
      */
-    protected void setCurrentTable(final PrometheusTableDataItem<?, ?> pTable,
+    protected void setCurrentTable(final PrometheusTableDataItem<?> pTable,
                                    final MetisDataState pMode) {
         /* Store details */
         theCurrTable = pTable;
@@ -154,7 +154,7 @@ public class PrometheusBatchControl {
         /**
          * The table that is being controlled.
          */
-        private final PrometheusTableDataItem<?, ?> theTable;
+        private final PrometheusTableDataItem<?> theTable;
 
         /**
          * The State of the table.
@@ -179,7 +179,7 @@ public class PrometheusBatchControl {
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                final DataItem<?> myCurr = (DataItem<?>) myIterator.next();
+                final DataItem myCurr = (DataItem) myIterator.next();
 
                 /* Ignore items that are not this type */
                 if (myCurr.getState() != theState) {
@@ -198,12 +198,12 @@ public class PrometheusBatchControl {
          */
         private void commitDeleteBatch() {
             /* Access the iterator */
-            final DataList<?, ?> myList = theTable.getList();
+            final DataList<?> myList = theTable.getList();
             final ListIterator<?> myIterator = myList.listIterator(myList.size());
 
             /* Loop through the list */
             while (myIterator.hasPrevious()) {
-                final DataItem<?> myCurr = (DataItem<?>) myIterator.previous();
+                final DataItem myCurr = (DataItem) myIterator.previous();
 
                 /* Ignore items that are not this type */
                 final MetisDataState myState = myCurr.getState();
@@ -224,9 +224,9 @@ public class PrometheusBatchControl {
          * @param pItem the item to commit
          * @return have we reached the end of the batch?
          */
-        private boolean commitItem(final DataItem<?> pItem) {
+        private boolean commitItem(final DataItem pItem) {
             /* Access the underlying element */
-            final DataItem<?> myBase = pItem.getBase();
+            final DataItem myBase = pItem.getBase();
 
             /* If we are handling deletions */
             if (theState == MetisDataState.DELETED) {

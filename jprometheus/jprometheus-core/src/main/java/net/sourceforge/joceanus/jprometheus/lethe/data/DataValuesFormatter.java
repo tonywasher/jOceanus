@@ -59,9 +59,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Formatter/Parser class for DataValues.
  * @param <T> the dataSet type
- * @param <E> the data type enum class
  */
-public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
+public class DataValuesFormatter<T extends DataSet<T>> {
     /**
      * Entry suffix.
      */
@@ -153,9 +152,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pFile)) {
             /* Loop through the data lists */
-            final Iterator<DataList<?, E>> myIterator = pData.iterator();
+            final Iterator<DataList<?>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
-                final DataList<?, E> myList = myIterator.next();
+                final DataList<?> myList = myIterator.next();
 
                 /* Declare the new stage */
                 theReport.setNewStage(myList.listName());
@@ -206,9 +205,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = myZips.createZipFile(pFile)) {
             /* Loop through the data lists */
-            final Iterator<DataList<?, E>> myIterator = pData.iterator();
+            final Iterator<DataList<?>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
-                final DataList<?, E> myList = myIterator.next();
+                final DataList<?> myList = myIterator.next();
 
                 /* Declare the new stage */
                 theReport.setNewStage(myList.listName());
@@ -243,7 +242,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pStoreIds do we include IDs in XML
      * @throws OceanusException on error
      */
-    private void writeXMLListToFile(final DataList<?, E> pList,
+    private void writeXMLListToFile(final DataList<?> pList,
                                     final GordianZipWriteFile pZipFile,
                                     final boolean pStoreIds) throws OceanusException {
         /* Access the list name */
@@ -273,7 +272,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws OceanusException on error
      */
     private void populateXML(final Document pDocument,
-                             final DataList<?, E> pList,
+                             final DataList<?> pList,
                              final boolean pStoreIds) throws OceanusException {
         /* Create an element for the item */
         final Element myElement = pDocument.createElement(pList.listName());
@@ -287,7 +286,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theReport.setNumSteps(myTotal);
 
         /* Set the list type and size */
-        myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().name());
+        myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().getItemName());
         myElement.setAttribute(DataValues.ATTR_SIZE, Integer.toString(myTotal));
         myElement.setAttribute(DataValues.ATTR_VERS, Integer.toString(theVersion));
 
@@ -303,16 +302,16 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
             /* Access as DataItem */
             @SuppressWarnings("unchecked")
-            final DataItem<E> myItem = (DataItem<E>) myObject;
+            final DataItem myItem = (DataItem) myObject;
 
             /* Skip over child items */
             if ((myItem instanceof GroupedItem)
-                && (((GroupedItem<?>) myItem).isChild())) {
+                && (((GroupedItem) myItem).isChild())) {
                 continue;
             }
 
             /* Create DataValues for item */
-            final DataValues<E> myValues = new DataValues<>(myItem);
+            final DataValues myValues = new DataValues(myItem);
 
             /* Add the child to the list */
             final Element myChild = myValues.createXML(pDocument, myFormatter, pStoreIds);
@@ -373,9 +372,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theReport.setNumStages(pData.getListMap().size());
 
         /* Loop through the data lists */
-        final Iterator<DataList<?, E>> myIterator = pData.iterator();
+        final Iterator<DataList<?>> myIterator = pData.iterator();
         while (myIterator.hasNext()) {
-            final DataList<?, E> myList = myIterator.next();
+            final DataList<?> myList = myIterator.next();
 
             /* Declare the new stage */
             theReport.setNewStage(myList.listName());
@@ -404,7 +403,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @param pZipFile the input zipFile
      * @throws OceanusException on error
      */
-    private void readXMLListFromFile(final DataList<?, E> pList,
+    private void readXMLListFromFile(final DataList<?> pList,
                                      final GordianZipReadFile pZipFile) throws OceanusException {
         /* Access the list name */
         final String myName = pList.listName() + SUFFIX_ENTRY;
@@ -437,14 +436,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws OceanusException on error
      */
     private void parseXMLDocument(final Document pDocument,
-                                  final DataList<?, E> pList) throws OceanusException {
+                                  final DataList<?> pList) throws OceanusException {
         /* Access the parent element */
         final Element myElement = pDocument.getDocumentElement();
-        final E myItemType = pList.getItemType();
+        final PrometheusListKey myItemType = pList.getItemType();
 
         /* Check that the document name and dataType are correct */
         if (!MetisDataDifference.isEqual(myElement.getNodeName(), pList.listName())
-            || !MetisDataDifference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name())) {
+            || !MetisDataDifference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.getItemName())) {
             throw new PrometheusDataException("Invalid list type");
         }
 
@@ -477,7 +476,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             final Element myItem = (Element) myChild;
 
             /* Create DataArguments for item */
-            final DataValues<E> myValues = new DataValues<>(myItem, myFields);
+            final DataValues myValues = new DataValues(myItem, myFields);
 
             /* Add the child to the list */
             pList.addValuesItem(myValues);

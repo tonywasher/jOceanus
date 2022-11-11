@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetAssetCurrency
-        extends PrometheusSheetStaticData<AssetCurrency, MoneyWiseDataType> {
+        extends PrometheusSheetStaticData<AssetCurrency> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -74,9 +74,9 @@ public class SheetAssetCurrency
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(AssetCurrency.OBJECT_NAME);
+        final DataValues myValues = getRowValues(AssetCurrency.OBJECT_NAME);
         myValues.addValue(AssetCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
 
         /* Return the values */

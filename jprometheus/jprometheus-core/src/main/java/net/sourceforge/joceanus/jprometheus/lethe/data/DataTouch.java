@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -27,26 +27,24 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class to record reference to a DataItem via another data item.
- * @param <E> the Data item type class
  */
-public class DataTouch<E extends Enum<E>>
-        implements MetisDataObjectFormat, MetisDataMap<E, TouchCounter<E>> {
+public class DataTouch
+        implements MetisDataObjectFormat, MetisDataMap<PrometheusListKey, TouchCounter> {
     /**
      * Map of touches.
      */
-    private final Map<E, TouchCounter<E>> theTouchMap;
+    private final Map<PrometheusListKey, TouchCounter> theTouchMap;
 
     /**
      * Constructor.
-     * @param pClass the eNum class
      */
-    public DataTouch(final Class<E> pClass) {
+    public DataTouch() {
         /* Create the map */
-        theTouchMap = new EnumMap<>(pClass);
+        theTouchMap = new HashMap<>();
     }
 
     @Override
-    public Map<E, TouchCounter<E>> getUnderlyingMap() {
+    public Map<PrometheusListKey, TouchCounter> getUnderlyingMap() {
         return theTouchMap;
     }
 
@@ -59,7 +57,7 @@ public class DataTouch<E extends Enum<E>>
      * Constructor.
      * @param pSource the source map
      */
-    protected void copyMap(final DataTouch<E> pSource) {
+    protected void copyMap(final DataTouch pSource) {
         /* Create the map */
         theTouchMap.putAll(pSource.getUnderlyingMap());
     }
@@ -76,7 +74,7 @@ public class DataTouch<E extends Enum<E>>
      * Reset touches for a dataType.
      * @param pItemType the ItemType
      */
-    public void resetTouches(final E pItemType) {
+    public void resetTouches(final PrometheusListKey pItemType) {
         theTouchMap.remove(pItemType);
     }
 
@@ -84,14 +82,14 @@ public class DataTouch<E extends Enum<E>>
      * Touch an item.
      * @param pItemType the item type
      */
-    public void touchItem(final E pItemType) {
+    public void touchItem(final PrometheusListKey pItemType) {
         /* Access the record for the item type */
-        final TouchCounter<E> myCounter = getCounter(pItemType);
+        final TouchCounter myCounter = getCounter(pItemType);
 
         /* If this is a new dataType */
         if (myCounter == null) {
             /* Store a new counter */
-            theTouchMap.put(pItemType, new TouchCounter<E>(pItemType));
+            theTouchMap.put(pItemType, new TouchCounter(pItemType));
 
             /* else just record the touch */
         } else {
@@ -104,9 +102,9 @@ public class DataTouch<E extends Enum<E>>
      * @param pItemType the item type
      * @return true/false
      */
-    public boolean touchedBy(final E pItemType) {
+    public boolean touchedBy(final PrometheusListKey pItemType) {
         /* Access the record for the item type */
-        final TouchCounter<E> myCounter = getCounter(pItemType);
+        final TouchCounter myCounter = getCounter(pItemType);
 
         /* If this is a new dataType */
         return myCounter != null;
@@ -125,7 +123,7 @@ public class DataTouch<E extends Enum<E>>
      * @param pItemType the item type
      * @return the counter (or null)
      */
-    public TouchCounter<E> getCounter(final E pItemType) {
+    public TouchCounter getCounter(final PrometheusListKey pItemType) {
         return theTouchMap.get(pItemType);
     }
 
@@ -133,20 +131,19 @@ public class DataTouch<E extends Enum<E>>
      * Obtain iterator.
      * @return the iterator
      */
-    public Iterator<TouchCounter<E>> iterator() {
+    public Iterator<TouchCounter> iterator() {
         return theTouchMap.values().iterator();
     }
 
     /**
      * Simple counter.
-     * @param <E> the DataItem types
      */
-    public static final class TouchCounter<E>
+    public static final class TouchCounter
             implements MetisDataObjectFormat {
         /**
          * The item type.
          */
-        private final E theItemType;
+        private final PrometheusListKey theItemType;
 
         /**
          * The number of touches.
@@ -157,7 +154,7 @@ public class DataTouch<E extends Enum<E>>
          * Constructor.
          * @param pItemType the item type
          */
-        private TouchCounter(final E pItemType) {
+        private TouchCounter(final PrometheusListKey pItemType) {
             theItemType = pItemType;
             theTouches = 1;
         }
@@ -171,7 +168,7 @@ public class DataTouch<E extends Enum<E>>
          * Obtain the item type.
          * @return the item type
          */
-        public E getItemType() {
+        public PrometheusListKey getItemType() {
             return theItemType;
         }
 

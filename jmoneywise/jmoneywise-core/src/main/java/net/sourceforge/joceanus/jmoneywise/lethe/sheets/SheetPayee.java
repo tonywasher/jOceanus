@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
@@ -32,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetPayee
-        extends PrometheusSheetEncrypted<Payee, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Payee> {
     /**
      * NamedArea for Payees.
      */
@@ -85,9 +84,9 @@ public class SheetPayee
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_CATEGORY, loadInteger(COL_TYPE));
         myValues.addValue(Payee.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Payee.FIELD_DESC, loadBytes(COL_DESC));
@@ -141,7 +140,7 @@ public class SheetPayee
         }
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
+        final DataValues myValues = new DataValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_NAME, myName);
         myValues.addValue(Payee.FIELD_CATEGORY, myType);
         myValues.addValue(Payee.FIELD_CLOSED, isClosed);

@@ -28,20 +28,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * and redefined. Existing loaded data will be marked as new so that it will be written to the
  * database via the store command.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadCreateDatabase<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadCreateDatabase<T extends DataSet<T>>
         implements TethysUIThread<Void> {
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateDatabase(final DataControl<T, E> pControl) {
+    public PrometheusThreadCreateDatabase(final DataControl<T> pControl) {
         theControl = pControl;
     }
 

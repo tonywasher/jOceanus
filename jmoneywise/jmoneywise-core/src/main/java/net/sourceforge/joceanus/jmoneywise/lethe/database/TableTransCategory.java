@@ -17,12 +17,11 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTransCategory
-        extends PrometheusTableEncrypted<TransactionCategory, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<TransactionCategory> {
     /**
      * The name of the Category table.
      */
@@ -52,8 +51,8 @@ public class TableTransCategory
         /* Declare the columns */
         final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(TransactionCategory.FIELD_CATTYPE, TableTransCategoryType.TABLE_NAME);
         final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(TransactionCategory.FIELD_PARENT);
-        myTableDef.addEncryptedColumn(TransactionCategory.FIELD_NAME, StaticData.NAMELEN);
-        myTableDef.addNullEncryptedColumn(TransactionCategory.FIELD_DESC, StaticData.DESCLEN);
+        myTableDef.addEncryptedColumn(TransactionCategory.FIELD_NAME, StaticDataItem.NAMELEN);
+        myTableDef.addNullEncryptedColumn(TransactionCategory.FIELD_DESC, StaticDataItem.DESCLEN);
 
         /* Declare Sort Columns */
         myParentCol.setSortOrder(SortOrder.DESCENDING);
@@ -61,18 +60,18 @@ public class TableTransCategory
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransCategories());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
+        final DataValues myValues = getRowValues(TransactionCategory.OBJECT_NAME);
         myValues.addValue(TransactionCategory.FIELD_CATTYPE, myTableDef.getIntegerValue(TransactionCategory.FIELD_CATTYPE));
         myValues.addValue(TransactionCategory.FIELD_PARENT, myTableDef.getIntegerValue(TransactionCategory.FIELD_PARENT));
         myValues.addValue(TransactionCategory.FIELD_NAME, myTableDef.getBinaryValue(TransactionCategory.FIELD_NAME));

@@ -27,11 +27,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Template for a Data Instance Map.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data type enum class
  * @param <K> the instance key
  */
-public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, K>
-        implements DataMapItem<T, E>, MetisFieldItem {
+public abstract class DataInstanceMap<T extends DataItem, K>
+        implements DataMapItem<T>, MetisFieldItem {
     /**
      * Report fields.
      */

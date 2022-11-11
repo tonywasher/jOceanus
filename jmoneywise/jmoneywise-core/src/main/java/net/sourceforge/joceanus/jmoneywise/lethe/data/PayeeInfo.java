@@ -25,9 +25,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PayeeInfo
-        extends DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoItem<PayeeInfo> {
     /**
      * Object name.
      */
@@ -49,7 +52,7 @@ public class PayeeInfo
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfo.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataInfoItem.FIELD_DEFS);
 
     /**
      * Copy Constructor.
@@ -87,7 +90,7 @@ public class PayeeInfo
      * @throws OceanusException on error
      */
     private PayeeInfo(final PayeeInfoList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                      final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -169,7 +172,7 @@ public class PayeeInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfo<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> pThat) {
+    public int compareTo(final DataInfoItem<PayeeInfo> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -178,8 +181,14 @@ public class PayeeInfo
             return -1;
         }
 
+        /* Check same item type */
+        final PrometheusListKey myItemType = pThat.getItemType();
+        if (!myItemType.equals(getItemType())) {
+            return myItemType.getItemKey() - getItemType().getItemKey();
+        }
+
         /* Compare the Payees */
-        int iDiff = getOwner().compareTo(pThat.getOwner());
+        int iDiff = getOwner().compareTo((Payee) pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -215,7 +224,7 @@ public class PayeeInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pInfo) {
+    public boolean applyChanges(final DataItem pInfo) {
         /* Can only update from PayeeInfo */
         if (!(pInfo instanceof PayeeInfo)) {
             return false;
@@ -240,7 +249,7 @@ public class PayeeInfo
      * PayeeInfoList.
      */
     public static class PayeeInfoList
-            extends DataInfoList<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<PayeeInfo> {
         /**
          * Report fields.
          */
@@ -300,7 +309,7 @@ public class PayeeInfo
         }
 
         @Override
-        public PayeeInfo addCopyItem(final DataItem<?> pItem) {
+        public PayeeInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a PayeeInfo */
             if (!(pItem instanceof PayeeInfo)) {
                 throw new UnsupportedOperationException();
@@ -317,10 +326,10 @@ public class PayeeInfo
         }
 
         @Override
-        protected PayeeInfo addNewItem(final Payee pOwner,
-                                       final AccountInfoType pInfoType) {
+        protected PayeeInfo addNewItem(final DataItem pOwner,
+                                       final StaticDataItem<?> pInfoType) {
             /* Allocate the new entry and add to list */
-            final PayeeInfo myInfo = new PayeeInfo(this, pOwner, pInfoType);
+            final PayeeInfo myInfo = new PayeeInfo(this, (Payee) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */
@@ -329,8 +338,8 @@ public class PayeeInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Payee pPayee,
-                                final AccountInfoClass pInfoClass,
+                                final DataItem pPayee,
+                                final DataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
@@ -347,7 +356,7 @@ public class PayeeInfo
             }
 
             /* Create the values */
-            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(PayeeInfo.OBJECT_NAME);
+            final DataValues myValues = new DataValues(PayeeInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pPayee);
@@ -367,7 +376,7 @@ public class PayeeInfo
         }
 
         @Override
-        public PayeeInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public PayeeInfo addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the info */
             final PayeeInfo myInfo = new PayeeInfo(this, pValues);
 

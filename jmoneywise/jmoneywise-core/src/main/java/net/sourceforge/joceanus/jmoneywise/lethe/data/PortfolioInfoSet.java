@@ -22,11 +22,10 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
  * @author Tony Washer
  */
 public class PortfolioInfoSet
-        extends DataInfoSet<PortfolioInfo, Portfolio, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<PortfolioInfo> {
     /**
      * Report fields.
      */
@@ -67,6 +66,11 @@ public class PortfolioInfoSet
     @Override
     public MetisFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public Portfolio getOwner() {
+        return (Portfolio) super.getOwner();
     }
 
     @Override
@@ -136,9 +140,9 @@ public class PortfolioInfoSet
     }
 
     @Override
-    public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final DataInfoClass pClass) {
         /* Switch on class */
-        switch (pClass) {
+        switch ((AccountInfoClass) pClass) {
             /* Allowed set */
             case NOTES:
             case SORTCODE:

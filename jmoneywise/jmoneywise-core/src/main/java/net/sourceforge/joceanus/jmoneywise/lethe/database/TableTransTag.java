@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -32,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTransTag
-        extends PrometheusTableEncrypted<TransactionTag, MoneyWiseDataType> {
+        extends PrometheusTableEncrypted<TransactionTag> {
     /**
      * The name of the TransactionTag table.
      */
@@ -52,18 +51,18 @@ public class TableTransTag
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransactionTags());
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
+        final DataValues myValues = getRowValues(TransactionTag.OBJECT_NAME);
         myValues.addValue(TransactionTag.FIELD_NAME, myTableDef.getBinaryValue(TransactionTag.FIELD_NAME));
         myValues.addValue(TransactionTag.FIELD_DESC, myTableDef.getBinaryValue(TransactionTag.FIELD_DESC));
 

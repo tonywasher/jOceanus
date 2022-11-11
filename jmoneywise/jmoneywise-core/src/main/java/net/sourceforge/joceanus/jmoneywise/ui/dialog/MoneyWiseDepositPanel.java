@@ -91,7 +91,7 @@ public class MoneyWiseDepositPanel
      */
     public MoneyWiseDepositPanel(final TethysUIFactory<?> pFactory,
                                  final MoneyWiseView pView,
-                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                 final UpdateSet pUpdateSet,
                                  final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);

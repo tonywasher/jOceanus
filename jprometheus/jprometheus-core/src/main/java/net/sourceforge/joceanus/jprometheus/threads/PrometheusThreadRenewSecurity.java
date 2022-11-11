@@ -29,20 +29,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
  * ready for committing the change to the database.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
  */
-public class PrometheusThreadRenewSecurity<T extends DataSet<T, E>, E extends Enum<E>>
+public class PrometheusThreadRenewSecurity<T extends DataSet<T>>
         implements TethysUIThread<T> {
     /**
      * Data Control.
      */
-    private final DataControl<T, E> theControl;
+    private final DataControl<T> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadRenewSecurity(final DataControl<T, E> pControl) {
+    public PrometheusThreadRenewSecurity(final DataControl<T> pControl) {
         theControl = pControl;
     }
 

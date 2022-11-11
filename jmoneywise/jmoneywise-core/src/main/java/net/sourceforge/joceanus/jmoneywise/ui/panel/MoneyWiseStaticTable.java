@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -47,9 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Static Table.
  * @param <L> the list type
  * @param <T> the data type
- * @param <S> the static class
  */
-public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>, T extends StaticData<T, S, MoneyWiseDataType>, S extends Enum<S> & StaticInterface>
+public class MoneyWiseStaticTable<L extends StaticList<T>, T extends StaticDataItem<T>>
         extends MoneyWiseBaseTable<T> {
     /**
      * Class column width.
@@ -90,7 +89,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pListClass the listClass
      */
     MoneyWiseStaticTable(final MoneyWiseView pView,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                         final UpdateSet pUpdateSet,
                          final MetisErrorPanel pError,
                          final MoneyWiseDataType pDataType,
                          final Class<L> pListClass) {
@@ -107,8 +106,8 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         MetisIcon.configureNewScrollButton(theNewButton);
 
         /* Set table configuration */
-        myTable.setDisabled(StaticData::isDisabled)
-               .setComparator(StaticData::compareTo);
+        myTable.setDisabled(StaticDataItem::isDisabled)
+               .setComparator(StaticDataItem::compareTo);
 
         /* Create the class column */
         myTable.declareStringColumn(PrometheusDataId.CLASS)
@@ -119,29 +118,29 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         /* Create the name column */
         myTable.declareStringColumn(PrometheusDataId.NAME)
                .setValidator(this::isValidName)
-               .setCellValueFactory(StaticData::getName)
+               .setCellValueFactory(StaticDataItem::getName)
                .setEditable(true)
                .setColumnWidth(WIDTH_NAME)
-               .setOnCommit((r, v) -> updateField(StaticData::setName, r, v));
+               .setOnCommit((r, v) -> updateField(StaticDataItem::setName, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(PrometheusDataId.DESC)
                .setValidator(this::isValidDesc)
-               .setCellValueFactory(StaticData::getDesc)
+               .setCellValueFactory(StaticDataItem::getDesc)
                .setEditable(true)
                .setColumnWidth(WIDTH_DESC)
-               .setOnCommit((r, v) -> updateField(StaticData::setDescription, r, v));
+               .setOnCommit((r, v) -> updateField(StaticDataItem::setDescription, r, v));
 
         /* Create the enabled column */
         final TethysUIIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton(myGuiFactory);
         theEnabledColumn = myTable.declareIconColumn(PrometheusDataId.ENABLED, Boolean.class)
                .setIconMapSet(r -> myEnabledMapSet)
-               .setCellValueFactory(StaticData::getEnabled)
+               .setCellValueFactory(StaticDataItem::getEnabled)
                .setVisible(false)
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
                .setColumnWidth(WIDTH_ICON)
-               .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
+               .setOnCommit((r, v) -> updateField(StaticDataItem::setEnabled, r, v));
 
         /* Create the Active column */
         final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
@@ -172,7 +171,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     @Override
     protected void refreshData() throws OceanusException {
         final MoneyWiseData myData = getView().getData();
-        final StaticList<T, S, MoneyWiseDataType> myStatic = myData.getDataList(theClass);
+        final StaticList<T> myStatic = myData.getDataList(theClass);
         theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
         theStatic.mapData();
         getTable().setItems(theStatic.getUnderlyingList());
@@ -183,11 +182,10 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * handle new static class.
      */
-    @SuppressWarnings("unchecked")
     private void handleNewClass() {
         /* Access the new class */
         cancelEditing();
-        final S myClass = (S) theNewButton.getValue().getData();
+        final StaticDataClass myClass = (StaticDataClass) theNewButton.getValue().getData();
 
         /* Protect the action */
         try {
@@ -228,7 +226,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         myMenu.removeAllItems();
 
         /* Loop through the missing classes */
-        for (S myValue : theStatic.getMissingClasses()) {
+        for (StaticDataClass myValue : theStatic.getMissingClasses()) {
             /* Create a new MenuItem and add it to the popUp */
             myMenu.addItem(new TethysUIGenericWrapper(myValue));
         }
@@ -239,7 +237,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pStatic the static data
      */
     @SuppressWarnings("unchecked")
-    void selectStatic(final StaticData<?, ?, MoneyWiseDataType> pStatic) {
+    void selectStatic(final StaticDataItem<?> pStatic) {
         getTable().selectRow((T) pStatic);
     }
 

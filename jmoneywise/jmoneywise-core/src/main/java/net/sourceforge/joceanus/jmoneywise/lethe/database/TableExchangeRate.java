@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class TableExchangeRate
-        extends PrometheusTableDataItem<ExchangeRate, MoneyWiseDataType> {
+        extends PrometheusTableDataItem<ExchangeRate> {
     /**
      * The name of the ExchangeRate table.
      */
@@ -66,19 +65,19 @@ public class TableExchangeRate
     }
 
     @Override
-    protected void declareData(final DataSet<?, ?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getExchangeRates());
         theFormatter = myData.getDataFormatter();
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
+    protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        final DataValues myValues = getRowValues(ExchangeRate.OBJECT_NAME);
         myValues.addValue(ExchangeRate.FIELD_DATE, myTableDef.getDateValue(ExchangeRate.FIELD_DATE));
         myValues.addValue(ExchangeRate.FIELD_FROM, myTableDef.getIntegerValue(ExchangeRate.FIELD_FROM));
         myValues.addValue(ExchangeRate.FIELD_TO, myTableDef.getIntegerValue(ExchangeRate.FIELD_TO));

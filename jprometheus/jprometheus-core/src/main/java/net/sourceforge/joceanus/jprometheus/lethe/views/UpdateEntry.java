@@ -22,30 +22,30 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Update entry items.
  * @param <T> the data type
- * @param <E> the data type enum class
  */
-public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+public final class UpdateEntry<T extends DataItem & Comparable<? super T>>
         implements MetisDataList<T> {
     /**
      * The data type.
      */
-    private final E theDataType;
+    private final PrometheusListKey theDataType;
 
     /**
      * The DataList.
      */
-    private DataList<T, E> theDataList;
+    private DataList<T> theDataList;
 
     /**
      * Constructor.
      * @param pDataType the dataType
      */
-    UpdateEntry(final E pDataType) {
+    UpdateEntry(final PrometheusListKey pDataType) {
         /* Store details */
         theDataType = pDataType;
         theDataList = null;
@@ -75,7 +75,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      * Obtain the list for the entry.
      * @return the list
      */
-    public DataList<T, E> getDataList() {
+    public DataList<T> getDataList() {
         return theDataList;
     }
 
@@ -84,7 +84,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      * @param pDataType the dataType to compare
      * @return true/false
      */
-    public boolean isDataType(final E pDataType) {
+    public boolean isDataType(final PrometheusListKey pDataType) {
         return theDataType.equals(pDataType);
     }
 
@@ -92,7 +92,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      * Set the Data list.
      * @param pDataList the DataList
      */
-    public void setDataList(final DataList<T, E> pDataList) {
+    public void setDataList(final DataList<T> pDataList) {
         theDataList = pDataList;
     }
 
@@ -108,12 +108,12 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
         /* Create an iterator for the changes list */
         final Iterator<T> myIterator = theDataList.iterator();
-        final DataList<?, E> myBaseList = theDataList.getBaseList();
+        final DataList<?> myBaseList = theDataList.getBaseList();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
-            final DataItem<E> myCurr = myIterator.next();
-            final DataItem<?> myBase;
+            final DataItem myCurr = myIterator.next();
+            final DataItem myBase;
 
             /* Switch on the state */
             switch (myCurr.getState()) {
@@ -175,13 +175,13 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
         /* Create an iterator for this list */
         final Iterator<T> myIterator = theDataList.iterator();
-        final DataList<?, E> myBaseList = theDataList.getBaseList();
+        final DataList<?> myBaseList = theDataList.getBaseList();
         final int myVersion = theDataList.getVersion();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
-            final DataItem<?> myBase;
+            final DataItem myBase;
 
             /* Switch on the state */
             switch (myCurr.getState()) {

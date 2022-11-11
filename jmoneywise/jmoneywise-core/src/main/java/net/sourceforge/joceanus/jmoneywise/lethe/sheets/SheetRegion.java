@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * SheetDataItem extension for Region.
  */
 public class SheetRegion
-        extends PrometheusSheetEncrypted<Region, MoneyWiseDataType> {
+        extends PrometheusSheetEncrypted<Region> {
     /**
      * NamedArea for regions.
      */
@@ -78,9 +77,9 @@ public class SheetRegion
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
+    protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues<MoneyWiseDataType> myValues = getRowValues(Region.OBJECT_NAME);
+        final DataValues myValues = getRowValues(Region.OBJECT_NAME);
         myValues.addValue(Region.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Region.FIELD_DESC, loadBytes(COL_DESC));
 
@@ -140,7 +139,7 @@ public class SheetRegion
                 final String myName = myCell.getString();
 
                 /* Build data values */
-                final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Region.OBJECT_NAME);
+                final DataValues myValues = new DataValues(Region.OBJECT_NAME);
                 myValues.addValue(Region.FIELD_NAME, myName);
 
                 /* Add the value into the list */

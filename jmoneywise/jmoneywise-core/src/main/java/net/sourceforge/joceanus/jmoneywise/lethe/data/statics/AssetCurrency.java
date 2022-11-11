@@ -30,7 +30,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class AssetCurrency
-        extends StaticData<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
+        extends StaticDataItem<AssetCurrency> {
     /**
      * Object name.
      */
@@ -53,7 +54,7 @@ public class AssetCurrency
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, StaticDataItem.FIELD_DEFS);
 
     /**
      * Default Field Id.
@@ -105,7 +106,7 @@ public class AssetCurrency
      * @throws OceanusException on error
      */
     private AssetCurrency(final AssetCurrencyList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+                          final DataValues pValues) throws OceanusException {
         super(pList, pValues);
 
         /* Store the Default */
@@ -168,7 +169,7 @@ public class AssetCurrency
      * @return the class
      */
     public AssetCurrencyClass getCurrencyClass() {
-        return super.getStaticClass();
+        return (AssetCurrencyClass) super.getStaticClass();
     }
 
     @Override
@@ -190,7 +191,7 @@ public class AssetCurrency
     }
 
     @Override
-    public int compareTo(final AssetCurrency pThat) {
+    public int compareTo(final StaticDataItem<?> pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -200,7 +201,8 @@ public class AssetCurrency
         }
 
         /* Handle differences in default value */
-        if (!isDefault().equals(pThat.isDefault())) {
+        final AssetCurrency myThat = (AssetCurrency) pThat;
+        if (!isDefault().equals(myThat.isDefault())) {
             return isDefault()
                                ? -1
                                : 1;
@@ -260,7 +262,7 @@ public class AssetCurrency
     }
 
     @Override
-    public boolean applyChanges(final DataItem<?> pData) {
+    public boolean applyChanges(final DataItem pData) {
         /* Can only apply changes for AccountCurrency */
         if (!(pData instanceof AssetCurrency)) {
             return false;
@@ -288,7 +290,7 @@ public class AssetCurrency
      * Represents a list of {@link AssetCurrency} objects.
      */
     public static class AssetCurrencyList
-            extends StaticList<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
+            extends StaticList<AssetCurrency> {
         /**
          * Report fields.
          */
@@ -298,7 +300,7 @@ public class AssetCurrency
          * Construct an empty CORE account currency list.
          * @param pData the DataSet for the list
          */
-        public AssetCurrencyList(final DataSet<?, ?> pData) {
+        public AssetCurrencyList(final DataSet<?> pData) {
             super(AssetCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
         }
 
@@ -343,7 +345,7 @@ public class AssetCurrency
         }
 
         @Override
-        public AssetCurrency addCopyItem(final DataItem<?> pItem) {
+        public AssetCurrency addCopyItem(final DataItem pItem) {
             /* Can only clone an AccountCurrency */
             if (!(pItem instanceof AssetCurrency)) {
                 throw new UnsupportedOperationException();
@@ -387,7 +389,7 @@ public class AssetCurrency
         }
 
         @Override
-        public AssetCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
+        public AssetCurrency addValuesItem(final DataValues pValues) throws OceanusException {
             /* Create the currency */
             final AssetCurrency myCurrency = new AssetCurrency(this, pValues);
 
@@ -461,9 +463,9 @@ public class AssetCurrency
         }
 
         @Override
-        protected AssetCurrency newItem(final AssetCurrencyClass pClass) throws OceanusException {
+        protected AssetCurrency newItem(final StaticDataClass pClass) throws OceanusException {
             /* Create the currency */
-            final AssetCurrency myCurr = new AssetCurrency(this, pClass);
+            final AssetCurrency myCurr = new AssetCurrency(this, (AssetCurrencyClass) pClass);
 
             /* Check that this CurrId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
@@ -511,7 +513,7 @@ public class AssetCurrency
      * The dataMap class.
      */
     protected static final class CurrencyDataMap
-            extends StaticDataMap<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
+            extends StaticDataMap<AssetCurrency> {
         /**
          * Report fields.
          */
