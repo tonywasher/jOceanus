@@ -34,7 +34,14 @@ import org.bouncycastle.asn1.crmf.ProofOfPossession;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
@@ -55,6 +62,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianKeyPairCRMParser
         extends GordianCRMParser {
+    /**
+     * The testData length.
+     */
+    private static final int TESTLEN = 1024;
+
     /**
      * The signer.
      */
@@ -202,12 +214,105 @@ public class GordianKeyPairCRMParser
             final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
 
-            /* derive the privateKey and keyPair */
+            /* derive the privateKey and full keyPair */
             final PKCS8EncodedKeySpec myPKCS8Spec = derivePrivateKey(pProof, pSubject);
-            return myGenerator.deriveKeyPair(myX509Spec, myPKCS8Spec);
+            final GordianKeyPair myKeyPair = myGenerator.deriveKeyPair(myX509Spec, myPKCS8Spec);
+
+            /* Check that the privateKey matches the publicKey */
+            checkPrivateKey(myKeyPair);
+
+            /* Return the public only value */
+            return myGenerator.derivePublicOnlyKeyPair(myX509Spec);
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to derive encrypted keyPair", e);
+        }
+    }
+
+    /**
+     * Check PrivateKey.
+     * @param pKeyPair the keyPair
+     * @throws OceanusException on error
+     */
+    private void checkPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Access details */
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+
+        /* Check for encryption private key */
+        final GordianEncryptorSpec myEncSpec = myFactory.getEncryptorFactory().defaultForKeyPair(mySpec);
+        if (myEncSpec != null) {
+            checkEncryptionPrivateKey(pKeyPair);
+            return;
+        }
+
+        /* Check for agreement private key */
+        final GordianAgreementSpec myAgreeSpec = myFactory.getAgreementFactory().defaultForKeyPair(mySpec);
+        if (myAgreeSpec != null) {
+            checkAgreementPrivateKey(pKeyPair);
+            return;
+        }
+
+        /* Reject the request */
+        throw new GordianDataException("Unable to verify privateKey");
+    }
+
+    /**
+     * Check Encryption PrivateKey.
+     * @param pKeyPair the keyPair
+     * @throws OceanusException on error
+     */
+    private void checkEncryptionPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Create the data to encrypt */
+        final byte[] mySrc = new byte[TESTLEN];
+        getFactory().getRandomSource().getRandom().nextBytes(mySrc);
+
+        /* Access details */
+        final GordianEncryptorFactory myFactory = getFactory().getKeyPairFactory().getEncryptorFactory();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianEncryptorSpec myEncSpec = myFactory.defaultForKeyPair(mySpec);
+
+        /* Create and initialise encryptors */
+        final GordianEncryptor mySender = myFactory.createEncryptor(myEncSpec);
+        final GordianEncryptor myReceiver = myFactory.createEncryptor(myEncSpec);
+
+        /* Handle Initialisation */
+        mySender.initForEncrypt(pKeyPair);
+        myReceiver.initForDecrypt(pKeyPair);
+
+        /* Perform the encryption and decryption for all zeros */
+        byte[] myEncrypted = mySender.encrypt(mySrc);
+        byte[] myResult = myReceiver.decrypt(myEncrypted);
+
+        /* Check the decryption */
+        if (!Arrays.areEqual(mySrc, myResult)) {
+            throw new GordianDataException("Private key failed validation");
+        }
+    }
+
+    /**
+     * Check Agreement PrivateKey.
+     * @param pKeyPair the keyPair
+     * @throws OceanusException on error
+     */
+    private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Access details */
+        final GordianAgreementFactory myFactory = getFactory().getKeyPairFactory().getAgreementFactory();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianAgreementSpec myAgreeSpec = myFactory.defaultForKeyPair(mySpec);
+
+        /* Create agreement */
+        final GordianAnonymousAgreement mySender = (GordianAnonymousAgreement) myFactory.createAgreement(myAgreeSpec);
+        mySender.setResultType(null);
+        final GordianAnonymousAgreement myResponder = (GordianAnonymousAgreement) myFactory.createAgreement(myAgreeSpec);
+        final byte[] myClientHello = mySender.createClientHello(pKeyPair);
+        myResponder.acceptClientHello(pKeyPair, myClientHello);
+
+        /* Check the agreements */
+        final byte[] myFirst = (byte[]) mySender.getResult();
+        final byte[] mySecond = (byte[]) myResponder.getResult();
+        if (!Arrays.areEqual(myFirst, mySecond)) {
+            throw new GordianDataException("Private key failed validation");
         }
     }
 
