@@ -21,17 +21,21 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.BERSet;
 import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.cmp.PBMParameter;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientIdentifier;
 import org.bouncycastle.asn1.cms.RecipientInfo;
+import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
 import org.bouncycastle.asn1.crmf.CRMFObjectIdentifiers;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
@@ -41,6 +45,8 @@ import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.crmf.POPOPrivKey;
 import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -52,6 +58,9 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
@@ -64,18 +73,23 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -83,6 +97,21 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * CRM Builder.
  */
 public class GordianCRMBuilder {
+    /**
+     * AttrOID branch.
+     */
+    public static final ASN1ObjectIdentifier ATTROID = GordianASN1Util.EXTOID.branch("4");
+
+    /**
+     * AttrOID branch.
+     */
+    public static final ASN1ObjectIdentifier MACVALUEATTROID = ATTROID.branch("1");
+
+    /**
+     * The # of hash iterations .
+     */
+    private static final int PBM_ITERATIONS = 10000;
+
     /**
      * The factory.
      */
@@ -94,21 +123,21 @@ public class GordianCRMBuilder {
     private final GordianCoreCertificate theTarget;
 
     /**
-     * Constructor.
-     * @param pFactory the factory
+     * The secret MAC key value.
      */
-    public GordianCRMBuilder(final GordianCoreFactory pFactory) {
-        this(pFactory, null);
-    }
+    private final byte[] theMACSecret;
 
     /**
      * Constructor.
      * @param pFactory the factory
+     * @param pMACSecret the MAC secret value
      * @param pTarget the target certificate
      */
     public GordianCRMBuilder(final GordianCoreFactory pFactory,
+                             final byte[] pMACSecret,
                              final GordianCoreCertificate pTarget) {
         theFactory = pFactory;
+        theMACSecret = pMACSecret;
         theTarget = pTarget;
     }
 
@@ -130,8 +159,17 @@ public class GordianCRMBuilder {
             /* Create the ProofOfPossession */
             final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
 
+            /* Create control if necessary */
+            AttributeTypeAndValue[] myAttrs = null;
+            if (theMACSecret != null) {
+                /* Create the PKMACValue Control */
+                final PBMParameter myParams = generatePBMParameters();
+                final PKMACValue myMACValue = calculatePKMacValue(theFactory, theMACSecret, myCertReq.getCertTemplate().getPublicKey(), myParams);
+                myAttrs = new AttributeTypeAndValue[] { new AttributeTypeAndValue(MACVALUEATTROID, myMACValue) };
+            }
+
             /* Create a CRMF */
-            final CertReqMsg myReqMsg = new CertReqMsg(myCertReq, myProof, null);
+            final CertReqMsg myReqMsg = new CertReqMsg(myCertReq, myProof, myAttrs);
             final GordianPEMObjectType myObjectType = GordianPEMObjectType.CERTREQ;
             return new GordianPEMObject(myObjectType, myReqMsg.getEncoded());
 
@@ -466,6 +504,73 @@ public class GordianCRMBuilder {
         @Override
         public ASN1Primitive toASN1Primitive() {
             return new DERTaggedObject(false, encryptedKey, theKey);
+        }
+    }
+
+    /**
+     * Create PBMParameters.
+     * @return the PBMParameters
+     */
+    private PBMParameter generatePBMParameters() {
+        /* Create the salt value */
+        final byte[] mySalt = new byte[GordianLength.LEN_256.getByteLength()];
+        final GordianRandomSource mySource = theFactory.getRandomSource();
+        mySource.getRandom().nextBytes(mySalt);
+
+        /* Access algorithm ids */
+        final AlgorithmIdentifier myHashId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
+        final AlgorithmIdentifier myMacId = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA256, DERNull.INSTANCE);
+
+        /* Create the PBMParameter */
+        return new PBMParameter(mySalt, myHashId, PBM_ITERATIONS, myMacId);
+    }
+
+    /**
+     * Calculate PKMacValue.
+     * @param pFactory the factory
+     * @param pSecret the secret value
+     * @param pPublicKey the publicKey
+     * @param pParams the PBM Parameters
+     * @return the PKMacValue
+     * @throws OceanusException on error
+     */
+    static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
+                                          final byte[] pSecret,
+                                          final SubjectPublicKeyInfo pPublicKey,
+                                          final PBMParameter pParams) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Create the digest */
+            final GordianDigestFactory myDigests = pFactory.getDigestFactory();
+            final GordianDigestSpec myDigestSpec = pFactory.getDigestSpecForIdentifier(pParams.getOwf());
+            final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
+
+            /* Run through the first iteration */
+            myDigest.update(pSecret);
+            myDigest.update(pParams.getSalt().getOctets());
+            byte[] myKey = new byte[myDigest.getDigestSize()];
+            myKey = myDigest.finish(myKey);
+
+            /* Loop through the remaining iterations */
+            final int numIterations = pParams.getIterationCount().intValueExact() - 1;
+            for (int i = 0; i < numIterations; i++) {
+                myKey = myDigest.finish(myKey);
+            }
+
+            /* Create the mac */
+            final GordianMacFactory myMacs = pFactory.getMacFactory();
+            final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
+            final GordianCoreMac myMac = (GordianCoreMac) myMacs.createMac(myMacSpec);
+            myMac.initKeyBytes(myKey);
+
+            /* Create the result */
+            myMac.update(pPublicKey.toASN1Primitive().getEncoded());
+            final byte[] myResult = myMac.finish();
+            return new PKMACValue(pParams, new DERBitString(myResult));
+
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to parse SubjectPublicKeyInfo", e);
         }
     }
 }

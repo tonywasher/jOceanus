@@ -93,6 +93,11 @@ public class KeyStoreTest {
     private static final char[] DEF_PASSWORD = "SimplePassword".toCharArray();
 
     /**
+     * Default secret.
+     */
+    private static final String DEF_MACSECRET = "A Simple MAC Secret";
+
+    /**
      * The testKey length.
      */
     private static final GordianLength KEYLEN = GordianLength.LEN_256;
@@ -381,6 +386,7 @@ public class KeyStoreTest {
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+        myGateway.setMACSecret(DEF_MACSECRET);
         myGateway.setPasswordResolver(pState::passwordResolver);
 
         /* Create a signature keyPair */
@@ -439,6 +445,7 @@ public class KeyStoreTest {
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+        myGateway.setMACSecret(DEF_MACSECRET);
         myGateway.setEncryptionTarget(KeyStoreAlias.TARGET.getName());
         myGateway.setPasswordResolver(pState::passwordResolver);
 
@@ -542,7 +549,7 @@ public class KeyStoreTest {
         pGateway.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD, myLock);
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
         pGateway.setLockResolver(l -> l.unlock(DEF_PASSWORD));
-        Assertions.assertEquals(pEntry, pGateway.importEntry(myInputStream, DEF_PASSWORD));
+        Assertions.assertEquals(pEntry, pGateway.importEntry(myInputStream));
     }
 
     /**

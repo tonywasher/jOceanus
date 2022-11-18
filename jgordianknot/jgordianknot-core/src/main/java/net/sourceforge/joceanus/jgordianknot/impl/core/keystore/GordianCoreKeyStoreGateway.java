@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * keyStoreGateway implementation.
@@ -63,6 +64,11 @@ public class GordianCoreKeyStoreGateway
      * The encryption target certificate.
      */
     private GordianCoreCertificate theTarget;
+
+    /**
+     * The secret MAC key value.
+     */
+    private byte[] theMACSecret;
 
     /**
      * The keyPairCertifier.
@@ -134,6 +140,11 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
+    public void setMACSecret(final String pMACSecret) {
+        theMACSecret = TethysDataConverter.stringToByteArray(pMACSecret);
+    }
+
+    @Override
     public void createCertificateRequest(final String pAlias,
                                          final File pFile,
                                          final char[] pPassword) throws OceanusException {
@@ -151,10 +162,10 @@ public class GordianCoreKeyStoreGateway
         /* Access the requested entry */
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
 
-        /* If it is a keyPair(Set) */
+        /* If it is a keyPair */
         if (myEntry instanceof GordianKeyStorePair) {
             /* Create the certificate request and write to output stream */
-            final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theTarget);
+            final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theMACSecret, theTarget);
             final GordianPEMObject myCertReq = myBuilder.createCertificateRequest((GordianKeyStorePair) myEntry);
             final GordianPEMParser myParser = new GordianPEMParser();
             myParser.writePEMFile(pStream, Collections.singletonList(myCertReq));
@@ -207,7 +218,7 @@ public class GordianCoreKeyStoreGateway
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
-            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
+            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theMACSecret, thePasswordResolver);
             final List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
             myParser.writePEMFile(pOutStream, myChain);
         } else {
@@ -216,21 +227,19 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public GordianKeyStoreEntry importEntry(final File pFile,
-                                            final char[] pPassword) throws OceanusException {
+    public GordianKeyStoreEntry importEntry(final File pFile) throws OceanusException {
         try (FileInputStream myStream = new FileInputStream(pFile)) {
-            return importEntry(myStream, pPassword);
+            return importEntry(myStream);
         } catch (IOException e) {
             throw new GordianIOException("Failed to read from file", e);
         }
     }
 
     @Override
-    public GordianKeyStoreEntry importEntry(final InputStream pStream,
-                                            final char[] pPassword) throws OceanusException {
+    public GordianKeyStoreEntry importEntry(final InputStream pStream) throws OceanusException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         myCoder.setLockResolver(theLockResolver);
-        return myCoder.importKeyStoreEntry(pStream, pPassword);
+        return myCoder.importKeyStoreEntry(pStream);
     }
 
     @Override

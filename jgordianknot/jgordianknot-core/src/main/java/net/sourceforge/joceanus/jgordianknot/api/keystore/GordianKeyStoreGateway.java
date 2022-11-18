@@ -108,6 +108,12 @@ public interface GordianKeyStoreGateway {
     void setLockResolver(GordianLockResolver pResolver);
 
     /**
+     * Set the MAC secret value.
+     * @param pMACSecret the secret value
+     */
+    void setMACSecret(String pMACSecret);
+
+    /**
      * create certificate request.
      * @param pAlias the alias
      * @param pFile the target file
@@ -150,22 +156,18 @@ public interface GordianKeyStoreGateway {
     /**
      * import object from file.
      * @param pFile the input file
-     * @param pPassword the password
      * @return the parsed object
      * @throws OceanusException on error
      */
-    GordianKeyStoreEntry importEntry(File pFile,
-                                     char[] pPassword) throws OceanusException;
+    GordianKeyStoreEntry importEntry(File pFile) throws OceanusException;
 
     /**
      * import object from stream.
      * @param pStream the input stream
-     * @param pPassword the password
      * @return the parsed object
      * @throws OceanusException on error
      */
-    GordianKeyStoreEntry importEntry(InputStream pStream,
-                                     char[] pPassword) throws OceanusException;
+    GordianKeyStoreEntry importEntry(InputStream pStream) throws OceanusException;
 
     /**
      * import certificates from file.

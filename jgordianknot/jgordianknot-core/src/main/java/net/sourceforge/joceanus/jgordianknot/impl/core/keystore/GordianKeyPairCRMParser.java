@@ -23,9 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import org.bouncycastle.asn1.cmp.PBMParameter;
+import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
 import org.bouncycastle.asn1.crmf.CertTemplate;
+import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -58,18 +61,26 @@ public class GordianKeyPairCRMParser
     private final GordianKeyStorePair theSigner;
 
     /**
+     * The secret MAC key value.
+     */
+    private final byte[] theMACSecret;
+
+    /**
      * Constructor.
      * @param pKeyStoreMgr the keyStoreManager
      * @param pSigner the signer
+     * @param pMACSecret the MAC secret value
      * @param pResolver the password resolver
      * @throws OceanusException on error
      */
     public GordianKeyPairCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
                                    final GordianKeyStorePair pSigner,
+                                   final byte[] pMACSecret,
                                    final Function<String, char[]> pResolver) throws OceanusException {
         /* Store parameters */
         super(pKeyStoreMgr, pResolver);
         theSigner = pSigner;
+        theMACSecret = pMACSecret;
 
         /* Reject null signer */
         if (theSigner == null) {
@@ -86,10 +97,14 @@ public class GordianKeyPairCRMParser
         final CertReqMsg myReq = CertReqMsg.getInstance(pObject.getEncoded());
         final CertRequest myCertReq = myReq.getCertReq();
         final ProofOfPossession myProof = myReq.getPopo();
+        final AttributeTypeAndValue[] myAttrs = myReq.getRegInfo();
         final CertTemplate myTemplate = myCertReq.getCertTemplate();
         final X500Name mySubject = myTemplate.getSubject();
         final SubjectPublicKeyInfo myPublic = myTemplate.getPublicKey();
         final GordianKeyPairUsage myUsage = GordianCoreCertificate.determineUsage(myTemplate.getExtensions());
+
+        /* Check the PKMacValue */
+        checkPKMACValue(myAttrs, myPublic);
 
         /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
@@ -117,17 +132,14 @@ public class GordianKeyPairCRMParser
                                          final X500Name pSubject,
                                          final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
         /* Handle signed keyPair */
-        if (pProof.getType() == ProofOfPossession.TYPE_SIGNING_KEY) {
-            return deriveSignedKeyPair(pProof, pCertReq, pPublicKey);
+        switch (pProof.getType()) {
+            case ProofOfPossession.TYPE_SIGNING_KEY:
+                return deriveSignedKeyPair(pProof, pCertReq, pPublicKey);
+            case ProofOfPossession.TYPE_KEY_ENCIPHERMENT:
+                return deriveEncryptedKeyPair(pProof, pSubject, pPublicKey);
+            default:
+                throw new GordianDataException("Unsupported proof type");
         }
-
-        /* Handle encrypted keyPair */
-        if (pProof.getType() == ProofOfPossession.TYPE_KEY_ENCIPHERMENT) {
-            return deriveEncryptedKeyPair(pProof, pSubject, pPublicKey);
-        }
-
-        /* Not supported */
-        throw new GordianDataException("Unsupported proof type");
     }
 
     /**
@@ -196,6 +208,44 @@ public class GordianKeyPairCRMParser
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to derive encrypted keyPair", e);
+        }
+    }
+
+    /**
+     * Check PKMacValue.
+     * @param pAttrs the attributes
+     * @param pPublicKey the public key
+     * @throws OceanusException on error
+     */
+    private void checkPKMACValue(final AttributeTypeAndValue[] pAttrs,
+                                 final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
+        /* If we have no secret then this is a no-op */
+        if (theMACSecret == null) {
+            return;
+        }
+
+        /* Loop through the Attrs */
+        AttributeTypeAndValue myAttr = null;
+        if (pAttrs != null) {
+            for (AttributeTypeAndValue myCurr : pAttrs) {
+                if (GordianCRMBuilder.MACVALUEATTROID.equals(myCurr.getType())) {
+                    myAttr = myCurr;
+                    break;
+                }
+            }
+        }
+
+        /* We must have a PKMACValue */
+        if (myAttr == null) {
+            throw new GordianDataException("Missing PKMacValue");
+        }
+
+        /* Calculate the PKMACValue and compare with the value that was sent */
+        final PKMACValue mySent = PKMACValue.getInstance(myAttr.getValue());
+        final PBMParameter myParams = PBMParameter.getInstance(mySent.getAlgId().getParameters());
+        final PKMACValue myMACValue = GordianCRMBuilder.calculatePKMacValue(getFactory(), theMACSecret, pPublicKey, myParams);
+        if (!mySent.equals(myMACValue)) {
+            throw new GordianDataException("Invalid PKMacValue");
         }
     }
 }
