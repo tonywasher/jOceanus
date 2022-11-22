@@ -102,7 +102,7 @@ public class GordianKeyPairCRMParser
 
     @Override
     public List<GordianPEMObject> decodeCertificateRequest(final GordianPEMObject pObject) throws OceanusException {
-        /* Reject if not KeyPairCertReq */
+        /* Reject if not CertReq */
         GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.CERTREQ);
 
         /* Derive the certificate request message */
@@ -128,6 +128,19 @@ public class GordianKeyPairCRMParser
             myObjects.add(GordianPEMCoder.encodeCertificate(myCert));
         }
         return myObjects;
+    }
+
+    /**
+     * decode the certificate response.
+     * @param pObject the encoded response
+     * @return the decoded response
+     */
+    public GordianCertResponseASN1 decodeCertificateResponse(final GordianPEMObject pObject) throws OceanusException {
+        /* Reject if not CertResponse */
+        GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.CERTRESP);
+
+        /* Derive the certificate request message */
+        return GordianCertResponseASN1.getInstance(pObject.getEncoded());
     }
 
     /**

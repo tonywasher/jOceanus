@@ -121,16 +121,6 @@ public class JcaAgreementFactory
     }
 
     /**
-     * Create the NewHope Agreement.
-     * @param pAgreementSpec the agreementSpec
-     * @return the Agreement
-     * @throws OceanusException on error
-     */
-    private GordianAgreement getNHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        return new JcaEncapsulationAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement("NH", true));
-    }
-
-    /**
      * Create the EC Agreement.
      * @param pAgreementSpec the agreementSpec
      * @return the Agreement

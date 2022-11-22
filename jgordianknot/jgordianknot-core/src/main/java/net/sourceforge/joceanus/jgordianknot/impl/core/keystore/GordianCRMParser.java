@@ -135,7 +135,6 @@ public abstract class GordianCRMParser {
         return GordianCRMBuilder.deriveKeySetFromKey(theFactory, myKey);
     }
 
-
     /**
      * Derive the privateKey.
      * @param pProof the proof of possession

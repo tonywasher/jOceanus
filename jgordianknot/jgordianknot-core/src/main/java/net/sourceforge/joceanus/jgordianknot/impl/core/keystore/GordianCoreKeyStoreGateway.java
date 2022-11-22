@@ -61,6 +61,11 @@ public class GordianCoreKeyStoreGateway
     private final GordianCoreKeyStore theKeyStore;
 
     /**
+     * The encryptor.
+     */
+    private final GordianCRMEncryptor theEncryptor;
+
+    /**
      * The encryption target certificate.
      */
     private GordianCoreCertificate theTarget;
@@ -95,6 +100,7 @@ public class GordianCoreKeyStoreGateway
         theFactory = pFactory;
         theKeyStoreMgr = pKeyStoreMgr;
         theKeyStore = theKeyStoreMgr.getKeyStore();
+        theEncryptor = new GordianCRMEncryptor(theFactory);
     }
 
     @Override
@@ -205,7 +211,7 @@ public class GordianCoreKeyStoreGateway
     public void processCertificateRequest(final File pInFile,
                                           final File pOutFile) throws OceanusException {
         try (FileInputStream myInStream = new FileInputStream(pInFile);
-             FileOutputStream myOutStream = new FileOutputStream(pOutFile)) {
+            FileOutputStream myOutStream = new FileOutputStream(pOutFile)) {
             processCertificateRequest(myInStream, myOutStream);
         } catch (IOException e) {
             throw new GordianIOException("Failed to process request", e);

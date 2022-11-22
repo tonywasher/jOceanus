@@ -90,9 +90,14 @@ public class GordianPEMObject {
         KEY("ENCRYPTED KEY"),
 
         /**
-         * keyPair certificate request.
+         * certificate request.
          */
-        CERTREQ("CERTIFICATE REQUEST");
+        CERTREQ("CERTIFICATE REQUEST"),
+
+        /**
+         * certificate response.
+         */
+        CERTRESP("CERTIFICATE RESPONSE");
 
         /**
          * The header.
