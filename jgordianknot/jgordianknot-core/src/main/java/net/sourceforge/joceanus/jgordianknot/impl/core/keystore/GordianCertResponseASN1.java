@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.Certificate;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
@@ -224,16 +225,18 @@ public class GordianCertResponseASN1
      * Decrypt certificate.
      * @param pEncryptor the encryptor
      * @param pCertificate the certificate
+     * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
     public void decryptCertificate(final GordianCRMEncryptor pEncryptor,
-                                   final GordianCertificate pCertificate) throws OceanusException {
+                                   final GordianCertificate pCertificate,
+                                   final GordianKeyPair pKeyPair) throws OceanusException {
         /* Only decrypt if currently encrypted */
         if (theCertificate == null) {
             /* Derive the KeySet */
             final RecipientInfo myRecipient = RecipientInfo.getInstance(theEncrypted.getRecipientInfos().getObjectAt(0));
             final KeyTransRecipientInfo myRecInfo = (KeyTransRecipientInfo) myRecipient.getInfo();
-            final GordianKeySet myKeySet = pEncryptor.deriveKeySetFromRecInfo(myRecInfo, pCertificate);
+            final GordianKeySet myKeySet = pEncryptor.deriveKeySetFromRecInfo(myRecInfo, pCertificate, pKeyPair);
 
             /* Decrypt the certificate */
             final EncryptedContentInfo myInfo = theEncrypted.getEncryptedContentInfo();

@@ -81,16 +81,18 @@ public class GordianKeyPairCRMParser
      * Constructor.
      * @param pKeyStoreMgr the keyStoreManager
      * @param pSigner the signer
+     * @param pEncryptor the encryptor
      * @param pMACSecret the MAC secret value
      * @param pResolver the password resolver
      * @throws OceanusException on error
      */
     public GordianKeyPairCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
                                    final GordianKeyStorePair pSigner,
+                                   final GordianCRMEncryptor pEncryptor,
                                    final byte[] pMACSecret,
                                    final Function<String, char[]> pResolver) throws OceanusException {
         /* Store parameters */
-        super(pKeyStoreMgr, pResolver);
+        super(pKeyStoreMgr, pEncryptor, pResolver);
         theSigner = pSigner;
         theMACSecret = pMACSecret;
 

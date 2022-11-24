@@ -171,7 +171,7 @@ public class GordianCoreKeyStoreGateway
         /* If it is a keyPair */
         if (myEntry instanceof GordianKeyStorePair) {
             /* Create the certificate request and write to output stream */
-            final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theMACSecret, theTarget);
+            final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theEncryptor, theMACSecret, theTarget);
             final GordianPEMObject myCertReq = myBuilder.createCertificateRequest((GordianKeyStorePair) myEntry);
             final GordianPEMParser myParser = new GordianPEMParser();
             myParser.writePEMFile(pStream, Collections.singletonList(myCertReq));
@@ -224,7 +224,7 @@ public class GordianCoreKeyStoreGateway
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
-            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theMACSecret, thePasswordResolver);
+            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theEncryptor, theMACSecret, thePasswordResolver);
             final List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
             myParser.writePEMFile(pOutStream, myChain);
         } else {

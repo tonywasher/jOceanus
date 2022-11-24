@@ -72,6 +72,11 @@ public abstract class GordianCRMParser {
     private final GordianCoreKeyStoreManager theKeyStoreMgr;
 
     /**
+     * The encryptor.
+     */
+    private final GordianCRMEncryptor theEncryptor;
+
+    /**
      * The password resolver.
      */
     private final Function<String, char[]> theResolver;
@@ -79,13 +84,16 @@ public abstract class GordianCRMParser {
     /**
      * Constructor.
      * @param pKeyStoreMgr the keyStoreManager
+     * @param pEncryptor the encryptor
      * @param pResolver the password resolver
      */
     protected GordianCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
+                               final GordianCRMEncryptor pEncryptor,
                                final Function<String, char[]> pResolver) {
         /* Store parameters */
         theKeyStoreMgr = pKeyStoreMgr;
         theKeyStore = pKeyStoreMgr.getKeyStore();
+        theEncryptor = pEncryptor;
         theResolver = pResolver;
         theFactory = theKeyStore.getFactory();
     }
@@ -113,27 +121,6 @@ public abstract class GordianCRMParser {
      * @throws OceanusException on error
      */
     public abstract List<GordianPEMObject> decodeCertificateRequest(GordianPEMObject pObject) throws OceanusException;
-
-    /**
-     * Derive an encrypted keySet.
-     * @param pKeyPair the keyPair
-     * @param pAlgId the algorithm Identifier
-     * @param pEncryptedKey the encrypted key
-     * @return the derived keySet
-     * @throws OceanusException on error
-     */
-    GordianKeySet deriveEncryptedKeySet(final GordianKeyPair pKeyPair,
-                                        final AlgorithmIdentifier pAlgId,
-                                        final byte[] pEncryptedKey) throws OceanusException {
-        /* Handle decryption */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
-        final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
-        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);
-        myEncryptor.initForDecrypt(pKeyPair);
-        final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);
-        return GordianCRMBuilder.deriveKeySetFromKey(theFactory, myKey);
-    }
 
     /**
      * Derive the privateKey.
@@ -181,10 +168,6 @@ public abstract class GordianCRMParser {
      * @throws OceanusException on error
      */
     private GordianKeySet deriveKeySetFromRecInfo(final KeyTransRecipientInfo pRecInfo) throws OceanusException {
-        /* Extract details */
-        final AlgorithmIdentifier myAlgId = pRecInfo.getKeyEncryptionAlgorithm();
-        final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();
-
         /* Access issuer details */
         final IssuerAndSerialNumber myIssId = (IssuerAndSerialNumber) pRecInfo.getRecipientIdentifier().getId();
 
@@ -200,29 +183,6 @@ public abstract class GordianCRMParser {
         /* Access details */
         final GordianKeyStorePair myIssuer = (GordianKeyStorePair) myIssuerEntry;
         final GordianCertificate myCert = myIssuer.getCertificateChain().get(0);
-        final GordianKeyPair myKeyPair = myIssuer.getKeyPair();
-
-        /* Derive the keySet appropriately */
-        final GordianKeyPairUsage myUsage = myCert.getUsage();
-        return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
-                ? deriveEncryptedKeySet(myKeyPair, myAlgId, myEncryptedKey)
-                : deriveAgreedKeySet(myKeyPair, myEncryptedKey);
-    }
-
-    /**
-     * Derive an agreed keySet.
-     * @param pKeyPair the keyPair
-     * @param pHello the clientHello
-     * @return the derived keySet
-     * @throws OceanusException on error
-     */
-    GordianKeySet deriveAgreedKeySet(final GordianKeyPair pKeyPair,
-                                     final byte[] pHello) throws OceanusException {
-        /* Handle agreement */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myKPFactory.getAgreementFactory();
-        final GordianAnonymousAgreement myAgree = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(pHello);
-        myAgree.acceptClientHello(pKeyPair, pHello);
-        return (GordianKeySet) myAgree.getResult();
+        return theEncryptor.deriveKeySetFromRecInfo(pRecInfo, myCert, myIssuer.getKeyPair());
     }
 }

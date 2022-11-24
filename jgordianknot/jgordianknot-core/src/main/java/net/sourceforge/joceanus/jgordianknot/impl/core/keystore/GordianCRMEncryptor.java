@@ -271,23 +271,25 @@ public class GordianCRMEncryptor {
      * Derive the keySet via a keyPairSet issuer.
      * @param pRecInfo the recipient info
      * @param pCertificate the receiving certificate
+     * @param pKeyPair the keyPair
      * @return the keySet
      * @throws OceanusException on error
      */
     public GordianKeySet deriveKeySetFromRecInfo(final KeyTransRecipientInfo pRecInfo,
-                                                 final GordianCertificate pCertificate) throws OceanusException {
+                                                 final GordianCertificate pCertificate,
+                                                 final GordianKeyPair pKeyPair) throws OceanusException {
         /* Extract details */
         final AlgorithmIdentifier myAlgId = pRecInfo.getKeyEncryptionAlgorithm();
         final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();
 
         /* Access details */
-        final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
+        //final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
 
         /* Derive the keySet appropriately */
         final GordianKeyPairUsage myUsage = pCertificate.getUsage();
         return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
-                ? deriveEncryptedKeySet(myKeyPair, myAlgId, myEncryptedKey)
-                : deriveAgreedKeySet(myKeyPair, myEncryptedKey);
+                ? deriveEncryptedKeySet(pKeyPair, myAlgId, myEncryptedKey)
+                : deriveAgreedKeySet(pKeyPair, myEncryptedKey);
     }
 
     /**
