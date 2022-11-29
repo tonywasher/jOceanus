@@ -225,8 +225,22 @@ public class GordianCoreKeyStoreGateway
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
             final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theEncryptor, theMACSecret, thePasswordResolver);
-            final List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
-            myParser.writePEMFile(pOutStream, myChain);
+            final GordianPEMObject myResponse = myCRMParser.decodeCertificateRequest(myObject);
+            myParser.writePEMFile(pOutStream, Collections.singletonList(myResponse));
+        } else {
+            throw new GordianDataException("Unexpected object type");
+        }
+    }
+
+    @Override
+    public List<GordianCertificate> processCertificateResponse(final InputStream pInStream) throws OceanusException {
+        final GordianPEMParser myParser = new GordianPEMParser();
+        final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
+        if (myObject.getObjectType() == GordianPEMObjectType.CERTRESP) {
+            final GordianKeyPairCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theEncryptor, theMACSecret, thePasswordResolver);
+            final GordianCertResponseASN1 myResponse = myCRMParser.decodeCertificateResponse(myObject);
+            final GordianCertificate[] myChain = myResponse.getCertificateChain(theEncryptor);
+            return List.of(myChain);
         } else {
             throw new GordianDataException("Unexpected object type");
         }

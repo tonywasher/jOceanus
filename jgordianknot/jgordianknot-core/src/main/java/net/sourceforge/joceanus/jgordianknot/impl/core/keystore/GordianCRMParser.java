@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
@@ -31,25 +30,15 @@ import org.bouncycastle.asn1.crmf.EncKeyWithID;
 import org.bouncycastle.asn1.crmf.POPOPrivKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -117,10 +106,10 @@ public abstract class GordianCRMParser {
     /**
      * Decode a certificate request.
      * @param pObject the PEM object
-     * @return the PEM certificate chain
+     * @return the PEM certificate response
      * @throws OceanusException on error
      */
-    public abstract List<GordianPEMObject> decodeCertificateRequest(GordianPEMObject pObject) throws OceanusException;
+    public abstract GordianPEMObject decodeCertificateRequest(GordianPEMObject pObject) throws OceanusException;
 
     /**
      * Derive the privateKey.

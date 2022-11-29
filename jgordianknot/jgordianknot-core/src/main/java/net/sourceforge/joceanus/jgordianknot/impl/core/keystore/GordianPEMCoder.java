@@ -250,6 +250,20 @@ public class GordianPEMCoder {
     }
 
     /**
+     * Encode a Certificate Response.
+     * @param pResponse the certificate response
+     * @return the encoded object.
+     * @throws OceanusException on error
+     */
+    static GordianPEMObject encodeCertResponse(final GordianCertResponseASN1 pResponse) throws OceanusException {
+        try {
+            return new GordianPEMObject(GordianPEMObjectType.CERTRESP, pResponse.getEncoded());
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to encode response", e);
+        }
+    }
+
+    /**
      * Encode a keyPair.
      * @param pKeyPair the keyPair
      * @param pLock the lock

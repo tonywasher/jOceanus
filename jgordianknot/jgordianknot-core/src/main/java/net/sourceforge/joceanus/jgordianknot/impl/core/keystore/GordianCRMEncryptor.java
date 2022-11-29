@@ -282,9 +282,6 @@ public class GordianCRMEncryptor {
         final AlgorithmIdentifier myAlgId = pRecInfo.getKeyEncryptionAlgorithm();
         final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();
 
-        /* Access details */
-        //final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
-
         /* Derive the keySet appropriately */
         final GordianKeyPairUsage myUsage = pCertificate.getUsage();
         return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)

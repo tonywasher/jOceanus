@@ -71,7 +71,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
@@ -405,11 +404,7 @@ public class KeyStoreTest {
 
         /* Input the new certificateChain and install it */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        final List<GordianKeyStoreEntry> myEntries = myGateway.importCertificates(myInputStream);
-        final List<GordianCertificate> myChain
-                = myEntries.stream()
-                        .map(e -> ((GordianKeyStoreCertificate) e).getCertificate())
-                        .collect(Collectors.toList());
+        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream);
         myStore.updateCertificateChain(KeyStoreAlias.SIGNER.getName(), myChain);
 
         /* Cleanup */
@@ -460,11 +455,7 @@ public class KeyStoreTest {
 
         /* Input the new certificateChain and install it */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        final List<GordianKeyStoreEntry> myEntries = myGateway.importCertificates(myInputStream);
-        final List<GordianCertificate> myChain
-                = myEntries.stream()
-                        .map(e -> ((GordianKeyStoreCertificate) e).getCertificate())
-                        .collect(Collectors.toList());
+        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream);
         myStore.updateCertificateChain(myAlias.getName(), myChain);
 
         /* Cleanup */

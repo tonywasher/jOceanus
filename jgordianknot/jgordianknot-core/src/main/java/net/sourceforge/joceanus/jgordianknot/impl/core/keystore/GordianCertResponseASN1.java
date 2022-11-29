@@ -17,13 +17,17 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.BERSet;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
@@ -45,13 +49,26 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianCertResponseASN1 ::= SEQUENCE {
  *      certReqId    INTEGER
- *      certificate  Certificate
+ *      CHOICE {
+ *          certificate     [1] Certificate,
+ *          encrypted       [2] EnvelopedData
+ *      }
  *      signerCerts  SEQUENCE SIZE (1..MAX) OF Certificate
  * }
  * </pre>
  */
 public class GordianCertResponseASN1
         extends GordianASN1Object {
+    /**
+     * The standard certificate tag.
+     */
+    private static final int TAG_STANDARD = 1;
+
+    /**
+     * The encrypted certificate tag.
+     */
+    private static final int TAG_ENCRYPTED = 2;
+
     /**
      * The requestId.
      */
@@ -96,7 +113,17 @@ public class GordianCertResponseASN1
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
             theReqId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
-            theCertificate = Certificate.getInstance(en.nextElement());
+            final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
+            switch (myTagged.getTagNo()) {
+                case TAG_STANDARD:
+                    theCertificate = Certificate.getInstance(myTagged, false);
+                    break;
+                case TAG_ENCRYPTED:
+                    theEncrypted = EnvelopedData.getInstance(myTagged, false);
+                    break;
+                default:
+                    throw new GordianDataException("Unexpected tag");
+            }
             final ASN1Sequence mySignerCerts = ASN1Sequence.getInstance(en.nextElement());
             final Enumeration<?> enCert = mySignerCerts.getObjects();
             final int myNumCerts = mySignerCerts.size();
@@ -133,16 +160,17 @@ public class GordianCertResponseASN1
      * @return the response
      */
     public static GordianCertResponseASN1 createCertResponse(final int pReqId,
-                                                             final GordianCoreCertificate[] pChain) {
+                                                             final List<GordianCertificate> pChain) {
         /* Create the chain */
-        final Certificate[] myChain = new Certificate[pChain.length - 1];
+        final Certificate[] myChain = new Certificate[pChain.size() - 1];
 
         /* Store first element in chain */
-        final Certificate myCert = pChain[0].getCertificate();
+        final Iterator<GordianCertificate> myIterator = pChain.iterator();
+        final Certificate myCert = ((GordianCoreCertificate) myIterator.next()).getCertificate();
 
         /* Store subsequent details */
-        for (int i = 1; i < pChain.length; i++) {
-            myChain[i-1] = pChain[i].getCertificate();
+        for (int i = 1; i < pChain.size(); i++) {
+            myChain[i - 1] = ((GordianCoreCertificate) myIterator.next()).getCertificate();
         }
 
         /* Return the chain */
@@ -196,7 +224,11 @@ public class GordianCertResponseASN1
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(new ASN1Integer(theReqId));
-        v.add(theCertificate);
+        if (theCertificate != null) {
+            v.add(new DERTaggedObject(false, TAG_STANDARD, theCertificate));
+        } else if (theEncrypted != null) {
+            v.add(new DERTaggedObject(false, TAG_ENCRYPTED, theEncrypted));
+        }
         v.add(new DERSequence(theSignerCerts));
 
         return new DERSequence(v);

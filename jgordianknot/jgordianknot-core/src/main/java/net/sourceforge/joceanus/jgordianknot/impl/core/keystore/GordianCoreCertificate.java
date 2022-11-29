@@ -291,7 +291,7 @@ public class GordianCoreCertificate
             /* Store the encoded representation */
             theEncoded = pCertificate.getEncoded();
         } catch (IOException e) {
-            throw new GordianIOException("FAiled to parse certificate", e);
+            throw new GordianIOException("Failed to parse certificate", e);
         }
     }
 

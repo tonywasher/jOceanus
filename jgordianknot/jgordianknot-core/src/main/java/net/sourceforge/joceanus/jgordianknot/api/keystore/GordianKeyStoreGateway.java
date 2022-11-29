@@ -154,6 +154,14 @@ public interface GordianKeyStoreGateway {
                                    OutputStream pOutStream) throws OceanusException;
 
     /**
+     * process certificate response.
+     * @param pInStream the input stream
+     * @return the certificate chain as a list
+     * @throws OceanusException on error
+     */
+    List<GordianCertificate> processCertificateResponse(InputStream pInStream) throws OceanusException;
+
+    /**
      * import object from file.
      * @param pFile the input file
      * @return the parsed object
