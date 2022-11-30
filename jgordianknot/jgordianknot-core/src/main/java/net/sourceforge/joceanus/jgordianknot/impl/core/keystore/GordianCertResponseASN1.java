@@ -34,9 +34,9 @@ import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.Certificate;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -256,19 +256,17 @@ public class GordianCertResponseASN1
     /**
      * Decrypt certificate.
      * @param pEncryptor the encryptor
-     * @param pCertificate the certificate
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
     public void decryptCertificate(final GordianCRMEncryptor pEncryptor,
-                                   final GordianCertificate pCertificate,
-                                   final GordianKeyPair pKeyPair) throws OceanusException {
+                                   final GordianKeyStorePair pKeyPair) throws OceanusException {
         /* Only decrypt if currently encrypted */
         if (theCertificate == null) {
             /* Derive the KeySet */
             final RecipientInfo myRecipient = RecipientInfo.getInstance(theEncrypted.getRecipientInfos().getObjectAt(0));
             final KeyTransRecipientInfo myRecInfo = (KeyTransRecipientInfo) myRecipient.getInfo();
-            final GordianKeySet myKeySet = pEncryptor.deriveKeySetFromRecInfo(myRecInfo, pCertificate, pKeyPair);
+            final GordianKeySet myKeySet = pEncryptor.deriveKeySetFromRecInfo(myRecInfo, pKeyPair.getCertificateChain().get(0), pKeyPair.getKeyPair());
 
             /* Decrypt the certificate */
             final EncryptedContentInfo myInfo = theEncrypted.getEncryptedContentInfo();

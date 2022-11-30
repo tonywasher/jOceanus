@@ -233,12 +233,13 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public List<GordianCertificate> processCertificateResponse(final InputStream pInStream) throws OceanusException {
+    public List<GordianCertificate> processCertificateResponse(final InputStream pInStream,
+                                                               final GordianKeyStorePair pKeyPair) throws OceanusException {
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTRESP) {
             final GordianKeyPairCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theEncryptor, theMACSecret, thePasswordResolver);
-            final GordianCertResponseASN1 myResponse = myCRMParser.decodeCertificateResponse(myObject);
+            final GordianCertResponseASN1 myResponse = myCRMParser.decodeCertificateResponse(myObject, pKeyPair);
             final GordianCertificate[] myChain = myResponse.getCertificateChain(theEncryptor);
             return List.of(myChain);
         } else {

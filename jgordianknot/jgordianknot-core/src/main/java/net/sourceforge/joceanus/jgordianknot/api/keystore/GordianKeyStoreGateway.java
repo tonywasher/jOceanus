@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Function;
 
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -156,10 +157,12 @@ public interface GordianKeyStoreGateway {
     /**
      * process certificate response.
      * @param pInStream the input stream
+     * @param pKeyPair the keyPAir
      * @return the certificate chain as a list
      * @throws OceanusException on error
      */
-    List<GordianCertificate> processCertificateResponse(InputStream pInStream) throws OceanusException;
+    List<GordianCertificate> processCertificateResponse(InputStream pInStream,
+                                                        GordianKeyStorePair pKeyPair) throws OceanusException;
 
     /**
      * import object from file.

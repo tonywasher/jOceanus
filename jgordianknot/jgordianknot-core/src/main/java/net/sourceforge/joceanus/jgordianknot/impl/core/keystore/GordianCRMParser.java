@@ -104,6 +104,14 @@ public abstract class GordianCRMParser {
     }
 
     /**
+     * Obtain the encryptor.
+     * @return the encryptor
+     */
+    GordianCRMEncryptor getEncryptor() {
+        return theEncryptor;
+    }
+
+    /**
      * Decode a certificate request.
      * @param pObject the PEM object
      * @return the PEM certificate response

@@ -19,18 +19,20 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.cmp.PBMParameter;
 import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
 import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.crmf.PKMACValue;
+import org.bouncycastle.asn1.crmf.POPOPrivKey;
 import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
+import org.bouncycastle.asn1.crmf.SubsequentMessage;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -78,6 +80,11 @@ public class GordianKeyPairCRMParser
     private final byte[] theMACSecret;
 
     /**
+     * Are we encrypting the response.
+     */
+    private boolean encryptCert;
+
+    /**
      * Constructor.
      * @param pKeyStoreMgr the keyStoreManager
      * @param pSigner the signer
@@ -119,27 +126,41 @@ public class GordianKeyPairCRMParser
 
         /* Check the PKMacValue */
         checkPKMACValue(myAttrs, myPublic);
+        encryptCert = false;
 
         /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
         final List<GordianCertificate> myChain = getKeyStoreMgr().signKeyPair(myPair, mySubject, myUsage, theSigner);
 
-        /* Create and return the certificate response */
+        /* Create the certificate response */
         final GordianCertResponseASN1 myResponse = GordianCertResponseASN1.createCertResponse(myCertReq.getCertReqId().intValueExact(), myChain);
+        if (encryptCert) {
+            myResponse.encryptCertificate(getEncryptor());
+        }
+
+        /* Return the certificate response */
         return GordianPEMCoder.encodeCertResponse(myResponse);
     }
 
     /**
      * decode the certificate response.
      * @param pObject the encoded response
+     * @param pKeyPair the receiving keyPair
      * @return the decoded response
      */
-    public GordianCertResponseASN1 decodeCertificateResponse(final GordianPEMObject pObject) throws OceanusException {
+    public GordianCertResponseASN1 decodeCertificateResponse(final GordianPEMObject pObject,
+                                                             final GordianKeyStorePair pKeyPair) throws OceanusException {
         /* Reject if not CertResponse */
         GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.CERTRESP);
 
         /* Derive the certificate request message */
-        return GordianCertResponseASN1.getInstance(pObject.getEncoded());
+        final GordianCertResponseASN1 myResp = GordianCertResponseASN1.getInstance(pObject.getEncoded());
+        if (myResp.isEncrypted()) {
+            myResp.decryptCertificate(getEncryptor(), pKeyPair);
+        }
+
+        /* Return the response */
+        return myResp;
     }
 
     /**
@@ -226,12 +247,24 @@ public class GordianKeyPairCRMParser
             final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
 
-            /* derive the privateKey and full keyPair */
-            final PKCS8EncodedKeySpec myPKCS8Spec = derivePrivateKey(pProof, pSubject);
-            final GordianKeyPair myKeyPair = myGenerator.deriveKeyPair(myX509Spec, myPKCS8Spec);
+            /* Determine type of proof of Possession */
+            final POPOPrivKey myPOP = POPOPrivKey.getInstance(pProof.getObject());
+            final int myProofType = myPOP.getType();
 
-            /* Check that the privateKey matches the publicKey */
-            checkPrivateKey(myKeyPair);
+            /* Handle encryptedKey */
+            if (myProofType == POPOPrivKey.encryptedKey) {
+                /* derive the privateKey and full keyPair */
+                final PKCS8EncodedKeySpec myPKCS8Spec = derivePrivateKey(pProof, pSubject);
+                final GordianKeyPair myKeyPair = myGenerator.deriveKeyPair(myX509Spec, myPKCS8Spec);
+
+                /* Check that the privateKey matches the publicKey */
+                checkPrivateKey(myKeyPair);
+            } else if (myProofType != POPOPrivKey.subsequentMessage
+                       || ASN1Integer.getInstance(myPOP.getValue()).intValueExact() != SubsequentMessage.encrCert.intValueExact()) {
+                throw new GordianDataException("Unsupported ProofType");
+            } else {
+                encryptCert = true;
+            }
 
             /* Return the public only value */
             return myGenerator.derivePublicOnlyKeyPair(myX509Spec);

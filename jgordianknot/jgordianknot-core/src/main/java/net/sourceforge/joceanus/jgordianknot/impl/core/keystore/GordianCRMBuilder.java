@@ -37,6 +37,7 @@ import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.crmf.POPOPrivKey;
 import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
+import org.bouncycastle.asn1.crmf.SubsequentMessage;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -218,24 +219,27 @@ public class GordianCRMBuilder {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
 
-        /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
-        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(myKeyPair);
-
-        /* Send encrypted key via Encryption or Agreement */
-        return createTargetedProofOfPossession(myPKCS8Encoding, pCertificate);
+        /* Send encrypted key via targeted encryption or request encrypted certificate */
+        return theTarget != null
+                ? createTargetedProofOfPossession(myKeyPair, pCertificate)
+                : new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));
     }
 
     /**
      * Create Targeted Proof of Possession.
-     * @param pPKCS8Encoding the PKCS8Encoding
+     * @param pKeyPair the keyPair
      * @param pCertificate the local certificate
      * @return the proof of possession
      * @throws OceanusException on error
      */
-    private ProofOfPossession createTargetedProofOfPossession(final PKCS8EncodedKeySpec pPKCS8Encoding,
+    private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws OceanusException {
+        /* Obtain the PKCS8Encoding of the private key */
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
+        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
+
         /* Prepare for encryption */
         final GordianCRMResult myResult = theEncryptor.prepareForEncryption(theTarget);
 
@@ -243,7 +247,7 @@ public class GordianCRMBuilder {
         final GordianKeySet myKeySet = myResult.getKeySet();
 
         /* Create the encrypted data */
-        final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myKeySet, pPKCS8Encoding, pCertificate);
+        final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myKeySet, myPKCS8Encoding, pCertificate);
 
         /* Create the Proof of possession */
         final EnvelopedData myEnvData = new EnvelopedData(null, new BERSet(myResult.getRecipient()), myInfo, (BERSet) null);
