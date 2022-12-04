@@ -90,66 +90,46 @@ public class GordianCRMBuilder {
     private static final int PBM_ITERATIONS = 10000;
 
     /**
-     * The factory.
+     * The gateway.
      */
-    private final GordianCoreFactory theFactory;
-
-    /**
-     * The encryptor.
-     */
-    private final GordianCRMEncryptor theEncryptor;
-
-    /**
-     * The target certificate.
-     */
-    private final GordianCoreCertificate theTarget;
-
-    /**
-     * The secret MAC key value.
-     */
-    private final byte[] theMACSecret;
+    private final GordianCoreKeyStoreGateway theGateway;
 
     /**
      * Constructor.
-     * @param pFactory the factory
-     * @param pEncryptor the encryptor
-     * @param pMACSecret the MAC secret value
-     * @param pTarget the target certificate
+     * @param pGateway the gateway
      */
-    public GordianCRMBuilder(final GordianCoreFactory pFactory,
-                             final GordianCRMEncryptor pEncryptor,
-                             final byte[] pMACSecret,
-                             final GordianCoreCertificate pTarget) {
-        theFactory = pFactory;
-        theEncryptor = pEncryptor;
-        theMACSecret = pMACSecret;
-        theTarget = pTarget;
+    GordianCRMBuilder(final GordianCoreKeyStoreGateway pGateway) {
+        theGateway = pGateway;
     }
 
     /**
      * Create a Certificate request.
      * @param pKeyPair the keyStore entry
+     * @param pRequestId the reqId
      * @return the encoded PEM object
      * @throws OceanusException on error
      */
-    public GordianPEMObject createCertificateRequest(final GordianKeyStorePair pKeyPair) throws OceanusException {
+    public GordianPEMObject createCertificateRequest(final GordianKeyStorePair pKeyPair,
+                                                     final int pRequestId) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the certificate */
             final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
 
             /* Create the Certificate request */
-            final CertRequest myCertReq = createCertRequest(myCert);
+            final CertRequest myCertReq = createCertRequest(myCert, pRequestId);
 
             /* Create the ProofOfPossession */
             final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
 
             /* Create control if necessary */
             AttributeTypeAndValue[] myAttrs = null;
-            if (theMACSecret != null) {
+            final byte[] myMACSecret = theGateway.getMACSecret();
+            if (myMACSecret != null) {
                 /* Create the PKMACValue Control */
                 final PBMParameter myParams = generatePBMParameters();
-                final PKMACValue myMACValue = calculatePKMacValue(theFactory, theMACSecret, myCertReq.getCertTemplate().getPublicKey(), myParams);
+                final GordianCoreFactory myFactory = theGateway.getFactory();
+                final PKMACValue myMACValue = calculatePKMacValue(myFactory, myMACSecret, myCertReq.getCertTemplate().getPublicKey(), myParams);
                 myAttrs = new AttributeTypeAndValue[] { new AttributeTypeAndValue(MACVALUEATTROID, myMACValue) };
             }
 
@@ -166,10 +146,12 @@ public class GordianCRMBuilder {
     /**
      * Create a Certificate request.
      * @param pCertificate the local certificate
+     * @param pRequestId the reqId
      * @return the certificate request
      * @throws OceanusException on error
      */
-    private static CertRequest createCertRequest(final GordianCoreCertificate pCertificate) throws OceanusException {
+    private static CertRequest createCertRequest(final GordianCoreCertificate pCertificate,
+                                                 final int pRequestId) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the Certificate template Builder */
@@ -189,11 +171,8 @@ public class GordianCRMBuilder {
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             myBuilder.setExtensions(myGenerator.generate());
 
-            /* Using the current timestamp as the certificate serial number */
-            final int myNow = (int) System.currentTimeMillis();
-
             /* Create the Certificate request */
-            return new CertRequest(myNow, myBuilder.build(), null);
+            return new CertRequest(pRequestId, myBuilder.build(), null);
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to create Certificate request", e);
@@ -214,13 +193,14 @@ public class GordianCRMBuilder {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianSignatureSpec mySignSpec = theFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
 
         /* Send encrypted key via targeted encryption or request encrypted certificate */
-        return theTarget != null
+        final GordianCoreCertificate myTarget = theGateway.getTarget();
+        return myTarget != null
                 ? createTargetedProofOfPossession(myKeyPair, pCertificate)
                 : new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));
     }
@@ -235,13 +215,15 @@ public class GordianCRMBuilder {
     private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws OceanusException {
         /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
 
         /* Prepare for encryption */
-        final GordianCRMResult myResult = theEncryptor.prepareForEncryption(theTarget);
+        final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
+        final GordianCoreCertificate myTarget = theGateway.getTarget();
+        final GordianCRMResult myResult = myEncryptor.prepareForEncryption(myTarget);
 
         /* Derive the keySet from the key */
         final GordianKeySet myKeySet = myResult.getKeySet();
@@ -266,7 +248,7 @@ public class GordianCRMBuilder {
                                                final GordianSignatureSpec pSignSpec,
                                                final CertRequest pCertRequest) throws OceanusException {
         /* Create the signer */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);
         final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);
@@ -335,7 +317,7 @@ public class GordianCRMBuilder {
     private PBMParameter generatePBMParameters() {
         /* Create the salt value */
         final byte[] mySalt = new byte[GordianLength.LEN_256.getByteLength()];
-        final GordianRandomSource mySource = theFactory.getRandomSource();
+        final GordianRandomSource mySource = theGateway.getFactory().getRandomSource();
         mySource.getRandom().nextBytes(mySalt);
 
         /* Access algorithm ids */

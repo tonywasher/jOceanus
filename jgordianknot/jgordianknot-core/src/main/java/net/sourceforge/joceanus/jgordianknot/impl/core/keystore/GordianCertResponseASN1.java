@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianCertResponseASN1 ::= SEQUENCE {
  *      certReqId    INTEGER
+ *      certRespId   INTEGER
  *      CHOICE {
  *          certificate     [1] Certificate,
  *          encrypted       [2] EnvelopedData
@@ -75,6 +76,11 @@ public class GordianCertResponseASN1
     private final int theReqId;
 
     /**
+     * The responseId.
+     */
+    private final int theRespId;
+
+    /**
      * The signer certificates.
      */
     private final Certificate[] theSignerCerts;
@@ -92,12 +98,17 @@ public class GordianCertResponseASN1
     /**
      * Create the ASN1 sequence.
      * @param pReqId the requestId
+     * @param pRespId the responseId
+     * @param pCertificate the certificate
+     * @param pSignerCerts the signerCertificates
      */
     private GordianCertResponseASN1(final int pReqId,
+                                    final int pRespId,
                                     final Certificate pCertificate,
                                     final Certificate[] pSignerCerts) {
         /* Store the Details */
         theReqId = pReqId;
+        theRespId = pRespId;
         theCertificate = pCertificate;
         theSignerCerts = pSignerCerts.clone();
     }
@@ -113,6 +124,7 @@ public class GordianCertResponseASN1
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
             theReqId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
+            theRespId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
             final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
             switch (myTagged.getTagNo()) {
                 case TAG_STANDARD:
@@ -156,10 +168,12 @@ public class GordianCertResponseASN1
     /**
      * Create the certificate response.
      * @param pReqId the request id
+     * @param pRespId the responseId
      * @param pChain the certificate chain
      * @return the response
      */
     public static GordianCertResponseASN1 createCertResponse(final int pReqId,
+                                                             final int pRespId,
                                                              final List<GordianCertificate> pChain) {
         /* Create the chain */
         final Certificate[] myChain = new Certificate[pChain.size() - 1];
@@ -174,7 +188,7 @@ public class GordianCertResponseASN1
         }
 
         /* Return the chain */
-        return new GordianCertResponseASN1(pReqId, myCert, myChain);
+        return new GordianCertResponseASN1(pReqId, pRespId, myCert, myChain);
     }
 
     /**
@@ -183,6 +197,14 @@ public class GordianCertResponseASN1
      */
     public int getReqId() {
         return theReqId;
+    }
+
+    /**
+     * Obtain the responseId.
+     * @return the id
+     */
+    public int getRespId() {
+        return theRespId;
     }
 
     /**
@@ -224,6 +246,7 @@ public class GordianCertResponseASN1
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(new ASN1Integer(theReqId));
+        v.add(new ASN1Integer(theRespId));
         if (theCertificate != null) {
             v.add(new DERTaggedObject(false, TAG_STANDARD, theCertificate));
         } else if (theEncrypted != null) {

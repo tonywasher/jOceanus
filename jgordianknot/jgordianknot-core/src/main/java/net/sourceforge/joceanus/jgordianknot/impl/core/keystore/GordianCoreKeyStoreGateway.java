@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
@@ -34,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -64,6 +62,26 @@ public class GordianCoreKeyStoreGateway
      * The encryptor.
      */
     private final GordianCRMEncryptor theEncryptor;
+
+    /**
+     * The builder.
+     */
+    private final GordianCRMBuilder theBuilder;
+
+    /**
+     * The parser.
+     */
+    private final GordianCRMParser theParser;
+
+    /**
+     * The next messageId.
+     */
+    private final AtomicInteger theNextId;
+
+    /**
+     * The requestMap.
+     */
+    private final Map<Integer, GordianRequestCache> theRequestMap;
 
     /**
      * The encryption target certificate.
@@ -97,10 +115,25 @@ public class GordianCoreKeyStoreGateway
      */
     GordianCoreKeyStoreGateway(final GordianCoreFactory pFactory,
                                final GordianCoreKeyStoreManager pKeyStoreMgr) {
+        /* Store parameters */
         theFactory = pFactory;
         theKeyStoreMgr = pKeyStoreMgr;
         theKeyStore = theKeyStoreMgr.getKeyStore();
+
+        /* Create underlying classes */
         theEncryptor = new GordianCRMEncryptor(theFactory);
+        theBuilder = new GordianCRMBuilder(this);
+        theParser = new GordianCRMParser(this);
+        theNextId = new AtomicInteger(1);
+        theRequestMap = new HashMap<>();
+    }
+
+    /**
+     * Obtain the factory.
+     * @return the factory
+     */
+    GordianCoreFactory getFactory() {
+        return theFactory;
     }
 
     @Override
@@ -113,16 +146,44 @@ public class GordianCoreKeyStoreGateway
         return theKeyStoreMgr;
     }
 
-    @Override
-    public void exportEntry(final String pAlias,
-                            final File pFile,
-                            final char[] pPassword,
-                            final GordianLock pLock) throws OceanusException {
-        try (FileOutputStream myStream = new FileOutputStream(pFile)) {
-            exportEntry(pAlias, myStream, pPassword, pLock);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to write to file", e);
-        }
+    /**
+     * Obtain the encryptor.
+     * @return the encryptor
+     */
+    GordianCRMEncryptor getEncryptor() {
+        return theEncryptor;
+    }
+
+    /**
+     * Obtain the signer.
+     * @return the signer
+     */
+    GordianKeyStorePair getSigner() {
+        return theKeyPairCertifier;
+    }
+
+    /**
+     * Obtain the MACSecret.
+     * @return the secret
+     */
+    byte[] getMACSecret() {
+        return theMACSecret;
+    }
+
+    /**
+     * Obtain the EncryptionTarget.
+     * @return the target
+     */
+    GordianCoreCertificate getTarget() {
+        return theTarget;
+    }
+
+    /**
+     * Obtain the PasswordResolver.
+     * @return the passwordResolver
+     */
+    Function<String, char[]> getPasswordResolver() {
+        return thePasswordResolver;
     }
 
     @Override
@@ -152,17 +213,6 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public void createCertificateRequest(final String pAlias,
-                                         final File pFile,
-                                         final char[] pPassword) throws OceanusException {
-        try (FileOutputStream myStream = new FileOutputStream(pFile)) {
-            createCertificateRequest(pAlias, myStream, pPassword);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create request", e);
-        }
-    }
-
-    @Override
-    public void createCertificateRequest(final String pAlias,
                                          final OutputStream pStream,
                                          final char[] pPassword) throws OceanusException {
         /* Access the requested entry */
@@ -170,9 +220,15 @@ public class GordianCoreKeyStoreGateway
 
         /* If it is a keyPair */
         if (myEntry instanceof GordianKeyStorePair) {
-            /* Create the certificate request and write to output stream */
-            final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theEncryptor, theMACSecret, theTarget);
-            final GordianPEMObject myCertReq = myBuilder.createCertificateRequest((GordianKeyStorePair) myEntry);
+            /* Create the certificate request */
+            final int myReqId = theNextId.getAndIncrement();
+            final GordianKeyStorePair myKeyPair = (GordianKeyStorePair) myEntry;
+            final GordianPEMObject myCertReq = theBuilder.createCertificateRequest(myKeyPair, myReqId);
+
+            /* Store details in requestMap */
+            theRequestMap.put(myReqId, new GordianRequestCache(pAlias, myKeyPair));
+
+            /* Write request to output stream */
             final GordianPEMParser myParser = new GordianPEMParser();
             myParser.writePEMFile(pStream, Collections.singletonList(myCertReq));
 
@@ -208,24 +264,13 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void processCertificateRequest(final File pInFile,
-                                          final File pOutFile) throws OceanusException {
-        try (FileInputStream myInStream = new FileInputStream(pInFile);
-            FileOutputStream myOutStream = new FileOutputStream(pOutFile)) {
-            processCertificateRequest(myInStream, myOutStream);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to process request", e);
-        }
-    }
-
-    @Override
     public void processCertificateRequest(final InputStream pInStream,
                                           final OutputStream pOutStream) throws OceanusException {
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
-            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theEncryptor, theMACSecret, thePasswordResolver);
-            final GordianPEMObject myResponse = myCRMParser.decodeCertificateRequest(myObject);
+            final int myRespId = theNextId.getAndIncrement();
+            final GordianPEMObject myResponse = theParser.decodeCertificateRequest(myObject, myRespId);
             myParser.writePEMFile(pOutStream, Collections.singletonList(myResponse));
         } else {
             throw new GordianDataException("Unexpected object type");
@@ -233,26 +278,15 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public List<GordianCertificate> processCertificateResponse(final InputStream pInStream,
-                                                               final GordianKeyStorePair pKeyPair) throws OceanusException {
+    public List<GordianCertificate> processCertificateResponse(final InputStream pInStream) throws OceanusException {
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTRESP) {
-            final GordianKeyPairCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theEncryptor, theMACSecret, thePasswordResolver);
-            final GordianCertResponseASN1 myResponse = myCRMParser.decodeCertificateResponse(myObject, pKeyPair);
+            final GordianCertResponseASN1 myResponse = theParser.decodeCertificateResponse(myObject, theRequestMap);
             final GordianCertificate[] myChain = myResponse.getCertificateChain(theEncryptor);
             return List.of(myChain);
         } else {
             throw new GordianDataException("Unexpected object type");
-        }
-    }
-
-    @Override
-    public GordianKeyStoreEntry importEntry(final File pFile) throws OceanusException {
-        try (FileInputStream myStream = new FileInputStream(pFile)) {
-            return importEntry(myStream);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to read from file", e);
         }
     }
 
@@ -264,17 +298,50 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public List<GordianKeyStoreEntry> importCertificates(final File pFile) throws OceanusException {
-        try (FileInputStream myStream = new FileInputStream(pFile)) {
-            return importCertificates(myStream);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to read from file", e);
-        }
-    }
-
-    @Override
     public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws OceanusException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         return myCoder.importCertificates(pStream);
+    }
+
+    /**
+     * RequestMapCache.
+     */
+    static final class GordianRequestCache {
+         /**
+         * The alias.
+         */
+        private final String theAlias;
+
+        /**
+         * The KeyPair.
+         */
+        private final GordianKeyStorePair theKeyPair;
+
+        /**
+         * Constructor.
+         * @param pAlias the alias
+         * @param pKeyPair the keyPair
+         */
+        GordianRequestCache(final String pAlias,
+                            final GordianKeyStorePair pKeyPair) {
+            theAlias = pAlias;
+            theKeyPair = pKeyPair;
+        }
+
+        /**
+         * Obtain the alias.
+         * @return the alias
+         */
+        String getAlias() {
+            return theAlias;
+        }
+
+        /**
+         * Obtain the keyPair.
+         * @return the keyPair
+         */
+        GordianKeyStorePair getKeyPair() {
+            return theKeyPair;
+        }
     }
 }

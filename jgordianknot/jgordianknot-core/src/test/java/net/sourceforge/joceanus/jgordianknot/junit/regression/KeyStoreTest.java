@@ -390,7 +390,7 @@ public class KeyStoreTest {
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
-        final GordianKeyStorePair myPair = myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
+        myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
 
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
@@ -403,7 +403,7 @@ public class KeyStoreTest {
 
         /* Input the new certificateChain and install it */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream, myPair);
+        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream);
         myStore.updateCertificateChain(KeyStoreAlias.SIGNER.getName(), myChain);
 
         /* Cleanup */
@@ -430,7 +430,7 @@ public class KeyStoreTest {
                 ? KeyStoreAlias.ENCRYPT
                 : KeyStoreAlias.AGREE;
         final X500Name myCertName = buildX500Name(myAlias);
-        final GordianKeyStorePair myPair = myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), DEF_PASSWORD);
+        myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), DEF_PASSWORD);
 
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
@@ -449,7 +449,7 @@ public class KeyStoreTest {
 
         /* Input the new certificateChain and install it */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream, myPair);
+        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream);
         myStore.updateCertificateChain(myAlias.getName(), myChain);
 
         /* Cleanup */
