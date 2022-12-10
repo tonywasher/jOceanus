@@ -21,7 +21,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import org.bouncycastle.asn1.ASN1Integer;
@@ -66,6 +65,7 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreGateway.GordianRequestCache;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -100,22 +100,35 @@ public class GordianCRMParser {
     }
 
     /**
-     * Decode a certificate request.
-     * @param pObject the PEM object
-     * @param pResponseId the responseId
-     * @return the PEM certificate response
+     * Does a certificate request require encryption?
+     * @param pCertReq the certificate request
+     * @return true/false
+     */
+    static boolean requiresEncryption(final CertReqMsg pCertReq) {
+        /* Only encipherment keys may be encrypted */
+        final ProofOfPossession myProof = pCertReq.getPopo();
+        if (myProof.getType() != ProofOfPossession.TYPE_KEY_ENCIPHERMENT){
+            return false;
+        }
+
+        /* Check that we are responding with an encrypted certificate */
+        final POPOPrivKey myPOP = POPOPrivKey.getInstance(myProof.getObject());
+        final int myProofType = myPOP.getType();
+        return myProofType == POPOPrivKey.subsequentMessage
+                 && ASN1Integer.getInstance(myPOP.getValue()).intValueExact() == SubsequentMessage.encrCert.intValueExact();
+    }
+
+    /**
+     * process a certificate request.
+     * @param pRequest the request
+     * @return the signed certificate chain
      * @throws OceanusException on error
      */
-    public GordianPEMObject decodeCertificateRequest(final GordianPEMObject pObject,
-                                                     final int pResponseId) throws OceanusException {
-        /* Reject if not CertReq */
-        GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.CERTREQ);
-
+    List<GordianCertificate> processCertificateRequest(final CertReqMsg pRequest) throws OceanusException {
         /* Derive the certificate request message */
-        final CertReqMsg myReq = CertReqMsg.getInstance(pObject.getEncoded());
-        final CertRequest myCertReq = myReq.getCertReq();
-        final ProofOfPossession myProof = myReq.getPopo();
-        final AttributeTypeAndValue[] myAttrs = myReq.getRegInfo();
+        final CertRequest myCertReq = pRequest.getCertReq();
+        final ProofOfPossession myProof = pRequest.getPopo();
+        final AttributeTypeAndValue[] myAttrs = pRequest.getRegInfo();
         final CertTemplate myTemplate = myCertReq.getCertTemplate();
         final X500Name mySubject = myTemplate.getSubject();
         final SubjectPublicKeyInfo myPublic = myTemplate.getPublicKey();
@@ -130,51 +143,35 @@ public class GordianCRMParser {
         final GordianCoreKeyStoreManager myKeyStoreMgr = theGateway.getKeyStoreManager();
         final GordianKeyStorePair mySigner = theGateway.getSigner();
         if (mySigner == null) {
-            throw new GordianDataException("Null keyPairSigner");
+            throw new GordianLogicException("Null keyPairSigner");
         }
-        final List<GordianCertificate> myChain = myKeyStoreMgr.signKeyPair(myPair, mySubject, myUsage, mySigner);
-
-        /* Create the certificate response */
-        final int myReqId = myCertReq.getCertReqId().intValueExact();
-        final GordianCertResponseASN1 myResponse = GordianCertResponseASN1.createCertResponse(myReqId, pResponseId, myChain);
-        if (encryptCert) {
-            final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
-            myResponse.encryptCertificate(myEncryptor);
-        }
-
-        /* Return the certificate response */
-        return GordianPEMCoder.encodeCertResponse(myResponse);
+        return myKeyStoreMgr.signKeyPair(myPair, mySubject, myUsage, mySigner);
     }
 
     /**
-     * decode the certificate response.
-     * @param pObject the encoded response
-     * @param pRequestMap the requestMap
-     * @return the decoded response
+     * process a certificate response.
+     * @param pResponse the certificate response
+     * @param pKeyPair the keyPair
      */
-    public GordianCertResponseASN1 decodeCertificateResponse(final GordianPEMObject pObject,
-                                                             final Map<Integer, GordianRequestCache> pRequestMap) throws OceanusException {
-        /* Reject if not CertResponse */
-        GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.CERTRESP);
-
-        /* Derive the certificate request message */
-        final GordianCertResponseASN1 myResp = GordianCertResponseASN1.getInstance(pObject.getEncoded());
-
-        /* Access the original keyPair for the request */
-        final GordianRequestCache myCache = pRequestMap.get(myResp.getReqId());
-        if (myCache == null) {
-            throw new GordianDataException("Unrecognised request Id");
-        }
-        pRequestMap.remove(myResp.getReqId());
-
+    public void processCertificateResponse(final GordianCertResponseASN1 pResponse,
+                                           final GordianKeyStorePair pKeyPair) throws OceanusException {
         /* Decrypt if necessary */
-        if (myResp.isEncrypted()) {
+        if (pResponse.isEncrypted()) {
             final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
-            myResp.decryptCertificate(myEncryptor, myCache.getKeyPair());
+            pResponse.decryptCertificate(myEncryptor, pKeyPair);
         }
 
-        /* Return the response */
-        return myResp;
+        /* Check that the publicKey matches */
+        final GordianCoreCertificate myNewCert = pResponse.getCertificate(theGateway.getEncryptor());
+        if (!myNewCert.checkMatchingPublicKey(pKeyPair.getKeyPair())) {
+            throw new GordianDataException("Mismatch on publicKey");
+        }
+
+        /* Check that subjectName matches */
+        final GordianCoreCertificate myOldCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+        if (!myNewCert.getSubjectName().equals(myOldCert.getSubjectName())) {
+            throw new GordianDataException("Mismatch on subjectName");
+        }
     }
 
     /**

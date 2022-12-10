@@ -56,13 +56,11 @@ public interface GordianKeyStoreGateway {
      * export object to stream.
      * @param pAlias the alias
      * @param pStream the target stream
-     * @param pPassword the keyStore password for the entry
      * @param pLock the lock for the file
      * @throws OceanusException on error
      */
     void exportEntry(String pAlias,
                      OutputStream pStream,
-                     char[] pPassword,
                      GordianLock pLock) throws OceanusException;
 
     /**
@@ -75,11 +73,9 @@ public interface GordianKeyStoreGateway {
     /**
      * set the Certifier.
      * @param pAlias the alias
-     * @param pPassword the password
      * @throws OceanusException on error
      */
-    void setCertifier(String pAlias,
-                      char[] pPassword) throws OceanusException;
+    void setCertifier(String pAlias) throws OceanusException;
 
     /**
      * set the passwordResolver.
@@ -103,12 +99,10 @@ public interface GordianKeyStoreGateway {
      * create certificate request.
      * @param pAlias the alias
      * @param pStream the target stream
-     * @param pPassword the password
      * @throws OceanusException on error
      */
     void createCertificateRequest(String pAlias,
-                                  OutputStream pStream,
-                                  char[] pPassword) throws OceanusException;
+                                  OutputStream pStream) throws OceanusException;
 
     /**
      * process certificate request.
@@ -122,10 +116,9 @@ public interface GordianKeyStoreGateway {
     /**
      * process certificate response.
      * @param pInStream the input stream
-     * @return the certificate chain as a list
      * @throws OceanusException on error
      */
-    List<GordianCertificate> processCertificateResponse(InputStream pInStream) throws OceanusException;
+    void processCertificateResponse(InputStream pInStream) throws OceanusException;
 
     /**
      * import object from stream.

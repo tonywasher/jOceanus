@@ -32,6 +32,7 @@ import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
+import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.x509.Certificate;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
@@ -213,6 +214,22 @@ public class GordianCertResponseASN1
      */
     public boolean isEncrypted() {
         return theEncrypted != null;
+    }
+
+    /**
+     * Obtain the certificate.
+     * @param pEncryptor the encryptor
+     * @return the certificate
+     * @throws OceanusException on error
+     */
+    public GordianCoreCertificate getCertificate(final GordianCRMEncryptor pEncryptor) throws OceanusException {
+        /* If the certificate is still encrypted */
+        if (isEncrypted()) {
+            throw new GordianLogicException("Certificate still encrypted");
+        }
+
+        /* Convert and return the certificate */
+        return pEncryptor.convertCertificate(theCertificate);
     }
 
     /**

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.BERSet;
@@ -106,41 +107,33 @@ public class GordianCRMBuilder {
      * Create a Certificate request.
      * @param pKeyPair the keyStore entry
      * @param pRequestId the reqId
-     * @return the encoded PEM object
+     * @return the certificate request message
      * @throws OceanusException on error
      */
-    public GordianPEMObject createCertificateRequest(final GordianKeyStorePair pKeyPair,
-                                                     final int pRequestId) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Access the certificate */
-            final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+    public CertReqMsg createCertificateRequest(final GordianKeyStorePair pKeyPair,
+                                               final int pRequestId) throws OceanusException {
+        /* Access the certificate */
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
 
-            /* Create the Certificate request */
-            final CertRequest myCertReq = createCertRequest(myCert, pRequestId);
+        /* Create the Certificate request */
+        final CertRequest myCertReq = createCertRequest(myCert, pRequestId);
 
-            /* Create the ProofOfPossession */
-            final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
+        /* Create the ProofOfPossession */
+        final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
 
-            /* Create control if necessary */
-            AttributeTypeAndValue[] myAttrs = null;
-            final byte[] myMACSecret = theGateway.getMACSecret();
-            if (myMACSecret != null) {
-                /* Create the PKMACValue Control */
-                final PBMParameter myParams = generatePBMParameters();
-                final GordianCoreFactory myFactory = theGateway.getFactory();
-                final PKMACValue myMACValue = calculatePKMacValue(myFactory, myMACSecret, myCertReq.getCertTemplate().getPublicKey(), myParams);
-                myAttrs = new AttributeTypeAndValue[] { new AttributeTypeAndValue(MACVALUEATTROID, myMACValue) };
-            }
-
-            /* Create a CRMF */
-            final CertReqMsg myReqMsg = new CertReqMsg(myCertReq, myProof, myAttrs);
-            final GordianPEMObjectType myObjectType = GordianPEMObjectType.CERTREQ;
-            return new GordianPEMObject(myObjectType, myReqMsg.getEncoded());
-
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create CRMF", e);
+        /* Create control if necessary */
+        AttributeTypeAndValue[] myAttrs = null;
+        final byte[] myMACSecret = theGateway.getMACSecret();
+        if (myMACSecret != null) {
+            /* Create the PKMACValue Control */
+            final PBMParameter myParams = generatePBMParameters();
+            final GordianCoreFactory myFactory = theGateway.getFactory();
+            final PKMACValue myMACValue = calculatePKMacValue(myFactory, myMACSecret, myCertReq.getCertTemplate().getPublicKey(), myParams);
+            myAttrs = new AttributeTypeAndValue[] { new AttributeTypeAndValue(MACVALUEATTROID, myMACValue) };
         }
+
+        /* Create a CRMF */
+        return new CertReqMsg(myCertReq, myProof, myAttrs);
     }
 
     /**
@@ -332,14 +325,14 @@ public class GordianCRMBuilder {
      * Calculate PKMacValue.
      * @param pFactory the factory
      * @param pSecret the secret value
-     * @param pPublicKey the publicKey
+     * @param pObject the object
      * @param pParams the PBM Parameters
      * @return the PKMacValue
      * @throws OceanusException on error
      */
     static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
                                           final byte[] pSecret,
-                                          final SubjectPublicKeyInfo pPublicKey,
+                                          final ASN1Object pObject,
                                           final PBMParameter pParams) throws OceanusException {
         /* Protect against exceptions */
         try {
@@ -367,13 +360,13 @@ public class GordianCRMBuilder {
             myMac.initKeyBytes(myKey);
 
             /* Create the result */
-            myMac.update(pPublicKey.toASN1Primitive().getEncoded());
+            myMac.update(pObject.toASN1Primitive().getEncoded());
             final byte[] myResult = myMac.finish();
             return new PKMACValue(pParams, new DERBitString(myResult));
 
             /* Handle exceptions */
         } catch (IOException e) {
-            throw new GordianIOException("Failed to parse SubjectPublicKeyInfo", e);
+            throw new GordianIOException("Failed to calculate PKMACValue", e);
         }
     }
 }

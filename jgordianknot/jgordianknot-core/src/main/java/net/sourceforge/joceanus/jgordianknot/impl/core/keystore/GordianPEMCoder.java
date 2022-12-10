@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -250,16 +252,21 @@ public class GordianPEMCoder {
     }
 
     /**
-     * Encode a Certificate Response.
-     * @param pResponse the certificate response
-     * @return the encoded object.
+     * Create a PEM Object
+     * @param pObjectType the objectType
+     * @param pObject the object
+     * @return the PEM Object
      * @throws OceanusException on error
      */
-    static GordianPEMObject encodeCertResponse(final GordianCertResponseASN1 pResponse) throws OceanusException {
+    static GordianPEMObject createPEMObject(final GordianPEMObjectType pObjectType,
+                                            final ASN1Object pObject) throws OceanusException {
+        /* Protect against exceptions */
         try {
-            return new GordianPEMObject(GordianPEMObjectType.CERTRESP, pResponse.getEncoded());
+            /* Create a PEM Object */
+            return new GordianPEMObject(pObjectType, pObject.getEncoded());
+
         } catch (IOException e) {
-            throw new GordianIOException("Failed to encode response", e);
+            throw new GordianIOException("Failed to create PEMObject", e);
         }
     }
 
@@ -396,6 +403,42 @@ public class GordianPEMCoder {
 
         /* parse the encoded bytes */
         return new GordianCoreCertificate(theFactory, pObject.getEncoded());
+    }
+
+    /**
+     * Decode a Certificate Request.
+     * @param pObjects the PEM object list
+     * @return the Certificate Request.
+     * @throws OceanusException on error
+     */
+    static CertReqMsg decodeCertRequest(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* Reject if not singleton list */
+        checkSingletonList(pObjects);
+        final GordianPEMObject myObject = pObjects.get(0);
+
+        /* Reject if not certificateRequest */
+        checkObjectType(myObject, GordianPEMObjectType.CERTREQ);
+
+        /* parse the encoded bytes */
+        return CertReqMsg.getInstance(myObject.getEncoded());
+    }
+
+    /**
+     * Decode a Certificate Response.
+     * @param pObjects the PEM object list
+     * @return the Certificate Response.
+     * @throws OceanusException on error
+     */
+    static GordianCertResponseASN1 decodeCertResponse(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* Reject if not singleton list */
+        checkSingletonList(pObjects);
+        final GordianPEMObject myObject = pObjects.get(0);
+
+        /* Reject if not certificateRequest */
+        checkObjectType(myObject, GordianPEMObjectType.CERTRESP);
+
+        /* parse the encoded bytes */
+        return GordianCertResponseASN1.getInstance(myObject.getEncoded());
     }
 
     /**

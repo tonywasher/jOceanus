@@ -383,9 +383,9 @@ public class KeyStoreTest {
 
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
-        myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
-        myGateway.setMACSecret(DEF_MACSECRET);
         myGateway.setPasswordResolver(pState::passwordResolver);
+        myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
+        myGateway.setMACSecret(DEF_MACSECRET);
 
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
@@ -394,7 +394,7 @@ public class KeyStoreTest {
 
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream, DEF_PASSWORD);
+        myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream);
 
         /* Process the certificateRequest */
         ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
@@ -403,8 +403,7 @@ public class KeyStoreTest {
 
         /* Input the new certificateChain and install it */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream);
-        myStore.updateCertificateChain(KeyStoreAlias.SIGNER.getName(), myChain);
+        myGateway.processCertificateResponse(myInputStream);
 
         /* Cleanup */
         myStore.deleteEntry(KeyStoreAlias.SIGNER.getName());
@@ -434,13 +433,13 @@ public class KeyStoreTest {
 
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
-        myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
-        myGateway.setMACSecret(DEF_MACSECRET);
         myGateway.setPasswordResolver(pState::passwordResolver);
+        myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
+        myGateway.setMACSecret(DEF_MACSECRET);
 
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        myGateway.createCertificateRequest(myAlias.getName(), myOutStream, DEF_PASSWORD);
+        myGateway.createCertificateRequest(myAlias.getName(), myOutStream);
 
         /* Process the certificateRequest */
         ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
@@ -449,12 +448,10 @@ public class KeyStoreTest {
 
         /* Input the new certificateChain and install it */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        final List<GordianCertificate> myChain = myGateway.processCertificateResponse(myInputStream);
-        myStore.updateCertificateChain(myAlias.getName(), myChain);
+        myGateway.processCertificateResponse(myInputStream);
 
         /* Cleanup */
         myStore.deleteEntry(myAlias.getName());
-        myStore.deleteEntry(KeyStoreAlias.TARGET.getName());
     }
 
     /**
@@ -531,7 +528,8 @@ public class KeyStoreTest {
         final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pGateway.getKeyStore();
         final GordianLock myLock = myStore.getFactory().getZipFactory().createPasswordLock(DEF_PASSWORD);
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        pGateway.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD, myLock);
+        pGateway.setPasswordResolver(a -> DEF_PASSWORD.clone());
+        pGateway.exportEntry(pAlias.getName(), myOutStream, myLock);
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
         pGateway.setLockResolver(l -> l.unlock(DEF_PASSWORD));
         Assertions.assertEquals(pEntry, pGateway.importEntry(myInputStream));

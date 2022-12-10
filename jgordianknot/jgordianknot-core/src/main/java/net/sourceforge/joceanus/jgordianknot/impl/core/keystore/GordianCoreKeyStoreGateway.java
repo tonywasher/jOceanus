@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import org.bouncycastle.asn1.crmf.CertReqMsg;
+
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
@@ -189,9 +191,9 @@ public class GordianCoreKeyStoreGateway
     @Override
     public void exportEntry(final String pAlias,
                             final OutputStream pStream,
-                            final char[] pPassword,
                             final GordianLock pLock) throws OceanusException {
-        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
+        final char[] myPassword = thePasswordResolver.apply(pAlias);
+        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         myCoder.exportKeyStoreEntry(myEntry, pStream, (GordianCoreLock) pLock);
     }
@@ -213,24 +215,25 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public void createCertificateRequest(final String pAlias,
-                                         final OutputStream pStream,
-                                         final char[] pPassword) throws OceanusException {
+                                         final OutputStream pStream) throws OceanusException {
         /* Access the requested entry */
-        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
+        final char[] myPassword = thePasswordResolver.apply(pAlias);
+        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
 
         /* If it is a keyPair */
         if (myEntry instanceof GordianKeyStorePair) {
             /* Create the certificate request */
             final int myReqId = theNextId.getAndIncrement();
             final GordianKeyStorePair myKeyPair = (GordianKeyStorePair) myEntry;
-            final GordianPEMObject myCertReq = theBuilder.createCertificateRequest(myKeyPair, myReqId);
+            final CertReqMsg myCertReq = theBuilder.createCertificateRequest(myKeyPair, myReqId);
 
             /* Store details in requestMap */
             theRequestMap.put(myReqId, new GordianRequestCache(pAlias, myKeyPair));
 
             /* Write request to output stream */
             final GordianPEMParser myParser = new GordianPEMParser();
-            myParser.writePEMFile(pStream, Collections.singletonList(myCertReq));
+            final GordianPEMObject myPEMObject = GordianPEMCoder.createPEMObject(GordianPEMObjectType.CERTREQ, myCertReq);
+            myParser.writePEMFile(pStream, Collections.singletonList(myPEMObject));
 
             /* else reject request */
         } else {
@@ -239,9 +242,9 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void setCertifier(final String pAlias,
-                             final char[] pPassword) throws OceanusException {
-        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
+    public void setCertifier(final String pAlias) throws OceanusException {
+        final char[] myPassword = thePasswordResolver.apply(pAlias);
+        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         if (myEntry instanceof GordianKeyStorePair) {
             final GordianKeyStorePair myPair = (GordianKeyStorePair) myEntry;
             final GordianCertificate myCert = myPair.getCertificateChain().get(0);
@@ -266,28 +269,48 @@ public class GordianCoreKeyStoreGateway
     @Override
     public void processCertificateRequest(final InputStream pInStream,
                                           final OutputStream pOutStream) throws OceanusException {
+        /* Decode the certificate request */
         final GordianPEMParser myParser = new GordianPEMParser();
-        final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
-        if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
-            final int myRespId = theNextId.getAndIncrement();
-            final GordianPEMObject myResponse = theParser.decodeCertificateRequest(myObject, myRespId);
-            myParser.writePEMFile(pOutStream, Collections.singletonList(myResponse));
-        } else {
-            throw new GordianDataException("Unexpected object type");
+        final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
+        final CertReqMsg myCertReq = GordianPEMCoder.decodeCertRequest(myObjects);
+
+        /* Determine responseId and sign certificate */
+        final int myRespId = theNextId.getAndIncrement();
+        final List<GordianCertificate> myChain = theParser.processCertificateRequest(myCertReq);
+
+        /* Create the certificate response */
+        final int myReqId = myCertReq.getCertReq().getCertReqId().intValueExact();
+        final GordianCertResponseASN1 myResponse = GordianCertResponseASN1.createCertResponse(myReqId, myRespId, myChain);
+        if (GordianCRMParser.requiresEncryption(myCertReq)) {
+            myResponse.encryptCertificate(theEncryptor);
         }
+
+        /* Write out the response */
+        final GordianPEMObject myPEMObject = GordianPEMCoder.createPEMObject(GordianPEMObjectType.CERTRESP, myResponse);
+        myParser.writePEMFile(pOutStream, Collections.singletonList(myPEMObject));
     }
 
     @Override
-    public List<GordianCertificate> processCertificateResponse(final InputStream pInStream) throws OceanusException {
+    public void processCertificateResponse(final InputStream pInStream) throws OceanusException {
+        /* Decode the certificate response */
         final GordianPEMParser myParser = new GordianPEMParser();
-        final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
-        if (myObject.getObjectType() == GordianPEMObjectType.CERTRESP) {
-            final GordianCertResponseASN1 myResponse = theParser.decodeCertificateResponse(myObject, theRequestMap);
-            final GordianCertificate[] myChain = myResponse.getCertificateChain(theEncryptor);
-            return List.of(myChain);
-        } else {
-            throw new GordianDataException("Unexpected object type");
+        final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
+        final GordianCertResponseASN1 myResponse = GordianPEMCoder.decodeCertResponse(myObjects);
+
+        /* Access the original keyPair for the request */
+        final GordianRequestCache myCache = theRequestMap.get(myResponse.getReqId());
+        if (myCache == null) {
+            throw new GordianDataException("Unrecognised request Id");
         }
+        theRequestMap.remove(myResponse.getReqId());
+
+        /* Process the certificate response */
+        theParser.processCertificateResponse(myResponse, myCache.getKeyPair());
+        final GordianCertificate[] myChain = myResponse.getCertificateChain(theEncryptor);
+
+        /* Update the keyStore with the new certificate chain */
+        final List<GordianCertificate> myList = List.of(myChain);
+        theKeyStore.updateCertificateChain(myCache.getAlias(), myList);
     }
 
     @Override
