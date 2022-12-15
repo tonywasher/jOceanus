@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
+import org.bouncycastle.asn1.crmf.PKMACValue;
+import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
@@ -91,9 +95,9 @@ public class GordianCoreKeyStoreGateway
     private GordianCoreCertificate theTarget;
 
     /**
-     * The secret MAC key value.
+     * The secret MAC key resolver.
      */
-    private byte[] theMACSecret;
+    private Function<X500Name, String> theMACSecretResolver;
 
     /**
      * The keyPairCertifier.
@@ -125,7 +129,7 @@ public class GordianCoreKeyStoreGateway
         /* Create underlying classes */
         theEncryptor = new GordianCRMEncryptor(theFactory);
         theBuilder = new GordianCRMBuilder(this);
-        theParser = new GordianCRMParser(this);
+        theParser = new GordianCRMParser(this, theBuilder);
         theNextId = new AtomicInteger(1);
         theRequestMap = new HashMap<>();
     }
@@ -166,10 +170,12 @@ public class GordianCoreKeyStoreGateway
 
     /**
      * Obtain the MACSecret.
+     * @param pName the name to resolve for
      * @return the secret
      */
-    byte[] getMACSecret() {
-        return theMACSecret;
+    byte[] getMACSecret(final X500Name pName) {
+        final String mySecret = theMACSecretResolver.apply(pName);
+        return mySecret == null ? null : TethysDataConverter.stringToByteArray(mySecret);
     }
 
     /**
@@ -209,8 +215,8 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void setMACSecret(final String pMACSecret) {
-        theMACSecret = TethysDataConverter.stringToByteArray(pMACSecret);
+    public void setMACSecretResolver(final Function<X500Name, String> pResolver) {
+        theMACSecretResolver = pResolver;
     }
 
     @Override
@@ -281,6 +287,15 @@ public class GordianCoreKeyStoreGateway
         /* Create the certificate response */
         final int myReqId = myCertReq.getCertReq().getCertReqId().intValueExact();
         final GordianCertResponseASN1 myResponse = GordianCertResponseASN1.createCertResponse(myReqId, myRespId, myChain);
+
+        /* Create PKMACValue if required */
+        final X500Name mySubject = myCertReq.getCertReq().getCertTemplate().getSubject();
+        final byte[] myMACSecret = getMACSecret(mySubject);
+        if (myMACSecret != null) {
+            final ASN1Object myMACData = myResponse.getMACData();
+            final PKMACValue myMACValue = theBuilder.createPKMACValue(myMACSecret, myMACData);
+            myResponse.setMACValue(myMACValue);
+        }
         if (GordianCRMParser.requiresEncryption(myCertReq)) {
             myResponse.encryptCertificate(theEncryptor);
         }

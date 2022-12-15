@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
@@ -56,6 +57,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  *          encrypted       [2] EnvelopedData
  *      }
  *      signerCerts  SEQUENCE SIZE (1..MAX) OF Certificate
+ *      macValue  PKMACValue OPTIONAL
  * }
  * </pre>
  */
@@ -97,6 +99,11 @@ public class GordianCertResponseASN1
     private EnvelopedData theEncrypted;
 
     /**
+     * The macValue.
+     */
+    private PKMACValue theMACValue;
+
+    /**
      * Create the ASN1 sequence.
      * @param pReqId the requestId
      * @param pRespId the responseId
@@ -122,10 +129,12 @@ public class GordianCertResponseASN1
     private GordianCertResponseASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Extract the parameters from the sequence */
+            /* Extract the request/responseIds from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
             theReqId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
             theRespId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
+
+            /* Extract the certificate from the sequence */
             final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
             switch (myTagged.getTagNo()) {
                 case TAG_STANDARD:
@@ -137,12 +146,19 @@ public class GordianCertResponseASN1
                 default:
                     throw new GordianDataException("Unexpected tag");
             }
+
+            /* Extract the signer Certificates from the sequence */
             final ASN1Sequence mySignerCerts = ASN1Sequence.getInstance(en.nextElement());
             final Enumeration<?> enCert = mySignerCerts.getObjects();
             final int myNumCerts = mySignerCerts.size();
             theSignerCerts = new Certificate[mySignerCerts.size()];
             for (int i = 0; i < myNumCerts; i++) {
                 theSignerCerts[i] = Certificate.getInstance(enCert.nextElement());
+            }
+
+            /* Extract the Optional MACValue from the sequence */
+            if (en.hasMoreElements()) {
+                theMACValue = PKMACValue.getInstance(en.nextElement());
             }
 
             /* handle exceptions */
@@ -209,6 +225,30 @@ public class GordianCertResponseASN1
     }
 
     /**
+     * Obtain the macValue.
+     * @return the macValue
+     */
+    public PKMACValue getMACValue() {
+        return theMACValue;
+    }
+
+    /**
+     * Set the macValue.
+     * @param pMACValue the macValue
+     */
+    public void setMACValue(final PKMACValue pMACValue) {
+        theMACValue = pMACValue;
+    }
+
+    /**
+     * Obtain the macData.
+     * @return the macData
+     */
+    public ASN1Object getMACData() {
+        return theCertificate;
+    }
+
+    /**
      * Is the response encrypted?
      * @return true/false
      */
@@ -270,6 +310,9 @@ public class GordianCertResponseASN1
             v.add(new DERTaggedObject(false, TAG_ENCRYPTED, theEncrypted));
         }
         v.add(new DERSequence(theSignerCerts));
+        if (theMACValue != null) {
+            v.add(theMACValue);
+        }
 
         return new DERSequence(v);
     }

@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Function;
 
+import org.bouncycastle.asn1.x500.X500Name;
+
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -90,10 +92,10 @@ public interface GordianKeyStoreGateway {
     void setLockResolver(GordianLockResolver pResolver);
 
     /**
-     * Set the MAC secret value.
-     * @param pMACSecret the secret value
+     * Set the MAC secret resolver.
+     * @param pResolver the resolver
      */
-    void setMACSecret(String pMACSecret);
+    void setMACSecretResolver(Function<X500Name, String> pResolver);
 
     /**
      * create certificate request.

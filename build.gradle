@@ -42,8 +42,8 @@ allprojects {
         bouncyCastleVersion = "1.72"
         jUnitVersion = "5.9.1"
         jsonVersion = "20220924"
-        mySQLVersion = "8.0.30"
-        postGreSQLVersion = "42.5.0"
+        mySQLVersion = "8.0.31"
+        postGreSQLVersion = "42.5.1"
         jtdsVersion = "1.3.1"
         h2Version = "2.1.214"
         apachePOIVersion = "5.2.3"
@@ -55,14 +55,14 @@ allprojects {
         javaFXPluginVersion = "0.0.13"
 
         /* Annotation versions */
-        jetBrainsAnnotationsVersion = "23.0.0"
+        jetBrainsAnnotationsVersion = "23.1.0"
 
         /* checkStyle config */
-        checkStyleVersion = "10.3.4"
+        checkStyleVersion = "10.5.0"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "6.50.0"
+        pmdVersion = "6.52.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.8"

@@ -41,6 +41,7 @@ import org.bouncycastle.asn1.crmf.ProofOfPossession;
 import org.bouncycastle.asn1.crmf.SubsequentMessage;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
@@ -63,6 +64,7 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
@@ -123,12 +125,11 @@ public class GordianCRMBuilder {
 
         /* Create control if necessary */
         AttributeTypeAndValue[] myAttrs = null;
-        final byte[] myMACSecret = theGateway.getMACSecret();
+        final X500Name myName = myCert.getSubjectName();
+        final byte[] myMACSecret = theGateway.getMACSecret(myName);
         if (myMACSecret != null) {
             /* Create the PKMACValue Control */
-            final PBMParameter myParams = generatePBMParameters();
-            final GordianCoreFactory myFactory = theGateway.getFactory();
-            final PKMACValue myMACValue = calculatePKMacValue(myFactory, myMACSecret, myCertReq.getCertTemplate().getPublicKey(), myParams);
+            final PKMACValue myMACValue = createPKMACValue(myMACSecret, myCertReq.getCertTemplate().getPublicKey());
             myAttrs = new AttributeTypeAndValue[] { new AttributeTypeAndValue(MACVALUEATTROID, myMACValue) };
         }
 
@@ -304,6 +305,36 @@ public class GordianCRMBuilder {
     }
 
     /**
+     * Create MACValue.
+     * @param pSecret the secret
+     * @param pData the data to calculate over
+     * @return the MACValue
+     * @throws OceanusException on error
+     */
+    public PKMACValue createPKMACValue(final byte[] pSecret,
+                                       final ASN1Object pData) throws OceanusException {
+        final PBMParameter myParams = generatePBMParameters();
+        return calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
+    }
+
+    /**
+     * Check PKMACValue.
+     * @param pSecret the secret
+     * @param pData the data to calculate over
+     * @param pMACValue the supplied MACValue
+     * @throws OceanusException on error
+     */
+    public void checkPKMACValue(final byte[] pSecret,
+                                final ASN1Object pData,
+                                final PKMACValue pMACValue) throws OceanusException {
+        final PBMParameter myParams = PBMParameter.getInstance(pMACValue.getAlgId().getParameters());
+        final PKMACValue myMACValue = GordianCRMBuilder.calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
+        if (!pMACValue.equals(myMACValue)) {
+            throw new GordianDataException("Invalid PKMacValue");
+        }
+    }
+
+    /**
      * Create PBMParameters.
      * @return the PBMParameters
      */
@@ -330,10 +361,10 @@ public class GordianCRMBuilder {
      * @return the PKMacValue
      * @throws OceanusException on error
      */
-    static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
-                                          final byte[] pSecret,
-                                          final ASN1Object pObject,
-                                          final PBMParameter pParams) throws OceanusException {
+    private static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
+                                                  final byte[] pSecret,
+                                                  final ASN1Object pObject,
+                                                  final PBMParameter pParams) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the digest */

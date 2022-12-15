@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cmp.PBMParameter;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
@@ -66,8 +67,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreGateway.GordianRequestCache;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -86,17 +85,19 @@ public class GordianCRMParser {
     private final GordianCoreKeyStoreGateway theGateway;
 
     /**
-     * Are we encrypting the response.
+     * The builder.
      */
-    private boolean encryptCert;
+    private final GordianCRMBuilder theBuilder;
 
     /**
      * Constructor.
      * @param pGateway the gateway
      */
-    GordianCRMParser(final GordianCoreKeyStoreGateway pGateway) {
+    GordianCRMParser(final GordianCoreKeyStoreGateway pGateway,
+                     final GordianCRMBuilder pBuilder) {
         /* Store parameters */
         theGateway = pGateway;
+        theBuilder = pBuilder;
     }
 
     /**
@@ -135,8 +136,7 @@ public class GordianCRMParser {
         final GordianKeyPairUsage myUsage = GordianCoreCertificate.determineUsage(myTemplate.getExtensions());
 
         /* Check the PKMacValue */
-        checkPKMACValue(myAttrs, myPublic);
-        encryptCert = false;
+        checkPKMACValue(mySubject, myAttrs, myPublic);
 
         /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
@@ -159,6 +159,24 @@ public class GordianCRMParser {
         if (pResponse.isEncrypted()) {
             final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
             pResponse.decryptCertificate(myEncryptor, pKeyPair);
+        }
+
+        /* Check the MACValue */
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+        final X500Name myName = myCert.getSubjectName();
+        final byte[] myMACSecret = theGateway.getMACSecret(myName);
+        final ASN1Object myMACData = pResponse.getMACData();
+        final PKMACValue mySent = pResponse.getMACValue();
+
+        /* If we have a mismatch on security */
+        if ((myMACSecret == null) != (mySent == null)) {
+            throw new GordianDataException("Mismatch on PKMAC Security");
+        }
+
+        /* If we have a MACValue */
+        if (mySent != null) {
+            /* Calculate the PKMACValue and compare with the value that was sent */
+            theBuilder.checkPKMACValue(myMACSecret, myMACData, mySent);
         }
 
         /* Check that the publicKey matches */
@@ -340,8 +358,6 @@ public class GordianCRMParser {
             } else if (myProofType != POPOPrivKey.subsequentMessage
                     || ASN1Integer.getInstance(myPOP.getValue()).intValueExact() != SubsequentMessage.encrCert.intValueExact()) {
                 throw new GordianDataException("Unsupported ProofType");
-            } else {
-                encryptCert = true;
             }
 
             /* Return the public only value */
@@ -443,18 +459,14 @@ public class GordianCRMParser {
 
     /**
      * Check PKMacValue.
+     * @param pSubject the subject name
      * @param pAttrs the attributes
      * @param pPublicKey the public key
      * @throws OceanusException on error
      */
-    private void checkPKMACValue(final AttributeTypeAndValue[] pAttrs,
+    private void checkPKMACValue(final X500Name pSubject,
+                                 final AttributeTypeAndValue[] pAttrs,
                                  final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
-        /* If we have no secret then this is a no-op */
-        final byte[] myMACSecret = theGateway.getMACSecret();
-        if (myMACSecret == null) {
-            return;
-        }
-
         /* Loop through the Attrs */
         AttributeTypeAndValue myAttr = null;
         if (pAttrs != null) {
@@ -466,18 +478,17 @@ public class GordianCRMParser {
             }
         }
 
-        /* We must have a PKMACValue */
-        if (myAttr == null) {
-            throw new GordianDataException("Missing PKMacValue");
+        /* If we have a mismatch on security */
+        final byte[] myMACSecret = theGateway.getMACSecret(pSubject);
+        if ((myMACSecret == null) != (myAttr == null)) {
+            throw new GordianDataException("Mismatch on PKMAC Security");
         }
 
-        /* Calculate the PKMACValue and compare with the value that was sent */
-        final GordianCoreFactory myFactory = theGateway.getFactory();
-        final PKMACValue mySent = PKMACValue.getInstance(myAttr.getValue());
-        final PBMParameter myParams = PBMParameter.getInstance(mySent.getAlgId().getParameters());
-        final PKMACValue myMACValue = GordianCRMBuilder.calculatePKMacValue(myFactory, myMACSecret, pPublicKey, myParams);
-        if (!mySent.equals(myMACValue)) {
-            throw new GordianDataException("Invalid PKMacValue");
+        /* If we have a MACValue */
+        if (myAttr != null) {
+            /* Calculate the PKMACValue and compare with the value that was sent */
+            final PKMACValue mySent = PKMACValue.getInstance(myAttr.getValue());
+            theBuilder.checkPKMACValue(myMACSecret, pPublicKey, mySent);
         }
     }
 }

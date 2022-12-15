@@ -385,7 +385,7 @@ public class KeyStoreTest {
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(pState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
-        myGateway.setMACSecret(DEF_MACSECRET);
+        myGateway.setMACSecretResolver(n -> DEF_MACSECRET);
 
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
@@ -435,7 +435,7 @@ public class KeyStoreTest {
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(pState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
-        myGateway.setMACSecret(DEF_MACSECRET);
+        myGateway.setMACSecretResolver(n -> DEF_MACSECRET);
 
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
