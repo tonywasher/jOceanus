@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +90,11 @@ public class GordianCoreKeyStoreGateway
     private final Map<Integer, GordianRequestCache> theRequestMap;
 
     /**
+     * The responseMap.
+     */
+    private final Map<Integer, GordianCoreCertificate> theResponseMap;
+
+    /**
      * The encryption target certificate.
      */
     private GordianCoreCertificate theTarget;
@@ -132,6 +137,7 @@ public class GordianCoreKeyStoreGateway
         theParser = new GordianCRMParser(this, theBuilder);
         theNextId = new AtomicInteger(1);
         theRequestMap = new HashMap<>();
+        theResponseMap = new HashMap<>();
     }
 
     /**
@@ -296,8 +302,21 @@ public class GordianCoreKeyStoreGateway
             final PKMACValue myMACValue = theBuilder.createPKMACValue(myMACSecret, myMACData);
             myResponse.setMACValue(myMACValue);
         }
+
+        /* Access the new certificate */
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.get(0);
+
+        /* If the certificate requires encryption */
         if (GordianCRMParser.requiresEncryption(myCertReq)) {
+            /* Encrypt the certificate */
             myResponse.encryptCertificate(theEncryptor);
+
+            /* Store in the response cache */
+            theResponseMap.put(myRespId, myCert);
+
+            /* else store the certificate */
+        } else {
+            theKeyStore.setCertificate(getCertificateAlias(myRespId), myCert);
         }
 
         /* Write out the response */
@@ -306,7 +325,8 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void processCertificateResponse(final InputStream pInStream) throws OceanusException {
+    public Integer processCertificateResponse(final InputStream pInStream,
+                                              final OutputStream pOutStream) throws OceanusException {
         /* Decode the certificate response */
         final GordianPEMParser myParser = new GordianPEMParser();
         final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
@@ -326,9 +346,45 @@ public class GordianCoreKeyStoreGateway
         /* Update the keyStore with the new certificate chain */
         final List<GordianCertificate> myList = List.of(myChain);
         theKeyStore.updateCertificateChain(myCache.getAlias(), myList);
+
+        /* calculate the Digest value */
+        final byte[] myDigest = theBuilder.calculateAckValue((GordianCoreCertificate) myChain[0]);
+        final GordianCertAckASN1 myAck = new GordianCertAckASN1(myResponse.getRespId(), myDigest);
+
+        /* Write out the response */
+        final GordianPEMObject myPEMObject = GordianPEMCoder.createPEMObject(GordianPEMObjectType.CERTACK, myAck);
+        myParser.writePEMFile(pOutStream, Collections.singletonList(myPEMObject));
+
+        /* Return the response id */
+        return myResponse.getRespId();
     }
 
     @Override
+    public void processCertificateAck(final InputStream pInStream) throws OceanusException {
+        /* Decode the certificate ack */
+        final GordianPEMParser myParser = new GordianPEMParser();
+        final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
+        final GordianCertAckASN1 myAck = GordianPEMCoder.decodeCertAck(myObjects);
+        final Integer myRespId = myAck.getRespId();
+
+        /* Access the original certificate for the ack */
+        final GordianCoreCertificate myCert = theResponseMap.get(myRespId);
+        if (myCert == null) {
+            throw new GordianDataException("Unrecognised response Id");
+        }
+        theResponseMap.remove(myRespId);
+
+        /* Check the Digest value */
+        final byte[]  myDigest = theBuilder.calculateAckValue(myCert);
+        if (!Arrays.equals(myDigest, myAck.getDigestValue())) {
+            throw new GordianDataException("Invalid Digest");
+        }
+
+        /* Store the certificate */
+        theKeyStore.setCertificate(getCertificateAlias(myRespId), myCert);
+    }
+
+        @Override
     public GordianKeyStoreEntry importEntry(final InputStream pStream) throws OceanusException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         myCoder.setLockResolver(theLockResolver);
@@ -339,6 +395,14 @@ public class GordianCoreKeyStoreGateway
     public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws OceanusException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         return myCoder.importCertificates(pStream);
+    }
+
+    /**
+     * Get certificate alias.
+     * @param pRespId the response id
+     */
+    public String getCertificateAlias(final Integer pRespId) {
+        return "AllocatedCertificate_" + pRespId;
     }
 
     /**

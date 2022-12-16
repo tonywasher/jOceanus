@@ -434,11 +434,29 @@ public class GordianPEMCoder {
         checkSingletonList(pObjects);
         final GordianPEMObject myObject = pObjects.get(0);
 
-        /* Reject if not certificateRequest */
+        /* Reject if not certificateResponse */
         checkObjectType(myObject, GordianPEMObjectType.CERTRESP);
 
         /* parse the encoded bytes */
         return GordianCertResponseASN1.getInstance(myObject.getEncoded());
+    }
+
+    /**
+     * Decode a Certificate Ack.
+     * @param pObjects the PEM object list
+     * @return the Certificate Ack.
+     * @throws OceanusException on error
+     */
+    static GordianCertAckASN1 decodeCertAck(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* Reject if not singleton list */
+        checkSingletonList(pObjects);
+        final GordianPEMObject myObject = pObjects.get(0);
+
+        /* Reject if not certificateAck */
+        checkObjectType(myObject, GordianPEMObjectType.CERTACK);
+
+        /* parse the encoded bytes */
+        return GordianCertAckASN1.getInstance(myObject.getEncoded());
     }
 
     /**

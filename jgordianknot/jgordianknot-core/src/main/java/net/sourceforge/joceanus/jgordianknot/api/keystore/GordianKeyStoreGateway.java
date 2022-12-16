@@ -118,9 +118,19 @@ public interface GordianKeyStoreGateway {
     /**
      * process certificate response.
      * @param pInStream the input stream
+     * @param pOutStream the output stream
+     * @return the response id
      * @throws OceanusException on error
      */
-    void processCertificateResponse(InputStream pInStream) throws OceanusException;
+    Integer processCertificateResponse(InputStream pInStream,
+                                       OutputStream pOutStream) throws OceanusException;
+
+    /**
+     * process certificate ack.
+     * @param pInStream the input stream
+     * @throws OceanusException on error
+     */
+    void processCertificateAck(InputStream pInStream) throws OceanusException;
 
     /**
      * import object from stream.

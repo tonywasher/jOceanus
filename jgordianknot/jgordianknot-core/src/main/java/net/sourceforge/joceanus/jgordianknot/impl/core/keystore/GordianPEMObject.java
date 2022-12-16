@@ -97,7 +97,12 @@ public class GordianPEMObject {
         /**
          * certificate response.
          */
-        CERTRESP("CERTIFICATE RESPONSE");
+        CERTRESP("CERTIFICATE RESPONSE"),
+
+        /**
+         * certificate acknowledgement.
+         */
+        CERTACK("CERTIFICATE ACK");
 
         /**
          * The header.

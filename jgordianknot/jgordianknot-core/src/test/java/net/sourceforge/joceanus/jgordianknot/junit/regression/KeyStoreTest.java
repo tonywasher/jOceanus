@@ -77,6 +77,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStore;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -401,12 +402,14 @@ public class KeyStoreTest {
         myOutStream.reset();
         myGateway.processCertificateRequest(myInputStream, myOutStream);
 
-        /* Input the new certificateChain and install it */
+        /* Process the certificateResponse */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myGateway.processCertificateResponse(myInputStream);
+        myOutStream.reset();
+        final Integer myRespId = myGateway.processCertificateResponse(myInputStream, myOutStream);
 
         /* Cleanup */
         myStore.deleteEntry(KeyStoreAlias.SIGNER.getName());
+        myStore.deleteEntry(((GordianCoreKeyStoreGateway) myGateway).getCertificateAlias(myRespId));
     }
 
     /**
@@ -446,12 +449,19 @@ public class KeyStoreTest {
         myOutStream.reset();
         myGateway.processCertificateRequest(myInputStream, myOutStream);
 
-        /* Input the new certificateChain and install it */
+        /* Process the certificateResponse */
         myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myGateway.processCertificateResponse(myInputStream);
+        myOutStream.reset();
+        final Integer myRespId = myGateway.processCertificateResponse(myInputStream, myOutStream);
+
+        /* Process the certificateAck */
+        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        myOutStream.reset();
+        myGateway.processCertificateAck(myInputStream);
 
         /* Cleanup */
         myStore.deleteEntry(myAlias.getName());
+        myStore.deleteEntry(((GordianCoreKeyStoreGateway) myGateway).getCertificateAlias(myRespId));
     }
 
     /**

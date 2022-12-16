@@ -68,7 +68,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -399,5 +398,29 @@ public class GordianCRMBuilder {
         } catch (IOException e) {
             throw new GordianIOException("Failed to calculate PKMACValue", e);
         }
+    }
+
+    /**
+     * Calculate AckValue.
+     * @param pCertificate the certificate
+     * @return the AckValue
+     * @throws OceanusException on error
+     */
+    public byte[] calculateAckValue(final GordianCoreCertificate pCertificate) throws OceanusException {
+        /* Access the MACSecret */
+        final X500Name mySubject = pCertificate.getSubjectName();
+        final byte[] myMACSecret = theGateway.getMACSecret(mySubject);
+
+        /* Create the digest */
+        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianDigestFactory myDigests = myFactory.getDigestFactory();
+        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpec.sha2(GordianLength.LEN_256));
+
+        /* Calculate the digest */
+        if (myMACSecret != null) {
+            myDigest.update(myMACSecret);
+        }
+        myDigest.update(pCertificate.getEncoded());
+        return myDigest.finish();
     }
 }
