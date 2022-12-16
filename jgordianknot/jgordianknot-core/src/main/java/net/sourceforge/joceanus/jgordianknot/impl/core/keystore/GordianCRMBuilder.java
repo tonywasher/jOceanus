@@ -19,63 +19,56 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.BERSet;
 import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.cmp.PBMParameter;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
-import org.bouncycastle.asn1.cms.RecipientIdentifier;
-import org.bouncycastle.asn1.cms.RecipientInfo;
-import org.bouncycastle.asn1.crmf.CRMFObjectIdentifiers;
+import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
 import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
-import org.bouncycastle.asn1.crmf.EncKeyWithID;
 import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.crmf.POPOPrivKey;
 import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.crmf.SubsequentMessage;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
-import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -84,69 +77,74 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianCRMBuilder {
     /**
-     * The factory.
+     * AttrOID branch.
      */
-    private final GordianCoreFactory theFactory;
+    public static final ASN1ObjectIdentifier ATTROID = GordianASN1Util.EXTOID.branch("4");
 
     /**
-     * The target certificate.
+     * AttrOID branch.
      */
-    private final GordianCoreCertificate theTarget;
+    public static final ASN1ObjectIdentifier MACVALUEATTROID = ATTROID.branch("1");
+
+    /**
+     * The # of hash iterations .
+     */
+    private static final int PBM_ITERATIONS = 10000;
+
+    /**
+     * The gateway.
+     */
+    private final GordianCoreKeyStoreGateway theGateway;
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     * @param pGateway the gateway
      */
-    public GordianCRMBuilder(final GordianCoreFactory pFactory) {
-        this(pFactory, null);
-    }
-
-    /**
-     * Constructor.
-     * @param pFactory the factory
-     * @param pTarget the target certificate
-     */
-    public GordianCRMBuilder(final GordianCoreFactory pFactory,
-                             final GordianCoreCertificate pTarget) {
-        theFactory = pFactory;
-        theTarget = pTarget;
+    GordianCRMBuilder(final GordianCoreKeyStoreGateway pGateway) {
+        theGateway = pGateway;
     }
 
     /**
      * Create a Certificate request.
      * @param pKeyPair the keyStore entry
-     * @return the encoded PEM object
+     * @param pRequestId the reqId
+     * @return the certificate request message
      * @throws OceanusException on error
      */
-    public GordianPEMObject createCertificateRequest(final GordianKeyStorePair pKeyPair) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Access the certificate */
-            final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+    public CertReqMsg createCertificateRequest(final GordianKeyStorePair pKeyPair,
+                                               final int pRequestId) throws OceanusException {
+        /* Access the certificate */
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
 
-            /* Create the Certificate request */
-            final CertRequest myCertReq = createCertRequest(myCert);
+        /* Create the Certificate request */
+        final CertRequest myCertReq = createCertRequest(myCert, pRequestId);
 
-            /* Create the ProofOfPossession */
-            final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
+        /* Create the ProofOfPossession */
+        final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
 
-            /* Create a CRMF */
-            final CertReqMsg myReqMsg = new CertReqMsg(myCertReq, myProof, null);
-            final GordianPEMObjectType myObjectType = GordianPEMObjectType.CERTREQ;
-            return new GordianPEMObject(myObjectType, myReqMsg.getEncoded());
-
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create CRMF", e);
+        /* Create control if necessary */
+        AttributeTypeAndValue[] myAttrs = null;
+        final X500Name myName = myCert.getSubjectName();
+        final byte[] myMACSecret = theGateway.getMACSecret(myName);
+        if (myMACSecret != null) {
+            /* Create the PKMACValue Control */
+            final PKMACValue myMACValue = createPKMACValue(myMACSecret, myCertReq.getCertTemplate().getPublicKey());
+            myAttrs = new AttributeTypeAndValue[] { new AttributeTypeAndValue(MACVALUEATTROID, myMACValue) };
         }
+
+        /* Create a CRMF */
+        return new CertReqMsg(myCertReq, myProof, myAttrs);
     }
 
     /**
      * Create a Certificate request.
      * @param pCertificate the local certificate
+     * @param pRequestId the reqId
      * @return the certificate request
      * @throws OceanusException on error
      */
-    private static CertRequest createCertRequest(final GordianCoreCertificate pCertificate) throws OceanusException {
+    private static CertRequest createCertRequest(final GordianCoreCertificate pCertificate,
+                                                 final int pRequestId) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the Certificate template Builder */
@@ -166,11 +164,8 @@ public class GordianCRMBuilder {
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             myBuilder.setExtensions(myGenerator.generate());
 
-            /* Using the current timestamp as the certificate serial number */
-            final int myNow = (int) System.currentTimeMillis();
-
             /* Create the Certificate request */
-            return new CertRequest(myNow, myBuilder.build(), null);
+            return new CertRequest(pRequestId, myBuilder.build(), null);
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to create Certificate request", e);
@@ -191,45 +186,47 @@ public class GordianCRMBuilder {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianSignatureSpec mySignSpec = theFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
 
-        /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
-        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(myKeyPair);
-
-        /* Send encrypted key via Encryption or Agreement */
-        return createTargetedProofOfPossession(myPKCS8Encoding, pCertificate);
+        /* Send encrypted key via targeted encryption or request encrypted certificate */
+        final GordianCoreCertificate myTarget = theGateway.getTarget();
+        return myTarget != null
+                ? createTargetedProofOfPossession(myKeyPair, pCertificate)
+                : new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));
     }
 
     /**
      * Create Targeted Proof of Possession.
-     * @param pPKCS8Encoding the PKCS8Encoding
+     * @param pKeyPair the keyPair
      * @param pCertificate the local certificate
      * @return the proof of possession
      * @throws OceanusException on error
      */
-    private ProofOfPossession createTargetedProofOfPossession(final PKCS8EncodedKeySpec pPKCS8Encoding,
+    private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws OceanusException {
-        /* Try to send an encrypted proof */
-        final GordianKeyPair myKeyPair = theTarget.getKeyPair();
-        final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianEncryptorSpec myEncSpec = theFactory.getKeyPairFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
-        if (myEncSpec != null) {
-            return createKeyPairEncryptedProof(pPKCS8Encoding, myEncSpec, pCertificate, theTarget);
-        }
+        /* Obtain the PKCS8Encoding of the private key */
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
+        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
 
-        /* Try to send an agreed proof */
-        final GordianAgreementSpec myAgreeSpec = theFactory.getKeyPairFactory().getAgreementFactory().defaultForKeyPair(mySpec);
-        if (myAgreeSpec != null) {
-            return createKeyPairAgreedProof(pPKCS8Encoding, myAgreeSpec, pCertificate, myKeyPair);
-        }
+        /* Prepare for encryption */
+        final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
+        final GordianCoreCertificate myTarget = theGateway.getTarget();
+        final GordianCRMResult myResult = myEncryptor.prepareForEncryption(myTarget);
 
-        /* Reject the request */
-        throw new GordianDataException("Unable to create ProofOfPossession");
+        /* Derive the keySet from the key */
+        final GordianKeySet myKeySet = myResult.getKeySet();
+
+        /* Create the encrypted data */
+        final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myKeySet, myPKCS8Encoding, pCertificate);
+
+        /* Create the Proof of possession */
+        final EnvelopedData myEnvData = new EnvelopedData(null, new BERSet(myResult.getRecipient()), myInfo, (BERSet) null);
+        return new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new XPOPOPrivKey(myEnvData));
     }
 
     /**
@@ -244,7 +241,7 @@ public class GordianCRMBuilder {
                                                final GordianSignatureSpec pSignSpec,
                                                final CertRequest pCertRequest) throws OceanusException {
         /* Create the signer */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);
         final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);
@@ -283,169 +280,6 @@ public class GordianCRMBuilder {
     }
 
     /**
-     * Create a KeyPair Encrypted Proof of Possession.
-     * @param pPKCS8Encoding the PKCS8Encoded privateKey
-     * @param pEncryptorSpec the encryptorSpec
-     * @param pCertificate the local certificate
-     * @param pTargetCertificate the target certificate
-     * @return the proof of possession
-     * @throws OceanusException on error
-     */
-    ProofOfPossession createKeyPairEncryptedProof(final PKCS8EncodedKeySpec pPKCS8Encoding,
-                                                  final GordianEncryptorSpec pEncryptorSpec,
-                                                  final GordianCertificate pCertificate,
-                                                  final GordianCoreCertificate pTargetCertificate) throws OceanusException {
-        /* Create the random key */
-        final byte[] myKey = createKeyForKeySet();
-
-        /* Derive the keySet from the key */
-        final GordianKeySet myKeySet = deriveKeySetFromKey(theFactory, myKey);
-
-        /* Create the encrypted data */
-        final EncryptedContentInfo myInfo = buildEncryptedContentInfo(myKeySet, pPKCS8Encoding, pCertificate);
-
-        /* Create the proof of Possession */
-        return encryptKeyWithKeyPair(myKey, myInfo, pTargetCertificate, pEncryptorSpec);
-    }
-
-    /**
-     * Create a KeyPair Agreed Proof of Possession.
-     * @param pPKCS8Encoding the PKCS8Encoded privateKey
-     * @param pAgreeSpec the agreementSpec
-     * @param pCertificate the local certificate
-     * @param pKeyPair the target keyPair
-     * @return the proof of possession
-     * @throws OceanusException on error
-     */
-    ProofOfPossession createKeyPairAgreedProof(final PKCS8EncodedKeySpec pPKCS8Encoding,
-                                               final GordianAgreementSpec pAgreeSpec,
-                                               final GordianCertificate pCertificate,
-                                               final GordianKeyPair pKeyPair) throws OceanusException {
-        /* Create the agreement */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
-        final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
-        final GordianAnonymousAgreement myAgree = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(pAgreeSpec);
-        myAgree.setResultType(new GordianKeySetSpec());
-        final byte[] myHello = myAgree.createClientHello(pKeyPair);
-        final GordianKeySet myKeySet = (GordianKeySet) myAgree.getResult();
-
-        /* Create the encrypted data */
-        final EncryptedContentInfo myInfo = buildEncryptedContentInfo(myKeySet, pPKCS8Encoding, pCertificate);
-
-        /* Create the proof of Possession */
-        return createProofOfPossession(myAgreeFactory.getIdentifierForSpec(pAgreeSpec), myHello, myInfo);
-    }
-
-    /**
-     * Create a random key for KeySet.
-     * @return the new key
-     */
-    private byte[] createKeyForKeySet() {
-        final byte[] myKey = new byte[GordianLength.LEN_1024.getByteLength()];
-        theFactory.getRandomSource().getRandom().nextBytes(myKey);
-        return myKey;
-    }
-
-    /**
-     * Derive a keySet from a key.
-     * @param pFactory the factory
-     * @param pKey the key
-     * @return the keySet
-     * @throws OceanusException on error
-     */
-    static GordianKeySet deriveKeySetFromKey(final GordianCoreFactory pFactory,
-                                             final byte[] pKey) throws OceanusException {
-        /* Create a new Factory using the key */
-        final byte[] myPhrase = Arrays.copyOf(pKey, GordianLength.LEN_256.getByteLength());
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        myParams.setSecurityPhrase(myPhrase);
-        myParams.setInternal();
-        final GordianFactory myFactory = pFactory.newFactory(myParams);
-        Arrays.fill(myPhrase, (byte) 0);
-
-        /* Create keySet from key */
-        final byte[] mySecret = Arrays.copyOfRange(pKey, GordianLength.LEN_512.getByteLength(), GordianLength.LEN_1024.getByteLength());
-        final byte[] myIV = Arrays.copyOfRange(pKey, GordianLength.LEN_256.getByteLength(), GordianLength.LEN_512.getByteLength());
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = myKeySets.createKeySet(new GordianKeySetSpec());
-        myKeySet.buildFromSecret(mySecret, myIV);
-        Arrays.fill(mySecret, (byte) 0);
-        Arrays.fill(myIV, (byte) 0);
-        return myKeySet;
-    }
-
-    /**
-     * Encrypt the key with a keyPair.
-     * @param pKey the key to encrypt
-     * @param pInfo the encrypted Info
-     * @param pCertificate the target certificate
-     * @param pSpec the encryptorSpec
-     * @return the encrypted key
-     * @throws OceanusException on error
-     */
-    private ProofOfPossession encryptKeyWithKeyPair(final byte[] pKey,
-                                                    final EncryptedContentInfo pInfo,
-                                                    final GordianCoreCertificate pCertificate,
-                                                    final GordianEncryptorSpec pSpec) throws OceanusException {
-        /* Create the encrypted key */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
-        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(pSpec);
-
-        /* Create the encrypted key */
-        myEncryptor.initForEncrypt(pCertificate.getKeyPair());
-        final byte[] myEncryptedKey = myEncryptor.encrypt(pKey);
-        Arrays.fill(pKey, (byte) 0);
-
-        /* Create the proof of Possession */
-        return createProofOfPossession(myEncFactory.getIdentifierForSpec(pSpec), myEncryptedKey, pInfo);
-    }
-
-    /**
-     * Build the encryptedContentInfo.
-     * @param pKeySet the keySet to encrypt with
-     * @param pPKCS8Encoding the PKCS8Encoded privateKey
-     * @param pCertificate the local certificate
-     * @return the encryptedContentInfo
-     * @throws OceanusException on error
-     */
-    private static EncryptedContentInfo buildEncryptedContentInfo(final GordianKeySet pKeySet,
-                                                                  final PKCS8EncodedKeySpec pPKCS8Encoding,
-                                                                  final GordianCertificate pCertificate) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Obtain the PrivateKeyInfo */
-            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPKCS8Encoding.getEncoded());
-            final EncKeyWithID myKeyWithId = new EncKeyWithID(myInfo, new GeneralName(pCertificate.getSubject().getName()));
-            final byte[] myData = pKeySet.encryptBytes(myKeyWithId.getEncoded());
-            final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());
-            final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();
-            return new EncryptedContentInfo(CRMFObjectIdentifiers.id_ct_encKeyWithID, myAlgId, new BEROctetString(myData));
-
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create EncryptedContentInfo", e);
-        }
-    }
-
-    /**
-     * Create Proof of Possession.
-     * @param pAlgId the algorithmId
-     * @param pEncodedKey the encoded key
-     * @param pContent the encryptedContent
-     * @return the proof of possession
-     */
-    private ProofOfPossession createProofOfPossession(final AlgorithmIdentifier pAlgId,
-                                                      final byte[] pEncodedKey,
-                                                      final EncryptedContentInfo pContent) {
-        /* Create the recipient info */
-        final IssuerAndSerialNumber myId = new IssuerAndSerialNumber(theTarget.getIssuer().getName(), theTarget.getSerialNo());
-        final KeyTransRecipientInfo myKTInfo = new KeyTransRecipientInfo(new RecipientIdentifier(myId), pAlgId, new BEROctetString(pEncodedKey));
-        final RecipientInfo myRecInfo = new RecipientInfo(myKTInfo);
-        final EnvelopedData myEnvData = new EnvelopedData(null, new BERSet(myRecInfo), pContent, (BERSet) null);
-        return new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new XPOPOPrivKey(myEnvData));
-    }
-
-    /**
      * Extended POPOPrivKey to allow encryptedKey.
      */
     static class XPOPOPrivKey extends POPOPrivKey {
@@ -467,5 +301,126 @@ public class GordianCRMBuilder {
         public ASN1Primitive toASN1Primitive() {
             return new DERTaggedObject(false, encryptedKey, theKey);
         }
+    }
+
+    /**
+     * Create MACValue.
+     * @param pSecret the secret
+     * @param pData the data to calculate over
+     * @return the MACValue
+     * @throws OceanusException on error
+     */
+    public PKMACValue createPKMACValue(final byte[] pSecret,
+                                       final ASN1Object pData) throws OceanusException {
+        final PBMParameter myParams = generatePBMParameters();
+        return calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
+    }
+
+    /**
+     * Check PKMACValue.
+     * @param pSecret the secret
+     * @param pData the data to calculate over
+     * @param pMACValue the supplied MACValue
+     * @throws OceanusException on error
+     */
+    public void checkPKMACValue(final byte[] pSecret,
+                                final ASN1Object pData,
+                                final PKMACValue pMACValue) throws OceanusException {
+        final PBMParameter myParams = PBMParameter.getInstance(pMACValue.getAlgId().getParameters());
+        final PKMACValue myMACValue = GordianCRMBuilder.calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
+        if (!pMACValue.equals(myMACValue)) {
+            throw new GordianDataException("Invalid PKMacValue");
+        }
+    }
+
+    /**
+     * Create PBMParameters.
+     * @return the PBMParameters
+     */
+    private PBMParameter generatePBMParameters() {
+        /* Create the salt value */
+        final byte[] mySalt = new byte[GordianLength.LEN_256.getByteLength()];
+        final GordianRandomSource mySource = theGateway.getFactory().getRandomSource();
+        mySource.getRandom().nextBytes(mySalt);
+
+        /* Access algorithm ids */
+        final AlgorithmIdentifier myHashId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
+        final AlgorithmIdentifier myMacId = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA256, DERNull.INSTANCE);
+
+        /* Create the PBMParameter */
+        return new PBMParameter(mySalt, myHashId, PBM_ITERATIONS, myMacId);
+    }
+
+    /**
+     * Calculate PKMacValue.
+     * @param pFactory the factory
+     * @param pSecret the secret value
+     * @param pObject the object
+     * @param pParams the PBM Parameters
+     * @return the PKMacValue
+     * @throws OceanusException on error
+     */
+    private static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
+                                                  final byte[] pSecret,
+                                                  final ASN1Object pObject,
+                                                  final PBMParameter pParams) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Create the digest */
+            final GordianDigestFactory myDigests = pFactory.getDigestFactory();
+            final GordianDigestSpec myDigestSpec = pFactory.getDigestSpecForIdentifier(pParams.getOwf());
+            final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
+
+            /* Run through the first iteration */
+            myDigest.update(pSecret);
+            myDigest.update(pParams.getSalt().getOctets());
+            byte[] myKey = new byte[myDigest.getDigestSize()];
+            myKey = myDigest.finish(myKey);
+
+            /* Loop through the remaining iterations */
+            final int numIterations = pParams.getIterationCount().intValueExact() - 1;
+            for (int i = 0; i < numIterations; i++) {
+                myKey = myDigest.finish(myKey);
+            }
+
+            /* Create the mac */
+            final GordianMacFactory myMacs = pFactory.getMacFactory();
+            final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
+            final GordianCoreMac myMac = (GordianCoreMac) myMacs.createMac(myMacSpec);
+            myMac.initKeyBytes(myKey);
+
+            /* Create the result */
+            myMac.update(pObject.toASN1Primitive().getEncoded());
+            final byte[] myResult = myMac.finish();
+            return new PKMACValue(pParams, new DERBitString(myResult));
+
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to calculate PKMACValue", e);
+        }
+    }
+
+    /**
+     * Calculate AckValue.
+     * @param pCertificate the certificate
+     * @return the AckValue
+     * @throws OceanusException on error
+     */
+    public byte[] calculateAckValue(final GordianCoreCertificate pCertificate) throws OceanusException {
+        /* Access the MACSecret */
+        final X500Name mySubject = pCertificate.getSubjectName();
+        final byte[] myMACSecret = theGateway.getMACSecret(mySubject);
+
+        /* Create the digest */
+        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianDigestFactory myDigests = myFactory.getDigestFactory();
+        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpec.sha2(GordianLength.LEN_256));
+
+        /* Calculate the digest */
+        if (myMACSecret != null) {
+            myDigest.update(myMACSecret);
+        }
+        myDigest.update(pCertificate.getEncoded());
+        return myDigest.finish();
     }
 }

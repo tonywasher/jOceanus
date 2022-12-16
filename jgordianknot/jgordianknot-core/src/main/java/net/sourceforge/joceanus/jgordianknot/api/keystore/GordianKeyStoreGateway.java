@@ -16,11 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Function;
+
+import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -54,29 +55,14 @@ public interface GordianKeyStoreGateway {
     GordianKeyStoreManager getKeyStoreManager();
 
     /**
-     * export object to file.
-     * @param pAlias the alias
-     * @param pFile the target file
-     * @param pPassword the keyStore password for the entry
-     * @param pLock the lock for the file
-     * @throws OceanusException on error
-     */
-    void exportEntry(String pAlias,
-                     File pFile,
-                     char[] pPassword,
-                     GordianLock pLock) throws OceanusException;
-
-    /**
      * export object to stream.
      * @param pAlias the alias
      * @param pStream the target stream
-     * @param pPassword the keyStore password for the entry
      * @param pLock the lock for the file
      * @throws OceanusException on error
      */
     void exportEntry(String pAlias,
                      OutputStream pStream,
-                     char[] pPassword,
                      GordianLock pLock) throws OceanusException;
 
     /**
@@ -89,11 +75,9 @@ public interface GordianKeyStoreGateway {
     /**
      * set the Certifier.
      * @param pAlias the alias
-     * @param pPassword the password
      * @throws OceanusException on error
      */
-    void setCertifier(String pAlias,
-                      char[] pPassword) throws OceanusException;
+    void setCertifier(String pAlias) throws OceanusException;
 
     /**
      * set the passwordResolver.
@@ -108,35 +92,19 @@ public interface GordianKeyStoreGateway {
     void setLockResolver(GordianLockResolver pResolver);
 
     /**
-     * create certificate request.
-     * @param pAlias the alias
-     * @param pFile the target file
-     * @param pPassword the password
-     * @throws OceanusException on error
+     * Set the MAC secret resolver.
+     * @param pResolver the resolver
      */
-    void createCertificateRequest(String pAlias,
-                                  File pFile,
-                                  char[] pPassword) throws OceanusException;
+    void setMACSecretResolver(Function<X500Name, String> pResolver);
 
     /**
      * create certificate request.
      * @param pAlias the alias
      * @param pStream the target stream
-     * @param pPassword the password
      * @throws OceanusException on error
      */
     void createCertificateRequest(String pAlias,
-                                  OutputStream pStream,
-                                  char[] pPassword) throws OceanusException;
-
-    /**
-     * process certificate request.
-     * @param pInFile the input file
-     * @param pOutFile the output file
-     * @throws OceanusException on error
-     */
-    void processCertificateRequest(File pInFile,
-                                   File pOutFile) throws OceanusException;
+                                  OutputStream pStream) throws OceanusException;
 
     /**
      * process certificate request.
@@ -148,32 +116,29 @@ public interface GordianKeyStoreGateway {
                                    OutputStream pOutStream) throws OceanusException;
 
     /**
-     * import object from file.
-     * @param pFile the input file
-     * @param pPassword the password
-     * @return the parsed object
+     * process certificate response.
+     * @param pInStream the input stream
+     * @param pOutStream the output stream
+     * @return the response id
      * @throws OceanusException on error
      */
-    GordianKeyStoreEntry importEntry(File pFile,
-                                     char[] pPassword) throws OceanusException;
+    Integer processCertificateResponse(InputStream pInStream,
+                                       OutputStream pOutStream) throws OceanusException;
+
+    /**
+     * process certificate ack.
+     * @param pInStream the input stream
+     * @throws OceanusException on error
+     */
+    void processCertificateAck(InputStream pInStream) throws OceanusException;
 
     /**
      * import object from stream.
      * @param pStream the input stream
-     * @param pPassword the password
      * @return the parsed object
      * @throws OceanusException on error
      */
-    GordianKeyStoreEntry importEntry(InputStream pStream,
-                                     char[] pPassword) throws OceanusException;
-
-    /**
-     * import certificates from file.
-     * @param pFile the input file
-     * @return the parsed object
-     * @throws OceanusException on error
-     */
-    List<GordianKeyStoreEntry> importCertificates(File pFile) throws OceanusException;
+    GordianKeyStoreEntry importEntry(InputStream pStream) throws OceanusException;
 
     /**
      * import certificates from stream.

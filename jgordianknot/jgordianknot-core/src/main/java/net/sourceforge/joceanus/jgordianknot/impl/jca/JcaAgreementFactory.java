@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaMQVAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaPostQuantumAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaSignedAgreement;
@@ -118,16 +117,6 @@ public class JcaAgreementFactory
      */
     private GordianAgreement getPostQuantumAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         return new JcaPostQuantumAgreement(getFactory(), pAgreementSpec, getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec().getKeyPairType()));
-    }
-
-    /**
-     * Create the NewHope Agreement.
-     * @param pAgreementSpec the agreementSpec
-     * @return the Agreement
-     * @throws OceanusException on error
-     */
-    private GordianAgreement getNHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        return new JcaEncapsulationAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement("NH", true));
     }
 
     /**

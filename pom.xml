@@ -75,8 +75,8 @@
     <JUnitVersion>5.9.1</JUnitVersion>
     <JSONVersion>20220924</JSONVersion>
     <ApacheMavenVersion>3.8.6</ApacheMavenVersion>
-    <MySQLVersion>8.0.30</MySQLVersion>
-    <PostGreSQLVersion>42.5.0</PostGreSQLVersion>
+    <MySQLVersion>8.0.31</MySQLVersion>
+    <PostGreSQLVersion>42.5.1</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>2.1.214</H2Version>
     <ApachePOIVersion>5.2.3</ApachePOIVersion>
@@ -86,20 +86,20 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>18.0.2</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.3.4</CheckStyleVersion>
-    <PMDVersion>6.50.0</PMDVersion>
+    <CheckStyleVersion>10.5.0</CheckStyleVersion>
+    <PMDVersion>6.52.0</PMDVersion>
     <CleanPluginVersion>3.2.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.0</ResourcesPluginVersion>
-    <InstallPluginVersion>3.0.1</InstallPluginVersion>
+    <InstallPluginVersion>3.1.0</InstallPluginVersion>
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0</DeployPluginVersion>
     <EnforcerPluginVersion>3.1.0</EnforcerPluginVersion>
     <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
-    <ShadePluginVersion>3.4.0</ShadePluginVersion>
+    <ShadePluginVersion>3.4.1</ShadePluginVersion>
     <DependencyPluginVersion>3.3.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M7</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.0.0</BuildNumberPluginVersion>
-    <BuildHelperPluginVersion>3.2.0</BuildHelperPluginVersion>
+    <BuildHelperPluginVersion>3.3.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.3.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.4.1</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.3.0</JxrPluginVersion>
@@ -111,8 +111,8 @@
     <PMDPluginVersion>3.19.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.8</JacocoPluginVersion>
     <GPGPluginVersion>3.0.1</GPGPluginVersion>
-    <JetBrainsAnnotationsVersion>23.0.0</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.11.0</VersionsPluginVersion>
+    <JetBrainsAnnotationsVersion>23.1.0</JetBrainsAnnotationsVersion>
+    <VersionsPluginVersion>2.13.0</VersionsPluginVersion>
   </properties>
   <build>
     <resources>

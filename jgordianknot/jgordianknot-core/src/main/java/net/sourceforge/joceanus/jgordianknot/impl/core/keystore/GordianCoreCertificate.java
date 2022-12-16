@@ -243,42 +243,56 @@ public class GordianCoreCertificate
      */
     protected GordianCoreCertificate(final GordianCoreFactory pFactory,
                                      final byte[] pSequence) throws OceanusException {
-        /* Store the parameters */
-        theFactory = pFactory;
+        this(pFactory, Certificate.getInstance(pSequence));
+    }
 
-        /* Parse the certificate */
-        final Certificate myCert = Certificate.getInstance(pSequence);
+    /**
+     * Parse a certificate.
+     *
+     * @param pFactory     the factory
+     * @param pCertificate the certificate
+     * @throws OceanusException on error
+     */
+    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+                                  final Certificate pCertificate) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Store the parameters */
+            theFactory = pFactory;
 
-        /* Extract the details */
-        theTbsCertificate = myCert.getTBSCertificate();
-        theSigAlgId = myCert.getSignatureAlgorithm();
-        theSignature = myCert.getSignature().getBytes();
+            /* Extract the details */
+            theTbsCertificate = pCertificate.getTBSCertificate();
+            theSigAlgId = pCertificate.getSignatureAlgorithm();
+            theSignature = pCertificate.getSignature().getBytes();
 
-        /* Determine the signatureSpec for the algorithmId */
-        theSigSpec = determineSignatureSpecForAlgId(theSigAlgId);
-        if (theSigSpec == null) {
-            throw new GordianDataException("Unsupported Signature AlgorithmId: " + theSigAlgId);
+            /* Determine the signatureSpec for the algorithmId */
+            theSigSpec = determineSignatureSpecForAlgId(theSigAlgId);
+            if (theSigSpec == null) {
+                throw new GordianDataException("Unsupported Signature AlgorithmId: " + theSigAlgId);
+            }
+
+            /* Derive the keyPair */
+            theKeyPair = parseEncodedKey();
+
+            /* Access the extensions */
+            final Extensions myExtensions = theTbsCertificate.getExtensions();
+            theKeyUsage = determineUsage(myExtensions);
+            theCAStatus = GordianCAStatus.determineStatus(myExtensions);
+
+            /* Determine whether we are self-signed */
+            final X500Name mySignerName = getSubjectName();
+            isSelfSigned = mySignerName.equals(getIssuerName());
+
+            /* Create the ids */
+            theSubject = GordianCoreCertificateId.getSubjectId(this);
+            theIssuer = GordianCoreCertificateId.getIssuerId(this);
+            theSerialNo = theTbsCertificate.getSerialNumber().getValue();
+
+            /* Store the encoded representation */
+            theEncoded = pCertificate.getEncoded();
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to parse certificate", e);
         }
-
-        /* Derive the keyPair */
-        theKeyPair = parseEncodedKey();
-
-        /* Access the extensions */
-        final Extensions myExtensions = theTbsCertificate.getExtensions();
-        theKeyUsage = determineUsage(myExtensions);
-        theCAStatus = GordianCAStatus.determineStatus(myExtensions);
-
-        /* Determine whether we are self-signed */
-        final X500Name mySignerName = getSubjectName();
-        isSelfSigned = mySignerName.equals(getIssuerName());
-
-        /* Create the ids */
-        theSubject = GordianCoreCertificateId.getSubjectId(this);
-        theIssuer = GordianCoreCertificateId.getIssuerId(this);
-        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
-
-        /* Store the encoded representation */
-        theEncoded = pSequence;
     }
 
     /**
@@ -294,6 +308,14 @@ public class GordianCoreCertificate
         /* Access the date */
         return pDate.compareTo(theTbsCertificate.getStartDate().getDate()) >= 0
                 && pDate.compareTo(theTbsCertificate.getEndDate().getDate()) <= 0;
+    }
+
+    /**
+     * Obtain the certificate.
+     * @return the certificate
+     */
+    public Certificate getCertificate() {
+        return Certificate.getInstance(getEncoded());
     }
 
     @Override

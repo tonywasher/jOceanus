@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -119,14 +121,12 @@ public class GordianPEMCoder {
     /**
      * Import a keyStoreEntry from stream.
      * @param pStream the input stream
-     * @param pPassword the password
      * @return the decoded object.
      * @throws OceanusException on error
      */
-    public GordianKeyStoreEntry importKeyStoreEntry(final InputStream pStream,
-                                                    final char[] pPassword) throws OceanusException {
+    public GordianKeyStoreEntry importKeyStoreEntry(final InputStream pStream) throws OceanusException {
         final List<GordianPEMObject> myObjects = theParser.parsePEMFile(pStream);
-        return decodePEMObjectList(myObjects, pPassword);
+        return decodePEMObjectList(myObjects);
     }
 
     /**
@@ -175,12 +175,10 @@ public class GordianPEMCoder {
     /**
      * Decode a PEMObject list.
      * @param pObjects the object list
-     * @param pPassword the password
      * @return the decoded object.
      * @throws OceanusException on error
      */
-     private GordianKeyStoreEntry decodePEMObjectList(final List<GordianPEMObject> pObjects,
-                                                      final char[] pPassword) throws OceanusException {
+     private GordianKeyStoreEntry decodePEMObjectList(final List<GordianPEMObject> pObjects) throws OceanusException {
          /* List must be non-empty */
          if (pObjects.isEmpty()) {
              throw new GordianDataException("Empty list");
@@ -191,13 +189,13 @@ public class GordianPEMCoder {
          switch (myFirst.getObjectType()) {
              /* Decode objects */
              case PRIVATEKEY:
-                 return decodeKeyPair(pObjects, pPassword);
+                 return decodeKeyPair(pObjects);
              case CERT:
                  return decodeCertificate(pObjects);
              case KEYSET:
-                 return decodeKeySet(pObjects, pPassword);
+                 return decodeKeySet(pObjects);
              case KEY:
-                 return decodeKey(pObjects, pPassword);
+                 return decodeKey(pObjects);
 
              /* Unsupported entry */
              default:
@@ -251,6 +249,25 @@ public class GordianPEMCoder {
      */
     static GordianPEMObject encodeCertificate(final GordianCertificate pCertificate) {
         return new GordianPEMObject(GordianPEMObjectType.CERT, pCertificate.getEncoded());
+    }
+
+    /**
+     * Create a PEM Object
+     * @param pObjectType the objectType
+     * @param pObject the object
+     * @return the PEM Object
+     * @throws OceanusException on error
+     */
+    static GordianPEMObject createPEMObject(final GordianPEMObjectType pObjectType,
+                                            final ASN1Object pObject) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Create a PEM Object */
+            return new GordianPEMObject(pObjectType, pObject.getEncoded());
+
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to create PEMObject", e);
+        }
     }
 
     /**
@@ -389,14 +406,66 @@ public class GordianPEMCoder {
     }
 
     /**
+     * Decode a Certificate Request.
+     * @param pObjects the PEM object list
+     * @return the Certificate Request.
+     * @throws OceanusException on error
+     */
+    static CertReqMsg decodeCertRequest(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* Reject if not singleton list */
+        checkSingletonList(pObjects);
+        final GordianPEMObject myObject = pObjects.get(0);
+
+        /* Reject if not certificateRequest */
+        checkObjectType(myObject, GordianPEMObjectType.CERTREQ);
+
+        /* parse the encoded bytes */
+        return CertReqMsg.getInstance(myObject.getEncoded());
+    }
+
+    /**
+     * Decode a Certificate Response.
+     * @param pObjects the PEM object list
+     * @return the Certificate Response.
+     * @throws OceanusException on error
+     */
+    static GordianCertResponseASN1 decodeCertResponse(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* Reject if not singleton list */
+        checkSingletonList(pObjects);
+        final GordianPEMObject myObject = pObjects.get(0);
+
+        /* Reject if not certificateResponse */
+        checkObjectType(myObject, GordianPEMObjectType.CERTRESP);
+
+        /* parse the encoded bytes */
+        return GordianCertResponseASN1.getInstance(myObject.getEncoded());
+    }
+
+    /**
+     * Decode a Certificate Ack.
+     * @param pObjects the PEM object list
+     * @return the Certificate Ack.
+     * @throws OceanusException on error
+     */
+    static GordianCertAckASN1 decodeCertAck(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* Reject if not singleton list */
+        checkSingletonList(pObjects);
+        final GordianPEMObject myObject = pObjects.get(0);
+
+        /* Reject if not certificateAck */
+        checkObjectType(myObject, GordianPEMObjectType.CERTACK);
+
+        /* parse the encoded bytes */
+        return GordianCertAckASN1.getInstance(myObject.getEncoded());
+    }
+
+    /**
      * Decode a keyPair.
      * @param pObjects the list of objects
-     * @param pPassword the password
      * @return the keyPair.
      * @throws OceanusException on error
      */
-    private GordianKeyStorePair decodeKeyPair(final List<GordianPEMObject> pObjects,
-                                              final char[] pPassword) throws OceanusException {
+    private GordianKeyStorePair decodeKeyPair(final List<GordianPEMObject> pObjects) throws OceanusException {
         /* Initialise variables */
         EncryptedPrivateKeyInfo myPrivateInfo = null;
         final List<GordianCertificate> myChain = new ArrayList<>();
@@ -419,7 +488,7 @@ public class GordianPEMCoder {
         }
 
         /* Derive the keyPair */
-        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo, pPassword);
+        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo);
         final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.get(0);
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
@@ -430,31 +499,27 @@ public class GordianPEMCoder {
     /**
      * Decode a keySet.
      * @param pObjects the PEM object list
-     * @param pPassword the password
      * @return the keySet.
      * @throws OceanusException on error
      */
-    private GordianKeyStoreSet decodeKeySet(final List<GordianPEMObject> pObjects,
-                                            final char[] pPassword) throws OceanusException {
+    private GordianKeyStoreSet decodeKeySet(final List<GordianPEMObject> pObjects) throws OceanusException {
         checkSingletonList(pObjects);
-        return decodeKeySet(pObjects.get(0), pPassword);
+        return decodeKeySet(pObjects.get(0));
     }
 
     /**
      * Decode a keySet.
      * @param pObject the PEM object
-     * @param pPassword the password
      * @return the keySet.
      * @throws OceanusException on error
      */
-    private GordianCoreKeyStoreSet decodeKeySet(final GordianPEMObject pObject,
-                                                final char[] pPassword) throws OceanusException {
+    private GordianCoreKeyStoreSet decodeKeySet(final GordianPEMObject pObject) throws OceanusException {
         /* Reject if not KeySet */
         checkObjectType(pObject, GordianPEMObjectType.KEYSET);
 
         /* Derive the securing keySet */
         final EncryptedPrivateKeyInfo myInfo = EncryptedPrivateKeyInfo.getInstance(pObject.getEncoded());
-        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo, pPassword);
+        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);
 
         /* Derive the keySet */
         final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
@@ -464,31 +529,27 @@ public class GordianPEMCoder {
     /**
      * Decode a key.
      * @param pObjects the PEM object list
-     * @param pPassword the password
      * @return the key.
      * @throws OceanusException on error
      */
-    private GordianKeyStoreKey<?> decodeKey(final List<GordianPEMObject> pObjects,
-                                            final char[] pPassword) throws OceanusException {
+    private GordianKeyStoreKey<?> decodeKey(final List<GordianPEMObject> pObjects) throws OceanusException {
         checkSingletonList(pObjects);
-        return decodeKey(pObjects.get(0), pPassword);
+        return decodeKey(pObjects.get(0));
     }
 
     /**
      * Decode a key.
      * @param pObject the PEM object
-     * @param pPassword the password
      * @return the key.
      * @throws OceanusException on error
      */
-    private GordianCoreKeyStoreKey<?> decodeKey(final GordianPEMObject pObject,
-                                                final char[] pPassword) throws OceanusException {
+    private GordianCoreKeyStoreKey<?> decodeKey(final GordianPEMObject pObject) throws OceanusException {
         /* Reject if not Key */
         checkObjectType(pObject, GordianPEMObjectType.KEY);
 
         /* Derive the securing keySet */
         final EncryptedPrivateKeyInfo myInfo = EncryptedPrivateKeyInfo.getInstance(pObject.getEncoded());
-        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo, pPassword);
+        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);
 
         /* Extract key definition */
         final byte[] mySecured = myInfo.getEncryptedData();
@@ -521,12 +582,10 @@ public class GordianPEMCoder {
     /**
      * Derive securing keySet.
      * @param pInfo the encrypted private keyInfo
-     * @param pPassword the password
      * @return the keySet
      * @throws OceanusException on error
      */
-    private GordianKeySet deriveSecuringKeySet(final EncryptedPrivateKeyInfo pInfo,
-                                               final char[] pPassword) throws OceanusException {
+    private GordianKeySet deriveSecuringKeySet(final EncryptedPrivateKeyInfo pInfo) throws OceanusException {
         /* Validate the algorithmId */
         final AlgorithmIdentifier myId = pInfo.getEncryptionAlgorithm();
         if (!myId.getAlgorithm().equals(GordianLockASN1.LOCKOID)) {
