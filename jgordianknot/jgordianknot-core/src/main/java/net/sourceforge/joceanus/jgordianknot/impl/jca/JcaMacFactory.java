@@ -211,7 +211,7 @@ public class JcaMacFactory
      * @return the Algorithm
      * @throws OceanusException on error
      */
-    private String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws OceanusException {
+    private static String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getHMacAlgorithm(pMacSpec.getDigestSpec());

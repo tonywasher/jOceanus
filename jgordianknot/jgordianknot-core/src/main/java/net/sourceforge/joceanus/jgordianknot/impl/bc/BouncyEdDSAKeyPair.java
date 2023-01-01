@@ -431,7 +431,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeyPair the keyPair
          * @return the signer
          */
-        private Signer createSigner(final GordianKeyPair pKeyPair) {
+        private static Signer createSigner(final GordianKeyPair pKeyPair) {
             /* Determine the EdwardsCurve */
             final boolean is25519 = pKeyPair.getKeyPairSpec().getEdwardsElliptic().is25519();
             final byte[] myContext =  new byte[0];

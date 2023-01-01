@@ -96,7 +96,7 @@
     <EnforcerPluginVersion>3.1.0</EnforcerPluginVersion>
     <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
     <ShadePluginVersion>3.4.1</ShadePluginVersion>
-    <DependencyPluginVersion>3.3.0</DependencyPluginVersion>
+    <DependencyPluginVersion>3.4.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M7</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.0.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.3.0</BuildHelperPluginVersion>

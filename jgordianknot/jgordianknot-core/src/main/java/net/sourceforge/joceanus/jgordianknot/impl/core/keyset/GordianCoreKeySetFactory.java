@@ -158,7 +158,7 @@ public class GordianCoreKeySetFactory
      * @param pSpec the keySetHashSpec
      * @return true/false
      */
-    private boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
+    private static boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
         /* Check for invalid spec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;

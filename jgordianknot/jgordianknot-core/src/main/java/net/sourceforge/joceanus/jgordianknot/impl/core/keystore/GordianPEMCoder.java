@@ -252,7 +252,7 @@ public class GordianPEMCoder {
     }
 
     /**
-     * Create a PEM Object
+     * Create a PEM Object.
      * @param pObjectType the objectType
      * @param pObject the object
      * @return the PEM Object
@@ -574,8 +574,8 @@ public class GordianPEMCoder {
      * @param pInfo the encryptedInfo
      * @return the algorithmId.
      */
-    private EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreLock pLock,
-                                                        final byte[] pInfo) {
+    private static EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreLock pLock,
+                                                               final byte[] pInfo) {
         return new EncryptedPrivateKeyInfo(pLock.getAlgorithmId(), pInfo);
     }
 

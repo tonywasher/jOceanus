@@ -400,6 +400,7 @@ public class GordianCoreKeyStoreGateway
     /**
      * Get certificate alias.
      * @param pRespId the response id
+     * @return the alias
      */
     public String getCertificateAlias(final Integer pRespId) {
         return "AllocatedCertificate_" + pRespId;

@@ -688,7 +688,7 @@ public enum AssetCurrencyClass implements StaticDataClass {
     SSP(132, 131),
 
     /**
-     * Sierra Leone Leone.
+     * Old Sierra Leone Leone.
      */
     SLL(133, 132),
 
@@ -840,7 +840,12 @@ public enum AssetCurrencyClass implements StaticDataClass {
     /**
      * Zimbabwe Dollar.
      */
-    ZWL(163, 162);
+    ZWL(163, 162),
+
+    /**
+     * New Sierra Leone Leone.
+     */
+    SLE(164, 163);
 
     /**
      * Class Id.

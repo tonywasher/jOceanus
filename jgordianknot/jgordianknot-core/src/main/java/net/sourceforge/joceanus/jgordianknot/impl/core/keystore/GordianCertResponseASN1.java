@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * }
  * </pre>
  */
-public class GordianCertResponseASN1
+public final class GordianCertResponseASN1
         extends GordianASN1Object {
     /**
      * The standard certificate tag.
@@ -292,7 +292,7 @@ public class GordianCertResponseASN1
 
         /* Store subsequent details */
         for (int i = 0; i < theSignerCerts.length; i++) {
-            myChain[i+1] = pEncryptor.convertCertificate(theSignerCerts[i]);
+            myChain[i + 1] = pEncryptor.convertCertificate(theSignerCerts[i]);
         }
 
         /* Return the chain */
