@@ -62,17 +62,21 @@
                     <tr><td>SM2</td><td>sm2p256v1, wapip192v1</td></tr>
                     <tr><td>EdDSA</td><td>Curve25519, Curve448</td></tr>
                     <tr><td>XDH</td><td>Curve25519, Curve448</td></tr>
-                    <tr><td>McEliece</td><td>Standard, CCA2(SHA1,SHA224,SHA256,SHA384,SHA512)</td></tr>
-                    <tr><td>NewHope</td><td/></tr>
-                    <tr><td>SPHINCS256</td><td>SHA2, SHA3</td></tr>
                     <tr><td>SPHINCSPLUS</td><td>(SHA, SHAKE) * (128, 192, 256) * (FS, SS, FR, FS)</td></tr>
-                    <tr><td>Rainbow</td><td/></tr>
                     <tr><td>XMSS</td><td>(SHA256,SHA512,SHAKE128,SHAKE256) * XMSS(H12, H16, H20) or XMSS^MT(H20, H40, H60)</td></tr>
                     <tr><td rowspan="2">LMS</td><td>SIG(H5,H10,H25,H20,H25) * OTS(W1,W2,W4,W8)</td></tr>
                     <tr><td>HSS(LMS * DEPTH(2..8)</td></tr>
                     <tr><td>CMCE</td><td>(BASE, PIVOT) * (3488, 4608, 6688, 6960, 8192)</td></tr>
                     <tr><td>FRODO</td><td>(AES, SHAKE) * (19888, 31296, 43088)</td></tr>
                     <tr><td>SABER</td><td>(LIGHT, BASE, FIRE) * (128, 192, 256)</td></tr>
+                    <tr><td>KYBER</td><td>(512, 768, 1024) * (NONE, AES)</td></tr>
+                    <tr><td>DILITHIUM</td><td>(2, 3, 5) * (NONE, AES)</td></tr>
+                    <tr><td>NTRU</td><td>HPS509, HPS677, HPS821, HRSS701</td></tr>
+                    <tr><td>NTRUPRIME</td><td>(NTRUL, SNTRU) * (653, 761, 857, 953, 1013, 1277)</td></tr>
+                    <tr><td>BIKE</td><td>128, 192, 256</td></tr>
+                    <tr><td>FALCON</td><td>512. 1024</td></tr>
+                    <tr><td>HQC</td><td>128, 192, 256</td></tr>
+                    <tr><td>PICNIC</td><td>(L1, L3, L5) * (FS, UR, FULL, 3)</td></tr>
                 </table>
             </subsection>
         </section>
