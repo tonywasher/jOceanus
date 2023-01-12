@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2022 Tony Washer
+ * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -158,7 +158,7 @@ public class GordianCoreKeySetFactory
      * @param pSpec the keySetHashSpec
      * @return true/false
      */
-    private boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
+    private static boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
         /* Check for invalid spec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;

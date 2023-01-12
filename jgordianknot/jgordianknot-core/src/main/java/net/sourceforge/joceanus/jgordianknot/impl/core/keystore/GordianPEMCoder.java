@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2022 Tony Washer
+ * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -252,7 +252,7 @@ public class GordianPEMCoder {
     }
 
     /**
-     * Create a PEM Object
+     * Create a PEM Object.
      * @param pObjectType the objectType
      * @param pObject the object
      * @return the PEM Object
@@ -574,8 +574,8 @@ public class GordianPEMCoder {
      * @param pInfo the encryptedInfo
      * @return the algorithmId.
      */
-    private EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreLock pLock,
-                                                        final byte[] pInfo) {
+    private static EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreLock pLock,
+                                                               final byte[] pInfo) {
         return new EncryptedPrivateKeyInfo(pLock.getAlgorithmId(), pInfo);
     }
 

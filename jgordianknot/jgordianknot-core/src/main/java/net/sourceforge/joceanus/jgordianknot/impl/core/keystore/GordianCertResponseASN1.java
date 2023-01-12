@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2022 Tony Washer
+ * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * }
  * </pre>
  */
-public class GordianCertResponseASN1
+public final class GordianCertResponseASN1
         extends GordianASN1Object {
     /**
      * The standard certificate tag.
@@ -292,7 +292,7 @@ public class GordianCertResponseASN1
 
         /* Store subsequent details */
         for (int i = 0; i < theSignerCerts.length; i++) {
-            myChain[i+1] = pEncryptor.convertCertificate(theSignerCerts[i]);
+            myChain[i + 1] = pEncryptor.convertCertificate(theSignerCerts[i]);
         }
 
         /* Return the chain */

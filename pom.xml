@@ -86,8 +86,8 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>18.0.2</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.5.0</CheckStyleVersion>
-    <PMDVersion>6.52.0</PMDVersion>
+    <CheckStyleVersion>10.6.0</CheckStyleVersion>
+    <PMDVersion>6.53.0</PMDVersion>
     <CleanPluginVersion>3.2.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.0</InstallPluginVersion>
@@ -96,7 +96,7 @@
     <EnforcerPluginVersion>3.1.0</EnforcerPluginVersion>
     <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
     <ShadePluginVersion>3.4.1</ShadePluginVersion>
-    <DependencyPluginVersion>3.3.0</DependencyPluginVersion>
+    <DependencyPluginVersion>3.4.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M7</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.0.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.3.0</BuildHelperPluginVersion>

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2022 Tony Washer
+ * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -688,7 +688,7 @@ public enum AssetCurrencyClass implements StaticDataClass {
     SSP(132, 131),
 
     /**
-     * Sierra Leone Leone.
+     * Old Sierra Leone Leone.
      */
     SLL(133, 132),
 
@@ -840,7 +840,12 @@ public enum AssetCurrencyClass implements StaticDataClass {
     /**
      * Zimbabwe Dollar.
      */
-    ZWL(163, 162);
+    ZWL(163, 162),
+
+    /**
+     * New Sierra Leone Leone.
+     */
+    SLE(164, 163);
 
     /**
      * Class Id.
