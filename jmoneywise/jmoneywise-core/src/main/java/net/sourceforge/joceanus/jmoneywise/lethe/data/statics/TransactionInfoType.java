@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfoType
-        extends StaticDataItem<TransactionInfoType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

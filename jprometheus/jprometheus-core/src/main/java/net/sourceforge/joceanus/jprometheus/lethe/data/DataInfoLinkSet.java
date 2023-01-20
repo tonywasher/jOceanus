@@ -76,7 +76,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
     /**
      * The infoType.
      */
-    private final StaticDataItem<?> theInfoType;
+    private final StaticDataItem theInfoType;
 
     /**
      * The infoType.
@@ -91,7 +91,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
      */
     protected DataInfoLinkSet(final DataInfoList<T> pList,
                               final DataItem pOwner,
-                              final StaticDataItem<?> pInfoType) {
+                              final StaticDataItem pInfoType) {
         /* Call super-constructor */
         super(pList);
 
@@ -158,7 +158,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
     }
 
     @Override
-    public StaticDataItem<?> getInfoType() {
+    public StaticDataItem getInfoType() {
         return theInfoType;
     }
 

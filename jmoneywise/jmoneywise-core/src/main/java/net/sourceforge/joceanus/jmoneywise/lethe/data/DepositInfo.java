@@ -327,7 +327,7 @@ public class DepositInfo
 
         @Override
         protected DepositInfo addNewItem(final DataItem pOwner,
-                                         final StaticDataItem<?> pInfoType) {
+                                         final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final DepositInfo myInfo = new DepositInfo(this, (Deposit) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

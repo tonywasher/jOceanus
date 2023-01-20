@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticDataItem<Frequency> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

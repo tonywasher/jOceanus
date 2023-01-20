@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PayeeType data type.
  */
 public class PayeeType
-        extends StaticDataItem<PayeeType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

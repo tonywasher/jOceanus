@@ -444,7 +444,7 @@ public class SecurityInfo
 
         @Override
         protected SecurityInfo addNewItem(final DataItem pOwner,
-                                          final StaticDataItem<?> pInfoType) {
+                                          final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

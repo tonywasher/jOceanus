@@ -327,7 +327,7 @@ public class LoanInfo
 
         @Override
         protected LoanInfo addNewItem(final DataItem pOwner,
-                                      final StaticDataItem<?> pInfoType) {
+                                      final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final LoanInfo myInfo = new LoanInfo(this, (Loan) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

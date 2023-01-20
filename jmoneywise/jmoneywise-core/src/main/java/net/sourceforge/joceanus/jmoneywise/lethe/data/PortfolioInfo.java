@@ -327,7 +327,7 @@ public class PortfolioInfo
 
         @Override
         protected PortfolioInfo addNewItem(final DataItem pOwner,
-                                           final StaticDataItem<?> pInfoType) {
+                                           final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final PortfolioInfo myInfo = new PortfolioInfo(this, (Portfolio) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

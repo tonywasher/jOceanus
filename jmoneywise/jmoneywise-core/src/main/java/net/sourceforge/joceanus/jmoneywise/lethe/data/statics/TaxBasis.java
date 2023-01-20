@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticDataItem<TaxBasis> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

@@ -451,7 +451,7 @@ public class CashInfo
 
         @Override
         protected CashInfo addNewItem(final DataItem pOwner,
-                                      final StaticDataItem<?> pInfoType) {
+                                      final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final CashInfo myInfo = new CashInfo(this, (Cash) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

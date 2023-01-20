@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticDataItem<SecurityType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

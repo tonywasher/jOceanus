@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanCategoryType
-        extends StaticDataItem<LoanCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the Category Data type
  * @param <S> the Static Data type
  */
-public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends StaticDataItem<S>>
+public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends StaticDataItem>
         extends EncryptedItem
         implements MetisDataNamedItem, Comparable<T> {
     /**
@@ -711,7 +711,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * @param <T> the Category Data type
      * @param <S> the Static Data type
      */
-    public abstract static class CategoryBaseList<T extends CategoryBase<T, S>, S extends StaticDataItem<S>>
+    public abstract static class CategoryBaseList<T extends CategoryBase<T, S>, S extends StaticDataItem>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -856,7 +856,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * @param <T> the Category Data type
      * @param <S> the Static Data type
      */
-    protected static class CategoryDataMap<T extends CategoryBase<T, S>, S extends StaticDataItem<S>>
+    protected static class CategoryDataMap<T extends CategoryBase<T, S>, S extends StaticDataItem>
             extends DataInstanceMap<T, String> {
         @Override
         public void adjustForItem(final T pItem) {

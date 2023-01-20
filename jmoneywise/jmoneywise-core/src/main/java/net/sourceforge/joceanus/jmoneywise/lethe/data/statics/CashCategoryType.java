@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashCategoryType
-        extends StaticDataItem<CashCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

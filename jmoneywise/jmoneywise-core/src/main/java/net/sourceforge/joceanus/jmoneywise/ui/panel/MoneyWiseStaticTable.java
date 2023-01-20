@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * @param <L> the list type
  * @param <T> the data type
  */
-public class MoneyWiseStaticTable<L extends StaticList<T>, T extends StaticDataItem<T>>
+public class MoneyWiseStaticTable<L extends StaticList<T>, T extends StaticDataItem>
         extends MoneyWiseBaseTable<T> {
     /**
      * Class column width.
@@ -237,7 +237,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T>, T extends StaticDataI
      * @param pStatic the static data
      */
     @SuppressWarnings("unchecked")
-    void selectStatic(final StaticDataItem<?> pStatic) {
+    void selectStatic(final StaticDataItem pStatic) {
         getTable().selectRow((T) pStatic);
     }
 

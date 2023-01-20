@@ -459,7 +459,7 @@ public class TransactionInfo
 
         @Override
         protected TransactionInfo addNewItem(final DataItem pOwner,
-                                             final StaticDataItem<?> pInfoType) {
+                                             final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final TransactionInfo myInfo = new TransactionInfo(this, (Transaction) pOwner, (TransactionInfoType) pInfoType);
             add(myInfo);

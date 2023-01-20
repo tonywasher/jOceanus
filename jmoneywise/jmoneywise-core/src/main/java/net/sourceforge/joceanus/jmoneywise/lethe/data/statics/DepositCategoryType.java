@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositCategoryType
-        extends StaticDataItem<DepositCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

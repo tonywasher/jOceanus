@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionCategoryType
-        extends StaticDataItem<TransactionCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

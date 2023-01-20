@@ -277,7 +277,7 @@ public abstract class DataInfoSet<T extends DataInfoItem<T>>
         /* If we have no set, create one */
         if (mySet == null) {
             /* Obtain infoType */
-            final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
+            final StaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Allocate the new set */
             mySet = new DataInfoLinkSet<>(theInfoList, theOwner, myInfoType);
@@ -292,7 +292,7 @@ public abstract class DataInfoSet<T extends DataInfoItem<T>>
         /* If this is a new link */
         if (myItem == null) {
             /* Obtain infoType */
-            final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
+            final StaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Create the entry and add to list */
             myItem = theInfoList.addNewItem(theOwner, myInfoType);
@@ -339,7 +339,7 @@ public abstract class DataInfoSet<T extends DataInfoItem<T>>
             /* If we do not currently have a set */
             if (mySet == null) {
                 /* Obtain infoType */
-                final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
+                final StaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);
 
                 /* Allocate the new set */
                 mySet = new DataInfoLinkSet<>(theInfoList, theOwner, myInfoType);
@@ -435,7 +435,7 @@ public abstract class DataInfoSet<T extends DataInfoItem<T>>
         /* If we have no entry */
         if (myValue == null) {
             /* Obtain infoType */
-            final StaticDataItem<?> myInfoType = theTypeList.findItemByClass(pInfoClass);
+            final StaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);
 
             /* Create the entry and add to list */
             myValue = theInfoList.addNewItem(theOwner, myInfoType);

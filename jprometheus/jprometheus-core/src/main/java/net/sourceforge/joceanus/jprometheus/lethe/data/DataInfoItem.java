@@ -146,7 +146,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      */
     protected DataInfoItem(final DataInfoList<T> pList,
                            final Integer uId,
-                           final StaticDataItem<?> pInfoType,
+                           final StaticDataItem pInfoType,
                            final DataItem pOwner) {
         /* Initialise the item */
         super(pList, uId);
@@ -174,7 +174,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         } else if (myValue instanceof String) {
             setValueInfoType((String) myValue);
         } else if (myValue instanceof StaticDataItem) {
-            setValueInfoType((StaticDataItem<?>) myValue);
+            setValueInfoType((StaticDataItem) myValue);
         }
 
         /* Store the Owner */
@@ -230,7 +230,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         }
 
         /* Access InfoType */
-        final StaticDataItem<?> myInfoType = (StaticDataItem<?>) myType;
+        final StaticDataItem myInfoType = (StaticDataItem) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + super.toString();
@@ -246,7 +246,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         }
 
         /* Access InfoType */
-        final StaticDataItem<?> myInfoType = getInfoType();
+        final StaticDataItem myInfoType = getInfoType();
 
         /* Access formatter */
         final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
@@ -266,7 +266,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * Obtain InfoType.
      * @return the InfoTypeId
      */
-    public abstract StaticDataItem<?> getInfoType();
+    public abstract StaticDataItem getInfoType();
 
     /**
      * Obtain InfoClass.
@@ -433,7 +433,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * Set InfoType.
      * @param pValue the info Type
      */
-    protected final void setValueInfoType(final StaticDataItem<?> pValue) {
+    protected final void setValueInfoType(final StaticDataItem pValue) {
         getValueSet().setValue(FIELD_INFOTYPE, pValue);
     }
 
@@ -561,7 +561,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      */
     protected void setValue(final Object pValue) throws OceanusException {
         /* Access the info Type */
-        final StaticDataItem<?> myType = getInfoType();
+        final StaticDataItem myType = getInfoType();
         final DataInfoClass myClass = (DataInfoClass) myType.getStaticClass();
 
         /* Access the DataSet and parser */
@@ -884,7 +884,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
 
     @Override
     public void validate() {
-        final StaticDataItem<?> myType = getInfoType();
+        final StaticDataItem myType = getInfoType();
         final DataItem myOwner = getOwner();
         final Object myValue = getValue(Object.class);
 
@@ -977,7 +977,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
          * @return the new info item
          */
         protected abstract T addNewItem(DataItem pOwner,
-                                        StaticDataItem<?> pInfoType);
+                                        StaticDataItem pInfoType);
 
         /**
          * Add an info Item to the list.

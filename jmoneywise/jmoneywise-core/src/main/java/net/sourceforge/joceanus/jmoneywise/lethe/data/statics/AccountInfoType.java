@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticDataItem<AccountInfoType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */

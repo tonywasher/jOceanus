@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class AssetCurrency
-        extends StaticDataItem<AssetCurrency> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -191,7 +191,7 @@ public class AssetCurrency
     }
 
     @Override
-    public int compareTo(final StaticDataItem<?> pThat) {
+    public int compareTo(final StaticDataItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
