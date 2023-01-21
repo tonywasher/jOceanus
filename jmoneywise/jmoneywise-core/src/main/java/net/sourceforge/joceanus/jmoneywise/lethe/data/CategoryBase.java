@@ -41,9 +41,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Category Base class.
  * @param <T> the Category Data type
- * @param <S> the Static Data type
  */
-public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends StaticDataItem>
+public abstract class CategoryBase<T extends CategoryBase<T>>
         extends EncryptedItem
         implements MetisDataNamedItem, Comparable<T> {
     /**
@@ -101,7 +100,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected CategoryBase(final CategoryBaseList<T, S> pList,
+    protected CategoryBase(final CategoryBaseList<T> pList,
                            final T pCategory) {
         /* Set standard values */
         super(pList, pCategory);
@@ -113,7 +112,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected CategoryBase(final CategoryBaseList<T, S> pList,
+    protected CategoryBase(final CategoryBaseList<T> pList,
                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -158,7 +157,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * Edit Constructor.
      * @param pList the list
      */
-    public CategoryBase(final CategoryBaseList<T, S> pList) {
+    protected CategoryBase(final CategoryBaseList<T> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }
@@ -239,14 +238,14 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * Obtain Category Type.
      * @return the type
      */
-    public abstract S getCategoryType();
+    public abstract StaticDataItem getCategoryType();
 
     /**
      * Obtain categoryTypeId.
      * @return the categoryTypeId
      */
     public Integer getCategoryTypeId() {
-        final S myType = getCategoryType();
+        final StaticDataItem myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getId();
@@ -257,7 +256,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * @return the categoryTypeName
      */
     public String getCategoryTypeName() {
-        final S myType = getCategoryType();
+        final StaticDataItem myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getName();
@@ -459,8 +458,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
 
     @Override
     @SuppressWarnings("unchecked")
-    public CategoryBaseList<T, S> getList() {
-        return (CategoryBaseList<T, S>) super.getList();
+    public CategoryBaseList<T> getList() {
+        return (CategoryBaseList<T>) super.getList();
     }
 
     @Override
@@ -587,7 +586,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
 
         /* If we should update the children */
         if (updateChildren) {
-            final CategoryBaseList<T, S> myList = getList();
+            final CategoryBaseList<T> myList = getList();
             myList.updateChildren(myList.getBaseClass().cast(this));
         }
     }
@@ -596,7 +595,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * Set a new category type.
      * @param pType the new type
      */
-    public abstract void setCategoryType(S pType);
+    public abstract void setCategoryType(StaticDataItem pType);
 
     /**
      * Set a new description.
@@ -634,10 +633,10 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
 
     @Override
     public void validate() {
-        final CategoryBaseList<T, S> myList = getList();
+        final CategoryBaseList<T> myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();
-        final CategoryDataMap<T, S> myMap = myList.getDataMap();
+        final CategoryDataMap<T> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -669,7 +668,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
      * Update base category from an edited category.
      * @param pCategory the edited category
      */
-    public void applyBasicChanges(final CategoryBase<T, S> pCategory) {
+    public void applyBasicChanges(final CategoryBase<T> pCategory) {
         /* Update the Name if required */
         if (!MetisDataDifference.isEqual(getName(), pCategory.getName())) {
             setValueName(pCategory.getNameField());
@@ -689,8 +688,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
 
     @Override
     public void adjustMapForItem() {
-        final CategoryBaseList<T, S> myList = getList();
-        final CategoryDataMap<T, S> myMap = myList.getDataMap();
+        final CategoryBaseList<T> myList = getList();
+        final CategoryDataMap<T> myMap = myList.getDataMap();
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
@@ -709,9 +708,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
     /**
      * The Category Base List class.
      * @param <T> the Category Data type
-     * @param <S> the Static Data type
      */
-    public abstract static class CategoryBaseList<T extends CategoryBase<T, S>, S extends StaticDataItem>
+    public abstract static class CategoryBaseList<T extends CategoryBase<T>>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -736,7 +734,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected CategoryBaseList(final CategoryBaseList<T, S> pSource) {
+        protected CategoryBaseList(final CategoryBaseList<T> pSource) {
             super(pSource);
         }
 
@@ -747,14 +745,14 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
 
         @Override
         @SuppressWarnings("unchecked")
-        protected CategoryDataMap<T, S> getDataMap() {
-            return (CategoryDataMap<T, S>) super.getDataMap();
+        protected CategoryDataMap<T> getDataMap() {
+            return (CategoryDataMap<T>) super.getDataMap();
         }
 
         @Override
         public T findItemByName(final String pName) {
             /* Access the dataMap */
-            final CategoryDataMap<T, S> myMap = getDataMap();
+            final CategoryDataMap<T> myMap = getDataMap();
 
             /* Use it if we have it */
             if (myMap != null) {
@@ -846,7 +844,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
         }
 
         @Override
-        protected CategoryDataMap<T, S> allocateDataMap() {
+        protected CategoryDataMap<T> allocateDataMap() {
             return new CategoryDataMap<>();
         }
     }
@@ -854,9 +852,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S>, S extends Stati
     /**
      * The dataMap class.
      * @param <T> the Category Data type
-     * @param <S> the Static Data type
      */
-    protected static class CategoryDataMap<T extends CategoryBase<T, S>, S extends StaticDataItem>
+    protected static class CategoryDataMap<T extends CategoryBase<T>>
             extends DataInstanceMap<T, String> {
         @Override
         public void adjustForItem(final T pItem) {

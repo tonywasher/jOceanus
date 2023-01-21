@@ -84,7 +84,7 @@ public class MoneyWiseLoanCategoryTable
         final TethysUITableManager<PrometheusDataFieldId, LoanCategory> myTable = getTable();
         myTable.declareScrollColumn(MoneyWiseCategoryDataId.LOANCATTYPE, LoanCategoryType.class)
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
-                .setCellValueFactory(CategoryBase::getCategoryType)
+                .setCellValueFactory(LoanCategory::getCategoryType)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
                 .setColumnWidth(WIDTH_NAME)

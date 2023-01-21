@@ -31,13 +31,14 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Deposit Category class.
  */
-public class DepositCategory
-        extends CategoryBase<DepositCategory, DepositCategoryType> {
+public final class DepositCategory
+        extends CategoryBase<DepositCategory> {
     /**
      * Object name.
      */
@@ -63,8 +64,8 @@ public class DepositCategory
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected DepositCategory(final DepositCategoryList pList,
-                              final DepositCategory pCategory) {
+    DepositCategory(final DepositCategoryList pList,
+                    final DepositCategory pCategory) {
         /* Set standard values */
         super(pList, pCategory);
     }
@@ -220,8 +221,8 @@ public class DepositCategory
     }
 
     @Override
-    public void setCategoryType(final DepositCategoryType pType) {
-        setValueType(pType);
+    public void setCategoryType(final StaticDataItem pType) {
+        setValueType((DepositCategoryType) pType);
     }
 
     @Override
@@ -314,7 +315,7 @@ public class DepositCategory
      * The Deposit Category List class.
      */
     public static class DepositCategoryList
-            extends CategoryBaseList<DepositCategory, DepositCategoryType> {
+            extends CategoryBaseList<DepositCategory> {
         /**
          * Report fields.
          */
