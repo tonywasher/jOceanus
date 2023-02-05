@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseCashPanel;
@@ -42,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Cash Table.
  */
 public class MoneyWiseCashTable
-        extends MoneyWiseAssetTable<Cash, CashCategory> {
+        extends MoneyWiseAssetTable<Cash> {
     /**
      * The Info UpdateEntry.
      */
@@ -68,7 +69,7 @@ public class MoneyWiseCashTable
                             final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH, CashCategory.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH);
 
         /* register the infoEntry */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.CASHINFO);
@@ -175,7 +176,7 @@ public class MoneyWiseCashTable
 
     @Override
     protected void buildCategoryMenu(final Cash pCash,
-                                     final TethysUIScrollMenu<CashCategory> pMenu) {
+                                     final TethysUIScrollMenu<AssetCategory> pMenu) {
         /* Build the menu */
         theActiveCash.buildCategoryMenu(pMenu, pCash);
     }

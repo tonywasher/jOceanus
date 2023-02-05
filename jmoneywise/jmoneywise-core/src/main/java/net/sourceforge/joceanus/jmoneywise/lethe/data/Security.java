@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Security class.
  */
 public class Security
-        extends AssetBase<Security, SecurityType>
+        extends AssetBase<Security>
         implements InfoSetItem {
     /**
      * Object name.
@@ -829,7 +829,7 @@ public class Security
      * The Security List class.
      */
     public static class SecurityList
-            extends AssetBaseList<Security, SecurityType> {
+            extends AssetBaseList<Security> {
         /**
          * Report fields.
          */

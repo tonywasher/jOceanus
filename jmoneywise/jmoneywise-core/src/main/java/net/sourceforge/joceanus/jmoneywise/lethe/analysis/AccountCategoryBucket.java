@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the account data type
  * @param <C> the account category data type
  */
-public abstract class AccountCategoryBucket<T extends AssetBase<T, C>, C>
+public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         implements MetisFieldTableItem {
     /**
      * Report fields.

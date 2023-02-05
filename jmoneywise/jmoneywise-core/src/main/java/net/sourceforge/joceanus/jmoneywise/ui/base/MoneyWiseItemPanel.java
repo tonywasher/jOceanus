@@ -189,7 +189,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem & Comparable<? super
                 myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
             } else if (myItem instanceof AssetBase) {
-                final AssetBase<?, ?> myAccount = (AssetBase<?, ?>) myItem;
+                final AssetBase<?> myAccount = (AssetBase<?>) myItem;
                 myId = MoneyWiseGoToId.ACCOUNT;
                 myName = myAccount.getName();
             } else if (myItem instanceof CategoryBase) {

@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
@@ -104,7 +105,7 @@ public class MoneyWiseLoanPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<LoanCategory> myCategoryButton = myFields.newScrollField(LoanCategory.class);
+        final TethysUIScrollButtonField<AssetCategory> myCategoryButton = myFields.newScrollField(AssetCategory.class);
         final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
         final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
@@ -284,20 +285,20 @@ public class MoneyWiseLoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCategoryMenu(final TethysUIScrollMenu<LoanCategory> pMenu,
+    public void buildCategoryMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
                                   final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final LoanCategory myCurr = pLoan.getCategory();
-        TethysUIScrollItem<LoanCategory> myActive = null;
+        TethysUIScrollItem<AssetCategory> myActive = null;
 
         /* Access Loan Categories */
         final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<AssetCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         final Iterator<LoanCategory> myIterator = myCategories.iterator();
@@ -313,10 +314,10 @@ public class MoneyWiseLoanPanel
             /* Determine menu to add to */
             final LoanCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<LoanCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysUIScrollSubMenu<AssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<AssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {

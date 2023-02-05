@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType.DepositCategoryTypeList;
@@ -38,7 +39,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Deposit Category class.
  */
 public final class DepositCategory
-        extends CategoryBase {
+        extends CategoryBase
+        implements AssetCategory {
     /**
      * Object name.
      */

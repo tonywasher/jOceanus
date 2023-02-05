@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
@@ -130,7 +131,7 @@ public class MoneyWiseDepositPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<DepositCategory> myCategoryButton = myFields.newScrollField(DepositCategory.class);
+        final TethysUIScrollButtonField<AssetCategory> myCategoryButton = myFields.newScrollField(AssetCategory.class);
         final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
         final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
@@ -341,20 +342,20 @@ public class MoneyWiseDepositPanel
      * @param pMenu the menu
      * @param pDeposit the deposit to build for
      */
-    public void buildCategoryMenu(final TethysUIScrollMenu<DepositCategory> pMenu,
+    public void buildCategoryMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
                                   final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final DepositCategory myCurr = pDeposit.getCategory();
-        TethysUIScrollItem<DepositCategory> myActive = null;
+        TethysUIScrollItem<AssetCategory> myActive = null;
 
         /* Access Deposit Categories */
         final DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<AssetCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         final Iterator<DepositCategory> myIterator = myCategories.iterator();
@@ -370,10 +371,10 @@ public class MoneyWiseDepositPanel
             /* Determine menu to add to */
             final DepositCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysUIScrollSubMenu<AssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<AssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {

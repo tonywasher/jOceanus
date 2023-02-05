@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PortfolioType data type.
  */
 public class PortfolioType
-        extends StaticDataItem {
+        extends StaticDataItem
+        implements AssetCategory {
     /**
      * Object name.
      */

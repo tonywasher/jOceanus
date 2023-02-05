@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
@@ -99,7 +100,7 @@ public class MoneyWisePayeePanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<PayeeType> myTypeButton = myFields.newScrollField(PayeeType.class);
+        final TethysUIScrollButtonField<AssetCategory> myTypeButton = myFields.newScrollField(AssetCategory.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
@@ -287,7 +288,7 @@ public class MoneyWisePayeePanel
      * @param pMenu the menu
      * @param pPayee the payee to build for
      */
-    public void buildPayeeTypeMenu(final TethysUIScrollMenu<PayeeType> pMenu,
+    public void buildPayeeTypeMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
                                    final Payee pPayee) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -295,7 +296,7 @@ public class MoneyWisePayeePanel
         /* Record active item */
         final PayeeType myCurr = pPayee.getCategory();
         final PayeeList myList = pPayee.getList();
-        TethysUIScrollItem<PayeeType> myActive = null;
+        TethysUIScrollItem<AssetCategory> myActive = null;
 
         /* Access PayeeTypes */
         final PayeeTypeList myTypes = getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
@@ -325,7 +326,7 @@ public class MoneyWisePayeePanel
             }
 
             /* Create a new action for the payeeType */
-            final TethysUIScrollItem<PayeeType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<AssetCategory> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {

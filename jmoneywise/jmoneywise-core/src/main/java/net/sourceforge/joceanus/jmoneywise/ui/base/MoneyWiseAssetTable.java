@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -46,9 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 /**
  * MoneyWise Asset Table.
  * @param <T> the Asset Data type
- * @param <C> the Category Data type
  */
-public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
+public abstract class MoneyWiseAssetTable<T extends AssetBase<T>>
         extends MoneyWiseBaseTable<T> {
     /**
      * ShowClosed prompt.
@@ -81,13 +81,11 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pUpdateSet the updateSet
      * @param pError     the error panel
      * @param pDataType  the dataType
-     * @param pCategoryClass the class of the category type
      */
     protected MoneyWiseAssetTable(final MoneyWiseView pView,
                                   final UpdateSet pUpdateSet,
                                   final MetisErrorPanel pError,
-                                  final MoneyWiseDataType pDataType,
-                                  final Class<C> pCategoryClass) {
+                                  final MoneyWiseDataType pDataType) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, pDataType);
 
@@ -122,7 +120,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setOnCommit((r, v) -> updateField(AssetBase::setName, r, v));
 
         /* Create the Category column */
-        myTable.declareScrollColumn(MoneyWiseAssetDataId.CATEGORY, pCategoryClass)
+        myTable.declareScrollColumn(MoneyWiseAssetDataId.CATEGORY, AssetCategory.class)
                 .setMenuConfigurator(this::buildCategoryMenu)
                 .setCellValueFactory(AssetBase::getCategory)
                 .setEditable(true)
@@ -277,7 +275,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pMenu the menu to build
      */
     protected abstract void buildCategoryMenu(T pAsset,
-                                              TethysUIScrollMenu<C> pMenu);
+                                              TethysUIScrollMenu<AssetCategory> pMenu);
 
     /**
      * Build the Parent list for the item.

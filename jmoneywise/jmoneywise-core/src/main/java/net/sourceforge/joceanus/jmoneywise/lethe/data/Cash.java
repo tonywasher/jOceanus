@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Cash class.
  */
 public class Cash
-        extends AssetBase<Cash, CashCategory>
+        extends AssetBase<Cash>
         implements InfoSetItem {
     /**
      * Object name.
@@ -656,7 +656,7 @@ public class Cash
      * The Cash List class.
      */
     public static class CashList
-            extends AssetBaseList<Cash, CashCategory> {
+            extends AssetBaseList<Cash> {
         /**
          * Report fields.
          */
@@ -940,7 +940,7 @@ public class Cash
          * @return the matching item
          */
         public Cash findItemByName(final String pName) {
-            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Cash
                                            ? (Cash) myAsset
                                            : null;

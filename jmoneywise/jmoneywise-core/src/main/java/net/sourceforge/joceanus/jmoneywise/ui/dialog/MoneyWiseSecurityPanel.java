@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
@@ -130,7 +131,7 @@ public class MoneyWiseSecurityPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<SecurityType> myTypeButton = myFields.newScrollField(SecurityType.class);
+        final TethysUIScrollButtonField<AssetCategory> myTypeButton = myFields.newScrollField(AssetCategory.class);
         final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
         final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
@@ -376,14 +377,14 @@ public class MoneyWiseSecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildSecTypeMenu(final TethysUIScrollMenu<SecurityType> pMenu,
+    public void buildSecTypeMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
                                  final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final SecurityType myCurr = pSecurity.getCategory();
-        TethysUIScrollItem<SecurityType> myActive = null;
+        TethysUIScrollItem<AssetCategory> myActive = null;
 
         /* Access SecurityTypes */
         final SecurityTypeList myTypes = getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
@@ -400,7 +401,7 @@ public class MoneyWiseSecurityPanel
             }
 
             /* Create a new action for the secType */
-            final TethysUIScrollItem<SecurityType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<AssetCategory> myItem = pMenu.addItem(myType);
 
             /* If this is the active secType */
             if (myType.equals(myCurr)) {

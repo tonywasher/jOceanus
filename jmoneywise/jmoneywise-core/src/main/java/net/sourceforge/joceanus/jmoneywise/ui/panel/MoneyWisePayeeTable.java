@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePayeePanel;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Payee Table.
  */
 public class MoneyWisePayeeTable
-        extends MoneyWiseAssetTable<Payee, PayeeType> {
+        extends MoneyWiseAssetTable<Payee> {
     /**
      * The Info UpdateEntry.
      */
@@ -67,7 +68,7 @@ public class MoneyWisePayeeTable
                         final UpdateSet pUpdateSet,
                         final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.PAYEE, PayeeType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.PAYEE);
 
         /* register the infoEntry */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.PAYEEINFO);
@@ -174,7 +175,7 @@ public class MoneyWisePayeeTable
 
     @Override
     protected void buildCategoryMenu(final Payee pPayee,
-                                     final TethysUIScrollMenu<PayeeType> pMenu) {
+                                     final TethysUIScrollMenu<AssetCategory> pMenu) {
         /* Build the menu */
         theActivePayee.buildPayeeTypeMenu(pMenu, pPayee);
     }
