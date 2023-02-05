@@ -386,7 +386,7 @@ public class ArchiveLoader {
      * @param pAsset the asset to declare.
      * @throws OceanusException on error
      */
-    protected void declareAsset(final AssetBase<?> pAsset) throws OceanusException {
+    protected void declareAsset(final AssetBase pAsset) throws OceanusException {
         /* Access the asset name */
         final String myName = pAsset.getName();
 

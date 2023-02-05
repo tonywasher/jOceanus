@@ -282,12 +282,12 @@ public final class AssetPair
 
         /* Convert AssetBase reference to Id */
         if (myValue instanceof AssetBase) {
-            myValue = ((AssetBase<?>) myValue).getId();
+            myValue = ((AssetBase) myValue).getId();
         }
 
         /* Lookup Id reference */
         if (myValue instanceof Integer) {
-            final AssetBase<?> myItem = pList.findItemById((Integer) myValue);
+            final AssetBase myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
                 throw new MoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
@@ -296,7 +296,7 @@ public final class AssetPair
 
             /* Lookup Name reference */
         } else if (myValue instanceof String) {
-            final AssetBase<?> myItem = pList.findItemByName((String) myValue);
+            final AssetBase myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
                 throw new MoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);

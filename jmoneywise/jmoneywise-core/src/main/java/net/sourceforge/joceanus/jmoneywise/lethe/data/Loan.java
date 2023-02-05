@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Loan class.
  */
 public class Loan
-        extends AssetBase<Loan>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -1016,7 +1016,7 @@ public class Loan
          * @return the matching item
          */
         public Loan findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Loan
                                            ? (Loan) myAsset
                                            : null;

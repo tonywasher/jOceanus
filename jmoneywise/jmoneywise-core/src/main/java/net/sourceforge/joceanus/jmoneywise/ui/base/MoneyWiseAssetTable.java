@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Asset Table.
  * @param <T> the Asset Data type
  */
-public abstract class MoneyWiseAssetTable<T extends AssetBase<T>>
+public abstract class MoneyWiseAssetTable<T extends AssetBase>
         extends MoneyWiseBaseTable<T> {
     /**
      * ShowClosed prompt.

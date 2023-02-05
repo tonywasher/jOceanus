@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Portfolio class.
  */
 public class Portfolio
-        extends AssetBase<Portfolio>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -1204,7 +1204,7 @@ public class Portfolio
          * @return the matching item
          */
         public Portfolio findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Portfolio
                                                 ? (Portfolio) myAsset
                                                 : null;

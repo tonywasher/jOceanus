@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Deposit class.
  */
 public class Deposit
-        extends AssetBase<Deposit>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -1136,7 +1136,7 @@ public class Deposit
          * @return the matching item
          */
         public Deposit findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Deposit
                                               ? (Deposit) myAsset
                                               : null;

@@ -270,7 +270,7 @@ public class MoneyWiseMaintenance
             /* View the requested account */
             case ACCOUNT:
                 /* Select the requested account */
-                final AssetBase<?> myAccount = pEvent.getDetails(AssetBase.class);
+                final AssetBase myAccount = pEvent.getDetails(AssetBase.class);
                 theAccountTab.selectAccount(myAccount);
 
                 /* Goto the Account tab */

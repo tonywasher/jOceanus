@@ -288,7 +288,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @param <B> the underlying bucket type
      * @param <T> the account data type
      */
-    public abstract static class AccountFilter<B extends AccountBucket<T>, T extends AssetBase<T>>
+    public abstract static class AccountFilter<B extends AccountBucket<T>, T extends AssetBase>
             extends AnalysisFilter<B, AccountAttribute> {
         /**
          * Constructor.

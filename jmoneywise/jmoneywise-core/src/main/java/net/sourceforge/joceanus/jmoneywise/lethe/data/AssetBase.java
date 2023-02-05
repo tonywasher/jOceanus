@@ -46,9 +46,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing an account that can be part of a transaction.
- * @param <T> the actual dataType
  */
-public abstract class AssetBase<T extends AssetBase<T>>
+public abstract class AssetBase
         extends EncryptedItem
         implements MetisDataNamedItem, TransactionAsset {
     /**
@@ -156,8 +155,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pList the list
      * @param pAsset The Asset to copy
      */
-    protected AssetBase(final AssetBaseList<T> pList,
-                        final AssetBase<T> pAsset) {
+    protected AssetBase(final AssetBaseList<?> pList,
+                        final AssetBase pAsset) {
         /* Set standard values */
         super(pList, pAsset);
 
@@ -179,7 +178,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected AssetBase(final AssetBaseList<T> pList,
+    protected AssetBase(final AssetBaseList<?> pList,
                         final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -250,7 +249,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Edit Constructor.
      * @param pList the list
      */
-    protected AssetBase(final AssetBaseList<T> pList) {
+    protected AssetBase(final AssetBaseList<?> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }
@@ -734,9 +733,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public AssetBaseList<T> getList() {
-        return (AssetBaseList<T>) super.getList();
+    public AssetBaseList<?> getList() {
+        return (AssetBaseList<?>) super.getList();
     }
 
     @Override
@@ -804,7 +802,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             }
 
             /* Touch parent if it exists */
-            final AssetBase<?> myParent = getParent();
+            final AssetBase myParent = getParent();
             if (myParent != null) {
                 myParent.touchItem(pSource);
             }
@@ -813,7 +811,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         /* If we are being touched by an asset */
         if (pSource instanceof AssetBase) {
             /* Access as assetBase */
-            final AssetBase<?> myAsset = (AssetBase<?>) pSource;
+            final AssetBase myAsset = (AssetBase) pSource;
 
             /* Mark as relevant if child is open */
             if (!myAsset.isClosed()) {
@@ -841,7 +839,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         /* Access as AssetBase */
-        final AssetBase<?> myThat = (AssetBase<?>) pThat;
+        final AssetBase myThat = (AssetBase) pThat;
 
         /* Check data type */
         return getItemType().getItemKey() - myThat.getItemType().getItemKey();
@@ -852,7 +850,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pThat the target asset
      * @return -1,0,1 as this is before, equal or after that
      */
-    protected int compareAsset(final T pThat) {
+    protected int compareAsset(final AssetBase pThat) {
         /* Check the names */
         final int iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
@@ -964,7 +962,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected void validateName(final String pName) {
         /* Access the list */
-        final AssetBaseList<T> myList = getList();
+        final AssetBaseList<?> myList = getList();
 
         /* The name must not be too long */
         if (pName.length() > NAMELEN) {
@@ -986,7 +984,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Update base asset from an edited asset.
      * @param pAsset the edited asset
      */
-    protected void applyBasicChanges(final AssetBase<T> pAsset) {
+    protected void applyBasicChanges(final AssetBase pAsset) {
         /* Update the name if required */
         if (!MetisDataDifference.isEqual(getName(), pAsset.getName())) {
             setValueName(pAsset.getNameField());
@@ -1022,7 +1020,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * The Asset List class.
      * @param <T> the dataType
      */
-    public abstract static class AssetBaseList<T extends AssetBase<T>>
+    public abstract static class AssetBaseList<T extends AssetBase>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -1110,11 +1108,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * The dataMap class.
      */
     protected static class AssetDataMap
-            extends DataInstanceMap<AssetBase<?>, String> {
+            extends DataInstanceMap<AssetBase, String> {
         @Override
         public void adjustForItem(final DataItem pItem) {
             /* Access item */
-            final AssetBase<?> myItem = (AssetBase<?>) pItem;
+            final AssetBase myItem = (AssetBase) pItem;
 
             /* Adjust name count */
             adjustForItem(myItem, myItem.getName());
@@ -1125,7 +1123,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
          * @param pName the name to look up
          * @return the matching item
          */
-        public AssetBase<?> findAssetByName(final String pName) {
+        public AssetBase findAssetByName(final String pName) {
             return findItemByKey(pName);
         }
 

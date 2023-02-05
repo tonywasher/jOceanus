@@ -904,7 +904,7 @@ public class SecurityPrice
          * @param pDate the date
          * @return the latest price for the date.
          */
-        public TethysPrice getPriceForDate(final AssetBase<?> pSecurity,
+        public TethysPrice getPriceForDate(final AssetBase pSecurity,
                                            final TethysDate pDate) {
             /* Access as security */
             final Security mySecurity = Security.class.cast(pSecurity);

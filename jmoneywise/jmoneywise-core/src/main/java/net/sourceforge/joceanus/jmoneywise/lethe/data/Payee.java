@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Payee class.
  */
 public class Payee
-        extends AssetBase<Payee>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -1070,7 +1070,7 @@ public class Payee
          * @return the matching item
          */
         public Payee findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Payee
                                             ? (Payee) myAsset
                                             : null;

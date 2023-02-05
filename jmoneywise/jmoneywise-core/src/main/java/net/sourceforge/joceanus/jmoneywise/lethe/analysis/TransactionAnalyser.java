@@ -448,9 +448,9 @@ public class TransactionAnalyser
         } else if (myDebitAsset instanceof AssetBase
                    && myCreditAsset instanceof AssetBase) {
             /* Access correctly */
-            AssetBase<?> myDebit = (AssetBase<?>) myDebitAsset;
-            AssetBase<?> myCredit = (AssetBase<?>) myCreditAsset;
-            AssetBase<?> myChild = null;
+            AssetBase myDebit = (AssetBase) myDebitAsset;
+            AssetBase myCredit = (AssetBase) myCreditAsset;
+            AssetBase myChild = null;
             final TethysMoney myAmount = pTrans.getAmount();
             TransactionCategory myCat = pTrans.getCategory();
 
@@ -594,7 +594,7 @@ public class TransactionAnalyser
         switch (myCat.getCategoryTypeClass()) {
             /* Process a stock right waived */
             case STOCKRIGHTSISSUE:
-                processTransferOut(pDebit, (AssetBase<?>) pCredit);
+                processTransferOut(pDebit, (AssetBase) pCredit);
                 break;
             /* Process a dividend */
             case DIVIDEND:
@@ -610,9 +610,9 @@ public class TransactionAnalyser
             case INHERITED:
             case OTHERINCOME:
                 if (pDebit.getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)) {
-                    processChargeableGain(pDebit, (AssetBase<?>) pCredit);
+                    processChargeableGain(pDebit, (AssetBase) pCredit);
                 } else {
-                    processTransferOut(pDebit, (AssetBase<?>) pCredit);
+                    processTransferOut(pDebit, (AssetBase) pCredit);
                 }
                 break;
             /* Throw an Exception */
@@ -681,7 +681,7 @@ public class TransactionAnalyser
             throw new MoneyWiseLogicException("Invalid Debit Asset: "
                                               + pDebit.getAssetType());
         }
-        final AssetBase<?> myDebit = (AssetBase<?>) pDebit;
+        final AssetBase myDebit = (AssetBase) pDebit;
 
         /* Switch on the category */
         final TransactionCategory myCat = theHelper.getCategory();
@@ -882,7 +882,7 @@ public class TransactionAnalyser
      * @param pDebit the debit account
      * @param pCredit the credit security holding
      */
-    private void processTransferIn(final AssetBase<?> pDebit,
+    private void processTransferIn(final AssetBase pDebit,
                                    final SecurityHolding pCredit) {
         /* Access debit account and category */
         final TransactionCategory myCat = theHelper.getCategory();
@@ -1002,7 +1002,7 @@ public class TransactionAnalyser
         myCat = mySecurity.getDetailedCategory(myCat, myYear);
 
         /* True debit account is the parent */
-        final AssetBase<?> myDebit = mySecurity.getParent();
+        final AssetBase myDebit = mySecurity.getParent();
 
         /* Adjust the debit payee bucket */
         final PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
@@ -1060,7 +1060,7 @@ public class TransactionAnalyser
             myAsset.adjustCounter(SecurityAttribute.DIVIDEND, myAdjust);
 
             /* Adjust the credit account bucket */
-            final AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) pCredit);
+            final AccountBucket<?> myBucket = getAccountBucket((AssetBase) pCredit);
             myBucket.adjustForCredit(theHelper);
         }
 
@@ -1082,7 +1082,7 @@ public class TransactionAnalyser
      * @param pCredit the credit account
      */
     private void processTransferOut(final SecurityHolding pHolding,
-                                    final AssetBase<?> pCredit) {
+                                    final AssetBase pCredit) {
         /* Access credit account and category */
         final TransactionCategory myCat = theHelper.getCategory();
 
@@ -1279,7 +1279,7 @@ public class TransactionAnalyser
      * @param pCredit the credit account
      */
     private void processChargeableGain(final SecurityHolding pHolding,
-                                       final AssetBase<?> pCredit) {
+                                       final AssetBase pCredit) {
         /* Chargeable Gain is from the debit account and may or may not have units */
         final Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
@@ -1306,7 +1306,7 @@ public class TransactionAnalyser
         myDelta.negate();
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
-        /* Assume the the cost reduction is the full value */
+        /* Assume the cost reduction is the full value */
         TethysMoney myReduction = new TethysMoney(myAmount);
         final TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
@@ -1354,7 +1354,7 @@ public class TransactionAnalyser
         myAsset.registerTransaction(theHelper);
 
         /* True debit account is the parent */
-        final AssetBase<?> myParent = myDebit.getParent();
+        final AssetBase myParent = myDebit.getParent();
 
         /* Adjust the debit account bucket */
         final PayeeBucket myPayee = thePayeeBuckets.getBucket(myParent);
@@ -1789,7 +1789,7 @@ public class TransactionAnalyser
                                                                        : MoneyWiseCashType.SMALLCASH);
 
         /* Adjust the ThirdParty account bucket */
-        final AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) myReturnedCashAccount);
+        final AccountBucket<?> myBucket = getAccountBucket((AssetBase) myReturnedCashAccount);
         myBucket.adjustForReturnedCashCredit(theHelper);
     }
 
@@ -1798,7 +1798,7 @@ public class TransactionAnalyser
      * @param pAsset the asset
      * @return the bucket
      */
-    private AccountBucket<?> getAccountBucket(final AssetBase<?> pAsset) {
+    private AccountBucket<?> getAccountBucket(final AssetBase pAsset) {
         switch (pAsset.getAssetType()) {
             case DEPOSIT:
                 return theDepositBuckets.getBucket((Deposit) pAsset);
