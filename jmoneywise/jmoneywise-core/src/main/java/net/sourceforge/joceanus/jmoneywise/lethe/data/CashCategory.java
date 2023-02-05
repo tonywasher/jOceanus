@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cash Category class.
  */
 public final class CashCategory
-        extends CategoryBase<CashCategory> {
+        extends CategoryBase {
     /**
      * Object name.
      */

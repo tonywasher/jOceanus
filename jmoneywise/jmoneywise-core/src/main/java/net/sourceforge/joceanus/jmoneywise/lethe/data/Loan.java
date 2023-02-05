@@ -1005,7 +1005,7 @@ public class Loan
         }
 
         @Override
-        public void adjustForItem(final Loan pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust name count */
             theUnderlyingMap.adjustForItem(pItem);
         }

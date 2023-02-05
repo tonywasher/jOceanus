@@ -838,9 +838,10 @@ public class SecurityPrice
         }
 
         @Override
-        public void adjustForItem(final T pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Access the Security Id */
-            final Security mySecurity = pItem.getSecurity();
+            final SecurityPrice myItem = (SecurityPrice) pItem;
+            final Security mySecurity = myItem.getSecurity();
             if (mySecurity == null) {
                 return;
             }
@@ -849,7 +850,7 @@ public class SecurityPrice
             final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -> new HashMap<>());
 
             /* Adjust price count */
-            final TethysDate myDate = pItem.getDate();
+            final TethysDate myDate = myItem.getDate();
             final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
@@ -861,7 +862,7 @@ public class SecurityPrice
             final PriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, PriceList::new);
 
             /* Add element to the list */
-            myList.add(pItem);
+            myList.add(myItem);
         }
 
         /**

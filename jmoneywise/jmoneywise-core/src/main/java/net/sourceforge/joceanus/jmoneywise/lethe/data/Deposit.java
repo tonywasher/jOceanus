@@ -1125,7 +1125,7 @@ public class Deposit
         }
 
         @Override
-        public void adjustForItem(final Deposit pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust name count */
             theUnderlyingMap.adjustForItem(pItem);
         }

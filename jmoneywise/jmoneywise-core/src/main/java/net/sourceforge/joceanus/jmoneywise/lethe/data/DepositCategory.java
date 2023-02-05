@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Deposit Category class.
  */
 public final class DepositCategory
-        extends CategoryBase<DepositCategory> {
+        extends CategoryBase {
     /**
      * Object name.
      */

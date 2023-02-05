@@ -1176,9 +1176,10 @@ public class Portfolio
         }
 
         @Override
-        public void adjustForItem(final Portfolio pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* If the class is singular */
-            final PortfolioTypeClass myClass = pItem.getCategoryClass();
+            final Portfolio myItem = (Portfolio) pItem;
+            final PortfolioTypeClass myClass = myItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -1190,7 +1191,7 @@ public class Portfolio
                 }
 
                 /* Adjust portfolio map */
-                thePortfolioMap.put(myId, pItem);
+                thePortfolioMap.put(myId, myItem);
             }
 
             /* Adjust name count */

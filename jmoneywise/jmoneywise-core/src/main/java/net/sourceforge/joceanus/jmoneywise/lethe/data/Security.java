@@ -1174,9 +1174,10 @@ public class Security
         }
 
         @Override
-        public void adjustForItem(final Security pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* If the class is singular */
-            final SecurityTypeClass myClass = pItem.getCategoryClass();
+            final Security myItem = (Security) pItem;
+            final SecurityTypeClass myClass = myItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -1188,12 +1189,12 @@ public class Security
                 }
 
                 /* Adjust security map */
-                theSecurityMap.put(myId, pItem);
+                theSecurityMap.put(myId, myItem);
             }
 
             /* Adjust symbol count */
             if (myClass.needsSymbol()) {
-                final String mySymbol = pItem.getSymbol();
+                final String mySymbol = myItem.getSymbol();
                 final Integer myCount = theSymbolCountMap.get(mySymbol);
                 if (myCount == null) {
                     theSymbolCountMap.put(mySymbol, ONE);
@@ -1202,11 +1203,11 @@ public class Security
                 }
 
                 /* Adjust symbol map */
-                theSymbolMap.put(mySymbol, pItem);
+                theSymbolMap.put(mySymbol, myItem);
             }
 
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

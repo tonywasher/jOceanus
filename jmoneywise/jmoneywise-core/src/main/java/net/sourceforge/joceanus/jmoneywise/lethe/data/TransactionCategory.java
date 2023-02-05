@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Transaction Category class.
  */
 public final class TransactionCategory
-        extends CategoryBase<TransactionCategory> {
+        extends CategoryBase {
     /**
      * Object name.
      */
@@ -236,28 +236,6 @@ public final class TransactionCategory
         setCategoryType(myTypes.findItemByClass(myNewClass));
         setParentCategory(pParent);
         setSubCategoryName(getList().getUniqueName(pParent));
-    }
-
-    @Override
-    public int compareTo(final TransactionCategory pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the hidden attribute */
-        final boolean isHidden = isHidden();
-        if (isHidden != pThat.isHidden()) {
-            return isHidden
-                            ? 1
-                            : -1;
-        }
-
-        /* Compare the underlying id */
-        return super.compareTo(pThat);
     }
 
     @Override
@@ -645,9 +623,12 @@ public final class TransactionCategory
         }
 
         @Override
-        public void adjustForItem(final TransactionCategory pItem) {
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final TransactionCategory myItem = (TransactionCategory) pItem;
+
             /* If the class is singular */
-            final TransactionCategoryClass myClass = pItem.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myItem.getCategoryTypeClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -659,11 +640,11 @@ public final class TransactionCategory
                 }
 
                 /* Adjust category map */
-                theCategoryMap.put(myId, pItem);
+                theCategoryMap.put(myId, myItem);
             }
 
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

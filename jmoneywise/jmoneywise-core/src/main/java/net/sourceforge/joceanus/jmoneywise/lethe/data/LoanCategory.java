@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Loan Category class.
  */
 public final class LoanCategory
-        extends CategoryBase<LoanCategory> {
+        extends CategoryBase {
     /**
      * Object name.
      */

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CategoryInterface;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
@@ -40,11 +41,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Category Base class.
- * @param <T> the Category Data type
  */
-public abstract class CategoryBase<T extends CategoryBase<T>>
+public abstract class CategoryBase
         extends EncryptedItem
-        implements MetisDataNamedItem, Comparable<T> {
+        implements MetisDataNamedItem, Comparable<CategoryBase> {
     /**
      * Separator.
      */
@@ -100,8 +100,8 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected CategoryBase(final CategoryBaseList<T> pList,
-                           final T pCategory) {
+    protected CategoryBase(final CategoryBaseList<?> pList,
+                           final CategoryBase pCategory) {
         /* Set standard values */
         super(pList, pCategory);
     }
@@ -112,7 +112,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected CategoryBase(final CategoryBaseList<T> pList,
+    protected CategoryBase(final CategoryBaseList<?> pList,
                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -157,7 +157,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * Edit Constructor.
      * @param pList the list
      */
-    protected CategoryBase(final CategoryBaseList<T> pList) {
+    protected CategoryBase(final CategoryBaseList<?> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }
@@ -272,14 +272,14 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * Obtain Cash Category Parent.
      * @return the parent
      */
-    public abstract T getParentCategory();
+    public abstract CategoryBase getParentCategory();
 
     /**
      * Obtain parentId.
      * @return the parentId
      */
     public Integer getParentCategoryId() {
-        final T myParent = getParentCategory();
+        final CategoryBase myParent = getParentCategory();
         return (myParent == null)
                                   ? null
                                   : myParent.getId();
@@ -290,7 +290,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * @return the parentName
      */
     public String getParentCategoryName() {
-        final T myParent = getParentCategory();
+        final CategoryBase myParent = getParentCategory();
         return (myParent == null)
                                   ? null
                                   : myParent.getName();
@@ -423,7 +423,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * Set parent value.
      * @param pValue the value
      */
-    private void setValueParent(final T pValue) {
+    private void setValueParent(final CategoryBase pValue) {
         getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
@@ -457,19 +457,17 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CategoryBaseList<T> getList() {
-        return (CategoryBaseList<T>) super.getList();
+    public CategoryBaseList<?> getList() {
+        return (CategoryBaseList<?>) super.getList();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T getBase() {
-        return (T) super.getBase();
+     public CategoryBase getBase() {
+        return (CategoryBase) super.getBase();
     }
 
     @Override
-    public int compareTo(final T pThat) {
+    public int compareTo(final CategoryBase pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -559,7 +557,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      */
     public void setSubCategoryName(final String pName) throws OceanusException {
         /* Obtain parent */
-        final T myParent = getParentCategory();
+        final CategoryBase myParent = getParentCategory();
         final String myName = getName();
         boolean updateChildren = false;
 
@@ -586,7 +584,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
 
         /* If we should update the children */
         if (updateChildren) {
-            final CategoryBaseList<T> myList = getList();
+            final CategoryBaseList<?> myList = getList();
             myList.updateChildren(myList.getBaseClass().cast(this));
         }
     }
@@ -611,7 +609,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * @param pParent the new parent
      * @throws OceanusException on error
      */
-    public void setParentCategory(final T pParent) throws OceanusException {
+    public void setParentCategory(final CategoryBase pParent) throws OceanusException {
         setValueParent(pParent);
         final String mySubName = getSubCategory();
         if (mySubName != null) {
@@ -625,7 +623,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
         getCategoryType().touchItem(this);
 
         /* Touch parent if it exists */
-        final T myParent = getParentCategory();
+        final CategoryBase myParent = getParentCategory();
         if (myParent != null) {
             myParent.touchItem(this);
         }
@@ -633,10 +631,10 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
 
     @Override
     public void validate() {
-        final CategoryBaseList<T> myList = getList();
+        final CategoryBaseList<?> myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();
-        final CategoryDataMap<T> myMap = myList.getDataMap();
+        final CategoryDataMap<?> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -668,7 +666,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * Update base category from an edited category.
      * @param pCategory the edited category
      */
-    public void applyBasicChanges(final CategoryBase<T> pCategory) {
+    public void applyBasicChanges(final CategoryBase pCategory) {
         /* Update the Name if required */
         if (!MetisDataDifference.isEqual(getName(), pCategory.getName())) {
             setValueName(pCategory.getNameField());
@@ -688,8 +686,8 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
 
     @Override
     public void adjustMapForItem() {
-        final CategoryBaseList<T> myList = getList();
-        final CategoryDataMap<T> myMap = myList.getDataMap();
+        final CategoryBaseList<?> myList = getList();
+        final CategoryDataMap<?> myMap = myList.getDataMap();
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
@@ -699,7 +697,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
         clearTouches(getItemType());
 
         /* Touch parent if it exists */
-        final T myParent = getParentCategory();
+        final CategoryBase myParent = getParentCategory();
         if (myParent != null) {
             myParent.touchItem(this);
         }
@@ -709,7 +707,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * The Category Base List class.
      * @param <T> the Category Data type
      */
-    public abstract static class CategoryBaseList<T extends CategoryBase<T>>
+    public abstract static class CategoryBaseList<T extends CategoryBase>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -809,7 +807,7 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
          * @param pParent the parent item
          * @throws OceanusException on error
          */
-        private void updateChildren(final T pParent) throws OceanusException {
+        private void updateChildren(final CategoryBase pParent) throws OceanusException {
             /* Determine the id */
             final Integer myId = pParent.getId();
             final String myName = pParent.getName();
@@ -853,12 +851,16 @@ public abstract class CategoryBase<T extends CategoryBase<T>>
      * The dataMap class.
      * @param <T> the Category Data type
      */
-    protected static class CategoryDataMap<T extends CategoryBase<T>>
+    protected static class CategoryDataMap<T extends CategoryBase>
             extends DataInstanceMap<T, String> {
         @Override
-        public void adjustForItem(final T pItem) {
+        @SuppressWarnings("unchecked")
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final T myItem = (T) pItem;
+
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem((T) pItem, myItem.getName());
         }
 
         /**

@@ -1040,9 +1040,12 @@ public class Payee
         }
 
         @Override
-        public void adjustForItem(final Payee pItem) {
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final Payee myItem = (Payee) pItem;
+
             /* If the class is singular */
-            final PayeeTypeClass myClass = pItem.getCategoryClass();
+            final PayeeTypeClass myClass = myItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -1054,7 +1057,7 @@ public class Payee
                 }
 
                 /* Adjust payee map */
-                thePayeeMap.put(myId, pItem);
+                thePayeeMap.put(myId, myItem);
             }
 
             /* Adjust name count */

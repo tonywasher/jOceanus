@@ -929,7 +929,7 @@ public class Cash
         }
 
         @Override
-        public void adjustForItem(final Cash pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust name count */
             theUnderlyingMap.adjustForItem(pItem);
         }

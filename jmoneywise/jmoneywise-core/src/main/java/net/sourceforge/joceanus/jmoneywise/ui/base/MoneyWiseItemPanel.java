@@ -193,7 +193,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem & Comparable<? super
                 myId = MoneyWiseGoToId.ACCOUNT;
                 myName = myAccount.getName();
             } else if (myItem instanceof CategoryBase) {
-                final CategoryBase<?> myCategory = (CategoryBase<?>) myItem;
+                final CategoryBase myCategory = (CategoryBase) myItem;
                 myId = MoneyWiseGoToId.CATEGORY;
                 myName = myCategory.getName();
             } else if (myItem instanceof Region) {

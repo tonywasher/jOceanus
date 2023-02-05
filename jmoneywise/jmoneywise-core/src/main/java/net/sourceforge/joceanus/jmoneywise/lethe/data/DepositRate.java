@@ -917,9 +917,10 @@ public class DepositRate
         }
 
         @Override
-        public void adjustForItem(final DepositRate pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Access the Deposit Id */
-            final Deposit myDeposit = pItem.getDeposit();
+            final DepositRate myItem = (DepositRate) pItem;
+            final Deposit myDeposit = myItem.getDeposit();
             if (myDeposit == null) {
                 return;
             }
@@ -928,7 +929,7 @@ public class DepositRate
             final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myDeposit, m -> new HashMap<>());
 
             /* Adjust rate count */
-            final TethysDate myDate = pItem.getEndDate();
+            final TethysDate myDate = myItem.getEndDate();
             final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
@@ -940,7 +941,7 @@ public class DepositRate
             final RateList myList = theMapOfRates.computeIfAbsent(myDeposit, RateList::new);
 
             /* Add element to the list */
-            myList.add(pItem);
+            myList.add(myItem);
         }
 
         /**

@@ -26,7 +26,7 @@ public interface DataMapItem<T extends DataItem> {
      * adjust maps for item.
      * @param pItem the item to map
      */
-    void adjustForItem(T pItem);
+    void adjustForItem(DataItem pItem);
 
     /**
      * Reset the map.

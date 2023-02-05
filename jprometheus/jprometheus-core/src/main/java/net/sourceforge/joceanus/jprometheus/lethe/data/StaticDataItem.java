@@ -581,7 +581,6 @@ public abstract class StaticDataItem
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public StaticList<?> getList() {
         return (StaticList<?>) super.getList();
     }
@@ -731,7 +730,7 @@ public abstract class StaticDataItem
     public void adjustMapForItem() {
         final StaticList<?> myList = getList();
         final StaticDataMap<?> myMap = myList.getDataMap();
-        // TODO myMap.adjustForItem(myList.getBaseClass().cast(this));
+        myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
     /**
@@ -954,9 +953,13 @@ public abstract class StaticDataItem
         }
 
         @Override
-        public void adjustForItem(final T pItem) {
+        @SuppressWarnings("unchecked")
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final T myItem = (T) pItem;
+
             /* Adjust order count */
-            final Integer myOrder = pItem.getOrder();
+            final Integer myOrder = myItem.getOrder();
             final Integer myCount = theOrderCountMap.get(myOrder);
             if (myCount == null) {
                 theOrderCountMap.put(myOrder, ONE);
@@ -965,7 +968,7 @@ public abstract class StaticDataItem
             }
 
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

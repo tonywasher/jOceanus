@@ -560,10 +560,11 @@ public class AssetCurrency
         }
 
         @Override
-        public void adjustForItem(final AssetCurrency pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust order count */
-            if (pItem.isDefault()) {
-                theDefault = pItem;
+            final AssetCurrency myItem = (AssetCurrency) pItem;
+            if (myItem.isDefault()) {
+                theDefault = myItem;
                 theDefaultCount = theDefaultCount == null
                                                           ? ONE
                                                           : theDefaultCount + 1;

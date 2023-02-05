@@ -1113,9 +1113,12 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
     protected static class AssetDataMap
             extends DataInstanceMap<AssetBase<?, ?>, String> {
         @Override
-        public void adjustForItem(final AssetBase<?, ?> pItem) {
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final AssetBase<?, ?> myItem = (AssetBase<?, ?>) pItem;
+
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

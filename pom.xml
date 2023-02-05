@@ -76,7 +76,7 @@
     <JSONVersion>20220924</JSONVersion>
     <ApacheMavenVersion>3.8.6</ApacheMavenVersion>
     <MySQLVersion>8.0.32</MySQLVersion>
-    <PostGreSQLVersion>42.5.1</PostGreSQLVersion>
+    <PostGreSQLVersion>42.5.3</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>2.1.214</H2Version>
     <ApachePOIVersion>5.2.3</ApachePOIVersion>
@@ -86,14 +86,14 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>18.0.2</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.6.0</CheckStyleVersion>
-    <PMDVersion>6.53.0</PMDVersion>
+    <CheckStyleVersion>10.7.0</CheckStyleVersion>
+    <PMDVersion>6.54.0</PMDVersion>
     <CleanPluginVersion>3.2.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.0</InstallPluginVersion>
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0</DeployPluginVersion>
-    <EnforcerPluginVersion>3.1.0</EnforcerPluginVersion>
+    <EnforcerPluginVersion>3.2.1</EnforcerPluginVersion>
     <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
     <ShadePluginVersion>3.4.1</ShadePluginVersion>
     <DependencyPluginVersion>3.5.0</DependencyPluginVersion>
