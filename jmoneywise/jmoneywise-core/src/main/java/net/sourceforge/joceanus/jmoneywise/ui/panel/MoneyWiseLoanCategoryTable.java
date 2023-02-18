@@ -113,7 +113,7 @@ public class MoneyWiseLoanCategoryTable
         myTask = myTask.startTask("LoanCategories");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final LoanCategoryList myBase = myData.getLoanCategories();
         theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());

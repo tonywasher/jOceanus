@@ -99,7 +99,7 @@ public class MoneyWisePayeeTable
         myTask = myTask.startTask("Payees");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final PayeeList myBase = myData.getPayees();
         thePayees = myBase.deriveEditList();
         getTable().setItems(thePayees.getUnderlyingList());

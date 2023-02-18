@@ -82,7 +82,7 @@ public class UpdateSet
     /**
      * The DataControl.
      */
-    private final DataControl<?> theControl;
+    private final DataControl theControl;
 
     /**
      * The version.
@@ -98,7 +98,7 @@ public class UpdateSet
      * Constructor for an update list.
      * @param pControl the Data Control
      */
-    public UpdateSet(final DataControl<?> pControl) {
+    public UpdateSet(final DataControl pControl) {
         /* Store the Control */
         theControl = pControl;
 
@@ -146,12 +146,10 @@ public class UpdateSet
 
     /**
      * Obtain the dataSet.
-     * @param <T> the dataSet type
-     * @param pClass the class of the dataSet
      * @return the dataSet
      */
-    public <T extends DataSet<T>> T getDataSet(final Class<T> pClass) {
-        return pClass.cast(theControl.getData());
+    public  DataSet getDataSet() {
+        return theControl.getData();
     }
 
     /**

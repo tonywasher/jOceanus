@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
  * Data Control for MoneyWiseApp.
  */
 public class MoneyWiseView
-        extends DataControl<MoneyWiseData> {
+        extends DataControl {
     /**
      * The TaxFactory.
      */
@@ -138,7 +139,7 @@ public class MoneyWiseView
     }
 
     @Override
-    public PrometheusDataStore<MoneyWiseData> getDatabase() throws OceanusException {
+    public PrometheusDataStore getDatabase() throws OceanusException {
         return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class));
     }
 
@@ -147,7 +148,7 @@ public class MoneyWiseView
      * @return new DataSet
      */
     @Override
-    public PrometheusSpreadSheet<MoneyWiseData> getSpreadSheet() {
+    public PrometheusSpreadSheet getSpreadSheet() {
         return new MoneyWiseSheet(getGuiFactory());
     }
 
@@ -156,9 +157,9 @@ public class MoneyWiseView
      * @param pData the new data set
      */
     @Override
-    public final void setData(final MoneyWiseData pData) {
+    public final void setData(final DataSet pData) {
         /* Record the data */
-        theData = pData;
+        theData = (MoneyWiseData) pData;
         super.setData(pData);
     }
 

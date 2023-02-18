@@ -26,20 +26,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be
  * marked as new so that it will be written to the database via the store command.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadPurgeDatabase<T extends DataSet<T>>
+public class PrometheusThreadPurgeDatabase
         implements TethysUIThread<Void> {
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadPurgeDatabase(final DataControl<T> pControl) {
+    public PrometheusThreadPurgeDatabase(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -54,7 +53,7 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T>>
         pManager.initTask(getTaskName());
 
         /* Create interface */
-        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
@@ -62,8 +61,8 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T>>
             myDatabase.purgeTables(pManager);
 
             /* Re-base this set on a null set */
-            final T myNull = theControl.getNewData();
-            final T myData = theControl.getData();
+            final DataSet myNull = theControl.getNewData();
+            final DataSet myData = theControl.getData();
             myData.reBase(pManager, myNull);
 
             /* Derive the new set of updates */

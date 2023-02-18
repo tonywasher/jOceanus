@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class MoneyWiseDatabase
-        extends PrometheusDataStore<MoneyWiseData> {
+        extends PrometheusDataStore {
     /**
      * Construct a new Database class for load.
      * @param pPreferences the preferences

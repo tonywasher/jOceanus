@@ -50,7 +50,7 @@ public class SheetFrequency
         super(pReader, AREA_FREQUENCIES);
 
         /* Access the Frequency list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getFrequencys());
     }
 
@@ -63,7 +63,7 @@ public class SheetFrequency
         super(pWriter, AREA_FREQUENCIES);
 
         /* Access the Frequency list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getFrequencys());
     }
 

@@ -84,7 +84,7 @@ public class SheetPortfolio
         super(pReader, AREA_PORTFOLIOS);
 
         /* Access the Portfolios list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getPortfolios());
     }
 
@@ -97,7 +97,7 @@ public class SheetPortfolio
         super(pWriter, AREA_PORTFOLIOS);
 
         /* Access the Portfolios list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getPortfolios());
     }
 

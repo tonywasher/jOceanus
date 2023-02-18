@@ -40,10 +40,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * changes and deletions is built. These changes remain in memory and should be committed to the
  * database later.
  * @author Tony Washer
- * @param <T> the DataSet type
  */
-public class PrometheusThreadLoadBackup<T extends DataSet<T>>
-        implements TethysUIThread<T> {
+public class PrometheusThreadLoadBackup
+        implements TethysUIThread<DataSet> {
     /**
      * Select Backup Task.
      */
@@ -52,13 +51,13 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T>>
     /**
      * Data control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadBackup(final DataControl<T> pControl) {
+    public PrometheusThreadLoadBackup(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -68,7 +67,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T>>
     }
 
     @Override
-    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final MetisToolkit myToolkit = myPromToolkit.getToolkit();
@@ -98,15 +97,15 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T>>
         }
 
         /* Load workbook */
-        final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
-        final T myData = theControl.getNewData();
+        final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
+        final DataSet myData = theControl.getNewData();
         mySheet.loadBackup(pManager, myPasswordMgr, myData, myFile);
 
         /* Create interface */
-        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        final T myStore = theControl.getNewData();
+        final DataSet myStore = theControl.getNewData();
         myDatabase.loadDatabase(pManager, myStore);
 
         /* Check security on the database */
@@ -123,7 +122,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T>>
     }
 
     @Override
-    public void processResult(final T pResult) {
+    public void processResult(final DataSet pResult) {
         theControl.setData(pResult);
     }
 }

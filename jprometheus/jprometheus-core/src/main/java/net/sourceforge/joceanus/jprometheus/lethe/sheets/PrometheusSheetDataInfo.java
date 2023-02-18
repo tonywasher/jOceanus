@@ -47,7 +47,7 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfoItem<T>>
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected PrometheusSheetDataInfo(final PrometheusSheetReader<?> pReader,
+    protected PrometheusSheetDataInfo(final PrometheusSheetReader pReader,
                                       final String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
@@ -58,7 +58,7 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfoItem<T>>
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected PrometheusSheetDataInfo(final PrometheusSheetWriter<?> pWriter,
+    protected PrometheusSheetDataInfo(final PrometheusSheetWriter pWriter,
                                       final String pRange) {
         /* Call super constructor */
         super(pWriter, pRange);

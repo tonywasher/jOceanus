@@ -72,7 +72,7 @@ public class SheetDepositRate
         super(pReader, AREA_RATES);
 
         /* Access the Rates list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getDepositRates());
     }
 
@@ -85,7 +85,7 @@ public class SheetDepositRate
         super(pWriter, AREA_RATES);
 
         /* Access the Rates list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getDepositRates());
     }
 

@@ -50,7 +50,7 @@ public class SheetCashCategoryType
         super(pReader, AREA_CASHCATTYPES);
 
         /* Access the Cash Type list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getCashCategoryTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetCashCategoryType
         super(pWriter, AREA_CASHCATTYPES);
 
         /* Access the Cash Type list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getCashCategoryTypes());
     }
 

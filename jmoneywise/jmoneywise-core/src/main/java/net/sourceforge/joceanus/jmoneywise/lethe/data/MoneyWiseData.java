@@ -77,7 +77,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * MoneyWise dataSet.
  */
 public class MoneyWiseData
-        extends DataSet<MoneyWiseData> {
+        extends DataSet {
     /**
      * Local Report fields.
      */
@@ -644,7 +644,7 @@ public class MoneyWiseData
      */
     @Override
     public MoneyWiseData getDifferenceSet(final TethysUIThreadStatusReport pReport,
-                                          final MoneyWiseData pOld) throws OceanusException {
+                                          final DataSet pOld) throws OceanusException {
         /* Build an empty DataSet */
         final MoneyWiseData myDiffers = new MoneyWiseData(this);
 

@@ -300,7 +300,7 @@ public class AssetCurrency
          * Construct an empty CORE account currency list.
          * @param pData the DataSet for the list
          */
-        public AssetCurrencyList(final DataSet<?> pData) {
+        public AssetCurrencyList(final DataSet pData) {
             super(AssetCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
         }
 

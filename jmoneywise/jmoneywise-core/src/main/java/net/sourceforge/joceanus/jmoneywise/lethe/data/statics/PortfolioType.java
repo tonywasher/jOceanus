@@ -128,7 +128,7 @@ public class PortfolioType
          * Construct an empty CORE portfolioType list.
          * @param pData the DataSet for the list
          */
-        public PortfolioTypeList(final DataSet<?> pData) {
+        public PortfolioTypeList(final DataSet pData) {
             super(PortfolioType.class, pData, MoneyWiseDataType.PORTFOLIOTYPE, ListStyle.CORE);
         }
 

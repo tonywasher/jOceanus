@@ -39,12 +39,12 @@ public class TableTransInfoType
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransInfoType(final PrometheusDataStore<?> pDatabase) {
+    protected TableTransInfoType(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransInfoTypes());
     }

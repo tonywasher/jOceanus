@@ -34,7 +34,7 @@ public abstract class PrometheusTableStaticData<T extends StaticDataItem>
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected PrometheusTableStaticData(final PrometheusDataStore<?> pDatabase,
+    protected PrometheusTableStaticData(final PrometheusDataStore pDatabase,
                                         final String pTabName) {
         super(pDatabase, pTabName);
 

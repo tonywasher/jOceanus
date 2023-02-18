@@ -113,7 +113,7 @@ public class MoneyWiseDepositCategoryTable
         myTask = myTask.startTask("DepositCategories");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final DepositCategoryList myBase = myData.getDepositCategories();
         theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());

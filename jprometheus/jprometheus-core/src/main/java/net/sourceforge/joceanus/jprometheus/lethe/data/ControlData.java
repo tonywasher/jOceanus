@@ -108,7 +108,7 @@ public class ControlData
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
         }
     }
@@ -220,7 +220,7 @@ public class ControlData
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
     }
 
@@ -260,7 +260,7 @@ public class ControlData
          * Construct an empty CORE Control Data list.
          * @param pData the DataSet for the list
          */
-        protected ControlDataList(final DataSet<?> pData) {
+        protected ControlDataList(final DataSet pData) {
             this(pData, ListStyle.CORE);
         }
 
@@ -269,7 +269,7 @@ public class ControlData
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlDataList(final DataSet<?> pData,
+        protected ControlDataList(final DataSet pData,
                                   final ListStyle pStyle) {
             super(ControlData.class, pData, CryptographyDataType.CONTROLDATA, pStyle);
         }
@@ -325,7 +325,7 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList deriveDifferences(final DataSet<?> pDataSet,
+        public ControlDataList deriveDifferences(final DataSet pDataSet,
                                                  final DataList<?> pOld) {
             return (ControlDataList) super.deriveDifferences(pDataSet, pOld);
         }

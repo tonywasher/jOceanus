@@ -38,9 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * Thread to create an encrypted backup of a data set.
  * @author Tony Washer
- * @param <T> the DataSet type
  */
-public class PrometheusThreadCreateBackup<T extends DataSet<T>>
+public class PrometheusThreadCreateBackup
         implements TethysUIThread<Void> {
     /**
      * Buffer length.
@@ -55,13 +54,13 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T>>
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateBackup(final DataControl<T> pControl) {
+    public PrometheusThreadCreateBackup(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -118,8 +117,8 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T>>
             myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);
 
             /* Create backup */
-            final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
-            final T myOldData = theControl.getData();
+            final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
+            final DataSet myOldData = theControl.getData();
             mySheet.createBackup(pManager, myOldData, myFile, myType);
 
             /* File created, so delete on error */
@@ -129,11 +128,11 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T>>
             pManager.initTask("Verifying Backup");
 
             /* Load workbook */
-            final T myNewData = theControl.getNewData();
+            final DataSet myNewData = theControl.getNewData();
             mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            final DataSet<T> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+            final DataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

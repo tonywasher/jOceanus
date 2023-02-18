@@ -38,9 +38,8 @@ import java.util.Properties;
 
 /**
  * Class that encapsulates a database connection.
- * @param <T> the dataSet type.
  */
-public abstract class PrometheusDataStore<T extends DataSet<T>> {
+public abstract class PrometheusDataStore {
     /**
      * Number of update steps per table (INSERT/UPDATE/DELETE).
      */
@@ -201,7 +200,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T>> {
      * @throws OceanusException on error
      */
     public void loadDatabase(final TethysUIThreadStatusReport pReport,
-                             final T pData) throws OceanusException {
+                             final DataSet pData) throws OceanusException {
         /* Initialise task */
         pReport.initTask("loadDatabase");
         pReport.setNumStages(theTables.size());
@@ -230,7 +229,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T>> {
      * @throws OceanusException on error
      */
     public void updateDatabase(final TethysUIThreadStatusReport pReport,
-                               final T pData) throws OceanusException {
+                               final DataSet pData) throws OceanusException {
         final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
 
         /* Set the number of stages */

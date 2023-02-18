@@ -50,7 +50,7 @@ public class SheetSecurityType
         super(pReader, AREA_SECURITYTYPES);
 
         /* Access the Security Type list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getSecurityTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetSecurityType
         super(pWriter, AREA_SECURITYTYPES);
 
         /* Access the Security Type list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getSecurityTypes());
     }
 

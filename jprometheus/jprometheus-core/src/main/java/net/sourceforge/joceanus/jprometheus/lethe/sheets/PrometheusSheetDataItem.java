@@ -59,7 +59,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem & Comparable<? 
     /**
      * The input sheet.
      */
-    private PrometheusSheetReader<?> theReader;
+    private PrometheusSheetReader theReader;
 
     /**
      * The workbook.
@@ -111,7 +111,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem & Comparable<? 
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected PrometheusSheetDataItem(final PrometheusSheetReader<?> pReader,
+    protected PrometheusSheetDataItem(final PrometheusSheetReader pReader,
                                       final String pRange) {
         /* Store parameters */
         theReport = pReader.getReport();
@@ -124,7 +124,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem & Comparable<? 
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected PrometheusSheetDataItem(final PrometheusSheetWriter<?> pWriter,
+    protected PrometheusSheetDataItem(final PrometheusSheetWriter pWriter,
                                       final String pRange) {
         /* Store parameters */
         theReport = pWriter.getReport();

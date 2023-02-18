@@ -109,7 +109,7 @@ public class MoneyWiseDepositTable
         myTask = myTask.startTask("Deposits");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final DepositList myBase = myData.getDeposits();
         theDeposits = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theDeposits.getUnderlyingList());

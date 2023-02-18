@@ -62,7 +62,7 @@ public class SheetDepositCategory
         super(pReader, AREA_DEPCATEGORIES);
 
         /* Access the Categories list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getDepositCategories());
     }
 
@@ -75,7 +75,7 @@ public class SheetDepositCategory
         super(pWriter, AREA_DEPCATEGORIES);
 
         /* Access the Categories list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getDepositCategories());
     }
 

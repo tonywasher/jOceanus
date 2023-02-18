@@ -754,7 +754,7 @@ public abstract class StaticDataItem
          * @param pStyle the style of the list
          */
         protected StaticList(final Class<T> pBaseClass,
-                             final DataSet<?> pData,
+                             final DataSet pData,
                              final PrometheusListKey pItemType,
                              final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);

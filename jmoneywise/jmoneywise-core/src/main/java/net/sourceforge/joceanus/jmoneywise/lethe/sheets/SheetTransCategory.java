@@ -70,7 +70,7 @@ public class SheetTransCategory
         super(pReader, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getTransCategories());
     }
 
@@ -83,7 +83,7 @@ public class SheetTransCategory
         super(pWriter, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getTransCategories());
     }
 

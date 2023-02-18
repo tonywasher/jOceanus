@@ -35,7 +35,7 @@ public abstract class PrometheusTableDataInfo<T extends DataInfoItem<T>>
      * @param pInfoTable the InfoTypes table name
      * @param pOwnerTable the Owner table name
      */
-    protected PrometheusTableDataInfo(final PrometheusDataStore<?> pDatabase,
+    protected PrometheusTableDataInfo(final PrometheusDataStore pDatabase,
                                       final String pTabName,
                                       final String pInfoTable,
                                       final String pOwnerTable) {

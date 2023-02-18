@@ -39,12 +39,12 @@ public class TablePortfolioInfo
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TablePortfolioInfo(final PrometheusDataStore<?> pDatabase) {
+    protected TablePortfolioInfo(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME, TableAccountInfoType.TABLE_NAME, TablePortfolio.TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getPortfolioInfo());
     }

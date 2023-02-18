@@ -121,7 +121,7 @@ public class MoneyWiseSecurityTable
         myTask = myTask.startTask("Securities");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final SecurityList myBase = myData.getSecurities();
         theSecurities = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theSecurities.getUnderlyingList());

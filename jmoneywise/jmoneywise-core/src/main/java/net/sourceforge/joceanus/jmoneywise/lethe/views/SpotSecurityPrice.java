@@ -280,7 +280,7 @@ public final class SpotSecurityPrice
                                 final Portfolio pPortfolio,
                                 final TethysDate pDate) {
             /* Build initial list */
-            super(pView.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
+            super((MoneyWiseData) pView.getData(), SpotSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
             ensureMap();
 
@@ -320,7 +320,7 @@ public final class SpotSecurityPrice
             }
 
             /* Set the base for this list */
-            final MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = (MoneyWiseData) theView.getData();
             final SecurityPriceList myPrices = myData.getSecurityPrices();
             setBase(myPrices);
 

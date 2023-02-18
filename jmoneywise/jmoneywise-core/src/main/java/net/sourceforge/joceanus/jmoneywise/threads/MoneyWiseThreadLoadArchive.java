@@ -72,7 +72,7 @@ public class MoneyWiseThreadLoadArchive
         pManager.initTask("Accessing DataStore");
 
         /* Create interface */
-        final PrometheusDataStore<MoneyWiseData> myDatabase = theView.getDatabase();
+        final PrometheusDataStore myDatabase = theView.getDatabase();
 
         /* Protect against failures */
         try {

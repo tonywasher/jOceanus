@@ -50,7 +50,7 @@ public class SheetTaxBasis
         super(pReader, AREA_TAXBASES);
 
         /* Access the Tax Basis list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getTaxBases());
     }
 
@@ -63,7 +63,7 @@ public class SheetTaxBasis
         super(pWriter, AREA_TAXBASES);
 
         /* Access the Tax Basis list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getTaxBases());
     }
 

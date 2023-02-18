@@ -49,7 +49,7 @@ public class TableExchangeRate
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableExchangeRate(final PrometheusDataStore<?> pDatabase) {
+    protected TableExchangeRate(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -65,7 +65,7 @@ public class TableExchangeRate
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getExchangeRates());
         theFormatter = myData.getDataFormatter();

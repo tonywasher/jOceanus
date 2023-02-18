@@ -36,7 +36,7 @@ public class PrometheusTableControlKeys
      * Constructor.
      * @param pDatabase the database control
      */
-    protected PrometheusTableControlKeys(final PrometheusDataStore<?> pDatabase) {
+    protected PrometheusTableControlKeys(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -47,7 +47,7 @@ public class PrometheusTableControlKeys
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         setList(pData.getControlKeys());
     }
 

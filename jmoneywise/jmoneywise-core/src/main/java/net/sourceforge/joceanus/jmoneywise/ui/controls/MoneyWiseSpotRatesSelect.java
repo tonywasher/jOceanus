@@ -222,7 +222,7 @@ public class MoneyWiseSpotRatesSelect
         setRange(myRange);
 
         /* Set the currency name */
-        final MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = (MoneyWiseData) theView.getData();
         final AssetCurrency myDefault = myData.getDefaultCurrency();
         theCurrLabel.setText(myDefault != null
                                                ? myDefault.getDesc() + " (" + myDefault.getName() + ")"

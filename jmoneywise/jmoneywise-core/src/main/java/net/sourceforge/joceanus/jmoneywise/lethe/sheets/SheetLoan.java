@@ -77,7 +77,7 @@ public class SheetLoan
         super(pReader, AREA_LOANS);
 
         /* Access the Loans list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getLoans());
     }
 
@@ -90,7 +90,7 @@ public class SheetLoan
         super(pWriter, AREA_LOANS);
 
         /* Access the Loans list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getLoans());
     }
 

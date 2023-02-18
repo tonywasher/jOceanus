@@ -565,7 +565,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         final DataInfoClass myClass = (DataInfoClass) myType.getStaticClass();
 
         /* Access the DataSet and parser */
-        final DataSet<?> myDataSet = getDataSet();
+        final DataSet myDataSet = getDataSet();
         final TethysUIDataFormatter myFormatter = myDataSet.getDataFormatter();
         final TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -948,7 +948,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
          * @param pStyle the style of the list
          */
         protected DataInfoList(final Class<T> pBaseClass,
-                               final DataSet<?> pData,
+                               final DataSet pData,
                                final PrometheusListKey pItemType,
                                final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);

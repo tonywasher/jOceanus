@@ -39,12 +39,12 @@ public class TableLoanCategoryType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableLoanCategoryType(final PrometheusDataStore<MoneyWiseData> pDatabase) {
+    protected TableLoanCategoryType(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getLoanCategoryTypes());
     }

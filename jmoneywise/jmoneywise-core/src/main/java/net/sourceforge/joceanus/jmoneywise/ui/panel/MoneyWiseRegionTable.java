@@ -146,7 +146,7 @@ public class MoneyWiseRegionTable
         myTask = myTask.startTask("Regions");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final RegionList myBase = myData.getRegions();
         theRegions = myBase.deriveEditList();
         getTable().setItems(theRegions.getUnderlyingList());

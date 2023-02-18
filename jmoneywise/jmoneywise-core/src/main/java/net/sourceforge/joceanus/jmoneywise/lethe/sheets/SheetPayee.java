@@ -66,7 +66,7 @@ public class SheetPayee
         super(pReader, AREA_PAYEES);
 
         /* Access the Payees list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getPayees());
     }
 
@@ -79,7 +79,7 @@ public class SheetPayee
         super(pWriter, AREA_PAYEES);
 
         /* Access the Payees list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getPayees());
     }
 

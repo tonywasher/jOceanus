@@ -101,7 +101,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * The DataSet.
      */
-    private DataSet<?> theDataSet;
+    private DataSet theDataSet;
 
     /**
      * The item type.
@@ -136,7 +136,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pStyle the new {@link ListStyle}
      */
     protected DataList(final Class<T> pBaseClass,
-                       final DataSet<?> pDataSet,
+                       final DataSet pDataSet,
                        final PrometheusListKey pItemType,
                        final ListStyle pStyle) {
         theBaseClazz = pBaseClass;
@@ -252,7 +252,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Get the dataSet.
      * @return the dataSet
      */
-    public DataSet<?> getDataSet() {
+    public DataSet getDataSet() {
         return theDataSet;
     }
 
@@ -380,7 +380,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pSource the source list
      * @throws OceanusException on error
      */
-    protected void cloneList(final DataSet<?> pData,
+    protected void cloneList(final DataSet pData,
                              final DataList<?> pSource) throws OceanusException {
         /* Correct the dataSet reference */
         theDataSet = pData;
@@ -471,7 +471,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pOld The old list to compare to
      * @return the difference list
      */
-    public DataList<T> deriveDifferences(final DataSet<?> pDataSet,
+    public DataList<T> deriveDifferences(final DataSet pDataSet,
                                          final DataList<?> pOld) {
         /* Obtain an empty list of the correct style */
         final DataList<T> myList = getEmptyList(ListStyle.DIFFER);

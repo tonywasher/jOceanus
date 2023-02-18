@@ -71,7 +71,7 @@ public class SheetExchangeRate
         super(pReader, AREA_XCHGRATES);
 
         /* Access the Rates list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getExchangeRates());
     }
 
@@ -84,7 +84,7 @@ public class SheetExchangeRate
         super(pWriter, AREA_XCHGRATES);
 
         /* Access the Rates list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getExchangeRates());
     }
 

@@ -205,7 +205,7 @@ public class AnalysisView
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
-            final MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = (MoneyWiseData) theView.getData();
             theTransactions = new TransactionView(myData.getTransactions(), theRange);
         } else {
             /* Set nulls */
@@ -236,7 +236,7 @@ public class AnalysisView
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
-            final MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = (MoneyWiseData) theView.getData();
             theTransactions = new TransactionView(myData.getTransactions(), theRange);
 
             /* register the lists */

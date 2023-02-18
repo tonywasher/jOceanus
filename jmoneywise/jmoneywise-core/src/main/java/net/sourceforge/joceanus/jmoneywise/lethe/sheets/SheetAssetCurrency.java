@@ -55,7 +55,7 @@ public class SheetAssetCurrency
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
         /* Access the list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getAccountCurrencies());
     }
 
@@ -68,7 +68,7 @@ public class SheetAssetCurrency
         super(pWriter, AREA_ACCOUNTCURRENCIES);
 
         /* Access the list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getAccountCurrencies());
     }
 

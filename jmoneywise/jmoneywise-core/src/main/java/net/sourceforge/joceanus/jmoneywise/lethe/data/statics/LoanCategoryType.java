@@ -138,7 +138,7 @@ public class LoanCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public LoanCategoryTypeList(final DataSet<?> pData) {
+        public LoanCategoryTypeList(final DataSet pData) {
             super(LoanCategoryType.class, pData, MoneyWiseDataType.LOANTYPE, ListStyle.CORE);
         }
 

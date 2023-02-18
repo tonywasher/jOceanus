@@ -43,7 +43,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? 
     /**
      * The Database control.
      */
-    private final PrometheusDataStore<?> theDatabase;
+    private final PrometheusDataStore theDatabase;
 
     /**
      * The Database connection.
@@ -80,7 +80,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? 
      * @param pDatabase the database control
      * @param pTable the table name
      */
-    protected PrometheusTableDataItem(final PrometheusDataStore<?> pDatabase,
+    protected PrometheusTableDataItem(final PrometheusDataStore pDatabase,
                                       final String pTable) {
         /* Set the table */
         theDatabase = pDatabase;
@@ -92,7 +92,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? 
      * Obtain database.
      * @return the database
      */
-    protected PrometheusDataStore<?> getDatabase() {
+    protected PrometheusDataStore getDatabase() {
         return theDatabase;
     }
 
@@ -245,7 +245,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? 
      * Declare DataSet.
      * @param pData the Data set
      */
-    protected abstract void declareData(DataSet<?> pData);
+    protected abstract void declareData(DataSet pData);
 
     /**
      * Set the list of items.
@@ -300,7 +300,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? 
      * @throws OceanusException on error
      */
     protected void loadItems(final TethysUIThreadStatusReport pReport,
-                             final DataSet<?> pData) throws OceanusException {
+                             final DataSet pData) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage(getTableName());
 
@@ -375,7 +375,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? 
      * @throws OceanusException on error
      */
     protected void insertItems(final TethysUIThreadStatusReport pReport,
-                               final DataSet<?> pData,
+                               final DataSet pData,
                                final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Inserting " + getTableName());

@@ -72,7 +72,7 @@ public class SheetSchedule
         super(pReader, AREA_SCHEDULES);
 
         /* Access the Lists */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getSchedules());
     }
 
@@ -85,7 +85,7 @@ public class SheetSchedule
         super(pWriter, AREA_SCHEDULES);
 
         /* Access the Schedules list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getSchedules());
     }
 

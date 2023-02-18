@@ -158,7 +158,7 @@ public final class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* Create a new keySetHash with new password */
@@ -192,7 +192,7 @@ public final class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* ReSeed the security generator */
@@ -426,7 +426,7 @@ public final class ControlKey
      */
     private GordianKeySetHash resolvePrimeHash() throws OceanusException {
         /* Access the Security manager */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Resolve the keySetHash */
@@ -444,7 +444,7 @@ public final class ControlKey
      */
     private GordianKeySetHash resolveAltHash() throws OceanusException {
         /* Access the Security manager */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Resolve the keySetHash */
@@ -474,7 +474,7 @@ public final class ControlKey
      * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private void allocateDataKeySets(final DataSet<?> pData) throws OceanusException {
+    private void allocateDataKeySets(final DataSet pData) throws OceanusException {
         /* Access the DataKeySet List */
         final DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
@@ -544,7 +544,7 @@ public final class ControlKey
 
         /* Update the hash for the KeySet */
         if (theDataKeySet.updateKeySetHash(isHashPrime, myHash)) {
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             myData.setVersion(myData.getVersion() + 1);
         }
     }
@@ -572,7 +572,7 @@ public final class ControlKey
          * Construct an empty CORE ControlKey list.
          * @param pData the DataSet for the list
          */
-        protected ControlKeyList(final DataSet<?> pData) {
+        protected ControlKeyList(final DataSet pData) {
             this(pData, ListStyle.CORE);
         }
 
@@ -581,7 +581,7 @@ public final class ControlKey
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlKeyList(final DataSet<?> pData,
+        protected ControlKeyList(final DataSet pData,
                                  final ListStyle pStyle) {
             super(ControlKey.class, pData, CryptographyDataType.CONTROLKEY, pStyle);
         }
@@ -627,7 +627,7 @@ public final class ControlKey
         }
 
         @Override
-        public ControlKeyList deriveDifferences(final DataSet<?> pDataSet,
+        public ControlKeyList deriveDifferences(final DataSet pDataSet,
                                                 final DataList<?> pOld) {
             return (ControlKeyList) super.deriveDifferences(pDataSet, pOld);
         }
@@ -702,9 +702,9 @@ public final class ControlKey
          * @param pDatabase the DataSet for the Database
          * @throws OceanusException on error
          */
-        protected void initialiseSecurity(final DataSet<?> pDatabase) throws OceanusException {
+        protected void initialiseSecurity(final DataSet pDatabase) throws OceanusException {
             /* Access the active control key from the database */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final ControlKey myDatabaseKey = pDatabase.getControlKey();
             final ControlKey myKey;
 
@@ -728,7 +728,7 @@ public final class ControlKey
          */
         protected void purgeOldControlKeys() {
             /* Access the current control Key */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final ControlKey myKey = myData.getControlKey();
 
             /* Loop through the controlKeys */
@@ -761,7 +761,7 @@ public final class ControlKey
             final ControlKey myControl = addValuesItem(myValues);
 
             /* Access the DataKey List */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final DataKeySetList myKeySets = myData.getDataKeySets();
 
             /* Create a new DataKeySet for this ControlKey */

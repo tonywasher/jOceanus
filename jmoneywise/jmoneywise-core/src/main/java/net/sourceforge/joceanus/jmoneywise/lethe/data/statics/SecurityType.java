@@ -133,7 +133,7 @@ public class SecurityType
          * Construct an empty CORE securityType list.
          * @param pData the DataSet for the list
          */
-        public SecurityTypeList(final DataSet<?> pData) {
+        public SecurityTypeList(final DataSet pData) {
             super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
         }
 

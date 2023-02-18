@@ -633,7 +633,7 @@ public class TransactionBuilder {
     private static SecurityHolding getDefaultHolding(final UpdateSet pUpdateSet,
                                                      final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        final MoneyWiseData myData = (MoneyWiseData) pUpdateSet.getDataSet();
         final PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 
@@ -677,7 +677,7 @@ public class TransactionBuilder {
                                                             final TransactionAsset pAccount,
                                                             final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        final MoneyWiseData myData = (MoneyWiseData) pUpdateSet.getDataSet();
         final PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 

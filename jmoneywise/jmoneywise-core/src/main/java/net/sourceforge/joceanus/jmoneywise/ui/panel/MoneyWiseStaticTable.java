@@ -170,7 +170,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T>, T extends StaticDataI
 
     @Override
     protected void refreshData() throws OceanusException {
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final StaticList<T> myStatic = myData.getDataList(theClass);
         theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
         theStatic.mapData();

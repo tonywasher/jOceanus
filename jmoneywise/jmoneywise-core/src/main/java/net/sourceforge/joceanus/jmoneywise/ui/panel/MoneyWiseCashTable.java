@@ -100,7 +100,7 @@ public class MoneyWiseCashTable
         myTask = myTask.startTask("Cashs");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final CashList myBase = myData.getCash();
         theCash = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theCash.getUnderlyingList());

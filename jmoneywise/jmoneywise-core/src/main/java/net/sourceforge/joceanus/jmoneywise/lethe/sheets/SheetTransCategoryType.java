@@ -51,7 +51,7 @@ public class SheetTransCategoryType
         super(pReader, AREA_CATTYPES);
 
         /* Access the Category Type list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getTransCategoryTypes());
     }
 
@@ -64,7 +64,7 @@ public class SheetTransCategoryType
         super(pWriter, AREA_CATTYPES);
 
         /* Access the Category Type list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getTransCategoryTypes());
     }
 

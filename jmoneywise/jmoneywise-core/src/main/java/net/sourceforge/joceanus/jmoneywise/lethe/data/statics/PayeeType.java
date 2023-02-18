@@ -130,7 +130,7 @@ public class PayeeType
          * Construct an empty CORE payeeType list.
          * @param pData the DataSet for the list
          */
-        public PayeeTypeList(final DataSet<?> pData) {
+        public PayeeTypeList(final DataSet pData) {
             super(PayeeType.class, pData, MoneyWiseDataType.PAYEETYPE, ListStyle.CORE);
         }
 
