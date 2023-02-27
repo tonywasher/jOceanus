@@ -174,7 +174,7 @@ public class DataValues {
                     /* If this is a DataInfo item */
                     if (myCurr instanceof DataInfoItem) {
                         /* Access as DataArguments */
-                        final DataInfoItem<?> myItem = (DataInfoItem<?>) myCurr;
+                        final DataInfoItem myItem = (DataInfoItem) myCurr;
 
                         /* Add item to the list */
                         final InfoItem myInfo = new InfoItem(myItem);
@@ -593,7 +593,7 @@ public class DataValues {
          * Constructor.
          * @param pInfo the info Item
          */
-        private InfoItem(final DataInfoItem<?> pInfo) {
+        private InfoItem(final DataInfoItem pInfo) {
             /* Access the infoClass */
             final DataInfoClass myClass = pInfo.getInfoClass();
 

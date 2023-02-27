@@ -42,11 +42,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Representation of an information extension of a DataItem.
  * @author Tony Washer
- * @param <T> the data type
  */
-public abstract class DataInfoItem<T extends DataInfoItem<T>>
+public abstract class DataInfoItem
         extends EncryptedItem
-        implements Comparable<DataInfoItem<T>> {
+        implements Comparable<DataInfoItem> {
     /**
      * Maximum DataLength.
      */
@@ -97,8 +96,8 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
-                           final DataInfoItem<T> pInfo) {
+    protected DataInfoItem(final DataInfoList<?> pList,
+                           final DataInfoItem pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -107,7 +106,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfoItem(final DataInfoList<T> pList) {
+    protected DataInfoItem(final DataInfoList<?> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -121,7 +120,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param uOwnerId the owner id
      * @throws OceanusException on error
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
+    protected DataInfoItem(final DataInfoList<?> pList,
                            final Integer uId,
                            final Integer uKeySetId,
                            final Integer uInfoTypeId,
@@ -144,7 +143,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
+    protected DataInfoItem(final DataInfoList<?> pList,
                            final Integer uId,
                            final StaticDataItem pInfoType,
                            final DataItem pOwner) {
@@ -162,7 +161,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param pValues the values
      * @throws OceanusException on error
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
+    protected DataInfoItem(final DataInfoList<?> pList,
                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -931,7 +930,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * List class for DataInfo.
      * @param <T> the DataType
      */
-    public abstract static class DataInfoList<T extends DataInfoItem<T> & Comparable<DataInfoItem<T>>>
+    public abstract static class DataInfoList<T extends DataInfoItem>
             extends EncryptedList<T> {
         /*
          * Report fields.

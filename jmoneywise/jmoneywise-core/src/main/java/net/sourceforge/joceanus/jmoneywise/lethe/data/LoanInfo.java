@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class LoanInfo
-        extends DataInfoItem<LoanInfo> {
+        extends DataInfoItem {
     /**
      * Object name.
      */
@@ -172,7 +172,7 @@ public class LoanInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<LoanInfo> pThat) {
+    public int compareTo(final DataInfoItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;

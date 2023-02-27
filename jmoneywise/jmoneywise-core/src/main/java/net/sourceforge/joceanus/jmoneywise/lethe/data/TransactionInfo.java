@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfoItem<TransactionInfo> {
+        extends DataInfoItem {
     /**
      * Object name.
      */
@@ -237,7 +237,7 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<TransactionInfo> pThat) {
+    public int compareTo(final DataInfoItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
