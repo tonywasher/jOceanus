@@ -62,7 +62,7 @@ public class SheetCashCategory
         super(pReader, AREA_CASHCATEGORIES);
 
         /* Access the Categories list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getCashCategories());
     }
 
@@ -75,7 +75,7 @@ public class SheetCashCategory
         super(pWriter, AREA_CASHCATEGORIES);
 
         /* Access the Categories list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getCashCategories());
     }
 

@@ -46,12 +46,12 @@ public class PrometheusSheetControlData
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected PrometheusSheetControlData(final PrometheusSheetReader<?> pReader) {
+    protected PrometheusSheetControlData(final PrometheusSheetReader pReader) {
         /* Call super constructor */
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        final DataSet<?> myData = pReader.getData();
+        final DataSet myData = pReader.getData();
         setDataList(myData.getControlData());
     }
 
@@ -59,12 +59,12 @@ public class PrometheusSheetControlData
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected PrometheusSheetControlData(final PrometheusSheetWriter<?> pWriter) {
+    protected PrometheusSheetControlData(final PrometheusSheetWriter pWriter) {
         /* Call super constructor */
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        final DataSet<?> myData = pWriter.getData();
+        final DataSet myData = pWriter.getData();
         setDataList(myData.getControlData());
     }
 

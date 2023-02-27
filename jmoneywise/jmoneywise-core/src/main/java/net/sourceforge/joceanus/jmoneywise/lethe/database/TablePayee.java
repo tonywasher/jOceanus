@@ -42,7 +42,7 @@ public class TablePayee
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TablePayee(final PrometheusDataStore<?> pDatabase) {
+    protected TablePayee(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -57,7 +57,7 @@ public class TablePayee
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getPayees());
     }

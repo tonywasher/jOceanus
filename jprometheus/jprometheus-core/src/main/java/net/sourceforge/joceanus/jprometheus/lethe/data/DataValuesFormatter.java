@@ -58,9 +58,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 
 /**
  * Formatter/Parser class for DataValues.
- * @param <T> the dataSet type
  */
-public class DataValuesFormatter<T extends DataSet<T>> {
+public class DataValuesFormatter {
     /**
      * Entry suffix.
      */
@@ -130,7 +129,7 @@ public class DataValuesFormatter<T extends DataSet<T>> {
      * @param pFile the backup file to write to
      * @throws OceanusException on error
      */
-    public void createBackup(final T pData,
+    public void createBackup(final DataSet pData,
                              final File pFile) throws OceanusException {
         /* Obtain the active profile */
         final TethysProfile myTask = theReport.getActiveTask();
@@ -188,7 +187,7 @@ public class DataValuesFormatter<T extends DataSet<T>> {
      * @param pFile the extract file to write to
      * @throws OceanusException on error
      */
-    public void createExtract(final T pData,
+    public void createExtract(final DataSet pData,
                               final File pFile) throws OceanusException {
         /* Obtain the active profile */
         final TethysProfile myTask = theReport.getActiveTask();
@@ -301,7 +300,6 @@ public class DataValuesFormatter<T extends DataSet<T>> {
             }
 
             /* Access as DataItem */
-            @SuppressWarnings("unchecked")
             final DataItem myItem = (DataItem) myObject;
 
             /* Skip over child items */
@@ -328,7 +326,7 @@ public class DataValuesFormatter<T extends DataSet<T>> {
      * @param pFile the file to load
      * @throws OceanusException on error
      */
-    public void loadZipFile(final T pData,
+    public void loadZipFile(final DataSet pData,
                             final File pFile) throws OceanusException {
         /* Obtain the active profile */
         final TethysProfile myTask = theReport.getActiveTask();
@@ -363,7 +361,7 @@ public class DataValuesFormatter<T extends DataSet<T>> {
      * @throws OceanusException on error
      */
     private void parseZipFile(final TethysProfile pProfile,
-                              final T pData,
+                              final DataSet pData,
                               final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
         final TethysProfile myStage = pProfile.startTask("Loading");

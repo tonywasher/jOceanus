@@ -25,20 +25,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to load data from the database.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadLoadDatabase<T extends DataSet<T>>
-        implements TethysUIThread<T> {
+public class PrometheusThreadLoadDatabase
+        implements TethysUIThread<DataSet> {
     /**
      * Data control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadDatabase(final DataControl<T> pControl) {
+    public PrometheusThreadLoadDatabase(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -48,14 +47,14 @@ public class PrometheusThreadLoadDatabase<T extends DataSet<T>>
     }
 
     @Override
-    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access database */
-        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
             /* Load database */
-            final T myData = theControl.getNewData();
+            final DataSet myData = theControl.getNewData();
             myDatabase.loadDatabase(pManager, myData);
 
             /* Check security on the database */
@@ -75,7 +74,7 @@ public class PrometheusThreadLoadDatabase<T extends DataSet<T>>
     }
 
     @Override
-    public void processResult(final T pResult) {
+    public void processResult(final DataSet pResult) {
         theControl.setData(pResult);
     }
 }

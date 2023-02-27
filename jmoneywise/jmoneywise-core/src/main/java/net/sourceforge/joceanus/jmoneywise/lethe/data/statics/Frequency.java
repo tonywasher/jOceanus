@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticDataItem<Frequency> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -179,7 +179,7 @@ public class Frequency
          * Construct an empty CORE frequency list.
          * @param pData the DataSet for the list
          */
-        public FrequencyList(final DataSet<?> pData) {
+        public FrequencyList(final DataSet pData) {
             super(Frequency.class, pData, MoneyWiseDataType.FREQUENCY, ListStyle.CORE);
         }
 

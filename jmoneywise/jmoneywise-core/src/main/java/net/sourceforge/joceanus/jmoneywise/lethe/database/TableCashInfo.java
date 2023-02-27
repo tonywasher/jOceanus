@@ -39,12 +39,12 @@ public class TableCashInfo
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableCashInfo(final PrometheusDataStore<?> pDatabase) {
+    protected TableCashInfo(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME, TableAccountInfoType.TABLE_NAME, TableCash.TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getCashInfo());
     }

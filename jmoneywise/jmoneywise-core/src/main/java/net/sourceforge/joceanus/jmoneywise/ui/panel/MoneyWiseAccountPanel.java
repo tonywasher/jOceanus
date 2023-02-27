@@ -531,7 +531,7 @@ public class MoneyWiseAccountPanel
      * Select account.
      * @param pAccount the account to select
      */
-    public void selectAccount(final AssetBase<?, ?> pAccount) {
+    public void selectAccount(final AssetBase pAccount) {
         /* Determine which panel to show */
         if (pAccount instanceof Deposit) {
             theDepositTable.selectDeposit((Deposit) pAccount);

@@ -80,7 +80,7 @@ public class SheetDeposit
         super(pReader, AREA_DEPOSITS);
 
         /* Access the Deposits list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getDeposits());
     }
 
@@ -93,7 +93,7 @@ public class SheetDeposit
         super(pWriter, AREA_DEPOSITS);
 
         /* Access the Deposits list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getDeposits());
     }
 

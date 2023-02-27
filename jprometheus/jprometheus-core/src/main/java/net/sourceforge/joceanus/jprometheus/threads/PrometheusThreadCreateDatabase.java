@@ -27,20 +27,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped
  * and redefined. Existing loaded data will be marked as new so that it will be written to the
  * database via the store command.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadCreateDatabase<T extends DataSet<T>>
+public class PrometheusThreadCreateDatabase
         implements TethysUIThread<Void> {
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateDatabase(final DataControl<T> pControl) {
+    public PrometheusThreadCreateDatabase(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -55,7 +54,7 @@ public class PrometheusThreadCreateDatabase<T extends DataSet<T>>
         pManager.initTask(getTaskName());
 
         /* Access Database */
-        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
@@ -63,8 +62,8 @@ public class PrometheusThreadCreateDatabase<T extends DataSet<T>>
             myDatabase.createTables(pManager);
 
             /* Re-base this set on a null set */
-            final T myNull = theControl.getNewData();
-            final T myData = theControl.getData();
+            final DataSet myNull = theControl.getNewData();
+            final DataSet myData = theControl.getData();
             myData.reBase(pManager, myNull);
 
             /* Derive the new set of updates */

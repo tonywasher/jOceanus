@@ -41,14 +41,14 @@ public class TableAssetCurrency
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableAssetCurrency(final PrometheusDataStore<MoneyWiseData> pDatabase) {
+    protected TableAssetCurrency(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
         myTableDef.addBooleanColumn(AssetCurrency.FIELD_DEFAULT);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getAccountCurrencies());
     }

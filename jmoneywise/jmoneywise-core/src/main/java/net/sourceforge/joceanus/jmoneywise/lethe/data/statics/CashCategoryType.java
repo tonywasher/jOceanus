@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class CashCategoryType
-        extends StaticDataItem<CashCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -138,7 +138,7 @@ public class CashCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public CashCategoryTypeList(final DataSet<?> pData) {
+        public CashCategoryTypeList(final DataSet pData) {
             super(CashCategoryType.class, pData, MoneyWiseDataType.CASHTYPE, ListStyle.CORE);
         }
 

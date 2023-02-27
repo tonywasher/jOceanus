@@ -998,9 +998,10 @@ public class ExchangeRate
         }
 
         @Override
-        public void adjustForItem(final T pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Access the Currency Id */
-            final AssetCurrency myCurrency = pItem.getToCurrency();
+            final ExchangeRate myItem = (ExchangeRate) pItem;
+            final AssetCurrency myCurrency = myItem.getToCurrency();
             if (myCurrency == null) {
                 return;
             }
@@ -1009,7 +1010,7 @@ public class ExchangeRate
             final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myCurrency, c -> new HashMap<>());
 
             /* Adjust rate count */
-            final TethysDate myDate = pItem.getDate();
+            final TethysDate myDate = myItem.getDate();
             final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
@@ -1021,7 +1022,7 @@ public class ExchangeRate
             final RateList myList = theMapOfRates.computeIfAbsent(myCurrency, RateList::new);
 
             /* Add element to the list */
-            myList.add(pItem);
+            myList.add(myItem);
         }
 
         /**

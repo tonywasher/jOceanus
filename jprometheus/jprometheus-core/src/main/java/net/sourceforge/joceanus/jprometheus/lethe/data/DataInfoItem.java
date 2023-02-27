@@ -42,11 +42,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Representation of an information extension of a DataItem.
  * @author Tony Washer
- * @param <T> the data type
  */
-public abstract class DataInfoItem<T extends DataInfoItem<T>>
+public abstract class DataInfoItem
         extends EncryptedItem
-        implements Comparable<DataInfoItem<T>> {
+        implements Comparable<DataInfoItem> {
     /**
      * Maximum DataLength.
      */
@@ -97,8 +96,8 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
-                           final DataInfoItem<T> pInfo) {
+    protected DataInfoItem(final DataInfoList<?> pList,
+                           final DataInfoItem pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -107,7 +106,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfoItem(final DataInfoList<T> pList) {
+    protected DataInfoItem(final DataInfoList<?> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -121,7 +120,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param uOwnerId the owner id
      * @throws OceanusException on error
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
+    protected DataInfoItem(final DataInfoList<?> pList,
                            final Integer uId,
                            final Integer uKeySetId,
                            final Integer uInfoTypeId,
@@ -144,9 +143,9 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
+    protected DataInfoItem(final DataInfoList<?> pList,
                            final Integer uId,
-                           final StaticDataItem<?> pInfoType,
+                           final StaticDataItem pInfoType,
                            final DataItem pOwner) {
         /* Initialise the item */
         super(pList, uId);
@@ -162,7 +161,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * @param pValues the values
      * @throws OceanusException on error
      */
-    protected DataInfoItem(final DataInfoList<T> pList,
+    protected DataInfoItem(final DataInfoList<?> pList,
                            final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -174,7 +173,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         } else if (myValue instanceof String) {
             setValueInfoType((String) myValue);
         } else if (myValue instanceof StaticDataItem) {
-            setValueInfoType((StaticDataItem<?>) myValue);
+            setValueInfoType((StaticDataItem) myValue);
         }
 
         /* Store the Owner */
@@ -230,7 +229,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         }
 
         /* Access InfoType */
-        final StaticDataItem<?> myInfoType = (StaticDataItem<?>) myType;
+        final StaticDataItem myInfoType = (StaticDataItem) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + super.toString();
@@ -246,7 +245,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
         }
 
         /* Access InfoType */
-        final StaticDataItem<?> myInfoType = getInfoType();
+        final StaticDataItem myInfoType = getInfoType();
 
         /* Access formatter */
         final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
@@ -266,7 +265,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * Obtain InfoType.
      * @return the InfoTypeId
      */
-    public abstract StaticDataItem<?> getInfoType();
+    public abstract StaticDataItem getInfoType();
 
     /**
      * Obtain InfoClass.
@@ -433,7 +432,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * Set InfoType.
      * @param pValue the info Type
      */
-    protected final void setValueInfoType(final StaticDataItem<?> pValue) {
+    protected final void setValueInfoType(final StaticDataItem pValue) {
         getValueSet().setValue(FIELD_INFOTYPE, pValue);
     }
 
@@ -561,11 +560,11 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      */
     protected void setValue(final Object pValue) throws OceanusException {
         /* Access the info Type */
-        final StaticDataItem<?> myType = getInfoType();
+        final StaticDataItem myType = getInfoType();
         final DataInfoClass myClass = (DataInfoClass) myType.getStaticClass();
 
         /* Access the DataSet and parser */
-        final DataSet<?> myDataSet = getDataSet();
+        final DataSet myDataSet = getDataSet();
         final TethysUIDataFormatter myFormatter = myDataSet.getDataFormatter();
         final TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -884,7 +883,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
 
     @Override
     public void validate() {
-        final StaticDataItem<?> myType = getInfoType();
+        final StaticDataItem myType = getInfoType();
         final DataItem myOwner = getOwner();
         final Object myValue = getValue(Object.class);
 
@@ -931,7 +930,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
      * List class for DataInfo.
      * @param <T> the DataType
      */
-    public abstract static class DataInfoList<T extends DataInfoItem<T> & Comparable<DataInfoItem<T>>>
+    public abstract static class DataInfoList<T extends DataInfoItem>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -948,7 +947,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
          * @param pStyle the style of the list
          */
         protected DataInfoList(final Class<T> pBaseClass,
-                               final DataSet<?> pData,
+                               final DataSet pData,
                                final PrometheusListKey pItemType,
                                final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
@@ -977,7 +976,7 @@ public abstract class DataInfoItem<T extends DataInfoItem<T>>
          * @return the new info item
          */
         protected abstract T addNewItem(DataItem pOwner,
-                                        StaticDataItem<?> pInfoType);
+                                        StaticDataItem pInfoType);
 
         /**
          * Add an info Item to the list.

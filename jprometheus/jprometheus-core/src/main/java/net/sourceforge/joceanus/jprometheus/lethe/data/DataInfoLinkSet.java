@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  * @param <T> the data type
  */
-public class DataInfoLinkSet<T extends DataInfoItem<T>>
-        extends DataInfoItem<T> {
+public class DataInfoLinkSet<T extends DataInfoItem>
+        extends DataInfoItem {
     /**
      * Item separator.
      */
@@ -76,7 +76,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
     /**
      * The infoType.
      */
-    private final StaticDataItem<?> theInfoType;
+    private final StaticDataItem theInfoType;
 
     /**
      * The infoType.
@@ -91,7 +91,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
      */
     protected DataInfoLinkSet(final DataInfoList<T> pList,
                               final DataItem pOwner,
-                              final StaticDataItem<?> pInfoType) {
+                              final StaticDataItem pInfoType) {
         /* Call super-constructor */
         super(pList);
 
@@ -158,7 +158,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
     }
 
     @Override
-    public StaticDataItem<?> getInfoType() {
+    public StaticDataItem getInfoType() {
         return theInfoType;
     }
 
@@ -570,7 +570,7 @@ public class DataInfoLinkSet<T extends DataInfoItem<T>>
     }
 
     @Override
-    public int compareTo(final DataInfoItem<T> pThat) {
+    public int compareTo(final DataInfoItem pThat) {
         return getInfoType().compareTo(pThat.getInfoType());
     }
 

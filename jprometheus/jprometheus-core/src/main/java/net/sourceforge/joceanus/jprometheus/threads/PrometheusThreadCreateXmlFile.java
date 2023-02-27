@@ -36,9 +36,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * LoaderThread extension to create an XML backup.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
+public class PrometheusThreadCreateXmlFile
         implements TethysUIThread<Void> {
     /**
      * Buffer length.
@@ -58,7 +57,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Is this a Secure backup?
@@ -70,7 +69,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
      * @param pControl data control
      * @param pSecure is this a secure backup
      */
-    public PrometheusThreadCreateXmlFile(final DataControl<T> pControl,
+    public PrometheusThreadCreateXmlFile(final DataControl pControl,
                                          final boolean pSecure) {
         isSecure = pSecure;
         theControl = pControl;
@@ -134,10 +133,10 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
                                                    : GordianUtilities.ZIPFILE_EXT));
 
             /* Access the data */
-            final T myOldData = theControl.getData();
+            final DataSet myOldData = theControl.getData();
 
             /* Create a new formatter */
-            final DataValuesFormatter<T> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
+            final DataValuesFormatter myFormatter = new DataValuesFormatter(pManager, myPasswordMgr);
 
             /* Create backup */
             if (isSecure) {
@@ -157,7 +156,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
                 pManager.initTask("Reading Backup");
 
                 /* Load workbook */
-                final T myNewData = theControl.getNewData();
+                final DataSet myNewData = theControl.getNewData();
                 myFormatter.loadZipFile(myNewData, myFile);
 
                 /* Initialise the security, from the original data */
@@ -167,7 +166,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T>>
                 pManager.initTask("Verifying Backup");
 
                 /* Create a difference set between the two data copies */
-                final DataSet<T> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+                final DataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {

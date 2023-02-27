@@ -50,7 +50,7 @@ public class SheetDepositCategoryType
         super(pReader, AREA_DEPOSITCATTYPES);
 
         /* Access the Deposit Type list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getDepositCategoryTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetDepositCategoryType
         super(pWriter, AREA_DEPOSITCATTYPES);
 
         /* Access the Deposit Type list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getDepositCategoryTypes());
     }
 

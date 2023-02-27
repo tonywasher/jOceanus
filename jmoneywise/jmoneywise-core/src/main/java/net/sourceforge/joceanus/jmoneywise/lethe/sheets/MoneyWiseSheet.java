@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class MoneyWiseSheet
-        extends PrometheusSpreadSheet<MoneyWiseData> {
+        extends PrometheusSpreadSheet {
     /**
      * The Data file name.
      */
@@ -44,14 +44,14 @@ public class MoneyWiseSheet
     }
 
     @Override
-    protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final TethysUIThreadStatusReport pReport,
-                                                                  final GordianPasswordManager pPasswordMgr) {
+    protected PrometheusSheetReader getSheetReader(final TethysUIThreadStatusReport pReport,
+                                                   final GordianPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
         return new MoneyWiseReader(theGuiFactory, pReport, pPasswordMgr);
     }
 
     @Override
-    protected PrometheusSheetWriter<MoneyWiseData> getSheetWriter(final TethysUIThreadStatusReport pReport) {
+    protected PrometheusSheetWriter getSheetWriter(final TethysUIThreadStatusReport pReport) {
         /* Create a MoneyWise Writer object and return it */
         return new MoneyWiseWriter(theGuiFactory, pReport);
     }

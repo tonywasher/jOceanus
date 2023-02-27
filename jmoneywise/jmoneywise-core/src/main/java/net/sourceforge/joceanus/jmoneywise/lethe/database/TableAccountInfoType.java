@@ -39,12 +39,12 @@ public class TableAccountInfoType
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccountInfoType(final PrometheusDataStore<?> pDatabase) {
+    protected TableAccountInfoType(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getActInfoTypes());
     }

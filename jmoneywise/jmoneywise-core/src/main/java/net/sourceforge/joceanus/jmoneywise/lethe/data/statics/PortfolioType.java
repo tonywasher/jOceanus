@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * PortfolioType data type.
  */
 public class PortfolioType
-        extends StaticDataItem<PortfolioType> {
+        extends StaticDataItem
+        implements AssetCategory {
     /**
      * Object name.
      */
@@ -127,7 +128,7 @@ public class PortfolioType
          * Construct an empty CORE portfolioType list.
          * @param pData the DataSet for the list
          */
-        public PortfolioTypeList(final DataSet<?> pData) {
+        public PortfolioTypeList(final DataSet pData) {
             super(PortfolioType.class, pData, MoneyWiseDataType.PORTFOLIOTYPE, ListStyle.CORE);
         }
 

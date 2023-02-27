@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Portfolio class.
  */
 public class Portfolio
-        extends AssetBase<Portfolio, PortfolioType>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -857,7 +857,7 @@ public class Portfolio
      * The Portfolio List class.
      */
     public static class PortfolioList
-            extends AssetBaseList<Portfolio, PortfolioType> {
+            extends AssetBaseList<Portfolio> {
         /**
          * Report fields.
          */
@@ -1176,9 +1176,10 @@ public class Portfolio
         }
 
         @Override
-        public void adjustForItem(final Portfolio pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* If the class is singular */
-            final PortfolioTypeClass myClass = pItem.getCategoryClass();
+            final Portfolio myItem = (Portfolio) pItem;
+            final PortfolioTypeClass myClass = myItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -1190,7 +1191,7 @@ public class Portfolio
                 }
 
                 /* Adjust portfolio map */
-                thePortfolioMap.put(myId, pItem);
+                thePortfolioMap.put(myId, myItem);
             }
 
             /* Adjust name count */
@@ -1203,7 +1204,7 @@ public class Portfolio
          * @return the matching item
          */
         public Portfolio findItemByName(final String pName) {
-            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Portfolio
                                                 ? (Portfolio) myAsset
                                                 : null;

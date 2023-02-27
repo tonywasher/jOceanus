@@ -84,7 +84,7 @@ public class MoneyWiseDepositCategoryTable
         final TethysUITableManager<PrometheusDataFieldId, DepositCategory> myTable = getTable();
         myTable.declareScrollColumn(MoneyWiseCategoryDataId.DEPOSITCATTYPE, DepositCategoryType.class)
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
-                .setCellValueFactory(CategoryBase::getCategoryType)
+                .setCellValueFactory(DepositCategory::getCategoryType)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
                 .setColumnWidth(WIDTH_NAME)
@@ -113,7 +113,7 @@ public class MoneyWiseDepositCategoryTable
         myTask = myTask.startTask("DepositCategories");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final DepositCategoryList myBase = myData.getDepositCategories();
         theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());

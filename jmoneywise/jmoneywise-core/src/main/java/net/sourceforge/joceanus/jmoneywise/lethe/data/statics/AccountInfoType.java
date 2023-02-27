@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticDataItem<AccountInfoType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -165,7 +165,7 @@ public class AccountInfoType
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public AccountInfoTypeList(final DataSet<?> pData) {
+        public AccountInfoTypeList(final DataSet pData) {
             super(AccountInfoType.class, pData, MoneyWiseDataType.ACCOUNTINFOTYPE, ListStyle.CORE);
         }
 

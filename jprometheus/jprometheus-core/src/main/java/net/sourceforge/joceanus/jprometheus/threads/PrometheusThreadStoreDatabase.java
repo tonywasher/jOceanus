@@ -26,20 +26,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to store changes in the DataSet to a database.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadStoreDatabase<T extends DataSet<T>>
+public class PrometheusThreadStoreDatabase
         implements TethysUIThread<Void> {
     /**
      * Data control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadStoreDatabase(final DataControl<T> pControl) {
+    public PrometheusThreadStoreDatabase(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -54,7 +53,7 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T>>
         pManager.initTask(getTaskName());
 
         /* Create interface */
-        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
@@ -62,12 +61,12 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T>>
             myDatabase.updateDatabase(pManager, theControl.getUpdates());
 
             /* Load database */
-            final T myStore = theControl.getNewData();
+            final DataSet myStore = theControl.getNewData();
             myDatabase.loadDatabase(pManager, myStore);
 
             /* Create a difference set between the two data copies */
-            final T myData = theControl.getData();
-            final DataSet<T> myDiff = myData.getDifferenceSet(pManager, myStore);
+            final DataSet myData = theControl.getData();
+            final DataSet myDiff = myData.getDifferenceSet(pManager, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

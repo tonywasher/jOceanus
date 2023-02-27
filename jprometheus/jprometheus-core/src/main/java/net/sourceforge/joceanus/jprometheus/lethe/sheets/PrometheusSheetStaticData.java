@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetStaticData<T extends StaticDataItem<T>>
+public abstract class PrometheusSheetStaticData<T extends StaticDataItem>
         extends PrometheusSheetEncrypted<T> {
     /**
      * Enabled column.
@@ -52,7 +52,7 @@ public abstract class PrometheusSheetStaticData<T extends StaticDataItem<T>>
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected PrometheusSheetStaticData(final PrometheusSheetReader<?> pReader,
+    protected PrometheusSheetStaticData(final PrometheusSheetReader pReader,
                                         final String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
@@ -63,7 +63,7 @@ public abstract class PrometheusSheetStaticData<T extends StaticDataItem<T>>
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected PrometheusSheetStaticData(final PrometheusSheetWriter<?> pWriter,
+    protected PrometheusSheetStaticData(final PrometheusSheetWriter pWriter,
                                         final String pRange) {
         /* Call super constructor */
         super(pWriter, pRange);

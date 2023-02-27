@@ -44,9 +44,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
- * @param <T> the dataSet type
  */
-public abstract class DataSet<T extends DataSet<T>>
+public abstract class DataSet
         implements MetisFieldItem, DataListSet {
     /**
      * The Hash prime.
@@ -180,7 +179,7 @@ public abstract class DataSet<T extends DataSet<T>>
      * Constructor for a cloned DataSet.
      * @param pSource the source DataSet
      */
-    protected DataSet(final DataSet<T> pSource) {
+    protected DataSet(final DataSet pSource) {
 
         /* Access the #activeKeySets */
         theNumActiveKeySets = pSource.getNumActiveKeySets();
@@ -277,14 +276,14 @@ public abstract class DataSet<T extends DataSet<T>>
      * @return the extract
      * @throws OceanusException on error
      */
-    public abstract T deriveCloneSet() throws OceanusException;
+    public abstract DataSet deriveCloneSet() throws OceanusException;
 
     /**
      * Build an empty clone dataSet.
      * @param pSource the source DataSet
      * @throws OceanusException on error
      */
-    protected void buildEmptyCloneSet(final DataSet<T> pSource) throws OceanusException {
+    protected void buildEmptyCloneSet(final DataSet pSource) throws OceanusException {
         /* Clone the Security items */
         theControlKeys = pSource.getControlKeys().getEmptyList(ListStyle.CLONE);
         theDataKeySets = pSource.getDataKeySets().getEmptyList(ListStyle.CLONE);
@@ -309,7 +308,7 @@ public abstract class DataSet<T extends DataSet<T>>
      * @param pSource the source DataSet
      * @throws OceanusException on error
      */
-    protected void deriveCloneSet(final DataSet<T> pSource) throws OceanusException {
+    protected void deriveCloneSet(final DataSet pSource) throws OceanusException {
         /* Clone the Security items */
         theControlKeys.cloneList(this, pSource.getControlKeys());
         theDataKeySets.cloneList(this, pSource.getDataKeySets());
@@ -338,14 +337,14 @@ public abstract class DataSet<T extends DataSet<T>>
      * @return the extract
      * @throws OceanusException on error
      */
-    public abstract T deriveUpdateSet() throws OceanusException;
+    public abstract DataSet deriveUpdateSet() throws OceanusException;
 
     /**
      * Construct an update extract for a DataSet.
      * @param pSource the source of the extract
      * @throws OceanusException on error
      */
-    protected void deriveUpdateSet(final T pSource) throws OceanusException {
+    protected void deriveUpdateSet(final DataSet pSource) throws OceanusException {
         /* Build the security extract */
         theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
         theDataKeySets = pSource.getDataKeySets().deriveList(ListStyle.UPDATE);
@@ -381,8 +380,8 @@ public abstract class DataSet<T extends DataSet<T>>
      * @return the difference set
      * @throws OceanusException on error
      */
-    public abstract T getDifferenceSet(TethysUIThreadStatusReport pReport,
-                                       T pOld) throws OceanusException;
+    public abstract DataSet getDifferenceSet(TethysUIThreadStatusReport pReport,
+                                             DataSet pOld) throws OceanusException;
 
     /**
      * Construct a difference extract between two DataSets. The difference extract will only contain
@@ -395,8 +394,8 @@ public abstract class DataSet<T extends DataSet<T>>
      * @throws OceanusException on error
      */
     protected void deriveDifferences(final TethysUIThreadStatusReport pReport,
-                                     final T pNew,
-                                     final T pOld) throws OceanusException {
+                                     final DataSet pNew,
+                                     final DataSet pOld) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_DATADIFF);
@@ -435,7 +434,7 @@ public abstract class DataSet<T extends DataSet<T>>
      * @throws OceanusException on error
      */
     public void reBase(final TethysUIThreadStatusReport pReport,
-                       final T pOld) throws OceanusException {
+                       final DataSet pOld) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_DATAREBASE);
@@ -624,7 +623,7 @@ public abstract class DataSet<T extends DataSet<T>>
         }
 
         /* Access the object as a DataSet */
-        final DataSet<?> myThat = (DataSet<?>) pThat;
+        final DataSet myThat = (DataSet) pThat;
 
         /* Check version and generation */
         if (myThat.getVersion() != theVersion) {
@@ -765,7 +764,7 @@ public abstract class DataSet<T extends DataSet<T>>
      * @throws OceanusException on error
      */
     public void initialiseSecurity(final TethysUIThreadStatusReport pReport,
-                                   final T pBase) throws OceanusException {
+                                   final DataSet pBase) throws OceanusException {
         /* Access current profile */
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_SECINIT);

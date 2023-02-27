@@ -44,7 +44,7 @@ public class TableTransCategory
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransCategory(final PrometheusDataStore<?> pDatabase) {
+    protected TableTransCategory(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -60,7 +60,7 @@ public class TableTransCategory
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransCategories());
     }

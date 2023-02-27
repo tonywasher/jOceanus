@@ -77,7 +77,7 @@ public class SheetCash
         super(pReader, AREA_CASH);
 
         /* Access the Cash list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getCash());
     }
 
@@ -90,7 +90,7 @@ public class SheetCash
         super(pWriter, AREA_CASH);
 
         /* Access the Cash list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getCash());
     }
 

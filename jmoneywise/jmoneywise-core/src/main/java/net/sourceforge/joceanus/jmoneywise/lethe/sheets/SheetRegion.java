@@ -59,7 +59,7 @@ public class SheetRegion
         super(pReader, AREA_REGIONS);
 
         /* Access the Class list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getRegions());
     }
 
@@ -72,7 +72,7 @@ public class SheetRegion
         super(pWriter, AREA_REGIONS);
 
         /* Access the Class list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getRegions());
     }
 

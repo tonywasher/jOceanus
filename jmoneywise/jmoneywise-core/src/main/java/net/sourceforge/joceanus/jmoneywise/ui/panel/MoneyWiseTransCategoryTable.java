@@ -84,7 +84,7 @@ public class MoneyWiseTransCategoryTable
         final TethysUITableManager<PrometheusDataFieldId, TransactionCategory> myTable = getTable();
         myTable.declareScrollColumn(MoneyWiseCategoryDataId.TRANSCATTYPE, TransactionCategoryType.class)
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
-                .setCellValueFactory(CategoryBase::getCategoryType)
+                .setCellValueFactory(TransactionCategory::getCategoryType)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
                 .setColumnWidth(WIDTH_NAME)
@@ -113,7 +113,7 @@ public class MoneyWiseTransCategoryTable
         myTask = myTask.startTask("TransactionCategories");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final TransactionCategoryList myBase = myData.getTransCategories();
         theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());

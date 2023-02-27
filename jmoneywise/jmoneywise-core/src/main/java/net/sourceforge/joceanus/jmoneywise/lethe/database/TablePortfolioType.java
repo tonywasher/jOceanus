@@ -39,12 +39,12 @@ public class TablePortfolioType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TablePortfolioType(final PrometheusDataStore<MoneyWiseData> pDatabase) {
+    protected TablePortfolioType(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getPortfolioTypes());
     }

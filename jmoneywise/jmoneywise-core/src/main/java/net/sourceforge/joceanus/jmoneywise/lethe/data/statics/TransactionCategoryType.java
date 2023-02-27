@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionCategoryType
-        extends StaticDataItem<TransactionCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -133,7 +133,7 @@ public class TransactionCategoryType
          * Construct an empty CORE category type list.
          * @param pData the DataSet for the list
          */
-        public TransactionCategoryTypeList(final DataSet<?> pData) {
+        public TransactionCategoryTypeList(final DataSet pData) {
             super(TransactionCategoryType.class, pData, MoneyWiseDataType.TRANSTYPE, ListStyle.CORE);
         }
 

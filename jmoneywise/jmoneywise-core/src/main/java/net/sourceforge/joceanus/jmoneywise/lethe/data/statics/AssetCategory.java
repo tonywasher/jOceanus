@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Prometheus: Application Framework
+ * MoneyWise: Finance Application
  * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,22 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.data;
+package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
 /**
- * Interface for a Data Instance Map.
- * @author Tony Washer
- * @param <T> the data type
+ * Asset Category Marker
  */
-public interface DataMapItem<T extends DataItem> {
-    /**
-     * adjust maps for item.
-     * @param pItem the item to map
-     */
-    void adjustForItem(DataItem pItem);
-
-    /**
-     * Reset the map.
-     */
-    void resetMap();
+public interface AssetCategory {
 }

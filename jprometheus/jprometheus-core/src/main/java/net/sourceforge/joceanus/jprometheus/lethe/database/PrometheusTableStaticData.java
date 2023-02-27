@@ -27,14 +27,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * extend this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableStaticData<T extends StaticDataItem<T>>
+public abstract class PrometheusTableStaticData<T extends StaticDataItem>
         extends PrometheusTableEncrypted<T> {
     /**
      * Constructor.
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected PrometheusTableStaticData(final PrometheusDataStore<?> pDatabase,
+    protected PrometheusTableStaticData(final PrometheusDataStore pDatabase,
                                         final String pTabName) {
         super(pDatabase, pTabName);
 

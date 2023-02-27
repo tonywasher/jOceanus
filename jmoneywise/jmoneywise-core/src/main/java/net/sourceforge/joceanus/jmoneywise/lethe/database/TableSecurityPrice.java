@@ -44,7 +44,7 @@ public class TableSecurityPrice
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableSecurityPrice(final PrometheusDataStore<?> pDatabase) {
+    protected TableSecurityPrice(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -59,7 +59,7 @@ public class TableSecurityPrice
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getSecurityPrices());
     }

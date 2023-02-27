@@ -81,7 +81,7 @@ public class SheetSecurity
         super(pReader, AREA_SECURITIES);
 
         /* Access the Securities list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getSecurities());
     }
 
@@ -94,7 +94,7 @@ public class SheetSecurity
         super(pWriter, AREA_SECURITIES);
 
         /* Access the Securities list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getSecurities());
     }
 

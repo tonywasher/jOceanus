@@ -42,7 +42,7 @@ public class TableCash
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableCash(final PrometheusDataStore<?> pDatabase) {
+    protected TableCash(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -58,7 +58,7 @@ public class TableCash
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getCash());
     }

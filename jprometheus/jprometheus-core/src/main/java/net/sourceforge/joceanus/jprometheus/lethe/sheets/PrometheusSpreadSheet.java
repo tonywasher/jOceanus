@@ -27,9 +27,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Spreadsheet control.
  * @author Tony Washer
- * @param <T> the DataSet type
  */
-public abstract class PrometheusSpreadSheet<T extends DataSet<T>> {
+public abstract class PrometheusSpreadSheet {
     /**
      * The Data file name.
      */
@@ -41,15 +40,15 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T>> {
      * @param pPasswordMgr the password manager
      * @return the sheet reader
      */
-    protected abstract PrometheusSheetReader<T> getSheetReader(TethysUIThreadStatusReport pReport,
-                                                               GordianPasswordManager pPasswordMgr);
+    protected abstract PrometheusSheetReader getSheetReader(TethysUIThreadStatusReport pReport,
+                                                            GordianPasswordManager pPasswordMgr);
 
     /**
      * Obtain a sheet writer.
      * @param pReport the report
      * @return the sheet writer
      */
-    protected abstract PrometheusSheetWriter<T> getSheetWriter(TethysUIThreadStatusReport pReport);
+    protected abstract PrometheusSheetWriter getSheetWriter(TethysUIThreadStatusReport pReport);
 
     /**
      * Load a Backup Workbook.
@@ -61,10 +60,10 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T>> {
      */
     public void loadBackup(final TethysUIThreadStatusReport pReport,
                            final GordianPasswordManager pPasswordMgr,
-                           final T pData,
+                           final DataSet pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */
-        final PrometheusSheetReader<T> myReader = getSheetReader(pReport, pPasswordMgr);
+        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);
 
         /* Load the backup */
         myReader.loadBackup(pFile, pData);
@@ -79,11 +78,11 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T>> {
      * @throws OceanusException on error
      */
     public void createBackup(final TethysUIThreadStatusReport pReport,
-                             final T pData,
+                             final DataSet pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
-        final PrometheusSheetWriter<T> myWriter = getSheetWriter(pReport);
+        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);
 
         /* Create the backup */
         myWriter.createBackup(pData, pFile, pType);

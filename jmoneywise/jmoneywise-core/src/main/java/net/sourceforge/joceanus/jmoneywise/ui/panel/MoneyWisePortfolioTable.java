@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
@@ -43,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Portfolio Table.
  */
 public class MoneyWisePortfolioTable
-        extends MoneyWiseAssetTable<Portfolio, PortfolioType> {
+        extends MoneyWiseAssetTable<Portfolio> {
     /**
      * The Info UpdateEntry.
      */
@@ -69,7 +70,7 @@ public class MoneyWisePortfolioTable
                             final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO, PortfolioType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO);
 
         /* register the infoEntry */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.PORTFOLIOINFO);
@@ -100,7 +101,7 @@ public class MoneyWisePortfolioTable
         myTask = myTask.startTask("Portfolios");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final PortfolioList myBase = myData.getPortfolios();
         thePortfolios = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(thePortfolios.getUnderlyingList());
@@ -176,7 +177,7 @@ public class MoneyWisePortfolioTable
 
     @Override
     protected void buildCategoryMenu(final Portfolio pPortfolio,
-                                     final TethysUIScrollMenu<PortfolioType> pMenu) {
+                                     final TethysUIScrollMenu<AssetCategory> pMenu) {
         /* Build the menu */
         theActivePortfolio.buildTypeMenu(pMenu, pPortfolio);
     }

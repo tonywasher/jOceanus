@@ -136,7 +136,7 @@ public class DataKeySet
         super(pList, pValues);
 
         /* Access the Password manager */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         final GordianPasswordManager mySecure = myData.getPasswordMgr();
         final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -204,7 +204,7 @@ public class DataKeySet
             setValueControlKey(pControlKey);
 
             /* Access the Security manager */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final GordianPasswordManager mySecure = myData.getPasswordMgr();
             final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -414,7 +414,7 @@ public class DataKeySet
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
         final ControlKey myControlKey = getControlKey();
 
@@ -471,7 +471,7 @@ public class DataKeySet
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
-        protected DataKeySetList(final DataSet<?> pData) {
+        protected DataKeySetList(final DataSet pData) {
             this(pData, ListStyle.CORE);
         }
 
@@ -480,7 +480,7 @@ public class DataKeySet
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected DataKeySetList(final DataSet<?> pData,
+        protected DataKeySetList(final DataSet pData,
                                  final ListStyle pStyle) {
             super(DataKeySet.class, pData, CryptographyDataType.DATAKEYSET, pStyle);
         }
@@ -526,7 +526,7 @@ public class DataKeySet
         }
 
         @Override
-        public DataKeySetList deriveDifferences(final DataSet<?> pDataSet,
+        public DataKeySetList deriveDifferences(final DataSet pDataSet,
                                                 final DataList<?> pOld) {
             return (DataKeySetList) super.deriveDifferences(pDataSet, pOld);
         }

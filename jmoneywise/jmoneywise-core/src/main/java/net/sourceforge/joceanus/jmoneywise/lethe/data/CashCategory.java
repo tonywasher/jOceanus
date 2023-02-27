@@ -26,18 +26,21 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cash Category class.
  */
-public class CashCategory
-        extends CategoryBase<CashCategory, CashCategoryType> {
+public final class CashCategory
+        extends CategoryBase
+        implements AssetCategory {
     /**
      * Object name.
      */
@@ -63,8 +66,8 @@ public class CashCategory
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected CashCategory(final CashCategoryList pList,
-                           final CashCategory pCategory) {
+    CashCategory(final CashCategoryList pList,
+                 final CashCategory pCategory) {
         /* Set standard values */
         super(pList, pCategory);
     }
@@ -220,8 +223,8 @@ public class CashCategory
     }
 
     @Override
-    public void setCategoryType(final CashCategoryType pType) {
-        setValueType(pType);
+    public void setCategoryType(final StaticDataItem pType) {
+        setValueType((CashCategoryType) pType);
     }
 
     @Override
@@ -314,7 +317,7 @@ public class CashCategory
      * The Cash Category List class.
      */
     public static class CashCategoryList
-            extends CategoryBaseList<CashCategory, CashCategoryType> {
+            extends CategoryBaseList<CashCategory> {
         /**
          * Report fields.
          */

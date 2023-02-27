@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositInfo
-        extends DataInfoItem<DepositInfo> {
+        extends DataInfoItem {
     /**
      * Object name.
      */
@@ -172,7 +172,7 @@ public class DepositInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<DepositInfo> pThat) {
+    public int compareTo(final DataInfoItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -327,7 +327,7 @@ public class DepositInfo
 
         @Override
         protected DepositInfo addNewItem(final DataItem pOwner,
-                                         final StaticDataItem<?> pInfoType) {
+                                         final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final DepositInfo myInfo = new DepositInfo(this, (Deposit) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

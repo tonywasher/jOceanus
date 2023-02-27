@@ -50,7 +50,7 @@ public class SheetTransInfoType
         super(pReader, AREA_TRANSINFOTYPES);
 
         /* Access the InfoType list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getTransInfoTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetTransInfoType
         super(pWriter, AREA_TRANSINFOTYPES);
 
         /* Access the InfoType list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getTransInfoTypes());
     }
 

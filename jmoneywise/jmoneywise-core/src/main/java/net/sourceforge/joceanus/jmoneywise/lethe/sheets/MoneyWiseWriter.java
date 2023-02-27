@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class MoneyWiseWriter
-        extends PrometheusSheetWriter<MoneyWiseData> {
+        extends PrometheusSheetWriter {
     /**
      * Constructor.
      * @param pFactory the gui factory

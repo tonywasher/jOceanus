@@ -55,10 +55,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManage
 
 /**
  * Main window for application.
- *
- * @param <T> the data set type
  */
-public abstract class PrometheusMainWindow<T extends DataSet<T>>
+public abstract class PrometheusMainWindow
         implements TethysUIMainPanel {
     /**
      * Logger.
@@ -88,7 +86,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
     /**
      * The data view.
      */
-    private DataControl<T> theView;
+    private DataControl theView;
 
     /**
      * The panel.
@@ -120,7 +118,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      *
      * @return the data view
      */
-    public DataControl<T> getView() {
+    public DataControl getView() {
         return theView;
     }
 
@@ -157,7 +155,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public void buildMainWindow(final DataControl<T> pView,
+    public void buildMainWindow(final DataControl pView,
                                 final PrometheusToolkit pToolkit) throws OceanusException {
         /* Store the view */
         theView = pView;
@@ -383,7 +381,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void loadDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadLoadDatabase<T> myThread = new PrometheusThreadLoadDatabase<>(theView);
+        final PrometheusThreadLoadDatabase myThread = new PrometheusThreadLoadDatabase(theView);
         startThread(myThread);
     }
 
@@ -392,7 +390,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void storeDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadStoreDatabase<T> myThread = new PrometheusThreadStoreDatabase<>(theView);
+        final PrometheusThreadStoreDatabase myThread = new PrometheusThreadStoreDatabase(theView);
         startThread(myThread);
     }
 
@@ -401,7 +399,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void createDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadCreateDatabase<T> myThread = new PrometheusThreadCreateDatabase<>(theView);
+        final PrometheusThreadCreateDatabase myThread = new PrometheusThreadCreateDatabase(theView);
         startThread(myThread);
     }
 
@@ -410,7 +408,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void purgeDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadPurgeDatabase<T> myThread = new PrometheusThreadPurgeDatabase<>(theView);
+        final PrometheusThreadPurgeDatabase myThread = new PrometheusThreadPurgeDatabase(theView);
         startThread(myThread);
     }
 
@@ -453,7 +451,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void writeBackup() {
         /* Create the worker thread */
-        final PrometheusThreadCreateBackup<T> myThread = new PrometheusThreadCreateBackup<>(theView);
+        final PrometheusThreadCreateBackup myThread = new PrometheusThreadCreateBackup(theView);
         startThread(myThread);
     }
 
@@ -462,7 +460,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void restoreBackup() {
         /* Create the worker thread */
-        final PrometheusThreadLoadBackup<T> myThread = new PrometheusThreadLoadBackup<>(theView);
+        final PrometheusThreadLoadBackup myThread = new PrometheusThreadLoadBackup(theView);
         startThread(myThread);
     }
 
@@ -471,7 +469,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void createXmlBackup() {
         /* Create the worker thread */
-        final PrometheusThreadCreateXmlFile<T> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
+        final PrometheusThreadCreateXmlFile myThread = new PrometheusThreadCreateXmlFile(theView, true);
         startThread(myThread);
     }
 
@@ -480,7 +478,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void createXmlXtract() {
         /* Create the worker thread */
-        final PrometheusThreadCreateXmlFile<T> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
+        final PrometheusThreadCreateXmlFile myThread = new PrometheusThreadCreateXmlFile(theView, false);
         startThread(myThread);
     }
 
@@ -489,7 +487,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void loadXmlFile() {
         /* Create the worker thread */
-        final PrometheusThreadLoadXmlFile<T> myThread = new PrometheusThreadLoadXmlFile<>(theView);
+        final PrometheusThreadLoadXmlFile myThread = new PrometheusThreadLoadXmlFile(theView);
         startThread(myThread);
     }
 
@@ -498,7 +496,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void updatePassword() {
         /* Create the worker thread */
-        final PrometheusThreadUpdatePassword<T> myThread = new PrometheusThreadUpdatePassword<>(theView);
+        final PrometheusThreadUpdatePassword myThread = new PrometheusThreadUpdatePassword(theView);
         startThread(myThread);
     }
 
@@ -507,7 +505,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T>>
      */
     private void reNewSecurity() {
         /* Create the worker thread */
-        final PrometheusThreadRenewSecurity<T> myThread = new PrometheusThreadRenewSecurity<>(theView);
+        final PrometheusThreadRenewSecurity myThread = new PrometheusThreadRenewSecurity(theView);
         startThread(myThread);
     }
 

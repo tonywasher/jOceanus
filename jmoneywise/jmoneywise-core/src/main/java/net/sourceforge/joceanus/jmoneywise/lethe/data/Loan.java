@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Loan class.
  */
 public class Loan
-        extends AssetBase<Loan, LoanCategory>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -739,7 +739,7 @@ public class Loan
      * The Loan List class.
      */
     public static class LoanList
-            extends AssetBaseList<Loan, LoanCategory> {
+            extends AssetBaseList<Loan> {
         /**
          * Report fields.
          */
@@ -1005,7 +1005,7 @@ public class Loan
         }
 
         @Override
-        public void adjustForItem(final Loan pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust name count */
             theUnderlyingMap.adjustForItem(pItem);
         }
@@ -1016,7 +1016,7 @@ public class Loan
          * @return the matching item
          */
         public Loan findItemByName(final String pName) {
-            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Loan
                                            ? (Loan) myAsset
                                            : null;

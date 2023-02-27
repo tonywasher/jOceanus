@@ -42,7 +42,7 @@ public class SheetDepositInfo
         super(pReader, AREA_DEPOSITINFO);
 
         /* Access the InfoType list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getDepositInfo());
     }
 
@@ -55,7 +55,7 @@ public class SheetDepositInfo
         super(pWriter, AREA_DEPOSITINFO);
 
         /* Access the InfoType list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getDepositInfo());
     }
 

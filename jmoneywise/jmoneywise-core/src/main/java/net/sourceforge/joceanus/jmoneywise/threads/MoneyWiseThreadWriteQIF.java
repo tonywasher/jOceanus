@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFType;
@@ -82,7 +83,7 @@ public class MoneyWiseThreadWriteQIF
         final Analysis myAnalysis = theView.getAnalysisManager().getAnalysis();
 
         /* Create QIF file */
-        final QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
+        final QIFFile myQFile = QIFFile.buildQIFFile((MoneyWiseData) theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
         pManager.initTask("Writing QIF file");

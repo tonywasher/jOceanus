@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
@@ -102,7 +103,7 @@ public class MoneyWisePortfolioPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<PortfolioType> myTypeButton = myFields.newScrollField(PortfolioType.class);
+        final TethysUIScrollButtonField<AssetCategory> myTypeButton = myFields.newScrollField(AssetCategory.class);
         final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
         final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
@@ -309,14 +310,14 @@ public class MoneyWisePortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildTypeMenu(final TethysUIScrollMenu<PortfolioType> pMenu,
+    public void buildTypeMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
                               final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
         final PortfolioType myCurr = pPortfolio.getCategory();
-        TethysUIScrollItem<PortfolioType> myActive = null;
+        TethysUIScrollItem<AssetCategory> myActive = null;
 
         /* Access PortfolioTypes */
         final PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
@@ -327,7 +328,7 @@ public class MoneyWisePortfolioPanel
             final PortfolioType myType = myIterator.next();
 
             /* Create a new action for the type */
-            final TethysUIScrollItem<PortfolioType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<AssetCategory> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {

@@ -625,9 +625,10 @@ public class TransactionTag
     protected static class TagDataMap
             extends DataInstanceMap<TransactionTag, String> {
         @Override
-        public void adjustForItem(final TransactionTag pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            final TransactionTag myItem = (TransactionTag) pItem;
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

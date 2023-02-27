@@ -50,7 +50,7 @@ public class SheetAccountInfoType
         super(pReader, AREA_ACCOUNTINFOTYPES);
 
         /* Access the InfoType list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getActInfoTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetAccountInfoType
         super(pWriter, AREA_ACCOUNTINFOTYPES);
 
         /* Access the InfoType list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getActInfoTypes());
     }
 

@@ -38,11 +38,10 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Template for a Static Data item and List.
  * @author Tony Washer
- * @param <T> the data type
  */
-public abstract class StaticDataItem<T extends StaticDataItem<T>>
+public abstract class StaticDataItem
         extends EncryptedItem
-        implements Comparable<StaticDataItem<?>>, MetisDataNamedItem {
+        implements Comparable<StaticDataItem>, MetisDataNamedItem {
     /**
      * Report fields.
      */
@@ -93,8 +92,8 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * @param pList The list to associate the Static Data with
      * @param pSource The static data to copy
      */
-    protected StaticDataItem(final StaticList<T> pList,
-                             final T pSource) {
+    protected StaticDataItem(final StaticList<?> pList,
+                             final StaticDataItem pSource) {
         super(pList, pSource);
         theEnumClass = pSource.getEnumClass();
         setId(pSource.getId());
@@ -106,7 +105,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * @param pValue the name of the new item
      * @throws OceanusException on error
      */
-    protected StaticDataItem(final StaticList<T> pList,
+    protected StaticDataItem(final StaticList<?> pList,
                              final String pValue) throws OceanusException {
         /* Call super constructor */
         super(pList, 0);
@@ -126,7 +125,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * @param pClass the class of the new item
      * @throws OceanusException on error
      */
-    protected StaticDataItem(final StaticList<T> pList,
+    protected StaticDataItem(final StaticList<?> pList,
                              final StaticDataClass pClass) throws OceanusException {
         /* Call super constructor */
         super(pList, 0);
@@ -158,7 +157,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected StaticDataItem(final StaticList<T> pList,
+    protected StaticDataItem(final StaticList<?> pList,
                              final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -499,7 +498,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
     }
 
     @Override
-    public int compareTo(final StaticDataItem<?> pThat) {
+    public int compareTo(final StaticDataItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -532,10 +531,10 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
 
     @Override
     public void validate() {
-        final StaticList<T> myList = getList();
+        final StaticList<?> myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();
-        final StaticDataMap<T> myMap = myList.getDataMap();
+        final StaticDataMap<?> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -582,9 +581,8 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public StaticList<T> getList() {
-        return (StaticList<T>) super.getList();
+    public StaticList<?> getList() {
+        return (StaticList<?>) super.getList();
     }
 
     /**
@@ -690,7 +688,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
         }
 
         /* Access the data */
-        final StaticDataItem<?> myData = (StaticDataItem<?>) pData;
+        final StaticDataItem myData = (StaticDataItem) pData;
 
         /* Store the current detail into history */
         pushHistory();
@@ -706,7 +704,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * Apply basic changes.
      * @param pData the changed element
      */
-    protected void applyBasicChanges(final StaticDataItem<?> pData) {
+    protected void applyBasicChanges(final StaticDataItem pData) {
         /* Update the name if required */
         if (!MetisDataDifference.isEqual(getName(), pData.getName())) {
             setValueName(pData.getNameField());
@@ -730,8 +728,8 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
 
     @Override
     public void adjustMapForItem() {
-        final StaticList<T> myList = getList();
-        final StaticDataMap<T> myMap = myList.getDataMap();
+        final StaticList<?> myList = getList();
+        final StaticDataMap<?> myMap = myList.getDataMap();
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
@@ -739,7 +737,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * Represents a list of StaticData objects.
      * @param <T> the item type
      */
-    public abstract static class StaticList<T extends StaticDataItem<T>>
+    public abstract static class StaticList<T extends StaticDataItem>
             extends EncryptedList<T> {
         /*
          * Report fields.
@@ -756,7 +754,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
          * @param pStyle the style of the list
          */
         protected StaticList(final Class<T> pBaseClass,
-                             final DataSet<?> pData,
+                             final DataSet pData,
                              final PrometheusListKey pItemType,
                              final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
@@ -901,7 +899,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
      * The dataMap class.
      * @param <T> the item type
      */
-    protected static class StaticDataMap<T extends StaticDataItem<T>>
+    protected static class StaticDataMap<T extends StaticDataItem>
             extends DataInstanceMap<T, String> {
         /**
          * Report fields.
@@ -955,9 +953,13 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
         }
 
         @Override
-        public void adjustForItem(final T pItem) {
+        @SuppressWarnings("unchecked")
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final T myItem = (T) pItem;
+
             /* Adjust order count */
-            final Integer myOrder = pItem.getOrder();
+            final Integer myOrder = myItem.getOrder();
             final Integer myCount = theOrderCountMap.get(myOrder);
             if (myCount == null) {
                 theOrderCountMap.put(myOrder, ONE);
@@ -966,7 +968,7 @@ public abstract class StaticDataItem<T extends StaticDataItem<T>>
             }
 
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

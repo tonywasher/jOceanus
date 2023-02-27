@@ -504,7 +504,7 @@ public abstract class DataItem
      * Obtain the dataSet.
      * @return the dataSet
      */
-    public DataSet<?> getDataSet() {
+    public DataSet getDataSet() {
         return getTheDataSet();
     }
 
@@ -512,7 +512,7 @@ public abstract class DataItem
      * Obtain the dataSet.
      * @return the dataSet
      */
-    private DataSet<?> getTheDataSet() {
+    private DataSet getTheDataSet() {
         return theList.getDataSet();
     }
 

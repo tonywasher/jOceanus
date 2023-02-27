@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SecurityInfo
-        extends DataInfoItem<SecurityInfo> {
+        extends DataInfoItem {
     /**
      * Object name.
      */
@@ -225,7 +225,7 @@ public class SecurityInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem<SecurityInfo> pThat) {
+    public int compareTo(final DataInfoItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -444,7 +444,7 @@ public class SecurityInfo
 
         @Override
         protected SecurityInfo addNewItem(final DataItem pOwner,
-                                          final StaticDataItem<?> pInfoType) {
+                                          final StaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
             final SecurityInfo myInfo = new SecurityInfo(this, (Security) pOwner, (AccountInfoType) pInfoType);
             add(myInfo);

@@ -26,18 +26,21 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Loan Category class.
  */
-public class LoanCategory
-        extends CategoryBase<LoanCategory, LoanCategoryType> {
+public final class LoanCategory
+        extends CategoryBase
+        implements AssetCategory {
     /**
      * Object name.
      */
@@ -63,8 +66,8 @@ public class LoanCategory
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected LoanCategory(final LoanCategoryList pList,
-                           final LoanCategory pCategory) {
+    LoanCategory(final LoanCategoryList pList,
+                 final LoanCategory pCategory) {
         /* Set standard values */
         super(pList, pCategory);
     }
@@ -220,8 +223,8 @@ public class LoanCategory
     }
 
     @Override
-    public void setCategoryType(final LoanCategoryType pType) {
-        setValueType(pType);
+    public void setCategoryType(final StaticDataItem pType) {
+        setValueType((LoanCategoryType) pType);
     }
 
     @Override
@@ -314,7 +317,7 @@ public class LoanCategory
      * The Loan Category List class.
      */
     public static class LoanCategoryList
-            extends CategoryBaseList<LoanCategory, LoanCategoryType> {
+            extends CategoryBaseList<LoanCategory> {
         /**
          * Report fields.
          */

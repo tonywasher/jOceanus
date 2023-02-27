@@ -186,7 +186,7 @@ public abstract class EncryptedItem
         setValueDataKeySet(pKeySetId);
 
         /* Resolve the ControlKey */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
         theGenerator = getDataKeySet().getFieldGenerator();
     }
@@ -260,7 +260,7 @@ public abstract class EncryptedItem
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final DataSet<?> myData = getDataSet();
+        final DataSet myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
     }
 
@@ -336,7 +336,7 @@ public abstract class EncryptedItem
          * @param pItemType the item type
          */
         protected EncryptedList(final Class<T> pBaseClass,
-                                final DataSet<?> pData,
+                                final DataSet pData,
                                 final PrometheusListKey pItemType) {
             this(pBaseClass, pData, pItemType, ListStyle.CORE);
         }
@@ -349,7 +349,7 @@ public abstract class EncryptedItem
          * @param pStyle the style of the list
          */
         protected EncryptedList(final Class<T> pBaseClass,
-                                final DataSet<?> pData,
+                                final DataSet pData,
                                 final PrometheusListKey pItemType,
                                 final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
@@ -431,7 +431,7 @@ public abstract class EncryptedItem
             pReport.setNumSteps(size());
 
             /* Obtain DataKeySet list */
-            final DataSet<?> myData = getDataSet();
+            final DataSet myData = getDataSet();
             final DataKeySetList mySets = myData.getDataKeySets();
 
             /* Create an iterator for our new list */

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Transaction Category class.
  */
 public final class TransactionCategory
-        extends CategoryBase<TransactionCategory, TransactionCategoryType> {
+        extends CategoryBase {
     /**
      * Object name.
      */
@@ -72,8 +73,8 @@ public final class TransactionCategory
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected TransactionCategory(final TransactionCategoryList pList,
-                                  final TransactionCategory pCategory) {
+    TransactionCategory(final TransactionCategoryList pList,
+                        final TransactionCategory pCategory) {
         /* Set standard values */
         super(pList, pCategory);
     }
@@ -238,28 +239,6 @@ public final class TransactionCategory
     }
 
     @Override
-    public int compareTo(final TransactionCategory pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the hidden attribute */
-        final boolean isHidden = isHidden();
-        if (isHidden != pThat.isHidden()) {
-            return isHidden
-                            ? 1
-                            : -1;
-        }
-
-        /* Compare the underlying id */
-        return super.compareTo(pThat);
-    }
-
-    @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Underlying details */
         super.resolveDataSetLinks();
@@ -276,8 +255,8 @@ public final class TransactionCategory
     }
 
     @Override
-    public void setCategoryType(final TransactionCategoryType pType) {
-        setValueType(pType);
+    public void setCategoryType(final StaticDataItem pType) {
+        setValueType((TransactionCategoryType) pType);
     }
 
     @Override
@@ -408,7 +387,7 @@ public final class TransactionCategory
      * The Transaction Category List class.
      */
     public static class TransactionCategoryList
-            extends CategoryBaseList<TransactionCategory, TransactionCategoryType> {
+            extends CategoryBaseList<TransactionCategory> {
         /**
          * Report fields.
          */
@@ -577,7 +556,7 @@ public final class TransactionCategory
      * The dataMap class.
      */
     protected static class TransCategoryDataMap
-            extends CategoryDataMap<TransactionCategory, TransactionCategoryType> {
+            extends CategoryDataMap<TransactionCategory> {
         /**
          * Report fields.
          */
@@ -644,9 +623,12 @@ public final class TransactionCategory
         }
 
         @Override
-        public void adjustForItem(final TransactionCategory pItem) {
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final TransactionCategory myItem = (TransactionCategory) pItem;
+
             /* If the class is singular */
-            final TransactionCategoryClass myClass = pItem.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myItem.getCategoryTypeClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -658,11 +640,11 @@ public final class TransactionCategory
                 }
 
                 /* Adjust category map */
-                theCategoryMap.put(myId, pItem);
+                theCategoryMap.put(myId, myItem);
             }
 
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

@@ -239,7 +239,7 @@ public final class SpotExchangeRate
         public SpotExchangeList(final MoneyWiseView pView,
                                 final TethysDate pDate) {
             /* Build initial list */
-            super(pView.getData(), SpotExchangeRate.class, MoneyWiseDataType.SECURITYPRICE);
+            super((MoneyWiseData) pView.getData(), SpotExchangeRate.class, MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
             ensureMap();
 
@@ -248,7 +248,7 @@ public final class SpotExchangeRate
             theView = pView;
 
             /* Obtain the portfolio bucket */
-            final MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = (MoneyWiseData) theView.getData();
             theCurrency = myData.getDefaultCurrency();
             final AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
 

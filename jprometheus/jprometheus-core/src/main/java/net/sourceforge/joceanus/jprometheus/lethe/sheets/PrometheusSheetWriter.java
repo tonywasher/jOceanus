@@ -41,9 +41,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Write control for spreadsheets.
  * @author Tony Washer
- * @param <T> the DataSet type
  */
-public abstract class PrometheusSheetWriter<T extends DataSet<T>> {
+public abstract class PrometheusSheetWriter {
     /**
      * Gui Factory.
      */
@@ -62,7 +61,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T>> {
     /**
      * The DataSet.
      */
-    private T theData;
+    private DataSet theData;
 
     /**
      * The WorkSheets.
@@ -100,7 +99,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T>> {
      * get dataSet.
      * @return the dataSet
      */
-    public T getData() {
+    public DataSet getData() {
         return theData;
     }
 
@@ -119,7 +118,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T>> {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    public void createBackup(final T pData,
+    public void createBackup(final DataSet pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */

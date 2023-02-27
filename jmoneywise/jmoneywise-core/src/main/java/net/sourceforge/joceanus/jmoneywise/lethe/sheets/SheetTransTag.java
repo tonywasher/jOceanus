@@ -60,7 +60,7 @@ public class SheetTransTag
         super(pReader, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getTransactionTags());
     }
 
@@ -73,7 +73,7 @@ public class SheetTransTag
         super(pWriter, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getTransactionTags());
     }
 

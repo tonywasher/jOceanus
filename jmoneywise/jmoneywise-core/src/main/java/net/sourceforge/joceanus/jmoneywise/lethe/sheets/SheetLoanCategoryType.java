@@ -50,7 +50,7 @@ public class SheetLoanCategoryType
         super(pReader, AREA_LOANCATTYPES);
 
         /* Access the Loan Type list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getLoanCategoryTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetLoanCategoryType
         super(pWriter, AREA_LOANCATTYPES);
 
         /* Access the Loan Type list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getLoanCategoryTypes());
     }
 

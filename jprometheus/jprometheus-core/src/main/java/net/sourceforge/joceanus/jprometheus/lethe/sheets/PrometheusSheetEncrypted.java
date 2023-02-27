@@ -37,7 +37,7 @@ public abstract class PrometheusSheetEncrypted<T extends EncryptedItem & Compara
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected PrometheusSheetEncrypted(final PrometheusSheetReader<?> pReader,
+    protected PrometheusSheetEncrypted(final PrometheusSheetReader pReader,
                                        final String pRange) {
         /* Pass call on */
         super(pReader, pRange);
@@ -48,7 +48,7 @@ public abstract class PrometheusSheetEncrypted<T extends EncryptedItem & Compara
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected PrometheusSheetEncrypted(final PrometheusSheetWriter<?> pWriter,
+    protected PrometheusSheetEncrypted(final PrometheusSheetWriter pWriter,
                                        final String pRange) {
         /* Pass call on */
         super(pWriter, pRange);

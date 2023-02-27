@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
@@ -48,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Security Table.
  */
 public class MoneyWiseSecurityTable
-        extends MoneyWiseAssetTable<Security, SecurityType> {
+        extends MoneyWiseAssetTable<Security> {
     /**
      * The Info UpdateEntry.
      */
@@ -79,7 +80,7 @@ public class MoneyWiseSecurityTable
                            final UpdateSet pUpdateSet,
                            final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITY, SecurityType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITY);
 
         /* register the info/priceEntries */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.SECURITYINFO);
@@ -120,7 +121,7 @@ public class MoneyWiseSecurityTable
         myTask = myTask.startTask("Securities");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final SecurityList myBase = myData.getSecurities();
         theSecurities = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theSecurities.getUnderlyingList());
@@ -201,7 +202,7 @@ public class MoneyWiseSecurityTable
 
     @Override
     protected void buildCategoryMenu(final Security pSecurity,
-                                     final TethysUIScrollMenu<SecurityType> pMenu) {
+                                     final TethysUIScrollMenu<AssetCategory> pMenu) {
         /* Build the menu */
         theActiveSecurity.buildSecTypeMenu(pMenu, pSecurity);
     }

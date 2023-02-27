@@ -571,8 +571,8 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private static <X extends AssetBase<X, ?>> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X, ?> pList,
-                                                                                           final TransactionCategory pCategory) {
+    private static <X extends AssetBase> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X> pList,
+                                                                                     final TransactionCategory pCategory) {
         /* Loop through the available values */
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
@@ -601,9 +601,9 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private static <X extends AssetBase<X, ?>> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X, ?> pList,
-                                                                                       final TransactionAsset pAccount,
-                                                                                       final TransactionCategory pCategory) {
+    private static <X extends AssetBase> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X> pList,
+                                                                                 final TransactionAsset pAccount,
+                                                                                 final TransactionCategory pCategory) {
         /* Loop through the available values */
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
@@ -633,7 +633,7 @@ public class TransactionBuilder {
     private static SecurityHolding getDefaultHolding(final UpdateSet pUpdateSet,
                                                      final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        final MoneyWiseData myData = (MoneyWiseData) pUpdateSet.getDataSet();
         final PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 
@@ -677,7 +677,7 @@ public class TransactionBuilder {
                                                             final TransactionAsset pAccount,
                                                             final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        final MoneyWiseData myData = (MoneyWiseData) pUpdateSet.getDataSet();
         final PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
         final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 

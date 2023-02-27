@@ -950,7 +950,7 @@ public final class PayeeBucket
          * @param pPayee the payee
          * @return the bucket
          */
-        protected PayeeBucket getBucket(final AssetBase<?, ?> pPayee) {
+        protected PayeeBucket getBucket(final AssetBase pPayee) {
             /* Handle null payee */
             if (pPayee == null) {
                 return null;

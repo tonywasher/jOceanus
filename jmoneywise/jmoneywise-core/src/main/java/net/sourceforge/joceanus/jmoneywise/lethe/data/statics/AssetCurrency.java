@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class AssetCurrency
-        extends StaticDataItem<AssetCurrency> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -191,7 +191,7 @@ public class AssetCurrency
     }
 
     @Override
-    public int compareTo(final StaticDataItem<?> pThat) {
+    public int compareTo(final StaticDataItem pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -300,7 +300,7 @@ public class AssetCurrency
          * Construct an empty CORE account currency list.
          * @param pData the DataSet for the list
          */
-        public AssetCurrencyList(final DataSet<?> pData) {
+        public AssetCurrencyList(final DataSet pData) {
             super(AssetCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
         }
 
@@ -560,10 +560,11 @@ public class AssetCurrency
         }
 
         @Override
-        public void adjustForItem(final AssetCurrency pItem) {
+        public void adjustForItem(final DataItem pItem) {
             /* Adjust order count */
-            if (pItem.isDefault()) {
-                theDefault = pItem;
+            final AssetCurrency myItem = (AssetCurrency) pItem;
+            if (myItem.isDefault()) {
+                theDefault = myItem;
                 theDefaultCount = theDefaultCount == null
                                                           ? ONE
                                                           : theDefaultCount + 1;

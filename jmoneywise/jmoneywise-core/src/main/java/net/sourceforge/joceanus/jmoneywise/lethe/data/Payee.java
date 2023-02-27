@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Payee class.
  */
 public class Payee
-        extends AssetBase<Payee, PayeeType>
+        extends AssetBase
         implements InfoSetItem {
     /**
      * Object name.
@@ -733,7 +733,7 @@ public class Payee
      * The Payee List class.
      */
     public static class PayeeList
-            extends AssetBaseList<Payee, PayeeType> {
+            extends AssetBaseList<Payee> {
         /**
          * Report fields.
          */
@@ -1040,9 +1040,12 @@ public class Payee
         }
 
         @Override
-        public void adjustForItem(final Payee pItem) {
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final Payee myItem = (Payee) pItem;
+
             /* If the class is singular */
-            final PayeeTypeClass myClass = pItem.getCategoryClass();
+            final PayeeTypeClass myClass = myItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -1054,7 +1057,7 @@ public class Payee
                 }
 
                 /* Adjust payee map */
-                thePayeeMap.put(myId, pItem);
+                thePayeeMap.put(myId, myItem);
             }
 
             /* Adjust name count */
@@ -1067,7 +1070,7 @@ public class Payee
          * @return the matching item
          */
         public Payee findItemByName(final String pName) {
-            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Payee
                                             ? (Payee) myAsset
                                             : null;

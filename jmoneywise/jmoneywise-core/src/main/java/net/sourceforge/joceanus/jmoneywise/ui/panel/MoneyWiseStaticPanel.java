@@ -340,8 +340,8 @@ public class MoneyWiseStaticPanel
      * @param <L> the list type
      * @param <T> the data type
      */
-    private <L extends StaticList<T>, T extends StaticDataItem<T>> void addStatic(final MoneyWiseDataType pItemType,
-                                                                                  final Class<L> pListClass) {
+    private <L extends StaticList<T>, T extends StaticDataItem> void addStatic(final MoneyWiseDataType pItemType,
+                                                                               final Class<L> pListClass) {
         /* Create the new panel */
         final MoneyWiseStaticTable<L, T> myPanel = new MoneyWiseStaticTable<>(theView, theUpdateSet, theError, pItemType, pListClass);
 
@@ -366,7 +366,7 @@ public class MoneyWiseStaticPanel
      * Select static data.
      * @param pStatic the static data to select
      */
-    public void selectStatic(final StaticDataItem<?> pStatic) {
+    public void selectStatic(final StaticDataItem pStatic) {
         /* Access the item type */
         final MoneyWiseDataType myType = (MoneyWiseDataType) pStatic.getItemType();
         final String myName = myType.getFieldName();

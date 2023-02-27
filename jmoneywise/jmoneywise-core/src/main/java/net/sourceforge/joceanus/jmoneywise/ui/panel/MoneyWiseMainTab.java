@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.Tethy
  * Main Window for MoneyWise.
  */
 public class MoneyWiseMainTab
-        extends PrometheusMainWindow<MoneyWiseData>
+        extends PrometheusMainWindow
         implements TethysUIMainPanel {
     /**
      * Report tab title.

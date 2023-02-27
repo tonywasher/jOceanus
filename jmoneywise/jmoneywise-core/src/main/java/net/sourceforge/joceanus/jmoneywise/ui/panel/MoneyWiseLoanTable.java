@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseLoanPanel;
@@ -43,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Loan Table.
  */
 public class MoneyWiseLoanTable
-        extends MoneyWiseAssetTable<Loan, LoanCategory> {
+        extends MoneyWiseAssetTable<Loan> {
     /**
      * The Info UpdateEntry.
      */
@@ -69,7 +70,7 @@ public class MoneyWiseLoanTable
                             final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN, LoanCategory.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN);
 
         /* register the infoEntry */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.LOANINFO);
@@ -100,7 +101,7 @@ public class MoneyWiseLoanTable
         myTask = myTask.startTask("Loans");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final LoanList myBase = myData.getLoans();
         theLoans = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theLoans.getUnderlyingList());
@@ -176,7 +177,7 @@ public class MoneyWiseLoanTable
 
     @Override
     protected void buildCategoryMenu(final Loan pLoan,
-                                     final TethysUIScrollMenu<LoanCategory> pMenu) {
+                                     final TethysUIScrollMenu<AssetCategory> pMenu) {
         /* Build the menu */
         theActiveLoan.buildCategoryMenu(pMenu, pLoan);
     }

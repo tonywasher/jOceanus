@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * @param <T> the Category Data type
  * @param <S> the Static Data type
  */
-public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S>, S extends StaticDataItem<S>>
+public abstract class MoneyWiseCategoryTable<T extends CategoryBase, S extends StaticDataItem>
         extends MoneyWiseBaseTable<T> {
     /**
      * Filter Prompt.
@@ -277,7 +277,8 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S>, S ext
 
         /* Loop through the available category values */
         for (T myCurr : myCategories) {
-            final S myType = myCurr.getCategoryType();
+            @SuppressWarnings("unchecked")
+            final S myType = (S) myCurr.getCategoryType();
 
             /* Ignore category if it is deleted or a child */
             if (myCurr.isDeleted() || isChildCategory(myType)) {

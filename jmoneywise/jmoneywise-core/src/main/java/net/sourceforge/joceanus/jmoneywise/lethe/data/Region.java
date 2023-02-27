@@ -625,9 +625,12 @@ public class Region
     protected static class RegionDataMap
             extends DataInstanceMap<Region, String> {
         @Override
-        public void adjustForItem(final Region pItem) {
+        public void adjustForItem(final DataItem pItem) {
+            /* Access item */
+            final Region myItem = (Region) pItem;
+
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            adjustForItem(myItem, myItem.getName());
         }
 
         /**

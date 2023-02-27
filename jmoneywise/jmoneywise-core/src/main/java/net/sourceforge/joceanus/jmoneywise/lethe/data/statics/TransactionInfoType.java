@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TransactionInfoType
-        extends StaticDataItem<TransactionInfoType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -155,7 +155,7 @@ public class TransactionInfoType
          * Construct an empty CORE Info list.
          * @param pData the DataSet for the list
          */
-        public TransactionInfoTypeList(final DataSet<?> pData) {
+        public TransactionInfoTypeList(final DataSet pData) {
             super(TransactionInfoType.class, pData, MoneyWiseDataType.TRANSINFOTYPE, ListStyle.CORE);
         }
 

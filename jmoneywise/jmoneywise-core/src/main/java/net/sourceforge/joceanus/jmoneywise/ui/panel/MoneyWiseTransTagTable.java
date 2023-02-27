@@ -146,7 +146,7 @@ public class MoneyWiseTransTagTable
         myTask = myTask.startTask("Tags");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final TransactionTagList myBase = myData.getTransactionTags();
         theTags = myBase.deriveEditList();
         getTable().setItems(theTags.getUnderlyingList());

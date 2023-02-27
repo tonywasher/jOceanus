@@ -35,10 +35,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * LoaderThread extension to load an XML backup.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadLoadXmlFile<T extends DataSet<T>>
-        implements TethysUIThread<T> {
+public class PrometheusThreadLoadXmlFile
+        implements TethysUIThread<DataSet> {
     /**
      * Select Backup Task.
      */
@@ -47,13 +46,13 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T>>
     /**
      * Data control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadXmlFile(final DataControl<T> pControl) {
+    public PrometheusThreadLoadXmlFile(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -63,7 +62,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T>>
     }
 
     @Override
-    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
@@ -92,17 +91,17 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T>>
         }
 
         /* Create a new formatter */
-        final DataValuesFormatter<T> myFormatter = new DataValuesFormatter<>(pManager, myPasswordMgr);
+        final DataValuesFormatter myFormatter = new DataValuesFormatter(pManager, myPasswordMgr);
 
         /* Load data */
-        final T myNewData = theControl.getNewData();
+        final DataSet myNewData = theControl.getNewData();
         myFormatter.loadZipFile(myNewData, myFile);
 
         /* Create interface */
-        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        final T myStore = theControl.getNewData();
+        final DataSet myStore = theControl.getNewData();
         myDatabase.loadDatabase(pManager, myStore);
 
         /* Check security on the database */
@@ -122,7 +121,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T>>
     }
 
     @Override
-    public void processResult(final T pResult) {
+    public void processResult(final DataSet pResult) {
         theControl.setData(pResult);
     }
 }

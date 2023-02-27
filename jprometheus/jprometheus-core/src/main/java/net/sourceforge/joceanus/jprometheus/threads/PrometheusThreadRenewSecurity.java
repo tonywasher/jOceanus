@@ -28,20 +28,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
  * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
  * ready for committing the change to the database.
- * @param <T> the DataSet type
  */
-public class PrometheusThreadRenewSecurity<T extends DataSet<T>>
-        implements TethysUIThread<T> {
+public class PrometheusThreadRenewSecurity
+        implements TethysUIThread<DataSet> {
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadRenewSecurity(final DataControl<T> pControl) {
+    public PrometheusThreadRenewSecurity(final DataControl pControl) {
         theControl = pControl;
     }
 
@@ -51,12 +50,12 @@ public class PrometheusThreadRenewSecurity<T extends DataSet<T>>
     }
 
     @Override
-    public T performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
         pManager.initTask(getTaskName());
 
         /* Access Data */
-        T myData = theControl.getData();
+        DataSet myData = theControl.getData();
         myData = myData.deriveCloneSet();
 
         /* ReNew Security */
@@ -70,7 +69,7 @@ public class PrometheusThreadRenewSecurity<T extends DataSet<T>>
     }
 
     @Override
-    public void processResult(final T pResult) {
+    public void processResult(final DataSet pResult) {
         theControl.setData(pResult);
     }
 }

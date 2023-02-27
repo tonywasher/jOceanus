@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseDepositPanel;
@@ -45,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Deposit Table.
  */
 public class MoneyWiseDepositTable
-        extends MoneyWiseAssetTable<Deposit, DepositCategory> {
+        extends MoneyWiseAssetTable<Deposit> {
     /**
      * The Info UpdateEntry.
      */
@@ -76,7 +77,7 @@ public class MoneyWiseDepositTable
                           final UpdateSet pUpdateSet,
                           final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT, DepositCategory.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT);
 
         /* register the info/rateEntries */
         theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITINFO);
@@ -108,7 +109,7 @@ public class MoneyWiseDepositTable
         myTask = myTask.startTask("Deposits");
 
         /* Access list */
-        final MoneyWiseData myData = getView().getData();
+        final MoneyWiseData myData = (MoneyWiseData) getView().getData();
         final DepositList myBase = myData.getDeposits();
         theDeposits = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theDeposits.getUnderlyingList());
@@ -189,7 +190,7 @@ public class MoneyWiseDepositTable
 
     @Override
     protected void buildCategoryMenu(final Deposit pDeposit,
-                                     final TethysUIScrollMenu<DepositCategory> pMenu) {
+                                     final TethysUIScrollMenu<AssetCategory> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildCategoryMenu(pMenu, pDeposit);
     }

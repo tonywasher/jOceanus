@@ -41,9 +41,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Provides top-level control of data.
- * @param <T> the DataSet type
  */
-public abstract class DataControl<T extends DataSet<T>>
+public abstract class DataControl
         implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * The Event Manager.
@@ -53,12 +52,12 @@ public abstract class DataControl<T extends DataSet<T>>
     /**
      * The DataSet.
      */
-    private T theData;
+    private DataSet theData;
 
     /**
      * The Update DataSet.
      */
-    private T theUpdates;
+    private DataSet theUpdates;
 
     /**
      * The Error List.
@@ -109,7 +108,7 @@ public abstract class DataControl<T extends DataSet<T>>
      * Record new DataSet.
      * @param pData the new DataSet
      */
-    public void setData(final T pData) {
+    public void setData(final DataSet pData) {
         /* If we already have data */
         if (theData != null) {
             /* Bump the generation */
@@ -143,7 +142,7 @@ public abstract class DataControl<T extends DataSet<T>>
      * Obtain current DataSet.
      * @return the current DataSet
      */
-    public T getData() {
+    public DataSet getData() {
         return theData;
     }
 
@@ -164,7 +163,7 @@ public abstract class DataControl<T extends DataSet<T>>
      * Obtain current Updates.
      * @return the current Updates
      */
-    public T getUpdates() {
+    public DataSet getUpdates() {
         return theUpdates;
     }
 
@@ -283,20 +282,20 @@ public abstract class DataControl<T extends DataSet<T>>
      * Obtain SpreadSheet object.
      * @return SpreadSheet object
      */
-    public abstract PrometheusSpreadSheet<T> getSpreadSheet();
+    public abstract PrometheusSpreadSheet getSpreadSheet();
 
     /**
      * Obtain Database object.
      * @return database object
      * @throws OceanusException on error
      */
-    public abstract PrometheusDataStore<T> getDatabase() throws OceanusException;
+    public abstract PrometheusDataStore getDatabase() throws OceanusException;
 
     /**
      * Obtain DataSet object.
      * @return dataSet object
      */
-    public abstract T getNewData();
+    public abstract DataSet getNewData();
 
     /**
      * Analyse the data in the view.

@@ -270,7 +270,7 @@ public class MoneyWiseMaintenance
             /* View the requested account */
             case ACCOUNT:
                 /* Select the requested account */
-                final AssetBase<?, ?> myAccount = pEvent.getDetails(AssetBase.class);
+                final AssetBase myAccount = pEvent.getDetails(AssetBase.class);
                 theAccountTab.selectAccount(myAccount);
 
                 /* Goto the Account tab */
@@ -310,7 +310,7 @@ public class MoneyWiseMaintenance
             /* View the requested static */
             case STATIC:
                 /* Select the requested tag */
-                final StaticDataItem<?> myData = pEvent.getDetails(StaticDataItem.class);
+                final StaticDataItem myData = pEvent.getDetails(StaticDataItem.class);
                 theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */

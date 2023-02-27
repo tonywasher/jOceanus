@@ -50,7 +50,7 @@ public class SheetPortfolioType
         super(pReader, AREA_PORTFOLIOTYPES);
 
         /* Access the Portfolio Type list */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getPortfolioTypes());
     }
 
@@ -63,7 +63,7 @@ public class SheetPortfolioType
         super(pWriter, AREA_PORTFOLIOTYPES);
 
         /* Access the Portfolio Type list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getPortfolioTypes());
     }
 

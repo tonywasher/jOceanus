@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticDataItem<TaxBasis> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -142,7 +142,7 @@ public class TaxBasis
          * Construct an empty CORE tax bucket list.
          * @param pData the DataSet for the list
          */
-        public TaxBasisList(final DataSet<?> pData) {
+        public TaxBasisList(final DataSet pData) {
             super(TaxBasis.class, pData, MoneyWiseDataType.TAXBASIS, ListStyle.CORE);
         }
 

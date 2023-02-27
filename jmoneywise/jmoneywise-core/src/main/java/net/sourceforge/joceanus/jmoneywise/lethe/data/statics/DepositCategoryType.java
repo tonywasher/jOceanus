@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class DepositCategoryType
-        extends StaticDataItem<DepositCategoryType> {
+        extends StaticDataItem {
     /**
      * Object name.
      */
@@ -138,7 +138,7 @@ public class DepositCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public DepositCategoryTypeList(final DataSet<?> pData) {
+        public DepositCategoryTypeList(final DataSet pData) {
             super(DepositCategoryType.class, pData, MoneyWiseDataType.DEPOSITTYPE, ListStyle.CORE);
         }
 

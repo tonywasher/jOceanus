@@ -39,12 +39,12 @@ public class TableSecurityType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableSecurityType(final PrometheusDataStore<MoneyWiseData> pDatabase) {
+    protected TableSecurityType(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getSecurityTypes());
     }

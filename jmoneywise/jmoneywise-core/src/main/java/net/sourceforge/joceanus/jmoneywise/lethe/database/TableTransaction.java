@@ -44,7 +44,7 @@ public class TableTransaction
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransaction(final PrometheusDataStore<?> pDatabase) {
+    protected TableTransaction(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -62,7 +62,7 @@ public class TableTransaction
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransactions());
     }

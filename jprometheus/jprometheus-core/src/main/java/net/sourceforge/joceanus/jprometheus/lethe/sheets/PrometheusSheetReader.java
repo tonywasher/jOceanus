@@ -42,9 +42,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Load control for spreadsheets.
  * @author Tony Washer
- * @param <T> the DataSet type
  */
-public abstract class PrometheusSheetReader<T extends DataSet<T>> {
+public abstract class PrometheusSheetReader {
     /**
      * Gui Factory.
      */
@@ -68,7 +67,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T>> {
     /**
      * DataSet.
      */
-    private T theData;
+    private DataSet theData;
 
     /**
      * The WorkSheets.
@@ -101,7 +100,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T>> {
      * get data.
      * @return the data
      */
-    public T getData() {
+    public DataSet getData() {
         return theData;
     }
 
@@ -128,7 +127,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T>> {
      * @throws OceanusException on error
      */
     public void loadBackup(final File pFile,
-                           final T pData) throws OceanusException {
+                           final DataSet pData) throws OceanusException {
         /* Start the task */
         TethysProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Loading");

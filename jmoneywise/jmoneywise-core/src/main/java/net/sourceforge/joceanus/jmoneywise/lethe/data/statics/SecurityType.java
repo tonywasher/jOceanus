@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticDataItem<SecurityType> {
+        extends StaticDataItem
+        implements AssetCategory {
     /**
      * Object name.
      */
@@ -132,7 +133,7 @@ public class SecurityType
          * Construct an empty CORE securityType list.
          * @param pData the DataSet for the list
          */
-        public SecurityTypeList(final DataSet<?> pData) {
+        public SecurityTypeList(final DataSet pData) {
             super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
         }
 

@@ -93,7 +93,7 @@ public class SheetTransaction
         super(pReader, AREA_TRANS);
 
         /* Access the Lists */
-        final MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pReader.getData();
         setDataList(myData.getTransactions());
     }
 
@@ -106,7 +106,7 @@ public class SheetTransaction
         super(pWriter, AREA_TRANS);
 
         /* Access the Transactions list */
-        final MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = (MoneyWiseData) pWriter.getData();
         setDataList(myData.getTransactions());
     }
 

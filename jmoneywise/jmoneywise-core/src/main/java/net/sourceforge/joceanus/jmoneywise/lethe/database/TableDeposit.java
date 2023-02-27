@@ -42,7 +42,7 @@ public class TableDeposit
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableDeposit(final PrometheusDataStore<?> pDatabase) {
+    protected TableDeposit(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
@@ -59,7 +59,7 @@ public class TableDeposit
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet pData) {
         final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getDeposits());
     }

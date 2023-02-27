@@ -33,7 +33,7 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem & Compara
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected PrometheusTableEncrypted(final PrometheusDataStore<?> pDatabase,
+    protected PrometheusTableEncrypted(final PrometheusDataStore pDatabase,
                                        final String pTabName) {
         super(pDatabase, pTabName);
         final PrometheusTableDefinition myTableDef = getTableDef();
