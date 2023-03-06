@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class TransactionTag
         extends EncryptedItem
-        implements MetisDataNamedItem, Comparable<TransactionTag> {
+        implements MetisDataNamedItem {
     /**
      * Object name.
      */
@@ -335,23 +335,10 @@ public class TransactionTag
     }
 
     @Override
-    public int compareTo(final TransactionTag pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
+    public int compareValues(final DataItem pThat) {
         /* Check the names */
-        final int iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        final TransactionTag myThat = (TransactionTag) pThat;
+        return MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 
     /**

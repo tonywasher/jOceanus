@@ -150,7 +150,7 @@ public interface TethysUIFieldFactory {
      * @param <T> the item type
      * @return the new field
      */
-    <T extends Comparable<T>> TethysUIListButtonField<T> newListField();
+    <T extends Comparable<? super T>> TethysUIListButtonField<T> newListField();
 
     /**
      * Obtain a new simple icon data field.

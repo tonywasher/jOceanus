@@ -401,7 +401,7 @@ public interface TethysUIDataEditField<T>
      * List Button Field.
      * @param <T> the value type
      */
-    interface TethysUIListButtonField<T extends Comparable<T>>
+    interface TethysUIListButtonField<T extends Comparable<? super T>>
             extends TethysUIDataEditField<List<T>>, TethysUIListButton<T> {
     }
 }

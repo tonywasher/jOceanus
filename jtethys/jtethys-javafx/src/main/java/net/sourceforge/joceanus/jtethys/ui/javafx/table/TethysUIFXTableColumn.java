@@ -716,7 +716,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysUIFXTableListColumn<T extends Comparable<T>, C, R>
+    public static class TethysUIFXTableListColumn<T extends Comparable<? super T>, C, R>
             extends TethysUIFXTableColumn<List<T>, C, R>
             implements TethysUITableListColumn<T, C, R> {
         /**

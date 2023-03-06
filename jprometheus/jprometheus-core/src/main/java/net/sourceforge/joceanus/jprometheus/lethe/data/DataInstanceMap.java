@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <K> the instance key
  */
 public abstract class DataInstanceMap<T extends DataItem, K>
-        implements DataMapItem<T>, MetisFieldItem {
+        implements DataMapItem, MetisFieldItem {
     /**
      * Report fields.
      */

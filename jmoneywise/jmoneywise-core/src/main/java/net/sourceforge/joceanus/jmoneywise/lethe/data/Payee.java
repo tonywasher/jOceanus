@@ -501,29 +501,13 @@ public class Payee
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
+    public int compareValues(final DataItem pThat) {
+        /* Check the category and then the name */
+        final Payee myThat = (Payee) pThat;
+        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
+        if (iDiff == 0) {
+            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
         }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare types of asset */
-        int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof Payee)) {
-            /* Check the payee type */
-            final Payee myThat = (Payee) pThat;
-            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
-            if (iDiff == 0) {
-                /* Check the underlying base */
-                iDiff = super.compareAsset(myThat);
-            }
-        }
-
-        /* Return the result */
         return iDiff;
     }
 
@@ -956,7 +940,7 @@ public class Payee
      * The dataMap class.
      */
     protected static class PayeeDataMap
-            implements DataMapItem<Payee>, MetisFieldItem {
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

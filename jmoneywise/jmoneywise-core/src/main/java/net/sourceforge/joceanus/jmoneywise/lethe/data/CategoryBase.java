@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public abstract class CategoryBase
         extends EncryptedItem
-        implements MetisDataNamedItem, Comparable<CategoryBase> {
+        implements MetisDataNamedItem {
     /**
      * Separator.
      */
@@ -467,29 +467,14 @@ public abstract class CategoryBase
     }
 
     @Override
-    public int compareTo(final CategoryBase pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
+    public int compareValues(final DataItem pThat) {
+        /* Check the category and then the name */
+        final CategoryBase myThat = (CategoryBase) pThat;
+        int iDiff = MetisDataDifference.compareObject(getCategoryType(), myThat.getCategoryType());
+        if (iDiff == 0) {
+            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
         }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Check the category type */
-        int iDiff = MetisDataDifference.compareObject(getCategoryType(), pThat.getCategoryType());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Check the names */
-        iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        return iDiff;
     }
 
     @Override

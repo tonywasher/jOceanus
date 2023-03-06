@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
  * </dl>
  * @param <T> the object type
  */
-public abstract class TethysUICoreListButtonManager<T extends Comparable<T>>
+public abstract class TethysUICoreListButtonManager<T extends Comparable<? super T>>
         extends TethysUICoreComponent
         implements TethysUIListButtonManager<T> {
     /**

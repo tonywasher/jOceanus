@@ -429,8 +429,8 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pClass the list class
      * @return the list
      */
-    public <L extends DataList<X>, X extends DataItem & Comparable<? super X>> L getDataList(final PrometheusListKey pDataType,
-                                                                                             final Class<L> pClass) {
+    public <L extends DataList<X>, X extends DataItem> L getDataList(final PrometheusListKey pDataType,
+                                                                     final Class<L> pClass) {
         /* Look up the base list */
         return theUpdateSet.getDataList(pDataType, pClass);
     }

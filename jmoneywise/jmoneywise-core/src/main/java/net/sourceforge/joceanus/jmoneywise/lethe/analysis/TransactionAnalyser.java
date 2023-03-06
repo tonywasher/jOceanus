@@ -112,7 +112,7 @@ public class TransactionAnalyser
     /**
      * The security price map.
      */
-    private final SecurityPriceDataMap<SecurityPrice> thePriceMap;
+    private final SecurityPriceDataMap thePriceMap;
 
     /**
      * The analysis.

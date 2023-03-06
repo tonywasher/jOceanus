@@ -34,7 +34,7 @@ public class ExchangeRateCursor {
     /**
      * ExchangeRate data map.
      */
-    private final ExchangeRateDataMap<ExchangeRate> theDataMap;
+    private final ExchangeRateDataMap theDataMap;
 
     /**
      * Cursor map.

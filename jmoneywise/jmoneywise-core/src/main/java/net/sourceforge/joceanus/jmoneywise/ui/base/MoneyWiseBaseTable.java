@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Base Table.
  * @param <T> the data type
  */
-public abstract class MoneyWiseBaseTable<T extends DataItem & Comparable<? super T>>
+public abstract class MoneyWiseBaseTable<T extends DataItem>
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * The logger.

@@ -72,7 +72,7 @@ public class TethysUISwingButtonFactory
     }
 
     @Override
-    public <T extends Comparable<T>> TethysUIListButtonManager<T> newListButton() {
+    public <T extends Comparable<? super T>> TethysUIListButtonManager<T> newListButton() {
         return new TethysUISwingListButtonManager<>(theFactory);
     }
 

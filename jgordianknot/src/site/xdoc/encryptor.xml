@@ -74,7 +74,6 @@
                 <tr><td>ElGamal</td><td>SHA224, SHA256, SHA384, SHA512</td><td/></tr>
                 <tr><td>EC</td><td/><td>Available for EC, GOST2012 and SM2 keys, Not available for JCA</td></tr>
                 <tr><td>SM2</td><td>C1C2C3, C1C3C2</td><td>Available for EC, GOST2012 and SM2 keys</td></tr>
-                <tr><td>McEliece</td><td>Standard, KobaraImai, Fujisaki, Pointcheval</td><td/></tr>
             </table>
         </section>
     </body>

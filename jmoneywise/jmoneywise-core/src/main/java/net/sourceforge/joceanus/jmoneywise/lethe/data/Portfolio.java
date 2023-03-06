@@ -562,29 +562,13 @@ public class Portfolio
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
+    public int compareValues(final DataItem pThat) {
+        /* Check the category and then the name */
+        final Portfolio myThat = (Portfolio) pThat;
+        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
+        if (iDiff == 0) {
+            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
         }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare types of asset */
-        int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof Portfolio)) {
-            /* Check the portfolio type */
-            final Portfolio myThat = (Portfolio) pThat;
-            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
-            if (iDiff == 0) {
-                /* Check the underlying base */
-                iDiff = super.compareAsset(myThat);
-            }
-        }
-
-        /* Return the result */
         return iDiff;
     }
 
@@ -1092,7 +1076,7 @@ public class Portfolio
      * The dataMap class.
      */
     protected static class PortfolioDataMap
-            implements DataMapItem<Portfolio>, MetisFieldItem {
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

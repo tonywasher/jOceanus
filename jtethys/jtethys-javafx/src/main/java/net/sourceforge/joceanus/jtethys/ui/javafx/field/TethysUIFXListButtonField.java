@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXScrollMenu;
  *
  * @param <T> the data type
  */
-public class TethysUIFXListButtonField<T extends Comparable<T>>
+public class TethysUIFXListButtonField<T extends Comparable<? super T>>
         extends TethysUIFXDataTextField<List<T>>
         implements TethysUIListButtonField<T> {
     /**

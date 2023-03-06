@@ -191,25 +191,17 @@ public class AssetCurrency
     }
 
     @Override
-    public int compareTo(final StaticDataItem pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
+    public int compareValues(final DataItem pThat) {
         /* Handle differences in default value */
         final AssetCurrency myThat = (AssetCurrency) pThat;
         if (!isDefault().equals(myThat.isDefault())) {
-            return isDefault()
+            return Boolean.TRUE.equals(isDefault())
                                ? -1
                                : 1;
         }
 
         /* Handle normally */
-        return super.compareTo(pThat);
+        return super.compareValues(pThat);
     }
 
     @Override

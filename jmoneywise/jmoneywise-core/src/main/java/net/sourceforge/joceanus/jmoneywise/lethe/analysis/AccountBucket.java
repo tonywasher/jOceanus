@@ -623,7 +623,7 @@ public abstract class AccountBucket<T extends AssetBase>
     protected void calculateFluctuations(final TethysDateRange pRange) {
         /* Obtain the appropriate rates */
         final MoneyWiseData myData = theAnalysis.getData();
-        final ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+        final ExchangeRateDataMap myRateMap = myData.getExchangeRateDataMap();
         final TethysRatio[] myRates = myRateMap.getRatesForRange(theAccount.getAssetCurrency(), pRange);
         final Currency myBaseCurrency = theAnalysis.getCurrency().getCurrency();
 

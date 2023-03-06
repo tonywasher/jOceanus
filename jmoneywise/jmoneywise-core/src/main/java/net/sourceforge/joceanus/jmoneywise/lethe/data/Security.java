@@ -550,29 +550,13 @@ public class Security
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
+    public int compareValues(final DataItem pThat) {
+        /* Check the category and then the name */
+        final Security myThat = (Security) pThat;
+        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
+        if (iDiff == 0) {
+            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
         }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare types of asset */
-        int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof Security)) {
-            /* Check the security type */
-            final Security myThat = (Security) pThat;
-            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
-            if (iDiff == 0) {
-                /* Check the underlying base */
-                iDiff = super.compareAsset(myThat);
-            }
-        }
-
-        /* Return the result */
         return iDiff;
     }
 

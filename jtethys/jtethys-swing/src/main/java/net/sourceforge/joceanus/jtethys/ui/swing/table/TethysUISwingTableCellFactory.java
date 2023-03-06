@@ -234,7 +234,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the list cell
      */
-    <T extends Comparable<T>> TethysUISwingTableCell<List<T>, C, R> listCell(final TethysUISwingTableListColumn<T, C, R> pColumn) {
+    <T extends Comparable<? super T>> TethysUISwingTableCell<List<T>, C, R> listCell(final TethysUISwingTableListColumn<T, C, R> pColumn) {
         return new TethysUISwingTableListCell<>(pColumn, theGuiFactory);
     }
 

@@ -73,8 +73,8 @@
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.72</BouncyCastleVersion>
     <JUnitVersion>5.9.2</JUnitVersion>
-    <JSONVersion>20220924</JSONVersion>
-    <ApacheMavenVersion>3.8.6</ApacheMavenVersion>
+    <JSONVersion>20230227</JSONVersion>
+    <ApacheMavenVersion>3.9.0</ApacheMavenVersion>
     <MySQLVersion>8.0.32</MySQLVersion>
     <PostGreSQLVersion>42.5.4</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
@@ -94,7 +94,7 @@
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0</DeployPluginVersion>
     <EnforcerPluginVersion>3.2.1</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.10.1</CompilerPluginVersion>
+    <CompilerPluginVersion>3.11.0</CompilerPluginVersion>
     <ShadePluginVersion>3.4.1</ShadePluginVersion>
     <DependencyPluginVersion>3.5.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M8</SurefirePluginVersion>
@@ -111,8 +111,8 @@
     <PMDPluginVersion>3.20.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.8</JacocoPluginVersion>
     <GPGPluginVersion>3.0.1</GPGPluginVersion>
-    <JetBrainsAnnotationsVersion>23.1.0</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.13.0</VersionsPluginVersion>
+    <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
+    <VersionsPluginVersion>2.15.0</VersionsPluginVersion>
   </properties>
   <build>
     <resources>

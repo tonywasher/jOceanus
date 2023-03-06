@@ -519,7 +519,7 @@ public final class SecurityBucket
     private void valueAsset(final TethysDateRange pRange) {
         /* Obtain the appropriate price */
         final MoneyWiseData myData = theAnalysis.getData();
-        final SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
+        final SecurityPriceDataMap myPriceMap = myData.getSecurityPriceDataMap();
         final TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
 
         /* Access base units */
@@ -546,9 +546,9 @@ public final class SecurityBucket
     private void valueForeignAsset(final TethysDateRange pRange) {
         /* Obtain the appropriate price */
         final MoneyWiseData myData = theAnalysis.getData();
-        final SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
+        final SecurityPriceDataMap myPriceMap = myData.getSecurityPriceDataMap();
         final TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
-        final ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+        final ExchangeRateDataMap myRateMap = myData.getExchangeRateDataMap();
         final TethysRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);
         final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 

@@ -204,7 +204,7 @@ public final class AssetPair
      * @throws OceanusException on error
      */
     protected void resolveDataLink(final MoneyWiseData pData,
-                                   final TransactionBase<?> pOwner,
+                                   final TransactionBase pOwner,
                                    final MetisLetheField pField) throws OceanusException {
         /* Access the values */
         if (pField.equals(Transaction.FIELD_ACCOUNT)) {
@@ -225,7 +225,7 @@ public final class AssetPair
      * @throws OceanusException on error
      */
     private static void resolveDataLink(final MoneyWiseData pData,
-                                        final TransactionBase<?> pOwner,
+                                        final TransactionBase pOwner,
                                         final AssetType pAssetType,
                                         final MetisLetheField pField) throws OceanusException {
         /* Handle security holding differently */
@@ -271,7 +271,7 @@ public final class AssetPair
      * @param pField the field
      * @throws OceanusException on error
      */
-    private static void resolveDataLink(final TransactionBase<?> pOwner,
+    private static void resolveDataLink(final TransactionBase pOwner,
                                         final AssetBaseList<?> pList,
                                         final MetisLetheField pField) throws OceanusException {
         /* Access the values */

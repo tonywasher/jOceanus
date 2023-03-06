@@ -38,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class ControlData
-        extends DataItem
-        implements Comparable<ControlData> {
+        extends DataItem {
     /**
      * Object name.
      */
@@ -198,23 +197,10 @@ public class ControlData
     }
 
     @Override
-    public int compareTo(final ControlData pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the Versions */
-        final int iDiff = getDataVersion() - pThat.getDataVersion();
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+    public int compareValues(final DataItem pThat) {
+        /* Check the versions */
+        final ControlData myThat = (ControlData) pThat;
+        return getDataVersion() - myThat.getDataVersion();
     }
 
     @Override
@@ -387,7 +373,7 @@ public class ControlData
         }
 
         @Override
-        protected DataMapItem<ControlData> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

@@ -86,7 +86,7 @@ public interface TethysUIButtonFactory<C> {
      * @param <T> the item type
      * @return the new manager
      */
-    <T extends Comparable<T>> TethysUIListButtonManager<T> newListButton();
+    <T extends Comparable<? super T>> TethysUIListButtonManager<T> newListButton();
 
     /**
      * Obtain a new colorPicker.

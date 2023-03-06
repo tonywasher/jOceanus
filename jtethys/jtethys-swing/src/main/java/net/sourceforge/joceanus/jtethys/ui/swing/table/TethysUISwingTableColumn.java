@@ -783,7 +783,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysUISwingTableListColumn<T extends Comparable<T>, C, R>
+    public static class TethysUISwingTableListColumn<T extends Comparable<? super T>, C, R>
             extends TethysUISwingTableColumn<List<T>, C, R>
             implements TethysUITableListColumn<T, C, R> {
         /**

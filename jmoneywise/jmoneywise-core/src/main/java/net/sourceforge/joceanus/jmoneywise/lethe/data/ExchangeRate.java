@@ -55,8 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * ExchangeRate class.
  */
 public class ExchangeRate
-        extends DataItem
-        implements Comparable<ExchangeRate> {
+        extends DataItem {
     /**
      * Object name.
      */
@@ -446,36 +445,25 @@ public class ExchangeRate
     }
 
     @Override
-    public int compareTo(final ExchangeRate pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+    public int compareValues(final DataItem pThat) {
+        /* Access as ExchangeRate */
+        final ExchangeRate myThat = (ExchangeRate) pThat;
 
-        /* Check the date */
-        int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
+        /* If the date differs */
+        int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
         }
 
-        /* Check the from currency */
-        iDiff = MetisDataDifference.compareObject(getFromCurrency(), pThat.getFromCurrency());
+        /* Compare From Currency */
+        iDiff = MetisDataDifference.compareObject(getFromCurrency(), myThat.getFromCurrency());
         if (iDiff != 0) {
             return iDiff;
         }
 
-        /* Check the to currency */
-        iDiff = MetisDataDifference.compareObject(getToCurrency(), pThat.getToCurrency());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        /* Compare the toCurrency */
+        return getToCurrency().compareTo(myThat.getToCurrency());
     }
 
     @Override
@@ -545,7 +533,7 @@ public class ExchangeRate
             /* else date is non-null */
         } else {
             /* Date must be unique for this currency */
-            final ExchangeRateDataMap<? extends ExchangeRate> myMap = myList.getDataMap();
+            final ExchangeRateDataMap myMap = myList.getDataMap();
             if (!myMap.validRateCount(this)) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
@@ -640,10 +628,9 @@ public class ExchangeRate
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void adjustMapForItem() {
         final ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
-        final ExchangeRateDataMap<ExchangeRate> myMap = (ExchangeRateDataMap<ExchangeRate>) myList.getDataMap();
+        final ExchangeRateDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -683,13 +670,13 @@ public class ExchangeRate
         }
 
         @Override
-        public ExchangeRateDataMap<T> getDataMap() {
-            return (ExchangeRateDataMap<T>) super.getDataMap();
+        public ExchangeRateDataMap getDataMap() {
+            return (ExchangeRateDataMap) super.getDataMap();
         }
 
         @Override
-        protected ExchangeRateDataMap<T> allocateDataMap() {
-            return new ExchangeRateDataMap<>();
+        protected ExchangeRateDataMap allocateDataMap() {
+            return new ExchangeRateDataMap();
         }
     }
 
@@ -927,10 +914,9 @@ public class ExchangeRate
 
     /**
      * The dataMap class.
-     * @param <T> the data type
      */
-    public static class ExchangeRateDataMap<T extends ExchangeRate>
-            implements DataMapItem<T>, MetisFieldItem {
+    public static class ExchangeRateDataMap
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

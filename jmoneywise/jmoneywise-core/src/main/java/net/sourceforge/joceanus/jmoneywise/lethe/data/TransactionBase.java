@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetPairManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
@@ -41,11 +42,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Transaction data type.
  * @author Tony Washer
- * @param <T> the transaction data type
  */
-public abstract class TransactionBase<T extends TransactionBase<T>>
-        extends EncryptedItem
-        implements Comparable<T> {
+public abstract class TransactionBase
+        extends EncryptedItem {
     /**
      * Object name.
      */
@@ -116,8 +115,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pList the event list
      * @param pTrans The Transaction to copy
      */
-    protected TransactionBase(final TransactionBaseList<T> pList,
-                              final T pTrans) {
+    protected TransactionBase(final TransactionBaseList<?> pList,
+                              final TransactionBase pTrans) {
         /* Set standard values */
         super(pList, pTrans);
     }
@@ -126,7 +125,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Edit constructor.
      * @param pList the list
      */
-    protected TransactionBase(final TransactionBaseList<T> pList) {
+    protected TransactionBase(final TransactionBaseList<?> pList) {
         super(pList, 0);
         setNextDataKeySet();
         setValueAssetPair(getAssetPairManager().getDefaultPair());
@@ -139,7 +138,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected TransactionBase(final TransactionBaseList<T> pList,
+    protected TransactionBase(final TransactionBaseList<?> pList,
                               final DataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -658,9 +657,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public TransactionBaseList<T> getList() {
-        return (TransactionBaseList<T>) super.getList();
+    public TransactionBaseList<?> getList() {
+        return (TransactionBaseList<?>) super.getList();
     }
 
     /**
@@ -691,23 +689,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * object in the sort order
      */
     @Override
-    public int compareTo(final T pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* If the categories differ */
-        final int iDiff = MetisDataDifference.compareObject(getCategory(), pThat.getCategory());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+    public int compareValues(final DataItem pThat) {
+        /* Check the category */
+        final TransactionBase myThat = (TransactionBase) pThat;
+        return MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
     }
 
     @Override
@@ -1008,7 +993,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Update base transaction from an edited transaction.
      * @param pTrans the edited transaction
      */
-    protected void applyBasicChanges(final T pTrans) {
+    protected void applyBasicChanges(final TransactionBase pTrans) {
         /* Update the assetPair if required */
         if (!MetisDataDifference.isEqual(getAssetPair(), pTrans.getAssetPair())) {
             setValueAssetPair(pTrans.getAssetPair());
@@ -1044,7 +1029,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * The Event List class.
      * @param <T> the dataType
      */
-    public abstract static class TransactionBaseList<T extends TransactionBase<T>>
+    public abstract static class TransactionBaseList<T extends TransactionBase>
             extends EncryptedList<T> {
         /*
          * Report fields.

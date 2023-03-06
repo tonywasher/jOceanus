@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public abstract class StaticDataItem
         extends EncryptedItem
-        implements Comparable<StaticDataItem>, MetisDataNamedItem {
+        implements MetisDataNamedItem {
     /**
      * Report fields.
      */
@@ -498,35 +498,19 @@ public abstract class StaticDataItem
     }
 
     @Override
-    public int compareTo(final StaticDataItem pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+    public int compareValues(final DataItem pThat) {
+        /* Access as StaticDataItem */
+        final StaticDataItem myThat = (StaticDataItem) pThat;
 
         /* Make sure that the object is the same enumeration class */
-        if (!MetisDataDifference.isEqual(getEnumClass(), pThat.getEnumClass())) {
+        if (!MetisDataDifference.isEqual(getEnumClass(), myThat.getEnumClass())) {
             /* Order the classes by canonical name */
-            return getEnumClass().getCanonicalName().compareTo(pThat.getEnumClass().getCanonicalName());
+            return getEnumClass().getCanonicalName().compareTo(myThat.getEnumClass().getCanonicalName());
         }
 
-        /* Compare on order */
-        int iDiff = getOrder() - pThat.getOrder();
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare on name */
-        iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        /* Compare on order and name */
+        int iDiff = getOrder() - myThat.getOrder();
+        return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 
     @Override
@@ -890,7 +874,7 @@ public abstract class StaticDataItem
         }
 
         @Override
-        protected DataMapItem<T> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             return new StaticDataMap<>();
         }
     }

@@ -569,11 +569,6 @@ public class DataInfoLinkSet<T extends DataInfoItem>
         return theLinkSet.iterator();
     }
 
-    @Override
-    public int compareTo(final DataInfoItem pThat) {
-        return getInfoType().compareTo(pThat.getInfoType());
-    }
-
     /**
      * Value List.
      */

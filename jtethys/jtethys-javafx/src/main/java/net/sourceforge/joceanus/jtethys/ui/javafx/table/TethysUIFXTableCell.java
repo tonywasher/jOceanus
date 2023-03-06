@@ -756,7 +756,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysUIFXTableListCell<T extends Comparable<T>, C, R>
+    public static class TethysUIFXTableListCell<T extends Comparable<? super T>, C, R>
             extends TethysUIFXTableCell<List<T>, C, R> {
         /**
          * Constructor.

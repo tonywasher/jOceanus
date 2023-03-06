@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXScrollMenu;
  *
  * @param <T> the item type
  */
-public final class TethysUIFXListButtonManager<T extends Comparable<T>>
+public final class TethysUIFXListButtonManager<T extends Comparable<? super T>>
         extends TethysUICoreListButtonManager<T> {
     /**
      * Constructor.

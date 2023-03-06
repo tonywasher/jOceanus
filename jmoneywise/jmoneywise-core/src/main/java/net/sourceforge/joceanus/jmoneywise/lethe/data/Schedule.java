@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency.FrequencyList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
@@ -42,8 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class Schedule
-        extends DataItem
-        implements Comparable<Schedule> {
+        extends DataItem {
     /**
      * The name of the object.
      */
@@ -528,35 +528,19 @@ public class Schedule
     }
 
     @Override
-    public int compareTo(final Schedule pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+    public int compareValues(final DataItem pThat) {
+        /* Access Schedule */
+        final Schedule myThat = (Schedule) pThat;
 
         /* Check the next date */
-        int iDiff = MetisDataDifference.compareObject(getNextDate(), pThat.getNextDate());
+        int iDiff = MetisDataDifference.compareObject(getNextDate(), myThat.getNextDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the start date */
-        iDiff = MetisDataDifference.compareObject(getStartDate(), pThat.getStartDate());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Check the frequency */
-        iDiff = MetisDataDifference.compareObject(getFrequency(), pThat.getFrequency());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare IDs if all else fails */
-        return super.compareId(pThat);
+        iDiff = MetisDataDifference.compareObject(getStartDate(), myThat.getStartDate());
+        return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getFrequency(), myThat.getFrequency());
     }
 
     @Override
@@ -909,7 +893,7 @@ public class Schedule
         }
 
         @Override
-        protected DataMapItem<Schedule> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

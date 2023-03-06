@@ -894,7 +894,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      * @param <T> the column item class
      */
-    public static class TethysUISwingTableListCell<T extends Comparable<T>, C, R>
+    public static class TethysUISwingTableListCell<T extends Comparable<? super T>, C, R>
             extends TethysUISwingTableCell<List<T>, C, R> {
         /**
          * Constructor.

@@ -364,8 +364,8 @@ public class TethysUISwingTableManager<C, R>
     }
 
     @Override
-    public <T extends Comparable<T>> TethysUISwingTableListColumn<T, C, R> declareListColumn(final C pId,
-                                                                                             final Class<T> pClazz) {
+    public <T extends Comparable<? super T>> TethysUISwingTableListColumn<T, C, R> declareListColumn(final C pId,
+                                                                                                     final Class<T> pClazz) {
         return new TethysUISwingTableListColumn<>(this, pId, pClazz);
     }
 

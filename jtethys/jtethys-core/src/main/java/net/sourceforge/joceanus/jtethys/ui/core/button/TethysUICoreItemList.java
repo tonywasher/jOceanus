@@ -24,7 +24,7 @@ import java.util.List;
  * Selectable item list.
  * @param <T> the item type.
  */
-public class TethysUICoreItemList<T extends Comparable<T>> {
+public class TethysUICoreItemList<T extends Comparable<? super T>> {
     /**
      * List of items.
      */
@@ -236,7 +236,7 @@ public class TethysUICoreItemList<T extends Comparable<T>> {
      * Item class.
      * @param <T> the item type.
      */
-    static final class TethysUICoreItem<T extends Comparable<T>>
+    static final class TethysUICoreItem<T extends Comparable<? super T>>
             implements Comparable<TethysUICoreItem<T>> {
         /**
          * The Item.

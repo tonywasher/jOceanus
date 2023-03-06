@@ -237,45 +237,23 @@ public class TransactionInfo
      * object in the sort order
      */
     @Override
-    public int compareTo(final DataInfoItem pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+    public int compareValues(final DataItem pThat) {
+        /* Access item */
+        final TransactionInfo myThat = (TransactionInfo) pThat;
 
-        /* Check same item type */
-        final PrometheusListKey myItemType = pThat.getItemType();
-        if (!myItemType.equals(getItemType())) {
-            return myItemType.getItemKey() - getItemType().getItemKey();
-        }
-
-        /* Compare the Transactions */
-        int iDiff = getOwner().compareTo((Transaction) pThat.getOwner());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the Info Types */
-        final TransactionInfoType myType = getInfoType();
-        iDiff = myType.compareTo(pThat.getInfoType());
+        /* Compare basic details */
+        int iDiff = super.compareValues(pThat);
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* If this is a linkSet */
+        final TransactionInfoType myType = myThat.getInfoType();
         if (myType.getInfoClass().isLinkSet()) {
             /* Compare names */
-            iDiff = MetisDataDifference.compareObject(getLinkName(), pThat.getLinkName());
-            if (iDiff != 0) {
-                return iDiff;
-            }
+            iDiff = MetisDataDifference.compareObject(getLinkName(), myThat.getLinkName());
         }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        return iDiff;
     }
 
     @Override

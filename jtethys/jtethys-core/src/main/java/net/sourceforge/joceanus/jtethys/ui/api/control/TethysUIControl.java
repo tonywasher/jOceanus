@@ -141,7 +141,7 @@ public interface TethysUIControl {
      * List Button Configuration.
      * @param <T> the value type
      */
-    interface TethysUIListButton<T extends Comparable<T>> {
+    interface TethysUIListButton<T extends Comparable<? super T>> {
         /**
          * Set the selectable supplier.
          * @param pSelectables the supplier

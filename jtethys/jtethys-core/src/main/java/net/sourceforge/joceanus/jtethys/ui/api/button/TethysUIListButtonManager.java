@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * </dl>
  * @param <T> the object type
  */
-public interface TethysUIListButtonManager<T extends Comparable<T>>
+public interface TethysUIListButtonManager<T extends Comparable<? super T>>
         extends TethysUIListButton<T>, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain menu.

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingScrollMenu;
  * ListButtonField class.
  * @param <T> the data type
  */
-public class TethysUISwingListButtonField<T extends Comparable<T>>
+public class TethysUISwingListButtonField<T extends Comparable<? super T>>
         extends TethysUISwingDataTextField<List<T>>
         implements TethysUIListButtonField<T> {
     /**

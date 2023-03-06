@@ -227,8 +227,9 @@
             <p>The following agreement algorithms are supported.</p>
             <table class="defTable">
                 <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
-                <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2, CMCE, Frodo, SABER</td><td>Only CMCE, Frodo and SABER available on JCA</td></tr>
-                <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH, NewHope</td><td/></tr>
+                <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2, CMCE, Frodo, SABER
+                        KYBER, BIKE, HQC, NTRU, NTRUPRIME</td><td>RSA, EC, GOST2012, DSTU4145 and SM2 are not available on JCA</td></tr>
+                <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>Basic</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>MQV</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2</td><td/></tr>

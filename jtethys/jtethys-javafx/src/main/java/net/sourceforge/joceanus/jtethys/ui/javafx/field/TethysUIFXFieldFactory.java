@@ -144,7 +144,7 @@ public class TethysUIFXFieldFactory
     }
 
     @Override
-    public <T extends Comparable<T>> TethysUIListButtonField<T> newListField() {
+    public <T extends Comparable<? super T>> TethysUIListButtonField<T> newListField() {
         return new TethysUIFXListButtonField<>(theFactory);
     }
 

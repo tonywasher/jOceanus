@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @see DataList
  */
 public abstract class DataItem
-        implements PrometheusTableItem {
+        implements PrometheusTableItem, Comparable<Object> {
     /**
      * Report fields.
      */
@@ -1052,6 +1052,40 @@ public abstract class DataItem
         /* hash code is Id for simplicity */
         return theId;
     }
+
+    @Override
+    public int compareTo(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this.equals(pThat)) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
+        }
+
+        /* Non-DataItems are last */
+        if (!(pThat instanceof DataItem)) {
+            return -1;
+        }
+
+        /* Check data type */
+        final DataItem myThat = (DataItem) pThat;
+        int iDiff = getItemType().getItemKey() - myThat.getItemType().getItemKey();
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Check values and finally id */
+        iDiff = compareValues(myThat);
+        return iDiff != 0 ? iDiff : compareId(myThat);
+    }
+
+    /**
+     * compareTo another dataItem.
+     * @param pThat the DataItem to compare
+     * @return the order
+     */
+    protected abstract int compareValues(DataItem pThat);
 
     /**
      * compareTo another dataItem.

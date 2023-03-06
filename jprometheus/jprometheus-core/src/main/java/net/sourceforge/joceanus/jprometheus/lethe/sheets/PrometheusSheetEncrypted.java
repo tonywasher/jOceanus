@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetEncrypted<T extends EncryptedItem & Comparable<? super T>>
+public abstract class PrometheusSheetEncrypted<T extends EncryptedItem>
         extends PrometheusSheetDataItem<T> {
     /**
      * KeySetId column.

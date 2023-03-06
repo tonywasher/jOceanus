@@ -362,8 +362,8 @@ public interface TethysUITableManager<C, R>
      * @param pClazz the data class
      * @return the column
      */
-    <T extends Comparable<T>> TethysUITableListColumn<T, C, R> declareListColumn(C pId,
-                                                                                 Class<T> pClazz);
+    <T extends Comparable<? super T>> TethysUITableListColumn<T, C, R> declareListColumn(C pId,
+                                                                                         Class<T> pClazz);
 
     /**
      * Declare icon column.

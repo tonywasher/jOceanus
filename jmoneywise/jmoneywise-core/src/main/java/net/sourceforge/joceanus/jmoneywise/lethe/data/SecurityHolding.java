@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Portfolio/Security combination.
  */
 public final class SecurityHolding
-        implements MetisFieldItem, TransactionAsset {
+        implements MetisFieldItem, TransactionAsset, Comparable<Object> {
     /**
      * Name separator.
      */
@@ -324,7 +324,7 @@ public final class SecurityHolding
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
+    public int compareTo(final Object pThat) {
         /* Handle the trivial cases */
         if (this.equals(pThat)) {
             return 0;

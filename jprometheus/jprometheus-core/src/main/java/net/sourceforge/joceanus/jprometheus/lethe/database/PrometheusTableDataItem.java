@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * Database Table class. This controls should be extended for each DataType/Table.
  * @param <T> the DataType
  */
-public abstract class PrometheusTableDataItem<T extends DataItem & Comparable<? super T>> {
+public abstract class PrometheusTableDataItem<T extends DataItem> {
     /**
      * The Database control.
      */

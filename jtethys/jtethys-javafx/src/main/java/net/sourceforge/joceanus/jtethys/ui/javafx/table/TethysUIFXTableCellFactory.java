@@ -237,7 +237,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the scroll cell factory
      */
-    <T extends Comparable<T>> Callback<TableColumn<R, List<T>>, TableCell<R, List<T>>> listCellFactory(final TethysUIFXTableListColumn<T, C, R> pColumn) {
+    <T extends Comparable<? super T>> Callback<TableColumn<R, List<T>>, TableCell<R, List<T>>> listCellFactory(final TethysUIFXTableListColumn<T, C, R> pColumn) {
         return e -> new TethysUIFXTableListCell<>(pColumn, theGuiFactory);
     }
 

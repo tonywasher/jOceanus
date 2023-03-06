@@ -476,29 +476,13 @@ public class Cash
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
+    public int compareValues(final DataItem pThat) {
+        /* Check the category and then the name */
+        final Cash myThat = (Cash) pThat;
+        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
+        if (iDiff == 0) {
+            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
         }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare types of asset */
-        int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof Cash)) {
-            /* Check the category */
-            final Cash myThat = (Cash) pThat;
-            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
-            if (iDiff == 0) {
-                /* Check the underlying base */
-                iDiff = super.compareAsset(myThat);
-            }
-        }
-
-        /* Return the result */
         return iDiff;
     }
 
@@ -782,7 +766,7 @@ public class Cash
          * @param pMap the map
          */
         @Override
-        protected void setDataMap(final DataMapItem<Cash> pMap) {
+        protected void setDataMap(final DataMapItem pMap) {
             super.setDataMap(pMap);
         }
 
@@ -879,7 +863,7 @@ public class Cash
      * The dataMap class.
      */
     protected static class CashDataMap
-            implements DataMapItem<Cash>, MetisFieldItem {
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

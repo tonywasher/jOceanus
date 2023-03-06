@@ -158,7 +158,7 @@ public class UpdateSet
      * @param pDataType the data type
      * @return the list class entry
      */
-    public <T extends DataItem & Comparable<? super T>> UpdateEntry<T> registerType(final PrometheusListKey pDataType) {
+    public <T extends DataItem> UpdateEntry<T> registerType(final PrometheusListKey pDataType) {
         /* Locate any existing entry */
         @SuppressWarnings("unchecked")
         UpdateEntry<T> myEntry = (UpdateEntry<T>) theMap.get(pDataType);

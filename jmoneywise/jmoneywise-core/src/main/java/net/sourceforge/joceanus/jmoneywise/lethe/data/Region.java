@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public class Region
         extends EncryptedItem
-        implements MetisDataNamedItem, Comparable<Region> {
+        implements MetisDataNamedItem {
     /**
      * Object name.
      */
@@ -335,23 +335,10 @@ public class Region
     }
 
     @Override
-    public int compareTo(final Region pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
+    public int compareValues(final DataItem pThat) {
         /* Check the names */
-        final int iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        final Region myThat = (Region) pThat;
+        return MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 
     /**

@@ -320,7 +320,7 @@ public abstract class EncryptedItem
      * Encrypted DataList.
      * @param <T> the item type
      */
-    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>>
+    public abstract static class EncryptedList<T extends EncryptedItem>
             extends DataList<T> {
         /*
          * Report fields.

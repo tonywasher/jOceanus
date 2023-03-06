@@ -54,8 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class DepositRate
-        extends EncryptedItem
-        implements Comparable<DepositRate> {
+        extends EncryptedItem {
     /**
      * Object name.
      */
@@ -523,37 +522,26 @@ public class DepositRate
      * object in the sort order
      */
     @Override
-    public int compareTo(final DepositRate pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+    public int compareValues(final DataItem pThat) {
+        /* Access as DepositRate */
+        final DepositRate myThat = (DepositRate) pThat;
 
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
             return isHeader()
-                              ? -1
-                              : 1;
+                    ? -1
+                    : 1;
         }
 
         /* If the date differs */
-        int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
         }
 
         /* Compare the deposits */
-        iDiff = getDeposit().compareTo(pThat.getDeposit());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        return getDeposit().compareTo(myThat.getDeposit());
     }
 
     @Override
@@ -851,7 +839,7 @@ public class DepositRate
      * The dataMap class.
      */
     public static class DepositRateDataMap
-            implements DataMapItem<DepositRate>, MetisFieldItem {
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

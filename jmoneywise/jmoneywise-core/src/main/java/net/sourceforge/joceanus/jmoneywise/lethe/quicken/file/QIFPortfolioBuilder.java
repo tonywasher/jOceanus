@@ -109,7 +109,7 @@ public class QIFPortfolioBuilder {
     private TethysPrice getPriceForDate(final Security pSecurity,
                                         final TethysDate pDate) {
         /* Add the price */
-        final SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
+        final SecurityPriceDataMap myPriceMap = theData.getSecurityPriceDataMap();
         return myPriceMap.getPriceForDate(pSecurity, pDate);
     }
 

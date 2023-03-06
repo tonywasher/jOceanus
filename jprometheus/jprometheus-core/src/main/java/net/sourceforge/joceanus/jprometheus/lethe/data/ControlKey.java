@@ -44,8 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public final class ControlKey
-        extends DataItem
-        implements Comparable<ControlKey> {
+        extends DataItem {
     /**
      * Object name.
      */
@@ -456,17 +455,9 @@ public final class ControlKey
     }
 
     @Override
-    public int compareTo(final ControlKey pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the underlying object */
-        return super.compareId(pThat);
+    public int compareValues(final DataItem pThat) {
+        /* Only sort on id */
+        return 0;
     }
 
     /**
@@ -779,7 +770,7 @@ public final class ControlKey
         }
 
         @Override
-        protected DataMapItem<ControlKey> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

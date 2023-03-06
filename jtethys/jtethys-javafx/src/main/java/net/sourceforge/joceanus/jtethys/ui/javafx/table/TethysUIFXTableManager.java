@@ -362,8 +362,8 @@ public class TethysUIFXTableManager<C, R>
     }
 
     @Override
-    public <T extends Comparable<T>> TethysUIFXTableListColumn<T, C, R> declareListColumn(final C pId,
-                                                                                          final Class<T> pClazz) {
+    public <T extends Comparable<? super T>> TethysUIFXTableListColumn<T, C, R> declareListColumn(final C pId,
+                                                                                                  final Class<T> pClazz) {
         return new TethysUIFXTableListColumn<>(this, pId, pClazz);
     }
 

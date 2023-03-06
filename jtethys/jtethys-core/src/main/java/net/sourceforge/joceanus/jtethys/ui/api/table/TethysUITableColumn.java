@@ -486,7 +486,7 @@ public interface TethysUITableColumn<T, C, R>
      * @param <T> the data type
      * @param <R> the row type
      */
-    interface TethysUITableListConfig<T extends Comparable<T>, R> {
+    interface TethysUITableListConfig<T extends Comparable<? super T>, R> {
         /**
          * Set the selectable supplier.
          * @param pSelectables the supplier
@@ -501,7 +501,7 @@ public interface TethysUITableColumn<T, C, R>
      * @param <C> the column identity
      * @param <R> the row type
      */
-    interface TethysUITableListColumn<T extends Comparable<T>, C, R>
+    interface TethysUITableListColumn<T extends Comparable<? super T>, C, R>
             extends TethysUITableListConfig<T, R>,
             TethysUITableColumn<List<T>, C, R> {
         @Override

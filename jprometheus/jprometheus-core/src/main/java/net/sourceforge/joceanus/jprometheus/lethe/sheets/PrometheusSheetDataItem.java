@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetDataItem<T extends DataItem & Comparable<? super T>> {
+public abstract class PrometheusSheetDataItem<T extends DataItem> {
     /**
      * ID column.
      */

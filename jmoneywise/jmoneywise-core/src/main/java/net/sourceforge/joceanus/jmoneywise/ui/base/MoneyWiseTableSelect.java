@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * Table Selection control.
  * @param <T> the item type
  */
-public class MoneyWiseTableSelect<T extends DataItem & Comparable<? super T>> {
+public class MoneyWiseTableSelect<T extends DataItem> {
     /**
      * The table.
      */

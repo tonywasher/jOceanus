@@ -57,8 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class SecurityPrice
-        extends EncryptedItem
-        implements Comparable<SecurityPrice> {
+        extends EncryptedItem {
     /**
      * Object name.
      */
@@ -407,37 +406,26 @@ public class SecurityPrice
     }
 
     @Override
-    public int compareTo(final SecurityPrice pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+    public int compareValues(final DataItem pThat) {
+        /* Access as SecurityPrice */
+        final SecurityPrice myThat = (SecurityPrice) pThat;
 
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
             return isHeader()
-                              ? -1
-                              : 1;
+                    ? -1
+                    : 1;
         }
 
-        /* Compare the dates */
-        int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
+        /* If the date differs */
+        int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
         }
 
         /* Compare the securities */
-        iDiff = getSecurity().compareTo(pThat.getSecurity());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        return getSecurity().compareTo(myThat.getSecurity());
     }
 
     @Override
@@ -488,7 +476,7 @@ public class SecurityPrice
             /* else date is non-null */
         } else {
             /* Date must be unique for this security */
-            final SecurityPriceDataMap<? extends SecurityPrice> myMap = myList.getDataMap();
+            final SecurityPriceDataMap myMap = myList.getDataMap();
             if (!myMap.validPriceCount(this)) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
@@ -586,10 +574,9 @@ public class SecurityPrice
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void adjustMapForItem() {
         final SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
-        final SecurityPriceDataMap<SecurityPrice> myMap = (SecurityPriceDataMap<SecurityPrice>) myList.getDataMap();
+        final SecurityPriceDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -629,13 +616,13 @@ public class SecurityPrice
         }
 
         @Override
-        protected SecurityPriceDataMap<T> getDataMap() {
-            return (SecurityPriceDataMap<T>) super.getDataMap();
+        protected SecurityPriceDataMap getDataMap() {
+            return (SecurityPriceDataMap) super.getDataMap();
         }
 
         @Override
-        protected SecurityPriceDataMap<T> allocateDataMap() {
-            return new SecurityPriceDataMap<>();
+        protected SecurityPriceDataMap allocateDataMap() {
+            return new SecurityPriceDataMap();
         }
     }
 
@@ -767,10 +754,9 @@ public class SecurityPrice
 
     /**
      * The dataMap class.
-     * @param <T> the data type
      */
-    public static class SecurityPriceDataMap<T extends SecurityPrice>
-            implements DataMapItem<T>, MetisFieldItem {
+    public static class SecurityPriceDataMap
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

@@ -524,29 +524,13 @@ public class Loan
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
+    public int compareValues(final DataItem pThat) {
+        /* Check the category and then the name */
+        final Loan myThat = (Loan) pThat;
+        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
+        if (iDiff == 0) {
+            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
         }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare types of asset */
-        int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof Loan)) {
-            /* Check the category */
-            final Loan myThat = (Loan) pThat;
-            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
-            if (iDiff == 0) {
-                /* Check the underlying base */
-                iDiff = super.compareAsset(myThat);
-            }
-        }
-
-        /* Return the result */
         return iDiff;
     }
 
@@ -955,7 +939,7 @@ public class Loan
      * The dataMap class.
      */
     protected static class LoanDataMap
-            implements DataMapItem<Loan>, MetisFieldItem {
+            implements DataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */

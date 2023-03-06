@@ -40,8 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class DataKeySet
-        extends DataItem
-        implements Comparable<DataKeySet> {
+        extends DataItem {
     /**
      * Object name.
      */
@@ -398,17 +397,9 @@ public class DataKeySet
     }
 
     @Override
-    public int compareTo(final DataKeySet pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the underlying object */
-        return super.compareId(pThat);
+    public int compareValues(final DataItem pThat) {
+        /* Only sort on id */
+        return 0;
     }
 
     @Override
@@ -595,7 +586,7 @@ public class DataKeySet
         }
 
         @Override
-        protected DataMapItem<DataKeySet> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

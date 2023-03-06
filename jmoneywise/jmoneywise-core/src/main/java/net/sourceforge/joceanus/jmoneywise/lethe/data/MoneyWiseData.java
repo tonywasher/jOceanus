@@ -485,7 +485,7 @@ public class MoneyWiseData
      * Obtain security prices map.
      * @return the prices map
      */
-    public SecurityPriceDataMap<SecurityPrice> getSecurityPriceDataMap() {
+    public SecurityPriceDataMap getSecurityPriceDataMap() {
         return getSecurityPrices().getDataMap();
     }
 
@@ -501,7 +501,7 @@ public class MoneyWiseData
      * Obtain exchange rates map.
      * @return the rates map
      */
-    public ExchangeRateDataMap<ExchangeRate> getExchangeRateDataMap() {
+    public ExchangeRateDataMap getExchangeRateDataMap() {
         return getExchangeRates().getDataMap();
     }
 

@@ -824,44 +824,6 @@ public abstract class AssetBase
     }
 
     @Override
-    public int compareTo(final TransactionAsset pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* If the Asset is not an AssetBase we are first */
-        if (!(pThat instanceof AssetBase)) {
-            return -1;
-        }
-
-        /* Access as AssetBase */
-        final AssetBase myThat = (AssetBase) pThat;
-
-        /* Check data type */
-        return getItemType().getItemKey() - myThat.getItemType().getItemKey();
-    }
-
-    /**
-     * Compare like for like assets.
-     * @param pThat the target asset
-     * @return -1,0,1 as this is before, equal or after that
-     */
-    protected int compareAsset(final AssetBase pThat) {
-        /* Check the names */
-        final int iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
-    }
-
-    @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();

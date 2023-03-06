@@ -96,9 +96,10 @@
                 <tr><td>GOST2012</td><td>Native</td></tr>
                 <tr><td>SM2</td><td>Native</td></tr>
                 <tr><td>EdDSA</td><td>Native</td></tr>
-                <tr><td>Rainbow</td><td>Native</td></tr>
-                <tr><td>SPHINCS256</td><td>Native</td></tr>
                 <tr><td>SPHINCSPLUS</td><td>Native</td></tr>
+                <tr><td>DILITHIUM</td><td>Native</td></tr>
+                <tr><td>FALCON</td><td>Native</td></tr>
+                <tr><td>PICNIC</td><td>Native</td></tr>
                 <tr><td>XMSS</td><td>Native, PreHash</td></tr>
                 <tr><td>LMS</td><td>Native</td></tr>
             </table>

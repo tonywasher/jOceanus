@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public class Transaction
-        extends TransactionBase<Transaction>
+        extends TransactionBase
         implements InfoSetItem {
     /**
      * The name of the object.
@@ -615,14 +615,9 @@ public class Transaction
      * object in the sort order
      */
     @Override
-    public int compareTo(final Transaction pThat) {
+    public int compareValues(final DataItem pThat) {
         /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
+        final Transaction myThat = (Transaction) pThat;
 
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
@@ -632,13 +627,13 @@ public class Transaction
         }
 
         /* If the dates differ */
-        final int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
+        final int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Compare the underlying details */
-        return super.compareTo(pThat);
+        return super.compareValues(pThat);
     }
 
     @Override
@@ -1184,7 +1179,7 @@ public class Transaction
         }
 
         @Override
-        protected DataMapItem<Transaction> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

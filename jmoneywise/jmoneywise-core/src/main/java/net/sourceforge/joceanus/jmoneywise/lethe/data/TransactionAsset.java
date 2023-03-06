@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
  * Interface for objects (Deposits, SecurityHoldings etc.) used in a transaction.
  */
 public interface TransactionAsset
-        extends MetisDataNamedItem, Comparable<TransactionAsset> {
+        extends MetisDataNamedItem {
     /**
      * Obtain the asset id.
      * @return the id

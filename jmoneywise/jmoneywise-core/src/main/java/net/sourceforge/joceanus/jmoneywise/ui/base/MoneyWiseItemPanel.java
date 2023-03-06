@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * MoneyWise Data Item Panel.
  * @param <T> the item type
  */
-public abstract class MoneyWiseItemPanel<T extends DataItem & Comparable<? super T>>
+public abstract class MoneyWiseItemPanel<T extends DataItem>
         extends PrometheusDataItemPanel<T, MoneyWiseGoToId> {
     /**
      * Filter text.

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingScrollMenu;
  * PopUp menu that displays a list of checkMenu items.
  * @param <T> the item type
  */
-public final class TethysUISwingListButtonManager<T extends Comparable<T>>
+public final class TethysUISwingListButtonManager<T extends Comparable<? super T>>
         extends TethysUICoreListButtonManager<T> {
     /**
      * Constructor.

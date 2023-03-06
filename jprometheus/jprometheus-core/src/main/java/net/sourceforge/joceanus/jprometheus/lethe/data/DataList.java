@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  * @param <T> the item type
  */
-public abstract class DataList<T extends DataItem & Comparable<? super T>>
+public abstract class DataList<T extends DataItem>
         implements MetisFieldItem, MetisDataList<T>, PrometheusTableList<T> {
     /**
      * DataList interface.
@@ -116,7 +116,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * DataMap.
      */
-    private DataMapItem<T> theDataMap;
+    private DataMapItem theDataMap;
 
     /**
      * The generation.
@@ -316,7 +316,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Obtain the DataMap.
      * @return the enumClass
      */
-    protected DataMapItem<T> getDataMap() {
+    protected DataMapItem getDataMap() {
         return theDataMap;
     }
 
@@ -723,13 +723,13 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Allocate the dataMap.
      * @return the dataMap
      */
-    protected abstract DataMapItem<T> allocateDataMap();
+    protected abstract DataMapItem allocateDataMap();
 
     /**
      * Set map.
      * @param pMap the map
      */
-    protected void setDataMap(final DataMapItem<T> pMap) {
+    protected void setDataMap(final DataMapItem pMap) {
         theDataMap = pMap;
     }
 

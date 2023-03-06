@@ -165,44 +165,6 @@ public class LoanInfo
         mySet.deRegisterInfo(this);
     }
 
-    /**
-     * Compare this data to another to establish sort order.
-     * @param pThat The AccountInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
-     * object in the sort order
-     */
-    @Override
-    public int compareTo(final DataInfoItem pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Check same item type */
-        final PrometheusListKey myItemType = pThat.getItemType();
-        if (!myItemType.equals(getItemType())) {
-            return myItemType.getItemKey() - getItemType().getItemKey();
-        }
-
-        /* Compare the Loans */
-        int iDiff = getOwner().compareTo((Loan) pThat.getOwner());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the Info Types */
-        iDiff = getInfoType().compareTo(pThat.getInfoType());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
-    }
-
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */

@@ -36,7 +36,7 @@ public class SecurityPriceCursor {
     /**
      * SecurityPrice data map.
      */
-    private final SecurityPriceDataMap<SecurityPrice> theDataMap;
+    private final SecurityPriceDataMap theDataMap;
 
     /**
      * Cursor map.

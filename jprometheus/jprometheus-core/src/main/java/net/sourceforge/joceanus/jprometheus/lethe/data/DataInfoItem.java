@@ -44,8 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public abstract class DataInfoItem
-        extends EncryptedItem
-        implements Comparable<DataInfoItem> {
+        extends EncryptedItem {
     /**
      * Maximum DataLength.
      */
@@ -926,6 +925,17 @@ public abstract class DataInfoItem
     public void rewindInfoLinkSet() {
     }
 
+    @Override
+    public int compareValues(final DataItem pThat) {
+        /* Compare the owner and infoType */
+        final DataInfoItem myThat = (DataInfoItem) pThat;
+        int iDiff = getOwner().compareTo(myThat.getOwner());
+        if (iDiff == 0) {
+            iDiff = getInfoType().compareTo(myThat.getInfoType());
+        }
+        return iDiff;
+    }
+
     /**
      * List class for DataInfo.
      * @param <T> the DataType
@@ -997,7 +1007,7 @@ public abstract class DataInfoItem
         }
 
         @Override
-        protected DataMapItem<T> allocateDataMap() {
+        protected DataMapItem allocateDataMap() {
             /* Unused */
             throw new UnsupportedOperationException();
         }

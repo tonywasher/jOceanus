@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Update entry items.
  * @param <T> the data type
  */
-public final class UpdateEntry<T extends DataItem & Comparable<? super T>>
+public final class UpdateEntry<T extends DataItem>
         implements MetisDataList<T> {
     /**
      * The data type.
