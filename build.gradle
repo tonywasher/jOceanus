@@ -43,7 +43,7 @@ allprojects {
         jUnitVersion = "5.9.2"
         jsonVersion = "20230227"
         mySQLVersion = "8.0.32"
-        postGreSQLVersion = "42.5.4"
+        postGreSQLVersion = "42.6.0"
         jtdsVersion = "1.3.1"
         h2Version = "2.1.214"
         apachePOIVersion = "5.2.3"
@@ -58,7 +58,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "23.1.0"
 
         /* checkStyle config */
-        checkStyleVersion = "10.8.0"
+        checkStyleVersion = "10.9.2"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
