@@ -47,7 +47,6 @@ import javax.swing.border.Border;
 import javax.swing.text.JTextComponent;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -59,7 +58,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreCharArrayEditConverter;
-import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreDilutedPriceEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreDilutionEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreIntegerEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreLongEditConverter;
@@ -1040,36 +1038,6 @@ public abstract class TethysUISwingDataTextField<T>
         @Override
         public TethysUISwingPriceTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingPriceTextField(super.getGuiFactory(), pLabel);
-        }
-    }
-
-    /**
-     * SwingDilutedPriceTextField class.
-     */
-    public static class TethysUISwingDilutedPriceTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysDilutedPrice>
-            implements TethysUIDilutedPriceEditField {
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        TethysUISwingDilutedPriceTextField(final TethysUICoreFactory<?> pFactory) {
-            this(pFactory, new JLabel());
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         * @param pLabel the label
-         */
-        private TethysUISwingDilutedPriceTextField(final TethysUICoreFactory<?> pFactory,
-                                                   final JLabel pLabel) {
-            super(pFactory, new TethysUICoreDilutedPriceEditConverter(pFactory.getDataFormatter()), pLabel);
-        }
-
-        @Override
-        public TethysUISwingDilutedPriceTextField cloneField(final JLabel pLabel) {
-            return new TethysUISwingDilutedPriceTextField(super.getGuiFactory(), pLabel);
         }
     }
 

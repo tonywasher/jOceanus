@@ -21,7 +21,6 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -91,9 +90,7 @@ public final class TethysTestDecimal {
         myRate = TethysRate.getWholePercentage(5);
         myMoney = TethysMoney.getWholeUnits(10);
         TethysPrice myPrice = myParser.parsePriceValue("5.280843");
-        TethysDilutedPrice myDPrice = myParser.parseDilutedPriceValue("4.3969");
         TethysDilution myDilution = new TethysDilution("0.5");
-        myPrice = myDPrice.getPrice(myDilution);
 
         /* Set to null */
         myFormat = myFormat.trim();

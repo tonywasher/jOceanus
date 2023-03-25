@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
@@ -344,12 +343,6 @@ public class TethysUIFXTableManager<C, R>
     public TethysUIFXTableRatioColumn<C, R> declareRatioColumn(final C pId) {
         return new TethysUIFXTableRatioColumn<>(this, pId);
     }
-
-    @Override
-    public TethysUIFXTableDilutedPriceColumn<C, R> declareDilutedPriceColumn(final C pId) {
-        return new TethysUIFXTableDilutedPriceColumn<>(this, pId);
-    }
-
     @Override
     public TethysUIFXTableDateColumn<C, R> declareDateColumn(final C pId) {
         return new TethysUIFXTableDateColumn<>(this, pId);

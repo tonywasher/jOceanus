@@ -20,7 +20,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -30,7 +29,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableCharArrayCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableDateCell;
-import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableDilutedPriceCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableDilutionCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableIconCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableIntegerCell;
@@ -47,7 +45,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.Te
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableUnitsCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIntegerColumn;
@@ -202,16 +199,6 @@ public class TethysUISwingTableCellFactory<C, R> {
      */
     TethysUISwingTableCell<TethysRatio, C, R> ratioCell(final TethysUISwingTableRatioColumn<C, R> pColumn) {
         return new TethysUISwingTableRatioCell<>(pColumn, theGuiFactory);
-    }
-
-    /**
-     * Obtain DilutedPrice Cell.
-     *
-     * @param pColumn the column
-     * @return the dilutedPrice cell
-     */
-    TethysUISwingTableCell<TethysDilutedPrice, C, R> dilutedPriceCell(final TethysUISwingTableDilutedPriceColumn<C, R> pColumn) {
-        return new TethysUISwingTableDilutedPriceCell<>(pColumn, theGuiFactory);
     }
 
     /**

@@ -25,7 +25,6 @@ import javafx.scene.control.TableRow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -45,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXIntegerTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXLongTextField;
@@ -64,7 +62,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXListButtonFiel
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
@@ -624,37 +621,6 @@ public abstract class TethysUIFXTableCell<T, C, R>
         @Override
         public TethysUIFXDilutionTextField getControl() {
             return (TethysUIFXDilutionTextField) super.getControl();
-        }
-    }
-
-    /**
-     * DilutedPrice Cell.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUIFXTableDilutedPriceCell<C, R>
-            extends TethysUIFXTableCell<TethysDilutedPrice, C, R> {
-        /**
-         * Constructor.
-         *
-         * @param pColumn  the column
-         * @param pFactory the GUI Factory
-         */
-        TethysUIFXTableDilutedPriceCell(final TethysUIFXTableDilutedPriceColumn<C, R> pColumn,
-                                        final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXDilutedPriceTextField) pFactory.fieldFactory().newDilutedPriceField(), TethysDilutedPrice.class);
-            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
-        }
-
-        @Override
-        public TethysUIFXTableDilutedPriceColumn<C, R> getColumn() {
-            return (TethysUIFXTableDilutedPriceColumn<C, R>) super.getColumn();
-        }
-
-        @Override
-        public TethysUIFXDilutedPriceTextField getControl() {
-            return (TethysUIFXDilutedPriceTextField) super.getControl();
         }
     }
 

@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.ui.core.table.TethysUICoreTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIntegerColumn;
@@ -345,11 +344,6 @@ public class TethysUISwingTableManager<C, R>
     @Override
     public TethysUISwingTableRatioColumn<C, R> declareRatioColumn(final C pId) {
         return new TethysUISwingTableRatioColumn<>(this, pId);
-    }
-
-    @Override
-    public TethysUISwingTableDilutedPriceColumn<C, R> declareDilutedPriceColumn(final C pId) {
-        return new TethysUISwingTableDilutedPriceColumn<>(this, pId);
     }
 
     @Override

@@ -23,7 +23,6 @@ import javafx.util.Callback;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -33,7 +32,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableCharArrayCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableDateCell;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableDilutedPriceCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableDilutionCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableIconCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableIntegerCell;
@@ -50,7 +48,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.Teth
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableUnitsCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
@@ -205,16 +202,6 @@ public class TethysUIFXTableCellFactory<C, R> {
      */
     Callback<TableColumn<R, TethysRatio>, TableCell<R, TethysRatio>> ratioCellFactory(final TethysUIFXTableRatioColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableRatioCell<>(pColumn, theGuiFactory);
-    }
-
-    /**
-     * Obtain DilutedPrice Cell Factory.
-     *
-     * @param pColumn the column
-     * @return the dilutedPrice cell factory
-     */
-    Callback<TableColumn<R, TethysDilutedPrice>, TableCell<R, TethysDilutedPrice>> dilutedPriceCellFactory(final TethysUIFXTableDilutedPriceColumn<C, R> pColumn) {
-        return e -> new TethysUIFXTableDilutedPriceCell<>(pColumn, theGuiFactory);
     }
 
     /**

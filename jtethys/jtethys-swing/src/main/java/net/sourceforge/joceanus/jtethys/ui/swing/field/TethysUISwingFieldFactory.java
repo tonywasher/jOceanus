@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingCharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingCharArrayTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingIntegerTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingLongTextField;
@@ -106,11 +105,6 @@ public class TethysUISwingFieldFactory
     @Override
     public TethysUISwingPriceTextField newPriceField() {
         return new TethysUISwingPriceTextField(theFactory);
-    }
-
-    @Override
-    public TethysUISwingDilutedPriceTextField newDilutedPriceField() {
-        return new TethysUISwingDilutedPriceTextField(theFactory);
     }
 
     @Override

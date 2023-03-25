@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -385,21 +384,6 @@ public interface TethysUITableColumn<T, C, R>
             TethysUITableColumn<TethysRatio, C, R> {
         @Override
         TethysUITableRatioColumn<C, R> setValidator(BiFunction<TethysRatio, R, String> pValidator);
-    }
-
-    /**
-     * DilutedPrice Column Definition.
-     * @param <C> the column identity
-     * @param <R> the row type
-     */
-    interface TethysUITableDilutedPriceColumn<C, R>
-            extends TethysUITableCurrencyColumn<TethysDilutedPrice, R>,
-            TethysUITableColumn<TethysDilutedPrice, C, R> {
-        @Override
-        TethysUITableDilutedPriceColumn<C, R> setValidator(BiFunction<TethysDilutedPrice, R, String> pValidator);
-
-        @Override
-        TethysUITableDilutedPriceColumn<C, R> setDeemedCurrency(Function<R, Currency> pSupplier);
     }
 
     /**

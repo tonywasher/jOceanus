@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutedPriceEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
@@ -123,11 +122,6 @@ public class TethysTestFields {
      * The price edit field.
      */
     private final TethysUIPriceEditField thePriceField;
-
-    /**
-     * The diluted price edit field.
-     */
-    private final TethysUIDilutedPriceEditField theDilutedPriceField;
 
     /**
      * The dilution edit field.
@@ -237,7 +231,6 @@ public class TethysTestFields {
         theLongField = myFields.newLongField();
         theMoneyField = myFields.newMoneyField();
         thePriceField = myFields.newPriceField();
-        theDilutedPriceField = myFields.newDilutedPriceField();
         theDilutionField = myFields.newDilutionField();
         theUnitsField = myFields.newUnitsField();
         theRateField = myFields.newRateField();
@@ -414,15 +407,6 @@ public class TethysTestFields {
         theDilutionField.setValue(TethysTestHelper.DILUTION_DEF);
         theDilutionField.setValidator(TethysTestHelper::validateDilution);
 
-        /* Create DilutedPrice field line */
-        myLabel = myControls.newLabel("DilutedPrice:");
-        myGrid.addCell(myLabel);
-        myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
-        myGrid.addCell(theDilutedPriceField);
-        myGrid.allowCellGrowth(theDilutedPriceField);
-        myGrid.newRow();
-        theDilutedPriceField.getEventRegistrar().addEventListener(e -> processActionEvent(theDilutedPriceField, e));
-
         /* Create ColorButton field line */
         myLabel = myControls.newLabel("ColorButton:");
         myGrid.addCell(myLabel);
@@ -583,7 +567,6 @@ public class TethysTestFields {
         theRateField.setEditable(pDoEdit);
         theRatioField.setEditable(pDoEdit);
         theDilutionField.setEditable(pDoEdit);
-        theDilutedPriceField.setEditable(pDoEdit);
         theColorField.setEditable(pDoEdit);
         theScrollField.setEditable(pDoEdit);
         theDateField.setEditable(pDoEdit);
@@ -599,7 +582,6 @@ public class TethysTestFields {
         /* Set the deemed currency */
         theMoneyField.setDeemedCurrency(() -> pCurrency);
         thePriceField.setDeemedCurrency(() -> pCurrency);
-        theDilutedPriceField.setDeemedCurrency(() -> pCurrency);
     }
 
     /**

@@ -29,7 +29,6 @@ import javax.swing.table.TableCellEditor;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -45,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableCell;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingCharArrayTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingIntegerTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingDataTextField.TethysUISwingLongTextField;
@@ -64,7 +62,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingListButtonFi
 import net.sourceforge.joceanus.jtethys.ui.swing.field.TethysUISwingScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIntegerColumn;
@@ -759,37 +756,6 @@ public abstract class TethysUISwingTableCell<T, C, R>
         @Override
         public TethysUISwingDilutionTextField getControl() {
             return (TethysUISwingDilutionTextField) super.getControl();
-        }
-    }
-
-    /**
-     * DilutedPrice Cell.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUISwingTableDilutedPriceCell<C, R>
-            extends TethysUISwingTableCell<TethysDilutedPrice, C, R> {
-        /**
-         * Constructor.
-         *
-         * @param pColumn  the column
-         * @param pFactory the GUI Factory
-         */
-        TethysUISwingTableDilutedPriceCell(final TethysUISwingTableDilutedPriceColumn<C, R> pColumn,
-                                           final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingDilutedPriceTextField) pFactory.fieldFactory().newDilutedPriceField(), TethysDilutedPrice.class);
-            getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
-        }
-
-        @Override
-        public TethysUISwingTableDilutedPriceColumn<C, R> getColumn() {
-            return (TethysUISwingTableDilutedPriceColumn<C, R>) super.getColumn();
-        }
-
-        @Override
-        public TethysUISwingDilutedPriceTextField getControl() {
-            return (TethysUISwingDilutedPriceTextField) super.getControl();
         }
     }
 

@@ -338,16 +338,6 @@ public class TethysDecimalFormatter {
     }
 
     /**
-     * Format DilutedPrice value.
-     * @param pDilutedPrice the value to format
-     * @return the formatted value
-     */
-    public String formatDilutedPrice(final TethysDilutedPrice pDilutedPrice) {
-        /* return the formatted value */
-        return formatMoney(pDilutedPrice);
-    }
-
-    /**
      * Format Rate value.
      * @param pRate the value to format
      * @return the formatted value
