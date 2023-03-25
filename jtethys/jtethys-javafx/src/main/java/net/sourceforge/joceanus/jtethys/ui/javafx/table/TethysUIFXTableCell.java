@@ -25,7 +25,6 @@ import javafx.scene.control.TableRow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -44,7 +43,6 @@ import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXDilutionTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXIntegerTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXLongTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXDataTextField.TethysUIFXMoneyTextField;
@@ -62,7 +60,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXListButtonFiel
 import net.sourceforge.joceanus.jtethys.ui.javafx.field.TethysUIFXScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableListColumn;
@@ -596,31 +593,6 @@ public abstract class TethysUIFXTableCell<T, C, R>
         @Override
         public TethysUIFXUnitsTextField getControl() {
             return (TethysUIFXUnitsTextField) super.getControl();
-        }
-    }
-
-    /**
-     * Dilution Cell.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUIFXTableDilutionCell<C, R>
-            extends TethysUIFXTableCell<TethysDilution, C, R> {
-        /**
-         * Constructor.
-         *
-         * @param pColumn  the column
-         * @param pFactory the GUI Factory
-         */
-        TethysUIFXTableDilutionCell(final TethysUIFXTableDilutionColumn<C, R> pColumn,
-                                    final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXDilutionTextField) pFactory.fieldFactory().newDilutionField(), TethysDilution.class);
-        }
-
-        @Override
-        public TethysUIFXDilutionTextField getControl() {
-            return (TethysUIFXDilutionTextField) super.getControl();
         }
     }
 

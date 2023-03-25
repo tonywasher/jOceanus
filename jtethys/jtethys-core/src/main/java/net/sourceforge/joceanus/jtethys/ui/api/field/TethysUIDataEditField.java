@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -322,17 +321,6 @@ public interface TethysUIDataEditField<T>
         @Override
         default TethysRate getCastValue(final Object pValue) {
             return (TethysRate) pValue;
-        }
-    }
-
-    /**
-     * DilutionTextFieldControl.
-     */
-    interface TethysUIDilutionEditField
-            extends TethysUIDataEditField<TethysDilution>, TethysUIValidatedEditField<TethysDilution> {
-        @Override
-        default TethysDilution getCastValue(final Object pValue) {
-            return (TethysDilution) pValue;
         }
     }
 

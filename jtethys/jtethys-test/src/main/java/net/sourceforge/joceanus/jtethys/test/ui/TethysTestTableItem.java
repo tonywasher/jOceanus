@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jtethys.test.ui;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -96,11 +95,6 @@ public class TethysTestTableItem {
     private TethysRatio theRatio;
 
     /**
-     * Dilution property.
-     */
-    private TethysDilution theDilution;
-
-    /**
      * Scroll property.
      */
     private String theScroll;
@@ -134,7 +128,6 @@ public class TethysTestTableItem {
         theUnits = TethysTestHelper.UNITS_DEF;
         theRate = TethysTestHelper.RATE_DEF;
         theRatio = TethysTestHelper.RATIO_DEF;
-        theDilution = TethysTestHelper.DILUTION_DEF;
         theList = pHelper.buildSelectedList();
         theUpdates = 0;
     }
@@ -331,21 +324,6 @@ public class TethysTestTableItem {
         theRatio = pValue;
     }
 
-    /**
-     * Obtain the dilution property.
-     * @return the dilution property
-     */
-    public TethysDilution getDilution() {
-        return theDilution;
-    }
-
-    /**
-     * Set the dilution property.
-     * @param pValue the new value
-     */
-    public void setDilution(final TethysDilution pValue) {
-        theDilution = pValue;
-    }
 
     /**
      * Obtain the date property.

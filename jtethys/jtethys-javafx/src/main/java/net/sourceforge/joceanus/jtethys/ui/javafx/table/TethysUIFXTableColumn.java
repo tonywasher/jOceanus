@@ -32,7 +32,6 @@ import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -512,33 +511,6 @@ public class TethysUIFXTableColumn<T, C, R>
         @Override
         public TethysUIFXTableUnitsColumn<C, R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
             return (TethysUIFXTableUnitsColumn<C, R>) super.setValidator(pValidator);
-        }
-    }
-
-    /**
-     * Dilution Column.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUIFXTableDilutionColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysDilution, C, R>
-            implements TethysUITableDilutionColumn<C, R> {
-        /**
-         * Constructor.
-         *
-         * @param pTable the table
-         * @param pId    the id
-         */
-        TethysUIFXTableDilutionColumn(final TethysUIFXTableManager<C, R> pTable,
-                                      final C pId) {
-            super(pTable, pId, TethysUIFieldType.DILUTION);
-            declareCellFactory(super.getCellFactory().dilutionCellFactory(this));
-        }
-
-        @Override
-        public TethysUIFXTableDilutionColumn<C, R> setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
-            return (TethysUIFXTableDilutionColumn<C, R>) super.setValidator(pValidator);
         }
     }
 

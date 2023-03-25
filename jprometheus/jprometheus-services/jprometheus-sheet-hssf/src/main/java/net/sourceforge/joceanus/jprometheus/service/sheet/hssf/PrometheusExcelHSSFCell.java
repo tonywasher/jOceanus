@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetExcepti
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -192,11 +191,6 @@ public class PrometheusExcelHSSFCell
     @Override
     public TethysUnits getUnits() throws OceanusException {
         return parseValue(getString(), TethysUnits.class);
-    }
-
-    @Override
-    public TethysDilution getDilution() throws OceanusException {
-        return parseValue(getString(), TethysDilution.class);
     }
 
     @Override

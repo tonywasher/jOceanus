@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableIntegerColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableListColumn;
@@ -315,13 +314,6 @@ public interface TethysUITableManager<C, R>
      * @return the column
      */
     TethysUITableUnitsColumn<C, R> declareUnitsColumn(C pId);
-
-    /**
-     * Declare dilution column.
-     * @param pId the column id
-     * @return the column
-     */
-    TethysUITableDilutionColumn<C, R> declareDilutionColumn(C pId);
 
     /**
      * Declare ratio column.

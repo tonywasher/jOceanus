@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -304,10 +303,6 @@ public class TethysUICoreDataFormatter
             /* Parse the units */
             return pClazz.cast(theDecimalParser.parseUnitsValue(pSource));
         }
-        if (TethysDilution.class.equals(pClazz)) {
-            /* Parse the dilution */
-            return pClazz.cast(theDecimalParser.parseDilutionValue(pSource));
-        }
         if (TethysRatio.class.equals(pClazz)) {
             /* Parse the dilution */
             return pClazz.cast(theDecimalParser.parseRatioValue(pSource));
@@ -333,10 +328,6 @@ public class TethysUICoreDataFormatter
         if (TethysUnits.class.equals(pClazz)) {
             /* Parse the units */
             return pClazz.cast(theDecimalParser.createUnitsFromDouble(pSource));
-        }
-        if (TethysDilution.class.equals(pClazz)) {
-            /* Parse the dilution */
-            return pClazz.cast(theDecimalParser.createDilutionFromDouble(pSource));
         }
         if (TethysRatio.class.equals(pClazz)) {
             /* Parse the dilution */

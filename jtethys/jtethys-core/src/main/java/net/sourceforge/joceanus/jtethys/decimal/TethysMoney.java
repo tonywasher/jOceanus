@@ -107,18 +107,6 @@ public class TethysMoney
     }
 
     /**
-     * Construct a new Money by combining money and dilution.
-     * @param pMoney the Money to dilute
-     * @param pDilution the Dilution factor
-     */
-    private TethysMoney(final TethysMoney pMoney,
-                        final TethysDilution pDilution) {
-        this(pMoney.getCurrency());
-        recordScale(theCurrency.getDefaultFractionDigits());
-        calculateProduct(pMoney, pDilution);
-    }
-
-    /**
      * Access the currency.
      * @return the currency
      */
@@ -226,7 +214,7 @@ public class TethysMoney
      * @param pDilution the dilution factor
      * @return the calculated value
      */
-    public TethysMoney getDilutedMoney(final TethysDilution pDilution) {
+    public TethysMoney getDilutedMoney(final TethysRatio pDilution) {
         /* Calculate diluted value */
         return new TethysMoney(this, pDilution);
     }

@@ -20,7 +20,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -169,13 +168,6 @@ public abstract class PrometheusSheetCell {
      * @throws OceanusException on error
      */
     public abstract TethysUnits getUnits() throws OceanusException;
-
-    /**
-     * Obtain dilution value of the cell.
-     * @return the dilution value
-     * @throws OceanusException on error
-     */
-    public abstract TethysDilution getDilution() throws OceanusException;
 
     /**
      * Obtain ratio value of the cell.
@@ -490,9 +482,6 @@ public abstract class PrometheusSheetCell {
         }
         if (pValue instanceof TethysRate) {
             return PrometheusSheetCellStyleType.RATE;
-        }
-        if (pValue instanceof TethysDilution) {
-            return PrometheusSheetCellStyleType.DILUTION;
         }
         if (pValue instanceof TethysRatio) {
             return PrometheusSheetCellStyleType.RATIO;

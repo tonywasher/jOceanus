@@ -669,31 +669,6 @@ public class TethysDecimalParser {
     }
 
     /**
-     * Parse Dilution value.
-     * @param pValue the string value to parse.
-     * @return the parsed dilution
-     * @throws IllegalArgumentException on invalid dilution value
-     */
-    public TethysDilution parseDilutionValue(final String pValue) {
-        /* Handle null value */
-        if (pValue == null) {
-            return null;
-        }
-
-        /* Create the new Dilution object */
-        final TethysDilution myDilution = new TethysDilution();
-
-        /* Parse the remaining string */
-        parseDecimalValue(pValue.trim(), theLocale, false, myDilution);
-
-        /* Correct the scale */
-        adjustDecimals(myDilution, TethysDilution.NUM_DECIMALS);
-
-        /* return the parsed dilution object */
-        return myDilution;
-    }
-
-    /**
      * Parse Ratio value.
      * @param pValue the string value to parse.
      * @return the parsed ratio
@@ -974,31 +949,6 @@ public class TethysDecimalParser {
 
         /* return the parsed units object */
         return myUnits;
-    }
-
-    /**
-     * create Dilution from double.
-     * @param pValue the double value.
-     * @return the parsed rate
-     * @throws IllegalArgumentException on invalid price value
-     */
-    public TethysDilution createDilutionFromDouble(final Double pValue) {
-        /* Handle null value */
-        if (pValue == null) {
-            return null;
-        }
-
-        /* Create the new Dilution object */
-        final TethysDilution myDilution = new TethysDilution();
-
-        /* Parse the remaining string */
-        parseDecimalValue(pValue.toString(), theLocale, false, myDilution);
-
-        /* Correct the scale */
-        adjustDecimals(myDilution, TethysDilution.NUM_DECIMALS);
-
-        /* return the parsed dilution object */
-        return myDilution;
     }
 
     /**

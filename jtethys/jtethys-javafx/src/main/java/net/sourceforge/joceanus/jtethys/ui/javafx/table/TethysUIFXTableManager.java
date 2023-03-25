@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableListColumn;
@@ -332,11 +331,6 @@ public class TethysUIFXTableManager<C, R>
     @Override
     public TethysUIFXTableUnitsColumn<C, R> declareUnitsColumn(final C pId) {
         return new TethysUIFXTableUnitsColumn<>(this, pId);
-    }
-
-    @Override
-    public TethysUIFXTableDilutionColumn<C, R> declareDilutionColumn(final C pId) {
-        return new TethysUIFXTableDilutionColumn<>(this, pId);
     }
 
     @Override

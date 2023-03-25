@@ -36,11 +36,6 @@ public enum PrometheusSheetCellStyleType {
     RATE,
 
     /**
-     * Dilution.
-     */
-    DILUTION,
-
-    /**
      * Ratio.
      */
     RATIO,

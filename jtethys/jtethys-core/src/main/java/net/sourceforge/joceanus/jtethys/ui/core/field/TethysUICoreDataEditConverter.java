@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -341,30 +340,6 @@ public interface TethysUICoreDataEditConverter<T> {
         @Override
         public TethysUnits parseEditedValue(final String pValue) {
             return getParser().parseUnitsValue(pValue);
-        }
-    }
-
-    /**
-     * DilutionEditConverter class.
-     */
-    class TethysUICoreDilutionEditConverter
-            extends TethysUICoreNumberEditConverter<TethysDilution> {
-        /**
-         * Constructor.
-         * @param pFormatter the formatter
-         */
-        public TethysUICoreDilutionEditConverter(final TethysUIDataFormatter pFormatter) {
-            super(pFormatter);
-        }
-
-        @Override
-        public String formatDisplayValue(final TethysDilution pValue) {
-            return getFormatter().formatDilution(pValue);
-        }
-
-        @Override
-        public TethysDilution parseEditedValue(final String pValue) {
-            return getParser().parseDilutionValue(pValue);
         }
     }
 

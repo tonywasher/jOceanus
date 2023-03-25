@@ -23,7 +23,6 @@ import javafx.util.Callback;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -32,7 +31,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableCharArrayCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableDateCell;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableDilutionCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableIconCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableIntegerCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableListCell;
@@ -48,7 +46,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.Teth
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableUnitsCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.table.TethysUIFXTableColumn.TethysUIFXTableListColumn;
@@ -182,16 +179,6 @@ public class TethysUIFXTableCellFactory<C, R> {
      */
     Callback<TableColumn<R, TethysUnits>, TableCell<R, TethysUnits>> unitsCellFactory(final TethysUIFXTableUnitsColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableUnitsCell<>(pColumn, theGuiFactory);
-    }
-
-    /**
-     * Obtain Dilution Cell Factory.
-     *
-     * @param pColumn the column
-     * @return the dilution cell factory
-     */
-    Callback<TableColumn<R, TethysDilution>, TableCell<R, TethysDilution>> dilutionCellFactory(final TethysUIFXTableDilutionColumn<C, R> pColumn) {
-        return e -> new TethysUIFXTableDilutionCell<>(pColumn, theGuiFactory);
     }
 
     /**

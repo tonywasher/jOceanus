@@ -20,7 +20,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -97,11 +96,6 @@ public enum MetisDataType {
     PRICE,
 
     /**
-     * Dilution.
-     */
-    DILUTION,
-
-    /**
      * Ratio.
      */
     RATIO,
@@ -145,7 +139,6 @@ public enum MetisDataType {
             case RATE:
             case UNITS:
             case RATIO:
-            case DILUTION:
                 return true;
             default:
                 return false;
@@ -186,8 +179,6 @@ public enum MetisDataType {
                 return TethysRate.class;
             case RATIO:
                 return TethysRatio.class;
-            case DILUTION:
-                return TethysDilution.class;
             case LINK:
                 return MetisDataIndexedItem.class;
             case LINKSET:

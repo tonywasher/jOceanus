@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -85,11 +84,6 @@ public class TethysTestHelper {
      * The default ratio value.
      */
     public static final TethysRatio RATIO_DEF = new TethysRatio("1.6");
-
-    /**
-     * The default dilution value.
-     */
-    public static final TethysDilution DILUTION_DEF = new TethysDilution("0.5");
 
     /**
      * The factory.
@@ -251,24 +245,6 @@ public class TethysTestHelper {
         myMenu.addItem(TethysIconState.OPEN);
         myMenu.addItem(TethysIconState.CLOSED);
         pManager.setValue(TethysIconState.CLOSED);
-    }
-
-    /**
-     * validate a dilution.
-     * @param pDilution the dilution
-     * @return null for valid or error message for invalid
-     */
-    public static String validateDilution(final TethysDilution pDilution) {
-        if (pDilution == null) {
-            return "Dilution cannot be null";
-        }
-        if (!pDilution.isPositive()) {
-            return "Dilution must be positive";
-        }
-        if (pDilution.compareTo(TethysDilution.MAX_DILUTION) > 0) {
-            return "Dilution must be be less or equal to " + TethysDilution.MAX_DILUTION;
-        }
-        return null;
     }
 
     /**

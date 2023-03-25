@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -579,33 +578,6 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         @Override
         public TethysUISwingTableUnitsColumn<C, R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
             return (TethysUISwingTableUnitsColumn<C, R>) super.setValidator(pValidator);
-        }
-    }
-
-    /**
-     * Dilution Column.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUISwingTableDilutionColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysDilution, C, R>
-            implements TethysUITableDilutionColumn<C, R> {
-        /**
-         * Constructor.
-         *
-         * @param pTable the table
-         * @param pId    the id
-         */
-        TethysUISwingTableDilutionColumn(final TethysUISwingTableManager<C, R> pTable,
-                                         final C pId) {
-            super(pTable, pId, TethysUIFieldType.DILUTION);
-            declareCell(getTable().getCellFactory().dilutionCell(this));
-        }
-
-        @Override
-        public TethysUISwingTableDilutionColumn<C, R> setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
-            return (TethysUISwingTableDilutionColumn<C, R>) super.setValidator(pValidator);
         }
     }
 

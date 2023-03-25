@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -129,7 +128,6 @@ public class PrometheusEncryptor {
         myMap.put(MetisDataType.PRICE, new PrometheusPriceEncryptor());
         myMap.put(MetisDataType.RATE, new PrometheusRateEncryptor());
         myMap.put(MetisDataType.UNITS, new PrometheusUnitsEncryptor());
-        myMap.put(MetisDataType.DILUTION, new PrometheusDilutionEncryptor());
         myMap.put(MetisDataType.RATIO, new PrometheusRatioEncryptor());
         return myMap;
     }
@@ -399,23 +397,6 @@ public class PrometheusEncryptor {
             try {
                 final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
                 return new TethysRate(myDecString);
-            } catch (IllegalArgumentException e) {
-                throw new MetisDataException(ERROR_BYTES_CONVERT, e);
-            }
-        }
-    }
-
-    /**
-     * DilutionEncryptor.
-     */
-    private static class PrometheusDilutionEncryptor
-            extends PrometheusRatioEncryptor {
-        @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
-                                 final byte[] pBytes) throws OceanusException {
-            try {
-                final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
-                return new TethysDilution(myDecString);
             } catch (IllegalArgumentException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }

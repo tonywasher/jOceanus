@@ -382,16 +382,6 @@ public class TethysDecimalFormatter {
     }
 
     /**
-     * Format Dilution value.
-     * @param pDilution the value to format
-     * @return the formatted value
-     */
-    public String formatDilution(final TethysDilution pDilution) {
-        /* Format the basic value */
-        return formatBasicDecimal(pDilution);
-    }
-
-    /**
      * Format Ratio value.
      * @param pRatio the value to format
      * @return the formatted value

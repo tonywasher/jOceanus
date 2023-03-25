@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -325,7 +324,7 @@ public class TransactionHelper {
      * Obtain dilution.
      * @return the dilution
      */
-    public TethysDilution getDilution() {
+    public TethysRatio getDilution() {
         return theAccountDetail.getDilution();
     }
 
@@ -457,7 +456,7 @@ public class TransactionHelper {
         /**
          * The dilution.
          */
-        private final TethysDilution theDilution;
+        private final TethysRatio theDilution;
 
         /**
          * The account price.
@@ -810,7 +809,7 @@ public class TransactionHelper {
          * Obtain dilution.
          * @return the dilution
          */
-        private TethysDilution getDilution() {
+        private TethysRatio getDilution() {
             return theDilution;
         }
     }

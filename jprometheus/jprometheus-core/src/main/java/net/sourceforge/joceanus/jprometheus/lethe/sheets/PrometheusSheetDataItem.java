@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBoo
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -423,15 +422,6 @@ public abstract class PrometheusSheetDataItem<T extends DataItem> {
     }
 
     /**
-     * Set Dilution column.
-     * @param pOffset the offset of the column
-     */
-    protected void setDilutionColumn(final int pOffset) {
-        /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DILUTION);
-    }
-
-    /**
      * Set Ratio column.
      * @param pOffset the offset of the column
      */
@@ -582,22 +572,6 @@ public abstract class PrometheusSheetDataItem<T extends DataItem> {
         /* Return the value */
         return myCell != null
                               ? myCell.getUnits()
-                              : null;
-    }
-
-    /**
-     * Access a dilution value from the WorkSheet.
-     * @param pOffset the column offset
-     * @return the dilution
-     * @throws OceanusException on error
-     */
-    protected TethysDilution loadDilution(final int pOffset) throws OceanusException {
-        /* Access the cells by reference */
-        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
-
-        /* Return the value */
-        return myCell != null
-                              ? myCell.getDilution()
                               : null;
     }
 

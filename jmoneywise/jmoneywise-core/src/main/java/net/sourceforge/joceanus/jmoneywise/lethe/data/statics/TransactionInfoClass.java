@@ -64,7 +64,7 @@ public enum TransactionInfoClass implements DataInfoClass {
     /**
      * Dilution.
      */
-    DILUTION(8, 7, MetisDataType.DILUTION),
+    DILUTION(8, 7, MetisDataType.RATIO),
 
     /**
      * Reference.

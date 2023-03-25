@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -349,9 +348,9 @@ public class Transaction
      * Obtain Dilution.
      * @return the Dilution
      */
-    public final TethysDilution getDilution() {
+    public final TethysRatio getDilution() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.DILUTION, TethysDilution.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.DILUTION, TethysRatio.class)
                           : null;
     }
 
@@ -819,7 +818,7 @@ public class Transaction
      * @param pDilution the new dilution
      * @throws OceanusException on error
      */
-    public final void setDilution(final TethysDilution pDilution) throws OceanusException {
+    public final void setDilution(final TethysRatio pDilution) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.DILUTION, pDilution);
     }
 

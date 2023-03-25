@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
@@ -119,7 +119,7 @@ public class MoneyWiseTransactionBuilder {
     /**
      * The Dilution.
      */
-    private TethysDilution theDilution;
+    private TethysRatio theDilution;
 
     /**
      * The QualifyYears.
@@ -295,7 +295,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pDilution the dilution of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder setDilution(final TethysDilution pDilution) {
+    public MoneyWiseTransactionBuilder setDilution(final TethysRatio pDilution) {
         theDilution = pDilution;
         return this;
     }

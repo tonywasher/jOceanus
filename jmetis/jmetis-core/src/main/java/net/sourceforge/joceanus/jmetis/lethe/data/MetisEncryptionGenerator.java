@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryp
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBoolean;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedCharArray;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedDate;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedDilution;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedDouble;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedFloat;
@@ -44,7 +43,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryp
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedUnits;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -165,9 +163,6 @@ public class MetisEncryptionGenerator {
         if (pValue instanceof TethysMoney) {
             return new MetisEncryptedMoney(theKeySet, theFormatter, (TethysMoney) pValue);
         }
-        if (pValue instanceof TethysDilution) {
-            return new MetisEncryptedDilution(theKeySet, theFormatter, (TethysDilution) pValue);
-        }
         if (pValue instanceof TethysRatio) {
             return new MetisEncryptedRatio(theKeySet, theFormatter, (TethysRatio) pValue);
         }
@@ -243,9 +238,6 @@ public class MetisEncryptionGenerator {
         }
         if (TethysPrice.class.equals(pClass)) {
             return new MetisEncryptedPrice(theKeySet, theFormatter, pEncrypted);
-        }
-        if (TethysDilution.class.equals(pClass)) {
-            return new MetisEncryptedDilution(theKeySet, theFormatter, pEncrypted);
         }
         if (TethysRatio.class.equals(pClass)) {
             return new MetisEncryptedRatio(theKeySet, theFormatter, pEncrypted);

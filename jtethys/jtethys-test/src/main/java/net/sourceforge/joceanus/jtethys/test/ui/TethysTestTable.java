@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUII
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableIntegerColumn;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableListColumn;
@@ -142,11 +141,6 @@ public class TethysTestTable {
         final TethysUITableRatioColumn<TethysTestDataId, TethysTestTableItem> myRatioColumn = theTable.declareRatioColumn(TethysTestDataId.RATIO);
         myRatioColumn.setCellValueFactory(TethysTestTableItem::getRatio);
         myRatioColumn.setOnCommit(TethysTestTableItem::setRatio);
-
-        /* Create the dilution column */
-        final TethysUITableDilutionColumn<TethysTestDataId, TethysTestTableItem> myDilutionColumn = theTable.declareDilutionColumn(TethysTestDataId.DILUTION);
-        myDilutionColumn.setCellValueFactory(TethysTestTableItem::getDilution);
-        myDilutionColumn.setOnCommit(TethysTestTableItem::setDilution);
 
         /* Create the boolean column */
         final TethysUITableIconColumn<Boolean, TethysTestDataId, TethysTestTableItem> myBoolColumn = theTable.declareIconColumn(TethysTestDataId.BOOLEAN, Boolean.class);

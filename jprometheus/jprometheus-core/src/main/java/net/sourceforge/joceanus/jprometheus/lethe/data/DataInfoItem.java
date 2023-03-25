@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -598,9 +597,6 @@ public abstract class DataInfoItem
             case PRICE:
                 bValueOK = setPriceValue(myParser, pValue);
                 break;
-            case DILUTION:
-                bValueOK = setDilutionValue(myParser, pValue);
-                break;
             case RATIO:
                 bValueOK = setRatioValue(myParser, pValue);
                 break;
@@ -852,29 +848,6 @@ public abstract class DataInfoItem
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parsePriceValue((String) pValue));
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Set Dilution Value.
-     * @param pParser the parser
-     * @param pValue the Value
-     * @return is value valid true/false
-     * @throws OceanusException on error
-     */
-    private boolean setDilutionValue(final TethysDecimalParser pParser,
-                                     final Object pValue) throws OceanusException {
-        /* Handle various forms */
-        if (pValue instanceof TethysDilution) {
-            setValueValue(pValue);
-            return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, TethysDilution.class);
-            return true;
-        } else if (pValue instanceof String) {
-            setValueValue(pParser.parseDilutionValue((String) pValue));
             return true;
         }
         return false;

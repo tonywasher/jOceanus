@@ -338,7 +338,6 @@ public class PrometheusOdfStyler {
                 break;
             case UNITS:
             case RATIO:
-            case DILUTION:
             default:
                 createDecimalStyle(pStyleName, (TethysDecimal) pValue);
                 break;
@@ -590,16 +589,6 @@ public class PrometheusOdfStyler {
         myProperty = theParser.newElement(PrometheusOdfStyleItem.COLUMNPROPS);
         myStyle.appendChild(myProperty);
         theParser.setAttribute(myProperty, PrometheusOdfStyleItem.COLUMNWIDTH, getStyleWidth(PrometheusSheetFormats.WIDTH_RATE));
-        theStyles.appendChild(myStyle);
-
-        /* Create the Dilution Column Style */
-        myStyle = theParser.newElement(PrometheusOdfStyleItem.STYLE);
-        theParser.setAttribute(myStyle, PrometheusOdfStyleItem.FAMILY, PrometheusOdfTableItem.COLUMN.getName());
-        myName = getColumnStyleName(PrometheusSheetCellStyleType.DILUTION);
-        theParser.setAttribute(myStyle, PrometheusOdfStyleItem.NAME, myName);
-        myProperty = theParser.newElement(PrometheusOdfStyleItem.COLUMNPROPS);
-        myStyle.appendChild(myProperty);
-        theParser.setAttribute(myProperty, PrometheusOdfStyleItem.COLUMNWIDTH, getStyleWidth(PrometheusSheetFormats.WIDTH_DILUTION));
         theStyles.appendChild(myStyle);
 
         /* Create the Ratio Column Style */

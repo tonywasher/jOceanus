@@ -20,7 +20,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -29,7 +28,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableCharArrayCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableDateCell;
-import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableDilutionCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableIconCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableIntegerCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableListCell;
@@ -45,7 +43,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.Te
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableUnitsCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableIntegerColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.table.TethysUISwingTableColumn.TethysUISwingTableListColumn;
@@ -179,16 +176,6 @@ public class TethysUISwingTableCellFactory<C, R> {
      */
     TethysUISwingTableCell<TethysUnits, C, R> unitsCell(final TethysUISwingTableUnitsColumn<C, R> pColumn) {
         return new TethysUISwingTableUnitsCell<>(pColumn, theGuiFactory);
-    }
-
-    /**
-     * Obtain Dilution Cell.
-     *
-     * @param pColumn the column
-     * @return the dilution cell
-     */
-    TethysUISwingTableCell<TethysDilution, C, R> dilutionCell(final TethysUISwingTableDilutionColumn<C, R> pColumn) {
-        return new TethysUISwingTableDilutionCell<>(pColumn, theGuiFactory);
     }
 
     /**

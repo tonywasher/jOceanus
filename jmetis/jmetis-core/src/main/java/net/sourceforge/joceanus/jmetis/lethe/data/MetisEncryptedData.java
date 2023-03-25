@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -1277,47 +1276,6 @@ public final class MetisEncryptedData {
         protected TethysPrice parseValue(final String pValue) throws OceanusException {
             try {
                 return getDecimalParser().parsePriceValue(pValue);
-            } catch (IllegalArgumentException e) {
-                throw new MetisDataException(ERROR_BYTES_CONVERT, e);
-            }
-        }
-    }
-
-    /**
-     * The encrypted Dilution class.
-     */
-    public static final class MetisEncryptedDilution
-            extends MetisEncryptedDecimal<TethysDilution> {
-        /**
-         * Constructor.
-         * @param pKeySet the keySet
-         * @param pFormatter the data formatter
-         * @param pEncrypted the encrypted value of the field
-         * @throws OceanusException on error
-         */
-        MetisEncryptedDilution(final GordianKeySet pKeySet,
-                               final TethysUIDataFormatter pFormatter,
-                               final byte[] pEncrypted) throws OceanusException {
-            super(pKeySet, pFormatter, pEncrypted);
-        }
-
-        /**
-         * Constructor.
-         * @param pKeySet the keySet
-         * @param pFormatter the data formatter
-         * @param pUnencrypted the unencrypted value of the field
-         * @throws OceanusException on error
-         */
-        MetisEncryptedDilution(final GordianKeySet pKeySet,
-                               final TethysUIDataFormatter pFormatter,
-                               final TethysDilution pUnencrypted) throws OceanusException {
-            super(pKeySet, pFormatter, pUnencrypted);
-        }
-
-        @Override
-        protected TethysDilution parseValue(final String pValue) throws OceanusException {
-            try {
-                return new TethysDilution(pValue);
             } catch (IllegalArgumentException e) {
                 throw new MetisDataException(ERROR_BYTES_CONVERT, e);
             }

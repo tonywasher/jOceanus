@@ -318,9 +318,6 @@ public class PrometheusExcelHSSFSheet
             case RATE:
                 return PrometheusSheetFormats.WIDTH_RATE
                        * WIDTH_CHAR;
-            case DILUTION:
-                return PrometheusSheetFormats.WIDTH_DILUTION
-                       * WIDTH_CHAR;
             case RATIO:
                 return PrometheusSheetFormats.WIDTH_RATIO
                        * WIDTH_CHAR;

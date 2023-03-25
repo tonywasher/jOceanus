@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHoldingMap;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
@@ -62,7 +61,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -1390,7 +1388,7 @@ public class TransactionAnalyser
 
         /* Obtain current cost */
         final TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        final TethysDilution myDilution = theHelper.getDilution();
+        final TethysRatio myDilution = theHelper.getDilution();
         final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
 
         /* If we reduced the units */
