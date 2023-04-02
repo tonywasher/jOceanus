@@ -141,7 +141,7 @@ public class TethysDecimalFormatter {
 
         /* Format the string */
         final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
-        myString.append(Long.toString(myValue));
+        myString.append(myValue);
 
         /* Add leading zeroes */
         int myLen = myString.length();
@@ -305,7 +305,7 @@ public class TethysDecimalFormatter {
         final boolean isNegative = myWork.charAt(0) == myMinus;
         if (isNegative) {
             /* Remove the minus sign */
-            myWork = myWork.deleteCharAt(0);
+            myWork.deleteCharAt(0);
         }
 
         /* If we are using accounting mode */
