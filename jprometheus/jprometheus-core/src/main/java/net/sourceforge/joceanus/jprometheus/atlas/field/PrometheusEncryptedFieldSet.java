@@ -175,15 +175,6 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted versioned dilution field.
-     * @param pId the fieldId
-     * @return the field
-     */
-    public PrometheusEncryptedField<T> declareEncryptedDilutionField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.DILUTION, FIELD_NO_MAXLENGTH);
-    }
-
-    /**
      * Declare encrypted versioned field.
      * @param pId the fieldId
      * @param pDataType the dataType of the field

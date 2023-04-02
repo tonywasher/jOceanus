@@ -20,8 +20,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.Tethy
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutedPriceEditField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
@@ -102,12 +100,6 @@ public interface TethysUIFieldFactory {
     TethysUIPriceEditField newPriceField();
 
     /**
-     * Obtain a new dilutedPrice data field.
-     * @return the new field
-     */
-    TethysUIDilutedPriceEditField newDilutedPriceField();
-
-    /**
      * Obtain a new rate data field.
      * @return the new field
      */
@@ -118,12 +110,6 @@ public interface TethysUIFieldFactory {
      * @return the new field
      */
     TethysUIUnitsEditField newUnitsField();
-
-    /**
-     * Obtain a new dilution data field.
-     * @return the new field
-     */
-    TethysUIDilutionEditField newDilutionField();
 
     /**
      * Obtain a new ratio data field.

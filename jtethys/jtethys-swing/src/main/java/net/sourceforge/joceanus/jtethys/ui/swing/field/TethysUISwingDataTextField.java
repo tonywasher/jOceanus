@@ -47,8 +47,6 @@ import javax.swing.border.Border;
 import javax.swing.text.JTextComponent;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -59,8 +57,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreCharArrayEditConverter;
-import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreDilutedPriceEditConverter;
-import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreDilutionEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreIntegerEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreLongEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreMoneyEditConverter;
@@ -1044,36 +1040,6 @@ public abstract class TethysUISwingDataTextField<T>
     }
 
     /**
-     * SwingDilutedPriceTextField class.
-     */
-    public static class TethysUISwingDilutedPriceTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysDilutedPrice>
-            implements TethysUIDilutedPriceEditField {
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        TethysUISwingDilutedPriceTextField(final TethysUICoreFactory<?> pFactory) {
-            this(pFactory, new JLabel());
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         * @param pLabel the label
-         */
-        private TethysUISwingDilutedPriceTextField(final TethysUICoreFactory<?> pFactory,
-                                                   final JLabel pLabel) {
-            super(pFactory, new TethysUICoreDilutedPriceEditConverter(pFactory.getDataFormatter()), pLabel);
-        }
-
-        @Override
-        public TethysUISwingDilutedPriceTextField cloneField(final JLabel pLabel) {
-            return new TethysUISwingDilutedPriceTextField(super.getGuiFactory(), pLabel);
-        }
-    }
-
-    /**
      * SwingRateTextField class.
      */
     public static class TethysUISwingRateTextField
@@ -1130,36 +1096,6 @@ public abstract class TethysUISwingDataTextField<T>
         @Override
         public TethysUISwingUnitsTextField cloneField(final JLabel pLabel) {
             return new TethysUISwingUnitsTextField(super.getGuiFactory(), pLabel);
-        }
-    }
-
-    /**
-     * SwingDilutionTextField class.
-     */
-    public static class TethysUISwingDilutionTextField
-            extends TethysUISwingTextEditField<TethysDilution, JTextField>
-            implements TethysUIDilutionEditField {
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        TethysUISwingDilutionTextField(final TethysUICoreFactory<?> pFactory) {
-            this(pFactory, new JLabel());
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         * @param pLabel the label
-         */
-        private TethysUISwingDilutionTextField(final TethysUICoreFactory<?> pFactory,
-                                               final JLabel pLabel) {
-            super(pFactory, new TethysUICoreDilutionEditConverter(pFactory.getDataFormatter()), pLabel, new JTextField());
-        }
-
-        @Override
-        public TethysUISwingDilutionTextField cloneField(final JLabel pLabel) {
-            return new TethysUISwingDilutionTextField(super.getGuiFactory(), pLabel);
         }
     }
 

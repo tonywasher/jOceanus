@@ -141,7 +141,7 @@ public class TethysDecimalFormatter {
 
         /* Format the string */
         final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
-        myString.append(Long.toString(myValue));
+        myString.append(myValue);
 
         /* Add leading zeroes */
         int myLen = myString.length();
@@ -305,7 +305,7 @@ public class TethysDecimalFormatter {
         final boolean isNegative = myWork.charAt(0) == myMinus;
         if (isNegative) {
             /* Remove the minus sign */
-            myWork = myWork.deleteCharAt(0);
+            myWork.deleteCharAt(0);
         }
 
         /* If we are using accounting mode */
@@ -335,16 +335,6 @@ public class TethysDecimalFormatter {
     public String formatPrice(final TethysPrice pPrice) {
         /* return the formatted value */
         return formatMoney(pPrice);
-    }
-
-    /**
-     * Format DilutedPrice value.
-     * @param pDilutedPrice the value to format
-     * @return the formatted value
-     */
-    public String formatDilutedPrice(final TethysDilutedPrice pDilutedPrice) {
-        /* return the formatted value */
-        return formatMoney(pDilutedPrice);
     }
 
     /**
@@ -389,16 +379,6 @@ public class TethysDecimalFormatter {
     public String formatUnits(final TethysUnits pUnits) {
         /* Format the basic value */
         return formatBasicDecimal(pUnits);
-    }
-
-    /**
-     * Format Dilution value.
-     * @param pDilution the value to format
-     * @return the formatted value
-     */
-    public String formatDilution(final TethysDilution pDilution) {
-        /* Format the basic value */
-        return formatBasicDecimal(pDilution);
     }
 
     /**

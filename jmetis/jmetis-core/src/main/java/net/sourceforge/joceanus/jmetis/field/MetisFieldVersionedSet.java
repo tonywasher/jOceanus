@@ -200,24 +200,6 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
     }
 
     /**
-     * Declare versioned dilution field.
-     * @param pId the fieldId
-     * @return the field
-     */
-    public MetisFieldVersioned<T> declareDilutionField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.DILUTION, FIELD_NO_MAXLENGTH);
-    }
-
-    /**
-     * Declare versioned dilutedPrice field.
-     * @param pId the fieldId
-     * @return the field
-     */
-    public MetisFieldVersioned<T> declareDilutedPriceField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.DILUTEDPRICE, FIELD_NO_MAXLENGTH);
-    }
-
-    /**
      * Declare versioned link field.
      * @param pId the fieldId
      * @return the field

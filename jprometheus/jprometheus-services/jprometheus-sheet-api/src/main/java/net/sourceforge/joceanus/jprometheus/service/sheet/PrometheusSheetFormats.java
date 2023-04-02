@@ -20,7 +20,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -338,8 +337,6 @@ public final class PrometheusSheetFormats {
                 return new TethysRate(STR_ZERO);
             case UNITS:
                 return new TethysUnits(STR_ZERO);
-            case DILUTION:
-                return new TethysDilution(STR_ZERO);
             case RATIO:
                 return new TethysRatio(STR_ZERO);
             default:
@@ -446,9 +443,6 @@ public final class PrometheusSheetFormats {
         if (pValue instanceof TethysUnits) {
             return getStyleName(TethysUnits.class.getSimpleName());
         }
-        if (pValue instanceof TethysDilution) {
-            return getStyleName(TethysDilution.class.getSimpleName());
-        }
         if (pValue instanceof TethysRatio) {
             return getStyleName(TethysRatio.class.getSimpleName());
         }
@@ -493,7 +487,6 @@ public final class PrometheusSheetFormats {
             case PRICE:
             case RATE:
             case UNITS:
-            case DILUTION:
             case RATIO:
                 return true;
             default:
@@ -531,9 +524,6 @@ public final class PrometheusSheetFormats {
         }
         if (pValue instanceof TethysUnits) {
             return PrometheusSheetCellStyleType.UNITS;
-        }
-        if (pValue instanceof TethysDilution) {
-            return PrometheusSheetCellStyleType.DILUTION;
         }
         if (pValue instanceof TethysRatio) {
             return PrometheusSheetCellStyleType.RATIO;

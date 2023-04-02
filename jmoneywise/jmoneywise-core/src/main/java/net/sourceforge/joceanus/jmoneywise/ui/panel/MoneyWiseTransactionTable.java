@@ -326,13 +326,13 @@ public class MoneyWiseTransactionTable
 
         /* Create the PartnerUnits column */
         myTable.declareUnitsColumn(MoneyWiseTransDataId.PARTNERDELTAUNITS)
-               .setCellValueFactory(Transaction::getAccountDeltaUnits)
+               .setCellValueFactory(Transaction::getPartnerDeltaUnits)
                .setEditable(true)
                .setColumnWidth(WIDTH_UNITS)
                .setOnCommit((r, v) -> updateField(Transaction::setPartnerDeltaUnits, r, v));
 
         /* Create the Dilution column */
-        myTable.declareDilutionColumn(MoneyWiseTransDataId.DILUTION)
+        myTable.declareRatioColumn(MoneyWiseTransDataId.DILUTION)
                .setCellValueFactory(Transaction::getDilution)
                .setEditable(true)
                .setColumnWidth(WIDTH_UNITS)

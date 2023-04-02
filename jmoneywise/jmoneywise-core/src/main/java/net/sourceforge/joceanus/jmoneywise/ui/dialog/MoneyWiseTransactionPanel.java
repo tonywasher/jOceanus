@@ -67,7 +67,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -75,7 +74,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDilutionEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
@@ -299,7 +297,7 @@ public class MoneyWiseTransactionPanel
         final TethysUIUnitsEditField myPartnerUnits = myFields.newUnitsField();
         final TethysUIMoneyEditField myCommission = myFields.newMoneyField();
         final TethysUIPriceEditField myPrice = myFields.newPriceField();
-        final TethysUIDilutionEditField myDilution = myFields.newDilutionField();
+        final TethysUIRatioEditField myDilution = myFields.newRatioField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseTransDataId.ACCOUNTDELTAUNITS, myAccountUnits, Transaction::getAccountDeltaUnits);
@@ -596,7 +594,7 @@ public class MoneyWiseTransactionPanel
             myTrans.setCommission(pUpdate.getValue(TethysMoney.class));
         } else if (MoneyWiseTransDataId.DILUTION.equals(myField)) {
             /* Update the Dilution */
-            myTrans.setDilution(pUpdate.getValue(TethysDilution.class));
+            myTrans.setDilution(pUpdate.getValue(TethysRatio.class));
         } else if (MoneyWiseTransDataId.QUALIFYYEARS.equals(myField)) {
             /* Update the QualifyYears */
             myTrans.setYears(pUpdate.getValue(Integer.class));

@@ -54,14 +54,6 @@ public class TethysRatio
     }
 
     /**
-     * Construct a ratio from a dilution.
-     * @param pDilution the dilution
-     */
-    protected TethysRatio(final TethysDilution pDilution) {
-        super(pDilution.unscaledValue(), pDilution.scale());
-    }
-
-    /**
      * Constructor for ratio from a decimal string.
      * @param pSource The source decimal string
      * @throws IllegalArgumentException on invalidly formatted argument

@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetExcepti
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -430,25 +429,6 @@ class PrometheusOdfCellStore {
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof TethysRatio
                ? (TethysRatio) myValue
-               : null;
-    }
-
-    /**
-     * Access the value as Dilution.
-     * @param pIndex the index
-     * @return the dilution
-     * @throws OceanusException on error
-     */
-    TethysDilution getDilutionValueAtIndex(final int pIndex) throws OceanusException {
-        if (isReadOnly) {
-            final PrometheusCellElement myElement = getElementAtIndex(pIndex);
-            return myElement == null
-                   ? null
-                   : myElement.getDilutionValue();
-        }
-        final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysDilution
-               ? (TethysDilution) myValue
                : null;
     }
 
@@ -1168,17 +1148,6 @@ class PrometheusOdfCellStore {
         TethysRatio getRatioValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
                    ? theStore.parseValue(theIndex, (String) theValue, TethysRatio.class)
-                   : null;
-        }
-
-        /**
-         * Access the value as Dilution.
-         * @return the dilution
-         * @throws OceanusException on error
-         */
-        TethysDilution getDilutionValue() throws OceanusException {
-            return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, TethysDilution.class)
                    : null;
         }
 

@@ -32,8 +32,6 @@ import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -517,33 +515,6 @@ public class TethysUIFXTableColumn<T, C, R>
     }
 
     /**
-     * Dilution Column.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUIFXTableDilutionColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysDilution, C, R>
-            implements TethysUITableDilutionColumn<C, R> {
-        /**
-         * Constructor.
-         *
-         * @param pTable the table
-         * @param pId    the id
-         */
-        TethysUIFXTableDilutionColumn(final TethysUIFXTableManager<C, R> pTable,
-                                      final C pId) {
-            super(pTable, pId, TethysUIFieldType.DILUTION);
-            declareCellFactory(super.getCellFactory().dilutionCellFactory(this));
-        }
-
-        @Override
-        public TethysUIFXTableDilutionColumn<C, R> setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
-            return (TethysUIFXTableDilutionColumn<C, R>) super.setValidator(pValidator);
-        }
-    }
-
-    /**
      * Ratio Column.
      *
      * @param <C> the column identity
@@ -567,54 +538,6 @@ public class TethysUIFXTableColumn<T, C, R>
         @Override
         public TethysUIFXTableRatioColumn<C, R> setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
             return (TethysUIFXTableRatioColumn<C, R>) super.setValidator(pValidator);
-        }
-    }
-
-    /**
-     * DilutedPrice Column.
-     *
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysUIFXTableDilutedPriceColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysDilutedPrice, C, R>
-            implements TethysUITableDilutedPriceColumn<C, R> {
-        /**
-         * Currency supplier.
-         */
-        private Function<R, Currency> theSupplier;
-
-        /**
-         * Constructor.
-         *
-         * @param pTable the table
-         * @param pId    the id
-         */
-        TethysUIFXTableDilutedPriceColumn(final TethysUIFXTableManager<C, R> pTable,
-                                          final C pId) {
-            super(pTable, pId, TethysUIFieldType.DILUTEDPRICE);
-            declareCellFactory(super.getCellFactory().dilutedPriceCellFactory(this));
-            theSupplier = p -> null;
-        }
-
-        @Override
-        public TethysUIFXTableDilutedPriceColumn<C, R> setValidator(final BiFunction<TethysDilutedPrice, R, String> pValidator) {
-            return (TethysUIFXTableDilutedPriceColumn<C, R>) super.setValidator(pValidator);
-        }
-
-        @Override
-        public TethysUIFXTableDilutedPriceColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
-            theSupplier = pSupplier;
-            return this;
-        }
-
-        /**
-         * Obtain the currency supplier.
-         *
-         * @return the supplier
-         */
-        Function<R, Currency> getDeemedCurrency() {
-            return theSupplier;
         }
     }
 

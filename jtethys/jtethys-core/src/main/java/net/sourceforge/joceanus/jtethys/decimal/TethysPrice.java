@@ -71,17 +71,6 @@ public class TethysPrice
     }
 
     /**
-     * Construct a new Price by combining diluted price and dilution.
-     * @param pDilutedPrice the DilutedPrice to unDilute
-     * @param pDilution the Dilution factor
-     */
-    protected TethysPrice(final TethysDilutedPrice pDilutedPrice,
-                          final TethysDilution pDilution) {
-        this(pDilutedPrice.getCurrency());
-        calculateQuotient(pDilutedPrice, pDilution);
-    }
-
-    /**
      * Factory method for generating whole monetary units for a currency (e.g. £)
      * @param pUnits the number of whole monetary units
      * @param pCurrency the currency
@@ -107,15 +96,5 @@ public class TethysPrice
         final int myScale = myResult.scale();
         myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
         return myResult;
-    }
-
-    /**
-     * obtain a Diluted price.
-     * @param pDilution the dilution factor
-     * @return the calculated value
-     */
-    public TethysDilutedPrice getDilutedPrice(final TethysDilution pDilution) {
-        /* Calculate diluted price */
-        return new TethysDilutedPrice(this, pDilution);
     }
 }

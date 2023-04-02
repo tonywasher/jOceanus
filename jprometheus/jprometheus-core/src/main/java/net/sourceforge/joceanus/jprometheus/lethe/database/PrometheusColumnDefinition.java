@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -1216,72 +1215,6 @@ public abstract class PrometheusColumnDefinition {
                 return pFormatter.parseValue(getValue(), TethysUnits.class);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(getValue(), "Bad Units Value", e);
-            }
-        }
-    }
-
-    /**
-     * The dilutionColumn Class.
-     */
-    protected static final class DilutionColumn
-            extends StringColumn {
-        /**
-         * Constructor.
-         * @param pTable the table to which the column belongs
-         * @param pId the column id
-         */
-        protected DilutionColumn(final PrometheusTableDefinition pTable,
-                                 final MetisLetheField pId) {
-            /* Record the column type */
-            super(pTable, pId, 0);
-        }
-
-        @Override
-        protected void buildColumnType(final StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.DECIMAL));
-            pBuilder.append(STR_OPNBRK);
-            pBuilder.append(STR_NUMLEN);
-            pBuilder.append(STR_COMMA);
-            pBuilder.append(STR_XTRADECLEN);
-            pBuilder.append(STR_CLSBRK);
-        }
-
-        /**
-         * Set the value.
-         * @param pValue the value
-         */
-        protected void setValue(final TethysDilution pValue) {
-            String myString = null;
-            if (pValue != null) {
-                myString = pValue.toString();
-            }
-            super.setObject(myString);
-        }
-
-        @Override
-        protected void storeValue(final PreparedStatement pStatement,
-                                  final int pIndex) throws SQLException {
-            final String myValue = getValue();
-            if (myValue != null) {
-                final BigDecimal myDecimal = new BigDecimal(myValue);
-                pStatement.setBigDecimal(pIndex, myDecimal);
-            } else {
-                pStatement.setNull(pIndex, Types.DECIMAL);
-            }
-        }
-
-        /**
-         * Obtain the value.
-         * @param pFormatter the data formatter
-         * @return the money value
-         * @throws OceanusException on error
-         */
-        public TethysDilution getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
-            try {
-                return pFormatter.parseValue(getValue(), TethysDilution.class);
-            } catch (IllegalArgumentException e) {
-                throw new PrometheusDataException(getValue(), "Bad Dilution Value", e);
             }
         }
     }

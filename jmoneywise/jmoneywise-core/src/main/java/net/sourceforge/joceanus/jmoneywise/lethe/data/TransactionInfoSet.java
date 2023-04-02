@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
@@ -705,13 +705,6 @@ public class TransactionInfoSet
                     myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
                 }
                 break;
-            case DILUTION:
-                /* Check range */
-                final TethysDilution myDilution = myInfo.getValue(TethysDilution.class);
-                if (myDilution.outOfRange()) {
-                    myTransaction.addError(DataItem.ERROR_RANGE, getFieldForClass(pClass));
-                }
-                break;
             case REFERENCE:
             case COMMENTS:
                 /* Check length */
@@ -721,6 +714,7 @@ public class TransactionInfoSet
                 }
                 break;
             case TRANSTAG:
+            case DILUTION:
             default:
                 break;
         }
@@ -785,7 +779,7 @@ public class TransactionInfoSet
                 setValue(pClass, TethysUnits.getWholeUnits(1));
                 break;
             case DILUTION:
-                setValue(pClass, TethysDilution.MAX_DILUTION);
+                setValue(pClass, TethysRatio.ONE);
                 break;
             case QUALIFYYEARS:
                 setValue(pClass, Integer.valueOf(1));

@@ -5,7 +5,7 @@ It is named after the titaness Tethys who was the embodiment of the waters of th
 
   The following utilities are provided
 
-* A generic <<JOceanusException>> exception class
+* A generic <<OceanusException>> exception class
 
   This class extends a standard exception by allowing an object to be associated with the exception. This is particularly
 useful for data applications since the data that caused the exception can be associated with it.
@@ -17,7 +17,7 @@ format/parse a byteArray to/from hexStrings and Base64Strings.
 
 * A generic EventManager.
 
-    This provides a <<JEventManager>> class which supports <<ActionEvents>> and <<ChangeEvents>> on a generic object.
+    This provides a <<TethysEventManager>> class which supports <<ActionEvents>> and <<ChangeEvents>> on a generic object.
 It is particularly useful for JPanels and JTables which only have the base capability of firing PropertyChangeEvents.
 Three classes <<JEventObject>>, <<JEventPanel>> and <<JEventTable>> are provided as extensions of Object, 
 JPanel and JTables respectively, with added ChangeEvent and ActionEvent support.
@@ -35,22 +35,20 @@ it will pass the setEnabled() method on to all subcomponents.
 
     * A class to provide simple sorting/filtering in a JTable
 
-* A DateDay class
+* A Simple Date class
 
-  This is an extension of the JDateButton project. It modifies JDateButton so that a JDateDay object is returned
-instead of a Calendar object. This JDateDay object has no concept of time of day, merely the date. All functionality
-of JDateButton is provided. 
-  
-  In addition to the facilities provided by JDateButton, JDateDay provides a JDateDayRange class which handles
-a contiguous range of Dates with a start and an end. A small JPanel selector object is provided to enable selection
-of such ranges.
+  This provides a simple Date object that represents a simple Date without any concept of time-of-day. A gui is provided
+to select a Date value from a calendar-like interface.
+
+  In addition a DateRange class which handles a contiguous range of Dates with a start and an end. A gui selector object
+is provided to enable selection of such ranges.
   
 * A set of decimal classes
 
-  JDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal,
+  TethysDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal,
 except that the class is mutable, allowing for much faster arithmetic.
 
-  Rather than deal with arbitrarily large numbers, JDecimal stores the value as a simple long, and so is not suitable for
+  Rather than deal with arbitrarily large numbers, TethysDecimal stores the value as a simple long, and so is not suitable for
 extremely large values, since precision will be lost. Users should continue to use BigDecimal for these situations.
 
   This implementation is particularly suited to financial applications since a monetary value of

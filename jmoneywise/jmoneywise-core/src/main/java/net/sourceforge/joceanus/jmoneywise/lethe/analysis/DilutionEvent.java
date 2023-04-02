@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -83,7 +83,7 @@ public final class DilutionEvent
     /**
      * The Dilution.
      */
-    private final TethysDilution theDilution;
+    private final TethysRatio theDilution;
 
     /**
      * The Transaction.
@@ -141,7 +141,7 @@ public final class DilutionEvent
      * Obtain the Dilution.
      * @return the dilution
      */
-    public TethysDilution getDilution() {
+    public TethysRatio getDilution() {
         return theDilution;
     }
 
@@ -385,8 +385,8 @@ public final class DilutionEvent
          * @param pDate the date of the price
          * @return the dilution factor
          */
-        public TethysDilution getDilutionFactor(final Security pSecurity,
-                                                final TethysDate pDate) {
+        public TethysRatio getDilutionFactor(final Security pSecurity,
+                                             final TethysDate pDate) {
             /* Access the dilutions for this security */
             final DilutionEventList myDilutionList = get(pSecurity.getId());
             if (myDilutionList == null) {
@@ -396,7 +396,7 @@ public final class DilutionEvent
 
             /* Loop through the items */
             final ListIterator<DilutionEvent> myIterator = myList.listIterator(myList.size());
-            TethysDilution myDilution = new TethysDilution(TethysDilution.MAX_DILUTION);
+            TethysRatio myDilution = new TethysRatio(TethysRatio.ONE);
             while (myIterator.hasPrevious()) {
                 final DilutionEvent myEvent = myIterator.previous();
 
@@ -406,11 +406,11 @@ public final class DilutionEvent
                 }
 
                 /* add in the dilution factor */
-                myDilution = myDilution.getFurtherDilution(myEvent.getDilution());
+                myDilution = myDilution.multiplyBy(myEvent.getDilution());
             }
 
             /* If there is no dilution at all */
-            if (myDilution.compareTo(TethysDilution.MAX_DILUTION) == 0) {
+            if (myDilution.compareTo(TethysRatio.ONE) == 0) {
                 myDilution = null;
             }
 

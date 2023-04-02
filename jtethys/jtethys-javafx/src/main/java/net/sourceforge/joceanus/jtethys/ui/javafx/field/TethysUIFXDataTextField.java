@@ -37,8 +37,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -49,8 +47,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreCharArrayEditConverter;
-import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreDilutedPriceEditConverter;
-import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreDilutionEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreIntegerEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreLongEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.core.field.TethysUICoreDataEditConverter.TethysUICoreMoneyEditConverter;
@@ -787,22 +783,6 @@ public abstract class TethysUIFXDataTextField<T>
     }
 
     /**
-     * FXDilutedPriceTextField class.
-     */
-    public static class TethysUIFXDilutedPriceTextField
-            extends TethysUIFXCurrencyTextFieldBase<TethysDilutedPrice>
-            implements TethysUIDilutedPriceEditField {
-        /**
-         * Constructor.
-         *
-         * @param pFactory the GUI factory
-         */
-        TethysUIFXDilutedPriceTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreDilutedPriceEditConverter(pFactory.getDataFormatter()));
-        }
-    }
-
-    /**
      * FXRateTextField class.
      */
     public static class TethysUIFXRateTextField
@@ -832,23 +812,6 @@ public abstract class TethysUIFXDataTextField<T>
          */
         TethysUIFXUnitsTextField(final TethysUICoreFactory<?> pFactory) {
             super(pFactory, new TethysUICoreUnitsEditConverter(pFactory.getDataFormatter()), new TextField());
-            super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
-        }
-    }
-
-    /**
-     * FXDilutionTextField class.
-     */
-    public static class TethysUIFXDilutionTextField
-            extends TethysUIFXTextEditField<TethysDilution, TextField>
-            implements TethysUIDilutionEditField {
-        /**
-         * Constructor.
-         *
-         * @param pFactory the GUI factory
-         */
-        TethysUIFXDilutionTextField(final TethysUICoreFactory<?> pFactory) {
-            super(pFactory, new TethysUICoreDilutionEditConverter(pFactory.getDataFormatter()), new TextField());
             super.setTheAttribute(TethysUIFieldAttribute.NUMERIC);
         }
     }

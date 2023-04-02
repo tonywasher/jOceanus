@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDrive
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.BooleanColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.DateColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.DilutionColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.IdColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.IntegerColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.LongColumn;
@@ -45,7 +44,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefin
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.UnitsColumn;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -786,28 +784,6 @@ public class PrometheusTableDefinition {
         /* Access the value */
         final UnitsColumn myUnitsCol = (UnitsColumn) myCol;
         return myUnitsCol.getValue(pFormatter);
-    }
-
-    /**
-     * Get Dilution value for column.
-     * @param pId the column id
-     * @param pFormatter the data formatter
-     * @return the Dilution value
-     * @throws OceanusException on error
-     */
-    public TethysDilution getDilutionValue(final MetisLetheField pId,
-                                           final TethysUIDataFormatter pFormatter) throws OceanusException {
-        /* Obtain the correct id */
-        final PrometheusColumnDefinition myCol = getColumnForId(pId);
-
-        /* Reject if this is not a dilution column */
-        if (!(myCol instanceof DilutionColumn)) {
-            throw new PrometheusLogicException(getColumnError(myCol) + " is not Dilution type");
-        }
-
-        /* Access the value */
-        final DilutionColumn myDilutionCol = (DilutionColumn) myCol;
-        return myDilutionCol.getValue(pFormatter);
     }
 
     /**
