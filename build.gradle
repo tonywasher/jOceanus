@@ -39,7 +39,7 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.72"
+        bouncyCastleVersion = "1.73"
         jUnitVersion = "5.9.2"
         jsonVersion = "20230227"
         mySQLVersion = "8.0.32"
@@ -51,21 +51,21 @@ allprojects {
         jFreeChartVersion = "1.5.4"
 
         /* javaFX versions */
-        javaFXVersion = "18.0.2"
+        javaFXVersion = "20"
         javaFXPluginVersion = "0.0.13"
 
         /* Annotation versions */
-        jetBrainsAnnotationsVersion = "23.1.0"
+        jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.9.2"
+        checkStyleVersion = "10.9.3"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "6.55.0"
+        pmdVersion = "7.0.0-rc1"
 
         /* jacoco config */
-        jacocoVersion = "0.8.8"
+        jacocoVersion = "0.8.9"
 
         /* Distribution details */
         appDir = "$rootDir/dist"

@@ -199,7 +199,7 @@ public final class BouncyEllipticKeyPair {
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            theGenerator = new ECKeyPairGenerator();
+            theGenerator = newGenerator();
 
             /* Lookup the parameters */
             final GordianElliptic myElliptic = pKeySpec.getElliptic();
@@ -216,6 +216,14 @@ public final class BouncyEllipticKeyPair {
             final ECNamedDomainParameters myDomain = new ECNamedDomainParameters(myOid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
             final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, getRandom());
             theGenerator.init(myParams);
+        }
+
+        /**
+         * Create the generator.
+         * @return the generator
+         */
+        ECKeyPairGenerator newGenerator() {
+            return new ECKeyPairGenerator();
         }
 
         @Override

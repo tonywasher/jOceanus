@@ -41,7 +41,7 @@ import org.bouncycastle.crypto.params.ECNamedDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.crypto.signers.ECGOST3410_2012Signer;
+import org.bouncycastle.crypto.signers.ECGOST3410Signer;
 import org.bouncycastle.jcajce.provider.asymmetric.ecgost12.BCECGOST3410_2012PrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ecgost12.BCECGOST3410_2012PublicKey;
 import org.bouncycastle.jcajce.spec.GOST3410ParameterSpec;
@@ -366,7 +366,7 @@ public final class BouncyGOSTKeyPair {
         /**
          * The Signer.
          */
-        private final ECGOST3410_2012Signer theSigner;
+        private final ECGOST3410Signer theSigner;
 
         /**
          * The Coder.
@@ -385,7 +385,7 @@ public final class BouncyGOSTKeyPair {
             super(pFactory, pSpec);
 
             /* Create the signer and Coder */
-            theSigner = new ECGOST3410_2012Signer();
+            theSigner = new ECGOST3410Signer();
             theCoder = new BouncyGOSTCoder(pSpec.getDigestSpec().getDigestLength().getByteLength() << 1);
         }
 

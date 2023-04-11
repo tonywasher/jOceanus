@@ -16,22 +16,46 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.engines.SM2Engine.Mode;
+import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
+import org.bouncycastle.crypto.generators.SM2KeyPairGenerator;
+import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ECNamedDomainParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
 import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
 import org.bouncycastle.crypto.signers.SM2Signer;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -40,7 +64,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMes
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -52,6 +78,29 @@ public final class BouncySM2KeyPair {
      * Private constructor.
      */
     private BouncySM2KeyPair() {
+    }
+
+    /**
+     * BouncyCastle Elliptic KeyPair generator.
+     */
+    public static class BouncySM2KeyPairGenerator
+            extends BouncyECKeyPairGenerator {
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        BouncySM2KeyPairGenerator(final BouncyFactory pFactory,
+                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+        }
+
+        @Override
+        SM2KeyPairGenerator newGenerator() {
+            return new SM2KeyPairGenerator();
+        }
     }
 
     /**
