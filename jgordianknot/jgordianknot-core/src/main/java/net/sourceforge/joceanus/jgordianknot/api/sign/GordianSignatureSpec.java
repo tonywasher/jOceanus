@@ -206,6 +206,14 @@ public final class GordianSignatureSpec {
     }
 
     /**
+     * Create rainbowSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec rainbow() {
+        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, GordianSignatureType.NATIVE);
+    }
+
+    /**
      * Create xmssSpec.
      * @return the SignatureSpec
      */
@@ -325,6 +333,7 @@ public final class GordianSignatureSpec {
             case SPHINCSPLUS:
             case DILITHIUM:
             case FALCON:
+            case RAINBOW:
             case XMSS:
             case LMS:
                 return theSignatureSpec == null;

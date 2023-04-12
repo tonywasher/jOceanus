@@ -24,13 +24,21 @@ import java.util.Arrays;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.crypto.picnic.PicnicKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.picnic.PicnicKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.picnic.PicnicParameters;
 import org.bouncycastle.pqc.crypto.picnic.PicnicPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.picnic.PicnicPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.picnic.PicnicSigner;
+import org.bouncycastle.pqc.crypto.rainbow.RainbowKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.rainbow.RainbowKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.rainbow.RainbowParameters;
+import org.bouncycastle.pqc.crypto.rainbow.RainbowPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.rainbow.RainbowPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.rainbow.RainbowSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -41,41 +49,43 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * PICNIC KeyPair classes.
+ * Rainbow KeyPair classes.
  */
-public final class BouncyPICNICKeyPair {
+public final class BouncyRainbowKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyPICNICKeyPair() {
+    private BouncyRainbowKeyPair() {
     }
 
     /**
-     * Bouncy Picnic PublicKey.
+     * Bouncy Rainbow PublicKey.
      */
-    public static class BouncyPICNICPublicKey
-            extends BouncyPublicKey<PicnicPublicKeyParameters> {
+    public static class BouncyRainbowPublicKey
+            extends BouncyPublicKey<RainbowPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyPICNICPublicKey(final GordianKeyPairSpec pKeySpec,
-                              final PicnicPublicKeyParameters pPublicKey) {
+        BouncyRainbowPublicKey(final GordianKeyPairSpec pKeySpec,
+                               final RainbowPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final PicnicPublicKeyParameters myThis = getPublicKey();
-            final PicnicPublicKeyParameters myThat = (PicnicPublicKeyParameters) pThat;
+            final RainbowPublicKeyParameters myThis = getPublicKey();
+            final RainbowPublicKeyParameters myThat = (RainbowPublicKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -87,24 +97,24 @@ public final class BouncyPICNICKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final PicnicPublicKeyParameters pFirst,
-                                           final PicnicPublicKeyParameters pSecond) {
+        private static boolean compareKeys(final RainbowPublicKeyParameters pFirst,
+                                           final RainbowPublicKeyParameters pSecond) {
             return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * Bouncy Picnic PrivateKey.
+     * Bouncy Rainbow PrivateKey.
      */
-    public static class BouncyPICNICPrivateKey
-            extends BouncyPrivateKey<PicnicPrivateKeyParameters> {
+    public static class BouncyRainbowPrivateKey
+            extends BouncyPrivateKey<RainbowPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyPICNICPrivateKey(final GordianKeyPairSpec pKeySpec,
-                               final PicnicPrivateKeyParameters pPrivateKey) {
+        BouncyRainbowPrivateKey(final GordianKeyPairSpec pKeySpec,
+                                final RainbowPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -112,8 +122,8 @@ public final class BouncyPICNICKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final PicnicPrivateKeyParameters myThis = getPrivateKey();
-            final PicnicPrivateKeyParameters myThat = (PicnicPrivateKeyParameters) pThat;
+            final RainbowPrivateKeyParameters myThis = getPrivateKey();
+            final RainbowPrivateKeyParameters myThat = (RainbowPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -125,38 +135,38 @@ public final class BouncyPICNICKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final PicnicPrivateKeyParameters pFirst,
-                                           final PicnicPrivateKeyParameters pSecond) {
+        private static boolean compareKeys(final RainbowPrivateKeyParameters pFirst,
+                                           final RainbowPrivateKeyParameters pSecond) {
             return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle Picnic KeyPair generator.
+     * BouncyCastle Rainbow KeyPair generator.
      */
-    public static class BouncyPICNICKeyPairGenerator
+    public static class BouncyRainbowKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final PicnicKeyPairGenerator theGenerator;
+        private final RainbowKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyPICNICKeyPairGenerator(final BouncyFactory pFactory,
-                                     final GordianKeyPairSpec pKeySpec) {
+        BouncyRainbowKeyPairGenerator(final BouncyFactory pFactory,
+                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final PicnicParameters myParms = pKeySpec.getPicnicKeySpec().getParameters();
+            final RainbowParameters myParms = pKeySpec.getRainbowKeySpec().getParameters();
 
             /* Create and initialise the generator */
-            theGenerator = new PicnicKeyPairGenerator();
-            final PicnicKeyGenerationParameters myParams = new PicnicKeyGenerationParameters(getRandom(), myParms);
+            theGenerator = new RainbowKeyPairGenerator();
+            final RainbowKeyGenerationParameters myParams = new RainbowKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -164,8 +174,8 @@ public final class BouncyPICNICKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyPICNICPublicKey myPublic = new BouncyPICNICPublicKey(getKeySpec(), (PicnicPublicKeyParameters) myPair.getPublic());
-            final BouncyPICNICPrivateKey myPrivate = new BouncyPICNICPrivateKey(getKeySpec(), (PicnicPrivateKeyParameters) myPair.getPrivate());
+            final BouncyRainbowPublicKey myPublic = new BouncyRainbowPublicKey(getKeySpec(), (RainbowPublicKeyParameters) myPair.getPublic());
+            final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), (RainbowPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -177,8 +187,8 @@ public final class BouncyPICNICKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyPICNICPrivateKey myPrivateKey = (BouncyPICNICPrivateKey) getPrivateKey(pKeyPair);
-                final PicnicPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyRainbowPrivateKey myPrivateKey = (BouncyRainbowPrivateKey) getPrivateKey(pKeyPair);
+                final RainbowPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -196,10 +206,10 @@ public final class BouncyPICNICKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyPICNICPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyRainbowPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final PicnicPrivateKeyParameters myParms = (PicnicPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyPICNICPrivateKey myPrivate = new BouncyPICNICPrivateKey(getKeySpec(), myParms);
+                final RainbowPrivateKeyParameters myParms = (RainbowPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -221,8 +231,8 @@ public final class BouncyPICNICKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyPICNICPublicKey myPublicKey = (BouncyPICNICPublicKey) getPublicKey(pKeyPair);
-                final PicnicPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyRainbowPublicKey myPublicKey = (BouncyRainbowPublicKey) getPublicKey(pKeyPair);
+                final RainbowPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -233,7 +243,7 @@ public final class BouncyPICNICKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            final BouncyPICNICPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyRainbowPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -243,7 +253,7 @@ public final class BouncyPICNICKeyPair {
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncyPICNICPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyRainbowPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -251,8 +261,8 @@ public final class BouncyPICNICKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final PicnicPublicKeyParameters myParms = (PicnicPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyPICNICPublicKey(getKeySpec(), myParms);
+                final RainbowPublicKeyParameters myParms = (RainbowPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyRainbowPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -261,14 +271,14 @@ public final class BouncyPICNICKeyPair {
     }
 
     /**
-     * Picnic signer.
+     * Rainbow signer.
      */
-    public static class BouncyPICNICSignature
+    public static class BouncyRainbowSignature
             extends BouncyDigestSignature {
         /**
-         * The Picnic Signer.
+         * The Rainbow Signer.
          */
-        private final PicnicSigner theSigner;
+        private final RainbowSigner theSigner;
 
         /**
          * Constructor.
@@ -276,11 +286,11 @@ public final class BouncyPICNICKeyPair {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        BouncyPICNICSignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyRainbowSignature(final BouncyFactory pFactory,
+                               final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-            theSigner = new PicnicSigner();
+            theSigner = new RainbowSigner();
         }
 
         @Override
@@ -290,8 +300,9 @@ public final class BouncyPICNICKeyPair {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyPICNICPrivateKey myPrivate = (BouncyPICNICPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
+            final BouncyRainbowPrivateKey myPrivate = (BouncyRainbowPrivateKey) getKeyPair().getPrivateKey();
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            theSigner.init(true, myParms);
         }
 
         @Override
@@ -301,7 +312,7 @@ public final class BouncyPICNICKeyPair {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyPICNICPublicKey myPublic = (BouncyPICNICPublicKey) getKeyPair().getPublicKey();
+            final BouncyRainbowPublicKey myPublic = (BouncyRainbowPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

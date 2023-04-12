@@ -95,6 +95,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
@@ -177,6 +178,7 @@ public class GordianKeyPairAlgId {
         GordianNTRUPrimeEncodedParser.register(this);
         GordianFalconEncodedParser.register(this);
         GordianPicnicEncodedParser.register(this);
+        GordianRainbowEncodedParser.register(this);
         GordianCompositeEncodedParser.register(this);
     }
 
@@ -1170,6 +1172,47 @@ public class GordianKeyPairAlgId {
             pIdManager.registerParser(BCObjectIdentifiers.picnicl5fs, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L5FS)));
             pIdManager.registerParser(BCObjectIdentifiers.picnicl5full, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L5FULL)));
             pIdManager.registerParser(BCObjectIdentifiers.picnic3l5, new GordianPicnicEncodedParser(GordianKeyPairSpec.picnic(GordianPICNICSpec.L53)));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * Rainbow Encoded parser.
+     */
+    private static class GordianRainbowEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianRainbowEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(BCObjectIdentifiers.rainbow_III_classic, new GordianRainbowEncodedParser(GordianKeyPairSpec.rainbow(GordianRainbowSpec.CLASSIC3)));
+            pIdManager.registerParser(BCObjectIdentifiers.rainbow_III_circumzenithal, new GordianRainbowEncodedParser(GordianKeyPairSpec.rainbow(GordianRainbowSpec.CIRCUM3)));
+            pIdManager.registerParser(BCObjectIdentifiers.rainbow_III_compressed, new GordianRainbowEncodedParser(GordianKeyPairSpec.rainbow(GordianRainbowSpec.COMPRESSED3)));
+            pIdManager.registerParser(BCObjectIdentifiers.rainbow_V_classic, new GordianRainbowEncodedParser(GordianKeyPairSpec.rainbow(GordianRainbowSpec.CLASSIC5)));
+            pIdManager.registerParser(BCObjectIdentifiers.rainbow_V_circumzenithal, new GordianRainbowEncodedParser(GordianKeyPairSpec.rainbow(GordianRainbowSpec.CIRCUM5)));
+            pIdManager.registerParser(BCObjectIdentifiers.rainbow_V_compressed, new GordianRainbowEncodedParser(GordianKeyPairSpec.rainbow(GordianRainbowSpec.COMPRESSED5)));
         }
 
         @Override

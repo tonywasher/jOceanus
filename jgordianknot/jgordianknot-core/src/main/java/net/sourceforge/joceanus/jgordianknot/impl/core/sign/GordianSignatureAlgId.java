@@ -402,6 +402,8 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha3_512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.picnic(GordianDigestSpec.shake256(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rainbow(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.rainbow, DERNull.INSTANCE));
 
         /* Add SPHINCSPlus signatures */
         addSPHINCSPlusSignatures();
