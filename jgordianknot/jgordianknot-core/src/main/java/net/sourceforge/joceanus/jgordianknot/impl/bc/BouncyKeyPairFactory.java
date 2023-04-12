@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTR
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusKeyPairGenerator;
@@ -186,6 +187,8 @@ public class BouncyKeyPairFactory
                 return new BouncyFALCONKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
                 return new BouncyPICNICKeyPairGenerator(getFactory(), pKeySpec);
+            case RAINBOW:
+                return new BouncyRainbowKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return pKeySpec.getXMSSKeySpec().isMT()
                        ? new BouncyXMSSMTKeyPairGenerator(getFactory(), pKeySpec)

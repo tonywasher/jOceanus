@@ -335,6 +335,15 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Create RainbowKey.
+     * @param pSpec the Rainbow Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec rainbow(final GordianRainbowSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.RAINBOW, pSpec);
+    }
+
+    /**
      * Create CompositeKey.
      * @param pSpecs the list of keySpecs
      * @return the KeySpec
@@ -528,7 +537,7 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the Bike keySpec.
+     * Obtain the Dilithium keySpec.
      * @return the keySpec.
      */
     public GordianDILITHIUMSpec getDilithiumKeySpec() {
@@ -572,7 +581,7 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the NTRUPRIME keySpec.
+     * Obtain the NTRULPRIME keySpec.
      * @return the keySpec.
      */
     public GordianNTRULPrimeSpec getNTRULPrimeKeySpec() {
@@ -583,7 +592,7 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the NTRUPRIME keySpec.
+     * Obtain the SNTRUPRIME keySpec.
      * @return the keySpec.
      */
     public GordianSNTRUPrimeSpec getSNTRUPrimeKeySpec() {
@@ -613,6 +622,17 @@ public class GordianKeyPairSpec {
             throw new IllegalArgumentException();
         }
         return (GordianPICNICSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the Rainbow keySpec.
+     * @return the keySpec.
+     */
+    public GordianRainbowSpec getRainbowKeySpec() {
+        if (!(theSubKeyType instanceof GordianRainbowSpec)) {
+            throw new IllegalArgumentException();
+        }
+        return (GordianRainbowSpec) theSubKeyType;
     }
 
     /**
@@ -769,6 +789,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianFALCONSpec;
             case PICNIC:
                 return theSubKeyType instanceof GordianPICNICSpec;
+            case RAINBOW:
+                return theSubKeyType instanceof GordianRainbowSpec;
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
                          && ((GordianLMSKeySpec) theSubKeyType).isValid())

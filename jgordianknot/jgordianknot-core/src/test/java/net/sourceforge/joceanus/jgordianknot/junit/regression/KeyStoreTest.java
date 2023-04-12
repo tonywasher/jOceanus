@@ -166,7 +166,7 @@ public class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.gost2012(GordianGOSTElliptic.GOST512A)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.dstu4145(GordianDSTU4145Elliptic.DSTU9)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128FR)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM2)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.falcon(GordianFALCONSpec.FALCON512)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.picnic(GordianPICNICSpec.L1FS)),

@@ -71,7 +71,7 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.72</BouncyCastleVersion>
+    <BouncyCastleVersion>1.73</BouncyCastleVersion>
     <JUnitVersion>5.9.2</JUnitVersion>
     <JSONVersion>20230227</JSONVersion>
     <ApacheMavenVersion>3.9.0</ApacheMavenVersion>
@@ -84,7 +84,7 @@
     <JFreeChartVersion>1.5.4</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>11</JavaVersion>
-    <JavaFXVersion>18.0.2</JavaFXVersion>
+    <JavaFXVersion>20</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>10.9.3</CheckStyleVersion>
     <PMDVersion>7.0.0-rc1</PMDVersion>
@@ -109,7 +109,7 @@
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.2.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.20.0</PMDPluginVersion>
-    <JacocoPluginVersion>0.8.8</JacocoPluginVersion>
+    <JacocoPluginVersion>0.8.9</JacocoPluginVersion>
     <GPGPluginVersion>3.0.1</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.15.0</VersionsPluginVersion>

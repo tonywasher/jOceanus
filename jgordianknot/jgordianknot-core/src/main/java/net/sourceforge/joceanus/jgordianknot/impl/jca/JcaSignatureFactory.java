@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignat
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -122,6 +123,8 @@ public class JcaSignatureFactory
                 return new JcaFalconSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new JcaPicnicSignature(getFactory(), pSignatureSpec);
+            case RAINBOW:
+                return new JcaRainbowSignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             case COMPOSITE:
@@ -155,6 +158,7 @@ public class JcaSignatureFactory
             case DILITHIUM:
             case FALCON:
             case PICNIC:
+            case RAINBOW:
             case EDDSA:
             case LMS:
             case COMPOSITE:

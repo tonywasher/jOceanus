@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
@@ -299,6 +300,7 @@ public abstract class GordianCoreKeyPairFactory
         EnumSet.allOf(GordianSNTRUPrimeSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.sntruprime(t)));
         EnumSet.allOf(GordianFALCONSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.falcon(t)));
         EnumSet.allOf(GordianPICNICSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.picnic(t)));
+        EnumSet.allOf(GordianRainbowSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpec.rainbow(t)));
 
         /* Return the list */
         return mySpecs;

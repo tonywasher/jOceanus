@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNTR
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaPICNICKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSPHINCSPlusKeyPairGenerator;
@@ -174,6 +175,8 @@ public class JcaKeyPairFactory
                 return new JcaFALCONKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
                 return new JcaPICNICKeyPairGenerator(getFactory(), pKeySpec);
+            case RAINBOW:
+                return new JcaRainbowKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:

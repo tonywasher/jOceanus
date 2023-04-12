@@ -148,6 +148,11 @@ public enum GordianKeyPairType {
     PICNIC,
 
     /**
+     * Rainbow.
+     */
+    RAINBOW,
+
+    /**
      * Composite.
      */
     COMPOSITE;
@@ -158,9 +163,10 @@ public enum GordianKeyPairType {
      */
     public boolean useRandomForSignatures() {
         switch (this) {
-            case SPHINCSPLUS:
-            case DILITHIUM:
-            case FALCON:
+            //case SPHINCSPLUS:
+            //case DILITHIUM:
+            //case FALCON:
+            case PICNIC:
             case XMSS:
             case EDDSA:
                 return false;
@@ -181,6 +187,7 @@ public enum GordianKeyPairType {
             case XMSS:
             case EDDSA:
             case LMS:
+            case RAINBOW:
                 return GordianRequired.NEVER;
             case PICNIC:
                 return GordianRequired.POSSIBLE;
