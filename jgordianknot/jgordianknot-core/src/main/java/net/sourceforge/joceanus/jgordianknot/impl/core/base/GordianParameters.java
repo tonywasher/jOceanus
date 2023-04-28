@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -26,6 +28,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * Security Parameters.
  */
 public class GordianParameters {
+    /**
+     * Seed length.
+     */
+    public static final int SEED_LEN = GordianLength.LEN_256.getByteLength();
+
     /**
      * Default Factory.
      */
@@ -37,9 +44,14 @@ public class GordianParameters {
     private GordianFactoryType theFactoryType;
 
     /**
+     * The Security seed.
+     */
+    private byte[] theSecuritySeed;
+
+    /**
      * The Security phrase.
      */
-    private byte[] theSecurityPhrase;
+    private byte[] theKeySetSeed;
 
     /**
      * Is this an internal set?
@@ -71,11 +83,19 @@ public class GordianParameters {
     }
 
     /**
-     * Access the security phrase in bytes format.
-     * @return the security phrase
+     * Access the security seed.
+     * @return the security seed
      */
-    public byte[] getSecurityPhrase() {
-        return theSecurityPhrase;
+    public byte[] getSecuritySeed() {
+        return theSecuritySeed;
+    }
+
+    /**
+     * Access the keySet seed.
+     * @return the keySet seed
+     */
+    public byte[] getKeySetSeed() {
+        return theKeySetSeed;
     }
 
     /**
@@ -100,19 +120,43 @@ public class GordianParameters {
      * @throws OceanusException on error
      */
     public void setSecurityPhrase(final char[] pSecurityPhrase) throws OceanusException {
-        theSecurityPhrase = pSecurityPhrase == null
+        theSecuritySeed = pSecurityPhrase == null
                                 ? null
                                 : TethysDataConverter.charsToByteArray(pSecurityPhrase);
     }
 
     /**
-     * Set security phrase.
-     * @param pSecurityPhrase the security phrase (or null)
+     * Set security seed.
+     * @param pSecuritySeed the security seed (or null)
      */
-    public void setSecurityPhrase(final byte[] pSecurityPhrase) {
-        theSecurityPhrase = pSecurityPhrase == null
+    public void setSecuritySeed(final byte[] pSecuritySeed) {
+        theSecuritySeed = pSecuritySeed == null
                             ? null
-                            : Arrays.copyOf(pSecurityPhrase, pSecurityPhrase.length);
+                            : Arrays.copyOf(pSecuritySeed, pSecuritySeed.length);
+    }
+
+    /**
+     * Set security seed.
+     * @param pSecuritySeed the security seed
+     * @param pKeySetSeed the keySet seed
+     */
+    public void setSecuritySeeds(final byte[] pSecuritySeed,
+                                 final byte[] pKeySetSeed) {
+        theSecuritySeed = Arrays.copyOf(pSecuritySeed, pSecuritySeed.length);
+        Arrays.fill(pSecuritySeed, (byte) 0);
+        theKeySetSeed = Arrays.copyOf(pKeySetSeed, pKeySetSeed.length);
+        Arrays.fill(pKeySetSeed, (byte) 0);
+    }
+
+    /**
+     * Set random security seeds.
+     * @param pRandom the secureRandom
+     */
+    public void setSecuritySeeds(final SecureRandom pRandom) {
+        theSecuritySeed = new byte[SEED_LEN];
+        pRandom.nextBytes(theSecuritySeed);
+        theKeySetSeed = new byte[SEED_LEN - GordianCoreFactoryLock.MASK_LEN];
+        pRandom.nextBytes(theKeySetSeed);
     }
 
     /**
@@ -127,6 +171,23 @@ public class GordianParameters {
      * @return valid true/false
      */
     public boolean validate() {
+        /* If there is a keySetSeed */
+        if (theKeySetSeed != null) {
+            /* it must be of length SEED_LEN - MASK_LEN */
+            if (theKeySetSeed.length != SEED_LEN - GordianCoreFactoryLock.MASK_LEN) {
+                return false;
+            }
+
+            /* It must be of equal length to SecuritySeed */
+            if (theSecuritySeed == null || theSecuritySeed.length != SEED_LEN) {
+                return false;
+            }
+
+            /* Factory type must be BC and it must be internal */
+            return theFactoryType == GordianFactoryType.BC
+                   && isInternal;
+        }
+
         /* Check factory type */
         return theFactoryType != null;
     }
@@ -155,10 +216,13 @@ public class GordianParameters {
             return false;
         }
 
-        /* Check phrase */
-        return theSecurityPhrase == null
-               ? myThat.getSecurityPhrase() == null
-               : Arrays.equals(theSecurityPhrase, myThat.getSecurityPhrase());
+        /* Check Differences */
+        if (!Arrays.equals(theKeySetSeed,myThat.getKeySetSeed())) {
+            return false;
+        }
+
+        /* Check seed */
+        return Arrays.equals(theSecuritySeed, myThat.getSecuritySeed());
     }
 
     @Override
@@ -173,9 +237,7 @@ public class GordianParameters {
         }
         myCode *= myPrime;
 
-        /* Calculate hash from phrase */
-        return myCode + (theSecurityPhrase == null
-                         ? 0
-                         : Arrays.hashCode(theSecurityPhrase));
+        /* Calculate hash from seeds */
+        return myCode + Arrays.hashCode(theSecuritySeed) + Arrays.hashCode(theKeySetSeed);
     }
 }

@@ -79,7 +79,7 @@ public class GordianRandomSource {
      * @return the secure random
      * @throws OceanusException on error
      */
-    private static SecureRandom getStrongRandom() throws OceanusException {
+    public static SecureRandom getStrongRandom() throws OceanusException {
         /* Return the entropy if it has been created */
         SecureRandom myStrong = theStrongEntropy;
         if (myStrong != null) {

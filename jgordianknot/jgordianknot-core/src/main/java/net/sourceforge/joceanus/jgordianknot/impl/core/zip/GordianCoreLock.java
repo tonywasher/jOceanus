@@ -154,7 +154,7 @@ public class GordianCoreLock
         myFactory.getRandomSource().getRandom().nextBytes(myKey);
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         myParams.setInternal();
-        myParams.setSecurityPhrase(myKey);
+        myParams.setSecuritySeed(myKey);
         theFactory = myFactory.newFactory(myParams);
 
         /* create the keySetHash */
@@ -253,7 +253,7 @@ public class GordianCoreLock
         /* Access the shared factory */
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         myParams.setInternal();
-        myParams.setSecurityPhrase(theZipLock.getKey());
+        myParams.setSecuritySeed(theZipLock.getKey());
         final GordianFactory myFactory = ((GordianCoreFactory) theFactory).newFactory(myParams);
 
         /* derive the keySetHash */

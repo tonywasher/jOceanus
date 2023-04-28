@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -32,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
@@ -42,6 +44,20 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianCoreFactory
     implements GordianFactory, GordianFactoryGenerator {
+    /**  * CreateKeySet interface.
+     */
+    public interface GordianKeySetGenerate {
+        /**
+         * create and build a keySet from seed
+         * @param pSeed the base seed
+         * @param pIV the IV
+         * @return the keySet
+         * @throws OceanusException on error
+         */
+        GordianKeySet generateKeySet(final byte[] pSeed,
+                                     final byte[] pIV) throws OceanusException;
+    }
+
     /**
      *  BCFactoryOID.
      */
@@ -81,6 +97,11 @@ public abstract class GordianCoreFactory
      * Random Source.
      */
     private final GordianRandomSource theRandom;
+
+    /**
+     * Embedded KeySet.
+     */
+    private final GordianKeySet theKeySet;
 
     /**
      * Personalisation.
@@ -159,6 +180,7 @@ public abstract class GordianCoreFactory
         thePersonalisation = new GordianPersonalisation(this);
         theIdManager = new GordianIdManager(this);
         theObfuscater = new GordianCoreKnuthObfuscater(this);
+        theKeySet = createEmbeddedKeySet();
     }
 
     /**
@@ -180,17 +202,33 @@ public abstract class GordianCoreFactory
         return theRandom;
     }
 
+    /**
+     * Obtain the parameters.
+     * @return the parameters
+     */
+    public GordianParameters getParameters() {
+        return theParameters;
+    }
+
     @Override
     public GordianFactoryType getFactoryType() {
         return theParameters.getFactoryType();
     }
 
     /**
-     * Obtain the security phrase.
-     * @return the security phrase
+     * Obtain the security seed.
+     * @return the security seed
      */
-    public byte[] getSecurityPhrase() {
-        return theParameters.getSecurityPhrase();
+    public byte[] getSecuritySeed() {
+        return theParameters.getSecuritySeed();
+    }
+
+    /**
+     * Obtain the keySet seed.
+     * @return the keySet seed
+     */
+    public byte[] getKeySetSeed() {
+        return theParameters.getKeySetSeed();
     }
 
     /**
@@ -199,6 +237,36 @@ public abstract class GordianCoreFactory
      */
     public boolean isInternal() {
         return theParameters.isInternal();
+    }
+
+    /**
+     * Obtain the embedded keySet.
+     * @return the keySet (or null)
+     */
+    public GordianKeySet getEmbeddedKeySet() {
+        return theKeySet;
+    }
+
+    /**
+     * Create embedded keySet (if available).
+     * @return the embedded keySet (or null).
+     * @throws OceanusException on error
+     */
+    private GordianKeySet createEmbeddedKeySet() throws OceanusException {
+        /* Obtain the keySet seed */
+        final byte[] mySeed = theParameters.getKeySetSeed();
+        if (mySeed == null) {
+            return null;
+        }
+
+        /* Split into secret and IV */
+        final int myLen = GordianParameters.SEED_LEN >> 1;
+        final byte[] mySecret = Arrays.copyOf(mySeed, myLen);
+        final byte[] myIV = Arrays.copyOfRange(mySeed, myLen, mySeed.length);
+
+        /* Derive the keySet */
+        final GordianKeySetGenerate myKeySets = (GordianKeySetGenerate) getKeySetFactory();
+        return myKeySets.generateKeySet(mySecret, myIV);
     }
 
     /**
@@ -469,7 +537,7 @@ public abstract class GordianCoreFactory
         if (pValue != null) {
             myBuilder.append(pValue.getClass().getSimpleName());
             myBuilder.append(" :- ");
-            myBuilder.append(pValue.toString());
+            myBuilder.append(pValue);
         } else {
             myBuilder.append("null value");
         }

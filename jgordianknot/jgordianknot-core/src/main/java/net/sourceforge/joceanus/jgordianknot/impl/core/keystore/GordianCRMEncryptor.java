@@ -181,7 +181,7 @@ public class GordianCRMEncryptor {
         /* Create a new Factory using the key */
         final byte[] myPhrase = Arrays.copyOf(pKey, GordianLength.LEN_256.getByteLength());
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        myParams.setSecurityPhrase(myPhrase);
+        myParams.setSecuritySeed(myPhrase);
         myParams.setInternal();
         final GordianFactory myFactory = theFactory.newFactory(myParams);
         Arrays.fill(myPhrase, (byte) 0);

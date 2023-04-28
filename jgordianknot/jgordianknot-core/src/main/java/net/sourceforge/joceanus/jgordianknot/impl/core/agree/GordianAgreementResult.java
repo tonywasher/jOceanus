@@ -320,7 +320,7 @@ public class GordianAgreementResult {
 
             /* Create a new Factory using the phrase */
             final GordianParameters myParams = new GordianParameters(pFactoryType);
-            myParams.setSecurityPhrase(myPhrase);
+            myParams.setSecuritySeed(myPhrase);
             myParams.setInternal();
             return theFactory.newFactory(myParams);
 
