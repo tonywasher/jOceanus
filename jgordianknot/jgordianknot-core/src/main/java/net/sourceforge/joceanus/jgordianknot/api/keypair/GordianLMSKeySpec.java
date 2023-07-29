@@ -24,7 +24,9 @@ import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * LMS KeyTypes.
@@ -36,14 +38,34 @@ public class GordianLMSKeySpec {
     private static final String SEP = "-";
 
     /**
-     * The key type.
+     * Invalid length error,
      */
-    private final GordianLMSSigType theSigType;
+    private static final String INVALID_LENGTH = "Invalid Length: ";
 
     /**
-     * The Ots type.
+     * The hash.
      */
-    private final GordianLMSOtsType theOtsType;
+    private final GordianLMSHash theHash;
+
+    /**
+     * The width.
+     */
+    private final GordianLMSWidth theWidth;
+
+    /**
+     * The height.
+     */
+    private final GordianLMSHeight theHeight;
+
+    /**
+     * The length.
+     */
+    private final GordianLength theLength;
+
+    /**
+     * The Parameters.
+     */
+    private final LMSParameters theParams;
 
     /**
      * The Validity.
@@ -57,30 +79,60 @@ public class GordianLMSKeySpec {
 
     /**
      * Constructor.
-     * @param pSigType the sigType
-     * @param pOtsType the otsType
+     * @param pHashType the hashType
+     * @param pHeight the height
+     * @param pWidth the width
+     * @param pLength the length
      */
-    public GordianLMSKeySpec(final GordianLMSSigType pSigType,
-                             final GordianLMSOtsType pOtsType) {
-        theSigType = pSigType;
-        theOtsType = pOtsType;
+    public GordianLMSKeySpec(final GordianLMSHash pHashType,
+                             final GordianLMSHeight pHeight,
+                             final GordianLMSWidth pWidth,
+                             final GordianLength pLength) {
+        /* Store parameters */
+        theHash = pHashType;
+        theWidth = pWidth;
+        theHeight = pHeight;
+        theLength = pLength;
+
+        /* Check validity */
         isValid = checkValidity();
+
+        /* Calculate parameters */
+        final LMSigParameters mySig = isValid ? theHeight.getSigParameter(theHash, theLength) : null;
+        final LMOtsParameters myOts = isValid ? theWidth.getOtsParameter(theHash, theLength) : null;
+        theParams = isValid ? new LMSParameters(mySig, myOts) : null;
     }
 
     /**
-     * Obtain the sigType.
-     * @return the sigType
+     * Obtain the hash.
+     * @return the hash
      */
-    public GordianLMSSigType getSigType() {
-        return theSigType;
+    public GordianLMSHash getHash() {
+        return theHash;
     }
 
     /**
-     * Obtain the otsType.
-     * @return the otsType
+     * Obtain the width.
+     * @return the width
      */
-    public GordianLMSOtsType getOtsType() {
-        return theOtsType;
+    public GordianLMSHeight getHeight() {
+        return theHeight;
+    }
+
+    /**
+     * Obtain the width.
+     * @return the width
+     */
+    public GordianLMSWidth getWidth() {
+        return theWidth;
+    }
+
+    /**
+     * Obtain the legth.
+     * @return the width
+     */
+    public GordianLength getLength() {
+        return theLength;
     }
 
     /**
@@ -88,17 +140,15 @@ public class GordianLMSKeySpec {
      * @return the parameters
      */
     public LMSParameters getParameters() {
-        return isValid
-               ? new LMSParameters(theSigType.getParameter(), theOtsType.getParameter())
-               : null;
+        return theParams;
     }
 
     /**
-     * Is the keySpec high (height &gt; 15)?
+     * Is the keySpec high (height &ge; 15)?
      * @return true/false.
      */
     public boolean isHigh() {
-        return isValid && theSigType.isHigh();
+        return isValid && theHeight.isHigh();
     }
 
     /**
@@ -110,22 +160,20 @@ public class GordianLMSKeySpec {
     }
 
     /**
-     * Create McEliece CCA2 keySpec.
-     * @param pSigType the sigType
-     * @param pOtsType the otsType
-     * @return the keySpec
-     */
-    public static GordianLMSKeySpec keySpec(final GordianLMSSigType pSigType,
-                                            final GordianLMSOtsType pOtsType) {
-        return new GordianLMSKeySpec(pSigType, pOtsType);
-    }
-
-    /**
      * Check spec validity.
      * @return valid true/false
      */
     private boolean checkValidity() {
-        return theSigType != null && theOtsType != null;
+        if (theWidth == null || theHeight == null || theHash == null || theLength == null) {
+            return false;
+        }
+        switch (theLength) {
+            case LEN_192:
+            case LEN_256:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -135,10 +183,10 @@ public class GordianLMSKeySpec {
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theSigType.toString() + SEP + theOtsType.toString();
+                theName = theHash.toString() + SEP + theWidth.toString() + SEP + theHeight.toString() + SEP + theLength.toString();
              }  else {
                 /* Report invalid spec */
-                theName = "InvalidLMSKeySpec: " + theSigType + ":" + theOtsType;
+                theName = "InvalidLMSKeySpec: " + theHash + SEP + theWidth + SEP + theHeight + SEP + theLength;
             }
         }
 
@@ -164,15 +212,20 @@ public class GordianLMSKeySpec {
         /* Access the target lmsSpec */
         final GordianLMSKeySpec myThat = (GordianLMSKeySpec) pThat;
 
-        /* Check sigType and otsType */
-        return theSigType == myThat.theSigType
-                && theOtsType == myThat.theOtsType;
+        /* Check hash and length */
+        if (theHash != myThat.theHash
+            || theLength != myThat.theLength) {
+            return false;
+        }
+
+        /* Check height and width */
+        return theWidth == myThat.theWidth
+                && theHeight == myThat.theHeight;
     }
 
     @Override
     public int hashCode() {
-        final int hashCode = theSigType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        return hashCode + theOtsType.hashCode();
+        return Objects.hash(theHash, theHeight, theWidth, theLength);
     }
 
     /**
@@ -184,14 +237,36 @@ public class GordianLMSKeySpec {
         final List<GordianLMSKeySpec> mySpecs = new ArrayList<>();
 
         /* Add the specs */
-        for (final GordianLMSSigType mySig : GordianLMSSigType.values()) {
-            for (final GordianLMSOtsType myOts : GordianLMSOtsType.values()) {
-                mySpecs.add(GordianLMSKeySpec.keySpec(mySig, myOts));
+        for (final GordianLMSHeight myHeight : GordianLMSHeight.values()) {
+            for (final GordianLMSWidth myWidth : GordianLMSWidth.values()) {
+                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_256));
+                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_192));
+                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_256));
+                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_192));
             }
         }
 
         /* Return the list */
         return mySpecs;
+    }
+
+    /**
+     * Match keySpec against LMSParameters.
+     * @param pSigParams the sigParameters
+     * @param pOtsParams the otsParameters
+     * @return the matching keySpec
+     * @throws OceanusException on error
+     */
+    public static GordianLMSKeySpec determineKeySpec(final LMSigParameters pSigParams,
+                                                     final LMOtsParameters pOtsParams) throws OceanusException {
+        final List<GordianLMSKeySpec> mySpecs = listPossibleKeySpecs();
+        for (GordianLMSKeySpec mySpec : mySpecs) {
+            if (pSigParams.equals(mySpec.getParameters().getLMSigParam())
+                && pOtsParams.equals(mySpec.getParameters().getLMOTSParam())) {
+                return mySpec;
+            }
+        }
+        throw new GordianDataException("Unsupported LMSSpec");
     }
 
     /**
@@ -329,57 +404,147 @@ public class GordianLMSKeySpec {
     }
 
     /**
-     * LMS sigTypes.
+     * LMS hash.
      */
-    public enum GordianLMSSigType {
+    public enum GordianLMSHash {
+        /**
+         * Sha256.
+         */
+        SHA256,
+
+        /**
+         * Shake256.
+         */
+        SHAKE256;
+    }
+
+    /**
+     * LMS height.
+     */
+    public enum GordianLMSHeight {
         /**
          * H5.
          */
-        H5(LMSigParameters.lms_sha256_n32_h5),
+        H5,
 
         /**
          * H10.
          */
-        H10(LMSigParameters.lms_sha256_n32_h10),
+        H10,
 
         /**
          * H15.
          */
-        H15(LMSigParameters.lms_sha256_n32_h15),
+        H15,
 
         /**
          * H20.
          */
-        H20(LMSigParameters.lms_sha256_n32_h20),
+        H20,
 
         /**
          * H25.
          */
-        H25(LMSigParameters.lms_sha256_n32_h25);
+        H25;
 
         /**
-         * The Ots parameter.
-         */
-        private final LMSigParameters theParm;
-
-        /**
-         * Constructor.
-         * @param pParam the parameter
-         */
-        GordianLMSSigType(final LMSigParameters pParam) {
-            theParm = pParam;
-        }
-
-        /**
-         * Obtain the parameter.
+         * Obtain the sigParameter.
          * @return the parameter
          */
-        public LMSigParameters getParameter() {
-            return theParm;
+        private LMSigParameters getSigParameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+            switch (this) {
+                case H5:    return getH5Parameter(pHash, pLength);
+                case H10:   return getH10Parameter(pHash, pLength);
+                case H15:   return getH15Parameter(pHash, pLength);
+                case H20:   return getH20Parameter(pHash, pLength);
+                case H25:   return getH25Parameter(pHash, pLength);
+                default:    throw new IllegalStateException();
+            }
         }
 
         /**
-         * Is the parameter high (height &gt; 15)?
+         * Obtain the H5 sigParameter.
+         * @return the parameter
+         */
+        private LMSigParameters getH5Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h5 : LMSigParameters.lms_shake256_n24_h5;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h5 : LMSigParameters.lms_shake256_n32_h5;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the H10 sigParameter.
+         * @return the parameter
+         */
+        private LMSigParameters getH10Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h10 : LMSigParameters.lms_shake256_n24_h10;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h10 : LMSigParameters.lms_shake256_n32_h10;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the H15 sigParameter.
+         * @return the parameter
+         */
+        private LMSigParameters getH15Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h15 : LMSigParameters.lms_shake256_n24_h15;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h15 : LMSigParameters.lms_shake256_n32_h15;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the H20 sigParameter.
+         * @return the parameter
+         */
+        private LMSigParameters getH20Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h20 : LMSigParameters.lms_shake256_n24_h20;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h20 : LMSigParameters.lms_shake256_n32_h20;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the H25 sigParameter.
+         * @return the parameter
+         */
+        private LMSigParameters getH25Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h25 : LMSigParameters.lms_shake256_n24_h25;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h25 : LMSigParameters.lms_shake256_n32_h25;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Is the parameter high (height &ge; 15)?
          * @return true/false.
          */
         public boolean isHigh() {
@@ -395,48 +560,106 @@ public class GordianLMSKeySpec {
     }
 
     /**
-     * LMS OTS Types.
+     * LMS Width.
      */
-    public enum GordianLMSOtsType {
+    public enum GordianLMSWidth {
         /**
          * W1.
          */
-        W1(LMOtsParameters.sha256_n32_w1),
+        W1,
 
         /**
          * W2.
          */
-        W2(LMOtsParameters.sha256_n32_w2),
+        W2,
 
         /**
-         * W1.
+         * W4.
          */
-        W4(LMOtsParameters.sha256_n32_w4),
+        W4,
 
         /**
          * W8.
          */
-        W8(LMOtsParameters.sha256_n32_w8);
+        W8;
 
         /**
-         * The Ots parameter.
+         * Obtain the sigParameter.
+         * @return the parameter
          */
-        private final LMOtsParameters theParm;
-
-        /**
-         * Constructor.
-         * @param pParam the parameter
-         */
-        GordianLMSOtsType(final LMOtsParameters pParam) {
-            theParm = pParam;
+        private LMOtsParameters getOtsParameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+            switch (this) {
+                case W1:   return getW1Parameter(pHash, pLength);
+                case W2:   return getW2Parameter(pHash, pLength);
+                case W4:   return getW4Parameter(pHash, pLength);
+                case W8:   return getW8Parameter(pHash, pLength);
+                default:   throw new IllegalStateException();
+            }
         }
 
         /**
-         * Obtain the parameter.
+         * Obtain the W1 otsParameter.
          * @return the parameter
          */
-        public LMOtsParameters getParameter() {
-            return theParm;
+        private LMOtsParameters getW1Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w1 : LMOtsParameters.shake256_n24_w1;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w1 : LMOtsParameters.shake256_n32_w1;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the W2 otsParameter.
+         * @return the parameter
+         */
+        private LMOtsParameters getW2Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w2 : LMOtsParameters.shake256_n24_w2;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w2 : LMOtsParameters.shake256_n32_w2;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the W4 otsParameter.
+         * @return the parameter
+         */
+        private LMOtsParameters getW4Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w4 : LMOtsParameters.shake256_n24_w4;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w4 : LMOtsParameters.shake256_n32_w4;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
+        }
+
+        /**
+         * Obtain the W8 otsParameter.
+         * @return the parameter
+         */
+        private LMOtsParameters getW8Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+            switch (pLength) {
+                case LEN_192:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w8 : LMOtsParameters.shake256_n24_w8;
+                case LEN_256:
+                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w8 : LMOtsParameters.shake256_n32_w8;
+                default:
+                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);
+            }
         }
     }
 }

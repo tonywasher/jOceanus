@@ -356,9 +356,6 @@ public class SheetTransaction
         String myDilution = null;
         if (myCell != null) {
             myDilution = myCell.getString();
-            if (!myDilution.startsWith("0.")) {
-                myDilution = null;
-            }
         }
 
         /* Handle Reference which may be missing */

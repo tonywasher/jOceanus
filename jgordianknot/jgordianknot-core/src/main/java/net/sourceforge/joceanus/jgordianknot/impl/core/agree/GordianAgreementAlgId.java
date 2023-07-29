@@ -258,13 +258,17 @@ public class GordianAgreementAlgId {
                 final Object mySubType = pSpec.getSubKeyType();
                 if (mySubType instanceof GordianLMSKeySpec) {
                     final GordianLMSKeySpec myLMS = (GordianLMSKeySpec) mySubType;
-                    myId = myId.branch(Integer.toString(myLMS.getSigType().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getOtsType().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHash().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHeight().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getWidth().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getLength().ordinal() + 1));
                 } else if (mySubType instanceof GordianHSSKeySpec) {
                     final GordianHSSKeySpec myHSS = (GordianHSSKeySpec) mySubType;
                     final GordianLMSKeySpec myLMS = myHSS.getKeySpec();
-                    myId = myId.branch(Integer.toString(myLMS.getSigType().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getOtsType().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHash().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHeight().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getWidth().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getLength().ordinal() + 1));
                     myId = myId.branch(Integer.toString(myHSS.getTreeDepth()));
                 }
                 break;
