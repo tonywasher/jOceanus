@@ -1068,7 +1068,7 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialise the generator */
                 theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(NTRU_ALGO, true);
-                final NTRULPRimeParameterSpec myParms = pKeySpec.getNTRULPrimeKeySpec().getParameterSpec();
+                final NTRULPRimeParameterSpec myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getNTRULParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1119,7 +1119,7 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialise the generator */
                 theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(NTRU_ALGO, true);
-                final SNTRUPrimeParameterSpec myParms = pKeySpec.getSNTRUPrimeKeySpec().getParameterSpec();
+                final SNTRUPrimeParameterSpec myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getSNTRUParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */

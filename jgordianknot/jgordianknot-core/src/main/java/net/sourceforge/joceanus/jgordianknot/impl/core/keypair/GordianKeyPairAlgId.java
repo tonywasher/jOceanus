@@ -85,14 +85,15 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
@@ -1069,18 +1070,30 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr653, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR653)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr761, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR761)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr857, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR857)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr953, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR953)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1013, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR1013)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1277, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR1277)));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup653, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR653)));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup761, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR761)));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup857, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR857)));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup953, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR953)));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup1013, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR1013)));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup1277, new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR1277)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr653,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR653))));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr761,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR761))));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr857,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR857))));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr953,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR953))));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1013,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR1013))));
+            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1277,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR1277))));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup653,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR653))));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup761,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR761))));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup857,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR857))));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup953,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR953))));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup1013,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR1013))));
+            pIdManager.registerParser(BCObjectIdentifiers.sntrup1277,
+                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR1277))));
         }
 
         @Override

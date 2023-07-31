@@ -276,8 +276,7 @@ public abstract class GordianCoreAgreementFactory
             case HQC:
             case BIKE:
             case NTRU:
-            case NTRULPRIME:
-            case SNTRUPRIME:
+            case NTRUPRIME:
                 myAgreements.add(GordianAgreementSpec.kem(pKeyPairSpec, GordianKDFType.NONE));
                 break;
             case EC:

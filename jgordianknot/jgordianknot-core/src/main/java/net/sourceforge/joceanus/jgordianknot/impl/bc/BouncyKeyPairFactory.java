@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
@@ -179,10 +180,10 @@ public class BouncyKeyPairFactory
                 return new BouncyBIKEKeyPairGenerator(getFactory(), pKeySpec);
             case NTRU:
                 return new BouncyNTRUKeyPairGenerator(getFactory(), pKeySpec);
-            case NTRULPRIME:
-                return new BouncyNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec);
-            case SNTRUPRIME:
-                return new BouncySNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
+            case NTRUPRIME:
+                return pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL
+                            ? new BouncyNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
+                            : new BouncySNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
                 return new BouncyFALCONKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
