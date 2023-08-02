@@ -22,6 +22,7 @@ import java.util.Map;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;
+import org.bouncycastle.crypto.DefaultBufferedBlockCipher;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.ARIAEngine;
@@ -308,7 +309,7 @@ public class BouncyCipherFactory
     static BlockCipher getBCSymEngine(final GordianSymKeySpec pKeySpec) throws OceanusException {
         switch (pKeySpec.getSymKeyType()) {
             case AES:
-                return new AESEngine();
+                return AESEngine.newInstance();
             case SERPENT:
                 return new SerpentEngine();
             case TWOFISH:
@@ -386,15 +387,15 @@ public class BouncyCipherFactory
             case ECB:
                 return pEngine;
             case CBC:
-                return new CBCBlockCipher(pEngine);
+                return CBCBlockCipher.newInstance(pEngine);
             case SIC:
-                return new SICBlockCipher(pEngine);
+                return SICBlockCipher.newInstance(pEngine);
             case KCTR:
                 return new KCTRBlockCipher(pEngine);
             case CFB:
-                return new CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+                return CFBBlockCipher.newInstance(pEngine, Byte.SIZE * pEngine.getBlockSize());
             case CFB8:
-                return new CFBBlockCipher(pEngine, Byte.SIZE);
+                return CFBBlockCipher.newInstance(pEngine, Byte.SIZE);
             case GCFB:
                 return new GCFBBlockCipher(pEngine);
             case OFB:
@@ -429,11 +430,11 @@ public class BouncyCipherFactory
             case EAX:
                 return new EAXBlockCipher(getBCSymEngine(mySpec));
             case CCM:
-                return new CCMBlockCipher(getBCSymEngine(mySpec));
+                return CCMBlockCipher.newInstance(getBCSymEngine(mySpec));
             case KCCM:
                 return new KCCMXBlockCipher(getBCSymEngine(mySpec));
             case GCM:
-                return new GCMBlockCipher(getBCSymEngine(mySpec));
+                return GCMBlockCipher.newInstance(getBCSymEngine(mySpec));
             case GCMSIV:
                 return new GCMSIVBlockCipher(getBCSymEngine(mySpec));
             case KGCM:
@@ -467,7 +468,7 @@ public class BouncyCipherFactory
                 return new PaddedBufferedBlockCipher(pEngine, new TBCPadding());
             case NONE:
             default:
-                return new BufferedBlockCipher(pEngine);
+                return new DefaultBufferedBlockCipher(pEngine);
         }
     }
 }

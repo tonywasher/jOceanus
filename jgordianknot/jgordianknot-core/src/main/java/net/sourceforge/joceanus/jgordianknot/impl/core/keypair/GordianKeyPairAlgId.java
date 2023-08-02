@@ -708,6 +708,43 @@ public class GordianKeyPairAlgId {
                     new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256F)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256s_r3,
                     new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256S)));
+
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA192F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA192S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA256F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA256S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_192f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA192F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_192s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA192S_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256f_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256F_S)));
+            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256s_r3_simple,
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256S_S)));
         }
 
         @Override

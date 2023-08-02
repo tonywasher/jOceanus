@@ -224,8 +224,9 @@ public class PGPXSignEncrypt {
         /* Create the signature builder */
         final BcPGPContentSignerBuilder mySignerBuilder = new BcPGPContentSignerBuilder(mySignSecret.getPublicKey().getAlgorithm(),
                 pHashAlgId);
-        if (mySignSecret.getPublicKey().getAlgorithm() != PGPPublicKey.EDDSA) {
-            mySignerBuilder.setSecureRandom(RANDOM);
+        final int myAlg = mySignSecret.getPublicKey().getAlgorithm();
+        if (myAlg != PGPPublicKey.Ed25519 && myAlg != PGPPublicKey.Ed448) {
+             mySignerBuilder.setSecureRandom(RANDOM);
         }
 
         /* Create the signer */
@@ -238,7 +239,7 @@ public class PGPXSignEncrypt {
         final Iterator<String> myUserids = mySignSecret.getUserIDs();
         if (myUserids.hasNext()) {
             final String userId = myUserids.next();
-            spGen.setSignerUserID(false, userId.getBytes(StandardCharsets.UTF_8));
+            spGen.addSignerUserID(false, userId.getBytes(StandardCharsets.UTF_8));
         }
         mySigner.setHashedSubpackets(spGen.generate());
 

@@ -39,7 +39,7 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.75"
+        bouncyCastleVersion = "1.76"
         jUnitVersion = "5.10.0"
         jsonVersion = "20230618"
         mySQLVersion = "8.0.33"
@@ -58,7 +58,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.12.1"
+        checkStyleVersion = "10.12.2"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

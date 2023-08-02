@@ -112,7 +112,8 @@ public class PGPXCreateRing {
         final PGPPublicKey myPublic = keyPairs.theCertify.getPublicKey();
         final BcPGPContentSignerBuilder mySignerBuilder = new BcPGPContentSignerBuilder(myPublic.getAlgorithm(),
                 HashAlgorithmTags.SHA256);
-        if (myPublic.getAlgorithm() != PGPPublicKey.EDDSA) {
+        final int myAlg = myPublic.getAlgorithm();
+        if (myAlg != PGPPublicKey.Ed25519 && myAlg != PGPPublicKey.Ed448) {
             mySignerBuilder.setSecureRandom(RANDOM);
         }
 
@@ -320,11 +321,11 @@ public class PGPXCreateRing {
         final PGPXKeyRingStyle myStyle = pType.getKeyPairStyle();
         final AsymmetricCipherKeyPair kpCert = kpgSign.generateKeyPair();
         final AsymmetricCipherKeyPair kpEnc = kpgEnc.generateKeyPair();
-        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PGPPublicKey.EDDSA, kpCert, date);
+        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PGPPublicKey.Ed448, kpCert, date);
         final PGPKeyPair encKeyPair = new BcPGPKeyPair(PGPPublicKey.ECDH, kpEnc, date);
         if (myStyle == PGPXKeyRingStyle.TRIO) {
             final AsymmetricCipherKeyPair kpSgn = kpgSign.generateKeyPair();
-            final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PGPPublicKey.EDDSA, kpSgn, date);
+            final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PGPPublicKey.Ed448, kpSgn, date);
             return new KeyPairSet(certKeyPair, encKeyPair, sgnKeyPair);
         } else {
             return new KeyPairSet(certKeyPair, encKeyPair);

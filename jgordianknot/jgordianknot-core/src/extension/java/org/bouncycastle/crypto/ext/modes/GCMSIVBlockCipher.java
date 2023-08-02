@@ -136,7 +136,7 @@ public class GCMSIVBlockCipher
      * Constructor.
      */
     public GCMSIVBlockCipher() {
-        this(new AESEngine());
+        this(AESEngine.newInstance());
     }
 
     /**

@@ -194,7 +194,7 @@ public class BouncyMacFactory
     private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
         return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
                ? new KXGMac(new KGCMXBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)))
-               : new GMac(new GCMBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)));
+               : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)));
     }
 
     /**

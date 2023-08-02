@@ -11,6 +11,7 @@ import org.bouncycastle.crypto.params.SkeinParameters;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Integers;
 import org.bouncycastle.util.Memoable;
+import org.bouncycastle.util.Pack;
 
 /**
  * Implementation of the Skein family of parameterised hash functions in 256, 512 and 1024 bit block
@@ -78,7 +79,7 @@ public class SkeinBase
             bytes[5] = 0;
 
             // 8..15 = output length
-            ThreefishEngine.wordToBytes(outputSizeBits, bytes, 8);
+            Pack.longToLittleEndian(outputSizeBits, bytes, 8);
         }
 
         public byte[] getBytes()
@@ -463,7 +464,7 @@ public class SkeinBase
             threefish.init(true, chain, tweak.getWords());
             for (int i = 0; i < message.length; i++)
             {
-                message[i] = ThreefishEngine.bytesToWord(currentBlock, i * 8);
+                message[i] = Pack.littleEndianToLong(currentBlock, i * 8);
             }
 
             threefish.processBlock(message, output);
@@ -812,7 +813,7 @@ public class SkeinBase
 
         /* Output the state */
         for (int i = 0; i < chain.length; i++) {
-            ThreefishEngine.wordToBytes(chain[i], out, outOff + (i * 8));
+            Pack.longToLittleEndian(chain[i], out, outOff + (i * 8));
         }
     }
 
@@ -867,7 +868,7 @@ public class SkeinBase
     {
         /* Restore the state */
         for (int i = 0; i < chain.length; i++) {
-            chain[i] = ThreefishEngine.bytesToWord(pState, i * 8);
+            chain[i] = Pack.littleEndianToLong(pState, i * 8);
         }
 
         // Initiate output
@@ -877,7 +878,7 @@ public class SkeinBase
     void output(long outputSequence, byte[] out, int outOff, int outputBytes)
     {
         byte[] currentBytes = new byte[8];
-        ThreefishEngine.wordToBytes(outputSequence, currentBytes, 0);
+        Pack.longToLittleEndian(outputSequence, currentBytes, 0);
 
         // Output is a sequence of UBI invocations all of which use and preserve the pre-output
         // state
@@ -892,11 +893,11 @@ public class SkeinBase
             int toWrite = Math.min(8, outputBytes - (i * 8));
             if (toWrite == 8)
             {
-                ThreefishEngine.wordToBytes(outputWords[i], out, outOff + (i * 8));
+                Pack.longToLittleEndian(outputWords[i], out, outOff + (i * 8));
             }
             else
             {
-                ThreefishEngine.wordToBytes(outputWords[i], currentBytes, 0);
+                Pack.longToLittleEndian(outputWords[i], currentBytes, 0);
                 System.arraycopy(currentBytes, 0, out, outOff + (i * 8), toWrite);
             }
         }
