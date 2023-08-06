@@ -107,7 +107,7 @@ public class GordianCRMParser {
      */
     static boolean requiresEncryption(final CertReqMsg pCertReq) {
         /* Only encipherment keys may be encrypted */
-        final ProofOfPossession myProof = pCertReq.getPopo();
+        final ProofOfPossession myProof = pCertReq.getPop();
         if (myProof.getType() != ProofOfPossession.TYPE_KEY_ENCIPHERMENT) {
             return false;
         }
@@ -128,7 +128,7 @@ public class GordianCRMParser {
     List<GordianCertificate> processCertificateRequest(final CertReqMsg pRequest) throws OceanusException {
         /* Derive the certificate request message */
         final CertRequest myCertReq = pRequest.getCertReq();
-        final ProofOfPossession myProof = pRequest.getPopo();
+        final ProofOfPossession myProof = pRequest.getPop();
         final AttributeTypeAndValue[] myAttrs = pRequest.getRegInfo();
         final CertTemplate myTemplate = myCertReq.getCertTemplate();
         final X500Name mySubject = myTemplate.getSubject();

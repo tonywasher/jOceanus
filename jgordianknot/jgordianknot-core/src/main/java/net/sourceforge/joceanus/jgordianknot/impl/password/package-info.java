@@ -18,4 +18,4 @@
 /**
  * Password Manager implementation.
  */
-package net.sourceforge.joceanus.jgordianknot.impl.core.password;
+package net.sourceforge.joceanus.jgordianknot.impl.password;

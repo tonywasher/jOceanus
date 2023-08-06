@@ -14,8 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.password;
-
+package net.sourceforge.joceanus.jgordianknot.impl.password;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
@@ -24,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 /**
  * DialogControl.
  */
-public class GordianCoreDialogControl
+public class GordianBaseDialogControl
         implements GordianDialogController {
     /**
      * GUI factory.
@@ -40,7 +39,7 @@ public class GordianCoreDialogControl
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreDialogControl(final TethysUIFactory<?> pFactory) {
+    public GordianBaseDialogControl(final TethysUIFactory<?> pFactory) {
         theFactory = pFactory;
     }
 

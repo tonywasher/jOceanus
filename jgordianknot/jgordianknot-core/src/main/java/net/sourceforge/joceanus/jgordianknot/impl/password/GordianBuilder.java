@@ -14,44 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.util;
+package net.sourceforge.joceanus.jgordianknot.impl.password;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
-import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBaseDialogControl;
-import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBasePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBuilder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
- * Factory generator.
+ * Builder methods.
  */
-public final class GordianGenerator {
+public final class GordianBuilder {
     /**
-     * Private  Constructor.
+     * Private class.
      */
-    private GordianGenerator() {
-    }
-
-    /**
-     * Create a new factory instance.
-     * @param pFactoryType the factoryType
-     * @return the new factory
-     * @throws OceanusException on error
-     */
-    public static GordianFactory createFactory(final GordianFactoryType pFactoryType) throws OceanusException {
-        /* Create a factory with null security phrase */
-        return createFactory(pFactoryType, null);
+    private GordianBuilder() {
     }
 
     /**
@@ -63,8 +46,11 @@ public final class GordianGenerator {
      */
     public static GordianFactory createFactory(final GordianFactoryType pFactoryType,
                                                final char[] pSecurityPhrase) throws OceanusException {
-        /* Create the factory */
-        return GordianBuilder.createFactory(pFactoryType, pSecurityPhrase);
+        /* Allocate a generator and the parameters */
+        final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
+        final GordianParameters myParams = new GordianParameters(pFactoryType);
+        myParams.setSecurityPhrase(pSecurityPhrase);
+        return myGenerator.newFactory(myParams);
     }
 
     /**
@@ -73,8 +59,12 @@ public final class GordianGenerator {
      * @throws OceanusException on error
      */
     public static GordianFactory createRandomFactory() throws OceanusException {
-        /* Create the random factory */
-        return GordianBuilder.createRandomFactory();
+        /* Allocate a generator and the parameters */
+        final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
+        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
+        myParams.setSecuritySeeds(GordianRandomSource.getStrongRandom());
+        myParams.setInternal();
+        return myGenerator.newFactory(myParams);
     }
 
     /**
@@ -87,7 +77,7 @@ public final class GordianGenerator {
     public static GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
                                                        final char[] pPassword) throws OceanusException {
         /* Create the factoryLock */
-        return GordianBuilder.createFactoryLock(pFactory, pPassword);
+        return new GordianCoreFactoryLock(pFactory, pPassword);
     }
 
     /**
@@ -101,23 +91,32 @@ public final class GordianGenerator {
     public static GordianFactoryLock resolveFactoryLock(final GordianFactory pFactory,
                                                         final byte[] pLock,
                                                         final char[] pPassword) throws OceanusException {
-        /* Resolve the factoryLock */
-        return GordianBuilder.resolveFactoryLock(pFactory, pLock, pPassword);
+        /* Create the factoryLock */
+        final GordianCoreFactoryLock myLock = new GordianCoreFactoryLock(pFactory, pLock, pPassword);
+        final GordianParameters myParams = myLock.getParameters();
+        final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
+        final GordianFactory myFactory = myGenerator.newFactory(myParams);
+        myLock.setFactory(myFactory);
+        return myLock;
     }
 
     /**
-     * Create a password Manager.
-     * @param pFactory the GUI Factory
-     * @param pFactoryType the factoryType
-     * @param pSecurityPhrase the security phrase
-     * @return the password Manager
-     * @throws OceanusException on error
+     * True Factory generator.
      */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pFactory,
-                                                            final GordianFactoryType pFactoryType,
-                                                            final char[] pSecurityPhrase) throws OceanusException {
-        final GordianFactory myFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
-        final GordianDialogController myController = new GordianBaseDialogControl(pFactory);
-        return new GordianBasePasswordManager(myFactory, myController);
+    private static class GordianUtilGenerator
+            implements GordianFactoryGenerator {
+        /**
+         * Constructor.
+         */
+        GordianUtilGenerator() {
+        }
+
+        @Override
+        public GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
+            /* Allocate the factory */
+            return GordianFactoryType.BC.equals(pParameters.getFactoryType())
+                    ? new BouncyFactory(this, pParameters)
+                    : new JcaFactory(this, pParameters);
+        }
     }
 }

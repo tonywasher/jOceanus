@@ -141,8 +141,7 @@ public enum GordianAgreementType {
             case HQC:
             case BIKE:
             case NTRU:
-            case NTRULPRIME:
-            case SNTRUPRIME:
+            case NTRUPRIME:
                 return true;
             default:
                 return false;

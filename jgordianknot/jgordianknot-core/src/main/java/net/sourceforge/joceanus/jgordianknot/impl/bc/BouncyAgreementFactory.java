@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonymousAgreement;
@@ -110,10 +112,11 @@ public class BouncyAgreementFactory
                 return new BouncyBIKEAgreement(getFactory(), pSpec);
             case NTRU:
                 return new BouncyNTRUAgreement(getFactory(), pSpec);
-            case NTRULPRIME:
-                return new BouncyNTRULPrimeAgreement(getFactory(), pSpec);
-            case SNTRUPRIME:
-                return new BouncySNTRUPrimeAgreement(getFactory(), pSpec);
+            case NTRUPRIME:
+                final GordianNTRUPrimeSpec mySpec = pSpec.getKeyPairSpec().getNTRUPrimeKeySpec();
+                return mySpec.getType() == GordianNTRUPrimeType.NTRUL
+                        ? new BouncyNTRULPrimeAgreement(getFactory(), pSpec)
+                        : new BouncySNTRUPrimeAgreement(getFactory(), pSpec);
             case XDH:
                 return getBCXDHAgreement(pSpec);
             case COMPOSITE:

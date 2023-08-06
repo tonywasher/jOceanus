@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
@@ -239,11 +240,10 @@ public class GordianAgreementAlgId {
             case NTRU:
                 myId = myId.branch(Integer.toString(pSpec.getNTRUKeySpec().ordinal() + 1));
                 break;
-            case NTRULPRIME:
-                myId = myId.branch(Integer.toString(pSpec.getNTRULPrimeKeySpec().ordinal() + 1));
-                break;
-            case SNTRUPRIME:
-                myId = myId.branch(Integer.toString(pSpec.getSNTRUPrimeKeySpec().ordinal() + 1));
+            case NTRUPRIME:
+                final GordianNTRUPrimeSpec myNTRUPrime = pSpec.getNTRUPrimeKeySpec();
+                myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));
+                myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));
                 break;
             case XMSS:
                 final GordianXMSSKeySpec myXMSS = pSpec.getXMSSKeySpec();
@@ -258,13 +258,17 @@ public class GordianAgreementAlgId {
                 final Object mySubType = pSpec.getSubKeyType();
                 if (mySubType instanceof GordianLMSKeySpec) {
                     final GordianLMSKeySpec myLMS = (GordianLMSKeySpec) mySubType;
-                    myId = myId.branch(Integer.toString(myLMS.getSigType().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getOtsType().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHash().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHeight().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getWidth().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getLength().ordinal() + 1));
                 } else if (mySubType instanceof GordianHSSKeySpec) {
                     final GordianHSSKeySpec myHSS = (GordianHSSKeySpec) mySubType;
                     final GordianLMSKeySpec myLMS = myHSS.getKeySpec();
-                    myId = myId.branch(Integer.toString(myLMS.getSigType().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getOtsType().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHash().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getHeight().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getWidth().ordinal() + 1));
+                    myId = myId.branch(Integer.toString(myLMS.getLength().ordinal() + 1));
                     myId = myId.branch(Integer.toString(myHSS.getTreeDepth()));
                 }
                 break;

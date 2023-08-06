@@ -6,6 +6,7 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.DefaultBufferedBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
@@ -60,7 +61,7 @@ public class KGCMXBlockCipher
 
     public KGCMXBlockCipher(BlockCipher dstu7624Engine) {
         this.engine = dstu7624Engine;
-        this.ctrEngine = new BufferedBlockCipher(new KCTRBlockCipher(this.engine));
+        this.ctrEngine = new DefaultBufferedBlockCipher(new KCTRBlockCipher(this.engine));
         this.macSize = -1;
         this.blockSize = engine.getBlockSize();
 

@@ -141,7 +141,7 @@ public final class BouncyNTRULPrimeKeyPair {
             theGenerator = new NTRULPRimeKeyPairGenerator();
 
             /* Determine the parameters */
-            final NTRULPRimeParameters myParms = pKeySpec.getNTRULPrimeKeySpec().getParameters();
+            final NTRULPRimeParameters myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getNTRULParameters();
 
             /* Initialise the generator */
             final NTRULPRimeKeyGenerationParameters myParams = new NTRULPRimeKeyGenerationParameters(getRandom(), myParms);

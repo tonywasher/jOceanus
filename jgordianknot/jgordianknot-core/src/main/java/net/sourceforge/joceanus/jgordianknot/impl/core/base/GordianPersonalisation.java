@@ -132,7 +132,7 @@ public class GordianPersonalisation {
 
         /* Obtain configuration */
         final byte[] myPersonalBytes = TethysDataConverter.stringToByteArray(BASE_PERSONAL);
-        byte[] myPhraseBytes = pFactory.getSecurityPhrase();
+        byte[] myPhraseBytes = pFactory.getSecuritySeed();
         if (myPhraseBytes == null) {
             myPhraseBytes = TethysDataConverter.stringToByteArray(getHostName());
         }

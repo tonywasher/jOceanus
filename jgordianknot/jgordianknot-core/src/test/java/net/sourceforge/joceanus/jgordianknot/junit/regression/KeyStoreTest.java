@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -49,21 +48,23 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSOtsType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSSigType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRULPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHash;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHeight;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSWidth;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSNTRUPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
@@ -170,8 +171,10 @@ public class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM2)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.falcon(GordianFALCONSpec.FALCON512)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.picnic(GordianPICNICSpec.L1FS)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpec.rainbow(GordianRainbowSpec.CLASSIC3)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpec.lms(GordianLMSKeySpec.keySpec(GordianLMSSigType.H5, GordianLMSOtsType.W1))),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpec.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
+                                                                                           GordianLMSWidth.W1, GordianLength.LEN_256))),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
                                                                            GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
                                                                            GordianKeyPairSpec.ed25519())),
@@ -189,8 +192,7 @@ public class KeyStoreTest {
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.hqc(GordianHQCSpec.HQC128)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.bike(GordianBIKESpec.BIKE128)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS821)),
-            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.ntrulprime(GordianNTRULPrimeSpec.PR653)),
-            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.sntruprime(GordianSNTRUPrimeSpec.PR653)),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR653))),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.composite(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488),
                                                                            GordianKeyPairSpec.frodo(GordianFRODOSpec.AES640),
                                                                            GordianKeyPairSpec.saber(GordianSABERSpec.BASE128))),

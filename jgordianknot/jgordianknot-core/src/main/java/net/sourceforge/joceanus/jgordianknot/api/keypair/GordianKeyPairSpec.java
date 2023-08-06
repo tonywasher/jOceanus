@@ -299,21 +299,12 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Create NTRULPRIMEKey.
-     * @param pSpec the NTRULPRIME Spec
+     * Create NTRUPRIMEKey.
+     * @param pSpec the NTRUPRIME Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec ntrulprime(final GordianNTRULPrimeSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.NTRULPRIME, pSpec);
-    }
-
-    /**
-     * Create SNTRUPRIMEKey.
-     * @param pSpec the SNTRUPRIME Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec sntruprime(final GordianSNTRUPrimeSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SNTRUPRIME, pSpec);
+    public static GordianKeyPairSpec ntruprime(final GordianNTRUPrimeSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.NTRUPRIME, pSpec);
     }
 
     /**
@@ -581,25 +572,14 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the NTRULPRIME keySpec.
+     * Obtain the NTRUPRIME keySpec.
      * @return the keySpec.
      */
-    public GordianNTRULPrimeSpec getNTRULPrimeKeySpec() {
-        if (!(theSubKeyType instanceof GordianNTRULPrimeSpec)) {
+    public GordianNTRUPrimeSpec getNTRUPrimeKeySpec() {
+        if (!(theSubKeyType instanceof GordianNTRUPrimeSpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianNTRULPrimeSpec) theSubKeyType;
-    }
-
-    /**
-     * Obtain the SNTRUPRIME keySpec.
-     * @return the keySpec.
-     */
-    public GordianSNTRUPrimeSpec getSNTRUPrimeKeySpec() {
-        if (!(theSubKeyType instanceof GordianSNTRUPrimeSpec)) {
-            throw new IllegalArgumentException();
-        }
-        return (GordianSNTRUPrimeSpec) theSubKeyType;
+        return (GordianNTRUPrimeSpec) theSubKeyType;
     }
 
     /**
@@ -781,10 +761,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianBIKESpec;
             case NTRU:
                 return theSubKeyType instanceof GordianNTRUSpec;
-            case NTRULPRIME:
-                return theSubKeyType instanceof GordianNTRULPrimeSpec;
-            case SNTRUPRIME:
-                return theSubKeyType instanceof GordianSNTRUPrimeSpec;
+            case NTRUPRIME:
+                return theSubKeyType instanceof GordianNTRUPrimeSpec;
             case FALCON:
                 return theSubKeyType instanceof GordianFALCONSpec;
             case PICNIC:

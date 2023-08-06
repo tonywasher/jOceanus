@@ -56,8 +56,7 @@ public class PrometheusToolkit {
 
         /* Create the passwordManager */
         final MetisSecurityPreferences myPreferences = myPreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
-        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(),
-                myPreferences.getSecurityPhrase(), myPreferences.getKeySetHashSpec());
+        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getSecurityPhrase());
 
         /* Set this as the threadData */
         myThreadMgr.setThreadData(this);
@@ -91,13 +90,11 @@ public class PrometheusToolkit {
      * Create a Password Manager.
      * @param pFactoryType the factoryType
      * @param pSecurityPhrase the security phrase
-     * @param pKeySetSpec the keySetHashSpec
      * @return the manager
      * @throws OceanusException on error
      */
     private GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
-                                                        final char[] pSecurityPhrase,
-                                                        final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return GordianGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
+                                                        final char[] pSecurityPhrase) throws OceanusException {
+        return GordianGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase);
     }
 }

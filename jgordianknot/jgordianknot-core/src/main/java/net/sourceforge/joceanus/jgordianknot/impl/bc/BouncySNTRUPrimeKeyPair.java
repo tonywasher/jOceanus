@@ -141,7 +141,7 @@ public final class BouncySNTRUPrimeKeyPair {
             theGenerator = new SNTRUPrimeKeyPairGenerator();
 
             /* Determine the parameters */
-            final SNTRUPrimeParameters myParms = pKeySpec.getSNTRUPrimeKeySpec().getParameters();
+            final SNTRUPrimeParameters myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getSNTRUParameters();
 
             /* Initialise the generator */
             final SNTRUPrimeKeyGenerationParameters myParams = new SNTRUPrimeKeyGenerationParameters(getRandom(), myParms);

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
@@ -339,6 +340,7 @@ class KeySetTest {
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_192, true));
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, false));
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, true));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("keySet", () -> testRandomFactory())));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), myStream));
@@ -832,5 +834,18 @@ class KeySetTest {
         if (fullProfiles) {
             System.out.println("Elapsed: " + myElapsed);
         }
+    }
+
+    /**
+     * create a random factory and lock/resolve it.
+     * @throws OceanusException on error
+     */
+    private void testRandomFactory() throws OceanusException {
+        /* Create the random factory */
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final GordianFactoryLock myLock = GordianGenerator.createFactoryLock(myFactory, DEF_PASSWORD);
+        final GordianFactoryLock myUnlocked = GordianGenerator.resolveFactoryLock(myFactory, myLock.getExternalBuffer(), DEF_PASSWORD);
+        final GordianFactory myResolved = myUnlocked.getFactory();
+        Assertions.assertEquals(myFactory, myResolved, "Failed to lock/resolve factory");
     }
 }

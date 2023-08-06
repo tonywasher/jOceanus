@@ -20,12 +20,14 @@ import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory.GordianKeySetGenerate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -33,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * GordianKnot Core KeySet Factory.
  */
 public class GordianCoreKeySetFactory
-    implements GordianKeySetFactory {
+    implements GordianKeySetFactory, GordianKeySetGenerate {
     /**
      * KeySetOID branch.
      */
@@ -100,6 +102,14 @@ public class GordianCoreKeySetFactory
     public GordianKeySetHash deriveKeySetHash(final byte[] pHashBytes,
                                               final char[] pPassword) throws OceanusException {
         return GordianCoreKeySetHash.resolveKeySetHash(getFactory(), pHashBytes, pPassword);
+    }
+
+    @Override
+    public GordianKeySet generateKeySet(final byte[] pSeed,
+                                        final byte[] pIV) throws OceanusException {
+        final GordianCoreKeySet myKeySet = generateKeySet(new GordianKeySetSpec());
+        myKeySet.buildFromSecret(pSeed, pIV);
+        return myKeySet;
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -167,10 +168,10 @@ public class JcaKeyPairFactory
                 return new JcaBIKEKeyPairGenerator(getFactory(), pKeySpec);
             case NTRU:
                 return new JcaNTRUKeyPairGenerator(getFactory(), pKeySpec);
-            case NTRULPRIME:
-                return new JcaNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec);
-            case SNTRUPRIME:
-                return new JcaSNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
+            case NTRUPRIME:
+                return pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL
+                        ? new JcaNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
+                        : new JcaSNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
                 return new JcaFALCONKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:

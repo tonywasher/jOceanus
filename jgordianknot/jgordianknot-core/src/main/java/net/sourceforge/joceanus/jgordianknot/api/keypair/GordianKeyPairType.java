@@ -128,14 +128,9 @@ public enum GordianKeyPairType {
     NTRU,
 
     /**
-     * NTRULPRIME.
+     * NTRUPRIME.
      */
-    NTRULPRIME,
-
-    /**
-     * SNTRUPRIME.
-     */
-    SNTRUPRIME,
+    NTRUPRIME,
 
     /**
      * Falcon.
@@ -163,9 +158,6 @@ public enum GordianKeyPairType {
      */
     public boolean useRandomForSignatures() {
         switch (this) {
-            //case SPHINCSPLUS:
-            //case DILITHIUM:
-            //case FALCON:
             case PICNIC:
             case XMSS:
             case EDDSA:

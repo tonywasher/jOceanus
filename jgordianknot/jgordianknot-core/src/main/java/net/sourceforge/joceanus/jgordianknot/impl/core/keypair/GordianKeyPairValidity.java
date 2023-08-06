@@ -203,8 +203,7 @@ public final class GordianKeyPairValidity {
             case HQC:
             case BIKE:
             case NTRU:
-            case NTRULPRIME:
-            case SNTRUPRIME:
+            case NTRUPRIME:
                 return GordianAgreementSpec.kem(mySpec, GordianKDFType.NONE);
             default:
                 return null;
