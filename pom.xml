@@ -109,7 +109,7 @@
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.3.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.21.0</PMDPluginVersion>
-    <JacocoPluginVersion>0.8.9</JacocoPluginVersion>
+    <JacocoPluginVersion>0.8.10</JacocoPluginVersion>
     <GPGPluginVersion>3.1.0</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.16.0</VersionsPluginVersion>

@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -212,7 +213,7 @@ public class DataKeySet
 
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-            theKeySet = myKeySets.generateKeySet(mySecure.getKeySetSpec());
+            theKeySet = myKeySets.generateKeySet(new GordianKeySetSpec());
             theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
 
             /* Set the wrappedKeySetDef */

@@ -29,10 +29,9 @@ import org.junit.jupiter.api.Test;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
+import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBasePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCorePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -134,7 +133,7 @@ class PasswordManagerTest {
          * @param pHash the hashIndex
          * @throws OceanusException on error
          */
-        GordianKeySetHash resolveHash(final GordianCorePasswordManager pManager,
+        GordianKeySetHash resolveHash(final GordianBasePasswordManager pManager,
                                       final HashIndex pHash) throws OceanusException {
             final int myIndex = pHash.theIndex;
             final boolean isKnown = myIndex != UNKNOWN;
@@ -191,7 +190,7 @@ class PasswordManagerTest {
      * @return the new Hash
      * @throws OceanusException on error
      */
-    static HashIndex createNewHash(final GordianCorePasswordManager pManager,
+    static HashIndex createNewHash(final GordianBasePasswordManager pManager,
                                    final int pIndex) throws OceanusException {
         final HashIndex myHash = new HashIndex(pManager.newKeySetHash(NAMES[pIndex]), pIndex);
         HASHES.add(myHash);
@@ -205,7 +204,7 @@ class PasswordManagerTest {
      * @return the new Hash
      * @throws OceanusException on error
      */
-    static HashIndex createSimilarHash(final GordianCorePasswordManager pManager,
+    static HashIndex createSimilarHash(final GordianBasePasswordManager pManager,
                                        final HashIndex pHash) throws OceanusException {
         final HashIndex myHash = new HashIndex(pManager.similarKeySetHash(pHash.theHash), pHash.theIndex);
         HASHES.add(myHash);
@@ -219,9 +218,8 @@ class PasswordManagerTest {
     @BeforeAll
     public static void setUpHashes() throws OceanusException {
         /* Create the security manager */
-        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final GordianCorePasswordManager myManager = new GordianCorePasswordManager(myFactory, mySpec, new DialogController());
+        final GordianBasePasswordManager myManager = new GordianBasePasswordManager(myFactory, new DialogController());
 
         /* For each NAME */
         for (int i = 0; i < NAMES.length; i++) {
@@ -246,10 +244,9 @@ class PasswordManagerTest {
     @Test
     void PasswordManagerTests() throws OceanusException {
         /* Create the security manager */
-        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final DialogController myController = new DialogController();
         final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final GordianCorePasswordManager myManager = new GordianCorePasswordManager(myFactory, mySpec, myController);
+        final GordianBasePasswordManager myManager = new GordianBasePasswordManager(myFactory, myController);
 
         /* Loop through the hashes in the list */
         for (HashIndex myHash : HASHES) {

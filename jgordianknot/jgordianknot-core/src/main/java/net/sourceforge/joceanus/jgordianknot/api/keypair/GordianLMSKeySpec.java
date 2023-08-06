@@ -25,8 +25,6 @@ import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * LMS KeyTypes.
@@ -255,10 +253,9 @@ public class GordianLMSKeySpec {
      * @param pSigParams the sigParameters
      * @param pOtsParams the otsParameters
      * @return the matching keySpec
-     * @throws OceanusException on error
      */
     public static GordianLMSKeySpec determineKeySpec(final LMSigParameters pSigParams,
-                                                     final LMOtsParameters pOtsParams) throws OceanusException {
+                                                     final LMOtsParameters pOtsParams) {
         final List<GordianLMSKeySpec> mySpecs = listPossibleKeySpecs();
         for (GordianLMSKeySpec mySpec : mySpecs) {
             if (pSigParams.equals(mySpec.getParameters().getLMSigParam())
@@ -266,7 +263,7 @@ public class GordianLMSKeySpec {
                 return mySpec;
             }
         }
-        throw new GordianDataException("Unsupported LMSSpec");
+        throw new IllegalArgumentException("Unsupported LMSSpec");
     }
 
     /**
