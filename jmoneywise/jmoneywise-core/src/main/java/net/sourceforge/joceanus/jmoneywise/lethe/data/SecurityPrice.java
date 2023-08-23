@@ -30,8 +30,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedPrice;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -39,11 +37,13 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -191,7 +191,7 @@ public class SecurityPrice
     @Override
     public String toString() {
         /* Access Key Values */
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         final Object mySecurity = myValues.getValue(FIELD_SECURITY);
         final Object myDate = myValues.getValue(FIELD_DATE);
         final Object myPrice = myValues.getValue(FIELD_PRICE);
@@ -236,7 +236,7 @@ public class SecurityPrice
      * Obtain Encrypted Price Field.
      * @return the field
      */
-    public MetisEncryptedPrice getPriceField() {
+    public PrometheusEncryptedPair getPriceField() {
         return getPriceField(getValueSet());
     }
 
@@ -301,7 +301,7 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Price
      */
-    public static TethysPrice getPrice(final MetisEncryptedValueSet pValueSet) {
+    public static TethysPrice getPrice(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_PRICE, TethysPrice.class);
     }
 
@@ -310,7 +310,7 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Price
      */
-    public static byte[] getPriceBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getPriceBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_PRICE);
     }
 
@@ -319,8 +319,8 @@ public class SecurityPrice
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static MetisEncryptedPrice getPriceField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRICE, MetisEncryptedPrice.class);
+    private static PrometheusEncryptedPair getPriceField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PRICE, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -377,7 +377,7 @@ public class SecurityPrice
      * Set the price.
      * @param pValue the price
      */
-    public void setValuePrice(final MetisEncryptedPrice pValue) {
+    public void setValuePrice(final PrometheusEncryptedPair pValue) {
         getValueSet().setValue(FIELD_PRICE, pValue);
     }
 

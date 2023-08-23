@@ -22,7 +22,6 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
@@ -202,8 +202,8 @@ public final class SpotSecurityPrice
 
     @Override
     public MetisDataState getState() {
-        final MetisEncryptedValueSet myCurr = getValueSet();
-        final MetisEncryptedValueSet myBase = getOriginalValues();
+        final EncryptedValueSet myCurr = getValueSet();
+        final EncryptedValueSet myBase = getOriginalValues();
 
         /* If we have no changes we are CLEAN */
         if (myCurr.getVersion() == 0) {

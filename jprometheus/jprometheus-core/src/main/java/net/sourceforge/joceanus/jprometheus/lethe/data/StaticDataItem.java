@@ -26,12 +26,11 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -272,7 +271,7 @@ public abstract class StaticDataItem
      * Return the encrypted name field of the Static Data.
      * @return the encrypted field
      */
-    private MetisEncryptedString getNameField() {
+    private PrometheusEncryptedPair getNameField() {
         return getNameField(getValueSet());
     }
 
@@ -296,7 +295,7 @@ public abstract class StaticDataItem
      * Return the encrypted description field of the Static Data.
      * @return the encrypted name
      */
-    private MetisEncryptedString getDescField() {
+    private PrometheusEncryptedPair getDescField() {
         return getDescField(getValueSet());
     }
 
@@ -334,7 +333,7 @@ public abstract class StaticDataItem
      * @param pValueSet the valueSet
      * @return the name
      */
-    public static String getName(final MetisEncryptedValueSet pValueSet) {
+    public static String getName(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
@@ -343,7 +342,7 @@ public abstract class StaticDataItem
      * @param pValueSet the valueSet
      * @return the encrypted name
      */
-    public static byte[] getNameBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
@@ -352,8 +351,8 @@ public abstract class StaticDataItem
      * @param pValueSet the valueSet
      * @return the encrypted name field
      */
-    private static MetisEncryptedString getNameField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, MetisEncryptedString.class);
+    private static PrometheusEncryptedPair getNameField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NAME, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -361,7 +360,7 @@ public abstract class StaticDataItem
      * @param pValueSet the valueSet
      * @return the description
      */
-    public static String getDesc(final MetisEncryptedValueSet pValueSet) {
+    public static String getDesc(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
@@ -370,7 +369,7 @@ public abstract class StaticDataItem
      * @param pValueSet the valueSet
      * @return the encrypted description
      */
-    public static byte[] getDescBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
@@ -379,8 +378,8 @@ public abstract class StaticDataItem
      * @param pValueSet the valueSet
      * @return the encrypted description field
      */
-    private static MetisEncryptedString getDescField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, MetisEncryptedString.class);
+    private static PrometheusEncryptedPair getDescField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -443,7 +442,7 @@ public abstract class StaticDataItem
      * Set the Name field.
      * @param pField the encrypted name
      */
-    private void setValueName(final MetisEncryptedString pField) {
+    private void setValueName(final PrometheusEncryptedPair pField) {
         getValueSet().setValue(FIELD_NAME, pField);
     }
 
@@ -469,7 +468,7 @@ public abstract class StaticDataItem
      * Set the Description field.
      * @param pField the encrypted description
      */
-    private void setValueDesc(final MetisEncryptedString pField) {
+    private void setValueDesc(final PrometheusEncryptedPair pField) {
         getValueSet().setValue(FIELD_DESC, pField);
     }
 

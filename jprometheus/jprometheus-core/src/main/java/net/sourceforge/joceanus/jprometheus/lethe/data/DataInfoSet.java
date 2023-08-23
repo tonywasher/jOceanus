@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
@@ -225,7 +225,7 @@ public abstract class DataInfoSet<T extends DataInfoItem>
      * @param pInfoClass the Info Class
      * @return the value
      */
-    public MetisEncryptedField<?> getField(final DataInfoClass pInfoClass) {
+    public PrometheusEncryptedPair getField(final DataInfoClass pInfoClass) {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();

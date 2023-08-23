@@ -17,12 +17,13 @@
 package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import java.util.Arrays;
+import java.util.Objects;
 
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference.MetisDataDiffers;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -38,17 +39,33 @@ public class PrometheusEncryptedPair
     /**
      * The encryptedBytes.
      */
-    private final byte[] theBytes;
+    private byte[] theBytes;
+
+    /**
+     * The keyset.
+     */
+    private GordianKeySet theKeySet;
 
     /**
      * Constructor.
+     * @param pKeySet the keySet
      * @param pValue the value.
      * @param pBytes the encrypted bytes
      */
-    PrometheusEncryptedPair(final Object pValue,
+    PrometheusEncryptedPair(final GordianKeySet pKeySet,
+                            final Object pValue,
                             final byte[] pBytes) {
+        theKeySet = pKeySet;
         theValue = pValue;
         theBytes = pBytes;
+    }
+
+    /**
+     * Obtain the keySet.
+     * @return the keySet.
+     */
+    public GordianKeySet getKeySet() {
+        return theKeySet;
     }
 
     /**
@@ -65,6 +82,31 @@ public class PrometheusEncryptedPair
      */
     public byte[] getBytes() {
         return theBytes;
+    }
+
+    /**
+     * Adopt Encryption.
+     * @param pGenerator the generator
+     * @param pSource field to adopt encryption from
+     * @throws OceanusException on error
+     */
+    protected void adoptEncryption(final PrometheusFieldGenerator pGenerator,
+                                   final PrometheusEncryptedPair pSource) throws OceanusException {
+        /* Store the keySet */
+        theKeySet = pGenerator.getKeySet();
+
+        /* If we need to renew the encryption */
+        if (pSource == null
+                || MetisDataDifference.difference(theKeySet, pSource.getKeySet()).isDifferent()
+                || MetisDataDifference.difference(getValue(), pSource.getValue()).isDifferent()) {
+            /* encrypt the value */
+            pGenerator.encryptValue(getValue());
+
+            /* else we can simply adopt the underlying encryption */
+        } else {
+            /* Pick up the underlying encryption */
+            theBytes = pSource.getBytes();
+        }
     }
 
     @Override
@@ -97,6 +139,11 @@ public class PrometheusEncryptedPair
         final PrometheusEncryptedPair myThat = (PrometheusEncryptedPair) pThat;
 
         /* Check differences */
+        if (!theKeySet.equals(myThat.getKeySet())) {
+            return false;
+        }
+
+        /* Check differences */
         if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
             return false;
         }
@@ -107,11 +154,7 @@ public class PrometheusEncryptedPair
 
     @Override
     public int hashCode() {
-        /* Calculate hash */
-        int myHashCode = MetisFieldSet.HASH_PRIME
-                * getValue().hashCode();
-        myHashCode += Arrays.hashCode(theBytes);
-        return myHashCode;
+        return Objects.hash(theKeySet, theValue, Arrays.hashCode(theBytes));
     }
 
     @Override
@@ -127,7 +170,7 @@ public class PrometheusEncryptedPair
         }
 
         /* Access as correct class */
-        final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) pThat;
+        final PrometheusEncryptedPair myField = (PrometheusEncryptedPair) pThat;
 
         /* Compare Unencrypted value */
         if (MetisDataDifference.difference(getValue(), myField.getValue()).isDifferent()) {

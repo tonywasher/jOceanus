@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
@@ -266,7 +265,7 @@ public abstract class DataItem
 
         /* Allocate initial value set and declare it */
         final MetisValueSet myValues = (this instanceof EncryptedItem)
-                                                                       ? new MetisEncryptedValueSet(this)
+                                                                       ? new EncryptedValueSet(this)
                                                                        : new MetisValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);

@@ -22,18 +22,18 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoLinkSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -176,7 +176,7 @@ public class TransactionTag
      * Obtain Encrypted Name Field.
      * @return the Field
      */
-    private MetisEncryptedString getNameField() {
+    private PrometheusEncryptedPair getNameField() {
         return getNameField(getValueSet());
     }
 
@@ -200,7 +200,7 @@ public class TransactionTag
      * Obtain Encrypted Description Field.
      * @return the Field
      */
-    private MetisEncryptedString getDescField() {
+    private PrometheusEncryptedPair getDescField() {
         return getDescField(getValueSet());
     }
 
@@ -209,7 +209,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the Name
      */
-    public static String getName(final MetisEncryptedValueSet pValueSet) {
+    public static String getName(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
@@ -218,7 +218,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getNameBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
@@ -227,8 +227,8 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the field
      */
-    private static MetisEncryptedString getNameField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, MetisEncryptedString.class);
+    private static PrometheusEncryptedPair getNameField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_NAME, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -236,7 +236,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the description
      */
-    public static String getDesc(final MetisEncryptedValueSet pValueSet) {
+    public static String getDesc(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
@@ -245,7 +245,7 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getDescBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
@@ -254,8 +254,8 @@ public class TransactionTag
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static MetisEncryptedString getDescField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, MetisEncryptedString.class);
+    private static PrometheusEncryptedPair getDescField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -280,7 +280,7 @@ public class TransactionTag
      * Set name value.
      * @param pValue the value
      */
-    private void setValueName(final MetisEncryptedString pValue) {
+    private void setValueName(final PrometheusEncryptedPair pValue) {
         getValueSet().setValue(FIELD_NAME, pValue);
     }
 
@@ -306,7 +306,7 @@ public class TransactionTag
      * Set description value.
      * @param pValue the value
      */
-    private void setValueDesc(final MetisEncryptedString pValue) {
+    private void setValueDesc(final PrometheusEncryptedPair pValue) {
         getValueSet().setValue(FIELD_DESC, pValue);
     }
 
