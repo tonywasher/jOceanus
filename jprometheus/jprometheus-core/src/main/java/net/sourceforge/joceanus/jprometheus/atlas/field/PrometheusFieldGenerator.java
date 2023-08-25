@@ -154,7 +154,7 @@ public class PrometheusFieldGenerator {
      * @return the dataType
      * @throws OceanusException on error
      */
-    private static MetisDataType getDataTypeForValue(final Object pValue) throws OceanusException {
+    public static MetisDataType getDataTypeForValue(final Object pValue) throws OceanusException {
         if (pValue instanceof String) {
             return MetisDataType.STRING;
         }

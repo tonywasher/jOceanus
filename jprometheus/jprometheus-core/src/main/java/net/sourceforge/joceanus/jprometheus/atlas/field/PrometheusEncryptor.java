@@ -70,6 +70,29 @@ public class PrometheusEncryptor {
     }
 
     /**
+     * Obtain the keySet.
+     * @return the keySet
+     */
+    public GordianKeySet getKeySet() {
+        return theKeySet;
+    }
+
+    /**
+     * Encrypt a value.
+     * @param pValue the value to encrypt.
+     * @return the encryptedBytes
+     * @throws OceanusException on error
+     */
+    public byte[] encryptValue(final Object pValue) throws OceanusException {
+        /* Access the encryptor */
+        final MetisDataType myDataType = PrometheusFieldGenerator.getDataTypeForValue(pValue);
+        final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
+
+        final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);
+        return theKeySet == null ? null : theKeySet.encryptBytes(myBytes);
+    }
+
+    /**
      * Encrypt a value.
      * @param pValue the value to encrypt.
      * @param pField the field definition
@@ -130,6 +153,18 @@ public class PrometheusEncryptor {
         myMap.put(MetisDataType.UNITS, new PrometheusUnitsEncryptor());
         myMap.put(MetisDataType.RATIO, new PrometheusRatioEncryptor());
         return myMap;
+    }
+
+    /**
+     * Adopt Encryption.
+     * @param pTarget the target field
+     * @param pSource the source field
+     * @throws OceanusException on error
+     */
+    public void adoptEncryption(final PrometheusEncryptedPair pTarget,
+                                final PrometheusEncryptedPair pSource) throws OceanusException {
+        /* Adopt the encryption */
+        pTarget.adoptEncryption(this, pSource);
     }
 
     /**

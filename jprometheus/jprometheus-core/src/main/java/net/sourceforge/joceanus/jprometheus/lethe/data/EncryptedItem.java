@@ -21,7 +21,6 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
@@ -239,8 +238,8 @@ public abstract class EncryptedItem
      * @param pNew The new Pair
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static MetisDataDifference getDifference(final MetisEncryptedField<?> pCurr,
-                                                    final MetisEncryptedField<?> pNew) {
+    public static MetisDataDifference getDifference(final PrometheusEncryptedPair pCurr,
+                                                    final PrometheusEncryptedPair pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null)

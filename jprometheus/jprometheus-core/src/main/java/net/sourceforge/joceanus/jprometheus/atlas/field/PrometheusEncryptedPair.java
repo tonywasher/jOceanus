@@ -32,6 +32,31 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 public class PrometheusEncryptedPair
     implements MetisDataObjectFormat, MetisDataDiffers {
     /**
+     * Encrypted Money length.
+     */
+    public static final int MONEYLEN = 15;
+
+    /**
+     * Encrypted Units length.
+     */
+    public static final int UNITSLEN = 15;
+
+    /**
+     * Encrypted Rate length.
+     */
+    public static final int RATELEN = 10;
+
+    /**
+     * Encrypted Price length.
+     */
+    public static final int PRICELEN = 15;
+
+    /**
+     * Encrypted Ratio length.
+     */
+    public static final int RATIOLEN = 10;
+
+    /**
      * The value.
      */
     private final Object theValue;
@@ -100,7 +125,32 @@ public class PrometheusEncryptedPair
                 || MetisDataDifference.difference(theKeySet, pSource.getKeySet()).isDifferent()
                 || MetisDataDifference.difference(getValue(), pSource.getValue()).isDifferent()) {
             /* encrypt the value */
-            pGenerator.encryptValue(getValue());
+            theBytes = pGenerator.encryptValue(getValue());
+
+            /* else we can simply adopt the underlying encryption */
+        } else {
+            /* Pick up the underlying encryption */
+            theBytes = pSource.getBytes();
+        }
+    }
+
+    /**
+     * Adopt Encryption.
+     * @param pEncryptor the encryptor
+     * @param pSource field to adopt encryption from
+     * @throws OceanusException on error
+     */
+    protected void adoptEncryption(final PrometheusEncryptor pEncryptor,
+                                   final PrometheusEncryptedPair pSource) throws OceanusException {
+        /* Store the keySet */
+        theKeySet = pEncryptor.getKeySet();
+
+        /* If we need to renew the encryption */
+        if (pSource == null
+                || MetisDataDifference.difference(theKeySet, pSource.getKeySet()).isDifferent()
+                || MetisDataDifference.difference(getValue(), pSource.getValue()).isDifferent()) {
+            /* encrypt the value */
+            theBytes = pEncryptor.encryptValue(getValue());
 
             /* else we can simply adopt the underlying encryption */
         } else {
