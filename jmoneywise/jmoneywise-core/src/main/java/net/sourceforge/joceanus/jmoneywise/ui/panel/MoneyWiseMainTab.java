@@ -124,8 +124,7 @@ public class MoneyWiseMainTab
      */
     public MoneyWiseMainTab(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create prometheus toolkit */
-        final MetisToolkit myMetisToolkit = new MetisToolkit(pFactory);
-        final PrometheusToolkit myToolkit = new PrometheusToolkit(myMetisToolkit);
+        final PrometheusToolkit myToolkit = new PrometheusToolkit(pFactory);
 
         /* create the view */
         theView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());

@@ -129,14 +129,14 @@ public interface MetisFieldColours {
      * MetisColorPreferences.
      */
     class MetisColorPreferences
-            extends MetisPreferenceSet<MetisColorPreferenceKey> {
+            extends MetisPreferenceSet {
         /**
          * Constructor.
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
         public MetisColorPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisColorPreferenceKey.class, MetisColorResource.FIELDCOLOR_PREFS);
+            super(pManager, MetisColorResource.FIELDCOLOR_PREFS);
         }
 
         /**
@@ -204,7 +204,7 @@ public interface MetisFieldColours {
          */
         private void defaultColour(final MetisColorPreferenceKey pKey,
                                    final String pDefault) {
-            final MetisStringPreference<MetisColorPreferenceKey> myPref = getStringPreference(pKey);
+            final MetisStringPreference myPref = getStringPreference(pKey);
             if (!myPref.isAvailable()) {
                 myPref.setValue(pDefault);
             }

@@ -99,7 +99,7 @@ public interface PrometheusBackup {
      * PrometheusBackupPreferences.
      */
     class PrometheusBackupPreferences
-            extends MetisPreferenceSet<PrometheusBackupPreferenceKey> {
+            extends MetisPreferenceSet {
         /**
          * Default Number of Active KeySets.
          */
@@ -111,7 +111,7 @@ public interface PrometheusBackup {
          * @throws OceanusException on error
          */
         public PrometheusBackupPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusBackupPreferenceKey.class, PrometheusPreferenceResource.BUPREF_PREFNAME);
+            super(pManager, PrometheusPreferenceResource.BUPREF_PREFNAME);
         }
 
         @Override
@@ -127,7 +127,7 @@ public interface PrometheusBackup {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the prefix is specified */
-            MetisStringPreference<PrometheusBackupPreferenceKey> myPref = getStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            MetisStringPreference myPref = getStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
             if (!myPref.isAvailable()) {
                 myPref.setValue("MoneyWiseBackup");
             }
@@ -145,20 +145,20 @@ public interface PrometheusBackup {
             }
 
             /* Make sure that the enum is specified */
-            final MetisEnumPreference<PrometheusBackupPreferenceKey, PrometheusSheetWorkBookType> myTypePref
+            final MetisEnumPreference<PrometheusSheetWorkBookType> myTypePref
                     = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, PrometheusSheetWorkBookType.class);
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(PrometheusSheetWorkBookType.OASIS);
             }
 
             /* Make sure that the date is specified */
-            final MetisDatePreference<PrometheusBackupPreferenceKey> myDatePref = getDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
+            final MetisDatePreference myDatePref = getDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
             if (!myDatePref.isAvailable()) {
                 myDatePref.setValue(new TethysDate());
             }
 
             /* Make sure that the option is specified */
-            final MetisBooleanPreference<PrometheusBackupPreferenceKey> myOption = getBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
+            final MetisBooleanPreference myOption = getBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
             if (!myOption.isAvailable()) {
                 myOption.setValue(Boolean.FALSE);
             }

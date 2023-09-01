@@ -19,6 +19,7 @@
  */
 module net.sourceforge.joceanus.jprometheus.core {
     /* Java Libraries */
+    requires java.prefs;
     requires java.sql;
 
     /* jOceanus */

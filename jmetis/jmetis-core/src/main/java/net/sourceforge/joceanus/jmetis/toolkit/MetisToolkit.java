@@ -61,7 +61,7 @@ public class MetisToolkit {
     /**
      * Preference Manager.
      */
-    private final MetisPreferenceManager thePreferenceManager;
+    private MetisPreferenceManager thePreferenceManager;
 
     /**
      * GUI Factory.
@@ -86,7 +86,7 @@ public class MetisToolkit {
     /**
      * Colour Preferences.
      */
-    private final MetisColorPreferences theColorPreferences;
+    private MetisColorPreferences theColorPreferences;
 
     /**
      * Program Definition.
@@ -99,6 +99,17 @@ public class MetisToolkit {
      * @throws OceanusException on error
      */
     public MetisToolkit(final TethysUIFactory<?> pFactory) throws OceanusException {
+        this(pFactory, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pPreference creat preference manager
+     * @throws OceanusException on error
+     */
+    public MetisToolkit(final TethysUIFactory<?> pFactory,
+                        final boolean pPreference) throws OceanusException {
         /* Store parameters */
         theGuiFactory = pFactory;
 
@@ -115,9 +126,6 @@ public class MetisToolkit {
         /* Record the profile */
         setProfile(theGuiFactory.getActiveProfile());
 
-        /* Create the preference manager */
-        thePreferenceManager = new MetisPreferenceManager(theViewerManager);
-
         /* Extend the formatter */
         getFormatter().extendFormatter(new MetisDataFormatter(getFormatter()));
 
@@ -125,8 +133,24 @@ public class MetisToolkit {
         theThreadManager = theGuiFactory.threadFactory().newThreadManager();
         attachToThreadManager();
 
+        /* If we are setting up a MetisPreferenceManager */
+        if (pPreference) {
+            /* Create the preference manager */
+            thePreferenceManager = new MetisPreferenceManager(theViewerManager);
+
+            /* Set up colors */
+            setUpColors(thePreferenceManager);
+        }
+    }
+
+    /**
+     * Set up colors.
+     * @param pPreferenceMgr the preference manager
+     */
+    public void setUpColors(final MetisPreferenceManager pPreferenceMgr) {
         /* Access the Colour Preferences */
-        theColorPreferences = thePreferenceManager.getPreferenceSet(MetisColorPreferences.class);
+        thePreferenceManager = pPreferenceMgr;
+        theColorPreferences = pPreferenceMgr.getPreferenceSet(MetisColorPreferences.class);
 
         /* Process the colour preferences */
         processColorPreferences();

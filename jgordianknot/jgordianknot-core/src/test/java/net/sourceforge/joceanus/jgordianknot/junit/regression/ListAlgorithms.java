@@ -122,9 +122,7 @@ public final class ListAlgorithms {
         if (algorithms.isEmpty()) {
             LOGGER.info("            None available.");
         } else {
-            final Iterator<String> it = algorithms.iterator();
-            while (it.hasNext()) {
-                final String name = it.next();
+            for (String name : algorithms) {
                 LOGGER.info("            "
                         + name);
             }

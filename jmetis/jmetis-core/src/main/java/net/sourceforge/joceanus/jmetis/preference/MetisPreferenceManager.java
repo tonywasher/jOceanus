@@ -72,7 +72,7 @@ public class MetisPreferenceManager
     /**
      * Map of preferenceSets.
      */
-    private final Map<String, MetisPreferenceSet<?>> theMap = new HashMap<>();
+    private final Map<String, MetisPreferenceSet> theMap = new HashMap<>();
 
     /**
      * Constructor.
@@ -121,7 +121,7 @@ public class MetisPreferenceManager
      * Obtain the collection of preference sets.
      * @return the preference sets
      */
-    public Collection<MetisPreferenceSet<?>> getPreferenceSets() {
+    public Collection<MetisPreferenceSet> getPreferenceSets() {
         return theMap.values();
     }
 
@@ -131,7 +131,7 @@ public class MetisPreferenceManager
      * @param pClazz the class of the preference set
      * @return the relevant preferenceSet
      */
-    public <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClazz) {
+    public <X extends MetisPreferenceSet> X getPreferenceSet(final Class<X> pClazz) {
         /* Synchronise */
         synchronized (this) {
             /* Locate a cached PreferenceSet */
@@ -156,12 +156,12 @@ public class MetisPreferenceManager
      * @param pClazz the class of the preference set
      * @return the new preferenceSet
      */
-    private <X extends MetisPreferenceSet<?>> X newPreferenceSet(final String pName,
-                                                                 final Class<X> pClazz) {
+    private <X extends MetisPreferenceSet> X newPreferenceSet(final String pName,
+                                                              final Class<X> pClazz) {
         /* Protect against exceptions */
         try {
             /* Obtain the relevant constructor */
-            final Constructor<X> myConstructor = pClazz.getConstructor(getClass());
+            final Constructor<X> myConstructor = pClazz.getConstructor(MetisPreferenceManager.class);
 
             /* Access the new set */
             final X mySet = myConstructor.newInstance(this);

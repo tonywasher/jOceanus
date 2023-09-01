@@ -77,7 +77,7 @@ public interface CoeusPreference {
      * CoeusPreferences.
      */
     class CoeusPreferences
-            extends MetisPreferenceSet<CoeusPreferenceKey> {
+            extends MetisPreferenceSet {
         /**
          * Base value for directories.
          */
@@ -89,7 +89,7 @@ public interface CoeusPreference {
          * @throws OceanusException on error
          */
         public CoeusPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, CoeusPreferenceKey.class, "Coeus Preferences");
+            super(pManager, "Coeus Preferences");
         }
 
         @Override
@@ -101,13 +101,13 @@ public interface CoeusPreference {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the server is specified */
-            final MetisStringPreference<CoeusPreferenceKey> myPref = getStringPreference(CoeusPreferenceKey.BASE);
+            final MetisStringPreference myPref = getStringPreference(CoeusPreferenceKey.BASE);
             if (!myPref.isAvailable()) {
                 myPref.setValue(BASE_DIR);
             }
 
             /* Make sure that the name is specified */
-            final MetisBooleanPreference<CoeusPreferenceKey> myBoolPref = getBooleanPreference(CoeusPreferenceKey.CALENDARYEAR);
+            final MetisBooleanPreference myBoolPref = getBooleanPreference(CoeusPreferenceKey.CALENDARYEAR);
             if (!myBoolPref.isAvailable()) {
                 myBoolPref.setValue(Boolean.FALSE);
             }
