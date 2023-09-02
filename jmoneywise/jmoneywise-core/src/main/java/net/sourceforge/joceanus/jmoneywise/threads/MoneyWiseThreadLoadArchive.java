@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -57,7 +57,7 @@ public class MoneyWiseThreadLoadArchive
 
         /* Load workbook */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
-        final MetisPreferenceManager myMgr = myPromToolkit.getToolkit().getPreferenceManager();
+        final PrometheusPreferenceManager myMgr = myPromToolkit.getPreferenceManager();
         final ArchiveLoader myLoader = new ArchiveLoader(myPromToolkit.getToolkit().getGuiFactory());
         final MoneyWiseData myData = theView.getNewData();
         myLoader.loadArchive(pManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));

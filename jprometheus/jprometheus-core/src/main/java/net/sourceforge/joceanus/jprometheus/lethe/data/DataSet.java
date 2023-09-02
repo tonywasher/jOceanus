@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferenceKey;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey.ControlKeyList;
@@ -158,10 +158,9 @@ public abstract class DataSet
         thePasswordMgr = pToolkit.getPasswordManager();
 
         /* Access the SecurityPreferences */
-        final MetisToolkit myToolkit = pToolkit.getToolkit();
-        final MetisPreferenceManager myPrefMgr = myToolkit.getPreferenceManager();
-        final MetisSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
-        theNumActiveKeySets = mySecPreferences.getIntegerValue(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
+        final PrometheusPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
+        final PrometheusSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);
+        theNumActiveKeySets = mySecPreferences.getIntegerValue(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
 
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);
@@ -172,6 +171,7 @@ public abstract class DataSet
         theListMap = new LinkedHashMap<>();
 
         /* record formatter */
+        final MetisToolkit myToolkit = pToolkit.getToolkit();
         theFormatter = myToolkit.getFormatter();
     }
 

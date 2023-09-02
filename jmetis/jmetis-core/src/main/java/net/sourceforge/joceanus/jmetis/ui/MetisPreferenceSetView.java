@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisBooleanPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisByteArrayPreference;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisCharArrayPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisDatePreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisEnumPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisIntegerPreference;
@@ -272,8 +271,6 @@ public class MetisPreferenceSetView
             return new DatePreferenceElement((MetisDatePreference) pItem);
         } else if (pItem instanceof MetisBooleanPreference) {
             return new BooleanPreferenceElement((MetisBooleanPreference) pItem);
-        } else if (pItem instanceof MetisCharArrayPreference) {
-            return new CharArrayPreferenceElement((MetisCharArrayPreference) pItem);
         } else if (pItem instanceof MetisStringPreference) {
             final MetisStringPreference myItem = (MetisStringPreference) pItem;
             final MetisPreferenceId myId = pItem.getType();
@@ -950,65 +947,6 @@ public class MetisPreferenceSetView
                 theSelector = theGuiFactory.dialogFactory().newDirectorySelector();
                 theSelector.setTitle(theItem.getDisplay());
             }
-        }
-    }
-
-    /**
-     * CharArray preference element.
-     */
-    private final class CharArrayPreferenceElement
-            implements PreferenceElement {
-        /**
-         * The Preference item.
-         */
-        private final MetisCharArrayPreference theItem;
-
-        /**
-         * The Field item.
-         */
-        private final TethysUICharArrayEditField theField;
-
-        /**
-         * Constructor.
-         *
-         * @param pItem the item
-         */
-        CharArrayPreferenceElement(final MetisCharArrayPreference pItem) {
-            /* Store parameters */
-            theItem = pItem;
-            theField = theGuiFactory.fieldFactory().newCharArrayField();
-            theField.setEditable(true);
-
-            /* Create the label */
-            final TethysUILabel myLabel = theGuiFactory.controlFactory().newLabel(pItem.getDisplay() + STR_COLON);
-            myLabel.setAlignment(TethysUIAlignment.EAST);
-
-            /* Add to the Grid Pane */
-            theGrid.addCell(myLabel);
-            theGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
-            theGrid.addCell(theField);
-            theGrid.setCellColumnSpan(theField, 2);
-            theGrid.allowCellGrowth(theField);
-            theGrid.newRow();
-
-            /* Create listener */
-            theField.getEventRegistrar().addEventListener(e -> {
-                pItem.setValue(theField.getValue());
-                notifyChanges();
-            });
-        }
-
-        @Override
-        public void updateField() {
-            /* Update the field */
-            theField.setValue(theItem.getValue());
-
-            /* Set changed indication */
-            theField.setTheAttributeState(TethysUIFieldAttribute.CHANGED, theItem.isChanged());
-            theField.adjustField();
-
-            /* Handle hidden state */
-            theField.setEnabled(!theItem.isHidden());
         }
     }
 }

@@ -41,6 +41,8 @@ public class PrometheusPreferenceView
     protected MetisPreferenceSetView createView(final TethysUIFactory<?> pFactory,
                                                 final MetisPreferenceSet pSet) {
         /* Create the underlying view */
-        return new PrometheusPreferenceSetView(pFactory, (PrometheusPreferenceSet) pSet);
+        return (pSet instanceof PrometheusPreferenceSet)
+            ? new PrometheusPreferenceSetView(pFactory, (PrometheusPreferenceSet) pSet)
+            : super.createView(pFactory, pSet);
     }
 }

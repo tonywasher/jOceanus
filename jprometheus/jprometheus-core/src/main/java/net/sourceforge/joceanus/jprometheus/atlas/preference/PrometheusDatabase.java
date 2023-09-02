@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -100,7 +99,7 @@ public interface PrometheusDatabase {
      * PrometheusDatabasePreferences.
      */
     class PrometheusDatabasePreferences
-            extends MetisPreferenceSet {
+            extends PrometheusPreferenceSet {
         /**
          * Default Database batch size.
          */
@@ -112,7 +111,7 @@ public interface PrometheusDatabase {
          * @throws OceanusException on error
          */
         public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusPreferenceResource.DBPREF_PREFNAME);
+            super((PrometheusPreferenceManager) pManager, PrometheusPreferenceResource.DBPREF_PREFNAME);
         }
 
         @Override
@@ -162,7 +161,7 @@ public interface PrometheusDatabase {
             }
 
             /* Make sure that the passWord is specified */
-            final MetisCharArrayPreference myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
+            final PrometheusCharArrayPreference myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
             if (!myPassPref.isAvailable()) {
                 myPassPref.setValue("secret".toCharArray());
             }

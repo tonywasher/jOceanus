@@ -27,7 +27,6 @@ module net.sourceforge.joceanus.jmetis.core {
     requires org.json;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.jgordianknot.core;
     requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */

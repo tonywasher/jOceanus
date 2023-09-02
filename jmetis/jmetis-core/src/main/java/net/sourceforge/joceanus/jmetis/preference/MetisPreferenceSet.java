@@ -62,14 +62,14 @@ public abstract class MetisPreferenceSet
     protected static final String ERROR_INVALID = "Invalid Preference: ";
 
     /**
+     * The Preference Manager.
+     */
+    private final MetisPreferenceManager thePreferenceManager;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<MetisPreferenceEvent> theEventManager;
-
-    /**
-     * The Security Manager.
-     */
-    private final MetisPreferenceSecurity theSecurityManager;
 
     /**
      * Report fields.
@@ -130,8 +130,8 @@ public abstract class MetisPreferenceSet
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
                                  final String pName) throws OceanusException {
-        /* Store security manager and name */
-        theSecurityManager = pManager.getSecurity();
+        /* Store name */
+        thePreferenceManager = pManager;
         theName = pName;
 
         /* Allocate the fields */
@@ -166,6 +166,14 @@ public abstract class MetisPreferenceSet
         final MetisViewerEntry myParent = myViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
         theViewerEntry = myViewer.newEntry(myParent, theName);
         theViewerEntry.setObject(this);
+    }
+
+    /**
+     * Obtain the preference manager
+     * @return the manager
+     */
+    public MetisPreferenceManager getPreferenceManager() {
+        return thePreferenceManager;
     }
 
     @Override
@@ -410,23 +418,6 @@ public abstract class MetisPreferenceSet
     protected MetisByteArrayPreference defineByteArrayPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
         final MetisByteArrayPreference myPref = new MetisByteArrayPreference(this, pKey);
-
-        /* Add it to the list of preferences */
-        definePreference(myPref);
-
-        /* Return the preference */
-        return myPref;
-    }
-
-    /**
-     * Define new CharArray preference.
-     * @param pKey the key for the preference
-     * @return the preference item
-     * @throws OceanusException on error
-     */
-    protected MetisCharArrayPreference defineCharArrayPreference(final MetisPreferenceKey pKey) throws OceanusException {
-        /* Define the preference */
-        final MetisCharArrayPreference myPref = new MetisCharArrayPreference(this, pKey);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -710,44 +701,6 @@ public abstract class MetisPreferenceSet
     public byte[] getByteArrayValue(final MetisPreferenceKey pKey) {
         /* Access preference */
         final MetisByteArrayPreference myPref = getByteArrayPreference(pKey);
-
-        /* Return the value */
-        return myPref.getValue();
-    }
-
-    /**
-     * Obtain CharArray preference.
-     * @param pKey the key of the preference
-     * @return the CharArray preference
-     */
-    public MetisCharArrayPreference getCharArrayPreference(final MetisPreferenceKey pKey) {
-        /* Access preference */
-        final MetisPreferenceItem myPref = getPreference(pKey);
-
-        /* Reject if not found */
-        if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
-        }
-
-        /* Reject if wrong type */
-        if (!(myPref instanceof MetisCharArrayPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
-        }
-
-        /* Return the preference */
-        return (MetisCharArrayPreference) myPref;
-    }
-
-    /**
-     * Obtain CharArray value.
-     * @param pKey the key of the preference
-     * @return the CharArray value
-     */
-    public char[] getCharArrayValue(final MetisPreferenceKey pKey) {
-        /* Access preference */
-        final MetisCharArrayPreference myPref = getCharArrayPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -1491,57 +1444,6 @@ public abstract class MetisPreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) {
             getHandle().putByteArray(getPreferenceName(), (byte[]) pNewValue);
-        }
-    }
-
-    /**
-     * CharArray preference.
-     */
-    public static class MetisCharArrayPreference
-            extends MetisPreferenceItem {
-        /**
-         * Constructor.
-         * @param pSet the preference Set
-         * @param pKey the key of the preference
-         * @throws OceanusException on error
-         */
-        protected MetisCharArrayPreference(final MetisPreferenceSet pSet,
-                                           final MetisPreferenceKey pKey) throws OceanusException {
-            /* Store name */
-            super(pSet, pKey, MetisPreferenceType.CHARARRAY);
-
-            /* Check whether we have an existing value */
-            if (pSet.checkExists(pKey)) {
-                /* Access the value */
-                final byte[] myBytes = getHandle().getByteArray(getPreferenceName(), null);
-
-                /* Decrypt the value */
-                final char[] myValue = myBytes == null
-                                                       ? null
-                                                       : pSet.theSecurityManager.decryptValue(myBytes);
-
-                /* Set as initial value */
-                setTheValue(myValue);
-            }
-        }
-
-        @Override
-        public char[] getValue() {
-            return (char[]) super.getValue();
-        }
-
-        /**
-         * Set value.
-         * @param pNewValue the new value
-         */
-        public void setValue(final char[] pNewValue) {
-            setNewValue(pNewValue);
-        }
-
-        @Override
-        protected void storeThePreference(final Object pNewValue) throws OceanusException {
-            /* Store the value */
-            getHandle().putByteArray(getPreferenceName(), getSet().theSecurityManager.encryptValue((char[]) pNewValue));
         }
     }
 }

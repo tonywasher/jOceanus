@@ -251,7 +251,7 @@ public class PrometheusPreferenceSecurity {
      * PrefSecurityPreferences.
      */
     public static class PrometheusSecurityPreferences
-            extends MetisPreferenceSet {
+            extends PrometheusPreferenceSet {
         /**
          * Valid lengths.
          */
@@ -284,7 +284,7 @@ public class PrometheusPreferenceSecurity {
          * @throws OceanusException on error
          */
         public PrometheusSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisPreferenceResource.SECPREF_PREFNAME);
+            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_PREFNAME);
         }
 
         /**
@@ -348,7 +348,7 @@ public class PrometheusPreferenceSecurity {
             myLengthPref.setFilter(VALID_LENGTHS::contains);
 
             /* Make sure that the security phrase is specified */
-            final MetisCharArrayPreference myPhrasePref = getCharArrayPreference(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
+            final PrometheusCharArrayPreference myPhrasePref = getCharArrayPreference(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
             if (!myPhrasePref.isAvailable()) {
                 myPhrasePref.setValue(DEFAULT_SECURITY_PHRASE.toCharArray());
             }

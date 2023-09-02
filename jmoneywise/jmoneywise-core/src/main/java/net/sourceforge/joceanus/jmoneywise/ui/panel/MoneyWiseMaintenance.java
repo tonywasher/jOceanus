@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -98,7 +99,7 @@ public class MoneyWiseMaintenance
     /**
      * The Preferences Panel.
      */
-    private final MetisPreferenceView thePreferences;
+    private final PrometheusPreferenceView thePreferences;
 
     /**
      * Refreshing flag.
@@ -136,7 +137,7 @@ public class MoneyWiseMaintenance
 
         /* Create the Preferences Tab */
         final MetisPreferenceManager myPrefs = theView.getPreferenceManager();
-        thePreferences = new MetisPreferenceView(myFactory, myPrefs);
+        thePreferences = theView.getToolkit().newPreferenceView();
         theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */

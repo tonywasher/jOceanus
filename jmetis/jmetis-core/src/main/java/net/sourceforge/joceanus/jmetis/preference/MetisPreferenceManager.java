@@ -65,11 +65,6 @@ public class MetisPreferenceManager
     private final MetisViewerManager theViewerManager;
 
     /**
-     * The Security Manager.
-     */
-    private final MetisPreferenceSecurity theSecurityManager;
-
-    /**
      * Map of preferenceSets.
      */
     private final Map<String, MetisPreferenceSet> theMap = new HashMap<>();
@@ -83,7 +78,6 @@ public class MetisPreferenceManager
         theViewerManager = pViewer;
         theEventManager = new TethysEventManager<>();
         theFields = MetisFieldSet.newFieldSet(this);
-        theSecurityManager = new MetisPreferenceSecurity(this);
     }
 
     @Override
@@ -99,14 +93,6 @@ public class MetisPreferenceManager
     @Override
     public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
-    }
-
-    /**
-     * Obtain the security manager.
-     * @return the security manager
-     */
-    protected MetisPreferenceSecurity getSecurity() {
-        return theSecurityManager;
     }
 
     /**

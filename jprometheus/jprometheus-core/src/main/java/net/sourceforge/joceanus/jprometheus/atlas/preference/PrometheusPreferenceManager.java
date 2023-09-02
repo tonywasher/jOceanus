@@ -28,7 +28,7 @@ public class PrometheusPreferenceManager
     /**
      * The Security Manager.
      */
-    private final PrometheusPreferenceSecurity theSecurity;
+    private PrometheusPreferenceSecurity theSecurity;
 
     /**
      * Constructor.
@@ -37,14 +37,17 @@ public class PrometheusPreferenceManager
      */
     public PrometheusPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         super(pViewer);
-        theSecurity = new PrometheusPreferenceSecurity(this);
     }
 
     /**
      * Obtain the security manager.
      * @return the security manager
+     * @throws OceanusException on error
      */
-    protected PrometheusPreferenceSecurity getSecurity1() {
+    protected PrometheusPreferenceSecurity getSecurity() throws OceanusException {
+        if (theSecurity == null) {
+            theSecurity = new PrometheusPreferenceSecurity(this);
+        }
         return theSecurity;
     }
 }

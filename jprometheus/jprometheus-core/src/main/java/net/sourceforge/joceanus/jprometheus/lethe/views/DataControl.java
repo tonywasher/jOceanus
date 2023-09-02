@@ -21,12 +21,12 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
@@ -218,8 +218,8 @@ public abstract class DataControl
      * Obtain PreferenceManager.
      * @return the PreferenceManager
      */
-    public MetisPreferenceManager getPreferenceManager() {
-        return theMetisToolkit.getPreferenceManager();
+    public PrometheusPreferenceManager getPreferenceManager() {
+        return theToolkit.getPreferenceManager();
     }
 
     /**

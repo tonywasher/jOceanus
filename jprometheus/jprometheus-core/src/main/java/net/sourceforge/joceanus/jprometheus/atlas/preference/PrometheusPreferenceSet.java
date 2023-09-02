@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 
@@ -30,7 +30,7 @@ public abstract class PrometheusPreferenceSet
     /**
      * The Security Manager.
      */
-    private final PrometheusPreferenceSecurity theSecurity;
+    private PrometheusPreferenceSecurity theSecurity;
 
     /**
      * Constructor.
@@ -55,7 +55,24 @@ public abstract class PrometheusPreferenceSet
         super(pManager, pName);
 
         /* Store security manager */
-        theSecurity = pManager.getSecurity1();
+        theSecurity = pManager.getSecurity();
+    }
+
+    @Override
+    public PrometheusPreferenceManager getPreferenceManager() {
+        return (PrometheusPreferenceManager) super.getPreferenceManager();
+    }
+
+    /**
+     * Obtain the security.
+     * @return the security
+     * @throws OceanusException on error
+     */
+    public PrometheusPreferenceSecurity getSecurity() throws OceanusException {
+        if (theSecurity == null) {
+            theSecurity = getPreferenceManager().getSecurity();
+        }
+        return theSecurity;
     }
 
     /**
@@ -64,7 +81,7 @@ public abstract class PrometheusPreferenceSet
      * @return the preference item
      * @throws OceanusException on error
      */
-    protected PrometheusCharArrayPreference defineCharArray1Preference(final MetisPreferenceKey pKey) throws OceanusException {
+    protected PrometheusCharArrayPreference defineCharArrayPreference(final MetisPreferenceKey pKey) throws OceanusException {
         /* Define the preference */
         final PrometheusCharArrayPreference myPref = new PrometheusCharArrayPreference(this, pKey);
 
@@ -80,7 +97,7 @@ public abstract class PrometheusPreferenceSet
      * @param pKey the key of the preference
      * @return the CharArray preference
      */
-    public PrometheusCharArrayPreference getCharArray1Preference(final MetisPreferenceKey pKey) {
+    public PrometheusCharArrayPreference getCharArrayPreference(final MetisPreferenceKey pKey) {
         /* Access preference */
         final MetisPreferenceItem myPref = getPreference(pKey);
 
@@ -105,9 +122,9 @@ public abstract class PrometheusPreferenceSet
      * @param pKey the key of the preference
      * @return the CharArray value
      */
-    public char[] getCharArray1Value(final MetisPreferenceKey pKey) {
+    public char[] getCharArrayValue(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final PrometheusCharArrayPreference myPref = getCharArray1Preference(pKey);
+        final PrometheusCharArrayPreference myPref = getCharArrayPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -133,11 +150,12 @@ public abstract class PrometheusPreferenceSet
             if (pSet.checkExists(pKey)) {
                 /* Access the value */
                 final byte[] myBytes = getHandle().getByteArray(getPreferenceName(), null);
+                final PrometheusPreferenceSecurity mySecurity = getSet().getSecurity();
 
                 /* Decrypt the value */
                 final char[] myValue = myBytes == null
                         ? null
-                        : pSet.theSecurity.decryptValue(myBytes);
+                        : mySecurity.decryptValue(myBytes);
 
                 /* Set as initial value */
                 setTheValue(myValue);
@@ -165,7 +183,8 @@ public abstract class PrometheusPreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) throws OceanusException {
             /* Store the value */
-            getHandle().putByteArray(getPreferenceName(), getSet().theSecurity.encryptValue((char[]) pNewValue));
+            final PrometheusPreferenceSecurity mySecurity = getSet().getSecurity();
+            getHandle().putByteArray(getPreferenceName(), mySecurity.encryptValue((char[]) pNewValue));
         }
     }
 }
