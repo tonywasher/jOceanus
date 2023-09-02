@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
@@ -50,8 +50,8 @@ public class TableDepositRate
 
         /* Declare the columns */
         final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
-        myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, MetisEncryptedData.RATELEN);
-        myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, MetisEncryptedData.RATELEN);
+        myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, PrometheusEncryptedPair.RATELEN);
+        myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, PrometheusEncryptedPair.RATELEN);
         final PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */

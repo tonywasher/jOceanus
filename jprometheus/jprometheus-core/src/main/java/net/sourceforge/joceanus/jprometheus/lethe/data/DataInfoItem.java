@@ -20,13 +20,12 @@ import java.util.Date;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -207,7 +206,7 @@ public abstract class DataInfoItem
      */
     private boolean isInfoLink() {
         /* Access Info Class Value */
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticDataItem)) {
             return false;
@@ -220,7 +219,7 @@ public abstract class DataInfoItem
     @Override
     public String toString() {
         /* Access Info Type Value */
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticDataItem)) {
             return super.toString();
@@ -236,7 +235,7 @@ public abstract class DataInfoItem
     @Override
     public String formatObject(final TethysUIDataFormatter pFormatter) {
         /* Access Info Type Value */
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticDataItem)) {
             return super.formatObject(pFormatter);
@@ -333,7 +332,7 @@ public abstract class DataInfoItem
      * Obtain Value as underlying object.
      * @return the Value
      */
-    public MetisEncryptedField<?> getField() {
+    public PrometheusEncryptedPair getField() {
         return getField(getValueSet());
     }
 
@@ -374,7 +373,7 @@ public abstract class DataInfoItem
      * @param pValueSet the valueSet
      * @return the Bytes
      */
-    public static byte[] getValueBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getValueBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_VALUE);
     }
 
@@ -385,7 +384,7 @@ public abstract class DataInfoItem
      * @param pClass the object class
      * @return the Value
      */
-    public static <X> X getValue(final MetisEncryptedValueSet pValueSet,
+    public static <X> X getValue(final EncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
         return pValueSet.isDeletion()
                                       ? null
@@ -397,10 +396,10 @@ public abstract class DataInfoItem
      * @param pValueSet the valueSet
      * @return the Value
      */
-    public static MetisEncryptedField<?> getField(final MetisEncryptedValueSet pValueSet) {
+    public static PrometheusEncryptedPair getField(final EncryptedValueSet pValueSet) {
         return pValueSet.isDeletion()
                                       ? null
-                                      : pValueSet.getValue(FIELD_VALUE, MetisEncryptedField.class);
+                                      : pValueSet.getValue(FIELD_VALUE, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -488,7 +487,7 @@ public abstract class DataInfoItem
      * Set value.
      * @param pValue the value
      */
-    protected void setValueValue(final MetisEncryptedField<?> pValue) {
+    protected void setValueValue(final PrometheusEncryptedPair pValue) {
         final MetisValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_VALUE, pValue);

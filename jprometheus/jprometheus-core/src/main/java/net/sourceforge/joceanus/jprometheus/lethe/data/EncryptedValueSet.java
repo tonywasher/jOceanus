@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Metis: Java Data Framework
+ * Prometheus: Application Framework
  * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,17 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.lethe.data;
+package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusFieldGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Encrypted ValueSet class.
  */
-public class MetisEncryptedValueSet
+public class EncryptedValueSet
         extends MetisValueSet {
     /**
      * Field access error text.
@@ -35,14 +37,14 @@ public class MetisEncryptedValueSet
      * Constructor.
      * @param pItem the item
      */
-    public MetisEncryptedValueSet(final MetisDataValues pItem) {
+    public EncryptedValueSet(final MetisDataValues pItem) {
         super(pItem);
     }
 
     @Override
-    public MetisEncryptedValueSet cloneIt() {
+    public EncryptedValueSet cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        final MetisEncryptedValueSet mySet = new MetisEncryptedValueSet(getItem());
+        final EncryptedValueSet mySet = new EncryptedValueSet(getItem());
         mySet.copyFrom(this);
         return mySet;
     }
@@ -65,13 +67,13 @@ public class MetisEncryptedValueSet
         }
 
         /* Handle bad usage */
-        if (!MetisEncryptedField.class.isInstance(myObject)) {
+        if (!(myObject instanceof PrometheusEncryptedPair)) {
             throw new IllegalArgumentException(ERROR_ACCESS
-                                               + pField.getName());
+                    + pField.getName());
         }
 
         /* Return the bytes */
-        final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myObject;
+        final PrometheusEncryptedPair myField = (PrometheusEncryptedPair) myObject;
         return myField.getBytes();
     }
 
@@ -91,13 +93,13 @@ public class MetisEncryptedValueSet
         }
 
         /* Handle bad usage */
-        if (!MetisEncryptedField.class.isInstance(myObject)) {
+        if (!(myObject instanceof PrometheusEncryptedPair)) {
             throw new IllegalArgumentException(ERROR_ACCESS
-                                               + pField.getName());
+                    + pField.getName());
         }
 
         /* Return the value */
-        final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myObject;
+        final PrometheusEncryptedPair myField = (PrometheusEncryptedPair) myObject;
         final Object myValue = myField.getValue();
         return pClass.cast(myValue);
     }
@@ -107,7 +109,7 @@ public class MetisEncryptedValueSet
      * @param pGenerator the generator
      * @throws OceanusException on error
      */
-    public void updateSecurity(final MetisEncryptionGenerator pGenerator) throws OceanusException {
+    public void updateSecurity(final PrometheusFieldGenerator pGenerator) throws OceanusException {
         /* Access the values */
         final Object[] myValues = getValues();
         final int iLen = myValues.length;
@@ -116,13 +118,12 @@ public class MetisEncryptedValueSet
         for (int i = 0; i < iLen; i++) {
             /* Skip null and non-encrypted fields */
             final Object myValue = myValues[i];
-            if ((myValue == null)
-                || (!MetisEncryptedField.class.isInstance(myValue))) {
+            if (!(myValue instanceof PrometheusEncryptedPair)) {
                 continue;
             }
 
             /* Update Security */
-            final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
+            final PrometheusEncryptedPair myField = (PrometheusEncryptedPair) myValue;
             myValues[i] = pGenerator.encryptValue(myField, myField.getValue());
         }
     }
@@ -133,32 +134,31 @@ public class MetisEncryptedValueSet
      * @param pBaseValues the base values
      * @throws OceanusException on error
      */
-    public void adoptSecurity(final MetisEncryptionGenerator pGenerator,
-                              final MetisEncryptedValueSet pBaseValues) throws OceanusException {
+    public void adoptSecurity(final PrometheusFieldGenerator pGenerator,
+                              final EncryptedValueSet pBaseValues) throws OceanusException {
         /* Access the values */
         final Object[] myValues = getValues();
         final int iLen = myValues.length;
         final Object[] myBaseValues = (pBaseValues == null)
-                                                            ? null
-                                                            : pBaseValues.getValues();
+                ? null
+                : pBaseValues.getValues();
 
         /* Loop through the values */
         for (int i = 0; i < iLen; i++) {
             /* Skip null and non-encrypted fields */
             final Object myValue = myValues[i];
-            if ((myValue == null)
-                || (!MetisEncryptedField.class.isInstance(myValue))) {
+            if (!(myValue instanceof PrometheusEncryptedPair)) {
                 continue;
             }
 
             /* Access relevant fields */
-            final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
-            MetisEncryptedField<?> myBaseField = null;
-            final Object myBaseObj = (myBaseValues == null)
-                                                            ? null
-                                                            : myBaseValues[i];
-            if (MetisEncryptedField.class.isInstance(myBaseObj)) {
-                myBaseField = (MetisEncryptedField<?>) myBaseObj;
+            final PrometheusEncryptedPair myField = (PrometheusEncryptedPair) myValue;
+            PrometheusEncryptedPair myBaseField = null;
+            final Object myBaseObj = myBaseValues == null
+                    ? null
+                    : myBaseValues[i];
+            if (myBaseObj instanceof PrometheusEncryptedPair) {
+                myBaseField = (PrometheusEncryptedPair) myBaseObj;
             }
 
             /* Adopt encryption */

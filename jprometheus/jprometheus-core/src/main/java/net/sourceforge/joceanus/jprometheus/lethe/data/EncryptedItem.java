@@ -21,11 +21,10 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusFieldGenerator;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
@@ -54,7 +53,7 @@ public abstract class EncryptedItem
     /**
      * Generator field.
      */
-    private MetisEncryptionGenerator theGenerator;
+    private PrometheusFieldGenerator theGenerator;
 
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when
@@ -65,7 +64,7 @@ public abstract class EncryptedItem
     protected EncryptedItem(final EncryptedList<?> pList,
                             final Integer pId) {
         super(pList, pId);
-        theGenerator = new MetisEncryptionGenerator(null, pList.getDataSet().getDataFormatter());
+        theGenerator = new PrometheusFieldGenerator(pList.getDataSet().getDataFormatter(), null);
     }
 
     /**
@@ -95,18 +94,18 @@ public abstract class EncryptedItem
         if (myId != null) {
             setDataKeySet(myId);
         } else {
-            theGenerator = new MetisEncryptionGenerator(null, pList.getDataSet().getDataFormatter());
+            theGenerator = new PrometheusFieldGenerator(pList.getDataSet().getDataFormatter(), null);
         }
     }
 
     @Override
-    public MetisEncryptedValueSet getValueSet() {
-        return (MetisEncryptedValueSet) super.getValueSet();
+    public EncryptedValueSet getValueSet() {
+        return (EncryptedValueSet) super.getValueSet();
     }
 
     @Override
-    public MetisEncryptedValueSet getOriginalValues() {
-        return (MetisEncryptedValueSet) super.getOriginalValues();
+    public EncryptedValueSet getOriginalValues() {
+        return (EncryptedValueSet) super.getOriginalValues();
     }
 
     /**
@@ -133,7 +132,7 @@ public abstract class EncryptedItem
      * @param pValueSet the valueSet
      * @return the ControlKey
      */
-    public static DataKeySet getDataKeySet(final MetisEncryptedValueSet pValueSet) {
+    public static DataKeySet getDataKeySet(final EncryptedValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYSET, DataKeySet.class);
     }
 
@@ -200,17 +199,17 @@ public abstract class EncryptedItem
     protected final void setEncryptedValue(final MetisLetheField pField,
                                            final Object pValue) throws OceanusException {
         /* Obtain the existing value */
-        final MetisEncryptedValueSet myValueSet = getValueSet();
+        final EncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle switched usage */
-        if ((myCurrent != null) && (!(myCurrent instanceof MetisEncryptedField))) {
+        if (myCurrent != null && !(myCurrent instanceof PrometheusEncryptedPair)) {
             myCurrent = null;
         }
 
         /* Create the new encrypted value */
-        final MetisEncryptedField<?> myCurr = (MetisEncryptedField<?>) myCurrent;
-        final MetisEncryptedField<?> myField = theGenerator.encryptValue(myCurr, pValue);
+        final PrometheusEncryptedPair myCurr = (PrometheusEncryptedPair) myCurrent;
+        final PrometheusEncryptedPair myField = theGenerator.encryptValue(myCurr, pValue);
 
         /* Store the new value */
         myValueSet.setValue(pField, myField);
@@ -227,7 +226,7 @@ public abstract class EncryptedItem
                                            final byte[] pEncrypted,
                                            final Class<?> pClass) throws OceanusException {
         /* Create the new encrypted value */
-        final MetisEncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
+        final PrometheusEncryptedPair myField = theGenerator.decryptValue(pEncrypted, pClass);
 
         /* Store the new value */
         getValueSet().setValue(pField, myField);
@@ -239,8 +238,8 @@ public abstract class EncryptedItem
      * @param pNew The new Pair
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static MetisDataDifference getDifference(final MetisEncryptedField<?> pCurr,
-                                                    final MetisEncryptedField<?> pNew) {
+    public static MetisDataDifference getDifference(final PrometheusEncryptedPair pCurr,
+                                                    final PrometheusEncryptedPair pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null)
@@ -276,7 +275,7 @@ public abstract class EncryptedItem
         setValueDataKeySet(pKeySet);
 
         /* Access underlying values if they exist */
-        final MetisEncryptedValueSet myBaseValues = pBase.getValueSet();
+        final EncryptedValueSet myBaseValues = pBase.getValueSet();
 
         /* Try to adopt the underlying */
         getValueSet().adoptSecurity(theGenerator, myBaseValues);

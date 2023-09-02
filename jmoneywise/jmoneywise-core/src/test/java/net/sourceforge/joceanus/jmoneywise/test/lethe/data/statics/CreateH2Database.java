@@ -31,7 +31,7 @@ public final class CreateH2Database {
             final MetisViewerManager myViewer = new MetisViewerManager();
             final MetisPreferenceManager myPrefMgr = new MetisPreferenceManager(myViewer);
             final PrometheusDatabasePreferences myPrefs = myPrefMgr.getPreferenceSet(PrometheusDatabasePreferences.class);
-            final MetisEnumPreference<PrometheusDatabasePreferenceKey, PrometheusJDBCDriver> myDBType
+            final MetisEnumPreference<PrometheusJDBCDriver> myDBType
                     =  myPrefs.getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
             myDBType.setValue(PrometheusJDBCDriver.H2);
             myPrefs.storeChanges();

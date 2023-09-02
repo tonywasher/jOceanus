@@ -147,7 +147,7 @@ public class MoneyWiseUKTaxAnalysis
      * Taxation Preferences.
      */
     public static class MoneyWiseUKTaxPreferences
-            extends MetisPreferenceSet<MoneyWiseUKTaxPreferenceKey> {
+            extends MetisPreferenceSet {
         /**
          * Default year.
          */
@@ -159,7 +159,7 @@ public class MoneyWiseUKTaxAnalysis
          * @throws OceanusException on error
          */
         public MoneyWiseUKTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MoneyWiseUKTaxPreferenceKey.class, MoneyWiseTaxResource.TAXPREF_NAME);
+            super(pManager, MoneyWiseTaxResource.TAXPREF_NAME);
         }
 
         @Override
@@ -170,7 +170,7 @@ public class MoneyWiseUKTaxAnalysis
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the birthDate is specified */
-            final MetisDatePreference<MoneyWiseUKTaxPreferenceKey> myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
+            final MetisDatePreference myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
             if (!myPref.isAvailable()) {
                 myPref.setValue(new TethysDate(YEAR, Month.JANUARY, 1));
             }

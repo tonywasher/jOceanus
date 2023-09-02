@@ -17,10 +17,8 @@
 package net.sourceforge.joceanus.jmoneywise.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
@@ -124,8 +122,7 @@ public class MoneyWiseMainTab
      */
     public MoneyWiseMainTab(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create prometheus toolkit */
-        final MetisToolkit myMetisToolkit = new MetisToolkit(pFactory);
-        final PrometheusToolkit myToolkit = new PrometheusToolkit(myMetisToolkit);
+        final PrometheusToolkit myToolkit = new PrometheusToolkit(pFactory);
 
         /* create the view */
         theView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());

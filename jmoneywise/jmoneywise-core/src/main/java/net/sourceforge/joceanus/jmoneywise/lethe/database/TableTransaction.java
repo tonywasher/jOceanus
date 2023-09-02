@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
@@ -53,7 +53,7 @@ public class TableTransaction
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
         myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
         myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
-        myTableDef.addNullEncryptedColumn(Transaction.FIELD_AMOUNT, MetisEncryptedData.MONEYLEN);
+        myTableDef.addNullEncryptedColumn(Transaction.FIELD_AMOUNT, PrometheusEncryptedPair.MONEYLEN);
         myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
 

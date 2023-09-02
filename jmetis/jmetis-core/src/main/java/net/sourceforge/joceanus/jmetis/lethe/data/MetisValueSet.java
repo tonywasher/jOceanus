@@ -21,7 +21,6 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
@@ -392,10 +391,10 @@ public class MetisValueSet {
         }
 
         /* If the item is encrypted, allow byteArray */
-        if (pField.getStorage().isEncrypted()
-            && pValue instanceof MetisEncryptedField) {
-            return;
-        }
+        //if (pField.getStorage().isEncrypted()
+        //    && pValue instanceof MetisEncryptedField) {
+        //    return;
+        //}
 
         /* Integer is allowed for Link type */
         final MetisDataType myDataType = pField.getDataType();

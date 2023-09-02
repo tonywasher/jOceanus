@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.preference;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -43,10 +42,15 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Wrapper class for java preferences.
  * @author Tony Washer
- * @param <K> the Key type
  */
-public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
+public abstract class MetisPreferenceSet
         implements MetisFieldItem, TethysEventProvider<MetisPreferenceEvent> {
+    /**
+     * Id interface.
+     */
+    public interface MetisPreferenceId {
+    }
+
     /**
      * Unknown preference string.
      */
@@ -58,19 +62,18 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     protected static final String ERROR_INVALID = "Invalid Preference: ";
 
     /**
+     * The Preference Manager.
+     */
+    private final MetisPreferenceManager thePreferenceManager;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
-     * The Security Manager.
-     */
-    private final MetisPreferenceSecurity theSecurityManager;
-
-    /**
      * Report fields.
      */
-    @SuppressWarnings("rawtypes")
     private final MetisFieldSet<MetisPreferenceSet> theFields;
 
     /**
@@ -81,12 +84,12 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * The map of preferences.
      */
-    private final Map<String, MetisPreferenceItem<K>> theNameMap;
+    private final Map<String, MetisPreferenceItem> theNameMap;
 
     /**
      * The map of preferences.
      */
-    private final Map<K, MetisPreferenceItem<K>> theKeyMap;
+    private final Map<MetisPreferenceKey, MetisPreferenceItem> theKeyMap;
 
     /**
      * The list of preferences that have a value on initialisation.
@@ -111,28 +114,24 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Constructor.
      * @param pManager the preference manager
-     * @param pClazz the key class
      * @param pId the resource id for the set name
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
-                                 final Class<K> pClazz,
                                  final TethysBundleId pId) throws OceanusException {
-        this(pManager, pClazz, pId.getValue());
+        this(pManager, pId.getValue());
     }
 
     /**
      * Constructor.
      * @param pManager the preference manager
-     * @param pClazz the key class
      * @param pName the set name
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
-                                 final Class<K> pClazz,
                                  final String pName) throws OceanusException {
-        /* Store security manager and name */
-        theSecurityManager = pManager.getSecurity();
+        /* Store name */
+        thePreferenceManager = pManager;
         theName = pName;
 
         /* Allocate the fields */
@@ -146,7 +145,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
         /* Allocate the preference maps */
         theNameMap = new HashMap<>();
-        theKeyMap = new EnumMap<>(pClazz);
+        theKeyMap = new HashMap<>();
 
         /* Access the active key names */
         try {
@@ -169,6 +168,14 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         theViewerEntry.setObject(this);
     }
 
+    /**
+     * Obtain the preference manager
+     * @return the manager
+     */
+    public MetisPreferenceManager getPreferenceManager() {
+        return thePreferenceManager;
+    }
+
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return theFields;
@@ -183,7 +190,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Declare preference.
      * @param pPref the preference to declare
      */
-    void declarePreference(final MetisPreferenceItem<K> pPref) {
+    void declarePreference(final MetisPreferenceItem pPref) {
         /* Create the DataField */
         theFields.declareLocalField(pPref.getPreferenceName(), s -> pPref.getViewerValue());
     }
@@ -234,7 +241,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Obtain the collection of preferences.
      * @return the preferences
      */
-    public Collection<MetisPreferenceItem<K>> getPreferences() {
+    public Collection<MetisPreferenceItem> getPreferences() {
         return theKeyMap.values();
     }
 
@@ -277,9 +284,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisStringPreference<K> defineStringPreference(final K pKey) {
+    protected MetisStringPreference defineStringPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisStringPreference<K> myPref = new MetisStringPreference<>(this, pKey);
+        final MetisStringPreference myPref = new MetisStringPreference(this, pKey);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -293,9 +300,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisStringPreference<K> defineFilePreference(final K pKey) {
+    protected MetisStringPreference defineFilePreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisStringPreference<K> myPref = new MetisStringPreference<>(this, pKey, MetisPreferenceType.FILE);
+        final MetisStringPreference myPref = new MetisStringPreference(this, pKey, MetisPreferenceType.FILE);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -309,9 +316,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisStringPreference<K> defineDirectoryPreference(final K pKey) {
+    protected MetisStringPreference defineDirectoryPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisStringPreference<K> myPref = new MetisStringPreference<>(this, pKey, MetisPreferenceType.DIRECTORY);
+        final MetisStringPreference myPref = new MetisStringPreference(this, pKey, MetisPreferenceType.DIRECTORY);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -325,9 +332,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisStringPreference<K> defineColorPreference(final K pKey) {
+    protected MetisStringPreference defineColorPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisStringPreference<K> myPref = new MetisStringPreference<>(this, pKey, MetisPreferenceType.COLOR);
+        final MetisStringPreference myPref = new MetisStringPreference(this, pKey, MetisPreferenceType.COLOR);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -341,9 +348,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisIntegerPreference<K> defineIntegerPreference(final K pKey) {
+    protected MetisIntegerPreference defineIntegerPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisIntegerPreference<K> myPref = new MetisIntegerPreference<>(this, pKey);
+        final MetisIntegerPreference myPref = new MetisIntegerPreference(this, pKey);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -357,9 +364,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisBooleanPreference<K> defineBooleanPreference(final K pKey) {
+    protected MetisBooleanPreference defineBooleanPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisBooleanPreference<K> myPref = new MetisBooleanPreference<>(this, pKey);
+        final MetisBooleanPreference myPref = new MetisBooleanPreference(this, pKey);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -373,9 +380,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisDatePreference<K> defineDatePreference(final K pKey) {
+    protected MetisDatePreference defineDatePreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisDatePreference<K> myPref = new MetisDatePreference<>(this, pKey);
+        final MetisDatePreference myPref = new MetisDatePreference(this, pKey);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -391,10 +398,10 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pClazz the Enum class
      * @return the newly created preference
      */
-    protected <E extends Enum<E>> MetisEnumPreference<K, E> defineEnumPreference(final K pKey,
-                                                                                 final Class<E> pClazz) {
+    protected <E extends Enum<E>> MetisEnumPreference<E> defineEnumPreference(final MetisPreferenceKey pKey,
+                                                                              final Class<E> pClazz) {
         /* Create the preference */
-        final MetisEnumPreference<K, E> myPref = new MetisEnumPreference<>(this, pKey, pClazz);
+        final MetisEnumPreference<E> myPref = new MetisEnumPreference<>(this, pKey, pClazz);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -408,26 +415,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key for the preference
      * @return the preference item
      */
-    protected MetisByteArrayPreference<K> defineByteArrayPreference(final K pKey) {
+    protected MetisByteArrayPreference defineByteArrayPreference(final MetisPreferenceKey pKey) {
         /* Define the preference */
-        final MetisByteArrayPreference<K> myPref = new MetisByteArrayPreference<>(this, pKey);
-
-        /* Add it to the list of preferences */
-        definePreference(myPref);
-
-        /* Return the preference */
-        return myPref;
-    }
-
-    /**
-     * Define new CharArray preference.
-     * @param pKey the key for the preference
-     * @return the preference item
-     * @throws OceanusException on error
-     */
-    protected MetisCharArrayPreference<K> defineCharArrayPreference(final K pKey) throws OceanusException {
-        /* Define the preference */
-        final MetisCharArrayPreference<K> myPref = new MetisCharArrayPreference<>(this, pKey);
+        final MetisByteArrayPreference myPref = new MetisByteArrayPreference(this, pKey);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -440,7 +430,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Define a preference for the node.
      * @param pPreference the preference to define
      */
-    private void definePreference(final MetisPreferenceItem<K> pPreference) {
+    protected void definePreference(final MetisPreferenceItem pPreference) {
         /* Access the key of the preference */
         final String myName = pPreference.getPreferenceName();
 
@@ -461,7 +451,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the preference
      */
-    public MetisPreferenceItem<K> getPreference(final K pKey) {
+    public MetisPreferenceItem getPreference(final MetisPreferenceKey pKey) {
         return theKeyMap.get(pKey);
     }
 
@@ -470,7 +460,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pName the name of the preference
      * @return the preference
      */
-    protected MetisPreferenceItem<K> getPreference(final String pName) {
+    protected MetisPreferenceItem getPreference(final String pName) {
         return theNameMap.get(pName);
     }
 
@@ -479,9 +469,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the String preference
      */
-    public MetisStringPreference<K> getStringPreference(final K pKey) {
+    public MetisStringPreference getStringPreference(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
+        final MetisPreferenceItem myPref = getPreference(pKey);
 
         /* Reject if not found */
         if (myPref == null) {
@@ -496,7 +486,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         }
 
         /* Return the preference */
-        return (MetisStringPreference<K>) myPref;
+        return (MetisStringPreference) myPref;
     }
 
     /**
@@ -504,9 +494,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the String value
      */
-    public String getStringValue(final K pKey) {
+    public String getStringValue(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisStringPreference<K> myPref = getStringPreference(pKey);
+        final MetisStringPreference myPref = getStringPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -517,9 +507,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the Integer preference
      */
-    public MetisIntegerPreference<K> getIntegerPreference(final K pKey) {
+    public MetisIntegerPreference getIntegerPreference(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
+        final MetisPreferenceItem myPref = getPreference(pKey);
 
         /* Reject if not found */
         if (myPref == null) {
@@ -534,7 +524,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         }
 
         /* Return the preference */
-        return (MetisIntegerPreference<K>) myPref;
+        return (MetisIntegerPreference) myPref;
     }
 
     /**
@@ -542,9 +532,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the Integer value
      */
-    public Integer getIntegerValue(final K pKey) {
+    public Integer getIntegerValue(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisIntegerPreference<K> myPref = getIntegerPreference(pKey);
+        final MetisIntegerPreference myPref = getIntegerPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -555,9 +545,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the Boolean preference
      */
-    public MetisBooleanPreference<K> getBooleanPreference(final K pKey) {
+    public MetisBooleanPreference getBooleanPreference(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
+        final MetisPreferenceItem myPref = getPreference(pKey);
 
         /* Reject if not found */
         if (myPref == null) {
@@ -572,7 +562,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         }
 
         /* Return the preference */
-        return (MetisBooleanPreference<K>) myPref;
+        return (MetisBooleanPreference) myPref;
     }
 
     /**
@@ -580,9 +570,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the Boolean value
      */
-    public Boolean getBooleanValue(final K pKey) {
+    public Boolean getBooleanValue(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisBooleanPreference<K> myPref = getBooleanPreference(pKey);
+        final MetisBooleanPreference myPref = getBooleanPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -593,9 +583,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the Date preference
      */
-    public MetisDatePreference<K> getDatePreference(final K pKey) {
+    public MetisDatePreference getDatePreference(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
+        final MetisPreferenceItem myPref = getPreference(pKey);
 
         /* Reject if not found */
         if (myPref == null) {
@@ -610,7 +600,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         }
 
         /* Return the preference */
-        return (MetisDatePreference<K>) myPref;
+        return (MetisDatePreference) myPref;
     }
 
     /**
@@ -618,9 +608,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the Date value
      */
-    public TethysDate getDateValue(final K pKey) {
+    public TethysDate getDateValue(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisDatePreference<K> myPref = getDatePreference(pKey);
+        final MetisDatePreference myPref = getDatePreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -633,10 +623,10 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pClazz the Enum class
      * @return the Enum preference
      */
-    public <E extends Enum<E>> MetisEnumPreference<K, E> getEnumPreference(final K pKey,
-                                                                           final Class<E> pClazz) {
+    public <E extends Enum<E>> MetisEnumPreference<E> getEnumPreference(final MetisPreferenceKey pKey,
+                                                                        final Class<E> pClazz) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
+        final MetisPreferenceItem myPref = getPreference(pKey);
 
         /* Reject if not found */
         if (myPref == null) {
@@ -652,7 +642,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
         /* Access as Enum preference */
         @SuppressWarnings("unchecked")
-        final MetisEnumPreference<K, E> myEnumPref = (MetisEnumPreference<K, E>) myPref;
+        final MetisEnumPreference<E> myEnumPref = (MetisEnumPreference<E>) myPref;
         if (!myEnumPref.theClazz.equals(pClazz)) {
             throw new IllegalArgumentException(ERROR_INVALID
                                                + pKey);
@@ -669,10 +659,10 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pClazz the Enum class
      * @return the Enum value
      */
-    public <E extends Enum<E>> E getEnumValue(final K pKey,
+    public <E extends Enum<E>> E getEnumValue(final MetisPreferenceKey pKey,
                                               final Class<E> pClazz) {
         /* Access preference */
-        final MetisEnumPreference<K, E> myPref = getEnumPreference(pKey, pClazz);
+        final MetisEnumPreference<E> myPref = getEnumPreference(pKey, pClazz);
 
         /* Return the value */
         return myPref.getValue();
@@ -683,9 +673,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the ByteArray preference
      */
-    public MetisByteArrayPreference<K> getByteArrayPreference(final K pKey) {
+    public MetisByteArrayPreference getByteArrayPreference(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
+        final MetisPreferenceItem myPref = getPreference(pKey);
 
         /* Reject if not found */
         if (myPref == null) {
@@ -700,7 +690,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         }
 
         /* Return the preference */
-        return (MetisByteArrayPreference<K>) myPref;
+        return (MetisByteArrayPreference) myPref;
     }
 
     /**
@@ -708,47 +698,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return the ByteArray value
      */
-    public byte[] getByteArrayValue(final K pKey) {
+    public byte[] getByteArrayValue(final MetisPreferenceKey pKey) {
         /* Access preference */
-        final MetisByteArrayPreference<K> myPref = getByteArrayPreference(pKey);
-
-        /* Return the value */
-        return myPref.getValue();
-    }
-
-    /**
-     * Obtain CharArray preference.
-     * @param pKey the key of the preference
-     * @return the CharArray preference
-     */
-    public MetisCharArrayPreference<K> getCharArrayPreference(final K pKey) {
-        /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pKey);
-
-        /* Reject if not found */
-        if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
-        }
-
-        /* Reject if wrong type */
-        if (!(myPref instanceof MetisCharArrayPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
-        }
-
-        /* Return the preference */
-        return (MetisCharArrayPreference<K>) myPref;
-    }
-
-    /**
-     * Obtain CharArray value.
-     * @param pKey the key of the preference
-     * @return the CharArray value
-     */
-    public char[] getCharArrayValue(final K pKey) {
-        /* Access preference */
-        final MetisCharArrayPreference<K> myPref = getCharArrayPreference(pKey);
+        final MetisByteArrayPreference myPref = getByteArrayPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -759,7 +711,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      */
     public void resetChanges() {
         /* Loop through all the preferences */
-        for (MetisPreferenceItem<K> myPref : theKeyMap.values()) {
+        for (MetisPreferenceItem myPref : theKeyMap.values()) {
             /* Reset the changes */
             myPref.resetChanges();
         }
@@ -771,7 +723,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      */
     public final void storeChanges() throws OceanusException {
         /* Loop through all the preferences */
-        for (MetisPreferenceItem<K> myPref : theKeyMap.values()) {
+        for (MetisPreferenceItem myPref : theKeyMap.values()) {
             /* Store any changes */
             myPref.storePreference();
         }
@@ -795,7 +747,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      */
     public boolean hasChanges() {
         /* Loop through all the preferences */
-        for (MetisPreferenceItem<K> myPref : theKeyMap.values()) {
+        for (MetisPreferenceItem myPref : theKeyMap.values()) {
             /* Check for changes */
             if (myPref.isChanged()) {
                 return true;
@@ -811,7 +763,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @param pKey the key of the preference
      * @return whether the preference already exists
      */
-    protected boolean checkExists(final K pKey) {
+    protected boolean checkExists(final MetisPreferenceKey pKey) {
         /* Obtain the name */
         final String myKeyName = pKey.getName();
 
@@ -829,18 +781,17 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * Underlying preference item class.
-     * @param <K> the keyType
      */
-    public abstract static class MetisPreferenceItem<K extends Enum<K> & MetisPreferenceKey> {
+    public abstract static class MetisPreferenceItem {
         /**
          * preferenceSet.
          */
-        private final MetisPreferenceSet<K> theSet;
+        private final MetisPreferenceSet theSet;
 
         /**
          * preference Key.
          */
-        private final K theKey;
+        private final MetisPreferenceKey theKey;
 
         /**
          * preference Name.
@@ -855,7 +806,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         /**
          * preference Type.
          */
-        private final MetisPreferenceType theType;
+        private final MetisPreferenceId theType;
 
         /**
          * preference Value.
@@ -883,9 +834,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * @param pKey the key of the preference
          * @param pType the type of the preference
          */
-        protected MetisPreferenceItem(final MetisPreferenceSet<K> pSet,
-                                      final K pKey,
-                                      final MetisPreferenceType pType) {
+        protected MetisPreferenceItem(final MetisPreferenceSet pSet,
+                                      final MetisPreferenceKey pKey,
+                                      final MetisPreferenceId pType) {
             /* Store parameters */
             theSet = pSet;
             theKey = pKey;
@@ -913,7 +864,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Obtain the preferenceSet.
          * @return the set
          */
-        protected MetisPreferenceSet<K> getSet() {
+        protected MetisPreferenceSet getSet() {
             return theSet;
         }
 
@@ -929,7 +880,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Obtain the key of the preference.
          * @return the key of the preference
          */
-        protected K getKey() {
+        protected MetisPreferenceKey getKey() {
             return theKey;
         }
 
@@ -953,7 +904,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Obtain the type of the preference.
          * @return the type of the preference
          */
-        public MetisPreferenceType getType() {
+        public MetisPreferenceId getType() {
             return theType;
         }
 
@@ -1062,17 +1013,16 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * String preference.
-     * @param <K> the keyType
      */
-    public static class MetisStringPreference<K extends Enum<K> & MetisPreferenceKey>
-            extends MetisPreferenceItem<K> {
+    public static class MetisStringPreference
+            extends MetisPreferenceItem {
         /**
          * Constructor.
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
-        protected MetisStringPreference(final MetisPreferenceSet<K> pSet,
-                                        final K pKey) {
+        protected MetisStringPreference(final MetisPreferenceSet pSet,
+                                        final MetisPreferenceKey pKey) {
             this(pSet, pKey, MetisPreferenceType.STRING);
         }
 
@@ -1082,8 +1032,8 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * @param pKey the key of the preference
          * @param pType the type of the preference
          */
-        private MetisStringPreference(final MetisPreferenceSet<K> pSet,
-                                      final K pKey,
+        private MetisStringPreference(final MetisPreferenceSet pSet,
+                                      final MetisPreferenceKey pKey,
                                       final MetisPreferenceType pType) {
             /* Store name */
             super(pSet, pKey, pType);
@@ -1119,10 +1069,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * Integer preference.
-     * @param <K> the keyType
      */
-    public static class MetisIntegerPreference<K extends Enum<K> & MetisPreferenceKey>
-            extends MetisPreferenceItem<K> {
+    public static class MetisIntegerPreference
+            extends MetisPreferenceItem {
         /**
          * The minimum value.
          */
@@ -1138,8 +1087,8 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
-        protected MetisIntegerPreference(final MetisPreferenceSet<K> pSet,
-                                         final K pKey) {
+        protected MetisIntegerPreference(final MetisPreferenceSet pSet,
+                                         final MetisPreferenceKey pKey) {
             /* Store name */
             super(pSet, pKey, MetisPreferenceType.INTEGER);
 
@@ -1149,7 +1098,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
                 final int myValue = getHandle().getInt(getPreferenceName(), -1);
 
                 /* Set as initial value */
-                setTheValue(Integer.valueOf(myValue));
+                setTheValue(myValue);
             }
         }
 
@@ -1220,17 +1169,16 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * Boolean preference.
-     * @param <K> the keyType
      */
-    public static class MetisBooleanPreference<K extends Enum<K> & MetisPreferenceKey>
-            extends MetisPreferenceItem<K> {
+    public static class MetisBooleanPreference
+            extends MetisPreferenceItem {
         /**
          * Constructor.
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
-        protected MetisBooleanPreference(final MetisPreferenceSet<K> pSet,
-                                         final K pKey) {
+        protected MetisBooleanPreference(final MetisPreferenceSet pSet,
+                                         final MetisPreferenceKey pKey) {
             /* Store name */
             super(pSet, pKey, MetisPreferenceType.BOOLEAN);
 
@@ -1277,17 +1225,16 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * Date preference.
-     * @param <K> the keyType
      */
-    public static class MetisDatePreference<K extends Enum<K> & MetisPreferenceKey>
-            extends MetisPreferenceItem<K> {
+    public static class MetisDatePreference
+            extends MetisPreferenceItem {
         /**
          * Constructor.
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
-        protected MetisDatePreference(final MetisPreferenceSet<K> pSet,
-                                      final K pKey) {
+        protected MetisDatePreference(final MetisPreferenceSet pSet,
+                                      final MetisPreferenceKey pKey) {
             /* Store name */
             super(pSet, pKey, MetisPreferenceType.DATE);
 
@@ -1333,11 +1280,10 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * Enum preference.
-     * @param <K> the keyType
      * @param <E> the Enum type
      */
-    public static class MetisEnumPreference<K extends Enum<K> & MetisPreferenceKey, E extends Enum<E>>
-            extends MetisPreferenceItem<K> {
+    public static class MetisEnumPreference<E extends Enum<E>>
+            extends MetisPreferenceItem {
         /**
          * The enum class.
          */
@@ -1359,8 +1305,8 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * @param pKey the key of the preference
          * @param pClazz the class of the preference
          */
-        public MetisEnumPreference(final MetisPreferenceSet<K> pSet,
-                                   final K pKey,
+        public MetisEnumPreference(final MetisPreferenceSet pSet,
+                                   final MetisPreferenceKey pKey,
                                    final Class<E> pClazz) {
             /* Store name */
             super(pSet, pKey, MetisPreferenceType.ENUM);
@@ -1459,17 +1405,16 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
     /**
      * ByteArray preference.
-     * @param <K> the keyType
      */
-    public static class MetisByteArrayPreference<K extends Enum<K> & MetisPreferenceKey>
-            extends MetisPreferenceItem<K> {
+    public static class MetisByteArrayPreference
+            extends MetisPreferenceItem {
         /**
          * Constructor.
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
-        protected MetisByteArrayPreference(final MetisPreferenceSet<K> pSet,
-                                           final K pKey) {
+        protected MetisByteArrayPreference(final MetisPreferenceSet pSet,
+                                           final MetisPreferenceKey pKey) {
             /* Store name */
             super(pSet, pKey, MetisPreferenceType.BYTEARRAY);
 
@@ -1499,58 +1444,6 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         @Override
         protected void storeThePreference(final Object pNewValue) {
             getHandle().putByteArray(getPreferenceName(), (byte[]) pNewValue);
-        }
-    }
-
-    /**
-     * CharArray preference.
-     * @param <K> the keyType
-     */
-    public static class MetisCharArrayPreference<K extends Enum<K> & MetisPreferenceKey>
-            extends MetisPreferenceItem<K> {
-        /**
-         * Constructor.
-         * @param pSet the preference Set
-         * @param pKey the key of the preference
-         * @throws OceanusException on error
-         */
-        protected MetisCharArrayPreference(final MetisPreferenceSet<K> pSet,
-                                           final K pKey) throws OceanusException {
-            /* Store name */
-            super(pSet, pKey, MetisPreferenceType.CHARARRAY);
-
-            /* Check whether we have an existing value */
-            if (pSet.checkExists(pKey)) {
-                /* Access the value */
-                final byte[] myBytes = getHandle().getByteArray(getPreferenceName(), null);
-
-                /* Decrypt the value */
-                final char[] myValue = myBytes == null
-                                                       ? null
-                                                       : pSet.theSecurityManager.decryptValue(myBytes);
-
-                /* Set as initial value */
-                setTheValue(myValue);
-            }
-        }
-
-        @Override
-        public char[] getValue() {
-            return (char[]) super.getValue();
-        }
-
-        /**
-         * Set value.
-         * @param pNewValue the new value
-         */
-        public void setValue(final char[] pNewValue) {
-            setNewValue(pNewValue);
-        }
-
-        @Override
-        protected void storeThePreference(final Object pNewValue) throws OceanusException {
-            /* Store the value */
-            getHandle().putByteArray(getPreferenceName(), getSet().theSecurityManager.encryptValue((char[]) pNewValue));
         }
     }
 }

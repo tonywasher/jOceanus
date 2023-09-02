@@ -29,19 +29,19 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedRate;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -212,7 +212,7 @@ public class DepositRate
     @Override
     public String toString() {
         /* Access Key Values */
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         final Object myDeposit = myValues.getValue(FIELD_DEPOSIT);
         final Object myRate = myValues.getValue(FIELD_RATE);
         final Object myEndDate = myValues.getValue(FIELD_ENDDATE);
@@ -254,7 +254,7 @@ public class DepositRate
      * Obtain Encrypted Rate Field.
      * @return the Field
      */
-    private MetisEncryptedRate getRateField() {
+    private PrometheusEncryptedPair getRateField() {
         return getRateField(getValueSet());
     }
 
@@ -278,7 +278,7 @@ public class DepositRate
      * Obtain Encrypted Rate Field.
      * @return the Field
      */
-    private MetisEncryptedRate getBonusField() {
+    private PrometheusEncryptedPair getBonusField() {
         return getBonusField(getValueSet());
     }
 
@@ -342,7 +342,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Rate
      */
-    public static TethysRate getRate(final MetisEncryptedValueSet pValueSet) {
+    public static TethysRate getRate(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_RATE, TethysRate.class);
     }
 
@@ -351,7 +351,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bytes
      */
-    public static byte[] getRateBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getRateBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_RATE);
     }
 
@@ -360,8 +360,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static MetisEncryptedRate getRateField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_RATE, MetisEncryptedRate.class);
+    private static PrometheusEncryptedPair getRateField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_RATE, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -369,7 +369,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bonus
      */
-    public static TethysRate getBonus(final MetisEncryptedValueSet pValueSet) {
+    public static TethysRate getBonus(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_BONUS, TethysRate.class);
     }
 
@@ -378,7 +378,7 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Bytes
      */
-    public static byte[] getBonusBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getBonusBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_BONUS);
     }
 
@@ -387,8 +387,8 @@ public class DepositRate
      * @param pValueSet the valueSet
      * @return the Field
      */
-    private static MetisEncryptedRate getBonusField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_BONUS, MetisEncryptedRate.class);
+    private static PrometheusEncryptedPair getBonusField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_BONUS, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -446,7 +446,7 @@ public class DepositRate
      * Set the rate.
      * @param pValue the rate
      */
-    private void setValueRate(final MetisEncryptedRate pValue) {
+    private void setValueRate(final PrometheusEncryptedPair pValue) {
         getValueSet().setValue(FIELD_RATE, pValue);
     }
 
@@ -480,7 +480,7 @@ public class DepositRate
      * Set the bonus.
      * @param pValue the bonus
      */
-    private void setValueBonus(final MetisEncryptedRate pValue) {
+    private void setValueBonus(final PrometheusEncryptedPair pValue) {
         getValueSet().setValue(FIELD_BONUS, pValue);
     }
 

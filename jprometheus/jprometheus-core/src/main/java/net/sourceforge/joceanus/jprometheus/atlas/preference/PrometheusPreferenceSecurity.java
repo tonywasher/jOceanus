@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Metis: Java Data Framework
+ * Prometheus: Application Framework
  * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -30,6 +30,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -38,11 +42,11 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 /**
  * Security for Preferences.
  */
-public class MetisPreferenceSecurity {
+public class PrometheusPreferenceSecurity {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisPreferenceSecurity.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusPreferenceSecurity.class);
 
     /**
      * Default KeyLength.
@@ -56,17 +60,18 @@ public class MetisPreferenceSecurity {
 
     /**
      * Constructor.
+     *
      * @param pManager the preference manager
      * @throws OceanusException on error
      */
-    MetisPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
+    PrometheusPreferenceSecurity(final PrometheusPreferenceManager pManager) throws OceanusException {
         /* Create a Security Factory */
         final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
         final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
 
         /* Obtain the hash as a preference */
-        final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);
-        final byte[] myHash = myPrefs.getByteArrayValue(MetisSecurityPreferenceKey.HASH);
+        final PrometheusBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(PrometheusBaseSecurityPreferences.class);
+        final byte[] myHash = myPrefs.getByteArrayValue(PrometheusSecurityPreferenceKey.HASH);
 
         /* Derive the password */
         final char[] myHost = getHostName();
@@ -77,8 +82,8 @@ public class MetisPreferenceSecurity {
 
         /* Derive or create the hash */
         final GordianKeySetHash myKeySetHash = myHash == null
-                                                              ? myKeySets.generateKeySetHash(new GordianKeySetHashSpec(), myPassword)
-                                                              : myKeySets.deriveKeySetHash(myHash, myPassword);
+                ? myKeySets.generateKeySetHash(new GordianKeySetHashSpec(), myPassword)
+                : myKeySets.deriveKeySetHash(myHash, myPassword);
 
         /* record the KeySet */
         theKeySet = myKeySetHash.getKeySet();
@@ -93,6 +98,7 @@ public class MetisPreferenceSecurity {
 
     /**
      * Encrypt the value.
+     *
      * @param pValue the value to encrypt
      * @return the encrypted value
      * @throws OceanusException on error
@@ -104,6 +110,7 @@ public class MetisPreferenceSecurity {
 
     /**
      * Decrypt the value.
+     *
      * @param pValue the value to decrypt
      * @return the decrypted value
      * @throws OceanusException on error
@@ -115,6 +122,7 @@ public class MetisPreferenceSecurity {
 
     /**
      * determine hostName.
+     *
      * @return the hostName
      */
     private static char[] getHostName() {
@@ -132,7 +140,7 @@ public class MetisPreferenceSecurity {
     /**
      * SecurityPreferenceKey.
      */
-    public enum MetisSecurityPreferenceKey implements MetisPreferenceKey {
+    public enum PrometheusSecurityPreferenceKey implements MetisPreferenceKey {
         /**
          * Hash.
          */
@@ -180,15 +188,16 @@ public class MetisPreferenceSecurity {
 
         /**
          * Constructor.
-         * @param pName the name
+         *
+         * @param pName    the name
          * @param pDisplay the display resource
          */
-        MetisSecurityPreferenceKey(final String pName,
-                                   final MetisPreferenceResource pDisplay) {
+        PrometheusSecurityPreferenceKey(final String pName,
+                                        final MetisPreferenceResource pDisplay) {
             theName = pName;
             theDisplay = pDisplay != null
-                                          ? pDisplay.getValue()
-                                          : null;
+                    ? pDisplay.getValue()
+                    : null;
         }
 
         @Override
@@ -205,29 +214,31 @@ public class MetisPreferenceSecurity {
     /**
      * PrefSecurityPreferences.
      */
-    public static class MetisBaseSecurityPreferences
-            extends MetisPreferenceSet<MetisSecurityPreferenceKey> {
+    public static class PrometheusBaseSecurityPreferences
+            extends MetisPreferenceSet {
         /**
          * Constructor.
+         *
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        public MetisBaseSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisSecurityPreferenceKey.class, MetisPreferenceResource.SECPREF_BASEPREFNAME);
+        public PrometheusBaseSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+            super(pManager, MetisPreferenceResource.SECPREF_BASEPREFNAME);
             setHidden();
         }
 
         /**
          * Set hash.
+         *
          * @param pHash the hash
          */
         protected void setHash(final byte[] pHash) {
-            getByteArrayPreference(MetisSecurityPreferenceKey.HASH).setValue(pHash);
+            getByteArrayPreference(PrometheusSecurityPreferenceKey.HASH).setValue(pHash);
         }
 
         @Override
         protected void definePreferences() {
-            defineByteArrayPreference(MetisSecurityPreferenceKey.HASH);
+            defineByteArrayPreference(PrometheusSecurityPreferenceKey.HASH);
         }
 
         @Override
@@ -239,8 +250,8 @@ public class MetisPreferenceSecurity {
     /**
      * PrefSecurityPreferences.
      */
-    public static class MetisSecurityPreferences
-            extends MetisPreferenceSet<MetisSecurityPreferenceKey> {
+    public static class PrometheusSecurityPreferences
+            extends PrometheusPreferenceSet {
         /**
          * Valid lengths.
          */
@@ -268,63 +279,67 @@ public class MetisPreferenceSecurity {
 
         /**
          * Constructor.
+         *
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        public MetisSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisSecurityPreferenceKey.class, MetisPreferenceResource.SECPREF_PREFNAME);
+        public PrometheusSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_PREFNAME);
         }
 
         /**
          * Get FactoryType.
+         *
          * @return the factoryType
          */
         public GordianFactoryType getFactoryType() {
-            return getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
+            return getEnumValue(PrometheusSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
         }
 
         /**
          * Get Security Phrase.
+         *
          * @return the phrase
          */
         public char[] getSecurityPhrase() {
-            return getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE);
+            return getCharArrayValue(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
         }
 
         /**
          * Get KeySetHashSpec.
+         *
          * @return the parameters
          */
         public GordianKeySetHashSpec getKeySetHashSpec() {
             /* Build and return keySetSpec */
-            final GordianLength myKeyLen = getEnumValue(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
-            final int myIterations = getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS);
-            final int mySteps = getIntegerValue(MetisSecurityPreferenceKey.CIPHERSTEPS);
+            final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            final int myIterations = getIntegerValue(PrometheusSecurityPreferenceKey.HASHITERATIONS);
+            final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
             return new GordianKeySetHashSpec(myIterations, new GordianKeySetSpec(myKeyLen, mySteps));
         }
 
         @Override
         protected void definePreferences() throws OceanusException {
-            defineEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
-            defineEnumPreference(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
-            defineIntegerPreference(MetisSecurityPreferenceKey.CIPHERSTEPS);
-            defineIntegerPreference(MetisSecurityPreferenceKey.HASHITERATIONS);
-            defineCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
-            defineIntegerPreference(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
+            defineEnumPreference(PrometheusSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
+            defineEnumPreference(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            defineIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
+            defineIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);
+            defineCharArrayPreference(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
+            defineIntegerPreference(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
         }
 
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the factory is specified */
-            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref
-                    = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
+            final MetisEnumPreference<GordianFactoryType> myFactPref
+                    = getEnumPreference(PrometheusSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
             if (!myFactPref.isAvailable()) {
                 myFactPref.setValue(GordianFactoryType.BC);
             }
 
             /* Make sure that the restricted state is specified */
-            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianLength> myLengthPref
-                    = getEnumPreference(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            final MetisEnumPreference<GordianLength> myLengthPref
+                    = getEnumPreference(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             if (!myLengthPref.isAvailable()) {
                 myLengthPref.setValue(DEFAULT_KEYLEN);
             }
@@ -333,13 +348,13 @@ public class MetisPreferenceSecurity {
             myLengthPref.setFilter(VALID_LENGTHS::contains);
 
             /* Make sure that the security phrase is specified */
-            final MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
+            final PrometheusCharArrayPreference myPhrasePref = getCharArrayPreference(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
             if (!myPhrasePref.isAvailable()) {
                 myPhrasePref.setValue(DEFAULT_SECURITY_PHRASE.toCharArray());
             }
 
             /* Make sure that the cipherSteps is specified */
-            MetisIntegerPreference<MetisSecurityPreferenceKey> myPref = getIntegerPreference(MetisSecurityPreferenceKey.CIPHERSTEPS);
+            MetisIntegerPreference myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
             if (!myPref.isAvailable()) {
                 myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);
             }
@@ -351,7 +366,7 @@ public class MetisPreferenceSecurity {
             }
 
             /* Make sure that the hashIterations is specified */
-            myPref = getIntegerPreference(MetisSecurityPreferenceKey.HASHITERATIONS);
+            myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);
             if (!myPref.isAvailable()) {
                 myPref.setValue(GordianKeySetHashSpec.DEFAULT_ITERATIONS);
             }
@@ -363,7 +378,7 @@ public class MetisPreferenceSecurity {
             }
 
             /* Make sure that the activeKeySets is specified */
-            myPref = getIntegerPreference(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
+            myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
             if (!myPref.isAvailable()) {
                 myPref.setValue(DEFAULT_ACTIVE_KEYSETS);
             }

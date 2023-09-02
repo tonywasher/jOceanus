@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
@@ -51,7 +51,7 @@ public class TableSecurityPrice
         /* Declare the columns */
         final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
         final PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
-        myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, MetisEncryptedData.PRICELEN);
+        myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, PrometheusEncryptedPair.PRICELEN);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.DESCENDING);

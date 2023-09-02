@@ -87,14 +87,14 @@ public final class QIFPreference {
      * QIF Preferences.
      */
     public static class MoneyWiseQIFPreferences
-            extends MetisPreferenceSet<MoneyWiseQIFPreferenceKey> {
+            extends MetisPreferenceSet {
         /**
          * Constructor.
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
         public MoneyWiseQIFPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MoneyWiseQIFPreferenceKey.class, "QIF Preferences");
+            super(pManager, "QIF Preferences");
         }
 
         @Override
@@ -107,19 +107,19 @@ public final class QIFPreference {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the directory is specified */
-            final MetisStringPreference<MoneyWiseQIFPreferenceKey> myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
+            final MetisStringPreference myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
             if (!myDirPref.isAvailable()) {
                 myDirPref.setValue(System.getProperty("user.home"));
             }
 
             /* Make sure that the QIFType is specified */
-            final MetisEnumPreference<MoneyWiseQIFPreferenceKey, QIFType> myTypePref = getEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+            final MetisEnumPreference<QIFType> myTypePref = getEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(QIFType.ACEMONEY);
             }
 
             /* Make sure that the eventDate is specified */
-            final MetisDatePreference<MoneyWiseQIFPreferenceKey> myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
+            final MetisDatePreference myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
             if (!myPref.isAvailable()) {
                 myPref.setValue(new TethysDate());
             }

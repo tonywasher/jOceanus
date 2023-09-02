@@ -114,7 +114,7 @@ public class MetisPreferenceView
     /**
      * The Properties Pane.
      */
-    private final TethysUICardPaneManager<MetisPreferenceSetView<?>> theProperties;
+    private final TethysUICardPaneManager<MetisPreferenceSetView> theProperties;
 
     /**
      * The Buttons Pane.
@@ -124,7 +124,7 @@ public class MetisPreferenceView
     /**
      * The list of views.
      */
-    private final List<MetisPreferenceSetView<?>> theViews;
+    private final List<MetisPreferenceSetView> theViews;
 
     /**
      * Constructor.
@@ -169,7 +169,7 @@ public class MetisPreferenceView
         theViews = new ArrayList<>();
 
         /* Loop through the existing property sets */
-        for (MetisPreferenceSet<?> mySet : pPreferenceMgr.getPreferenceSets()) {
+        for (MetisPreferenceSet mySet : pPreferenceMgr.getPreferenceSets()) {
             /* Register the Set */
             registerSet(mySet);
         }
@@ -225,7 +225,7 @@ public class MetisPreferenceView
      * handle propertySetSelect event.
      */
     private void handlePropertySetSelect() {
-        final MetisPreferenceSetView<?> myView = (MetisPreferenceSetView<?>) theSelectButton.getValue().getData();
+        final MetisPreferenceSetView myView = (MetisPreferenceSetView) theSelectButton.getValue().getData();
         theProperties.selectCard(myView.toString());
     }
 
@@ -235,7 +235,7 @@ public class MetisPreferenceView
      */
     private void handleNewPropertySet(final TethysEvent<MetisPreferenceEvent> pEvent) {
         /* Details is the property set that has been added */
-        final MetisPreferenceSet<?> mySet = pEvent.getDetails(MetisPreferenceSet.class);
+        final MetisPreferenceSet mySet = pEvent.getDetails(MetisPreferenceSet.class);
 
         /* Register the set */
         registerSet(mySet);
@@ -248,11 +248,11 @@ public class MetisPreferenceView
      * RegisterSet.
      * @param pSet the set to register
      */
-    private void registerSet(final MetisPreferenceSet<?> pSet) {
+    private void registerSet(final MetisPreferenceSet pSet) {
         /* Ignore hidden sets */
         if (!pSet.isHidden()) {
             /* Create the underlying view */
-            final MetisPreferenceSetView<?> myView = new MetisPreferenceSetView<>(theGuiFactory, pSet);
+            final MetisPreferenceSetView myView = createView(theGuiFactory, pSet);
 
             /* Add the view */
             theProperties.addCard(myView.toString(), myView);
@@ -267,11 +267,21 @@ public class MetisPreferenceView
     }
 
     /**
+     * Create view for preference.
+     * @param pSet the set to register
+     */
+    protected MetisPreferenceSetView createView(final TethysUIFactory<?> pFactory,
+                                                final MetisPreferenceSet pSet) {
+        /* Create the underlying view */
+        return new MetisPreferenceSetView(pFactory, pSet);
+    }
+
+    /**
      * Determine Focus.
      */
     public void determineFocus() {
         /* Request the focus */
-        final MetisPreferenceSetView<?> myPanel = theProperties.getActiveCard();
+        final MetisPreferenceSetView myPanel = theProperties.getActiveCard();
         if (myPanel != null) {
             myPanel.determineFocus();
         }
@@ -282,7 +292,7 @@ public class MetisPreferenceView
      * @return true/false
      */
     public boolean hasUpdates() {
-        final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView myView = theProperties.getActiveCard();
         return (myView != null)
                && myView.hasChanges();
     }
@@ -300,7 +310,7 @@ public class MetisPreferenceView
      */
     private void saveUpdates() {
         try {
-            final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
+            final MetisPreferenceSetView myView = theProperties.getActiveCard();
             myView.storeChanges();
         } catch (OceanusException e) {
             LOGGER.error(ERROR_STORE, e);
@@ -318,7 +328,7 @@ public class MetisPreferenceView
      */
     private void resetUpdates() {
         /* Reset all changes */
-        final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView myView = theProperties.getActiveCard();
         myView.resetChanges();
 
         /* Set correct visibility */
@@ -333,7 +343,7 @@ public class MetisPreferenceView
      */
     private void setVisibility() {
         /* Enable selection */
-        final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView myView = theProperties.getActiveCard();
         theSelectButton.setEnabled((myView != null)
                                    && !myView.hasChanges());
 
@@ -362,7 +372,7 @@ public class MetisPreferenceView
         final String myActiveName = theProperties.getActiveName();
 
         /* Loop through the views */
-        for (MetisPreferenceSetView<?> myView : theViews) {
+        for (MetisPreferenceSetView myView : theViews) {
             /* Create a new MenuItem and add it to the popUp */
             final TethysUIScrollItem<?> myItem = thePrefMenu.addItem(new TethysUIGenericWrapper(myView));
 

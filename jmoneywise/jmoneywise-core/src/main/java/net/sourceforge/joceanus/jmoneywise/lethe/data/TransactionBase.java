@@ -21,8 +21,6 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedMoney;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -31,9 +29,11 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetPairManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -255,7 +255,7 @@ public abstract class TransactionBase
         }
 
         /* Access Key Values */
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         final Object myAccount = myValues.getValue(FIELD_ACCOUNT);
         final Object myPartner = myValues.getValue(FIELD_PARTNER);
         final Object myPair = myValues.getValue(FIELD_PAIR);
@@ -378,7 +378,7 @@ public abstract class TransactionBase
      * Obtain Encrypted Amount Field.
      * @return the Field
      */
-    protected MetisEncryptedMoney getAmountField() {
+    protected PrometheusEncryptedPair getAmountField() {
         return getAmountField(getValueSet());
     }
 
@@ -462,7 +462,7 @@ public abstract class TransactionBase
      * @param pValueSet the valueSet
      * @return the Amount
      */
-    public static TethysMoney getAmount(final MetisEncryptedValueSet pValueSet) {
+    public static TethysMoney getAmount(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_AMOUNT, TethysMoney.class);
     }
 
@@ -471,7 +471,7 @@ public abstract class TransactionBase
      * @param pValueSet the valueSet
      * @return the bytes
      */
-    public static byte[] getAmountBytes(final MetisEncryptedValueSet pValueSet) {
+    public static byte[] getAmountBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_AMOUNT);
     }
 
@@ -480,8 +480,8 @@ public abstract class TransactionBase
      * @param pValueSet the valueSet
      * @return the field
      */
-    private static MetisEncryptedMoney getAmountField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_AMOUNT, MetisEncryptedMoney.class);
+    private static PrometheusEncryptedPair getAmountField(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_AMOUNT, PrometheusEncryptedPair.class);
     }
 
     /**
@@ -516,7 +516,7 @@ public abstract class TransactionBase
      * @param pValue the value
      */
     protected final void setValueAssetPair(final AssetPair pValue) {
-        final MetisEncryptedValueSet myValues = getValueSet();
+        final EncryptedValueSet myValues = getValueSet();
         myValues.setValue(FIELD_PAIR, pValue);
         myValues.setValue(FIELD_DIRECTION, pValue.getDirection());
     }
@@ -583,7 +583,7 @@ public abstract class TransactionBase
      * Set amount value.
      * @param pValue the value
      */
-    protected final void setValueAmount(final MetisEncryptedMoney pValue) {
+    protected final void setValueAmount(final PrometheusEncryptedPair pValue) {
         getValueSet().setValue(FIELD_AMOUNT, pValue);
     }
 

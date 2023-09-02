@@ -17,14 +17,15 @@
 package net.sourceforge.joceanus.jprometheus.lethe;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
@@ -37,29 +38,43 @@ public class PrometheusToolkit {
     private final MetisToolkit theToolkit;
 
     /**
+     * Preference Manager.
+     */
+    private final PrometheusPreferenceManager thePreferenceManager;
+
+    /**
      * Password Manager.
      */
     private final GordianPasswordManager thePasswordMgr;
 
     /**
      * Constructor.
-     * @param pToolkit the toolkit
+     * @param pFactory the GUI factory
      * @throws OceanusException on error
      */
-    public PrometheusToolkit(final MetisToolkit pToolkit) throws OceanusException {
+    public PrometheusToolkit(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Store parameters */
-        theToolkit = pToolkit;
+        theToolkit = new MetisToolkit(pFactory, false);
 
         /* Access components */
-        final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
-        final TethysUIThreadManager myThreadMgr = pToolkit.getThreadManager();
+        thePreferenceManager = new PrometheusPreferenceManager(theToolkit.getViewerManager());
+        theToolkit.setUpColors(thePreferenceManager);
+        final TethysUIThreadManager myThreadMgr = theToolkit.getThreadManager();
 
         /* Create the passwordManager */
-        final MetisSecurityPreferences myPreferences = myPreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
+        final PrometheusSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(PrometheusSecurityPreferences.class);
         thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getSecurityPhrase());
 
         /* Set this as the threadData */
         myThreadMgr.setThreadData(this);
+    }
+
+    /**
+     * Obtain the preference manager.
+     * @return the preference manager
+     */
+    public PrometheusPreferenceManager getPreferenceManager() {
+        return thePreferenceManager;
     }
 
     /**
@@ -94,7 +109,15 @@ public class PrometheusToolkit {
      * @throws OceanusException on error
      */
     private GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
-                                                        final char[] pSecurityPhrase) throws OceanusException {
+                                                      final char[] pSecurityPhrase) throws OceanusException {
         return GordianGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase);
+    }
+
+    /**
+     * Create a new Preference View.
+     * @return the view
+     */
+    public PrometheusPreferenceView newPreferenceView() {
+        return new PrometheusPreferenceView(getToolkit().getGuiFactory(), thePreferenceManager);
     }
 }

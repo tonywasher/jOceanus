@@ -19,6 +19,7 @@
  */
 module net.sourceforge.joceanus.jprometheus.core {
     /* Java Libraries */
+    requires java.prefs;
     requires java.sql;
 
     /* jOceanus */
@@ -30,6 +31,7 @@ module net.sourceforge.joceanus.jprometheus.core {
     /* Exports */
     exports net.sourceforge.joceanus.jprometheus;
     exports net.sourceforge.joceanus.jprometheus.atlas.data;
+    exports net.sourceforge.joceanus.jprometheus.atlas.field;
     exports net.sourceforge.joceanus.jprometheus.atlas.preference;
     exports net.sourceforge.joceanus.jprometheus.ui.fieldset;
     exports net.sourceforge.joceanus.jprometheus.ui.panel;

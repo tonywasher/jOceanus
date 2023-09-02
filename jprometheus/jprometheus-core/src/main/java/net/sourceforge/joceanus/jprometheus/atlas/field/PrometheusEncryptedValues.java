@@ -150,4 +150,62 @@ public class PrometheusEncryptedValues
             }
         }
     }
+
+    /**
+     * Update security for the values.
+     * @throws OceanusException on error
+     */
+    public void updateSecurity() throws OceanusException {
+        /* Loop through the fields */
+        final MetisFieldSetDef myFieldSet = getFields();
+        final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
+        while (myIterator.hasNext()) {
+            final MetisFieldDef myField = myIterator.next();
+
+            /* Ignore non-encrypted fields */
+            if (!(myField instanceof PrometheusEncryptedField)) {
+                continue;
+            }
+
+            /* Access the value */
+            final Object myValue = getValue(myField);
+
+            /* If this is a byte array */
+            /* Encrypt the value */
+            setUncheckedValue(myField, theEncryptor.encryptValue(myValue, myField));
+        }
+    }
+
+    /**
+     * Adopt security for the values.
+     * @param pGenerator the generator
+     * @param pBaseValues the base values
+     * @throws OceanusException on error
+     */
+    public void adoptSecurity(final PrometheusFieldGenerator pGenerator,
+                              final PrometheusEncryptedValues pBaseValues) throws OceanusException {
+        /* Loop through the fields */
+        final MetisFieldSetDef myFieldSet = getFields();
+        final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
+        while (myIterator.hasNext()) {
+            final MetisFieldDef myField = myIterator.next();
+
+            /* Ignore non-encrypted fields */
+            final Object myValue = getValue(myField);
+            if (!(myValue instanceof PrometheusEncryptedPair)) {
+                continue;
+            }
+
+            /* Access the base object */
+            Object myBaseObj = pBaseValues == null
+                    ? null
+                    : pBaseValues.getValue(myField);
+            if (!(myBaseObj instanceof PrometheusEncryptedPair)) {
+                myBaseObj = null;
+            }
+
+            /* Adopt encryption */
+            theEncryptor.adoptEncryption((PrometheusEncryptedPair) myValue, (PrometheusEncryptedPair) myBaseObj);
+        }
+    }
 }

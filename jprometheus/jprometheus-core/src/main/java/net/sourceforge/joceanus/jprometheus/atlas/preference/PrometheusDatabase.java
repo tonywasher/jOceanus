@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -100,7 +99,7 @@ public interface PrometheusDatabase {
      * PrometheusDatabasePreferences.
      */
     class PrometheusDatabasePreferences
-            extends MetisPreferenceSet<PrometheusDatabasePreferenceKey> {
+            extends PrometheusPreferenceSet {
         /**
          * Default Database batch size.
          */
@@ -112,7 +111,7 @@ public interface PrometheusDatabase {
          * @throws OceanusException on error
          */
         public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusDatabasePreferenceKey.class, PrometheusPreferenceResource.DBPREF_PREFNAME);
+            super((PrometheusPreferenceManager) pManager, PrometheusPreferenceResource.DBPREF_PREFNAME);
         }
 
         @Override
@@ -129,13 +128,13 @@ public interface PrometheusDatabase {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the enum is specified */
-            final MetisEnumPreference<PrometheusDatabasePreferenceKey, PrometheusJDBCDriver> myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
+            final MetisEnumPreference<PrometheusJDBCDriver> myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);
             }
 
             /* Make sure that the hostName is specified */
-            MetisStringPreference<PrometheusDatabasePreferenceKey> myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);
+            MetisStringPreference myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);
             if (!myPref.isAvailable()) {
                 myPref.setValue("localhost");
             }
@@ -162,13 +161,13 @@ public interface PrometheusDatabase {
             }
 
             /* Make sure that the passWord is specified */
-            final MetisCharArrayPreference<PrometheusDatabasePreferenceKey> myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
+            final PrometheusCharArrayPreference myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
             if (!myPassPref.isAvailable()) {
                 myPassPref.setValue("secret".toCharArray());
             }
 
             /* Make sure that the value is specified */
-            final MetisIntegerPreference<PrometheusDatabasePreferenceKey> myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
+            final MetisIntegerPreference myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
             if (!myBatchPref.isAvailable()) {
                 myBatchPref.setValue(DEFAULT_DBBATCH);
             }

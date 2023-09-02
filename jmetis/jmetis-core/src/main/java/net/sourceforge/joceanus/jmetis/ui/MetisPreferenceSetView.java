@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisBooleanPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisByteArrayPreference;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisCharArrayPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisDatePreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisEnumPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisIntegerPreference;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPreferenceId;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPreferenceItem;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisStringPreference;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -65,15 +65,13 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * Panel for editing a preference Set.
- *
- * @param <K> the key type
  */
-public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
+public class MetisPreferenceSetView
         implements TethysEventProvider<MetisPreferenceEvent>, TethysUIComponent {
     /**
      * Colon String.
      */
-    private static final String STR_COLON = TethysUIConstant.STR_COLON;
+    protected static final String STR_COLON = TethysUIConstant.STR_COLON;
 
     /**
      * Text for Preferences Title.
@@ -93,7 +91,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
     /**
      * The PreferenceSet for this panel.
      */
-    private final MetisPreferenceSet<K> thePreferences;
+    private final MetisPreferenceSet thePreferences;
 
     /**
      * The Border Pane.
@@ -126,8 +124,8 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
      * @param pFactory       the GUI factory
      * @param pPreferenceSet the preference set
      */
-    MetisPreferenceSetView(final TethysUIFactory<?> pFactory,
-                           final MetisPreferenceSet<K> pPreferenceSet) {
+    protected MetisPreferenceSetView(final TethysUIFactory<?> pFactory,
+                                     final MetisPreferenceSet pPreferenceSet) {
         /* Store parameters */
         theGuiFactory = pFactory;
         thePreferences = pPreferenceSet;
@@ -143,7 +141,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         theGrid = myPanes.newGridPane();
 
         /* Loop through the preferences */
-        for (MetisPreferenceItem<K> myPref : thePreferences.getPreferences()) {
+        for (MetisPreferenceItem myPref : thePreferences.getPreferences()) {
             /* Create element and add it to the list */
             final PreferenceElement myElement = allocatePreferenceElement(myPref);
             if (myElement != null) {
@@ -164,6 +162,22 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
 
         /* initialise the fields */
         updateFields();
+    }
+
+    /**
+     * Obtain the GUI factory.
+     * @return the factory
+     */
+    protected TethysUIFactory<?> getFactory() {
+        return theGuiFactory;
+    }
+
+    /**
+     * Obtain the grid.
+     * @return the grid
+     */
+    protected TethysUIGridPaneManager getGrid() {
+        return theGrid;
     }
 
     @Override
@@ -231,7 +245,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Notify changes.
      */
-    private void notifyChanges() {
+    protected void notifyChanges() {
         /* AutoCorrect the preferences */
         thePreferences.autoCorrectPreferences();
 
@@ -248,29 +262,26 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
      * @param pItem the preference item
      * @return the element
      */
-    @SuppressWarnings("unchecked")
-    private PreferenceElement allocatePreferenceElement(final MetisPreferenceItem<K> pItem) {
+    protected PreferenceElement allocatePreferenceElement(final MetisPreferenceItem pItem) {
         if (pItem instanceof MetisEnumPreference) {
-            return new EnumPreferenceElement<>((MetisEnumPreference<K, ?>) pItem);
+            return new EnumPreferenceElement<>((MetisEnumPreference<?>) pItem);
         } else if (pItem instanceof MetisIntegerPreference) {
-            return new IntegerPreferenceElement((MetisIntegerPreference<K>) pItem);
+            return new IntegerPreferenceElement((MetisIntegerPreference) pItem);
         } else if (pItem instanceof MetisDatePreference) {
-            return new DatePreferenceElement((MetisDatePreference<K>) pItem);
+            return new DatePreferenceElement((MetisDatePreference) pItem);
         } else if (pItem instanceof MetisBooleanPreference) {
-            return new BooleanPreferenceElement((MetisBooleanPreference<K>) pItem);
-        } else if (pItem instanceof MetisCharArrayPreference) {
-            return new CharArrayPreferenceElement((MetisCharArrayPreference<K>) pItem);
+            return new BooleanPreferenceElement((MetisBooleanPreference) pItem);
         } else if (pItem instanceof MetisStringPreference) {
-            final MetisStringPreference<K> myItem = (MetisStringPreference<K>) pItem;
-            switch (pItem.getType()) {
-                case DIRECTORY:
-                    return new DirectoryPreferenceElement(myItem);
-                case FILE:
-                    return new FilePreferenceElement(myItem);
-                case COLOR:
-                    return new ColorPreferenceElement(myItem);
-                default:
-                    return new StringPreferenceElement(myItem);
+            final MetisStringPreference myItem = (MetisStringPreference) pItem;
+            final MetisPreferenceId myId = pItem.getType();
+            if (myId.equals(MetisPreferenceType.DIRECTORY)) {
+                return new DirectoryPreferenceElement(myItem);
+            } else if (myId.equals(MetisPreferenceType.FILE)) {
+                return new FilePreferenceElement(myItem);
+            } else if (myId.equals(MetisPreferenceType.COLOR)) {
+                return new ColorPreferenceElement(myItem);
+            } else {
+                return new StringPreferenceElement(myItem);
             }
         } else if (!(pItem instanceof MetisByteArrayPreference)) {
             throw new IllegalArgumentException("Bad Preference Type: " + pItem.getType());
@@ -289,7 +300,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
      * PreferenceElement.
      */
     @FunctionalInterface
-    private interface PreferenceElement {
+    protected interface PreferenceElement {
         /**
          * Update the field.
          */
@@ -304,7 +315,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisStringPreference<K> theItem;
+        private final MetisStringPreference theItem;
 
         /**
          * The Field item.
@@ -316,7 +327,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        StringPreferenceElement(final MetisStringPreference<K> pItem) {
+        StringPreferenceElement(final MetisStringPreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newStringField();
@@ -363,7 +374,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisIntegerPreference<K> theItem;
+        private final MetisIntegerPreference theItem;
 
         /**
          * The Field item.
@@ -380,7 +391,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        IntegerPreferenceElement(final MetisIntegerPreference<K> pItem) {
+        IntegerPreferenceElement(final MetisIntegerPreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newIntegerField();
@@ -478,7 +489,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisBooleanPreference<K> theItem;
+        private final MetisBooleanPreference theItem;
 
         /**
          * The CheckBox item.
@@ -490,7 +501,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        BooleanPreferenceElement(final MetisBooleanPreference<K> pItem) {
+        BooleanPreferenceElement(final MetisBooleanPreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theCheckBox = theGuiFactory.controlFactory().newCheckBox(pItem.getDisplay());
@@ -541,7 +552,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisDatePreference<K> theItem;
+        private final MetisDatePreference theItem;
 
         /**
          * The Field item.
@@ -553,7 +564,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        DatePreferenceElement(final MetisDatePreference<K> pItem) {
+        DatePreferenceElement(final MetisDatePreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newDateField();
@@ -606,7 +617,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisEnumPreference<K, E> theItem;
+        private final MetisEnumPreference<E> theItem;
 
         /**
          * The Field item.
@@ -619,7 +630,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          * @param pItem the item
          */
         @SuppressWarnings("unchecked")
-        EnumPreferenceElement(final MetisEnumPreference<K, E> pItem) {
+        EnumPreferenceElement(final MetisEnumPreference<E> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newScrollField(TethysUIGenericWrapper.class);
@@ -694,7 +705,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisStringPreference<K> theItem;
+        private final MetisStringPreference theItem;
 
         /**
          * The Field item.
@@ -706,7 +717,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        ColorPreferenceElement(final MetisStringPreference<K> pItem) {
+        ColorPreferenceElement(final MetisStringPreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newColorField();
@@ -757,7 +768,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisStringPreference<K> theItem;
+        private final MetisStringPreference theItem;
 
         /**
          * The Field item.
@@ -779,7 +790,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        FilePreferenceElement(final MetisStringPreference<K> pItem) {
+        FilePreferenceElement(final MetisStringPreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newStringField();
@@ -852,7 +863,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The Preference item.
          */
-        private final MetisStringPreference<K> theItem;
+        private final MetisStringPreference theItem;
 
         /**
          * The Field item.
@@ -874,7 +885,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
          *
          * @param pItem the item
          */
-        DirectoryPreferenceElement(final MetisStringPreference<K> pItem) {
+        DirectoryPreferenceElement(final MetisStringPreference pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.fieldFactory().newStringField();
@@ -936,65 +947,6 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
                 theSelector = theGuiFactory.dialogFactory().newDirectorySelector();
                 theSelector.setTitle(theItem.getDisplay());
             }
-        }
-    }
-
-    /**
-     * CharArray preference element.
-     */
-    private final class CharArrayPreferenceElement
-            implements PreferenceElement {
-        /**
-         * The Preference item.
-         */
-        private final MetisCharArrayPreference<K> theItem;
-
-        /**
-         * The Field item.
-         */
-        private final TethysUICharArrayEditField theField;
-
-        /**
-         * Constructor.
-         *
-         * @param pItem the item
-         */
-        CharArrayPreferenceElement(final MetisCharArrayPreference<K> pItem) {
-            /* Store parameters */
-            theItem = pItem;
-            theField = theGuiFactory.fieldFactory().newCharArrayField();
-            theField.setEditable(true);
-
-            /* Create the label */
-            final TethysUILabel myLabel = theGuiFactory.controlFactory().newLabel(pItem.getDisplay() + STR_COLON);
-            myLabel.setAlignment(TethysUIAlignment.EAST);
-
-            /* Add to the Grid Pane */
-            theGrid.addCell(myLabel);
-            theGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);
-            theGrid.addCell(theField);
-            theGrid.setCellColumnSpan(theField, 2);
-            theGrid.allowCellGrowth(theField);
-            theGrid.newRow();
-
-            /* Create listener */
-            theField.getEventRegistrar().addEventListener(e -> {
-                pItem.setValue(theField.getValue());
-                notifyChanges();
-            });
-        }
-
-        @Override
-        public void updateField() {
-            /* Update the field */
-            theField.setValue(theItem.getValue());
-
-            /* Set changed indication */
-            theField.setTheAttributeState(TethysUIFieldAttribute.CHANGED, theItem.isChanged());
-            theField.adjustField();
-
-            /* Handle hidden state */
-            theField.setEnabled(!theItem.isHidden());
         }
     }
 }
