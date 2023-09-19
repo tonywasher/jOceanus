@@ -69,16 +69,6 @@ public enum MetisPreferenceResource implements TethysBundleId {
     TYPE_COLOR("type.COLOR"),
 
     /**
-     * Preference type CHARARRAY.
-     */
-    TYPE_CHARARRAY("type.CHARARRAY"),
-
-    /**
-     * Preference type BYTEARRAY.
-     */
-    TYPE_BYTEARRAY("type.BYTEARRAY"),
-
-    /**
      * OK button text.
      */
     UI_BUTTON_OK("ui.button.Ok"),
@@ -254,8 +244,6 @@ public enum MetisPreferenceResource implements TethysBundleId {
         myMap.put(MetisPreferenceType.DIRECTORY, TYPE_DIRECTORY);
         myMap.put(MetisPreferenceType.ENUM, TYPE_ENUM);
         myMap.put(MetisPreferenceType.COLOR, TYPE_COLOR);
-        myMap.put(MetisPreferenceType.CHARARRAY, TYPE_CHARARRAY);
-        myMap.put(MetisPreferenceType.BYTEARRAY, TYPE_BYTEARRAY);
         return myMap;
     }
 
@@ -264,7 +252,7 @@ public enum MetisPreferenceResource implements TethysBundleId {
      * @param pType the type
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForPrefType(final MetisPreferenceType pType) {
+    public static TethysBundleId getKeyForPrefType(final MetisPreferenceType pType) {
         return TethysBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

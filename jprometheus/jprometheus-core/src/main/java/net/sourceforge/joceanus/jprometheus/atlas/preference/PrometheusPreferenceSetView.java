@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPreferenceItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceSetView;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSet.PrometheusByteArrayPreference;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSet.PrometheusCharArrayPreference;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
@@ -46,6 +47,8 @@ public class PrometheusPreferenceSetView
     protected PreferenceElement allocatePreferenceElement(final MetisPreferenceItem pItem) {
         if (pItem instanceof PrometheusCharArrayPreference) {
             return new CharArrayPreferenceElement((PrometheusCharArrayPreference) pItem);
+        } else if (pItem instanceof PrometheusByteArrayPreference) {
+            return null;
         } else {
             return super.allocatePreferenceElement(pItem);
         }

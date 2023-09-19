@@ -61,17 +61,7 @@ public enum MetisPreferenceType
     /**
      * Colour.
      */
-    COLOR,
-
-    /**
-     * CharArray.
-     */
-    CHARARRAY,
-
-    /**
-     * ByteArray.
-     */
-    BYTEARRAY;
+    COLOR;
 
     /**
      * The String name.

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPreferenceId;
 
 /**
@@ -23,6 +24,11 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPrefer
  */
 public enum PrometheusPreferenceType
         implements MetisPreferenceId {
+    /**
+     * ByteArray.
+     */
+    BYTEARRAY,
+
     /**
      * CharArray.
      */
@@ -38,7 +44,7 @@ public enum PrometheusPreferenceType
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = "CharArray";
+            theName = PrometheusPreferenceResource.getKeyForPrefType(this).getValue();
         }
 
         /* return the name */

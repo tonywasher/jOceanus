@@ -29,6 +29,16 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
  */
 public enum PrometheusPreferenceResource implements TethysBundleId {
     /**
+     * Preference type BYTEARRAY.
+     */
+    TYPE_BYTEARRAY("preference.type.BYTEARRAY"),
+
+    /**
+     * Preference type CHARARRAY.
+     */
+    TYPE_CHARARRAY("preference.type.CHARARRAY"),
+
+    /**
      * DBDriver SQLServer.
      */
     DRIVER_SQLSERVER("DBDriver.SQLSERVER"),
@@ -139,6 +149,11 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
     private static final Map<PrometheusJDBCDriver, TethysBundleId> DRIVER_MAP = buildDriverMap();
 
     /**
+     * The PreferenceType Map.
+     */
+    private static final Map<PrometheusPreferenceType, TethysBundleId> PREF_MAP = buildPreferenceMap();
+
+    /**
      * The Resource Loader.
      */
     private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
@@ -203,7 +218,28 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
+    static TethysBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
         return TethysBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);
+    }
+
+    /**
+     * Build preference map.
+     * @return the map
+     */
+    private static Map<PrometheusPreferenceType, TethysBundleId> buildPreferenceMap() {
+        /* Create the map and return it */
+        final Map<PrometheusPreferenceType, TethysBundleId> myMap = new EnumMap<>(PrometheusPreferenceType.class);
+        myMap.put(PrometheusPreferenceType.BYTEARRAY, TYPE_BYTEARRAY);
+        myMap.put(PrometheusPreferenceType.CHARARRAY, TYPE_CHARARRAY);
+        return myMap;
+    }
+
+    /**
+     * Obtain key for prefType.
+     * @param pType the type
+     * @return the resource key
+     */
+    public static TethysBundleId getKeyForPrefType(final PrometheusPreferenceType pType) {
+        return TethysBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

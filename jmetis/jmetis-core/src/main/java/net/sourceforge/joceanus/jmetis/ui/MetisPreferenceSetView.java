@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisBooleanPreference;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisByteArrayPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisDatePreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisEnumPreference;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisIntegerPreference;
@@ -49,7 +48,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
@@ -283,10 +281,9 @@ public class MetisPreferenceSetView
             } else {
                 return new StringPreferenceElement(myItem);
             }
-        } else if (!(pItem instanceof MetisByteArrayPreference)) {
+        } else  {
             throw new IllegalArgumentException("Bad Preference Type: " + pItem.getType());
         }
-        return null;
     }
 
     /**

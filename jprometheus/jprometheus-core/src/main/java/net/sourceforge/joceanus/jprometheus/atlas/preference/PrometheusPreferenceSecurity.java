@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -215,7 +214,7 @@ public class PrometheusPreferenceSecurity {
      * PrefSecurityPreferences.
      */
     public static class PrometheusBaseSecurityPreferences
-            extends MetisPreferenceSet {
+            extends PrometheusPreferenceSet {
         /**
          * Constructor.
          *
@@ -223,7 +222,7 @@ public class PrometheusPreferenceSecurity {
          * @throws OceanusException on error
          */
         public PrometheusBaseSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MetisPreferenceResource.SECPREF_BASEPREFNAME);
+            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_BASEPREFNAME);
             setHidden();
         }
 
