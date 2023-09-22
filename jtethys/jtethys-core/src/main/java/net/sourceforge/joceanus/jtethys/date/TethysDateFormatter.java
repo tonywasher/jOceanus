@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -343,5 +344,26 @@ public class TethysDateFormatter
      */
     public Locale getLocale() {
         return theLocale;
+    }
+
+    /**
+     * Create a byte array representation of a date.
+     * @param pDate the date to process
+     * @return the processed date
+     */
+    public byte[] toBytes(final TethysDate pDate) {
+        final long myEpoch = pDate.getDate().toEpochDay();
+        return TethysDataConverter.longToByteArray(myEpoch);
+    }
+
+    /**
+     * Parse a byte array representation of a date.
+     * @param pBuffer the byte representation
+     * @return the date
+     */
+    public TethysDate fromBytes(final byte[] pBuffer) {
+        final long myEpoch = TethysDataConverter.byteArrayToLong(pBuffer);
+        final LocalDate myDate = LocalDate.ofEpochDay(myEpoch);
+        return new TethysDate(myDate);
     }
 }

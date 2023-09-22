@@ -71,6 +71,14 @@ public class TethysPrice
     }
 
     /**
+     * Create the price from a byte array.
+     * @param pBuffer the buffer
+     */
+    public TethysPrice(final byte[] pBuffer) {
+        super(pBuffer);
+    }
+
+    /**
      * Factory method for generating whole monetary units for a currency (e.g. £)
      * @param pUnits the number of whole monetary units
      * @param pCurrency the currency

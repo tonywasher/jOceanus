@@ -19,6 +19,9 @@ package net.sourceforge.joceanus.jtethys.decimal;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Arrays;
+
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Provides classes to represent decimal numbers with fixed numbers of decimal digits
@@ -120,6 +123,20 @@ public class TethysDecimal
                          final int pScale) {
         /* Store value and scale */
         setValue(pUnscaledValue, pScale);
+    }
+
+    /**
+     * Create the decimal from a byte array.
+     * @param pBuffer the buffer
+     */
+    public TethysDecimal(final byte[] pBuffer) {
+        if (pBuffer == null || pBuffer.length < Long.BYTES + 1) {
+            throw new IllegalArgumentException();
+        }
+        final byte[] myValue = Arrays.copyOf(pBuffer, Long.BYTES);
+        final long myUnscaled = TethysDataConverter.byteArrayToLong(myValue);
+        final int myScale = pBuffer[Long.BYTES];
+        setValue(myUnscaled, myScale);
     }
 
     /**
@@ -1059,5 +1076,16 @@ public class TethysDecimal
 
         /* Return the array */
         return myArray;
+    }
+
+    /**
+     * Convert the Decimal to a byte array.
+     * @return the byte array
+     */
+    public byte[] toBytes() {
+        final byte[] myValue = TethysDataConverter.longToByteArray(unscaledValue());
+        final byte[] myResult = Arrays.copyOf(myValue, myValue.length + 1);
+        myResult[myValue.length] = (byte) scale();
+        return myResult;
     }
 }

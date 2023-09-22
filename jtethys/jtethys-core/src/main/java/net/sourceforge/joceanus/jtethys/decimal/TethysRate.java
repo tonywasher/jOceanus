@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.decimal;
 
+import java.util.Arrays;
+
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
 /**
  * Represents a Rate object.
  */
@@ -75,6 +79,14 @@ public class TethysRate
         /* Parse the string and correct the scale */
         TethysDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(NUM_DECIMALS);
+    }
+
+    /**
+     * Create the rate from a byte array.
+     * @param pBuffer the buffer
+     */
+    public TethysRate(final byte[] pBuffer) {
+        super(pBuffer);
     }
 
     /**

@@ -76,6 +76,14 @@ public class TethysRatio
     }
 
     /**
+     * Create the ratio from a byte array.
+     * @param pBuffer the buffer
+     */
+    public TethysRatio(final byte[] pBuffer) {
+        super(pBuffer);
+    }
+
+    /**
      * Obtain inverse ratio of this ratio (i.e. 100%/this rate).
      * @return the inverse ratio
      */

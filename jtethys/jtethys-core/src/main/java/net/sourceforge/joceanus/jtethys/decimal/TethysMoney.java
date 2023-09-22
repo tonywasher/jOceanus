@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.decimal;
 
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.Currency;
 
 /**
@@ -28,6 +30,11 @@ public class TethysMoney
      * Invalid Currency error text.
      */
     private static final String ERROR_DIFFER = "Cannot add together two different currencies";
+
+    /**
+     * Currency code length.
+     */
+    private static final int CURRCODE_LEN = 2;
 
     /**
      * Currency for money.
@@ -43,6 +50,7 @@ public class TethysMoney
 
     /**
      * Constructor for money of value zero.
+     *
      * @param pCurrency the currency
      */
     public TethysMoney(final Currency pCurrency) {
@@ -52,6 +60,7 @@ public class TethysMoney
 
     /**
      * Construct a new Money by copying another money.
+     *
      * @param pMoney the Money to copy
      */
     public TethysMoney(final TethysMoney pMoney) {
@@ -61,6 +70,7 @@ public class TethysMoney
 
     /**
      * Constructor for money from a decimal string.
+     *
      * @param pSource The source decimal string
      * @throws IllegalArgumentException on invalidly formatted argument
      */
@@ -75,6 +85,7 @@ public class TethysMoney
 
     /**
      * Construct a new Money by combining units and price.
+     *
      * @param pUnits the number of units
      * @param pPrice the price of each unit
      */
@@ -86,8 +97,9 @@ public class TethysMoney
 
     /**
      * Construct a new Money by combining money and rate.
+     *
      * @param pMoney the Money to apply rate to
-     * @param pRate the Rate to apply
+     * @param pRate  the Rate to apply
      */
     private TethysMoney(final TethysMoney pMoney,
                         final TethysRate pRate) {
@@ -97,6 +109,7 @@ public class TethysMoney
 
     /**
      * Construct a new Money by combining money and ratio.
+     *
      * @param pMoney the Money to apply ratio to
      * @param pRatio the Ratio to apply
      */
@@ -107,7 +120,22 @@ public class TethysMoney
     }
 
     /**
+     * Create the decimal from a byte array.
+     * @param pBuffer the buffer
+     */
+    public TethysMoney(final byte[] pBuffer) {
+        super(pBuffer);
+        if (pBuffer.length < Long.BYTES + 1 + CURRCODE_LEN) {
+            throw new IllegalArgumentException();
+        }
+        final byte[] myCurr = Arrays.copyOfRange(pBuffer, Long.BYTES + 1, pBuffer.length);
+        final String myCurrCode = new String(myCurr);
+        theCurrency = Currency.getInstance(myCurrCode);
+    }
+
+    /**
      * Access the currency.
+     *
      * @return the currency
      */
     public Currency getCurrency() {
@@ -116,7 +144,8 @@ public class TethysMoney
 
     /**
      * Factory method for generating whole monetary units for a currency (e.g. £)
-     * @param pUnits the number of whole monetary units
+     *
+     * @param pUnits    the number of whole monetary units
      * @param pCurrency the currency
      * @return the allocated money
      */
@@ -131,6 +160,7 @@ public class TethysMoney
 
     /**
      * Factory method for generating whole monetary units (e.g. £)
+     *
      * @param pUnits the number of whole monetary units
      * @return the allocated money
      */
@@ -144,6 +174,7 @@ public class TethysMoney
 
     /**
      * Add a monetary amount to the value.
+     *
      * @param pValue The money to add to this one.
      */
     public void addAmount(final TethysMoney pValue) {
@@ -158,6 +189,7 @@ public class TethysMoney
 
     /**
      * Subtract a monetary amount from the value.
+     *
      * @param pValue The money to subtract from this one.
      */
     public void subtractAmount(final TethysMoney pValue) {
@@ -182,6 +214,7 @@ public class TethysMoney
 
     /**
      * Obtain value in different currency.
+     *
      * @param pCurrency the currency to convert to
      * @return the converted money in the new currency
      */
@@ -192,8 +225,9 @@ public class TethysMoney
 
     /**
      * Obtain converted money.
+     *
      * @param pCurrency the currency to convert to
-     * @param pRate the conversion rate
+     * @param pRate     the conversion rate
      * @return the converted money in the new currency
      */
     public TethysMoney convertCurrency(final Currency pCurrency,
@@ -211,6 +245,7 @@ public class TethysMoney
 
     /**
      * obtain a Diluted money.
+     *
      * @param pDilution the dilution factor
      * @return the calculated value
      */
@@ -221,6 +256,7 @@ public class TethysMoney
 
     /**
      * calculate the value of this money at a given rate.
+     *
      * @param pRate the rate to calculate at
      * @return the calculated value
      */
@@ -231,6 +267,7 @@ public class TethysMoney
 
     /**
      * calculate the value of this money at a given ratio.
+     *
      * @param pRatio the ratio to multiply by
      * @return the calculated value
      */
@@ -242,6 +279,7 @@ public class TethysMoney
     /**
      * calculate the gross value of this money at a given rate used to convert from net to gross
      * values form interest and dividends.
+     *
      * @param pRate the rate to calculate at
      * @return the calculated value
      */
@@ -254,6 +292,7 @@ public class TethysMoney
     /**
      * calculate the TaxCredit value of this money at a given rate used to convert from net to
      * gross. values form interest and dividends
+     *
      * @param pRate the rate to calculate at
      * @return the calculated value
      */
@@ -265,8 +304,9 @@ public class TethysMoney
 
     /**
      * calculate the value of this money at a given proportion (i.e. weight/total).
+     *
      * @param pWeight the weight of this item
-     * @param pTotal the total weight of all the items
+     * @param pTotal  the total weight of all the items
      * @return the calculated value
      */
     public TethysMoney valueAtWeight(final TethysMoney pWeight,
@@ -283,8 +323,9 @@ public class TethysMoney
 
     /**
      * calculate the value of this money at a given proportion (i.e. weight/total).
+     *
      * @param pWeight the weight of this item
-     * @param pTotal the total weight of all the items
+     * @param pTotal  the total weight of all the items
      * @return the calculated value
      */
     public TethysMoney valueAtWeight(final TethysUnits pWeight,
@@ -329,6 +370,15 @@ public class TethysMoney
     @Override
     public int hashCode() {
         return theCurrency.hashCode()
-               ^ super.hashCode();
+                ^ super.hashCode();
+    }
+
+    @Override
+    public byte[] toBytes() {
+        final byte[] myBase = super.toBytes();
+        final byte[] myCurr = theCurrency.getCurrencyCode().getBytes(StandardCharsets.UTF_8);
+        final byte[] myResult = Arrays.copyOf(myBase, myBase.length + myCurr.length);
+        System.arraycopy(myCurr, 0, myResult, myBase.length, myCurr.length);
+        return myResult;
     }
 }

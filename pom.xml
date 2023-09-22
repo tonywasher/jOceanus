@@ -78,7 +78,7 @@
     <MySQLVersion>8.0.33</MySQLVersion>
     <PostGreSQLVersion>42.6.0</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
-    <H2Version>2.2.220</H2Version>
+    <H2Version>2.2.224</H2Version>
     <ApachePOIVersion>5.2.3</ApachePOIVersion>
     <JSoupVersion>1.16.1</JSoupVersion>
     <JFreeChartVersion>1.5.4</JFreeChartVersion>
@@ -86,14 +86,14 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.8</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.12.2</CheckStyleVersion>
+    <CheckStyleVersion>10.12.3</CheckStyleVersion>
     <PMDVersion>6.55.0</PMDVersion>
     <CleanPluginVersion>3.3.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.1</InstallPluginVersion>
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.1.1</DeployPluginVersion>
-    <EnforcerPluginVersion>3.3.0</EnforcerPluginVersion>
+    <EnforcerPluginVersion>3.4.1</EnforcerPluginVersion>
     <CompilerPluginVersion>3.11.0</CompilerPluginVersion>
     <ShadePluginVersion>3.5.0</ShadePluginVersion>
     <DependencyPluginVersion>3.6.0</DependencyPluginVersion>
@@ -103,7 +103,7 @@
     <JarPluginVersion>3.3.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.4.5</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.3.0</JxrPluginVersion>
-    <JavaDocPluginVersion>3.5.0</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.6.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.3.0</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
