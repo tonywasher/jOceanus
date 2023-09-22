@@ -27,6 +27,11 @@ import java.util.Currency;
 public class TethysMoney
         extends TethysDecimal {
     /**
+     * Money Byte length.
+     */
+    public static final int BYTE_LEN = Long.BYTES + 4;
+
+    /**
      * Invalid Currency error text.
      */
     private static final String ERROR_DIFFER = "Cannot add together two different currencies";

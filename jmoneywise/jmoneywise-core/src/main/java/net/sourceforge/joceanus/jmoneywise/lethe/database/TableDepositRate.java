@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefini
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * TableEncrypted extension for DepositRate.
@@ -50,8 +51,8 @@ public class TableDepositRate
 
         /* Declare the columns */
         final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
-        myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, PrometheusEncryptedPair.RATELEN);
-        myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, PrometheusEncryptedPair.RATELEN);
+        myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, TethysDecimal.BYTE_LEN);
+        myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, TethysDecimal.BYTE_LEN);
         final PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */

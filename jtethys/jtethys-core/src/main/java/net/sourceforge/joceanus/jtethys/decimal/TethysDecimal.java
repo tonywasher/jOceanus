@@ -35,6 +35,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 public class TethysDecimal
         implements Comparable<TethysDecimal> {
     /**
+     * Decimal Byte length.
+     */
+    public static final int BYTE_LEN = Long.BYTES + 1;
+
+    /**
      * The Decimal radix.
      */
     public static final int RADIX_TEN = 10;

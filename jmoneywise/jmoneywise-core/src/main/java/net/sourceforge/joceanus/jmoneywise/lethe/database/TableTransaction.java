@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefini
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * TableEncrypted extension for Transaction.
@@ -53,7 +54,7 @@ public class TableTransaction
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
         myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
         myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
-        myTableDef.addNullEncryptedColumn(Transaction.FIELD_AMOUNT, PrometheusEncryptedPair.MONEYLEN);
+        myTableDef.addNullEncryptedColumn(Transaction.FIELD_AMOUNT, TethysMoney.BYTE_LEN);
         myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
 

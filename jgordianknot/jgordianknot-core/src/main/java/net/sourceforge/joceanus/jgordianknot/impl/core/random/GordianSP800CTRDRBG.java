@@ -104,7 +104,7 @@ public class GordianSP800CTRDRBG
         ctrDRBGUpdate(mySeed);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
+        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);
         theReseedCounter.iterate();
     }
 

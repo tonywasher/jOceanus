@@ -85,18 +85,6 @@ public final class TethysDataConverter {
     public static final int HEX_RADIX = 16;
 
     /**
-     * Number of bytes in a long.
-     */
-    public static final int BYTES_LONG = Long.SIZE
-                                         / Byte.SIZE;
-
-    /**
-     * Number of bytes in an integer.
-     */
-    public static final int BYTES_INTEGER = Integer.SIZE
-                                            / Byte.SIZE;
-
-    /**
      * Byte shift.
      */
     public static final int BYTE_SHIFT = Byte.SIZE;
@@ -387,7 +375,7 @@ public final class TethysDataConverter {
     public static long byteArrayToLong(final byte[] pBytes) {
         /* Loop through the bytes */
         long myValue = 0;
-        for (int i = 0; i < BYTES_LONG; i++) {
+        for (int i = 0; i < Long.BYTES; i++) {
             /* Access the next byte as an unsigned integer */
             int myByte = pBytes[i];
             myByte &= BYTE_MASK;
@@ -409,8 +397,8 @@ public final class TethysDataConverter {
     public static byte[] longToByteArray(final long pValue) {
         /* Loop through the bytes */
         long myValue = pValue;
-        final byte[] myBytes = new byte[BYTES_LONG];
-        for (int i = BYTES_LONG; i > 0; i--) {
+        final byte[] myBytes = new byte[Long.BYTES];
+        for (int i = Long.BYTES; i > 0; i--) {
             /* Store the next byte */
             final byte myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
@@ -431,7 +419,7 @@ public final class TethysDataConverter {
     public static int byteArrayToInteger(final byte[] pBytes) {
         /* Loop through the bytes */
         int myValue = 0;
-        for (int i = 0; i < BYTES_INTEGER; i++) {
+        for (int i = 0; i < Integer.BYTES; i++) {
             /* Access the next byte as an unsigned integer */
             int myByte = pBytes[i];
             myByte &= BYTE_MASK;
@@ -452,9 +440,53 @@ public final class TethysDataConverter {
      */
     public static byte[] integerToByteArray(final int pValue) {
         /* Loop through the bytes */
-        final byte[] myBytes = new byte[BYTES_INTEGER];
+        final byte[] myBytes = new byte[Integer.BYTES];
         int myValue = pValue;
-        for (int i = BYTES_INTEGER; i > 0; i--) {
+        for (int i = Integer.BYTES; i > 0; i--) {
+            /* Store the next byte */
+            final byte myByte = (byte) (myValue & BYTE_MASK);
+            myBytes[i - 1] = myByte;
+
+            /* Adjust value */
+            myValue >>= BYTE_SHIFT;
+        }
+
+        /* Return the value */
+        return myBytes;
+    }
+
+    /**
+     * parse a short from a byte array.
+     * @param pBytes the four byte array holding the integer
+     * @return the short value
+     */
+    public static short byteArrayToShort(final byte[] pBytes) {
+        /* Loop through the bytes */
+        short myValue = 0;
+        for (int i = 0; i < Short.BYTES; i++) {
+            /* Access the next byte as an unsigned integer */
+            short myByte = pBytes[i];
+            myByte &= BYTE_MASK;
+
+            /* Add in to value */
+            myValue <<= BYTE_SHIFT;
+            myValue += myByte;
+        }
+
+        /* Return the value */
+        return myValue;
+    }
+
+    /**
+     * build a byte array from a short.
+     * @param pValue the short value to convert
+     * @return the byte array
+     */
+    public static byte[] shortToByteArray(final short pValue) {
+        /* Loop through the bytes */
+        final byte[] myBytes = new byte[Short.BYTES];
+        int myValue = pValue;
+        for (int i = Short.BYTES; i > 0; i--) {
             /* Store the next byte */
             final byte myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;

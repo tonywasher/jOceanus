@@ -121,7 +121,7 @@ public final class GordianSP800HashDRBG
         theC = hashDerive(myTempH, theSeedLength);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
+        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);
         theReseedCounter.iterate();
     }
 
@@ -250,7 +250,7 @@ public final class GordianSP800HashDRBG
         final byte[] myOutput = new byte[myLen];
 
         /* Create seed array */
-        final byte[] mySeed = new byte[TethysDataConverter.BYTES_INTEGER];
+        final byte[] mySeed = new byte[Integer.BYTES];
         int mySeedLength = pSeedLength;
         for (int i = mySeed.length - 1; i >= 0; i--) {
             mySeed[i] = (byte) mySeedLength;

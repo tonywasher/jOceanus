@@ -32,31 +32,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 public class PrometheusEncryptedPair
     implements MetisDataObjectFormat, MetisDataDiffers {
     /**
-     * Encrypted Money length.
-     */
-    public static final int MONEYLEN = 15;
-
-    /**
-     * Encrypted Units length.
-     */
-    public static final int UNITSLEN = 15;
-
-    /**
-     * Encrypted Rate length.
-     */
-    public static final int RATELEN = 10;
-
-    /**
-     * Encrypted Price length.
-     */
-    public static final int PRICELEN = 15;
-
-    /**
-     * Encrypted Ratio length.
-     */
-    public static final int RATIOLEN = 10;
-
-    /**
      * The value.
      */
     private final Object theValue;

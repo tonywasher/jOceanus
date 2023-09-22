@@ -37,6 +37,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public class TethysDateFormatter
         implements TethysEventProvider<TethysDateEvent> {
     /**
+     * Date Byte length.
+     */
+    public static final int BYTE_LEN = Long.BYTES;
+
+    /**
      * As of Java 16.0.2 the short format for September is Sept instead of Sep.
      */
     private static final int PATCH_JAVA_VER = 16;
@@ -362,6 +367,9 @@ public class TethysDateFormatter
      * @return the date
      */
     public TethysDate fromBytes(final byte[] pBuffer) {
+        if (pBuffer == null || pBuffer.length < Long.BYTES) {
+            throw new IllegalArgumentException();
+        }
         final long myEpoch = TethysDataConverter.byteArrayToLong(pBuffer);
         final LocalDate myDate = LocalDate.ofEpochDay(myEpoch);
         return new TethysDate(myDate);

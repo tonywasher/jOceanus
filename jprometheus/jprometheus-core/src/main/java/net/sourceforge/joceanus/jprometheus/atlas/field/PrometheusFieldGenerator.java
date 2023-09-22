@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -317,16 +318,14 @@ public class PrometheusFieldGenerator {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            final String myDate = pFormatter.getDateFormatter().formatDate((TethysDate) pValue);
-            return TethysDataConverter.stringToByteArray(myDate);
+            return pFormatter.getDateFormatter().toBytes((TethysDate) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
-                final String myDateString = TethysDataConverter.byteArrayToString(pBytes);
-                return pFormatter.getDateFormatter().parseDate(myDateString);
+                return pFormatter.getDateFormatter().fromBytes(pBytes);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
             }
@@ -341,18 +340,13 @@ public class PrometheusFieldGenerator {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.stringToByteArray(pValue.toString());
+            return TethysDataConverter.shortToByteArray((short) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myShortString = TethysDataConverter.byteArrayToString(pBytes);
-                return Short.parseShort(myShortString);
-            } catch (NumberFormatException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return TethysDataConverter.byteArrayToShort(pBytes);
         }
     }
     /**
@@ -363,18 +357,13 @@ public class PrometheusFieldGenerator {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.stringToByteArray(pValue.toString());
+            return TethysDataConverter.integerToByteArray((int) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myIntString = TethysDataConverter.byteArrayToString(pBytes);
-                return Integer.parseInt(myIntString);
-            } catch (NumberFormatException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return TethysDataConverter.byteArrayToInteger(pBytes);
         }
     }
 
@@ -386,18 +375,13 @@ public class PrometheusFieldGenerator {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.stringToByteArray(pValue.toString());
+            return TethysDataConverter.longToByteArray((long) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myLongString = TethysDataConverter.byteArrayToString(pBytes);
-                return Long.parseLong(myLongString);
-            } catch (NumberFormatException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return TethysDataConverter.byteArrayToLong(pBytes);
         }
     }
 
@@ -457,26 +441,26 @@ public class PrometheusFieldGenerator {
     }
 
     /**
-     * MoneyEncryptor.
+     * DecimalEncryptor.
      */
-    private static class PrometheusMoneyEncryptor
+    private abstract static class PrometheusDecimalEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            final String myDecString = pFormatter.getDecimalFormatter().toCurrencyString((TethysMoney) pValue);
-            return TethysDataConverter.stringToByteArray(myDecString);
+            return ((TethysDecimal) pValue).toBytes();
         }
+    }
 
+    /**
+     * MoneyEncryptor.
+     */
+    private static class PrometheusMoneyEncryptor
+            extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
-                return pFormatter.getDecimalParser().parseMoneyValue(myDecString);
-            } catch (IllegalArgumentException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return new TethysMoney(pBytes);
         }
     }
 
@@ -488,12 +472,7 @@ public class PrometheusFieldGenerator {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
-                return pFormatter.getDecimalParser().parsePriceValue(myDecString);
-            } catch (IllegalArgumentException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return new TethysPrice(pBytes);
         }
     }
 
@@ -501,23 +480,11 @@ public class PrometheusFieldGenerator {
      * RatioEncryptor.
      */
     private static class PrometheusRatioEncryptor
-            implements PrometheusDataEncryptor {
-        @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
-                                   final Object pValue) {
-            final String myDecString = pValue.toString();
-            return TethysDataConverter.stringToByteArray(myDecString);
-        }
-
+            extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
-                return new TethysRatio(myDecString);
-            } catch (IllegalArgumentException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return new TethysRatio(pBytes);
         }
     }
 
@@ -525,16 +492,11 @@ public class PrometheusFieldGenerator {
      * UnitsEncryptor.
      */
     private static class PrometheusUnitsEncryptor
-            extends PrometheusRatioEncryptor {
+            extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
-                return new TethysUnits(myDecString);
-            } catch (IllegalArgumentException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return new TethysUnits(pBytes);
         }
     }
 
@@ -542,16 +504,11 @@ public class PrometheusFieldGenerator {
      * RateEncryptor.
      */
     private static class PrometheusRateEncryptor
-            extends PrometheusRatioEncryptor {
+            extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            try {
-                final String myDecString = TethysDataConverter.byteArrayToString(pBytes);
-                return new TethysRate(myDecString);
-            } catch (IllegalArgumentException e) {
-                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);
-            }
+            return new TethysRate(pBytes);
         }
     }
 }
