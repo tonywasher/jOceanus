@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
@@ -53,9 +52,6 @@ public abstract class PrometheusPreferenceSet
                                       final String pName) throws OceanusException {
         /* Initialize super-class */
         super(pManager, pName);
-
-        /* Store security manager */
-        theSecurity = pManager.getSecurity();
     }
 
     @Override
@@ -76,6 +72,22 @@ public abstract class PrometheusPreferenceSet
     }
 
     /**
+     * Define new ByteArray preference.
+     * @param pKey the key for the preference
+     * @return the preference item
+     */
+    protected PrometheusByteArrayPreference defineByteArrayPreference(final MetisPreferenceKey pKey) {
+        /* Define the preference */
+        final PrometheusByteArrayPreference myPref = new PrometheusByteArrayPreference(this, pKey);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
      * Define new CharArray preference.
      * @param pKey the key for the preference
      * @return the preference item
@@ -90,6 +102,44 @@ public abstract class PrometheusPreferenceSet
 
         /* Return the preference */
         return myPref;
+    }
+
+    /**
+     * Obtain ByteArray preference.
+     * @param pKey the key of the preference
+     * @return the ByteArray preference
+     */
+    public PrometheusByteArrayPreference getByteArrayPreference(final MetisPreferenceKey pKey) {
+        /* Access preference */
+        final MetisPreferenceItem myPref = getPreference(pKey);
+
+        /* Reject if not found */
+        if (myPref == null) {
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                    + pKey);
+        }
+
+        /* Reject if wrong type */
+        if (!(myPref instanceof PrometheusByteArrayPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID
+                    + pKey);
+        }
+
+        /* Return the preference */
+        return (PrometheusByteArrayPreference) myPref;
+    }
+
+    /**
+     * Obtain ByteArray value.
+     * @param pKey the key of the preference
+     * @return the ByteArray value
+     */
+    public byte[] getByteArrayValue(final MetisPreferenceKey pKey) {
+        /* Access preference */
+        final PrometheusByteArrayPreference myPref = getByteArrayPreference(pKey);
+
+        /* Return the value */
+        return myPref.getValue();
     }
 
     /**
@@ -128,6 +178,50 @@ public abstract class PrometheusPreferenceSet
 
         /* Return the value */
         return myPref.getValue();
+    }
+
+    /**
+     * ByteArray preference.
+     */
+    public static class PrometheusByteArrayPreference
+            extends MetisPreferenceItem {
+        /**
+         * Constructor.
+         * @param pSet the preference Set
+         * @param pKey the key of the preference
+         */
+        protected PrometheusByteArrayPreference(final PrometheusPreferenceSet pSet,
+                                                final MetisPreferenceKey pKey) {
+            /* Store name */
+            super(pSet, pKey, PrometheusPreferenceType.BYTEARRAY);
+
+            /* Check whether we have an existing value */
+            if (pSet.checkExists(pKey)) {
+                /* Access the value */
+                final byte[] myValue = getHandle().getByteArray(getPreferenceName(), null);
+
+                /* Set as initial value */
+                setTheValue(myValue);
+            }
+        }
+
+        @Override
+        public byte[] getValue() {
+            return (byte[]) super.getValue();
+        }
+
+        /**
+         * Set value.
+         * @param pNewValue the new value
+         */
+        public void setValue(final byte[] pNewValue) {
+            setNewValue(pNewValue);
+        }
+
+        @Override
+        protected void storeThePreference(final Object pNewValue) {
+            getHandle().putByteArray(getPreferenceName(), (byte[]) pNewValue);
+        }
     }
 
     /**

@@ -45,6 +45,7 @@ public class PrometheusPreferenceManager
      * @throws OceanusException on error
      */
     protected PrometheusPreferenceSecurity getSecurity() throws OceanusException {
+        /* If we have not created security and are not in the middle of creating security */
         if (theSecurity == null) {
             theSecurity = new PrometheusPreferenceSecurity(this);
         }

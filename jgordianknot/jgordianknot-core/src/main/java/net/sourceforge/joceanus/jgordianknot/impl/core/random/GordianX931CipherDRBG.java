@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Implementation of X931DRBG based on the BouncyCastle Code.
@@ -123,7 +122,7 @@ public class GordianX931CipherDRBG
         theR = new byte[myLen];
 
         /* Initialise reSeed counter */
-        theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
+        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);
         theReseedCounter.iterate();
     }
 

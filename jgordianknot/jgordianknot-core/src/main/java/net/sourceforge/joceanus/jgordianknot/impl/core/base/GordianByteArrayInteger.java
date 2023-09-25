@@ -28,7 +28,7 @@ public final class GordianByteArrayInteger {
     /**
      * The default counter length.
      */
-    private static final int COUNTER_LEN = TethysDataConverter.BYTES_INTEGER;
+    private static final int COUNTER_LEN = Integer.BYTES;
 
     /**
      * The counter length.
@@ -92,7 +92,7 @@ public final class GordianByteArrayInteger {
      */
     public boolean compareLimit(final long pLimit) {
         /* Check that we are long length */
-        if (theLength != TethysDataConverter.BYTES_LONG) {
+        if (theLength != Long.BYTES) {
             return false;
         }
 

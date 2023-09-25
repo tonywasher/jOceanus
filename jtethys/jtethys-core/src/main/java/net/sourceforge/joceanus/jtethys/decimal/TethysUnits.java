@@ -56,6 +56,14 @@ public class TethysUnits
     }
 
     /**
+     * Create the units from a byte array.
+     * @param pBuffer the buffer
+     */
+    public TethysUnits(final byte[] pBuffer) {
+        super(pBuffer);
+    }
+
+    /**
      * Construct a new Units by setting the value explicitly.
      * @param pValue the unscaled value
      * @return the new Rate

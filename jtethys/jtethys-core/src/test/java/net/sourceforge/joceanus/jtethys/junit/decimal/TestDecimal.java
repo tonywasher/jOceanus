@@ -26,7 +26,14 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Decimal JUnit Tests.
@@ -43,7 +50,8 @@ class TestDecimal {
                 DynamicTest.dynamicTest("checkAdd", TestDecimal::additions),
                 DynamicTest.dynamicTest("checkSubtract", TestDecimal::subtractions),
                 DynamicTest.dynamicTest("checkMultiply", TestDecimal::multiplications),
-                DynamicTest.dynamicTest("checkDivide", TestDecimal::divisions)
+                DynamicTest.dynamicTest("checkDivide", TestDecimal::divisions),
+                DynamicTest.dynamicTest("checkBytes", TestDecimal::checkBytes)
         );
     }
 
@@ -212,5 +220,43 @@ class TestDecimal {
 
         /* Assert equality */
         Assertions.assertEquals(myB3, myD3.toBigDecimal(), "Failed Division: " + pFirst + " / " + pSecond);
+    }
+
+    /**
+     * Check bytes.
+     */
+    private static void checkBytes() {
+        /* Obtain the two values */
+        final TethysRate myRate = new TethysRate("0.25");
+        final TethysUnits myUnits = new TethysUnits("25.678");
+        final TethysRatio myRatio = new TethysRatio("5425.68");
+        final TethysMoney myMoney = new TethysMoney("76.90");
+        final TethysPrice myPrice = new TethysPrice("0.9856");
+        final TethysDate myDate = new TethysDate();
+
+        /* Check Rate */
+        final TethysRate myRate2 = new TethysRate(myRate.toBytes());
+        Assertions.assertEquals(myRate, myRate2, "Failed Rate");
+
+        /* Check Units */
+        final TethysUnits myUnits2 = new TethysUnits(myUnits.toBytes());
+        Assertions.assertEquals(myUnits, myUnits2, "Failed Units");
+
+        /* Check Ratio */
+        final TethysRatio myRatio2 = new TethysRatio(myRatio.toBytes());
+        Assertions.assertEquals(myRatio, myRatio2, "Failed Ratio");
+
+        /* Check Money */
+        final TethysMoney myMoney2 = new TethysMoney(myMoney.toBytes());
+        Assertions.assertEquals(myMoney, myMoney2, "Failed Money");
+
+        /* Check Price */
+        final TethysPrice myPrice2 = new TethysPrice(myPrice.toBytes());
+        Assertions.assertEquals(myPrice, myPrice2, "Failed Price");
+
+        /* Check Date */
+        final TethysDateFormatter myFormatter = new TethysDateFormatter();
+        final TethysDate myDate2 = myFormatter.fromBytes(myFormatter.toBytes(myDate));
+        Assertions.assertEquals(myDate, myDate2, "Failed Date");
     }
 }

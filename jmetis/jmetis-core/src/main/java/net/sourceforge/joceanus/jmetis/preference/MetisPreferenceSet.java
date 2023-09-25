@@ -411,22 +411,6 @@ public abstract class MetisPreferenceSet
     }
 
     /**
-     * Define new ByteArray preference.
-     * @param pKey the key for the preference
-     * @return the preference item
-     */
-    protected MetisByteArrayPreference defineByteArrayPreference(final MetisPreferenceKey pKey) {
-        /* Define the preference */
-        final MetisByteArrayPreference myPref = new MetisByteArrayPreference(this, pKey);
-
-        /* Add it to the list of preferences */
-        definePreference(myPref);
-
-        /* Return the preference */
-        return myPref;
-    }
-
-    /**
      * Define a preference for the node.
      * @param pPreference the preference to define
      */
@@ -663,44 +647,6 @@ public abstract class MetisPreferenceSet
                                               final Class<E> pClazz) {
         /* Access preference */
         final MetisEnumPreference<E> myPref = getEnumPreference(pKey, pClazz);
-
-        /* Return the value */
-        return myPref.getValue();
-    }
-
-    /**
-     * Obtain ByteArray preference.
-     * @param pKey the key of the preference
-     * @return the ByteArray preference
-     */
-    public MetisByteArrayPreference getByteArrayPreference(final MetisPreferenceKey pKey) {
-        /* Access preference */
-        final MetisPreferenceItem myPref = getPreference(pKey);
-
-        /* Reject if not found */
-        if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
-        }
-
-        /* Reject if wrong type */
-        if (!(myPref instanceof MetisByteArrayPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
-        }
-
-        /* Return the preference */
-        return (MetisByteArrayPreference) myPref;
-    }
-
-    /**
-     * Obtain ByteArray value.
-     * @param pKey the key of the preference
-     * @return the ByteArray value
-     */
-    public byte[] getByteArrayValue(final MetisPreferenceKey pKey) {
-        /* Access preference */
-        final MetisByteArrayPreference myPref = getByteArrayPreference(pKey);
 
         /* Return the value */
         return myPref.getValue();
@@ -1400,50 +1346,6 @@ public abstract class MetisPreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) {
             getHandle().put(getPreferenceName(), theClazz.cast(pNewValue).name());
-        }
-    }
-
-    /**
-     * ByteArray preference.
-     */
-    public static class MetisByteArrayPreference
-            extends MetisPreferenceItem {
-        /**
-         * Constructor.
-         * @param pSet the preference Set
-         * @param pKey the key of the preference
-         */
-        protected MetisByteArrayPreference(final MetisPreferenceSet pSet,
-                                           final MetisPreferenceKey pKey) {
-            /* Store name */
-            super(pSet, pKey, MetisPreferenceType.BYTEARRAY);
-
-            /* Check whether we have an existing value */
-            if (pSet.checkExists(pKey)) {
-                /* Access the value */
-                final byte[] myValue = getHandle().getByteArray(getPreferenceName(), null);
-
-                /* Set as initial value */
-                setTheValue(myValue);
-            }
-        }
-
-        @Override
-        public byte[] getValue() {
-            return (byte[]) super.getValue();
-        }
-
-        /**
-         * Set value.
-         * @param pNewValue the new value
-         */
-        public void setValue(final byte[] pNewValue) {
-            setNewValue(pNewValue);
-        }
-
-        @Override
-        protected void storeThePreference(final Object pNewValue) {
-            getHandle().putByteArray(getPreferenceName(), (byte[]) pNewValue);
         }
     }
 }

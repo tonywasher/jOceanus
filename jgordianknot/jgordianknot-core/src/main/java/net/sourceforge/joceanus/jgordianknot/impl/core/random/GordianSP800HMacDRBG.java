@@ -22,7 +22,6 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Implementation of HMacSP800DRBG based on the BouncyCastle Code.
@@ -95,7 +94,7 @@ public final class GordianSP800HMacDRBG
         updateState(mySeed);
 
         /* Initialise reSeed counter */
-        theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
+        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);
         theReseedCounter.iterate();
     }
 
