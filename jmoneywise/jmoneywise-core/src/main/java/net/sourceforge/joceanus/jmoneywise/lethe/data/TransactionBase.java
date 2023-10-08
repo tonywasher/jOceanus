@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -251,7 +251,7 @@ public abstract class TransactionBase
     public String toString() {
         /* Handle header */
         if (isHeader()) {
-            return PrometheusDataResource.DATAITEM_HEADER.getValue();
+            return PrometheusDataResourceX.DATAITEM_HEADER.getValue();
         }
 
         /* Access Key Values */

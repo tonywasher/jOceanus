@@ -14,14 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.data;
+package net.sourceforge.joceanus.jprometheus.atlas.data;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
@@ -508,17 +508,17 @@ public enum PrometheusDataResource
     /**
      * The Name Map.
      */
-    private static final Map<CryptographyDataType, TethysBundleId> NAME_MAP = buildNameMap();
+    private static final Map<PrometheusCryptographyDataType, TethysBundleId> NAME_MAP = buildNameMap();
 
     /**
      * The List Map.
      */
-    private static final Map<CryptographyDataType, TethysBundleId> LIST_MAP = buildListMap();
+    private static final Map<PrometheusCryptographyDataType, TethysBundleId> LIST_MAP = buildListMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(DataSet.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -570,12 +570,12 @@ public enum PrometheusDataResource
      * Build item map.
      * @return the map
      */
-    private static Map<CryptographyDataType, TethysBundleId> buildNameMap() {
+    private static Map<PrometheusCryptographyDataType, TethysBundleId> buildNameMap() {
         /* Create the map and return it */
-        final Map<CryptographyDataType, TethysBundleId> myMap = new EnumMap<>(CryptographyDataType.class);
-        myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
-        myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
-        myMap.put(CryptographyDataType.CONTROLDATA, CONTROLDATA_NAME);
+        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new HashMap<>();
+        myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
+        myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
+        myMap.put(PrometheusCryptographyDataType.CONTROLDATA, CONTROLDATA_NAME);
         return myMap;
     }
 
@@ -584,7 +584,7 @@ public enum PrometheusDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForCryptoItem(final CryptographyDataType pValue) {
+    protected static TethysBundleId getKeyForCryptoItem(final PrometheusCryptographyDataType pValue) {
         return TethysBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
@@ -592,12 +592,12 @@ public enum PrometheusDataResource
      * Build list map.
      * @return the map
      */
-    private static Map<CryptographyDataType, TethysBundleId> buildListMap() {
+    private static Map<PrometheusCryptographyDataType, TethysBundleId> buildListMap() {
         /* Create the map and return it */
-        final Map<CryptographyDataType, TethysBundleId> myMap = new EnumMap<>(CryptographyDataType.class);
-        myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
-        myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
-        myMap.put(CryptographyDataType.CONTROLDATA, CONTROLDATA_LIST);
+        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new HashMap<>();
+        myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
+        myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
+        myMap.put(PrometheusCryptographyDataType.CONTROLDATA, CONTROLDATA_LIST);
         return myMap;
     }
 
@@ -606,7 +606,7 @@ public enum PrometheusDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForCryptoList(final CryptographyDataType pValue) {
+    protected static TethysBundleId getKeyForCryptoList(final PrometheusCryptographyDataType pValue) {
         return TethysBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

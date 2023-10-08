@@ -62,42 +62,42 @@ public abstract class DataSet
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, DataSet::getGeneration);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, DataSet::getVersion);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST, DataSet::getControlKeys);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST, DataSet::getDataKeySets);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST, DataSet::getControlData);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_GENERATION, DataSet::getGeneration);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_VERSION, DataSet::getVersion);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.CONTROLKEY_LIST, DataSet::getControlKeys);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAKEYSET_LIST, DataSet::getDataKeySets);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.CONTROLDATA_LIST, DataSet::getControlData);
     }
 
     /**
      * SecurityInit Task.
      */
-    private static final String TASK_SECINIT = PrometheusDataResource.TASK_SECURITY_INIT.getValue();
+    private static final String TASK_SECINIT = PrometheusDataResourceX.TASK_SECURITY_INIT.getValue();
 
     /**
      * SecurityCheck Task.
      */
-    private static final String TASK_SECCHECK = PrometheusDataResource.TASK_SECURITY_CHECK.getValue();
+    private static final String TASK_SECCHECK = PrometheusDataResourceX.TASK_SECURITY_CHECK.getValue();
 
     /**
      * SecurityUpdate Task.
      */
-    private static final String TASK_SECUPDATE = PrometheusDataResource.TASK_SECURITY_UPDATE.getValue();
+    private static final String TASK_SECUPDATE = PrometheusDataResourceX.TASK_SECURITY_UPDATE.getValue();
 
     /**
      * SecurityReNew Task.
      */
-    private static final String TASK_SECRENEW = PrometheusDataResource.TASK_SECURITY_RENEW.getValue();
+    private static final String TASK_SECRENEW = PrometheusDataResourceX.TASK_SECURITY_RENEW.getValue();
 
     /**
      * DataReBase Task.
      */
-    private static final String TASK_DATAREBASE = PrometheusDataResource.TASK_DATA_REBASE.getValue();
+    private static final String TASK_DATAREBASE = PrometheusDataResourceX.TASK_DATA_REBASE.getValue();
 
     /**
      * DataDiff Task.
      */
-    private static final String TASK_DATADIFF = PrometheusDataResource.TASK_DATA_DIFF.getValue();
+    private static final String TASK_DATADIFF = PrometheusDataResourceX.TASK_DATA_DIFF.getValue();
 
     /**
      * Password Manager.
@@ -142,7 +142,7 @@ public abstract class DataSet
     /**
      * The DataList Map.
      */
-    private final Map<PrometheusListKey, DataList<?>> theListMap;
+    private final Map<PrometheusListKeyX, DataList<?>> theListMap;
 
     /**
      * General formatter.
@@ -267,7 +267,7 @@ public abstract class DataSet
      * Get List Map.
      * @return the list map
      */
-    protected Map<PrometheusListKey, DataList<?>> getListMap() {
+    protected Map<PrometheusListKeyX, DataList<?>> getListMap() {
         return theListMap;
     }
 
@@ -290,12 +290,12 @@ public abstract class DataSet
         theControlData = pSource.getControlData().getEmptyList(ListStyle.CLONE);
 
         /* Loop through the source lists */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = pSource.entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access components */
-            final PrometheusListKey myType = myEntry.getKey();
+            final PrometheusListKeyX myType = myEntry.getKey();
             final DataList<?> myList = myEntry.getValue();
 
             /* Create the empty cloned list */
@@ -315,15 +315,15 @@ public abstract class DataSet
         theControlData.cloneList(this, pSource.getControlData());
 
         /* Obtain listMaps */
-        final Map<PrometheusListKey, DataList<?>> myOldMap = pSource.getListMap();
+        final Map<PrometheusListKeyX, DataList<?>> myOldMap = pSource.getListMap();
 
         /* Loop through the new lists */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access components */
-            final PrometheusListKey myType = myEntry.getKey();
+            final PrometheusListKeyX myType = myEntry.getKey();
             final DataList<?> myNew = myEntry.getValue();
             final DataList<?> myOld = myOldMap.get(myType);
 
@@ -351,12 +351,12 @@ public abstract class DataSet
         theControlData = pSource.getControlData().deriveList(ListStyle.UPDATE);
 
         /* Loop through the source lists */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = pSource.entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access components */
-            final PrometheusListKey myType = myEntry.getKey();
+            final PrometheusListKeyX myType = myEntry.getKey();
             final DataList<?> myList = myEntry.getValue();
 
             /* Create the update list */
@@ -406,15 +406,15 @@ public abstract class DataSet
         theControlData = pNew.getControlData().deriveDifferences(this, pOld.getControlData());
 
         /* Obtain listMaps */
-        final Map<PrometheusListKey, DataList<?>> myOldMap = pOld.getListMap();
+        final Map<PrometheusListKeyX, DataList<?>> myOldMap = pOld.getListMap();
 
         /* Loop through the new lists */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = pNew.entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = pNew.entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access components */
-            final PrometheusListKey myType = myEntry.getKey();
+            final PrometheusListKeyX myType = myEntry.getKey();
             final DataList<?> myNew = myEntry.getValue();
             final DataList<?> myOld = myOldMap.get(myType);
 
@@ -445,15 +445,15 @@ public abstract class DataSet
         bUpdates |= theControlData.reBase(pOld.getControlData());
 
         /* Obtain old listMap */
-        final Map<PrometheusListKey, DataList<?>> myMap = pOld.getListMap();
+        final Map<PrometheusListKeyX, DataList<?>> myMap = pOld.getListMap();
 
         /* Loop through the lists */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access components */
-            final PrometheusListKey myType = myEntry.getKey();
+            final PrometheusListKeyX myType = myEntry.getKey();
             final DataList<?> myList = myEntry.getValue();
 
             /* ReBase on Old dataList */
@@ -476,7 +476,7 @@ public abstract class DataSet
      * @param pListType the list type
      * @param pList the list to add
      */
-    protected void addList(final PrometheusListKey pListType,
+    protected void addList(final PrometheusListKeyX pListType,
                            final DataList<?> pList) {
         /* Add the DataList to the map */
         theListMap.put(pListType, pList);
@@ -488,7 +488,7 @@ public abstract class DataSet
     }
 
     @Override
-    public <L extends DataList<?>> L getDataList(final PrometheusListKey pListType,
+    public <L extends DataList<?>> L getDataList(final PrometheusListKeyX pListType,
                                                  final Class<L> pListClass) {
         /* Access the list */
         final DataList<?> myList = theListMap.get(pListType);
@@ -504,7 +504,7 @@ public abstract class DataSet
      * @param pListType the list type
      * @return true/false
      */
-    protected Object getFieldListValue(final PrometheusListKey pListType) {
+    protected Object getFieldListValue(final PrometheusListKeyX pListType) {
         /* Access the class */
         final DataList<?> myList = theListMap.get(pListType);
 
@@ -523,9 +523,9 @@ public abstract class DataSet
      */
     public <L extends DataList<?>> L getDataList(final Class<L> pListClass) {
         /* Loop through the lists */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access components */
             final DataList<?> myList = myEntry.getValue();
@@ -777,12 +777,12 @@ public abstract class DataSet
         theControlKeys.initialiseSecurity(pBase);
 
         /* Obtain base listMap */
-        final Map<PrometheusListKey, DataList<?>> myMap = pBase.getListMap();
+        final Map<PrometheusListKeyX, DataList<?>> myMap = pBase.getListMap();
 
         /* Loop through the List values */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Access the two lists */
             final DataList<?> myList = myEntry.getValue();
@@ -958,7 +958,7 @@ public abstract class DataSet
      * Obtain list iterator.
      * @return the iterator
      */
-    public Iterator<Entry<PrometheusListKey, DataList<?>>> entryIterator() {
+    public Iterator<Entry<PrometheusListKeyX, DataList<?>>> entryIterator() {
         return theListMap.entrySet().iterator();
     }
 
@@ -966,7 +966,7 @@ public abstract class DataSet
      * Cryptography Data Enum Types.
      */
     public enum CryptographyDataType
-        implements PrometheusListKey {
+        implements PrometheusListKeyX {
         /**
          * ControlData.
          */
@@ -1015,7 +1015,7 @@ public abstract class DataSet
             /* If we have not yet loaded the name */
             if (theName == null) {
                 /* Load the name */
-                theName = PrometheusDataResource.getKeyForCryptoItem(this).getValue();
+                theName = PrometheusDataResourceX.getKeyForCryptoItem(this).getValue();
             }
 
             /* return the name */
@@ -1032,7 +1032,7 @@ public abstract class DataSet
             /* If we have not yet loaded the name */
             if (theListName == null) {
                 /* Load the name */
-                theListName = PrometheusDataResource.getKeyForCryptoList(this).getValue();
+                theListName = PrometheusDataResourceX.getKeyForCryptoList(this).getValue();
             }
 
             /* return the list name */

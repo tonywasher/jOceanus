@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -45,7 +45,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID, BucketSnapShot::getId);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_ID, BucketSnapShot::getId);
         FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION, BucketSnapShot::getTransaction);
         FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, BucketSnapShot::getDate);
         FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_VALUES, BucketSnapShot::getSnapShot);

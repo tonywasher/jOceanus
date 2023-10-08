@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -58,17 +58,17 @@ public abstract class CategoryBase
     /**
      * Name Field Id.
      */
-    public static final MetisLetheField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
+    public static final MetisLetheField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResourceX.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
 
     /**
      * Description Field Id.
      */
-    public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
+    public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResourceX.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
 
     /**
      * Parent Category Field Id.
      */
-    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAGROUP_PARENT.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.DATAGROUP_PARENT.getValue(), MetisDataType.LINK);
 
     /**
      * SubCategory Field Id.

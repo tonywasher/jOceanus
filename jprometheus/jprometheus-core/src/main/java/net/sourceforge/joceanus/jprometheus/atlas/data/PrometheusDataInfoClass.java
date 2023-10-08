@@ -14,28 +14,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.data;
+package net.sourceforge.joceanus.jprometheus.atlas.data;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
- * ListKey.
+ * DataInfoClass interface.
  */
-public interface PrometheusListKey {
+public interface PrometheusDataInfoClass
+        extends PrometheusStaticDataClass {
     /**
-     * Obtain the item key.
-     * @return the item key
+     * Obtain Data Type.
+     * @return the date type
      */
-    Integer getItemKey();
+    MetisDataType getDataType();
 
     /**
-     * Obtain the list name.
-     * @return the list name
+     * is this a Link?
+     * @return true/false
      */
-    String getListName();
+    boolean isLink();
 
     /**
-     * Obtain the item name.
-     * @return the item name
+     * is this a Link Set?
+     * @return true/false
      */
-    String getItemName();
+    boolean isLinkSet();
 }

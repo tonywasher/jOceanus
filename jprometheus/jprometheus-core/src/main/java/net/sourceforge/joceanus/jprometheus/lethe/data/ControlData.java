@@ -57,7 +57,7 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final MetisLetheField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue(), MetisDataType.INTEGER);
+    public static final MetisLetheField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.CONTROLDATA_VERSION.getValue(), MetisDataType.INTEGER);
 
     /**
      * Field ID for Control Key.
@@ -67,7 +67,7 @@ public class ControlData
     /**
      * Error message for already exists.
      */
-    public static final String ERROR_CTLEXISTS = PrometheusDataResource.CONTROLDATA_ERROR_EXISTS.getValue();
+    public static final String ERROR_CTLEXISTS = PrometheusDataResourceX.CONTROLDATA_ERROR_EXISTS.getValue();
 
     /**
      * Copy Constructor.

@@ -22,7 +22,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -34,7 +34,7 @@ public final class UpdateEntry<T extends DataItem>
     /**
      * The data type.
      */
-    private final PrometheusListKey theDataType;
+    private final PrometheusListKeyX theDataType;
 
     /**
      * The DataList.
@@ -45,7 +45,7 @@ public final class UpdateEntry<T extends DataItem>
      * Constructor.
      * @param pDataType the dataType
      */
-    UpdateEntry(final PrometheusListKey pDataType) {
+    UpdateEntry(final PrometheusListKeyX pDataType) {
         /* Store details */
         theDataType = pDataType;
         theDataList = null;
@@ -84,7 +84,7 @@ public final class UpdateEntry<T extends DataItem>
      * @param pDataType the dataType to compare
      * @return true/false
      */
-    public boolean isDataType(final PrometheusListKey pDataType) {
+    public boolean isDataType(final PrometheusListKeyX pDataType) {
         return theDataType.equals(pDataType);
     }
 

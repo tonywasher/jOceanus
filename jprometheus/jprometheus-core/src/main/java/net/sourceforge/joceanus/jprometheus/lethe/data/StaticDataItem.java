@@ -44,42 +44,42 @@ public abstract class StaticDataItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATA_NAME.getValue(), EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResourceX.STATICDATA_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final MetisLetheField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
+    public static final MetisLetheField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResourceX.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
 
     /**
      * Description Field Id.
      */
-    public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
+    public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResourceX.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
 
     /**
      * Enabled Field Id.
      */
-    public static final MetisLetheField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_ENABLED.getValue(), MetisDataType.BOOLEAN);
+    public static final MetisLetheField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.STATICDATA_ENABLED.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Order Field Id.
      */
-    public static final MetisLetheField FIELD_ORDER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_SORT.getValue(), MetisDataType.INTEGER);
+    public static final MetisLetheField FIELD_ORDER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResourceX.STATICDATA_SORT.getValue(), MetisDataType.INTEGER);
 
     /**
      * Class Field Id.
      */
-    public static final MetisLetheField FIELD_CLASS = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_CLASS.getValue(), MetisDataType.ENUM);
+    public static final MetisLetheField FIELD_CLASS = FIELD_DEFS.declareComparisonValueField(PrometheusDataResourceX.STATICDATA_CLASS.getValue(), MetisDataType.ENUM);
 
     /**
      * BadId error.
      */
-    public static final String ERROR_BADID = PrometheusDataResource.STATICDATA_ERROR_ID.getValue();
+    public static final String ERROR_BADID = PrometheusDataResourceX.STATICDATA_ERROR_ID.getValue();
 
     /**
      * BadName error.
      */
-    public static final String ERROR_BADNAME = PrometheusDataResource.STATICDATA_ERROR_NAME.getValue();
+    public static final String ERROR_BADNAME = PrometheusDataResourceX.STATICDATA_ERROR_NAME.getValue();
 
     /**
      * The Enum Class for this Static Data.
@@ -738,7 +738,7 @@ public abstract class StaticDataItem
          */
         protected StaticList(final Class<T> pBaseClass,
                              final DataSet pData,
-                             final PrometheusListKey pItemType,
+                             final PrometheusListKeyX pItemType,
                              final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }
@@ -894,7 +894,7 @@ public abstract class StaticDataItem
          * Declare Fields.
          */
         static {
-            FIELD_DEFS.declareLocalField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS, StaticDataMap::getOrderCountMap);
+            FIELD_DEFS.declareLocalField(PrometheusDataResourceX.STATICDATAMAP_ORDERCOUNTS, StaticDataMap::getOrderCountMap);
         }
 
         /**

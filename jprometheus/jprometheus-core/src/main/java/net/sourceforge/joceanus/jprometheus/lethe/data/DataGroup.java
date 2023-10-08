@@ -40,7 +40,7 @@ public abstract class DataGroup<T extends DataItem>
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT, DataGroup::getParent);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAGROUP_PARENT, DataGroup::getParent);
     }
 
     /**

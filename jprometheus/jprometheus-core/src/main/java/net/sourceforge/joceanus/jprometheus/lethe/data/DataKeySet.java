@@ -70,22 +70,22 @@ public class DataKeySet
     /**
      * HashPrime Field Id.
      */
-    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
+    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Field ID for KeySetDef.
      */
-    public static final MetisLetheField FIELD_KEYSETDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_KEYSETDEF.getValue(), MetisDataType.BYTEARRAY, WRAPLEN);
+    public static final MetisLetheField FIELD_KEYSETDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.DATAKEYSET_KEYSETDEF.getValue(), MetisDataType.BYTEARRAY, WRAPLEN);
 
     /**d
      * Field ID for CreationDate.
      */
-    public static final MetisLetheField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.DATAKEYSET_CREATION.getValue(), MetisDataType.DATE);
 
     /**
      * Field ID for KeySet.
      */
-    public static final MetisLetheField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
+    public static final MetisLetheField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAKEYSET_KEYSET.getValue());
 
     /**
      * The Encryption KeySet.

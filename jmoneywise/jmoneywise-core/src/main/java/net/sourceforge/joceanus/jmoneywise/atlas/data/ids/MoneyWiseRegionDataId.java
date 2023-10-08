@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 
 /**
  * Region DataIds.
@@ -30,12 +30,12 @@ public enum MoneyWiseRegionDataId
     /**
      * Name.
      */
-    NAME(PrometheusDataResource.DATAITEM_FIELD_NAME, Region.FIELD_NAME),
+    NAME(PrometheusDataResourceX.DATAITEM_FIELD_NAME, Region.FIELD_NAME),
 
     /**
      * Description.
      */
-    DESC(PrometheusDataResource.DATAITEM_FIELD_DESC, Region.FIELD_DESC);
+    DESC(PrometheusDataResourceX.DATAITEM_FIELD_DESC, Region.FIELD_DESC);
 
     /**
      * The Value.

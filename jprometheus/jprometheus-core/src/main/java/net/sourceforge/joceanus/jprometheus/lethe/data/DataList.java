@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem.DataInfoList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItemX.PrometheusTableListX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the item type
  */
 public abstract class DataList<T extends DataItem>
-        implements MetisFieldItem, MetisDataList<T>, PrometheusTableList<T> {
+        implements MetisFieldItem, MetisDataList<T>, PrometheusTableListX<T> {
     /**
      * DataList interface.
      */
@@ -53,7 +53,7 @@ public abstract class DataList<T extends DataItem>
          * @param pClass the list class
          * @return the list
          */
-        <L extends DataList<?>> L getDataList(PrometheusListKey pDataType,
+        <L extends DataList<?>> L getDataList(PrometheusListKeyX pDataType,
                                               Class<L> pClass);
     }
 
@@ -68,14 +68,14 @@ public abstract class DataList<T extends DataItem>
      */
     static {
         FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataList::size);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE, DataList::getStyle);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME, DataList::getDataSet);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_MAPS, DataList::getDataMap);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, DataList::getGeneration);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, DataList::getVersion);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE, DataList::getEditState);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, DataList::getItemType);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE, DataList::getBaseList);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATALIST_STYLE, DataList::getStyle);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_NAME, DataList::getDataSet);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATALIST_MAPS, DataList::getDataMap);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_GENERATION, DataList::getGeneration);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_VERSION, DataList::getVersion);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_EDITSTATE, DataList::getEditState);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_TYPE, DataList::getItemType);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_BASE, DataList::getBaseList);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class DataList<T extends DataItem>
     /**
      * The item type.
      */
-    private final PrometheusListKey theItemType;
+    private final PrometheusListKeyX theItemType;
 
     /**
      * The base list (for extracts).
@@ -137,7 +137,7 @@ public abstract class DataList<T extends DataItem>
      */
     protected DataList(final Class<T> pBaseClass,
                        final DataSet pDataSet,
-                       final PrometheusListKey pItemType,
+                       final PrometheusListKeyX pItemType,
                        final ListStyle pStyle) {
         theBaseClazz = pBaseClass;
         theStyle = pStyle;
@@ -244,7 +244,7 @@ public abstract class DataList<T extends DataItem>
      * Get the type of the list.
      * @return the item type
      */
-    public PrometheusListKey getItemType() {
+    public PrometheusListKeyX getItemType() {
         return theItemType;
     }
 

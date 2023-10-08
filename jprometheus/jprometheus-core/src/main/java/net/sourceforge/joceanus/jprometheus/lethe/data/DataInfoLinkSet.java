@@ -51,12 +51,12 @@ public class DataInfoLinkSet<T extends DataInfoItem>
     /**
      * The Active LinkSet.
      */
-    private static final MetisLetheField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE.getValue());
+    private static final MetisLetheField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAINFO_ACTIVE.getValue());
 
     /**
      * The LinkSet.
      */
-    private static final MetisLetheField FIELD_LINKSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET.getValue());
+    private static final MetisLetheField FIELD_LINKSET = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAINFO_LINKSET.getValue());
 
     /**
      * List of active items.

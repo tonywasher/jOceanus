@@ -69,32 +69,32 @@ public class DataValues {
     /**
      * InfoSet Items tag.
      */
-    private static final String TAG_INFOSET = PrometheusDataResource.DATAINFOSET_NAME.getValue();
+    private static final String TAG_INFOSET = PrometheusDataResourceX.DATAINFOSET_NAME.getValue();
 
     /**
      * Children Items tag.
      */
-    private static final String TAG_CHILDREN = PrometheusDataResource.DATAVALUES_CHILDREN.getValue();
+    private static final String TAG_CHILDREN = PrometheusDataResourceX.DATAVALUES_CHILDREN.getValue();
 
     /**
      * Child Item tag.
      */
-    private static final String TAG_CHILD = PrometheusDataResource.DATAVALUES_CHILD.getValue();
+    private static final String TAG_CHILD = PrometheusDataResourceX.DATAVALUES_CHILD.getValue();
 
     /**
      * List type attribute.
      */
-    protected static final String ATTR_TYPE = PrometheusDataResource.DATAVALUES_ATTRTYPE.getValue();
+    protected static final String ATTR_TYPE = PrometheusDataResourceX.DATAVALUES_ATTRTYPE.getValue();
 
     /**
      * List size attribute.
      */
-    protected static final String ATTR_SIZE = PrometheusDataResource.DATAVALUES_ATTRSIZE.getValue();
+    protected static final String ATTR_SIZE = PrometheusDataResourceX.DATAVALUES_ATTRSIZE.getValue();
 
     /**
      * Data Version attribute.
      */
-    protected static final String ATTR_VERS = PrometheusDataResource.DATAVALUES_ATTRVER.getValue();
+    protected static final String ATTR_VERS = PrometheusDataResourceX.DATAVALUES_ATTRVER.getValue();
 
     /**
      * The item type.

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -73,8 +73,8 @@ public final class SecurityHolding
      * UnderlyingMap Field Id.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID, SecurityHolding::getId);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_FIELD_NAME, SecurityHolding::getName);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_ID, SecurityHolding::getId);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_FIELD_NAME, SecurityHolding::getName);
         FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO, SecurityHolding::getPortfolio);
         FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY, SecurityHolding::getSecurity);
     }

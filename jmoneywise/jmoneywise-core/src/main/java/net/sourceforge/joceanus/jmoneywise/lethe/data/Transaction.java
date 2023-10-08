@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -90,12 +90,12 @@ public class Transaction
     /**
      * EventInfoSet field Id.
      */
-    private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAINFOSET_NAME.getValue());
 
     /**
      * Bad InfoSet Error Text.
      */
-    private static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
+    private static final String ERROR_BADINFOSET = PrometheusDataResourceX.DATAINFOSET_ERROR_BADSET.getValue();
 
     /**
      * Circular update Error Text.

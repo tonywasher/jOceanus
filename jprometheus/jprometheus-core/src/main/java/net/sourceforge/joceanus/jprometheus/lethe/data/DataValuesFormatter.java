@@ -437,7 +437,7 @@ public class DataValuesFormatter {
                                   final DataList<?> pList) throws OceanusException {
         /* Access the parent element */
         final Element myElement = pDocument.getDocumentElement();
-        final PrometheusListKey myItemType = pList.getItemType();
+        final PrometheusListKeyX myItemType = pList.getItemType();
 
         /* Check that the document name and dataType are correct */
         if (!MetisDataDifference.isEqual(myElement.getNodeName(), pList.listName())

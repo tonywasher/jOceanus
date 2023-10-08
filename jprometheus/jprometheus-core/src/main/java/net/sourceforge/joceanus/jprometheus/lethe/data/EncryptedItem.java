@@ -38,7 +38,7 @@ public abstract class EncryptedItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.ENCRYPTED_NAME.getValue(), DataItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResourceX.ENCRYPTED_NAME.getValue(), DataItem.FIELD_DEFS);
 
     /**
      * Data Key Set Field Id.
@@ -48,7 +48,7 @@ public abstract class EncryptedItem
     /**
      * Error message for bad usage.
      */
-    public static final String ERROR_USAGE = PrometheusDataResource.ENCRYPTED_ERROR_USAGE.getValue();
+    public static final String ERROR_USAGE = PrometheusDataResourceX.ENCRYPTED_ERROR_USAGE.getValue();
 
     /**
      * Generator field.
@@ -336,7 +336,7 @@ public abstract class EncryptedItem
          */
         protected EncryptedList(final Class<T> pBaseClass,
                                 final DataSet pData,
-                                final PrometheusListKey pItemType) {
+                                final PrometheusListKeyX pItemType) {
             this(pBaseClass, pData, pItemType, ListStyle.CORE);
         }
 
@@ -349,7 +349,7 @@ public abstract class EncryptedItem
          */
         protected EncryptedList(final Class<T> pBaseClass,
                                 final DataSet pData,
-                                final PrometheusListKey pItemType,
+                                final PrometheusListKeyX pItemType,
                                 final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }

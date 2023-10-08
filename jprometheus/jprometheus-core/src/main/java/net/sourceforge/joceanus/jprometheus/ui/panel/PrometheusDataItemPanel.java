@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.jprometheus.ui.panel;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItemX;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemActions;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
  * @param <T> the item type
  * @param <G> the goto id type
  */
-public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>>
+public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & Comparable<? super T>, G extends Enum<G>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent, PrometheusItemEditParent {
     /**
      * Details Tab Title.
@@ -429,7 +429,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pClass the list class
      * @return the list
      */
-    public <L extends DataList<X>, X extends DataItem> L getDataList(final PrometheusListKey pDataType,
+    public <L extends DataList<X>, X extends DataItem> L getDataList(final PrometheusListKeyX pDataType,
                                                                      final Class<L> pClass) {
         /* Look up the base list */
         return theUpdateSet.getDataList(pDataType, pClass);

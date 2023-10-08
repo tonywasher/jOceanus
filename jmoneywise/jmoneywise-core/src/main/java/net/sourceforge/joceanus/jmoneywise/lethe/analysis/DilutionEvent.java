@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -58,7 +58,7 @@ public final class DilutionEvent
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID, DilutionEvent::getIndexedId);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_ID, DilutionEvent::getIndexedId);
         FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY, DilutionEvent::getSecurity);
         FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, DilutionEvent::getDate);
         FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_DILUTION, DilutionEvent::getDilution);

@@ -68,27 +68,27 @@ public final class ControlKey
     /**
      * HashPrime Field Id.
      */
-    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
+    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Field ID for PrimeHashBytes.
      */
-    public static final MetisLetheField FIELD_PRIMEBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
+    public static final MetisLetheField FIELD_PRIMEBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.CONTROLKEY_PRIMEBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
 
     /**
      * Field ID for AltHashBytes.
      */
-    public static final MetisLetheField FIELD_ALTBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
+    public static final MetisLetheField FIELD_ALTBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResourceX.CONTROLKEY_ALTBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
 
     /**
      * Field ID for Prime keySetHash.
      */
-    public static final MetisLetheField FIELD_PRIMEHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
+    public static final MetisLetheField FIELD_PRIMEHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResourceX.CONTROLKEY_PRIMEHASH.getValue());
 
     /**
      * Field ID for Alternate keySetHash.
      */
-    public static final MetisLetheField FIELD_ALTHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
+    public static final MetisLetheField FIELD_ALTHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResourceX.CONTROLKEY_ALTHASH.getValue());
 
     /**
      * Field ID for DataKeySet.
@@ -98,7 +98,7 @@ public final class ControlKey
     /**
      * Name of Database.
      */
-    public static final String NAME_DATABASE = PrometheusDataResource.CONTROLKEY_DATABASE.getValue();
+    public static final String NAME_DATABASE = PrometheusDataResourceX.CONTROLKEY_DATABASE.getValue();
 
     /**
      * The DataKeySet.

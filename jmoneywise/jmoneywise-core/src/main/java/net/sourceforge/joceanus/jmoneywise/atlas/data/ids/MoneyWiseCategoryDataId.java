@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 
 /**
  * Category DataIds.
@@ -36,17 +36,17 @@ public enum MoneyWiseCategoryDataId
     /**
      * Name.
      */
-    NAME(PrometheusDataResource.DATAITEM_FIELD_NAME, CategoryBase.FIELD_NAME),
+    NAME(PrometheusDataResourceX.DATAITEM_FIELD_NAME, CategoryBase.FIELD_NAME),
 
     /**
      * Description.
      */
-    DESC(PrometheusDataResource.DATAITEM_FIELD_DESC, CategoryBase.FIELD_DESC),
+    DESC(PrometheusDataResourceX.DATAITEM_FIELD_DESC, CategoryBase.FIELD_DESC),
 
     /**
      * Parent.
      */
-    PARENT(PrometheusDataResource.DATAGROUP_PARENT, CategoryBase.FIELD_PARENT),
+    PARENT(PrometheusDataResourceX.DATAGROUP_PARENT, CategoryBase.FIELD_PARENT),
 
     /**
      * SubCategory.

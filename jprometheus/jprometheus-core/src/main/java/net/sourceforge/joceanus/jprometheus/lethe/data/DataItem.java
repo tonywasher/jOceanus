@@ -42,86 +42,86 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @see DataList
  */
 public abstract class DataItem
-        implements PrometheusTableItem, Comparable<Object> {
+        implements PrometheusTableItemX, Comparable<Object> {
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAITEM_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResourceX.DATAITEM_NAME.getValue());
 
     /**
      * Validation error.
      */
-    public static final String ERROR_VALIDATION = PrometheusDataResource.DATAITEM_ERROR_VALIDATION.getValue();
+    public static final String ERROR_VALIDATION = PrometheusDataResourceX.DATAITEM_ERROR_VALIDATION.getValue();
 
     /**
      * Resolution error.
      */
-    public static final String ERROR_RESOLUTION = PrometheusDataResource.DATAITEM_ERROR_RESOLUTION.getValue();
+    public static final String ERROR_RESOLUTION = PrometheusDataResourceX.DATAITEM_ERROR_RESOLUTION.getValue();
 
     /**
      * Duplicate Id error.
      */
-    public static final String ERROR_DUPLICATE = PrometheusDataResource.DATAITEM_ERROR_DUPLICATE.getValue();
+    public static final String ERROR_DUPLICATE = PrometheusDataResourceX.DATAITEM_ERROR_DUPLICATE.getValue();
 
     /**
      * Unknown Id error.
      */
-    public static final String ERROR_UNKNOWN = PrometheusDataResource.DATAITEM_ERROR_UNKNOWN.getValue();
+    public static final String ERROR_UNKNOWN = PrometheusDataResourceX.DATAITEM_ERROR_UNKNOWN.getValue();
 
     /**
      * Existing value error.
      */
-    public static final String ERROR_EXIST = PrometheusDataResource.DATAITEM_ERROR_EXIST.getValue();
+    public static final String ERROR_EXIST = PrometheusDataResourceX.DATAITEM_ERROR_EXIST.getValue();
 
     /**
      * Missing value error.
      */
-    public static final String ERROR_MISSING = PrometheusDataResource.DATAITEM_ERROR_MISSING.getValue();
+    public static final String ERROR_MISSING = PrometheusDataResourceX.DATAITEM_ERROR_MISSING.getValue();
 
     /**
      * Value too long error.
      */
-    public static final String ERROR_LENGTH = PrometheusDataResource.DATAITEM_ERROR_LENGTH.getValue();
+    public static final String ERROR_LENGTH = PrometheusDataResourceX.DATAITEM_ERROR_LENGTH.getValue();
 
     /**
      * Value negative error.
      */
-    public static final String ERROR_NEGATIVE = PrometheusDataResource.DATAITEM_ERROR_NEGATIVE.getValue();
+    public static final String ERROR_NEGATIVE = PrometheusDataResourceX.DATAITEM_ERROR_NEGATIVE.getValue();
 
     /**
      * Value positive error.
      */
-    public static final String ERROR_POSITIVE = PrometheusDataResource.DATAITEM_ERROR_POSITIVE.getValue();
+    public static final String ERROR_POSITIVE = PrometheusDataResourceX.DATAITEM_ERROR_POSITIVE.getValue();
 
     /**
      * Value zero error.
      */
-    public static final String ERROR_ZERO = PrometheusDataResource.DATAITEM_ERROR_ZERO.getValue();
+    public static final String ERROR_ZERO = PrometheusDataResourceX.DATAITEM_ERROR_ZERO.getValue();
 
     /**
      * Value outside valid range.
      */
-    public static final String ERROR_RANGE = PrometheusDataResource.DATAITEM_ERROR_RANGE.getValue();
+    public static final String ERROR_RANGE = PrometheusDataResourceX.DATAITEM_ERROR_RANGE.getValue();
 
     /**
      * Value disabled error.
      */
-    public static final String ERROR_DISABLED = PrometheusDataResource.DATAITEM_ERROR_DISABLED.getValue();
+    public static final String ERROR_DISABLED = PrometheusDataResourceX.DATAITEM_ERROR_DISABLED.getValue();
 
     /**
      * Creation failure.
      */
-    public static final String ERROR_CREATEITEM = PrometheusDataResource.DATAITEM_ERROR_CREATE.getValue();
+    public static final String ERROR_CREATEITEM = PrometheusDataResourceX.DATAITEM_ERROR_CREATE.getValue();
 
     /**
      * Multiple instances Error.
      */
-    public static final String ERROR_MULT = PrometheusDataResource.DATAITEM_ERROR_MULTIPLE.getValue();
+    public static final String ERROR_MULT = PrometheusDataResourceX.DATAITEM_ERROR_MULTIPLE.getValue();
 
     /**
      * Reserved name error.
      */
-    public static final String ERROR_INVALIDCHAR = PrometheusDataResource.DATAITEM_ERROR_INVALIDCHAR.getValue();
+    public static final String ERROR_INVALIDCHAR = PrometheusDataResourceX.DATAITEM_ERROR_INVALIDCHAR.getValue();
 
     /**
      * Standard Name length.
@@ -136,62 +136,62 @@ public abstract class DataItem
     /**
      * Id Field Id.
      */
-    public static final MetisLetheField FIELD_ID = FIELD_DEFS.declareComparisonField(PrometheusDataResource.DATAITEM_ID.getValue());
+    public static final MetisLetheField FIELD_ID = FIELD_DEFS.declareComparisonField(PrometheusDataResourceX.DATAITEM_ID.getValue());
 
     /**
      * Type Field Id.
      */
-    public static final MetisLetheField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
+    public static final MetisLetheField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_TYPE.getValue());
 
     /**
      * List Field Id.
      */
-    public static final MetisLetheField FIELD_LIST = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME.getValue());
+    public static final MetisLetheField FIELD_LIST = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATALIST_NAME.getValue());
 
     /**
      * Base Field Id.
      */
-    public static final MetisLetheField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
+    public static final MetisLetheField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_BASE.getValue());
 
     /**
      * TouchStatus Field Id.
      */
-    public static final MetisLetheField FIELD_TOUCH = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH.getValue());
+    public static final MetisLetheField FIELD_TOUCH = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_TOUCH.getValue());
 
     /**
      * Deleted Field Id.
      */
-    public static final MetisLetheField FIELD_DELETED = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_DELETED.getValue());
+    public static final MetisLetheField FIELD_DELETED = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_DELETED.getValue());
 
     /**
      * DataState Field Id.
      */
-    public static final MetisLetheField FIELD_STATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_STATE.getValue());
+    public static final MetisLetheField FIELD_STATE = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_STATE.getValue());
 
     /**
      * Edit State Field Id.
      */
-    public static final MetisLetheField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
+    public static final MetisLetheField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_EDITSTATE.getValue());
 
     /**
      * Version Field Id.
      */
-    public static final MetisLetheField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisLetheField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_VERSION.getValue());
 
     /**
      * Header Field Id.
      */
-    public static final MetisLetheField FIELD_HEADER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER.getValue());
+    public static final MetisLetheField FIELD_HEADER = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_HEADER.getValue());
 
     /**
      * History Field Id.
      */
-    public static final MetisLetheField FIELD_HISTORY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HISTORY.getValue());
+    public static final MetisLetheField FIELD_HISTORY = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_HISTORY.getValue());
 
     /**
      * Errors Field Id.
      */
-    public static final MetisLetheField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
+    public static final MetisLetheField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAITEM_ERRORS.getValue());
 
     /**
      * Instance ReportFields.
@@ -527,7 +527,7 @@ public abstract class DataItem
      * Get the type of the item.
      * @return the item type
      */
-    public PrometheusListKey getItemType() {
+    public PrometheusListKeyX getItemType() {
         return theList.getItemType();
     }
 
@@ -676,7 +676,7 @@ public abstract class DataItem
      * Clear the item touches.
      * @param pItemType the item type
      */
-    public void clearTouches(final PrometheusListKey pItemType) {
+    public void clearTouches(final PrometheusListKeyX pItemType) {
         theTouchStatus.resetTouches(pItemType);
     }
 

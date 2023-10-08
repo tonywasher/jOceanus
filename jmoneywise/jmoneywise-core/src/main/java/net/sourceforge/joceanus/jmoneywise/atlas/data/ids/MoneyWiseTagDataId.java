@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 
 /**
  * Tag DataIds.
@@ -30,12 +30,12 @@ public enum MoneyWiseTagDataId
     /**
      * Name.
      */
-    NAME(PrometheusDataResource.DATAITEM_FIELD_NAME, TransactionTag.FIELD_NAME),
+    NAME(PrometheusDataResourceX.DATAITEM_FIELD_NAME, TransactionTag.FIELD_NAME),
 
     /**
      * Description.
      */
-    DESC(PrometheusDataResource.DATAITEM_FIELD_DESC, TransactionTag.FIELD_DESC);
+    DESC(PrometheusDataResourceX.DATAITEM_FIELD_DESC, TransactionTag.FIELD_DESC);
 
     /**
      * The Value.

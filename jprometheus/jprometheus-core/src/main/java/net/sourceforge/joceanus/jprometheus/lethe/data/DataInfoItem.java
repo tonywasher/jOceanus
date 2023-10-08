@@ -51,42 +51,42 @@ public abstract class DataInfoItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_NAME.getValue(), EncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResourceX.DATAINFO_NAME.getValue(), EncryptedItem.FIELD_DEFS);
 
     /**
      * InfoType Field Id.
      */
-    public static final MetisLetheField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResourceX.DATAINFO_TYPE.getValue(), MetisDataType.LINK);
 
     /**
      * Owner Field Id.
      */
-    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResourceX.DATAINFO_OWNER.getValue(), MetisDataType.LINK);
 
     /**
      * Value Field Id.
      */
-    public static final MetisLetheField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue(), MetisDataType.CONTEXT);
+    public static final MetisLetheField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResourceX.DATAINFO_VALUE.getValue(), MetisDataType.CONTEXT);
 
     /**
      * Link Field Id.
      */
-    public static final MetisLetheField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
+    public static final MetisLetheField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResourceX.DATAINFO_LINK.getValue());
 
     /**
      * Invalid Data Type Error.
      */
-    protected static final String ERROR_BADDATATYPE = PrometheusDataResource.DATAINFO_ERROR_TYPE.getValue();
+    protected static final String ERROR_BADDATATYPE = PrometheusDataResourceX.DATAINFO_ERROR_TYPE.getValue();
 
     /**
      * Invalid Data Error.
      */
-    protected static final String ERROR_BADDATA = PrometheusDataResource.DATAINFO_ERROR_DATA.getValue();
+    protected static final String ERROR_BADDATA = PrometheusDataResourceX.DATAINFO_ERROR_DATA.getValue();
 
     /**
      * Invalid Info Class Error.
      */
-    protected static final String ERROR_BADINFOCLASS = PrometheusDataResource.DATAINFO_ERROR_CLASS.getValue();
+    protected static final String ERROR_BADINFOCLASS = PrometheusDataResourceX.DATAINFO_ERROR_CLASS.getValue();
 
     /**
      * Copy Constructor.
@@ -930,7 +930,7 @@ public abstract class DataInfoItem
          */
         protected DataInfoList(final Class<T> pBaseClass,
                                final DataSet pData,
-                               final PrometheusListKey pItemType,
+                               final PrometheusListKeyX pItemType,
                                final ListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }

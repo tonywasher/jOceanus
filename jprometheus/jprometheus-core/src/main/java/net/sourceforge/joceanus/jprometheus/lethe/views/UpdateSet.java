@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -55,7 +55,7 @@ public class UpdateSet
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, UpdateSet::getVersion);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_VERSION, UpdateSet::getVersion);
     }
 
     /**
@@ -77,7 +77,7 @@ public class UpdateSet
     /**
      * The entry map.
      */
-    private final Map<PrometheusListKey, UpdateEntry<?>> theMap;
+    private final Map<PrometheusListKeyX, UpdateEntry<?>> theMap;
 
     /**
      * The DataControl.
@@ -158,7 +158,7 @@ public class UpdateSet
      * @param pDataType the data type
      * @return the list class entry
      */
-    public <T extends DataItem> UpdateEntry<T> registerType(final PrometheusListKey pDataType) {
+    public <T extends DataItem> UpdateEntry<T> registerType(final PrometheusListKeyX pDataType) {
         /* Locate any existing entry */
         @SuppressWarnings("unchecked")
         UpdateEntry<T> myEntry = (UpdateEntry<T>) theMap.get(pDataType);
@@ -185,7 +185,7 @@ public class UpdateSet
      * @return the list
      */
     @Override
-    public <L extends DataList<?>> L getDataList(final PrometheusListKey pDataType,
+    public <L extends DataList<?>> L getDataList(final PrometheusListKeyX pDataType,
                                                  final Class<L> pClass) {
         /* Locate an existing entry */
         final UpdateEntry<?> myEntry = theMap.get(pDataType);

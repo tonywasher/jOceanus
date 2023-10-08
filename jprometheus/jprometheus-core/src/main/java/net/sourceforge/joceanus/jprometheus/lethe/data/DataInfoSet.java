@@ -49,17 +49,17 @@ public abstract class DataInfoSet<T extends DataInfoItem>
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResourceX.DATAINFOSET_NAME.getValue());
 
     /**
      * Owner Field Id.
      */
-    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER.getValue());
+    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAINFO_OWNER.getValue());
 
     /**
      * Values Field Id.
      */
-    public static final MetisLetheField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES.getValue());
+    public static final MetisLetheField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAINFOSET_VALUES.getValue());
 
     /**
      * The Owner to which this set belongs.

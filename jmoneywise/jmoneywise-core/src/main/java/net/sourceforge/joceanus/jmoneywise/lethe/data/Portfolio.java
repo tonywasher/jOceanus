@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -80,7 +80,7 @@ public class Portfolio
     /**
      * PortfolioInfoSet field Id.
      */
-    private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.

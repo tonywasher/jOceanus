@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 
 /**
  * Asset DataIds.
@@ -40,12 +40,12 @@ public enum MoneyWiseAssetDataId
     /**
      * Name.
      */
-    NAME(PrometheusDataResource.DATAITEM_FIELD_NAME, AssetBase.FIELD_NAME),
+    NAME(PrometheusDataResourceX.DATAITEM_FIELD_NAME, AssetBase.FIELD_NAME),
 
     /**
      * Description.
      */
-    DESC(PrometheusDataResource.DATAITEM_FIELD_DESC, AssetBase.FIELD_DESC),
+    DESC(PrometheusDataResourceX.DATAITEM_FIELD_DESC, AssetBase.FIELD_DESC),
 
     /**
      * Category.

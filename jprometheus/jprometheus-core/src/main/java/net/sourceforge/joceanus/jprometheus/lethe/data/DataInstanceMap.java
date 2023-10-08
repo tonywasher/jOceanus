@@ -41,8 +41,8 @@ public abstract class DataInstanceMap<T extends DataItem, K>
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAMAP_KEYS, DataInstanceMap::getKeyMap);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAMAP_KEYCOUNTS, DataInstanceMap::getKeyCountMap);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAMAP_KEYS, DataInstanceMap::getKeyMap);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATAMAP_KEYCOUNTS, DataInstanceMap::getKeyCountMap);
     }
 
     /**

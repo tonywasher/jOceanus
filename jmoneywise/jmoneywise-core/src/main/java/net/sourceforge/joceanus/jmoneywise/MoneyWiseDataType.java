@@ -20,13 +20,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
 
 /**
  * MoneyWise Item Types.
  */
 public enum MoneyWiseDataType
-        implements MetisLetheFieldEnum, MetisDataFieldId, PrometheusListKey {
+        implements MetisLetheFieldEnum, MetisDataFieldId, PrometheusListKeyX {
     /**
      * DepositType.
      */

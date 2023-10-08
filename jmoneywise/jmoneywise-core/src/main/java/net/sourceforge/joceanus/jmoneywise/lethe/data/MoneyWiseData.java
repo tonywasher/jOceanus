@@ -67,7 +67,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoTyp
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -660,9 +660,9 @@ public class MoneyWiseData
      */
     public void initialiseAnalysis() {
         /* Loop through the list types */
-        final Iterator<Entry<PrometheusListKey, DataList<?>>> myIterator = entryIterator();
+        final Iterator<Entry<PrometheusListKeyX, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, DataList<?>> myEntry = myIterator.next();
+            final Entry<PrometheusListKeyX, DataList<?>> myEntry = myIterator.next();
 
             /* Prepare list for analysis */
             final DataList<?> myList = myEntry.getValue();
