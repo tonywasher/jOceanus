@@ -160,6 +160,14 @@ public class GordianParameters {
     }
 
     /**
+     * Renew keySet.
+     * @param pRandom the secureRandom
+     */
+    public void renewKeySet(final SecureRandom pRandom) {
+        pRandom.nextBytes(theKeySetSeed);
+    }
+
+    /**
      * Set internal.
      */
     public void setInternal() {

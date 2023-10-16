@@ -20,8 +20,6 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
@@ -29,6 +27,10 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -178,6 +180,7 @@ public class GordianCoreFactoryLock
     public void setFactory(final GordianFactory pFactory) {
         theFactory = pFactory;
     }
+
     @Override
     public byte[] getExternalBuffer() {
         /* Create buffer */
@@ -217,25 +220,26 @@ public class GordianCoreFactoryLock
         /* Access password as bytes */
         final byte[] myPassword = TethysDataConverter.charsToByteArray(pPassword);
 
-        /* Determine the digests */
-        final GordianDigest[] myDigests = determineDigests(pFactory);
-        final byte[][] myHashes = new byte[myDigests.length][];
+        /* Determine the macs */
+        final GordianMac[] myMacs = determineMacs(pFactory);
+        final byte[][] myHashes = new byte[myMacs.length][];
 
         /* Initialise hashes */
-        for (int i = 0; i < myDigests.length; i++) {
-            /* Initialise the digests */
-            final GordianDigest myDigest = myDigests[i];
-            myDigest.update(myPassword);
+        for (int i = 0; i < myMacs.length; i++) {
+            /* Initialise the macs */
+            final GordianCoreMac myMac = (GordianCoreMac) myMacs[i];
+            myMac.initKeyBytes(myPassword);
+            myMac.update(theInit);
 
             /* Finish the update and store the buffer */
-            final byte[] myResult = myDigest.finish();
+            final byte[] myResult = myMac.finish();
             myHashes[i] = myResult;
         }
 
         /* Loop iterations times */
         for (int i = 0; i < NUM_ITERATIONS; i++) {
             /* Cross-fertilise the hashes and apply them */
-            iterateHashes(myDigests, myHashes);
+            iterateHashes(myMacs, myHashes);
             applyHashes(myHashes);
         }
     }
@@ -258,53 +262,55 @@ public class GordianCoreFactoryLock
 
     /**
      * Iterate the hashes.
-     * @param pDigests the digest array
+     * @param pMacs the mac array
      * @param pHashes the hashes array
      * @throws OceanusException on error
      */
-    private static void iterateHashes(final GordianDigest[] pDigests,
+    private static void iterateHashes(final GordianMac[] pMacs,
                                       final byte[][] pHashes) throws OceanusException {
-        /* Update all the digests */
-        for (final GordianDigest myDigest : pDigests) {
+        /* Update all the Macs */
+        for (final GordianMac myMac : pMacs) {
             /* Update with the results */
-            for (int k = 0; k < pDigests.length; k++) {
-                myDigest.update(pHashes[k]);
+            for (int k = 0; k < pMacs.length; k++) {
+                myMac.update(pHashes[k]);
             }
         }
 
-        /* Finish all the digests */
-        for (int j = 0; j < pDigests.length; j++) {
+        /* Finish all the macs */
+        for (int j = 0; j < pMacs.length; j++) {
             /* Update with the results */
-            final GordianDigest myDigest = pDigests[j];
+            final GordianMac myMac = pMacs[j];
             final byte[] myResult = pHashes[j];
-            myDigest.finish(myResult, 0);
+            myMac.finish(myResult, 0);
         }
     }
 
     /**
-     * Obtain an array of digests for masking.
+     * Obtain an array of macs for masking.
      * @param pFactory the factory
-     * @return the digests
+     * @return the macs
      * @throws OceanusException on error
      */
-    private static GordianDigest[] determineDigests(final GordianFactory pFactory) throws OceanusException {
-        /* Access digest factory */
-        final GordianDigestFactory myFactory = pFactory.getDigestFactory();
+    private static GordianMac[] determineMacs(final GordianFactory pFactory) throws OceanusException {
+        /* Access mac factory */
+        final GordianMacFactory myFactory = pFactory.getMacFactory();
 
         /* Initialise variables */
         final GordianDigestType[] myTypes = GordianDigestType.values();
-        final GordianDigest[] myDigests = new GordianDigest[myTypes.length];
+        final GordianMac[] myMacs = new GordianMac[myTypes.length];
         int myLen = 0;
 
         /* Loop through the digestTypes */
-        for (final GordianDigestType myType : GordianDigestType.values()) {
-            /* Add the digest if it is relevant */
-            if (myFactory.supportedExternalDigestTypes().test(myType)) {
-                myDigests[myLen++] = myFactory.createDigest(new GordianDigestSpec(myType, HASH_LEN));
+        for (final GordianDigestType myType : myTypes) {
+            /* If we can generate HASH_LEN as the result */
+            if (myType.isLengthValid(HASH_LEN)
+                && myFactory.supportedHMacDigestTypes().test(myType)) {
+                final GordianMacSpec myMacSpec = GordianMacSpec.hMac(new GordianDigestSpec(myType, HASH_LEN));
+                myMacs[myLen++] = myFactory.createMac(myMacSpec);
             }
         }
 
         /* Return the array */
-        return Arrays.copyOf(myDigests, myLen);
+        return Arrays.copyOf(myMacs, myLen);
     }
 }

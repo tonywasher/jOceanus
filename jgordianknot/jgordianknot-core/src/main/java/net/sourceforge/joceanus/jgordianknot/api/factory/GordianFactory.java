@@ -18,10 +18,12 @@ package net.sourceforge.joceanus.jgordianknot.api.factory;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Factory API.
@@ -85,4 +87,16 @@ public interface GordianFactory {
      * @return the obfuscater
      */
     GordianKnuthObfuscater getObfuscater();
+
+    /**
+     * Obtain the embedded keySet.
+     * @return the keySet (or null)
+     */
+    GordianKeySet getEmbeddedKeySet();
+
+    /**
+     * Renew embedded keySet.
+     * @throws OceanusException on error
+     */
+    void renewEmbeddedKeySet() throws OceanusException;
 }
