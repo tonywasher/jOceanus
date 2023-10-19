@@ -340,7 +340,7 @@ class KeySetTest {
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_192, true));
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, false));
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, true));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("keySet", () -> testRandomFactory())));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("random", () -> testRandomFactory())));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), myStream));

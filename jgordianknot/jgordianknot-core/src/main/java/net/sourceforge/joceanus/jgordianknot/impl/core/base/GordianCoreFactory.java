@@ -99,11 +99,6 @@ public abstract class GordianCoreFactory
     private final GordianRandomSource theRandom;
 
     /**
-     * Embedded KeySet.
-     */
-    private final GordianKeySet theKeySet;
-
-    /**
      * Personalisation.
      */
     private final GordianPersonalisation thePersonalisation;
@@ -117,6 +112,11 @@ public abstract class GordianCoreFactory
      * Obfuscater.
      */
     private final GordianCoreKnuthObfuscater theObfuscater;
+
+    /**
+     * Embedded KeySet.
+     */
+    private GordianKeySet theKeySet;
 
     /**
      * Digest Factory.
@@ -239,12 +239,21 @@ public abstract class GordianCoreFactory
         return theParameters.isInternal();
     }
 
-    /**
-     * Obtain the embedded keySet.
-     * @return the keySet (or null)
-     */
+    @Override
     public GordianKeySet getEmbeddedKeySet() {
         return theKeySet;
+    }
+
+    @Override
+    public void renewEmbeddedKeySet() throws OceanusException {
+        /* Reject if we have no embedded keySet */
+        if (theKeySet == null) {
+            throw new GordianLogicException("No embedded keySet");
+        }
+
+        /* Renew the keySet */
+        theParameters.renewKeySet(theRandom.getRandom());
+        theKeySet = createEmbeddedKeySet();
     }
 
     /**
