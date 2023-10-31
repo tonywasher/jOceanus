@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -49,7 +51,7 @@ public class MoneyWiseDepositCategoryBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseDepositCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseDepositCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -81,11 +83,20 @@ public class MoneyWiseDepositCategoryBuilder {
     }
 
     /**
+     * Set the categoryType.
+     * @param pType the type of the category.
+     * @return the builder
+     */
+    public MoneyWiseDepositCategoryBuilder type(final DepositCategoryClass pType) {
+        return type(theDataSet.getDepositCategoryTypes().findItemByClass(pType));
+    }
+
+    /**
      * Obtain the depositCategory.
      * @param pCategory the name of the category.
      * @return the depositCategory
      */
-    public DepositCategory lookupCategory(final String pCategory) {
+    private DepositCategory lookupCategory(final String pCategory) {
         return theDataSet.getDepositCategories().findItemByName(pCategory);
     }
 
@@ -100,6 +111,16 @@ public class MoneyWiseDepositCategoryBuilder {
         myCategory.setSubCategoryName(theName);
         myCategory.setParentCategory(theParent);
         myCategory.setCategoryType(theType);
+
+        /* Check for errors */
+        myCategory.validate();
+        if (myCategory.hasErrors()) {
+            theDataSet.getDepositCategories().remove(myCategory);
+            throw new MoneyWiseDataException("Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myCategory.adjustMapForItem();
 
         /* Reset values */
         theName = null;

@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -49,7 +51,7 @@ public class MoneyWiseCashCategoryBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseCashCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseCashCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -81,11 +83,20 @@ public class MoneyWiseCashCategoryBuilder {
     }
 
     /**
+     * Set the categoryType.
+     * @param pType the type of the category.
+     * @return the builder
+     */
+    public MoneyWiseCashCategoryBuilder type(final CashCategoryClass pType) {
+        return type(theDataSet.getCashCategoryTypes().findItemByClass(pType));
+    }
+
+    /**
      * Obtain the cashCategory.
      * @param pCategory the name of the category.
      * @return the cashCategory
      */
-    public CashCategory lookupCategory(final String pCategory) {
+    private CashCategory lookupCategory(final String pCategory) {
         return theDataSet.getCashCategories().findItemByName(pCategory);
     }
 
@@ -100,6 +111,16 @@ public class MoneyWiseCashCategoryBuilder {
         myCategory.setSubCategoryName(theName);
         myCategory.setParentCategory(theParent);
         myCategory.setCategoryType(theType);
+
+        /* Check for errors */
+        myCategory.validate();
+        if (myCategory.hasErrors()) {
+            theDataSet.getCashCategories().remove(myCategory);
+            throw new MoneyWiseDataException("Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myCategory.adjustMapForItem();
 
         /* Reset values */
         theName = null;

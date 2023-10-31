@@ -222,9 +222,10 @@ public class TransactionInfoType
         /**
          * Add an InfoType.
          * @param pType the Name of the InfoType
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pType) throws OceanusException {
+        public TransactionInfoType addBasicItem(final String pType) throws OceanusException {
             /* Create a new InfoType */
             final TransactionInfoType myType = new TransactionInfoType(this, pType);
 
@@ -236,6 +237,7 @@ public class TransactionInfoType
 
             /* Add the Type to the list */
             add(myType);
+            return myType;
         }
 
         @Override

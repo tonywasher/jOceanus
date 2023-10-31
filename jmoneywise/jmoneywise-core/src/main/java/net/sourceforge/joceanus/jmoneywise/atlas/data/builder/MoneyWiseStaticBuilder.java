@@ -68,7 +68,7 @@ public class MoneyWiseStaticBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseStaticBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseStaticBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -114,7 +114,8 @@ public class MoneyWiseStaticBuilder {
     private void buildPayeeTypes() throws OceanusException {
         final PayeeTypeList myTypes = theDataSet.getPayeeTypes();
         for (PayeeTypeClass myClass : PayeeTypeClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final PayeeType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -134,7 +135,8 @@ public class MoneyWiseStaticBuilder {
     private void buildSecurityTypes() throws OceanusException {
         final SecurityTypeList myTypes = theDataSet.getSecurityTypes();
         for (SecurityTypeClass myClass : SecurityTypeClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final SecurityType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -154,7 +156,8 @@ public class MoneyWiseStaticBuilder {
     private void buildPortfolioTypes() throws OceanusException {
         final PortfolioTypeList myTypes = theDataSet.getPortfolioTypes();
         for (PortfolioTypeClass myClass : PortfolioTypeClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final PortfolioType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -174,7 +177,8 @@ public class MoneyWiseStaticBuilder {
     private void buildDepositCategories() throws OceanusException {
         final DepositCategoryTypeList myTypes = theDataSet.getDepositCategoryTypes();
         for (DepositCategoryClass myClass : DepositCategoryClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final DepositCategoryType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -194,7 +198,8 @@ public class MoneyWiseStaticBuilder {
     private void buildCashCategories() throws OceanusException {
         final CashCategoryTypeList myTypes = theDataSet.getCashCategoryTypes();
         for (CashCategoryClass myClass : CashCategoryClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final CashCategoryType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -214,7 +219,8 @@ public class MoneyWiseStaticBuilder {
     private void buildLoanCategories() throws OceanusException {
         final LoanCategoryTypeList myTypes = theDataSet.getLoanCategoryTypes();
         for (LoanCategoryClass myClass : LoanCategoryClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final LoanCategoryType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -234,7 +240,8 @@ public class MoneyWiseStaticBuilder {
     private void buildTaxBases() throws OceanusException {
         final TaxBasisList myBases = theDataSet.getTaxBases();
         for (TaxBasisClass myClass : TaxBasisClass.values()) {
-            myBases.addBasicItem(myClass.toString());
+            final TaxBasis myBasis = myBases.addBasicItem(myClass.toString());
+            myBasis.adjustMapForItem();
         }
     }
 
@@ -254,7 +261,8 @@ public class MoneyWiseStaticBuilder {
     private void buildTransCategories() throws OceanusException {
         final TransactionCategoryTypeList myTypes = theDataSet.getTransCategoryTypes();
         for (TransactionCategoryClass myClass : TransactionCategoryClass.values()) {
-            myTypes.addBasicItem(myClass.toString());
+            final TransactionCategoryType myType = myTypes.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -274,7 +282,8 @@ public class MoneyWiseStaticBuilder {
     private void buildAccountInfo() throws OceanusException {
         final AccountInfoTypeList myInfo = theDataSet.getActInfoTypes();
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
-            myInfo.addBasicItem(myClass.toString());
+            final AccountInfoType myType = myInfo.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -294,7 +303,8 @@ public class MoneyWiseStaticBuilder {
     private void buildTransInfo() throws OceanusException {
         final TransactionInfoTypeList myInfo = theDataSet.getTransInfoTypes();
         for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
-            myInfo.addBasicItem(myClass.toString());
+            final TransactionInfoType myType = myInfo.addBasicItem(myClass.toString());
+            myType.adjustMapForItem();
         }
     }
 
@@ -319,6 +329,16 @@ public class MoneyWiseStaticBuilder {
     }
 
     /**
+     * build currency.
+     * @param pClass the currency class
+     * @return the new currency
+     * @throws OceanusException on error
+     */
+    private AssetCurrency buildCurrency(final AssetCurrencyClass pClass) throws OceanusException {
+        return addCurrency(pClass);
+    }
+
+    /**
      * add currency.
      * @param pCurrency the currency class
      * @return the new currency
@@ -326,8 +346,9 @@ public class MoneyWiseStaticBuilder {
      */
     public AssetCurrency addCurrency(final AssetCurrencyClass pCurrency) throws OceanusException {
         final AssetCurrencyList myList = theDataSet.getAccountCurrencies();
-        myList.addBasicItem(pCurrency.name());
-        return myList.findItemByClass(pCurrency);
+        final AssetCurrency myCurr = myList.addBasicItem(pCurrency.name());
+        myCurr.adjustMapForItem();
+        return myCurr;
     }
 
     /**

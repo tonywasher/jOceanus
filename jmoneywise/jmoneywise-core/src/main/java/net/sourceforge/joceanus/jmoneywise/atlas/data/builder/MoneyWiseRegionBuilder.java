@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -38,7 +39,7 @@ public class MoneyWiseRegionBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseRegionBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseRegionBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -70,6 +71,16 @@ public class MoneyWiseRegionBuilder {
         /* Create the region */
         final Region myRegion = theDataSet.getRegions().addNewItem();
         myRegion.setName(theName);
+
+        /* Check for errors */
+        myRegion.validate();
+        if (myRegion.hasErrors()) {
+            theDataSet.getRegions().remove(myRegion);
+            throw new MoneyWiseDataException("Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myRegion.adjustMapForItem();
 
         /* Reset values */
         theName = null;

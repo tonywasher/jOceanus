@@ -71,6 +71,23 @@ public class TethysPrice
     }
 
     /**
+     * Constructor for price from a decimal string.
+     * @param pSource The source decimal string
+     * @param pCurrency the currency
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+    public TethysPrice(final String pSource,
+                       final Currency pCurrency) {
+        /* Use default constructor */
+        this();
+
+        /* Parse the string and correct the scale */
+        TethysDecimalParser.parseDecimalValue(pSource, this);
+        adjustToScale(getCurrency().getDefaultFractionDigits()
+                + XTRA_DECIMALS);
+    }
+
+    /**
      * Create the price from a byte array.
      * @param pBuffer the buffer
      */

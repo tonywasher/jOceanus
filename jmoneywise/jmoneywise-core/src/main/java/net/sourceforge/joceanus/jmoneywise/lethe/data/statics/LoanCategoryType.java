@@ -205,9 +205,10 @@ public class LoanCategoryType
         /**
          * Add a LoanCategoryType to the list.
          * @param pLoanCatType the Name of the loan category type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pLoanCatType) throws OceanusException {
+        public LoanCategoryType addBasicItem(final String pLoanCatType) throws OceanusException {
             /* Create a new Loan Category Type */
             final LoanCategoryType myLoanType = new LoanCategoryType(this, pLoanCatType);
 
@@ -219,6 +220,7 @@ public class LoanCategoryType
 
             /* Add the Loan Category to the list */
             add(myLoanType);
+            return myLoanType;
         }
 
         @Override

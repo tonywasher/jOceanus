@@ -16,11 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -62,7 +65,7 @@ public class MoneyWiseDepositBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseDepositBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseDepositBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         defaultCurrency();
     }
@@ -88,6 +91,15 @@ public class MoneyWiseDepositBuilder {
     }
 
     /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder parent(final String pParent) {
+        return parent(theDataSet.getPayees().findItemByName(pParent));
+    }
+
+    /**
      * Set the depositCategory.
      * @param pCategory the category of the deposit.
      * @return the builder
@@ -98,6 +110,15 @@ public class MoneyWiseDepositBuilder {
     }
 
     /**
+     * Set the depositCategory.
+     * @param pCategory the category of the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder category(final String pCategory) {
+        return category(theDataSet.getDepositCategories().findItemByName(pCategory));
+    }
+
+    /**
      * Set the currency.
      * @param pCurrency the currency of the deposit.
      * @return the builder
@@ -105,6 +126,15 @@ public class MoneyWiseDepositBuilder {
     public MoneyWiseDepositBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder currency(final AssetCurrencyClass pCurrency) {
+        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
     /**
@@ -133,12 +163,12 @@ public class MoneyWiseDepositBuilder {
     }
 
     /**
-     * Obtain the deposit.
-     * @param pDeposit the name of the deposit.
-     * @return the deposit
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
      */
-    public Deposit lookupDeposit(final String pDeposit) {
-        return theDataSet.getDeposits().findItemByName(pDeposit);
+    public MoneyWiseDepositBuilder openingBalance(final String pOpening) {
+        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
     }
 
     /**
@@ -154,7 +184,16 @@ public class MoneyWiseDepositBuilder {
         myDeposit.setCategory(theCategory);
         myDeposit.setAssetCurrency(theCurrency);
         myDeposit.setOpeningBalance(theOpeningBalance);
+
+        /* Check for errors */
         myDeposit.validate();
+        if (myDeposit.hasErrors()) {
+            theDataSet.getDeposits().remove(myDeposit);
+            throw new MoneyWiseDataException("Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myDeposit.adjustMapForItem();
 
         /* Reset values */
         theName = null;

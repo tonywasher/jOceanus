@@ -364,9 +364,10 @@ public class AssetCurrency
         /**
          * Add an AccountCurrency to the list.
          * @param pCurrency the Name of the account currency
+         * @return the new currency
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pCurrency) throws OceanusException {
+        public AssetCurrency addBasicItem(final String pCurrency) throws OceanusException {
             /* Create a new Account Currency */
             final AssetCurrency myCurr = new AssetCurrency(this, pCurrency);
 
@@ -378,6 +379,7 @@ public class AssetCurrency
 
             /* Add the Account Currency to the list */
             add(myCurr);
+            return myCurr;
         }
 
         @Override

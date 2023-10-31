@@ -197,9 +197,10 @@ public class PayeeType
         /**
          * Add a PayeeType to the list.
          * @param pPayeeType the Name of the account category type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pPayeeType) throws OceanusException {
+        public PayeeType addBasicItem(final String pPayeeType) throws OceanusException {
             /* Create a new Payee Type */
             final PayeeType myPayeeType = new PayeeType(this, pPayeeType);
 
@@ -211,6 +212,7 @@ public class PayeeType
 
             /* Add the PayeeType to the list */
             add(myPayeeType);
+            return myPayeeType;
         }
 
         @Override

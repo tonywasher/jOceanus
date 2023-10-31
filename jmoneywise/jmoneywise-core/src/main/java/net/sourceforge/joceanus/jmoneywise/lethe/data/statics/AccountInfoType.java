@@ -232,9 +232,10 @@ public class AccountInfoType
         /**
          * Add a Basic Open AccountInfoType to the list.
          * @param pInfoType the Name of the account info type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pInfoType) throws OceanusException {
+        public AccountInfoType addBasicItem(final String pInfoType) throws OceanusException {
             /* Create a new Account Info Type */
             final AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
 
@@ -246,6 +247,7 @@ public class AccountInfoType
 
             /* Add the Account Info Type to the list */
             add(myInfoType);
+            return myInfoType;
         }
 
         @Override

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -38,7 +39,7 @@ public class MoneyWiseTagBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTagBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseTagBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -53,15 +54,6 @@ public class MoneyWiseTagBuilder {
     }
 
     /**
-     * Obtain the tag.
-     * @param pTag the tag.
-     * @return the tag
-     */
-    public TransactionTag lookupTag(final String pTag) {
-        return theDataSet.getTransactionTags().findItemByName(pTag);
-    }
-
-    /**
      * Build the tag.
      * @return the new tag
      * @throws OceanusException on error
@@ -70,6 +62,16 @@ public class MoneyWiseTagBuilder {
         /* Create the tag */
         final TransactionTag myTag = theDataSet.getTransactionTags().addNewItem();
         myTag.setName(theName);
+
+        /* Check for errors */
+        myTag.validate();
+        if (myTag.hasErrors()) {
+            theDataSet.getTransactionTags().remove(myTag);
+            throw new MoneyWiseDataException("Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myTag.adjustMapForItem();
 
         /* Reset values */
         theName = null;

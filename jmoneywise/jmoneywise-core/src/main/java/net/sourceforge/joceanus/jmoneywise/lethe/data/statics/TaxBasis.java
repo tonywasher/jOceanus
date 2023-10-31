@@ -218,9 +218,10 @@ public class TaxBasis
         /**
          * Add a TaxBasis.
          * @param pTaxBasis the Name of the tax basis
+         * @return the new basis
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pTaxBasis) throws OceanusException {
+        public TaxBasis addBasicItem(final String pTaxBasis) throws OceanusException {
             /* Create a new Tax Basis */
             final TaxBasis myBasis = new TaxBasis(this, pTaxBasis);
 
@@ -232,6 +233,7 @@ public class TaxBasis
 
             /* Add the Tax Basis to the list */
             add(myBasis);
+            return myBasis;
         }
 
         @Override

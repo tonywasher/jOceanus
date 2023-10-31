@@ -16,9 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -44,7 +46,7 @@ public class MoneyWisePayeeBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWisePayeeBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWisePayeeBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -63,18 +65,18 @@ public class MoneyWisePayeeBuilder {
      * @param pType the type of the payee.
      * @return the builder
      */
-    public MoneyWisePayeeBuilder type(final PayeeType pType) {
-        theType = pType;
-        return this;
+    public MoneyWisePayeeBuilder type(final PayeeTypeClass pType) {
+        return type(theDataSet.getPayeeTypes().findItemByClass(pType));
     }
 
     /**
-     * Obtain the payee.
-     * @param pPayee the name of the payee.
-     * @return the payee
+     * Set the payeeType.
+     * @param pType the type of the payee.
+     * @return the builder
      */
-    public Payee lookupPayee(final String pPayee) {
-        return theDataSet.getPayees().findItemByName(pPayee);
+    public MoneyWisePayeeBuilder type(final PayeeType pType) {
+        theType = pType;
+        return this;
     }
 
     /**
@@ -87,7 +89,16 @@ public class MoneyWisePayeeBuilder {
         final Payee myPayee = theDataSet.getPayees().addNewItem();
         myPayee.setName(theName);
         myPayee.setCategory(theType);
+
+        /* Check for errors */
         myPayee.validate();
+        if (myPayee.hasErrors()) {
+            theDataSet.getPayees().remove(myPayee);
+            throw new MoneyWiseDataException("Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myPayee.adjustMapForItem();
 
         /* Reset values */
         theName = null;

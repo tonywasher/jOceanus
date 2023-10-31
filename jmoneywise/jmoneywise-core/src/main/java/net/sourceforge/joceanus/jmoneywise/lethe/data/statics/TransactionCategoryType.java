@@ -209,9 +209,10 @@ public class TransactionCategoryType
         /**
          * Add a TransactionCategoryType.
          * @param pCategoryType the Name of the category type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pCategoryType) throws OceanusException {
+        public TransactionCategoryType addBasicItem(final String pCategoryType) throws OceanusException {
             /* Create a new Category Type */
             final TransactionCategoryType myCatType = new TransactionCategoryType(this, pCategoryType);
 
@@ -223,6 +224,7 @@ public class TransactionCategoryType
 
             /* Add the Category Type to the list */
             add(myCatType);
+            return myCatType;
         }
 
         @Override
