@@ -24,11 +24,11 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -301,17 +301,17 @@ public final class GordianCoreKeySetHash
 
         /* Create the primeMac */
         GordianMacSpec myMacSpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
-        final GordianCoreMac myPrimeMac = (GordianCoreMac) myMacs.createMac(myMacSpec);
+        final GordianMac myPrimeMac = myMacs.createMac(myMacSpec);
         myPrimeMac.initKeyBytes(pPassword);
 
         /* Create the alternateMac */
         myMacSpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
-        final GordianCoreMac myAlternateMac = (GordianCoreMac) myMacs.createMac(myMacSpec);
+        final GordianMac myAlternateMac = myMacs.createMac(myMacSpec);
         myAlternateMac.initKeyBytes(pPassword);
 
         /* Create the secretMac */
         myMacSpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
-        final GordianCoreMac mySecretMac = (GordianCoreMac) myMacs.createMac(myMacSpec);
+        final GordianMac mySecretMac = myMacs.createMac(myMacSpec);
         mySecretMac.initKeyBytes(pPassword);
 
         /* Initialise hash bytes and counter */

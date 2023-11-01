@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -43,7 +43,7 @@ public final class GordianSP800HMacDRBG
     /**
      * The HMac.
      */
-    private final GordianCoreMac theHMac;
+    private final GordianMac theHMac;
 
     /**
      * The Entropy Source.
@@ -72,7 +72,7 @@ public final class GordianSP800HMacDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    public GordianSP800HMacDRBG(final GordianCoreMac pHMac,
+    public GordianSP800HMacDRBG(final GordianMac pHMac,
                                 final EntropySource pEntropy,
                                 final byte[] pSecurityBytes,
                                 final byte[] pInitVector) {

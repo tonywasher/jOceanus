@@ -28,4 +28,9 @@ public interface GordianPasswordManager
      * @return the security factory
      */
     GordianFactory getSecurityFactory();
+
+    /**
+     * Set the dialog controller.
+     */
+    void setDialogController(GordianDialogController pDialog);
 }

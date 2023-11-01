@@ -49,14 +49,14 @@ public class GordianBasePasswordManager
     private final GordianFactory theFactory;
 
     /**
-     * Dialog controller.
-     */
-    private final GordianDialogController theDialog;
-
-    /**
      * The Cache.
      */
     private final GordianPasswordCache theCache;
+
+    /**
+     * Dialog controller.
+     */
+    private GordianDialogController theDialog;
 
     /**
      * Constructor.
@@ -77,6 +77,11 @@ public class GordianBasePasswordManager
     @Override
     public GordianFactory getSecurityFactory() {
         return theFactory;
+    }
+
+    @Override
+    public void setDialogController(final GordianDialogController pDialog) {
+        theDialog = pDialog;
     }
 
     @Override

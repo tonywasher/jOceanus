@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -227,7 +226,7 @@ public class GordianCoreFactoryLock
         /* Initialise hashes */
         for (int i = 0; i < myMacs.length; i++) {
             /* Initialise the macs */
-            final GordianCoreMac myMac = (GordianCoreMac) myMacs[i];
+            final GordianMac myMac = myMacs[i];
             myMac.initKeyBytes(myPassword);
             myMac.update(theInit);
 
