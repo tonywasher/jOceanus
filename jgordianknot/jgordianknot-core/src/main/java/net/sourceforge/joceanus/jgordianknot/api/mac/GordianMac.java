@@ -57,6 +57,13 @@ public interface GordianMac
     void init(GordianMacParameters pParams) throws OceanusException;
 
     /**
+     * Init with bytes as key.
+     * @param pKeyBytes the bytes to use
+     * @throws OceanusException on error
+     */
+    void initKeyBytes(byte[] pKeyBytes) throws OceanusException;
+
+    /**
      * Calculate the MAC.
      * @return the MAC
      */

@@ -78,11 +78,7 @@ public abstract class GordianCoreMac
         }
     }
 
-    /**
-     * Init with bytes as key.
-     * @param pKeyBytes the bytes to use
-     * @throws OceanusException on error
-     */
+    @Override
     public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
         /* Create the key and initialise */
         final GordianKey<GordianMacSpec> myKey = theParameters.buildKeyFromBytes(pKeyBytes);

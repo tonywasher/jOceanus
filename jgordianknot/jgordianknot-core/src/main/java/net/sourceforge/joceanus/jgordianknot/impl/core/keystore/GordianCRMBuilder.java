@@ -58,6 +58,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -68,7 +69,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -386,7 +386,7 @@ public class GordianCRMBuilder {
             /* Create the mac */
             final GordianMacFactory myMacs = pFactory.getMacFactory();
             final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
-            final GordianCoreMac myMac = (GordianCoreMac) myMacs.createMac(myMacSpec);
+            final GordianMac myMac = myMacs.createMac(myMacSpec);
             myMac.initKeyBytes(myKey);
 
             /* Create the result */
