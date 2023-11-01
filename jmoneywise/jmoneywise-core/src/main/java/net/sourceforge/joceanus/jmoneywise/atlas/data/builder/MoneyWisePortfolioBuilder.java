@@ -166,7 +166,7 @@ public class MoneyWisePortfolioBuilder {
         myPortfolio.validate();
         if (myPortfolio.hasErrors()) {
             theDataSet.getPortfolios().remove(myPortfolio);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myPortfolio, "Failed validation");
         }
 
         /* Reset values */

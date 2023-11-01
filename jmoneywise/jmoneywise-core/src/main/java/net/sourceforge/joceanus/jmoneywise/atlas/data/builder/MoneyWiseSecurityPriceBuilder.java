@@ -131,7 +131,7 @@ public class MoneyWiseSecurityPriceBuilder {
         myPrice.validate();
         if (myPrice.hasErrors()) {
             theDataSet.getSecurityPrices().remove(myPrice);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myPrice, "Failed validation");
         }
 
         /* Reset values */

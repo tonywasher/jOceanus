@@ -544,7 +544,7 @@ public class MoneyWiseTransactionBuilder {
         myTrans.validate();
         if (myTrans.hasErrors()) {
             theDataSet.getTransactions().remove(myTrans);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myTrans, "Failed validation");
         }
 
         /* Reset values */

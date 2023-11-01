@@ -191,7 +191,7 @@ public class MoneyWiseDepositBuilder {
         myDeposit.validate();
         if (myDeposit.hasErrors()) {
             theDataSet.getDeposits().remove(myDeposit);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myDeposit, "Failed validation");
         }
 
         /* Reset values */

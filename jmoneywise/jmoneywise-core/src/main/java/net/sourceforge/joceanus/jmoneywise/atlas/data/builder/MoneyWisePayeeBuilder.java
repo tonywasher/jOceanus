@@ -97,7 +97,7 @@ public class MoneyWisePayeeBuilder {
         myPayee.validate();
         if (myPayee.hasErrors()) {
             theDataSet.getPayees().remove(myPayee);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myPayee, "Failed validation");
         }
 
         /* Reset values */

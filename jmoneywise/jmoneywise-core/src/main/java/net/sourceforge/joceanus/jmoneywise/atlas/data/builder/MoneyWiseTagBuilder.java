@@ -69,7 +69,7 @@ public class MoneyWiseTagBuilder {
         myTag.validate();
         if (myTag.hasErrors()) {
             theDataSet.getTransactionTags().remove(myTag);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myTag, "Failed validation");
         }
 
         /* Reset values */

@@ -241,7 +241,7 @@ public class MoneyWiseSecurityBuilder {
         mySecurity.validate();
         if (mySecurity.hasErrors()) {
             theDataSet.getSecurities().remove(mySecurity);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(mySecurity, "Failed validation");
         }
 
         /* Reset values */

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Tethys: Java Utilities
  * Copyright 2012,2023 Tony Washer
  *
@@ -14,24 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api.base;
 
 /**
- * Type of GUI.
+ * Tethys UI factory for non-GUI tests.
  */
-public enum TethysUIType {
-    /**
-     * Swing.
-     */
-    SWING,
-
-    /**
-     * javaFX.
-     */
-    JAVAFX,
-
-    /**
-     * helper.
-     */
-    HELPER;
-}
+package net.sourceforge.joceanus.jtethys.ui.helper;

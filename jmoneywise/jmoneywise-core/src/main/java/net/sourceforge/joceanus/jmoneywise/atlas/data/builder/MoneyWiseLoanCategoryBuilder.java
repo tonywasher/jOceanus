@@ -118,7 +118,7 @@ public class MoneyWiseLoanCategoryBuilder {
         myCategory.validate();
         if (myCategory.hasErrors()) {
             theDataSet.getLoanCategories().remove(myCategory);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 
         /* Reset values */

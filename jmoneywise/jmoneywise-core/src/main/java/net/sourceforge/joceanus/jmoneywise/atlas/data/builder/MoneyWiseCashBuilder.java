@@ -205,7 +205,7 @@ public class MoneyWiseCashBuilder {
         myCash.validate();
         if (myCash.hasErrors()) {
             theDataSet.getCash().remove(myCash);
-            throw new MoneyWiseDataException("Failed validation");
+            throw new MoneyWiseDataException(myCash, "Failed validation");
         }
 
         /* Reset values */
