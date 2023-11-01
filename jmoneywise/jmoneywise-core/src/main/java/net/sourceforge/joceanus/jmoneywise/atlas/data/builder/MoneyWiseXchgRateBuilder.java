@@ -55,6 +55,7 @@ public class MoneyWiseXchgRateBuilder {
      */
     public MoneyWiseXchgRateBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getExchangeRates().ensureMap();
     }
 
     /**
@@ -138,14 +139,12 @@ public class MoneyWiseXchgRateBuilder {
         myRate.setDate(theDate);
 
         /* Check for errors */
+        myRate.adjustMapForItem();
         myRate.validate();
         if (myRate.hasErrors()) {
             theDataSet.getExchangeRates().remove(myRate);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myRate.adjustMapForItem();
 
         /* Reset values */
         theCurrency = null;

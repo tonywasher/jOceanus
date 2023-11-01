@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
 /**
@@ -55,6 +54,7 @@ public class MoneyWiseSecurityPriceBuilder {
      */
     public MoneyWiseSecurityPriceBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getSecurityPrices().ensureMap();
     }
 
     /**
@@ -127,14 +127,12 @@ public class MoneyWiseSecurityPriceBuilder {
         myPrice.setDate(theDate);
 
         /* Check for errors */
+        myPrice.adjustMapForItem();
         myPrice.validate();
         if (myPrice.hasErrors()) {
             theDataSet.getSecurityPrices().remove(myPrice);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myPrice.adjustMapForItem();
 
         /* Reset values */
         theSecurity = null;

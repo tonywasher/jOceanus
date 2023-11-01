@@ -59,6 +59,7 @@ public class MoneyWiseDepositRateBuilder {
      */
     MoneyWiseDepositRateBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getDepositRates().ensureMap();
     }
 
     /**
@@ -151,14 +152,12 @@ public class MoneyWiseDepositRateBuilder {
         myRate.setEndDate(theEndDate);
 
         /* Check for errors */
+        myRate.adjustMapForItem();
         myRate.validate();
         if (myRate.hasErrors()) {
             theDataSet.getDepositRates().remove(myRate);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myRate.adjustMapForItem();
 
         /* Reset values */
         theDeposit = null;

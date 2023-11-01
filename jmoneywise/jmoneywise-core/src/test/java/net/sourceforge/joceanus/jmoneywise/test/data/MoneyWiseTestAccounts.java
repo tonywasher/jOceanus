@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePortfolio
 import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityBuilder;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityPriceBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
@@ -34,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Accounts Builder.
  */
-public class MoneyWiseAccounts {
+public class MoneyWiseTestAccounts {
     /**
      * Payee ids.
      */
@@ -128,7 +127,7 @@ public class MoneyWiseAccounts {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseAccounts(final MoneyWiseData pDataSet) {
+    MoneyWiseTestAccounts(final MoneyWiseData pDataSet) {
         /* Create the builders */
         thePayeeBuilder = new MoneyWisePayeeBuilder(pDataSet);
         theDepositBuilder = new MoneyWiseDepositBuilder(pDataSet);
@@ -171,7 +170,6 @@ public class MoneyWiseAccounts {
         thePayeeBuilder.name(idPY_ASDA).type(PayeeTypeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_CoOp).type(PayeeTypeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_Tesco).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_ASDA).type(PayeeTypeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_Petrol).type(PayeeTypeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_Parking).type(PayeeTypeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_Potters).type(PayeeTypeClass.PAYEE).build();
@@ -183,11 +181,11 @@ public class MoneyWiseAccounts {
      * @throws OceanusException on error
      */
     private void createDeposits() throws OceanusException {
-        theDepositBuilder.name(idDP_BarclaysCurrent).parent(idPY_Barclays).category(MoneyWiseCategories.idDC_Current).openingBalance("10000").build();
-        theDepositBuilder.name(idDP_NatWideFlexDirect).parent(idPY_Nationwide).category(MoneyWiseCategories.idDC_Current).openingBalance("10000").build();
-        theDepositBuilder.name(idDP_NatWideLoyalty).parent(idPY_Nationwide).category(MoneyWiseCategories.idDC_Savings).openingBalance("10000").build();
-        theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseCategories.idDC_Current).openingBalance("10000").build();
-        theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseCategories.idDC_Current).currency(AssetCurrencyClass.EUR).build();
+        theDepositBuilder.name(idDP_BarclaysCurrent).parent(idPY_Barclays).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
+        theDepositBuilder.name(idDP_NatWideFlexDirect).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
+        theDepositBuilder.name(idDP_NatWideLoyalty).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Savings).openingBalance("10000").build();
+        theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
+        theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(AssetCurrencyClass.EUR).build();
     }
 
     /**
@@ -195,7 +193,7 @@ public class MoneyWiseAccounts {
      * @throws OceanusException on error
      */
     private void createCash() throws OceanusException {
-        theCashBuilder.name(idCS_Cash).category(MoneyWiseCategories.idCC_Cash).autoExpense(MoneyWiseCategories.idTC_ExpCash, idPY_CashExpense).build();
+        theCashBuilder.name(idCS_Cash).category(MoneyWiseTestCategories.idCC_Cash).autoExpense(MoneyWiseTestCategories.idTC_ExpCash, idPY_CashExpense).build();
     }
 
     /**
@@ -203,10 +201,10 @@ public class MoneyWiseAccounts {
      * @throws OceanusException on error
      */
     private void createLoans() throws OceanusException {
-        theLoanBuilder.name(idLN_Barclaycard).parent(idPY_Barclays).category(MoneyWiseCategories.idLC_CreditCards).build();
-        theLoanBuilder.name(idLN_BarclaysMortgage).parent(idPY_Barclays).category(MoneyWiseCategories.idLC_Mortgage).build();
-        theLoanBuilder.name(idLN_DeferredTax).parent(idPY_HMRC).category(MoneyWiseCategories.idLC_Pending).build();
-        theLoanBuilder.name(idLN_DamageLoan).parent(idPY_Damage).category(MoneyWiseCategories.idLC_Private).build();
+        theLoanBuilder.name(idLN_Barclaycard).parent(idPY_Barclays).category(MoneyWiseTestCategories.idLC_CreditCards).build();
+        theLoanBuilder.name(idLN_BarclaysMortgage).parent(idPY_Barclays).category(MoneyWiseTestCategories.idLC_Mortgage).build();
+        theLoanBuilder.name(idLN_DeferredTax).parent(idPY_HMRC).category(MoneyWiseTestCategories.idLC_Pending).build();
+        theLoanBuilder.name(idLN_DamageLoan).parent(idPY_Damage).category(MoneyWiseTestCategories.idLC_Private).build();
     }
 
     /**
@@ -222,8 +220,8 @@ public class MoneyWiseAccounts {
      * @throws OceanusException on error
      */
     private void createSecurities() throws OceanusException {
-        theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(SecurityTypeClass.SHARES).build();
-        theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(SecurityTypeClass.SHARES).currency(AssetCurrencyClass.USD).build();
+        theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(SecurityTypeClass.SHARES).symbol("BARC.L").build();
+        theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(SecurityTypeClass.SHARES).symbol("BALL.NY").currency(AssetCurrencyClass.USD).build();
     }
 
     /**
@@ -231,9 +229,9 @@ public class MoneyWiseAccounts {
      * @throws OceanusException on error
      */
     private void createSecurityPrices() throws OceanusException {
-        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01/01/1980").price("5.00").build();
-        theSecurityPriceBuilder.security(idSC_BallShares).date("01/01/1980").price("15.00").build();
-        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01/01/2010").price("10.00").build();
-        theSecurityPriceBuilder.security(idSC_BallShares).date("01/01/2010").price("25.00").build();
+        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01-Jun-1980").price("5.00").build();
+        theSecurityPriceBuilder.security(idSC_BallShares).date("01-Jun-1980").price("15.00").build();
+        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01-Jun-2010").price("10.00").build();
+        theSecurityPriceBuilder.security(idSC_BallShares).date("01-Jun-2010").price("25.00").build();
     }
 }

@@ -730,7 +730,9 @@ public class SecurityPrice
          */
         @Override
         public SecurityPrice addNewItem() {
-            throw new UnsupportedOperationException();
+            final SecurityPrice myPrice = new SecurityPrice(this);
+            add(myPrice);
+            return myPrice;
         }
 
         @Override

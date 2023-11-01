@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -67,6 +66,7 @@ public class MoneyWiseDepositBuilder {
      */
     public MoneyWiseDepositBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getDeposits().ensureMap();
         defaultCurrency();
     }
 
@@ -184,16 +184,15 @@ public class MoneyWiseDepositBuilder {
         myDeposit.setCategory(theCategory);
         myDeposit.setAssetCurrency(theCurrency);
         myDeposit.setOpeningBalance(theOpeningBalance);
+        myDeposit.setClosed(Boolean.FALSE);
 
         /* Check for errors */
+        myDeposit.adjustMapForItem();
         myDeposit.validate();
         if (myDeposit.hasErrors()) {
             theDataSet.getDeposits().remove(myDeposit);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myDeposit.adjustMapForItem();
 
         /* Reset values */
         theName = null;

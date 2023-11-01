@@ -48,6 +48,7 @@ public class MoneyWisePayeeBuilder {
      */
     public MoneyWisePayeeBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getPayees().ensureMap();
     }
 
     /**
@@ -89,16 +90,15 @@ public class MoneyWisePayeeBuilder {
         final Payee myPayee = theDataSet.getPayees().addNewItem();
         myPayee.setName(theName);
         myPayee.setCategory(theType);
+        myPayee.setClosed(Boolean.FALSE);
 
         /* Check for errors */
+        myPayee.adjustMapForItem();
         myPayee.validate();
         if (myPayee.hasErrors()) {
             theDataSet.getPayees().remove(myPayee);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myPayee.adjustMapForItem();
 
         /* Reset values */
         theName = null;

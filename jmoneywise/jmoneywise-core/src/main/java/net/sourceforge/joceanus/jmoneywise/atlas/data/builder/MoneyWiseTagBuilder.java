@@ -41,6 +41,7 @@ public class MoneyWiseTagBuilder {
      */
     public MoneyWiseTagBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getTransactionTags().ensureMap();
     }
 
     /**
@@ -64,14 +65,12 @@ public class MoneyWiseTagBuilder {
         myTag.setName(theName);
 
         /* Check for errors */
+        myTag.adjustMapForItem();
         myTag.validate();
         if (myTag.hasErrors()) {
             theDataSet.getTransactionTags().remove(myTag);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myTag.adjustMapForItem();
 
         /* Reset values */
         theName = null;

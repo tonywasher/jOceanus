@@ -83,6 +83,7 @@ public class MoneyWiseSecurityBuilder {
      */
     public MoneyWiseSecurityBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getSecurities().ensureMap();
         defaultCurrency();
     }
 
@@ -174,7 +175,7 @@ public class MoneyWiseSecurityBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityBuilder symbol(final String pSymbol) {
-        theName = pSymbol;
+        theSymbol = pSymbol;
         return this;
     }
 
@@ -233,16 +234,15 @@ public class MoneyWiseSecurityBuilder {
         mySecurity.setRegion(theRegion);
         mySecurity.setUnderlyingStock(theUnderlying);
         mySecurity.setOptionPrice(theOptionPrice);
+        mySecurity.setClosed(Boolean.FALSE);
 
         /* Check for errors */
+        mySecurity.adjustMapForItem();
         mySecurity.validate();
         if (mySecurity.hasErrors()) {
             theDataSet.getSecurities().remove(mySecurity);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        mySecurity.adjustMapForItem();
 
         /* Reset values */
         theName = null;

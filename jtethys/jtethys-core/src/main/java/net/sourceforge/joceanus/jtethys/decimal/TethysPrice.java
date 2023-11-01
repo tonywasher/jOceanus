@@ -79,7 +79,7 @@ public class TethysPrice
     public TethysPrice(final String pSource,
                        final Currency pCurrency) {
         /* Use default constructor */
-        this();
+        this(pCurrency);
 
         /* Parse the string and correct the scale */
         TethysDecimalParser.parseDecimalValue(pSource, this);

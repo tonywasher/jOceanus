@@ -909,7 +909,7 @@ public class Schedule
         }
 
         @Override
-        protected void ensureMap() {
+        public void ensureMap() {
             /* Null operation */
         }
 

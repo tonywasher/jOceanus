@@ -66,6 +66,7 @@ public class MoneyWiseLoanBuilder {
      */
     public MoneyWiseLoanBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getLoans().ensureMap();
         defaultCurrency();
     }
 
@@ -183,8 +184,10 @@ public class MoneyWiseLoanBuilder {
         myLoan.setCategory(theCategory);
         myLoan.setAssetCurrency(theCurrency);
         myLoan.setOpeningBalance(theOpeningBalance);
+        myLoan.setClosed(Boolean.FALSE);
 
         /* Check for errors */
+        myLoan.adjustMapForItem();
         myLoan.validate();
         if (myLoan.hasErrors()) {
             theDataSet.getLoans().remove(myLoan);

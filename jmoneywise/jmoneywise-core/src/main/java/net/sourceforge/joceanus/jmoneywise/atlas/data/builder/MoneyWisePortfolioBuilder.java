@@ -61,6 +61,7 @@ public class MoneyWisePortfolioBuilder {
      */
     public MoneyWisePortfolioBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getPortfolios().ensureMap();
         defaultCurrency();
     }
 
@@ -158,16 +159,15 @@ public class MoneyWisePortfolioBuilder {
         myPortfolio.setParent(theParent);
         myPortfolio.setCategory(theType);
         myPortfolio.setAssetCurrency(theCurrency);
+        myPortfolio.setClosed(Boolean.FALSE);
 
         /* Check for errors */
+        myPortfolio.adjustMapForItem();
         myPortfolio.validate();
         if (myPortfolio.hasErrors()) {
             theDataSet.getPortfolios().remove(myPortfolio);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myPortfolio.adjustMapForItem();
 
         /* Reset values */
         theName = null;

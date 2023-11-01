@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Categories Builder.
  */
-public class MoneyWiseCategories {
+public class MoneyWiseTestCategories {
     /**
      * Deposit ids.
      */
@@ -275,7 +275,7 @@ public class MoneyWiseCategories {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseCategories(final MoneyWiseData pDataSet) {
+    MoneyWiseTestCategories(final MoneyWiseData pDataSet) {
         /* Create the builders */
         theStaticBuilder = new MoneyWiseStaticBuilder(pDataSet);
         theDepositBuilder = new MoneyWiseDepositCategoryBuilder(pDataSet);
@@ -299,6 +299,7 @@ public class MoneyWiseCategories {
         buildDeposits();
         buildCash();
         buildLoans();
+        buildTrans();
 
         /* Build regions and tags */
         buildRegions();
@@ -314,8 +315,8 @@ public class MoneyWiseCategories {
      */
     private void buildStatic() throws OceanusException {
         theStaticBuilder.buildBasic();
-        theStaticBuilder.addCurrency(AssetCurrencyClass.EUR);
-        theStaticBuilder.addCurrency(AssetCurrencyClass.USD);
+        theStaticBuilder.buildCurrency(AssetCurrencyClass.EUR);
+        theStaticBuilder.buildCurrency(AssetCurrencyClass.USD);
     }
 
     /**
@@ -486,7 +487,6 @@ public class MoneyWiseCategories {
         theTransBuilder.name(idTC_LeisDining).type(TransactionCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_LeisEBooks).type(TransactionCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_LeisEvents).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisAlcohol).type(TransactionCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_LeisGames).type(TransactionCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_LeisMisc).type(TransactionCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_LeisMusic).type(TransactionCategoryClass.EXPENSE).build();
@@ -536,12 +536,12 @@ public class MoneyWiseCategories {
 
         /* Utilities */
         theTransBuilder.name(idTC_Utilities).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_UtilElectric).type(TransactionCategoryClass.LOCALTAXES).build();
-        theTransBuilder.name(idTC_UtilGas).type(TransactionCategoryClass.LOCALTAXES).build();
-        theTransBuilder.name(idTC_UtilInternet).type(TransactionCategoryClass.INCOMETAX).build();
-        theTransBuilder.name(idTC_UtilPhone).type(TransactionCategoryClass.LOCALTAXES).build();
-        theTransBuilder.name(idTC_UtilTV).type(TransactionCategoryClass.LOCALTAXES).build();
-        theTransBuilder.name(idTC_UtilWater).type(TransactionCategoryClass.INCOMETAX).build();
+        theTransBuilder.name(idTC_UtilElectric).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilGas).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilInternet).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilPhone).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilTV).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilWater).type(TransactionCategoryClass.EXPENSE).build();
     }
 
     /**
@@ -573,9 +573,9 @@ public class MoneyWiseCategories {
      * @throws OceanusException on error
      */
     private void buildXchgRates() throws OceanusException {
-        theXchgRateBuilder.currency(AssetCurrencyClass.USD).date("01/01/1980").rate("0.8").build();
-        theXchgRateBuilder.currency(AssetCurrencyClass.EUR).date("01/01/1980").rate("0.9").build();
-        theXchgRateBuilder.currency(AssetCurrencyClass.USD).date("01/01/2010").rate("0.85").build();
-        theXchgRateBuilder.currency(AssetCurrencyClass.EUR).date("01/01/2010").rate("0.95").build();
+        theXchgRateBuilder.currency(AssetCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
+        theXchgRateBuilder.currency(AssetCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
+        theXchgRateBuilder.currency(AssetCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
+        theXchgRateBuilder.currency(AssetCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
     }
 }

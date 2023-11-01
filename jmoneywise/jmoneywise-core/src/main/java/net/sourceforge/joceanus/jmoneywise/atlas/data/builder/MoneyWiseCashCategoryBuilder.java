@@ -53,6 +53,7 @@ public class MoneyWiseCashCategoryBuilder {
      */
     public MoneyWiseCashCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getCashCategories().ensureMap();
     }
 
     /**
@@ -108,19 +109,17 @@ public class MoneyWiseCashCategoryBuilder {
     public CashCategory build() throws OceanusException {
         /* Create the category */
         final CashCategory myCategory = theDataSet.getCashCategories().addNewItem();
-        myCategory.setSubCategoryName(theName);
-        myCategory.setParentCategory(theParent);
         myCategory.setCategoryType(theType);
+        myCategory.setParentCategory(theParent);
+        myCategory.setSubCategoryName(theName);
 
         /* Check for errors */
+        myCategory.adjustMapForItem();
         myCategory.validate();
         if (myCategory.hasErrors()) {
             theDataSet.getCashCategories().remove(myCategory);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myCategory.adjustMapForItem();
 
         /* Reset values */
         theName = null;

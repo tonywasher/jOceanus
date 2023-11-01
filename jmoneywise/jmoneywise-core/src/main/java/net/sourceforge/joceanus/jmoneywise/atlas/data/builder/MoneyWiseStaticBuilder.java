@@ -113,6 +113,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildPayeeTypes() throws OceanusException {
         final PayeeTypeList myTypes = theDataSet.getPayeeTypes();
+        myTypes.ensureMap();
         for (PayeeTypeClass myClass : PayeeTypeClass.values()) {
             final PayeeType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -134,6 +135,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildSecurityTypes() throws OceanusException {
         final SecurityTypeList myTypes = theDataSet.getSecurityTypes();
+        myTypes.ensureMap();
         for (SecurityTypeClass myClass : SecurityTypeClass.values()) {
             final SecurityType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -155,6 +157,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildPortfolioTypes() throws OceanusException {
         final PortfolioTypeList myTypes = theDataSet.getPortfolioTypes();
+        myTypes.ensureMap();
         for (PortfolioTypeClass myClass : PortfolioTypeClass.values()) {
             final PortfolioType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -176,6 +179,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildDepositCategories() throws OceanusException {
         final DepositCategoryTypeList myTypes = theDataSet.getDepositCategoryTypes();
+        myTypes.ensureMap();
         for (DepositCategoryClass myClass : DepositCategoryClass.values()) {
             final DepositCategoryType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -197,6 +201,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildCashCategories() throws OceanusException {
         final CashCategoryTypeList myTypes = theDataSet.getCashCategoryTypes();
+        myTypes.ensureMap();
         for (CashCategoryClass myClass : CashCategoryClass.values()) {
             final CashCategoryType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -218,6 +223,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildLoanCategories() throws OceanusException {
         final LoanCategoryTypeList myTypes = theDataSet.getLoanCategoryTypes();
+        myTypes.ensureMap();
         for (LoanCategoryClass myClass : LoanCategoryClass.values()) {
             final LoanCategoryType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -239,6 +245,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildTaxBases() throws OceanusException {
         final TaxBasisList myBases = theDataSet.getTaxBases();
+        myBases.ensureMap();
         for (TaxBasisClass myClass : TaxBasisClass.values()) {
             final TaxBasis myBasis = myBases.addBasicItem(myClass.toString());
             myBasis.adjustMapForItem();
@@ -260,6 +267,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildTransCategories() throws OceanusException {
         final TransactionCategoryTypeList myTypes = theDataSet.getTransCategoryTypes();
+        myTypes.ensureMap();
         for (TransactionCategoryClass myClass : TransactionCategoryClass.values()) {
             final TransactionCategoryType myType = myTypes.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -281,6 +289,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildAccountInfo() throws OceanusException {
         final AccountInfoTypeList myInfo = theDataSet.getActInfoTypes();
+        myInfo.ensureMap();
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             final AccountInfoType myType = myInfo.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -302,6 +311,7 @@ public class MoneyWiseStaticBuilder {
      */
     private void buildTransInfo() throws OceanusException {
         final TransactionInfoTypeList myInfo = theDataSet.getTransInfoTypes();
+        myInfo.ensureMap();
         for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
             final TransactionInfoType myType = myInfo.addBasicItem(myClass.toString());
             myType.adjustMapForItem();
@@ -318,35 +328,29 @@ public class MoneyWiseStaticBuilder {
     }
 
     /**
-     * build defaultCurrency.
-     * @param pDefault the default currency
-     * @throws OceanusException on error
-     */
-    private void buildDefaultCurrency(final Currency pDefault) throws OceanusException {
-        final AssetCurrencyClass myClass = AssetCurrencyClass.fromCurrency(pDefault);
-        final AssetCurrency myDefault = addCurrency(myClass);
-        myDefault.setDefault(Boolean.TRUE);
-    }
-
-    /**
-     * build currency.
-     * @param pClass the currency class
-     * @return the new currency
-     * @throws OceanusException on error
-     */
-    private AssetCurrency buildCurrency(final AssetCurrencyClass pClass) throws OceanusException {
-        return addCurrency(pClass);
-    }
-
-    /**
      * add currency.
      * @param pCurrency the currency class
      * @return the new currency
      * @throws OceanusException on error
      */
-    public AssetCurrency addCurrency(final AssetCurrencyClass pCurrency) throws OceanusException {
+    public AssetCurrency buildCurrency(final AssetCurrencyClass pCurrency) throws OceanusException {
         final AssetCurrencyList myList = theDataSet.getAccountCurrencies();
         final AssetCurrency myCurr = myList.addBasicItem(pCurrency.name());
+        myCurr.adjustMapForItem();
+        return myCurr;
+    }
+
+    /**
+     * add currency.
+     * @param pCurrency the currency
+     * @return the new currency
+     * @throws OceanusException on error
+     */
+    public AssetCurrency buildDefaultCurrency(final Currency pCurrency) throws OceanusException {
+        final AssetCurrencyList myList = theDataSet.getAccountCurrencies();
+        myList.ensureMap();
+        final AssetCurrency myCurr = myList.addBasicItem(pCurrency.getCurrencyCode());
+        myCurr.setDefault(Boolean.TRUE);
         myCurr.adjustMapForItem();
         return myCurr;
     }

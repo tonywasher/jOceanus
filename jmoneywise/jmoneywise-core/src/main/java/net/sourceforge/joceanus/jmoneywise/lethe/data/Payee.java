@@ -634,7 +634,7 @@ public class Payee
         final PayeeList myList = getList();
         final PayeeType myPayeeType = getCategory();
         final Payee myParent = getParent();
-         final AssetCurrency myCurrency = getAssetCurrency();
+        final AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();

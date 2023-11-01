@@ -72,6 +72,7 @@ public class MoneyWiseCashBuilder {
      */
     public MoneyWiseCashBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getCash().ensureMap();
         defaultCurrency();
     }
 
@@ -197,16 +198,15 @@ public class MoneyWiseCashBuilder {
         myCash.setOpeningBalance(theOpeningBalance);
         myCash.setAutoExpense(theAutoExpense);
         myCash.setAutoPayee(theAutoPayee);
+        myCash.setClosed(Boolean.FALSE);
 
         /* Check for errors */
+        myCash.adjustMapForItem();
         myCash.validate();
         if (myCash.hasErrors()) {
             theDataSet.getCash().remove(myCash);
             throw new MoneyWiseDataException("Failed validation");
         }
-
-        /* Update maps to reflect the new object */
-        myCash.adjustMapForItem();
 
         /* Reset values */
         theName = null;
