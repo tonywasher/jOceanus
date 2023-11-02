@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;

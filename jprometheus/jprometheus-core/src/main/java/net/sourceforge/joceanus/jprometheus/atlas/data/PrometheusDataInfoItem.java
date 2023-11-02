@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public abstract class PrometheusDataInfoItem
-        extends PrometheusEncryptedItem {
+        extends PrometheusEncryptedDataItem {
     /**
      * Maximum DataLength.
      */
@@ -51,7 +51,7 @@ public abstract class PrometheusDataInfoItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_NAME.getValue(), PrometheusEncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_NAME.getValue(), PrometheusEncryptedDataItem.FIELD_DEFS);
 
     /**
      * InfoType Field Id.

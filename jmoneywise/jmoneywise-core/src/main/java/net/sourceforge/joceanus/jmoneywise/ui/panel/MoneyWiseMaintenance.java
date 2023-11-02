@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.panel;
 
-import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;

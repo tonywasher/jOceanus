@@ -265,7 +265,7 @@ public abstract class PrometheusDataItem
         theHistory = new MetisValueSetHistory();
 
         /* Allocate initial value set and declare it */
-        final MetisValueSet myValues = (this instanceof PrometheusEncryptedItem)
+        final MetisValueSet myValues = (this instanceof PrometheusEncryptedDataItem)
                 ? new PrometheusEncryptedValueSet(this)
                 : new MetisValueSet(this);
         declareValues(myValues);

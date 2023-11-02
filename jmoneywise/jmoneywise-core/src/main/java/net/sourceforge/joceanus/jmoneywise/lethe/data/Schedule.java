@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency.FrequencyList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;

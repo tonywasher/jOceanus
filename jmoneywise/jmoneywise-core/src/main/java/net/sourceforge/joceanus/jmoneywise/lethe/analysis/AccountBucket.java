@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate.ExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;

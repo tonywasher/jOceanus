@@ -35,7 +35,7 @@ public abstract class MoneyWiseTaxYearCache
      * Constructor.
      * @param pYear the fiscal year
      */
-    public MoneyWiseTaxYearCache(final TethysFiscalYear pYear) {
+    protected MoneyWiseTaxYearCache(final TethysFiscalYear pYear) {
         theFiscalYear = pYear;
     }
 

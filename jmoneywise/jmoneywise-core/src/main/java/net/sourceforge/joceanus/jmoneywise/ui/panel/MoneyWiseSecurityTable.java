@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseSecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;

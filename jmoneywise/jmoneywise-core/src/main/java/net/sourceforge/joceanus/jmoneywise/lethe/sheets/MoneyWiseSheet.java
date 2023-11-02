@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetWriter;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;

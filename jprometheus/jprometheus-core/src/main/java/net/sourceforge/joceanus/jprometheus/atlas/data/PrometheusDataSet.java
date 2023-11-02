@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlKey.Prom
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusListStyle;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedItem.PrometheusEncryptedList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataItem.PrometheusEncryptedList;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;

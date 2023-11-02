@@ -21,7 +21,6 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateXmlFile;

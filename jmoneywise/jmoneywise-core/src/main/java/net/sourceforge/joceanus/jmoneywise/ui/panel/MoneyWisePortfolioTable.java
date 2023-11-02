@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;

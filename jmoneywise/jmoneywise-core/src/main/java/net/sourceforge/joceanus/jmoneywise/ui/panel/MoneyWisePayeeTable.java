@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;

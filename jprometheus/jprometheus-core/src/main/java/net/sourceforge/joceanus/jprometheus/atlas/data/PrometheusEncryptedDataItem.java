@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * Encrypted Data Item and List.
  * @author Tony Washer
  */
-public abstract class PrometheusEncryptedItem
+public abstract class PrometheusEncryptedDataItem
         extends PrometheusDataItem {
     /**
      * Report fields.
@@ -61,8 +61,8 @@ public abstract class PrometheusEncryptedItem
      * @param pList the list that this item is associated with
      * @param pId the Id of the new item (or 0 if not yet known)
      */
-    protected PrometheusEncryptedItem(final PrometheusEncryptedList<?> pList,
-                                      final Integer pId) {
+    protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
+                                          final Integer pId) {
         super(pList, pId);
         theGenerator = new PrometheusFieldGenerator(pList.getDataSet().getDataFormatter(), null);
     }
@@ -72,8 +72,8 @@ public abstract class PrometheusEncryptedItem
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    protected PrometheusEncryptedItem(final PrometheusEncryptedList<?> pList,
-                                      final PrometheusEncryptedItem pSource) {
+    protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
+                                          final PrometheusEncryptedDataItem pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
@@ -85,8 +85,8 @@ public abstract class PrometheusEncryptedItem
      * @param pValues the data values
      * @throws OceanusException on error
      */
-    protected PrometheusEncryptedItem(final PrometheusEncryptedList<?> pList,
-                                      final PrometheusDataValues pValues) throws OceanusException {
+    protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
+                                          final PrometheusDataValues pValues) throws OceanusException {
         super(pList, pValues);
 
         /* Access dataKeySet id */
@@ -270,7 +270,7 @@ public abstract class PrometheusEncryptedItem
      * @throws OceanusException on error
      */
     protected void adoptSecurity(final PrometheusDataKeySet pKeySet,
-                                 final PrometheusEncryptedItem pBase) throws OceanusException {
+                                 final PrometheusEncryptedDataItem pBase) throws OceanusException {
         /* Set the DataKeySet */
         setValueDataKeySet(pKeySet);
 
@@ -319,7 +319,7 @@ public abstract class PrometheusEncryptedItem
      * Encrypted DataList.
      * @param <T> the item type
      */
-    public abstract static class PrometheusEncryptedList<T extends PrometheusEncryptedItem>
+    public abstract static class PrometheusEncryptedList<T extends PrometheusEncryptedDataItem>
             extends PrometheusDataList<T> {
         /*
          * Report fields.
@@ -440,8 +440,8 @@ public abstract class PrometheusEncryptedItem
             /* Loop through this list */
             while (myIterator.hasNext()) {
                 /* Locate the item in the base list */
-                final PrometheusEncryptedItem myCurr = myIterator.next();
-                final PrometheusEncryptedItem myBase = pBase.findItemById(myCurr.getId());
+                final PrometheusEncryptedDataItem myCurr = myIterator.next();
+                final PrometheusEncryptedDataItem myBase = pBase.findItemById(myCurr.getId());
 
                 /* Access target correctly */
                 final T myTarget = myClass.cast(myCurr);

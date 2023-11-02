@@ -61,7 +61,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
     /**
      * List of active items.
      */
-    private final MetisInfoSetValueList theActive;
+    private final PrometheusInfoSetValueList theActive;
 
     /**
      * List of underlying items.
@@ -101,7 +101,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
         theInfoList = pList;
 
         /* Allocate the lists */
-        theActive = new MetisInfoSetValueList();
+        theActive = new PrometheusInfoSetValueList();
         theLinkSet = pList.getEmptyList(pList.getStyle());
     }
 
@@ -572,7 +572,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
     /**
      * Value List.
      */
-    public static final class MetisInfoSetValueList
+    public static final class PrometheusInfoSetValueList
             implements MetisDataObjectFormat, MetisDataList<Object> {
         /**
          * The list.
@@ -582,7 +582,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
         /**
          * Constructor.
          */
-        MetisInfoSetValueList() {
+        PrometheusInfoSetValueList() {
             theList = new ArrayList<>();
         }
 
