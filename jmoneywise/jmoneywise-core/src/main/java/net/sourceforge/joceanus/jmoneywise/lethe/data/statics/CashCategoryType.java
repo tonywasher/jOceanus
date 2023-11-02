@@ -205,9 +205,10 @@ public class CashCategoryType
         /**
          * Add a CashCategoryType to the list.
          * @param pCatType the Name of the cash category type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pCatType) throws OceanusException {
+        public CashCategoryType addBasicItem(final String pCatType) throws OceanusException {
             /* Create a new Cash Category Type */
             final CashCategoryType myCashType = new CashCategoryType(this, pCatType);
 
@@ -219,6 +220,7 @@ public class CashCategoryType
 
             /* Add the Cash Category to the list */
             add(myCashType);
+            return myCashType;
         }
 
         @Override

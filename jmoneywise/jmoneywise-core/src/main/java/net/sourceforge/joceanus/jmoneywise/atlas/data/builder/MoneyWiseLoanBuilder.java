@@ -16,11 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -62,8 +64,9 @@ public class MoneyWiseLoanBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseLoanBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseLoanBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getLoans().ensureMap();
         defaultCurrency();
     }
 
@@ -88,6 +91,15 @@ public class MoneyWiseLoanBuilder {
     }
 
     /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder parent(final String pParent) {
+        return parent(theDataSet.getPayees().findItemByName(pParent));
+    }
+
+    /**
      * Set the loanCategory.
      * @param pCategory the category of the loan.
      * @return the builder
@@ -98,6 +110,15 @@ public class MoneyWiseLoanBuilder {
     }
 
     /**
+     * Set the loanCategory.
+     * @param pCategory the category of the loan.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder category(final String pCategory) {
+        return category(theDataSet.getLoanCategories().findItemByName(pCategory));
+    }
+
+    /**
      * Set the currency.
      * @param pCurrency the currency of the loan.
      * @return the builder
@@ -105,6 +126,15 @@ public class MoneyWiseLoanBuilder {
     public MoneyWiseLoanBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder currency(final AssetCurrencyClass pCurrency) {
+        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
     /**
@@ -133,12 +163,12 @@ public class MoneyWiseLoanBuilder {
     }
 
     /**
-     * Obtain the loan.
-     * @param pLoan the name of the loan.
-     * @return the loan
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
      */
-    public Loan lookupLoan(final String pLoan) {
-        return theDataSet.getLoans().findItemByName(pLoan);
+    public MoneyWiseLoanBuilder openingBalance(final String pOpening) {
+        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
     }
 
     /**
@@ -154,7 +184,18 @@ public class MoneyWiseLoanBuilder {
         myLoan.setCategory(theCategory);
         myLoan.setAssetCurrency(theCurrency);
         myLoan.setOpeningBalance(theOpeningBalance);
+        myLoan.setClosed(Boolean.FALSE);
+
+        /* Check for errors */
+        myLoan.adjustMapForItem();
         myLoan.validate();
+        if (myLoan.hasErrors()) {
+            theDataSet.getLoans().remove(myLoan);
+            throw new MoneyWiseDataException(myLoan, "Failed validation");
+        }
+
+        /* Update maps to reflect the new object */
+        myLoan.adjustMapForItem();
 
         /* Reset values */
         theName = null;

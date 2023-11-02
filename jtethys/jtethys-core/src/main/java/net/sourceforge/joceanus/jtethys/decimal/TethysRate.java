@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.decimal;
 
-import java.util.Arrays;
-
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-
 /**
  * Represents a Rate object.
  */

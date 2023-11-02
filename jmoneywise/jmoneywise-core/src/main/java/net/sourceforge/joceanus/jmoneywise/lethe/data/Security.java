@@ -760,9 +760,7 @@ public class Security
         }
 
         /* Set validation flag */
-        if (!
-
-        hasErrors()) {
+        if (!hasErrors()) {
             setValidEdit();
         }
     }

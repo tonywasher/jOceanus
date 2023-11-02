@@ -44,6 +44,7 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.ui.api.pane;
     exports net.sourceforge.joceanus.jtethys.ui.api.table;
     exports net.sourceforge.joceanus.jtethys.ui.api.thread;
+    exports net.sourceforge.joceanus.jtethys.ui.helper;
 
     /* Restricted exports */
     exports net.sourceforge.joceanus.jtethys.ui.core.base to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;

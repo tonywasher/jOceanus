@@ -195,9 +195,10 @@ public class PortfolioType
         /**
          * Add a PortfolioType to the list.
          * @param pPortType the Name of the portfolio type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pPortType) throws OceanusException {
+        public PortfolioType addBasicItem(final String pPortType) throws OceanusException {
             /* Create a new Portfolio Type */
             final PortfolioType myPortType = new PortfolioType(this, pPortType);
 
@@ -209,6 +210,7 @@ public class PortfolioType
 
             /* Add the PortfolioType to the list */
             add(myPortType);
+            return myPortType;
         }
 
         @Override

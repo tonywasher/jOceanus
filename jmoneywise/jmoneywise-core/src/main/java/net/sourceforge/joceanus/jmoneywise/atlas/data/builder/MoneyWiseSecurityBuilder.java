@@ -16,12 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 
@@ -78,8 +81,9 @@ public class MoneyWiseSecurityBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseSecurityBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseSecurityBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getSecurities().ensureMap();
         defaultCurrency();
     }
 
@@ -104,6 +108,15 @@ public class MoneyWiseSecurityBuilder {
     }
 
     /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder parent(final String pParent) {
+        return parent(theDataSet.getPayees().findItemByName(pParent));
+    }
+
+    /**
      * Set the securityType.
      * @param pType the type of the security.
      * @return the builder
@@ -114,6 +127,15 @@ public class MoneyWiseSecurityBuilder {
     }
 
     /**
+     * Set the securityType.
+     * @param pType the type of the security.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder type(final SecurityTypeClass pType) {
+        return type(theDataSet.getSecurityTypes().findItemByClass(pType));
+    }
+
+    /**
      * Set the currency.
      * @param pCurrency the currency of the loan.
      * @return the builder
@@ -121,6 +143,15 @@ public class MoneyWiseSecurityBuilder {
     public MoneyWiseSecurityBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder currency(final AssetCurrencyClass pCurrency) {
+        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
     /**
@@ -144,7 +175,7 @@ public class MoneyWiseSecurityBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityBuilder symbol(final String pSymbol) {
-        theName = pSymbol;
+        theSymbol = pSymbol;
         return this;
     }
 
@@ -159,12 +190,12 @@ public class MoneyWiseSecurityBuilder {
     }
 
     /**
-     * Obtain the security.
-     * @param pSecurity the security.
-     * @return the security
+     * Set Region.
+     * @param pRegion the region.
+     * @return the builder
      */
-    public Security lookupSecurity(final String pSecurity) {
-        return theDataSet.getSecurities().findItemByName(pSecurity);
+    public MoneyWiseSecurityBuilder region(final String pRegion) {
+        return region(theDataSet.getRegions().findItemByName(pRegion));
     }
 
     /**
@@ -203,7 +234,15 @@ public class MoneyWiseSecurityBuilder {
         mySecurity.setRegion(theRegion);
         mySecurity.setUnderlyingStock(theUnderlying);
         mySecurity.setOptionPrice(theOptionPrice);
+        mySecurity.setClosed(Boolean.FALSE);
+
+        /* Check for errors */
+        mySecurity.adjustMapForItem();
         mySecurity.validate();
+        if (mySecurity.hasErrors()) {
+            theDataSet.getSecurities().remove(mySecurity);
+            throw new MoneyWiseDataException(mySecurity, "Failed validation");
+        }
 
         /* Reset values */
         theName = null;

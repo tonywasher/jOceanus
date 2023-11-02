@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -49,8 +51,9 @@ public class MoneyWiseTransCategoryBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTransCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseTransCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getTransCategories().ensureMap();
     }
 
     /**
@@ -81,11 +84,30 @@ public class MoneyWiseTransCategoryBuilder {
     }
 
     /**
+     * Set the categoryType.
+     * @param pType the type of the category.
+     * @return the builder
+     */
+    public MoneyWiseTransCategoryBuilder type(final TransactionCategoryClass pType) {
+        return type(theDataSet.getTransCategoryTypes().findItemByClass(pType));
+    }
+
+    /**
+     * Set the parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseTransCategoryBuilder parent(final TransactionCategory pParent) {
+        theParent = pParent;
+        return this;
+    }
+
+    /**
      * Obtain the transCategory.
      * @param pCategory the name of the category.
      * @return the loanCategory
      */
-    public TransactionCategory lookupCategory(final String pCategory) {
+    private TransactionCategory lookupCategory(final String pCategory) {
         return theDataSet.getTransCategories().findItemByName(pCategory);
     }
 
@@ -97,9 +119,17 @@ public class MoneyWiseTransCategoryBuilder {
     public TransactionCategory build() throws OceanusException {
         /* Create the category */
         final TransactionCategory myCategory = theDataSet.getTransCategories().addNewItem();
-        myCategory.setSubCategoryName(theName);
-        myCategory.setParentCategory(theParent);
         myCategory.setCategoryType(theType);
+        myCategory.setParentCategory(theParent);
+        myCategory.setSubCategoryName(theName);
+
+        /* Check for errors */
+        myCategory.adjustMapForItem();
+        myCategory.validate();
+        if (myCategory.hasErrors()) {
+            theDataSet.getTransCategories().remove(myCategory);
+            throw new MoneyWiseDataException(myCategory, "Failed validation");
+        }
 
         /* Reset values */
         theName = null;

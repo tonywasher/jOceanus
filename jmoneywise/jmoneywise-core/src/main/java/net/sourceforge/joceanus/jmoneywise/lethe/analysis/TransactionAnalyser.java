@@ -654,7 +654,7 @@ public class TransactionAnalyser
             case EXPENSE:
             case INHERITED:
             case OTHERINCOME:
-                processStockXchange(pDebit, (SecurityHolding) pCredit);
+                processStockXchange(pDebit, pCredit);
                 break;
             /* Throw an Exception */
             default:

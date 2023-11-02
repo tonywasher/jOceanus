@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;

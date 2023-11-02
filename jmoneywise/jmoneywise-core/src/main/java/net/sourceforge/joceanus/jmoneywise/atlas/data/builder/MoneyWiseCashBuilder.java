@@ -16,12 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -68,8 +70,9 @@ public class MoneyWiseCashBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseCashBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseCashBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getCash().ensureMap();
         defaultCurrency();
     }
 
@@ -94,6 +97,15 @@ public class MoneyWiseCashBuilder {
     }
 
     /**
+     * Set the cashCategory.
+     * @param pCategory the category of the cash.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder category(final String pCategory) {
+        return category(theDataSet.getCashCategories().findItemByName(pCategory));
+    }
+
+    /**
      * Set the autoExpense.
      * @param pCategory the category.
      * @param pPayee the payee
@@ -107,6 +119,19 @@ public class MoneyWiseCashBuilder {
     }
 
     /**
+     * Set the autoExpense.
+     * @param pCategory the category.
+     * @param pPayee the payee
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder autoExpense(final String pCategory,
+                                            final String pPayee) {
+        final TransactionCategory myCat = theDataSet.getTransCategories().findItemByName(pCategory);
+        final Payee myPayee = theDataSet.getPayees().findItemByName(pPayee);
+        return autoExpense(myCat, myPayee);
+    }
+
+    /**
      * Set the currency.
      * @param pCurrency the currency of the cash.
      * @return the builder
@@ -114,6 +139,15 @@ public class MoneyWiseCashBuilder {
     public MoneyWiseCashBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder currency(final AssetCurrencyClass pCurrency) {
+        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
     /**
@@ -142,12 +176,12 @@ public class MoneyWiseCashBuilder {
     }
 
     /**
-     * Obtain the cash.
-     * @param pCash the name of the cash.
-     * @return the cash
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
      */
-    public Cash lookupCash(final String pCash) {
-        return theDataSet.getCash().findItemByName(pCash);
+    public MoneyWiseCashBuilder openingBalance(final String pOpening) {
+        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
     }
 
     /**
@@ -164,7 +198,15 @@ public class MoneyWiseCashBuilder {
         myCash.setOpeningBalance(theOpeningBalance);
         myCash.setAutoExpense(theAutoExpense);
         myCash.setAutoPayee(theAutoPayee);
+        myCash.setClosed(Boolean.FALSE);
+
+        /* Check for errors */
+        myCash.adjustMapForItem();
         myCash.validate();
+        if (myCash.hasErrors()) {
+            theDataSet.getCash().remove(myCash);
+            throw new MoneyWiseDataException(myCash, "Failed validation");
+        }
 
         /* Reset values */
         theName = null;

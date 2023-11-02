@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
@@ -52,25 +53,9 @@ public class MoneyWiseXchgRateBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseXchgRateBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXchgRateBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
-    }
-
-    /**
-     * Set the currency.
-     * @param pCurrency the currency of the cash.
-     */
-    public void currency(final AssetCurrencyClass pCurrency) {
-        theCurrency = lookupCurrency(pCurrency);
-    }
-
-    /**
-     * Obtain the currency for the class.
-     * @param pCurrency the class currency of the cash.
-     * @return the currency
-     */
-    private AssetCurrency lookupCurrency(final AssetCurrencyClass pCurrency) {
-        return theDataSet.getAccountCurrencies().findItemByClass(pCurrency);
+        theDataSet.getExchangeRates().ensureMap();
     }
 
     /**
@@ -84,6 +69,25 @@ public class MoneyWiseXchgRateBuilder {
     }
 
     /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseXchgRateBuilder currency(final AssetCurrencyClass pCurrency) {
+        theCurrency = lookupCurrency(pCurrency);
+        return this;
+    }
+
+    /**
+     * Obtain the currency for the class.
+     * @param pCurrency the class currency of the cash.
+     * @return the currency
+     */
+    private AssetCurrency lookupCurrency(final AssetCurrencyClass pCurrency) {
+        return theDataSet.getAccountCurrencies().findItemByClass(pCurrency);
+    }
+
+    /**
      * Set the rate.
      * @param pRate the rate.
      * @return the builder
@@ -94,6 +98,15 @@ public class MoneyWiseXchgRateBuilder {
     }
 
     /**
+     * Set the rate.
+     * @param pRate the rate.
+     * @return the builder
+     */
+    public MoneyWiseXchgRateBuilder rate(final String pRate) {
+        return rate(new TethysRatio(pRate));
+    }
+
+    /**
      * Set the date.
      * @param pDate the Date of the rate.
      * @return the builder
@@ -101,6 +114,15 @@ public class MoneyWiseXchgRateBuilder {
     public MoneyWiseXchgRateBuilder date(final TethysDate pDate) {
         theDate = pDate;
         return this;
+    }
+
+    /**
+     * Set the date.
+     * @param pDate the Date of the rate.
+     * @return the builder
+     */
+    public MoneyWiseXchgRateBuilder date(final String pDate) {
+        return date(new TethysDate(pDate));
     }
 
     /**
@@ -115,7 +137,14 @@ public class MoneyWiseXchgRateBuilder {
         myRate.setFromCurrency(theDataSet.getDefaultCurrency());
         myRate.setExchangeRate(theRate);
         myRate.setDate(theDate);
+
+        /* Check for errors */
+        myRate.adjustMapForItem();
         myRate.validate();
+        if (myRate.hasErrors()) {
+            theDataSet.getExchangeRates().remove(myRate);
+            throw new MoneyWiseDataException(myRate, "Failed validation");
+        }
 
         /* Reset values */
         theCurrency = null;

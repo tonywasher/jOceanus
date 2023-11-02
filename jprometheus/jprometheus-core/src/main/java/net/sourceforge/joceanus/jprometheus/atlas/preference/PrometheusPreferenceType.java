@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPreferenceId;
 
 /**

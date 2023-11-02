@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
@@ -51,8 +52,9 @@ public class MoneyWiseSecurityPriceBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseSecurityPriceBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseSecurityPriceBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getSecurityPrices().ensureMap();
     }
 
     /**
@@ -66,13 +68,31 @@ public class MoneyWiseSecurityPriceBuilder {
     }
 
     /**
+     * Set Security.
+     * @param pSecurity the security
+     * @return the builder
+     */
+    public MoneyWiseSecurityPriceBuilder security(final String pSecurity) {
+        return security(theDataSet.getSecurities().findItemByName(pSecurity));
+    }
+
+    /**
      * Set the price.
      * @param pPrice the price.
      * @return the builder
      */
-    public MoneyWiseSecurityPriceBuilder rate(final TethysPrice pPrice) {
+    public MoneyWiseSecurityPriceBuilder price(final TethysPrice pPrice) {
         thePrice = pPrice;
         return this;
+    }
+
+    /**
+     * Set the price.
+     * @param pPrice the price
+     * @return the builder
+     */
+    public MoneyWiseSecurityPriceBuilder price(final String pPrice) {
+        return price(new TethysPrice(pPrice, theSecurity.getAssetCurrency().getCurrency()));
     }
 
     /**
@@ -86,6 +106,15 @@ public class MoneyWiseSecurityPriceBuilder {
     }
 
     /**
+     * Set the date.
+     * @param pDate the Date of the rate.
+     * @return the builder
+     */
+    public MoneyWiseSecurityPriceBuilder date(final String pDate) {
+        return date(new TethysDate(pDate));
+    }
+
+    /**
      * Build the Rate.
      * @return the new Rate
      * @throws OceanusException on error
@@ -96,7 +125,14 @@ public class MoneyWiseSecurityPriceBuilder {
         myPrice.setSecurity(theSecurity);
         myPrice.setPrice(thePrice);
         myPrice.setDate(theDate);
+
+        /* Check for errors */
+        myPrice.adjustMapForItem();
         myPrice.validate();
+        if (myPrice.hasErrors()) {
+            theDataSet.getSecurityPrices().remove(myPrice);
+            throw new MoneyWiseDataException(myPrice, "Failed validation");
+        }
 
         /* Reset values */
         theSecurity = null;

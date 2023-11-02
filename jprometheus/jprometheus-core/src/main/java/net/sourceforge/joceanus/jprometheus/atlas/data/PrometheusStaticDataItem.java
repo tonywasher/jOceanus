@@ -39,12 +39,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @author Tony Washer
  */
 public abstract class PrometheusStaticDataItem
-        extends PrometheusEncryptedItem
+        extends PrometheusEncryptedDataItem
         implements MetisDataNamedItem {
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATA_NAME.getValue(), PrometheusEncryptedItem.FIELD_DEFS);
+    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATA_NAME.getValue(), PrometheusEncryptedDataItem.FIELD_DEFS);
 
     /**
      * Name Field Id.

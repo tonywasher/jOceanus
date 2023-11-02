@@ -736,7 +736,7 @@ public abstract class DataList<T extends DataItem>
     /**
      * Ensure map.
      */
-    protected void ensureMap() {
+    public void ensureMap() {
         /* Allocate/Reset the map */
         if (theDataMap == null) {
             theDataMap = allocateDataMap();

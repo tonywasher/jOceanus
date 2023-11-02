@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -58,6 +59,7 @@ public class MoneyWiseDepositRateBuilder {
      */
     MoneyWiseDepositRateBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getDepositRates().ensureMap();
     }
 
     /**
@@ -71,6 +73,15 @@ public class MoneyWiseDepositRateBuilder {
     }
 
     /**
+     * Set Deposit.
+     * @param pDeposit the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder deposit(final String pDeposit) {
+        return deposit(theDataSet.getDeposits().findItemByName(pDeposit));
+    }
+
+    /**
      * Set the rate.
      * @param pRate the rate.
      * @return the builder
@@ -78,6 +89,15 @@ public class MoneyWiseDepositRateBuilder {
     public MoneyWiseDepositRateBuilder rate(final TethysRate pRate) {
         theRate = pRate;
         return this;
+    }
+
+    /**
+     * Set the rate.
+     * @param pRate the rate.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder rate(final String pRate) {
+        return rate(new TethysRate(pRate));
     }
 
     /**
@@ -91,6 +111,15 @@ public class MoneyWiseDepositRateBuilder {
     }
 
     /**
+     * Set the bonus.
+     * @param pBonus the bonus.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder bonus(final String pBonus) {
+        return bonus(new TethysRate(pBonus));
+    }
+
+    /**
      * Set the endDate.
      * @param pEndDate the endDate of the rate.
      * @return the builder
@@ -98,6 +127,15 @@ public class MoneyWiseDepositRateBuilder {
     public MoneyWiseDepositRateBuilder endDate(final TethysDate pEndDate) {
         theEndDate = pEndDate;
         return this;
+    }
+
+    /**
+     * Set the endDate.
+     * @param pEndDate the Date of the rate.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder endDate(final String pEndDate) {
+        return endDate(new TethysDate(pEndDate));
     }
 
     /**
@@ -112,7 +150,14 @@ public class MoneyWiseDepositRateBuilder {
         myRate.setRate(theRate);
         myRate.setBonus(theBonus);
         myRate.setEndDate(theEndDate);
+
+        /* Check for errors */
+        myRate.adjustMapForItem();
         myRate.validate();
+        if (myRate.hasErrors()) {
+            theDataSet.getDepositRates().remove(myRate);
+            throw new MoneyWiseDataException(myRate, "Failed validation");
+        }
 
         /* Reset values */
         theDeposit = null;

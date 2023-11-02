@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -49,8 +51,9 @@ public class MoneyWiseLoanCategoryBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseLoanCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseLoanCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
+        theDataSet.getLoanCategories().ensureMap();
     }
 
     /**
@@ -81,11 +84,20 @@ public class MoneyWiseLoanCategoryBuilder {
     }
 
     /**
+     * Set the categoryType.
+     * @param pType the type of the category.
+     * @return the builder
+     */
+    public MoneyWiseLoanCategoryBuilder type(final LoanCategoryClass pType) {
+        return type(theDataSet.getLoanCategoryTypes().findItemByClass(pType));
+    }
+
+    /**
      * Obtain the loanCategory.
      * @param pCategory the name of the category.
      * @return the loanCategory
      */
-    public LoanCategory lookupCategory(final String pCategory) {
+    private LoanCategory lookupCategory(final String pCategory) {
         return theDataSet.getLoanCategories().findItemByName(pCategory);
     }
 
@@ -97,9 +109,17 @@ public class MoneyWiseLoanCategoryBuilder {
     public LoanCategory build() throws OceanusException {
         /* Create the category */
         final LoanCategory myCategory = theDataSet.getLoanCategories().addNewItem();
-        myCategory.setSubCategoryName(theName);
-        myCategory.setParentCategory(theParent);
         myCategory.setCategoryType(theType);
+        myCategory.setParentCategory(theParent);
+        myCategory.setSubCategoryName(theName);
+
+        /* Check for errors */
+        myCategory.adjustMapForItem();
+        myCategory.validate();
+        if (myCategory.hasErrors()) {
+            theDataSet.getLoanCategories().remove(myCategory);
+            throw new MoneyWiseDataException(myCategory, "Failed validation");
+        }
 
         /* Reset values */
         theName = null;

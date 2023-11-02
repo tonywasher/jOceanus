@@ -200,9 +200,10 @@ public class SecurityType
         /**
          * Add a SecurityType to the list.
          * @param pSecType the Name of the security type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pSecType) throws OceanusException {
+        public SecurityType addBasicItem(final String pSecType) throws OceanusException {
             /* Create a new Security Type */
             final SecurityType mySecType = new SecurityType(this, pSecType);
 
@@ -214,6 +215,7 @@ public class SecurityType
 
             /* Add the SecurityType to the list */
             add(mySecType);
+            return mySecType;
         }
 
         @Override

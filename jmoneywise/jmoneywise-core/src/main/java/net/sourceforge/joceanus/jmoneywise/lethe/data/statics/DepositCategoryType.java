@@ -205,9 +205,10 @@ public class DepositCategoryType
         /**
          * Add a DepositCategoryType to the list.
          * @param pDepCatType the Name of the account category type
+         * @return the new type
          * @throws OceanusException on error
          */
-        public void addBasicItem(final String pDepCatType) throws OceanusException {
+        public DepositCategoryType addBasicItem(final String pDepCatType) throws OceanusException {
             /* Create a new Deposit Category Type */
             final DepositCategoryType myDepType = new DepositCategoryType(this, pDepCatType);
 
@@ -219,6 +220,7 @@ public class DepositCategoryType
 
             /* Add the Deposit Category to the list */
             add(myDepType);
+            return myDepType;
         }
 
         @Override

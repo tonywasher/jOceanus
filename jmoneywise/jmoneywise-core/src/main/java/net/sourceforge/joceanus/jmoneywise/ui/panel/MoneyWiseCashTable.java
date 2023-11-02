@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;

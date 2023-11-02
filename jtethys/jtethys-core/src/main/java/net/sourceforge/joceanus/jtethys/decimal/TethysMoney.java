@@ -89,6 +89,23 @@ public class TethysMoney
     }
 
     /**
+     * Constructor for money from a decimal string.
+     *
+     * @param pSource The source decimal string
+     * @param pCurrency the currency
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+    public TethysMoney(final String pSource,
+                       final Currency pCurrency) {
+        /* Use currency constructor */
+        this(pCurrency);
+
+        /* Parse the string and correct the scale */
+        TethysDecimalParser.parseDecimalValue(pSource, this);
+        adjustToScale(theCurrency.getDefaultFractionDigits());
+    }
+
+    /**
      * Construct a new Money by combining units and price.
      *
      * @param pUnits the number of units
