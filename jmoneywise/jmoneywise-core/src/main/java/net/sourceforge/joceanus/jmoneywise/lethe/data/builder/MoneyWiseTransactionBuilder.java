@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
+package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
 
 import java.util.ArrayList;
 import java.util.List;

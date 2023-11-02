@@ -18,4 +18,4 @@
 /**
  * MoneyWise DataIds.
  */
-package net.sourceforge.joceanus.jmoneywise.atlas.data.ids;
+package net.sourceforge.joceanus.jmoneywise.lethe.data.ids;

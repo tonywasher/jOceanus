@@ -14,64 +14,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.ids;
+package net.sourceforge.joceanus.jmoneywise.lethe.data.ids;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
 
 /**
- * Category DataIds.
+ * Tag DataIds.
  */
-public enum MoneyWiseCategoryDataId
+public enum MoneyWiseTagDataId
         implements PrometheusDataFieldId {
     /**
      * Name.
      */
-    NAME(PrometheusDataResourceX.DATAITEM_FIELD_NAME, CategoryBase.FIELD_NAME),
+    NAME(PrometheusDataResourceX.DATAITEM_FIELD_NAME, TransactionTag.FIELD_NAME),
 
     /**
      * Description.
      */
-    DESC(PrometheusDataResourceX.DATAITEM_FIELD_DESC, CategoryBase.FIELD_DESC),
-
-    /**
-     * Parent.
-     */
-    PARENT(PrometheusDataResourceX.DATAGROUP_PARENT, CategoryBase.FIELD_PARENT),
-
-    /**
-     * SubCategory.
-     */
-    SUBCAT(MoneyWiseDataResource.CATEGORY_SUBCAT, CategoryBase.FIELD_SUBCAT),
-
-    /**
-     * DepositCategoryType.
-     */
-    DEPOSITCATTYPE(MoneyWiseDataType.DEPOSITTYPE, DepositCategory.FIELD_CATTYPE),
-
-    /**
-     * CashCategoryType.
-     */
-    CASHCATTYPE(MoneyWiseDataType.CASHTYPE, CashCategory.FIELD_CATTYPE),
-
-    /**
-     * LoanCategoryType.
-     */
-    LOANCATTYPE(MoneyWiseDataType.LOANTYPE, LoanCategory.FIELD_CATTYPE),
-
-    /**
-     * TransactionCategoryType.
-     */
-    TRANSCATTYPE(MoneyWiseDataType.TRANSTYPE, TransactionCategory.FIELD_CATTYPE);
+    DESC(PrometheusDataResourceX.DATAITEM_FIELD_DESC, TransactionTag.FIELD_DESC);
 
     /**
      * The Value.
@@ -88,8 +52,8 @@ public enum MoneyWiseCategoryDataId
      * @param pKeyName the key name
      * @param pField the lethe field
      */
-    MoneyWiseCategoryDataId(final MetisDataFieldId pKeyName,
-                            final MetisLetheField pField) {
+    MoneyWiseTagDataId(final MetisDataFieldId pKeyName,
+                       final MetisLetheField pField) {
         theValue = pKeyName.getId();
         theField = pField;
     }
@@ -109,3 +73,4 @@ public enum MoneyWiseCategoryDataId
         return theField;
     }
 }
+

@@ -1,5 +1,5 @@
-/* *****************************************************************************
- * MoneyWise: Finance Application
+/*******************************************************************************
+ * Prometheus: Application Framework
  * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,8 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jprometheus.lethe.data.ids;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
- * Data Builder.
+ * DataField Id.
  */
-package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
+public interface PrometheusDataFieldId
+    extends MetisDataFieldId {
+    /**
+     * Obtain the associated MetisLetheField.
+     * @return the field
+     */
+    MetisLetheField getLetheField();
+}
