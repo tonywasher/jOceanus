@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseTagDataId;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseTagDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;

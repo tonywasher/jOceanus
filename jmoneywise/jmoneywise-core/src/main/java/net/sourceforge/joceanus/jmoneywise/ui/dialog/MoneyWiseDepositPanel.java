@@ -22,7 +22,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseAssetDataId;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseAssetDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;

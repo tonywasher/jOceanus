@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseCashBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseDepositBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseLoanBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePayeeBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePortfolioBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityPriceBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseCashBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseDepositBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseLoanBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWisePayeeBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWisePortfolioBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseSecurityBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseSecurityPriceBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;

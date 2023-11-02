@@ -42,4 +42,5 @@ module net.sourceforge.joceanus.jprometheus.core {
     exports net.sourceforge.joceanus.jprometheus.threads;
     exports net.sourceforge.joceanus.jprometheus.ui;
     exports net.sourceforge.joceanus.jprometheus.lethe.views;
+    exports net.sourceforge.joceanus.jprometheus.lethe.data.ids;
 }

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.fieldset;
 
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;

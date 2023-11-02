@@ -14,19 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
+package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * LoanCategory Builder.
+ * DepositCategory Builder.
  */
-public class MoneyWiseLoanCategoryBuilder {
+public class MoneyWiseDepositCategoryBuilder {
     /**
      * DataSet.
      */
@@ -40,20 +40,20 @@ public class MoneyWiseLoanCategoryBuilder {
     /**
      * The Parent.
      */
-    private LoanCategory theParent;
+    private DepositCategory theParent;
 
     /**
      * The CategoryType.
      */
-    private LoanCategoryType theType;
+    private DepositCategoryType theType;
 
     /**
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseLoanCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseDepositCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
-        theDataSet.getLoanCategories().ensureMap();
+        theDataSet.getDepositCategories().ensureMap();
     }
 
     /**
@@ -61,7 +61,7 @@ public class MoneyWiseLoanCategoryBuilder {
      * @param pName the name of the category.
      * @return the builder
      */
-    public MoneyWiseLoanCategoryBuilder name(final String pName) {
+    public MoneyWiseDepositCategoryBuilder name(final String pName) {
         final int myIndex = pName.lastIndexOf(':');
         if (myIndex == -1) {
             theName = pName;
@@ -78,7 +78,7 @@ public class MoneyWiseLoanCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseLoanCategoryBuilder type(final LoanCategoryType pType) {
+    public MoneyWiseDepositCategoryBuilder type(final DepositCategoryType pType) {
         theType = pType;
         return this;
     }
@@ -88,27 +88,27 @@ public class MoneyWiseLoanCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseLoanCategoryBuilder type(final LoanCategoryClass pType) {
-        return type(theDataSet.getLoanCategoryTypes().findItemByClass(pType));
+    public MoneyWiseDepositCategoryBuilder type(final DepositCategoryClass pType) {
+        return type(theDataSet.getDepositCategoryTypes().findItemByClass(pType));
     }
 
     /**
-     * Obtain the loanCategory.
+     * Obtain the depositCategory.
      * @param pCategory the name of the category.
-     * @return the loanCategory
+     * @return the depositCategory
      */
-    private LoanCategory lookupCategory(final String pCategory) {
-        return theDataSet.getLoanCategories().findItemByName(pCategory);
+    private DepositCategory lookupCategory(final String pCategory) {
+        return theDataSet.getDepositCategories().findItemByName(pCategory);
     }
 
     /**
-     * Build the loanCategory.
+     * Build the depositCategory.
      * @return the new Category
      * @throws OceanusException on error
      */
-    public LoanCategory build() throws OceanusException {
+    public DepositCategory build() throws OceanusException {
         /* Create the category */
-        final LoanCategory myCategory = theDataSet.getLoanCategories().addNewItem();
+        final DepositCategory myCategory = theDataSet.getDepositCategories().addNewItem();
         myCategory.setCategoryType(theType);
         myCategory.setParentCategory(theParent);
         myCategory.setSubCategoryName(theName);
@@ -117,7 +117,7 @@ public class MoneyWiseLoanCategoryBuilder {
         myCategory.adjustMapForItem();
         myCategory.validate();
         if (myCategory.hasErrors()) {
-            theDataSet.getLoanCategories().remove(myCategory);
+            theDataSet.getDepositCategories().remove(myCategory);
             throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 

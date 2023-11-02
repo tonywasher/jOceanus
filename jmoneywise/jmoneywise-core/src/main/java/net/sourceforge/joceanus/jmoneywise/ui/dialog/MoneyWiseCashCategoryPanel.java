@@ -20,14 +20,14 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.ids.MoneyWiseCategoryDataId;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;

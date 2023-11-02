@@ -14,29 +14,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
+package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
- * Portfolio Builder.
+ * Loan Builder.
  */
-public class MoneyWisePortfolioBuilder {
+public class MoneyWiseLoanBuilder {
     /**
      * DataSet.
      */
     private final MoneyWiseData theDataSet;
 
     /**
-     * The PortfolioName.
+     * The LoanName.
      */
     private String theName;
 
@@ -46,9 +46,9 @@ public class MoneyWisePortfolioBuilder {
     private Payee theParent;
 
     /**
-     * The PortfolioType.
+     * The Loan Category.
      */
-    private PortfolioType theType;
+    private LoanCategory theCategory;
 
     /**
      * The Currency.
@@ -56,21 +56,26 @@ public class MoneyWisePortfolioBuilder {
     private AssetCurrency theCurrency;
 
     /**
+     * The Opening Balance.
+     */
+    private TethysMoney theOpeningBalance;
+
+    /**
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWisePortfolioBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseLoanBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
-        theDataSet.getPortfolios().ensureMap();
+        theDataSet.getLoans().ensureMap();
         defaultCurrency();
     }
 
     /**
      * Set Name.
-     * @param pName the name of the portfolio.
+     * @param pName the name of the loan.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder name(final String pName) {
+    public MoneyWiseLoanBuilder name(final String pName) {
         theName = pName;
         return this;
     }
@@ -80,7 +85,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder parent(final Payee pParent) {
+    public MoneyWiseLoanBuilder parent(final Payee pParent) {
         theParent = pParent;
         return this;
     }
@@ -90,27 +95,27 @@ public class MoneyWisePortfolioBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder parent(final String pParent) {
+    public MoneyWiseLoanBuilder parent(final String pParent) {
         return parent(theDataSet.getPayees().findItemByName(pParent));
     }
 
     /**
-     * Set the portfolioType.
-     * @param pType the type of the portfolio.
+     * Set the loanCategory.
+     * @param pCategory the category of the loan.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder type(final PortfolioType pType) {
-        theType = pType;
+    public MoneyWiseLoanBuilder category(final LoanCategory pCategory) {
+        theCategory = pCategory;
         return this;
     }
 
     /**
-     * Set the portfolioType.
-     * @param pType the type of the portfolio.
+     * Set the loanCategory.
+     * @param pCategory the category of the loan.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder type(final PortfolioTypeClass pType) {
-        return type(theDataSet.getPortfolioTypes().findItemByClass(pType));
+    public MoneyWiseLoanBuilder category(final String pCategory) {
+        return category(theDataSet.getLoanCategories().findItemByName(pCategory));
     }
 
     /**
@@ -118,7 +123,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pCurrency the currency of the loan.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder currency(final AssetCurrency pCurrency) {
+    public MoneyWiseLoanBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
     }
@@ -128,7 +133,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder currency(final AssetCurrencyClass pCurrency) {
+    public MoneyWiseLoanBuilder currency(final AssetCurrencyClass pCurrency) {
         return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
@@ -148,33 +153,58 @@ public class MoneyWisePortfolioBuilder {
     }
 
     /**
-     * Build the portfolio.
-     * @return the new Portfolio
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder openingBalance(final TethysMoney pOpening) {
+        theOpeningBalance = pOpening;
+        return this;
+    }
+
+    /**
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder openingBalance(final String pOpening) {
+        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
+    }
+
+    /**
+     * Build the loan.
+     * @return the new Loan
      * @throws OceanusException on error
      */
-    public Portfolio build() throws OceanusException {
-        /* Create the payee */
-        final Portfolio myPortfolio = theDataSet.getPortfolios().addNewItem();
-        myPortfolio.setName(theName);
-        myPortfolio.setParent(theParent);
-        myPortfolio.setCategory(theType);
-        myPortfolio.setAssetCurrency(theCurrency);
-        myPortfolio.setClosed(Boolean.FALSE);
+    public Loan build() throws OceanusException {
+        /* Create the loan */
+        final Loan myLoan = theDataSet.getLoans().addNewItem();
+        myLoan.setName(theName);
+        myLoan.setParent(theParent);
+        myLoan.setCategory(theCategory);
+        myLoan.setAssetCurrency(theCurrency);
+        myLoan.setOpeningBalance(theOpeningBalance);
+        myLoan.setClosed(Boolean.FALSE);
 
         /* Check for errors */
-        myPortfolio.adjustMapForItem();
-        myPortfolio.validate();
-        if (myPortfolio.hasErrors()) {
-            theDataSet.getPortfolios().remove(myPortfolio);
-            throw new MoneyWiseDataException(myPortfolio, "Failed validation");
+        myLoan.adjustMapForItem();
+        myLoan.validate();
+        if (myLoan.hasErrors()) {
+            theDataSet.getLoans().remove(myLoan);
+            throw new MoneyWiseDataException(myLoan, "Failed validation");
         }
+
+        /* Update maps to reflect the new object */
+        myLoan.adjustMapForItem();
 
         /* Reset values */
         theName = null;
+        theCategory = null;
         theParent = null;
-        theType = null;
+        theOpeningBalance = null;
+        defaultCurrency();
 
-        /* Return the portfolio */
-        return myPortfolio;
+        /* Return the loan */
+        return myLoan;
     }
 }

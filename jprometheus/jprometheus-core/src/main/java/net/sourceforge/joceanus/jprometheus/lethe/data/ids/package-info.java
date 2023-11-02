@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Prometheus: Application Framework
  * Copyright 2012,2023 Tony Washer
  *
@@ -14,19 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.data;
-
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
- * DataField Id.
+ * Data ids.
  */
-public interface PrometheusDataFieldId
-    extends MetisDataFieldId {
-    /**
-     * Obtain the associated MetisLetheField.
-     * @return the field
-     */
-    MetisLetheField getLetheField();
-}
+package net.sourceforge.joceanus.jprometheus.lethe.data.ids;
