@@ -88,26 +88,26 @@
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>10.12.4</CheckStyleVersion>
     <PMDVersion>6.55.0</PMDVersion>
-    <CleanPluginVersion>3.3.1</CleanPluginVersion>
+    <CleanPluginVersion>3.3.2</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.1</InstallPluginVersion>
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.1.1</DeployPluginVersion>
     <EnforcerPluginVersion>3.4.1</EnforcerPluginVersion>
     <CompilerPluginVersion>3.11.0</CompilerPluginVersion>
-    <ShadePluginVersion>3.5.0</ShadePluginVersion>
-    <DependencyPluginVersion>3.6.0</DependencyPluginVersion>
-    <SurefirePluginVersion>3.1.2</SurefirePluginVersion>
+    <ShadePluginVersion>3.5.1</ShadePluginVersion>
+    <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
+    <SurefirePluginVersion>3.2.1</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.1.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.4.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.3.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.4.5</ProjectInfoPluginVersion>
-    <JxrPluginVersion>3.3.0</JxrPluginVersion>
+    <JxrPluginVersion>3.3.1</JxrPluginVersion>
     <JavaDocPluginVersion>3.6.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.3.0</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
-    <CheckStylePluginVersion>3.3.0</CheckStylePluginVersion>
+    <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.21.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.11</JacocoPluginVersion>
     <GPGPluginVersion>3.1.0</GPGPluginVersion>

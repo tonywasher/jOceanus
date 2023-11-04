@@ -20,18 +20,13 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation.MetisErrorElement;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSetHistory;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusListStyle;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItemX;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -43,11 +38,23 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @see PrometheusDataList
  */
 public abstract class PrometheusDataItem
-        implements PrometheusTableItemX, Comparable<Object> {
+        extends MetisFieldVersionedItem
+        implements Comparable<Object> {
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAITEM_NAME.getValue());
+    private static final MetisFieldSet<PrometheusDataItem> FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataItem.class);
+
+    /*
+     * FieldIds.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME, PrometheusDataItem::getList);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE, PrometheusDataItem::getBase);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH, PrometheusDataItem::getTouchStatus);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER, PrometheusDataItem::isHeader);
+    }
+
 
     /**
      * Validation error.
@@ -135,76 +142,6 @@ public abstract class PrometheusDataItem
     public static final int DESCLEN = 50;
 
     /**
-     * Id Field Id.
-     */
-    public static final MetisLetheField FIELD_ID = FIELD_DEFS.declareComparisonField(PrometheusDataResource.DATAITEM_ID.getValue());
-
-    /**
-     * Type Field Id.
-     */
-    public static final MetisLetheField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
-
-    /**
-     * List Field Id.
-     */
-    public static final MetisLetheField FIELD_LIST = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME.getValue());
-
-    /**
-     * Base Field Id.
-     */
-    public static final MetisLetheField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
-
-    /**
-     * TouchStatus Field Id.
-     */
-    public static final MetisLetheField FIELD_TOUCH = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH.getValue());
-
-    /**
-     * Deleted Field Id.
-     */
-    public static final MetisLetheField FIELD_DELETED = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_DELETED.getValue());
-
-    /**
-     * DataState Field Id.
-     */
-    public static final MetisLetheField FIELD_STATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_STATE.getValue());
-
-    /**
-     * Edit State Field Id.
-     */
-    public static final MetisLetheField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
-
-    /**
-     * Version Field Id.
-     */
-    public static final MetisLetheField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
-
-    /**
-     * Header Field Id.
-     */
-    public static final MetisLetheField FIELD_HEADER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER.getValue());
-
-    /**
-     * History Field Id.
-     */
-    public static final MetisLetheField FIELD_HISTORY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HISTORY.getValue());
-
-    /**
-     * Errors Field Id.
-     */
-    public static final MetisLetheField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
-
-    /**
-     * Instance ReportFields.
-     */
-    private final MetisFields theFields;
-
-    /**
-     * ValueSet.
-     */
-    private MetisValueSet theValueSet;
-
-    /**
      * The list to which this item belongs.
      */
     private PrometheusDataList<?> theList;
@@ -215,29 +152,9 @@ public abstract class PrometheusDataItem
     private PrometheusDataItem theBase;
 
     /**
-     * The Edit state of this item {@link MetisDataEditState}.
-     */
-    private MetisDataEditState theEdit = MetisDataEditState.CLEAN;
-
-    /**
      * Is the item a header.
      */
     private boolean isHeader;
-
-    /**
-     * The id number of the item.
-     */
-    private Integer theId;
-
-    /**
-     * The history control {@link MetisValueSetHistory}.
-     */
-    private MetisValueSetHistory theHistory;
-
-    /**
-     * The validation control {@link MetisItemValidation}.
-     */
-    private MetisItemValidation theErrors;
 
     /**
      * Status.
@@ -252,24 +169,8 @@ public abstract class PrometheusDataItem
     protected PrometheusDataItem(final PrometheusDataList<?> pList,
                                  final Integer uId) {
         /* Record list and item references */
-        theId = uId;
+        setIndexedId(uId);
         theList = pList;
-
-        /* Declare fields (allowing for subclasses) */
-        theFields = declareFields();
-
-        /* Create validation control */
-        theErrors = new MetisItemValidation();
-
-        /* Create history control */
-        theHistory = new MetisValueSetHistory();
-
-        /* Allocate initial value set and declare it */
-        final MetisValueSet myValues = (this instanceof PrometheusEncryptedDataItem)
-                ? new PrometheusEncryptedValueSet(this)
-                : new MetisValueSet(this);
-        declareValues(myValues);
-        theHistory.setValues(myValues);
 
         /* Allocate id */
         pList.setNewId(this);
@@ -297,10 +198,10 @@ public abstract class PrometheusDataItem
     protected PrometheusDataItem(final PrometheusDataList<?> pList,
                                  final PrometheusDataItem pBase) {
         /* Initialise using standard constructor */
-        this(pList, pBase.getId());
+        this(pList, pBase.getIndexedId());
 
         /* Initialise the valueSet */
-        theValueSet.copyFrom(pBase.getValueSet());
+        getValues().copyFrom(pBase.getValues());
 
         /* Access the varying styles and the source state */
         final PrometheusListStyle myStyle = pList.getStyle();
@@ -315,11 +216,11 @@ public abstract class PrometheusDataItem
                     /* NEW/DELNEW need to be at version 1 */
                     case DELNEW:
                     case NEW:
-                        theValueSet.setVersion(1);
+                        getValues().setVersion(1);
                         break;
 
                     case DELETED:
-                        theHistory.pushHistory(1);
+                        getValuesHistory().pushHistory(1);
                         break;
 
                     /*
@@ -350,10 +251,10 @@ public abstract class PrometheusDataItem
                     /* Duplication in edit */
                     case EDIT:
                         /* set as a new item */
-                        theValueSet.setVersion(pList.getVersion() + 1);
+                        getValues().setVersion(pList.getVersion() + 1);
 
                         /* Reset the Id */
-                        theId = 0;
+                        setIndexedId(0);
                         pList.setNewId(this);
                         break;
                     default:
@@ -364,12 +265,12 @@ public abstract class PrometheusDataItem
             /* We are building a CORE item */
             case CORE:
                 /* set as a new item */
-                theValueSet.setVersion(pList.getVersion() + 1);
+                getValues().setVersion(pList.getVersion() + 1);
 
                 /* If we are adding from Edit */
                 if (myBaseStyle == PrometheusListStyle.EDIT) {
                     /* Reset the Id */
-                    theId = 0;
+                    setIndexedId(0);
                     pList.setNewId(this);
                 }
                 break;
@@ -386,110 +287,17 @@ public abstract class PrometheusDataItem
         }
     }
 
-    @Override
-    public MetisFields getDataFields() {
-        return theFields;
-    }
-
-    /**
-     * Declare fields.
-     * @return the fields
-     */
-    public abstract MetisFields declareFields();
-
-    @Override
-    public final void declareValues(final MetisValueSet pValues) {
-        theValueSet = pValues;
-    }
-
-    @Override
-    public MetisValueSet getValueSet() {
-        return theValueSet;
-    }
-
-    @Override
-    public MetisValueSetHistory getValueSetHistory() {
-        return theHistory;
-    }
-
     /**
      * Obtain valueSet version.
      * @return the valueSet version
      */
     public int getValueSetVersion() {
-        return theValueSet.getVersion();
+        return getValues().getVersion();
     }
 
     @Override
     public String formatObject(final TethysUIDataFormatter pFormatter) {
-        return getDataFields().getName();
-    }
-
-    @Override
-    public boolean skipField(final MetisLetheField pField) {
-        return false;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisLetheField pField) {
-        /* If this is a valueSet field */
-        if (pField.getStorage().isValueSet()) {
-            /* Access from valueSet */
-            return theValueSet.getValue(pField);
-        }
-
-        /* If the field is not an attribute handle normally */
-        if (FIELD_ID.equals(pField)) {
-            return getId();
-        }
-        if (FIELD_LIST.equals(pField)) {
-            return getList();
-        }
-        if (FIELD_DATATYPE.equals(pField)) {
-            return getItemType();
-        }
-        if (FIELD_TOUCH.equals(pField)) {
-            return theTouchStatus;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return (theBase == null)
-                    ? MetisDataFieldValue.SKIP
-                    : theBase;
-        }
-        if (FIELD_STATE.equals(pField)) {
-            return getState();
-        }
-        if (FIELD_EDITSTATE.equals(pField)) {
-            return getEditState();
-        }
-        if (FIELD_DELETED.equals(pField)) {
-            return isDeleted()
-                    ? Boolean.TRUE
-                    : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_VERSION.equals(pField)) {
-            return (theValueSet != null)
-                    ? theValueSet.getVersion()
-                    : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_HEADER.equals(pField)) {
-            return isHeader
-                    ? isHeader
-                    : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return hasHistory()
-                    ? theHistory
-                    : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_ERRORS.equals(pField)) {
-            return hasErrors()
-                    ? theErrors
-                    : MetisDataFieldValue.SKIP;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
+        return this.getDataFieldSet().getName();
     }
 
     /**
@@ -532,25 +340,15 @@ public abstract class PrometheusDataItem
         return theList.getItemType();
     }
 
-    /**
-     * Get the Id for this item.
-     * @return the Id
-     */
-    public Integer getId() {
-        return theId;
-    }
-
-    @Override
-    public Integer getIndexedId() {
-        return theId;
-    }
-
     @Override
     public boolean isActive() {
         return theTouchStatus.isActive();
     }
 
-    @Override
+    /**
+     * Is the item disabled?
+     * @return true/false
+     */
     public boolean isDisabled() {
         return false;
     }
@@ -564,22 +362,6 @@ public abstract class PrometheusDataItem
     }
 
     /**
-     * Get the EditState for this item.
-     * @return the EditState
-     */
-    public MetisDataEditState getEditState() {
-        return theEdit;
-    }
-
-    /**
-     * Get the State for this item.
-     * @return the State
-     */
-    public MetisDataState getState() {
-        return MetisValueSetHistory.determineState(theHistory);
-    }
-
-    /**
      * Get the Generation.
      * @return the Generation
      */
@@ -587,43 +369,15 @@ public abstract class PrometheusDataItem
         return theList.getGeneration();
     }
 
-    /**
-     * Get the history for this item.
-     * @return the history
-     */
-    protected MetisValueSetHistory getHistory() {
-        return theHistory;
-    }
-
-    @Override
-    public void setDeleted(final boolean bDeleted) {
-        /* If the state has changed */
-        if (bDeleted != isDeleted()) {
-            /* Push history and set flag */
-            pushHistory();
-            theValueSet.setDeletion(bDeleted);
-        }
-    }
-
-    /**
-     * Set the Edit State.
-     * @param pState the Edit Status
-     */
-    protected void setEditState(final MetisDataEditState pState) {
-        theEdit = pState;
-    }
-
     @Override
     public boolean isEditable() {
         return !isDeleted();
     }
 
-    @Override
-    public boolean isDeleted() {
-        return theValueSet.isDeletion();
-    }
-
-    @Override
+    /**
+     * Is this item a header?
+     * @return true/false
+     */
     public boolean isHeader() {
         return isHeader;
     }
@@ -634,14 +388,6 @@ public abstract class PrometheusDataItem
      */
     protected void setHeader(final boolean pHeader) {
         isHeader = pHeader;
-    }
-
-    /**
-     * Set the id of the item.
-     * @param id of the item
-     */
-    public void setId(final Integer id) {
-        theId = id;
     }
 
     /**
@@ -743,60 +489,15 @@ public abstract class PrometheusDataItem
     }
 
     /**
-     * Determine whether the item has changes.
-     * @return <code>true/false</code>
-     */
-    public boolean hasHistory() {
-        return (theHistory != null) && (theHistory.hasHistory());
-    }
-
-    /**
      * Set new version.
      */
     public void setNewVersion() {
-        theValueSet.setVersion(theList.getVersion() + 1);
-    }
-
-    /**
-     * Clear the history for the item (leaving current values).
-     */
-    public void clearHistory() {
-        theHistory.clearHistory();
-        theEdit = MetisDataEditState.CLEAN;
-    }
-
-    /**
-     * Reset the history for the item (restoring original values).
-     */
-    public void resetHistory() {
-        theHistory.resetHistory();
-    }
-
-    /**
-     * Set Change history for an update list so that the first and only entry in the change list is
-     * the original values of the base.
-     * @param pBase the base item
-     */
-    public final void setHistory(final PrometheusDataItem pBase) {
-        theHistory.setHistory(pBase.getOriginalValues());
-    }
-
-    /**
-     * Return the base history object.
-     * @return the original values for this object
-     */
-    public MetisValueSet getOriginalValues() {
-        return theHistory.getOriginalValues();
+        getValues().setVersion(getNextVersion());
     }
 
     @Override
-    public boolean checkForHistory() {
-        return theHistory.maybePopHistory();
-    }
-
-    @Override
-    public void pushHistory() {
-        theHistory.pushHistory(theList.getVersion() + 1);
+    public int getNextVersion() {
+        return theList.getVersion() + 1;
     }
 
     @Override
@@ -820,18 +521,10 @@ public abstract class PrometheusDataItem
         }
 
         /* Loop while version is too high */
-        while (theValueSet.getVersion() > pVersion) {
+        while (getValues().getVersion() > pVersion) {
             /* Pop history */
-            theHistory.popTheHistory();
+            popHistory();
         }
-    }
-
-    /**
-     * Condense history.
-     * @param pNewVersion the new maximum version
-     */
-    public void condenseHistory(final int pNewVersion) {
-        theHistory.condenseHistory(pNewVersion);
     }
 
     /**
@@ -839,42 +532,11 @@ public abstract class PrometheusDataItem
      * @param pField the field to test
      * @return <code>true/false</code>
      */
-    public MetisDataDifference fieldChanged(final MetisLetheField pField) {
+    public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
         return (pField != null
-                && pField.getStorage().isValueSet())
-                ? theHistory.fieldChanged(pField)
+                && pField instanceof MetisFieldVersionedDef)
+                ? getValuesHistory().fieldChanged(pField)
                 : MetisDataDifference.IDENTICAL;
-    }
-
-    /**
-     * Determine whether the item has Errors.
-     * @return <code>true/false</code>
-     */
-    public boolean hasErrors() {
-        return theEdit == MetisDataEditState.ERROR;
-    }
-
-    /**
-     * Determine whether the item has Changes.
-     * @return <code>true/false</code>
-     */
-    public boolean hasChanges() {
-        return theEdit != MetisDataEditState.CLEAN;
-    }
-
-    /**
-     * Determine whether the item is Valid.
-     * @return <code>true/false</code>
-     */
-    public boolean isValid() {
-        return theEdit == MetisDataEditState.CLEAN
-                || theEdit == MetisDataEditState.VALID;
-    }
-
-    @Override
-    public boolean hasErrors(final MetisLetheField pField) {
-        return pField != null
-                && theErrors.hasErrors(pField);
     }
 
     /**
@@ -883,22 +545,12 @@ public abstract class PrometheusDataItem
     public void setValidEdit() {
         final MetisDataState myState = getState();
         if (myState == MetisDataState.CLEAN) {
-            theEdit = MetisDataEditState.CLEAN;
+            setEditState(MetisDataEditState.CLEAN);
         } else if (theList.getStyle() == PrometheusListStyle.CORE) {
-            theEdit = MetisDataEditState.DIRTY;
+            setEditState(MetisDataEditState.DIRTY);
         } else {
-            theEdit = MetisDataEditState.VALID;
+            setEditState(MetisDataEditState.VALID);
         }
-    }
-
-    /**
-     * Clear all errors for this item.
-     */
-    public void clearErrors() {
-        theEdit = theValueSet.getVersion() > 0
-                ? MetisDataEditState.DIRTY
-                : MetisDataEditState.CLEAN;
-        theErrors.clearErrors();
     }
 
     /**
@@ -907,33 +559,12 @@ public abstract class PrometheusDataItem
      * @param pField the associated field
      */
     public void addError(final String pError,
-                         final MetisLetheField pField) {
+                         final MetisFieldDef pField) {
         /* Set edit state and add the error */
-        theEdit = MetisDataEditState.ERROR;
-        theErrors.addError(pError, pField);
+        super.addError(pError, pField);
 
         /* Note that the list has errors */
         theList.setEditState(MetisDataEditState.ERROR);
-    }
-
-    @Override
-    public String getFieldErrors(final MetisLetheField pField) {
-        return (pField != null)
-                ? theErrors.getFieldErrors(pField)
-                : null;
-    }
-
-    @Override
-    public String getFieldErrors(final MetisLetheField[] pFields) {
-        return theErrors.getFieldErrors(pFields);
-    }
-
-    /**
-     * Get the first error element for an item.
-     * @return the first error (or <code>null</code>)
-     */
-    public MetisErrorElement getFirstError() {
-        return theErrors.getFirst();
     }
 
     /**
@@ -957,17 +588,17 @@ public abstract class PrometheusDataItem
      * @param pList the list to resolve against
      * @throws OceanusException on error
      */
-    protected void resolveDataLink(final MetisLetheField pField,
+    protected void resolveDataLink(final MetisFieldDef pField,
                                    final PrometheusDataList<?> pList) throws OceanusException {
         /* Access the values */
-        final MetisValueSet myValues = getValueSet();
+        final MetisFieldVersionValues myValues = getValues();
 
         /* Access value for field */
         Object myValue = myValues.getValue(pField);
 
         /* Convert dataItem reference to Id */
         if (myValue instanceof PrometheusDataItem) {
-            myValue = ((PrometheusDataItem) myValue).getId();
+            myValue = ((PrometheusDataItem) myValue).getIndexedId();
         }
 
         /* Lookup Id reference */
@@ -995,7 +626,7 @@ public abstract class PrometheusDataItem
      * @param pField the field to check
      * @return true/false
      */
-    public boolean includeXmlField(final MetisLetheField pField) {
+    public boolean includeXmlField(final MetisFieldDef pField) {
         return false;
     }
 
@@ -1023,19 +654,20 @@ public abstract class PrometheusDataItem
         }
 
         /* Loop through the fields */
-        final Iterator<MetisLetheField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = getDataFieldSet().fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            final MetisLetheField myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* Skip if not used in equality */
-            if (!myField.getEquality().isEquality()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                || !((MetisFieldVersionedDef)myField).isEquality()) {
                 continue;
             }
 
             /* Access the values */
-            final Object myValue = getFieldValue(myField);
-            final Object myNew = myItem.getFieldValue(myField);
+            final Object myValue = myField.getFieldValue(this);
+            final Object myNew = myField.getFieldValue(myItem);
 
             /* Check the field */
             if (!MetisDataDifference.isEqual(myValue, myNew)) {
@@ -1050,7 +682,7 @@ public abstract class PrometheusDataItem
     @Override
     public int hashCode() {
         /* hash code is Id for simplicity */
-        return theId;
+        return getIndexedId();
     }
 
     @Override
@@ -1093,7 +725,7 @@ public abstract class PrometheusDataItem
      * @return the order
      */
     protected int compareId(final PrometheusDataItem pThat) {
-        return theId - pThat.theId;
+        return getIndexedId() - pThat.getIndexedId();
     }
 
     /**
@@ -1170,8 +802,12 @@ public abstract class PrometheusDataItem
         return TethysDataConverter.stringToByteArray(pString).length;
     }
 
-    @Override
-    public MetisFieldState getFieldState(final MetisLetheField pField) {
+    /**
+     * Obtain the field state
+     * @param pField the field
+     * @return the state
+     */
+    public MetisFieldState getFieldState(final MetisFieldDef pField) {
         /* Determine DELETED state */
         if (isDeleted()) {
             return MetisFieldState.DELETED;
@@ -1197,7 +833,10 @@ public abstract class PrometheusDataItem
         }
     }
 
-    @Override
+    /**
+     * Obtain the item State.
+     * @return the state
+     */
     public MetisFieldState getItemState() {
         /* Determine DELETED state */
         if (isDeleted()) {

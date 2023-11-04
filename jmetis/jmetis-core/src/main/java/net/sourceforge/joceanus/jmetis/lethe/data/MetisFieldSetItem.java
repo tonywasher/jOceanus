@@ -41,14 +41,14 @@ public interface MetisFieldSetItem
      * Get the state for the item.
      * @return the render state
      */
-    MetisFieldState getItemState();
+    MetisFieldStateX getItemState();
 
     /**
      * Get the state for the field.
      * @param pField the field
      * @return the render state
      */
-    MetisFieldState getFieldState(MetisLetheField pField);
+    MetisFieldStateX getFieldState(MetisLetheField pField);
 
     /**
      * Get the Errors for the field.

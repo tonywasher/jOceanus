@@ -127,6 +127,31 @@ public final class MetisDataItem {
     }
 
     /**
+     * Deletable Item interface.
+     */
+    public interface MetisDataDeletableItem {
+        /**
+         * Is this active?
+         * @return true/false
+         */
+        default boolean isActive() {
+            return false;
+        }
+
+        /**
+         * Is this item deleted?
+         * @return true/false
+         */
+        boolean isDeleted();
+
+        /**
+         * Set the deleted flags for the item.
+         * @param pFlag true/false
+         */
+        void setDeleted(boolean pFlag);
+    }
+
+    /**
      * List interface.
      * @param <T> the list element type
      */
