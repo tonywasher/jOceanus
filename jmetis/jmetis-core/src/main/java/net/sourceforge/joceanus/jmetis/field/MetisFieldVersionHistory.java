@@ -201,7 +201,7 @@ public class MetisFieldVersionHistory
      * Set history explicitly.
      * @param pBase the base item
      */
-    protected void setHistory(final MetisFieldVersionValues pBase) {
+    public void setHistory(final MetisFieldVersionValues pBase) {
         theStack.clear();
         theDeltas.clear();
         theOriginal = theCurr.cloneIt();

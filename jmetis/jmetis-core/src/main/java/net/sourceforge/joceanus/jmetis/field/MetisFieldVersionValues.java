@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
@@ -168,6 +169,18 @@ public class MetisFieldVersionValues {
 
     /**
      * Set the value.
+     * @param pFieldId the fieldId
+     * @param pValue the value
+     * @throws OceanusException on error
+     */
+    public void setValue(final MetisDataFieldId pFieldId,
+                         final Object pValue) throws OceanusException {
+        final MetisFieldDef myField = theFields.getField(pFieldId);
+        setValue(myField, pValue);
+    }
+
+    /**
+     * Set the value.
      * @param pField the field
      * @param pValue the value
      * @throws OceanusException on error
@@ -184,6 +197,17 @@ public class MetisFieldVersionValues {
 
         /* Store the value */
         theValues[((MetisFieldVersionedDef) pField).getIndex()] = pValue;
+    }
+
+    /**
+     * Set the value.
+     * @param pFieldId the fieldId
+     * @param pValue the value
+     */
+    public void setUncheckedValue(final MetisDataFieldId pFieldId,
+                                  final Object pValue) {
+        final MetisFieldDef myField = theFields.getField(pFieldId);
+        setUncheckedValue(myField, pValue);
     }
 
     /**
@@ -204,6 +228,16 @@ public class MetisFieldVersionValues {
 
     /**
      * Get the value.
+     * @param pFieldId the fieldId
+     * @return the value
+     */
+    public Object getValue(final MetisDataFieldId pFieldId) {
+        final MetisFieldDef myField = theFields.getField(pFieldId);
+        return getValue(myField);
+    }
+
+    /**
+     * Get the value.
      * @param pField the field
      * @return the value
      */
@@ -215,6 +249,19 @@ public class MetisFieldVersionValues {
 
         /* Return the value */
         return theValues[((MetisFieldVersionedDef) pField).getIndex()];
+    }
+
+    /**
+     * Get the value.
+     * @param <X> the required type
+     * @param pFieldId the fieldId
+     * @param pClazz the class
+     * @return the value
+     */
+    public <X> X getValue(final MetisDataFieldId pFieldId,
+                          final Class<X> pClazz) {
+        final MetisFieldDef myField = theFields.getField(pFieldId);
+        return getValue(myField, pClazz);
     }
 
     /**

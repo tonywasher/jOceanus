@@ -110,6 +110,17 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
     }
 
     /**
+     * Declare versioned byteArray field.
+     * @param pId the fieldId
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisFieldVersioned<T> declareByteArrayField(final MetisDataFieldId pId,
+                                                        final int pMaxLength) {
+        return declareEqualityVersionedField(pId, MetisDataType.BYTEARRAY, pMaxLength);
+    }
+
+    /**
      * Declare versioned short field.
      * @param pId the fieldId
      * @return the field

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
+import java.io.OptionalDataException;
+
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -23,11 +25,9 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusFieldGenerator;
@@ -60,37 +60,17 @@ public class PrometheusDataKeySet
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, PrometheusDataItem.FIELD_DEFS);
+    private static final MetisFieldVersionedSet<PrometheusDataKeySet> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusDataKeySet.class);
 
-    /**
-     * Field ID for ControlKey.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(PrometheusCryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * HashPrime Field Id.
-     */
-    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
-
-    /**
-     * Field ID for KeySetDef.
-     */
-    public static final MetisLetheField FIELD_KEYSETDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_KEYSETDEF.getValue(), MetisDataType.BYTEARRAY, WRAPLEN);
-
-    /**d
-     * Field ID for CreationDate.
-     */
-    public static final MetisLetheField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue(), MetisDataType.DATE);
-
-    /**
-     * Field ID for KeySet.
-     */
-    public static final MetisLetheField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
-
-    /**
-     * The Encryption KeySet.
-     */
-    private GordianKeySet theKeySet;
+    static {
+        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);
+        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.DATAKEYSET_KEYSETDEF, WRAPLEN);
+        FIELD_DEFS.declareDateField(PrometheusDataResource.DATAKEYSET_CREATION);
+        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.DATAKEYSET_KEYSET);
+    }
 
     /**
      * The Security Factory.
@@ -116,8 +96,9 @@ public class PrometheusDataKeySet
         switch (getStyle()) {
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
-                theKeySet = pSource.theKeySet;
-                theGenerator = new PrometheusFieldGenerator(getDataSet().getDataFormatter(), theKeySet);
+                final GordianKeySet myKeySet = pSource.getKeySet();
+                theGenerator = new PrometheusFieldGenerator(getDataSet().getDataFormatter(), myKeySet);
+                setValueKeySet(myKeySet);
                 break;
             default:
                 break;
@@ -144,14 +125,14 @@ public class PrometheusDataKeySet
         theSecurityFactory = mySecure.getSecurityFactory();
 
         /* Store the ControlKey */
-        Object myValue = pValues.getValue(FIELD_CONTROLKEY);
+        Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
         if (myValue instanceof Integer) {
             /* Store the integer */
             final Integer myInt = (Integer) myValue;
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
         } else if (myValue instanceof PrometheusControlKey) {
             /* Store the controlKey */
             setValueControlKey((PrometheusControlKey) myValue);
@@ -160,24 +141,24 @@ public class PrometheusDataKeySet
         /* Access the controlKey */
         final PrometheusControlKey myControl = getControlKey();
 
-        /* Store the PrimeHash indicator */
-        myValue = pValues.getValue(FIELD_HASHPRIME);
-        final Boolean isHashPrime = (myValue instanceof Boolean)
-                ? (Boolean) myValue
-                : Boolean.TRUE;
-        setValueHashPrime(isHashPrime);
-
         /* Store the WrappedKeySetDef */
-        myValue = pValues.getValue(FIELD_KEYSETDEF);
+        myValue = pValues.getValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF);
         if (myValue instanceof byte[]) {
-            final byte[] myBytes = (byte[]) myValue;
-            setValueSecuredKeySetDef(myBytes);
-            theKeySet = myControl.getKeySetHash(isHashPrime()).getKeySet().deriveKeySet(myBytes);
-            theGenerator = new PrometheusFieldGenerator(myFormatter, theKeySet);
+            setValueSecuredKeySetDef((byte[]) myValue);
+        }
+
+        /* Store/Resolve the keySet */
+        myValue = pValues.getValue(PrometheusDataResource.DATAKEYSET_KEYSET);
+        if (myValue instanceof GordianKeySet) {
+            setValueKeySet((GordianKeySet) myValue);
+        } else if (getSecuredKeySetDef() != null) {
+            final GordianKeySet myKeySet = myControl.getKeySetHash().getKeySet().deriveKeySet(getSecuredKeySetDef());
+            theGenerator = new PrometheusFieldGenerator(myFormatter, myKeySet);
+            setValueKeySet(myKeySet);
         }
 
         /* Store the CreationDate */
-        myValue = pValues.getValue(FIELD_CREATEDATE);
+        myValue = pValues.getValue(PrometheusDataResource.DATAKEYSET_CREATION);
         if (!(myValue instanceof TethysDate)) {
             myValue = new TethysDate();
         }
@@ -213,12 +194,12 @@ public class PrometheusDataKeySet
 
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-            theKeySet = myKeySets.generateKeySet(new GordianKeySetSpec());
-            theGenerator = new PrometheusFieldGenerator(myFormatter, theKeySet);
+            final GordianKeySet myKeySet = myKeySets.generateKeySet(new GordianKeySetSpec());
+            theGenerator = new PrometheusFieldGenerator(myFormatter, myKeySet);
+            setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueHashPrime(pControlKey.isHashPrime());
-            setValueSecuredKeySetDef(pControlKey.getKeySetHash().getKeySet().secureKeySet(theKeySet));
+            setValueSecuredKeySetDef(pControlKey.getKeySetHash().getKeySet().secureKeySet(myKeySet));
 
             /* Set the creationDate */
             setValueCreationDate(new TethysDate());
@@ -231,17 +212,8 @@ public class PrometheusDataKeySet
     }
 
     @Override
-    public MetisFields declareFields() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisLetheField pField) {
-        if (FIELD_KEYSET.equals(pField)) {
-            return theKeySet;
-        }
-
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -265,7 +237,7 @@ public class PrometheusDataKeySet
      * @return the controlKey
      */
     public final PrometheusControlKey getControlKey() {
-        return getControlKey(getValueSet());
+        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);
     }
 
     /**
@@ -276,15 +248,7 @@ public class PrometheusDataKeySet
         final PrometheusControlKey myKey = getControlKey();
         return (myKey == null)
                 ? null
-                : myKey.getId();
-    }
-
-    /**
-     * Is this locked by prime hash.
-     * @return true/false
-     */
-    public Boolean isHashPrime() {
-        return isHashPrime(getValueSet());
+                : myKey.getIndexedId();
     }
 
     /**
@@ -292,7 +256,15 @@ public class PrometheusDataKeySet
      * @return the securedKeySetDef
      */
     public final byte[] getSecuredKeySetDef() {
-        return getSecuredKeySetDef(getValueSet());
+        return getValues().getValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, byte[].class);
+    }
+
+    /**
+     * Get the KeySet.
+     * @return the keySet
+     */
+    public GordianKeySet getKeySet() {
+        return getValues().getValue(PrometheusDataResource.DATAKEYSET_KEYSET, GordianKeySet.class);
     }
 
     /**
@@ -300,91 +272,51 @@ public class PrometheusDataKeySet
      * @return the creationDate
      */
     public final TethysDate getCreationDate() {
-        return getCreationDate(getValueSet());
-    }
-
-    /**
-     * Get the ControlKey.
-     * @param pValueSet the valueSet
-     * @return the control Key
-     */
-    public static PrometheusControlKey getControlKey(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CONTROLKEY, PrometheusControlKey.class);
-    }
-
-    /**
-     * Is this locked by prime hash.
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isHashPrime(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_HASHPRIME, Boolean.class);
-    }
-
-    /**
-     * Get the securedKeySetDef.
-     * @param pValueSet the valueSet
-     * @return the securedKeySetDef
-     */
-    public static byte[] getSecuredKeySetDef(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEYSETDEF, byte[].class);
-    }
-
-    /**
-     * Get the CreationDate.
-     * @param pValueSet the valueSet
-     * @return the creationDate
-     */
-    public static TethysDate getCreationDate(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CREATEDATE, TethysDate.class);
-    }
-
-    /**
-     * Set the ControlKey.
-     * @param pValue the controlKey
-     */
-    private void setValueControlKey(final PrometheusControlKey pValue) {
-        getValueSet().setValue(FIELD_CONTROLKEY, pValue);
+        return getValues().getValue(PrometheusDataResource.DATAKEYSET_CREATION, TethysDate.class);
     }
 
     /**
      * Set the ControlKey Id.
      * @param pId the controlKey id
+     * @throws OceanusException on error
      */
-    private void setValueControlKey(final Integer pId) {
-        getValueSet().setValue(FIELD_CONTROLKEY, pId);
+    private void setValueControlKey(final Integer pId) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);
     }
 
     /**
-     * Set the HashPrime indicator.
-     * @param pPrime true/false
+     * Set the ControlKey.
+     * @param pKey the controlKey
+     * @throws OceanusException on error
      */
-    private void setValueHashPrime(final Boolean pPrime) {
-        getValueSet().setValue(FIELD_HASHPRIME, pPrime);
+    private void setValueControlKey(final PrometheusControlKey pKey) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pKey);
     }
 
     /**
      * Set the securedKeySetDef.
      * @param pValue the securedKeySetDef
+     * @throws OceanusException on error
      */
-    private void setValueSecuredKeySetDef(final byte[] pValue) {
-        getValueSet().setValue(FIELD_KEYSETDEF, pValue);
+    private void setValueSecuredKeySetDef(final byte[] pValue) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pValue);
+    }
+
+    /**
+     * Set the keySet.
+     * @param pValue the keySet
+     */
+    private void setValueKeySet(final GordianKeySet pValue) {
+        getValues().setUncheckedValue(PrometheusDataResource.DATAKEYSET_KEYSET, pValue);
     }
 
     /**
      * Set the CreationDate.
      * @param pValue the creationDate
-     */
-    private void setValueCreationDate(final TethysDate pValue) {
-        getValueSet().setValue(FIELD_CREATEDATE, pValue);
-    }
-
-    /**
-     * Resolve the Active HashKey.
      * @throws OceanusException on error
      */
-    protected final void resolveHash() throws OceanusException {
-        getControlKey().resolveHash();
+    private void setValueCreationDate(final TethysDate pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.DATAKEYSET_CREATION, pValue);
     }
 
     @Override
@@ -407,7 +339,7 @@ public class PrometheusDataKeySet
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
         final PrometheusControlKey myControlKey = getControlKey();
 
         /* Register the KeySet */
@@ -424,29 +356,20 @@ public class PrometheusDataKeySet
 
     /**
      * Update password hash.
-     * @param pPrimeHash this is the prime hash
      * @param pHash the new keySetHash
      * @return were there changes? true/false
      * @throws OceanusException on error
      */
-    boolean updateKeySetHash(final Boolean pPrimeHash,
-                             final GordianKeySetHash pHash) throws OceanusException {
-        /* Determine whether we need to update */
-        if (!pPrimeHash.equals(isHashPrime())) {
-            /* Store the current detail into history */
-            pushHistory();
+    boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
+        /* Store the current detail into history */
+        pushHistory();
 
-            /* Update the Security Control Key and obtain the new secured KeySetDef */
-            final GordianKeySet myKeySet = pHash.getKeySet();
-            setValueHashPrime(pPrimeHash);
-            setValueSecuredKeySetDef(myKeySet.secureKeySet(theKeySet));
+        /* Update the Security Control Key and obtain the new secured KeySetDef */
+        final GordianKeySet myKeySet = pHash.getKeySet();
+        setValueSecuredKeySetDef(myKeySet.secureKeySet(myKeySet));
 
-            /* Check for changes */
-            return checkForHistory();
-        }
-
-        /* No changes */
-        return false;
+        /* Check for changes */
+        return checkForHistory();
     }
 
     /**
@@ -496,7 +419,7 @@ public class PrometheusDataKeySet
         }
 
         @Override
-        public MetisFields getItemFields() {
+        public MetisFieldSet<PrometheusDataKeySet> getItemFields() {
             return PrometheusDataKeySet.FIELD_DEFS;
         }
 
@@ -547,8 +470,8 @@ public class PrometheusDataKeySet
             final PrometheusDataKeySet mySet = new PrometheusDataKeySet(this, pValues);
 
             /* Check that this keyId has not been previously added */
-            if (!isIdUnique(mySet.getId())) {
-                mySet.addError(ERROR_DUPLICATE, FIELD_ID);
+            if (!isIdUnique(mySet.getIndexedId())) {
+                mySet.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
                 throw new PrometheusDataException(mySet, ERROR_VALIDATION);
             }
 
@@ -570,11 +493,11 @@ public class PrometheusDataKeySet
                                                        final PrometheusDataKeySet pKeySet) throws OceanusException {
             /* Build data values */
             final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusDataKeySet.OBJECT_NAME);
-            myValues.addValue(PrometheusDataKeySet.FIELD_ID, pKeySet.getId());
-            myValues.addValue(PrometheusDataKeySet.FIELD_CONTROLKEY, pControlKey);
-            myValues.addValue(PrometheusDataKeySet.FIELD_HASHPRIME, pKeySet.isHashPrime());
-            myValues.addValue(PrometheusDataKeySet.FIELD_KEYSETDEF, pKeySet.getSecuredKeySetDef());
-            myValues.addValue(PrometheusDataKeySet.FIELD_CREATEDATE, pKeySet.getCreationDate());
+            myValues.addValue(MetisDataResource.DATA_ID, pKeySet.getIndexedId());
+            myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, pControlKey);
+            myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, pKeySet.getSecuredKeySetDef());
+            myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSET, pKeySet.getKeySet());
+            myValues.addValue(PrometheusDataResource.DATAKEYSET_CREATION, pKeySet.getCreationDate());
 
             /* Clone the dataKeySet */
             return addValuesItem(myValues);

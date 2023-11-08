@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDeletable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataUpdatable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
@@ -27,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
  * Table Item interface.
  */
 public interface PrometheusTableItem
-        extends MetisDataIndexedItem, MetisDataValues, MetisFieldSetItem, MetisDataDeletable, MetisDataUpdatable {
+        extends MetisFieldTableItem {
     /**
      * Is this a header?
      * @return true/false

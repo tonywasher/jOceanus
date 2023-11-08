@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldValidation.MetisFieldError;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation.MetisErrorElement;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -255,9 +254,21 @@ public abstract class MetisFieldVersionedItem
     }
 
     @Override
-    public boolean hasErrors(final MetisFieldDef pField) {
-        return pField != null
-                && theValidation.hasErrors(pField);
+    public boolean hasErrors(final MetisDataFieldId pFieldId) {
+        final MetisFieldDef myField = getDataFieldSet().getField(pFieldId);
+        return pFieldId != null
+                && theValidation.hasErrors(myField);
+    }
+
+    /**
+     * Add an error for this item.
+     * @param pError the error text
+     * @param pField the associated field
+     */
+    public void addError(final String pError,
+                         final MetisDataFieldId pFieldId) {
+        final MetisFieldDef myField = getDataFieldSet().getField(pFieldId);
+        addError(pError, myField);
     }
 
     /**
@@ -291,15 +302,21 @@ public abstract class MetisFieldVersionedItem
     }
 
     @Override
-    public String getFieldErrors(final MetisFieldDef pField) {
+    public String getFieldErrors(final MetisDataFieldId pField) {
+        final MetisFieldDef myField = getDataFieldSet().getField(pField);
         return pField != null
-                ? theValidation.getFieldErrors(pField)
+                ? theValidation.getFieldErrors(myField)
                 : null;
     }
 
     @Override
-    public String getFieldErrors(final MetisFieldDef[] pFields) {
-        return theValidation.getFieldErrors(pFields);
+    public String getFieldErrors(final MetisDataFieldId[] pFields) {
+        final MetisFieldSetDef myFieldSet = getDataFieldSet();
+        final MetisFieldDef[] myFields = new MetisFieldDef[pFields.length];
+        for (int i = 0; i < pFields.length; i++) {
+            myFields[i] = myFieldSet.getField(pFields[i]);
+        }
+        return theValidation.getFieldErrors(myFields);
     }
 
     /**
@@ -381,8 +398,9 @@ public abstract class MetisFieldVersionedItem
      * @param pField the field
      * @return the difference
      */
-    public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
-        return theHistory.fieldChanged(pField);
+    public MetisDataDifference fieldChanged(final MetisDataFieldId pField) {
+        final MetisFieldDef myField = getDataFieldSet().getField(pField);
+        return theHistory.fieldChanged(myField);
     }
 
     /**

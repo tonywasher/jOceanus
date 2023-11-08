@@ -193,10 +193,9 @@ public interface MetisFieldItem
 
         /**
          * Obtain the class of the item.
-         * @param <T> the item type
          * @return the clazz
          */
-        <T extends MetisFieldVersionedItem> Class<T> getClazz();
+        Class<? extends MetisFieldVersionedItem> getClazz();
     }
 
     /**
@@ -231,7 +230,7 @@ public interface MetisFieldItem
          * @param pField the particular field
          * @return <code>true/false</code>
          */
-        default boolean hasErrors(final MetisFieldDef pField) {
+        default boolean hasErrors(final MetisDataFieldId pField) {
             return false;
         }
 
@@ -240,14 +239,14 @@ public interface MetisFieldItem
          * @param pField the field
          * @return the error details
          */
-        String getFieldErrors(MetisFieldDef pField);
+        String getFieldErrors(MetisDataFieldId pField);
 
         /**
          * Obtain error details for a set of fields
          * @param pFields the fields
          * @return the error details
          */
-        String getFieldErrors(MetisFieldDef[] pFields);
+        String getFieldErrors(MetisDataFieldId[] pFields);
 
         /**
          * Is the item editable?
@@ -280,7 +279,7 @@ public interface MetisFieldItem
          * @param pField the field
          * @return true/false
          */
-        default boolean skipField(MetisFieldDef pField) {
+        default boolean skipField(MetisDataFieldId pField) {
             return false;
         }
     }

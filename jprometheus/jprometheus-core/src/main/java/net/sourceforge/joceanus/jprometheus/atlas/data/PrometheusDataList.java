@@ -26,11 +26,10 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem.PrometheusDataInfoList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItemX.PrometheusTableListX;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -40,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the item type
  */
 public abstract class PrometheusDataList<T extends PrometheusDataItem>
-        implements MetisFieldItem, MetisDataList<T>, PrometheusTableListX<T> {
+        implements MetisFieldItem, MetisDataList<T>, PrometheusTableList<T> {
     /**
      * DataList interface.
      */
@@ -147,7 +146,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
         /* Create the list */
         theList = new MetisListIndexed<>();
-        theList.setComparator((l, r) -> l.compareTo(r));
+        theList.setComparator(PrometheusDataItem::compareTo);
     }
 
     /**
@@ -169,7 +168,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * Obtain item fields.
      * @return the item fields
      */
-    public abstract MetisFields getItemFields();
+    public abstract MetisFieldSetDef getItemFields();
 
     @Override
     public String formatObject(final TethysUIDataFormatter pFormatter) {
@@ -485,7 +484,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
             final PrometheusDataItem myCurr = myIterator.next();
-            PrometheusDataItem myItem = (PrometheusDataItem) myOld.get(myCurr.getId());
+            PrometheusDataItem myItem = (PrometheusDataItem) myOld.get(myCurr.getIndexedId());
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
@@ -506,7 +505,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
                 }
 
                 /* Remove the item from the map */
-                myOld.remove(myItem.getId());
+                myOld.remove(myItem.getIndexedId());
             }
         }
 
@@ -542,12 +541,12 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         while (myIterator.hasNext()) {
             /* Locate the item in the base list */
             final T myCurr = myIterator.next();
-            final PrometheusDataItem myItem = (PrometheusDataItem) myBase.get(myCurr.getId());
+            final PrometheusDataItem myItem = (PrometheusDataItem) myBase.get(myCurr.getIndexedId());
 
             /* If the underlying item does not exist */
             if (myItem == null) {
                 /* Mark this as a new item */
-                myCurr.getValueSet().setVersion(getVersion() + 1);
+                myCurr.getValues().setVersion(getVersion() + 1);
                 myCurr.setBase(null);
                 bChanges = true;
 
@@ -568,7 +567,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
                 }
 
                 /* Remove the old item */
-                myBase.remove(myItem.getId());
+                myBase.remove(myItem.getIndexedId());
             }
         }
 
@@ -580,7 +579,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
             final T myItem = addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setHistory(myCurr);
-            myItem.getValueSet().setDeletion(true);
+            myItem.getValues().setDeletion(true);
             bChanges = true;
         }
 
@@ -611,13 +610,13 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      */
     protected void setNewId(final PrometheusDataItem pItem) {
         /* Access the Id */
-        final Integer myId = pItem.getId();
+        final Integer myId = pItem.getIndexedId();
 
         /* If we need to generate a new id */
         if (myId == null
                 || myId == 0) {
             /* Obtain the next Id */
-            pItem.setId(theList.allocateNextId());
+            pItem.setIndexedId(theList.allocateNextId());
         }
     }
 
@@ -887,7 +886,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
             final T myCurr = myIterator.next();
 
             /* If the version is before required version */
-            if (myCurr.getValueSet().getVersion() <= pVersion) {
+            if (myCurr.getValues().getVersion() <= pVersion) {
                 /* Ignore */
                 continue;
             }
@@ -926,7 +925,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
             final T myCurr = myIterator.next();
 
             /* If the version is before required version */
-            if (myCurr.getValueSet().getVersion() < pNewVersion) {
+            if (myCurr.getValues().getVersion() < pNewVersion) {
                 /* Ignore */
                 continue;
             }

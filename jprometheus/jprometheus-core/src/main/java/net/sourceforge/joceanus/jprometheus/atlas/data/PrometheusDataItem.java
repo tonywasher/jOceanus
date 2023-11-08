@@ -20,6 +20,8 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
@@ -39,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public abstract class PrometheusDataItem
         extends MetisFieldVersionedItem
-        implements Comparable<Object> {
+        implements PrometheusTableItem, Comparable<Object> {
     /**
      * Report fields.
      */
@@ -54,7 +56,6 @@ public abstract class PrometheusDataItem
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH, PrometheusDataItem::getTouchStatus);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER, PrometheusDataItem::isHeader);
     }
-
 
     /**
      * Validation error.
@@ -187,7 +188,7 @@ public abstract class PrometheusDataItem
     protected PrometheusDataItem(final PrometheusDataList<?> pList,
                                  final PrometheusDataValues pValues) {
         /* Record list and item references */
-        this(pList, pValues.getValue(FIELD_ID, Integer.class));
+        this(pList, pValues.getValue(MetisDataResource.DATA_ID, Integer.class));
     }
 
     /**
@@ -528,6 +529,15 @@ public abstract class PrometheusDataItem
     }
 
     /**
+     * Set Change history for an update list so that the first and only entry in the change list is
+     * the original values of the base.
+     * @param pBase the base item
+     */
+    public final void setHistory(final PrometheusDataItem pBase) {
+        getValuesHistory().setHistory(pBase.getOriginalValues());
+    }
+
+    /**
      * Determine whether a particular field has changed in this edit view.
      * @param pField the field to test
      * @return <code>true/false</code>
@@ -580,6 +590,18 @@ public abstract class PrometheusDataItem
      * @throws OceanusException on error
      */
     public void resolveDataSetLinks() throws OceanusException {
+    }
+
+    /**
+     * Resolve a data link into a list.
+     * @param pFieldId the fieldId to resolve
+     * @param pList the list to resolve against
+     * @throws OceanusException on error
+     */
+    protected void resolveDataLink(final MetisDataFieldId pFieldId,
+                                   final PrometheusDataList<?> pList) throws OceanusException {
+        final MetisFieldDef myField = getDataFieldSet().getField(pFieldId);
+        resolveDataLink(myField, pList);
     }
 
     /**
@@ -807,7 +829,7 @@ public abstract class PrometheusDataItem
      * @param pField the field
      * @return the state
      */
-    public MetisFieldState getFieldState(final MetisFieldDef pField) {
+    public MetisFieldState getFieldState(final MetisDataFieldId pField) {
         /* Determine DELETED state */
         if (isDeleted()) {
             return MetisFieldState.DELETED;

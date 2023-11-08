@@ -27,9 +27,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -104,7 +107,7 @@ public class PrometheusDataValues {
     /**
      * Field Definitions.
      */
-    private final Map<MetisLetheField, Object> theFields;
+    private final Map<MetisDataFieldId, Object> theFields;
 
     /**
      * InfoSet values.
@@ -130,26 +133,26 @@ public class PrometheusDataValues {
         theFields = new LinkedHashMap<>();
 
         /* Store the id */
-        theFields.put(PrometheusDataItem.FIELD_ID, pItem.getId());
+        theFields.put(MetisDataResource.DATA_ID, pItem.getIndexedId());
 
         /* Access values */
-        final MetisValueSet myValues = pItem.getValueSet();
+        final MetisFieldVersionValues myValues = pItem.getValues();
 
         /* Iterate through the fields */
-        final Iterator<MetisLetheField> myIterator = pItem.getDataFields().fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = pItem.getDataFieldSet().fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisLetheField myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* Ignore field if it is irrelevant */
-            if (!myField.getStorage().isValueSet()
-                    || !myField.getEquality().isEquality()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                    || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
             /* If the field is to be included */
             if (pItem.includeXmlField(myField)) {
                 /* Store the value if it is non-null */
-                theFields.put(myField, myValues.getValue(myField));
+                theFields.put(myField.getFieldId(), myValues.getValue(myField));
             }
         }
 
@@ -232,14 +235,14 @@ public class PrometheusDataValues {
         /* Store the id if available */
         final Integer myId = pInfo.getId();
         if (myId != null) {
-            theFields.put(PrometheusDataItem.FIELD_ID, myId);
+            theFields.put(MetisDataResource.DATA_ID, myId);
         }
 
         /* Store the Info Type */
         theFields.put(PrometheusDataInfoItem.FIELD_INFOTYPE, pInfo.getName());
 
         /* Store the Owner */
-        theFields.put(PrometheusDataInfoItem.FIELD_OWNER, pOwner.getId());
+        theFields.put(PrometheusDataInfoItem.FIELD_OWNER, pOwner.getIndexedId());
 
         /* Store the value */
         theFields.put(PrometheusDataInfoItem.FIELD_VALUE, pInfo.getValue());
@@ -255,7 +258,7 @@ public class PrometheusDataValues {
      * @param pFields the field definitions
      */
     public PrometheusDataValues(final Element pElement,
-                                final MetisFields pFields) {
+                                final MetisFieldSetDef pFields) {
         this(pElement, pFields, pElement.getNodeName());
     }
 
@@ -266,7 +269,7 @@ public class PrometheusDataValues {
      * @param pItemName the item name
      */
     protected PrometheusDataValues(final Element pElement,
-                                   final MetisFields pFields,
+                                   final MetisFieldSetDef pFields,
                                    final String pItemName) {
         /* Store Item type */
         theItemType = pItemName;
@@ -277,22 +280,22 @@ public class PrometheusDataValues {
         /* Declare the id if it exists */
         final Integer myId = getId(pElement);
         if (myId != null) {
-            theFields.put(PrometheusDataItem.FIELD_ID, myId);
+            theFields.put(MetisDataResource.DATA_ID, myId);
         }
 
         /* Loop through the children */
-        final Iterator<MetisLetheField> myIterator = pFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = pFields.fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisLetheField myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
-            if (myField.getStorage().isValueSet()
-                    && myField.getEquality().isEquality()) {
+            if (myField instanceof MetisFieldVersionedDef
+                    && ((MetisFieldVersionedDef) myField).isEquality()) {
                 /* Access element */
-                final Element myChild = getChild(pElement, myField.getName());
+                final Element myChild = getChild(pElement, myField.getFieldId().getId());
                 if (myChild != null) {
                     /* Put value */
-                    theFields.put(myField, myChild.getTextContent());
+                    theFields.put(myField.getFieldId(), myChild.getTextContent());
                 }
             }
         }
@@ -367,7 +370,7 @@ public class PrometheusDataValues {
      * @param pItem the Item to obtain values from
      */
     public PrometheusDataValues(final PrometheusDataItem pItem) {
-        this(pItem, pItem.getDataFields().getName());
+        this(pItem, pItem.getDataFieldSet().getName());
     }
 
     /**
@@ -382,7 +385,7 @@ public class PrometheusDataValues {
      * Obtain Field iterator.
      * @return the Field iterator
      */
-    public final Iterator<Entry<MetisLetheField, Object>> fieldIterator() {
+    public final Iterator<Entry<MetisDataFieldId, Object>> fieldIterator() {
         return theFields.entrySet().iterator();
     }
 
@@ -423,7 +426,7 @@ public class PrometheusDataValues {
      * @param pField the Field definition
      * @param pValue the field value
      */
-    public void addValue(final MetisLetheField pField,
+    public void addValue(final MetisDataFieldId pField,
                          final Object pValue) {
         /* If the value is non-null */
         if (pValue != null) {
@@ -437,7 +440,7 @@ public class PrometheusDataValues {
      * @param pField the Field definition
      * @return the field value
      */
-    public Object getValue(final MetisLetheField pField) {
+    public Object getValue(final MetisDataFieldId pField) {
         /* Return the field */
         return theFields.get(pField);
     }
@@ -449,7 +452,7 @@ public class PrometheusDataValues {
      * @param <T> the item type
      * @return the field value
      */
-    public <T> T getValue(final MetisLetheField pField,
+    public <T> T getValue(final MetisDataFieldId pField,
                           final Class<T> pClass) {
         /* Return the properly cast field */
         return pClass.cast(getValue(pField));
@@ -462,8 +465,8 @@ public class PrometheusDataValues {
      */
     private static Integer getId(final Element pElement) {
         /* Access the id */
-        final String myId = pElement.getAttribute(PrometheusDataItem.FIELD_ID.getName());
-        return (myId.length() > 0)
+        final String myId = pElement.getAttribute(MetisDataResource.DATA_ID.getId());
+        return !myId.isEmpty()
                 ? Integer.parseInt(myId)
                 : null;
     }
@@ -503,16 +506,16 @@ public class PrometheusDataValues {
         final Element myElement = pDocument.createElement(theItemType);
 
         /* Loop through the values */
-        for (Entry<MetisLetheField, Object> myEntry : theFields.entrySet()) {
+        for (Entry<MetisDataFieldId, Object> myEntry : theFields.entrySet()) {
             /* Access parts */
-            final MetisLetheField myField = myEntry.getKey();
+            final MetisDataFieldId myFieldId = myEntry.getKey();
             final Object myValue = myEntry.getValue();
 
             /* If this is the Id */
-            if (PrometheusDataItem.FIELD_ID.equals(myField)) {
+            if (MetisDataResource.DATA_ID.equals(myFieldId)) {
                 /* Add as an Attribute if required */
                 if (pStoreIds) {
-                    myElement.setAttribute(myField.getName(), myValue.toString());
+                    myElement.setAttribute(myFieldId.getId(), myValue.toString());
                 }
 
                 /* Skip to next field */
@@ -520,7 +523,7 @@ public class PrometheusDataValues {
             }
 
             /* Create the child element */
-            final Element myChild = pDocument.createElement(myField.getName());
+            final Element myChild = pDocument.createElement(myFieldId.getId());
             myElement.appendChild(myChild);
 
             /* Store the value */
@@ -541,7 +544,7 @@ public class PrometheusDataValues {
 
                 /* Set the id if required */
                 if (pStoreIds) {
-                    myItem.setAttribute(PrometheusDataItem.FIELD_ID.getName(), myInfo.getId().toString());
+                    myItem.setAttribute(MetisDataResource.DATA_ID.getValue(), myInfo.getId().toString());
                 }
 
                 /* Set the value */
@@ -599,7 +602,7 @@ public class PrometheusDataValues {
 
             /* Store values */
             theName = myClass.toString();
-            theId = pInfo.getId();
+            theId = pInfo.getIndexedId();
             theValue = myClass.isLink()
                     ? pInfo.getLink()
                     : pInfo.getValue(Object.class);

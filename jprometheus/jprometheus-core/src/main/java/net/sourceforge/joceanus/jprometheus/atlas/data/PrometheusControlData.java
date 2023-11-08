@@ -16,11 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -52,17 +50,15 @@ public class PrometheusControlData
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, PrometheusDataItem.FIELD_DEFS);
+    private static final MetisFieldVersionedSet<PrometheusControlData> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusControlData.class);
 
-    /**
-     * Field ID for Data Version.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue(), MetisDataType.INTEGER);
-
-    /**
-     * Field ID for Control Key.
-     */
-    public static final MetisLetheField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(PrometheusCryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
+    static {
+        FIELD_DEFS.declareIntegerField(PrometheusDataResource.CONTROLDATA_VERSION);
+        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);
+    }
 
     /**
      * Error message for already exists.
@@ -92,7 +88,7 @@ public class PrometheusControlData
         super(pList, pValues);
 
         /* Store the Version */
-        Object myValue = pValues.getValue(FIELD_DATAVERSION);
+        Object myValue = pValues.getValue(PrometheusDataResource.CONTROLDATA_VERSION);
         if (myValue instanceof Integer) {
             setValueDataVersion((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -100,7 +96,7 @@ public class PrometheusControlData
         }
 
         /* Store the ControlKey */
-        myValue = pValues.getValue(FIELD_CONTROLKEY);
+        myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
         if (myValue instanceof Integer) {
             /* Store value */
             final Integer myInt = (Integer) myValue;
@@ -108,12 +104,12 @@ public class PrometheusControlData
 
             /* Resolve the ControlKey */
             final PrometheusDataSet myData = getDataSet();
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
         }
     }
 
     @Override
-    public MetisFields declareFields() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -122,7 +118,7 @@ public class PrometheusControlData
      * @return data version
      */
     public Integer getDataVersion() {
-        return getDataVersion(getValueSet());
+        return getValues().getValue(PrometheusDataResource.CONTROLDATA_VERSION, Integer.class);
     }
 
     /**
@@ -130,7 +126,7 @@ public class PrometheusControlData
      * @return the control key
      */
     public PrometheusControlKey getControlKey() {
-        return getControlKey(getValueSet());
+        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);
     }
 
     /**
@@ -141,49 +137,34 @@ public class PrometheusControlData
         final PrometheusControlKey myKey = getControlKey();
         return (myKey == null)
                 ? null
-                : myKey.getId();
-    }
-
-    /**
-     * Get the data version for a ValueSet.
-     * @param pValueSet the value set
-     * @return data version
-     */
-    public static Integer getDataVersion(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATAVERSION, Integer.class);
-    }
-
-    /**
-     * Get the control key for a ValueSet.
-     * @param pValueSet the value set
-     * @return control key
-     */
-    public static PrometheusControlKey getControlKey(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CONTROLKEY, PrometheusControlKey.class);
+                : myKey.getIndexedId();
     }
 
     /**
      * Set the data version value.
      * @param pValue the value
+     * @throws OceanusException on error
      */
-    private void setValueDataVersion(final Integer pValue) {
-        getValueSet().setValue(FIELD_DATAVERSION, pValue);
+    private void setValueDataVersion(final Integer pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.CONTROLDATA_VERSION, pValue);
     }
 
     /**
      * Set the control key value.
      * @param pValue the value
+     * @throws OceanusException on error
      */
-    private void setValueControlKey(final PrometheusControlKey pValue) {
-        getValueSet().setValue(FIELD_CONTROLKEY, pValue);
+    private void setValueControlKey(final PrometheusControlKey pValue) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pValue);
     }
 
     /**
      * Set the control key value as Id.
      * @param pId the value
+     * @throws OceanusException on error
      */
-    private void setValueControlKey(final Integer pId) {
-        getValueSet().setValue(FIELD_CONTROLKEY, pId);
+    private void setValueControlKey(final Integer pId) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);
     }
 
     @Override
@@ -207,14 +188,15 @@ public class PrometheusControlData
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
     }
 
     /**
      * Set a new ControlKey.
      * @param pControl the new control key
+     * @throws OceanusException on error
      */
-    protected void setControlKey(final PrometheusControlKey pControl) {
+    protected void setControlKey(final PrometheusControlKey pControl) throws OceanusException {
         /* If we do not have a control Key */
         if (getControlKey() == null) {
             /* Store the control details and return */
@@ -279,7 +261,7 @@ public class PrometheusControlData
         }
 
         @Override
-        public MetisFields getItemFields() {
+        public MetisFieldSet<PrometheusControlData> getItemFields() {
             return PrometheusControlData.FIELD_DEFS;
         }
 
@@ -342,7 +324,7 @@ public class PrometheusControlData
         public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
             final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusControlData.OBJECT_NAME);
-            myValues.addValue(FIELD_DATAVERSION, pVersion);
+            myValues.addValue(PrometheusDataResource.CONTROLDATA_VERSION, pVersion);
 
             /* Add the item */
             addValuesItem(myValues);
@@ -354,8 +336,8 @@ public class PrometheusControlData
             final PrometheusControlData myControl = new PrometheusControlData(this, pValues);
 
             /* Check that this controlId has not been previously added */
-            if (!isIdUnique(myControl.getId())) {
-                myControl.addError(ERROR_DUPLICATE, FIELD_ID);
+            if (!isIdUnique(myControl.getIndexedId())) {
+                myControl.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
                 throw new PrometheusDataException(myControl, ERROR_VALIDATION);
             }
 
