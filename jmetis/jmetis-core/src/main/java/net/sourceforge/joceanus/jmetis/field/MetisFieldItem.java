@@ -288,6 +288,6 @@ public interface MetisFieldItem
      * Table Item.
      */
     interface MetisFieldTableItem
-            extends MetisFieldItem, MetisDataIndexedItem, MetisDataDeletableItem, MetisFieldUpdatableItem {
+            extends MetisFieldItem, MetisDataIndexedItem {
     }
 }

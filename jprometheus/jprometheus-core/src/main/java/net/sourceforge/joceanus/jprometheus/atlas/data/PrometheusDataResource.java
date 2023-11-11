@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -547,7 +547,7 @@ public enum PrometheusDataResource
      */
     private static Map<PrometheusCryptographyDataType, TethysBundleId> buildNameMap() {
         /* Create the map and return it */
-        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new HashMap<>();
+        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
         myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
         myMap.put(PrometheusCryptographyDataType.CONTROLDATA, CONTROLDATA_NAME);
@@ -569,7 +569,7 @@ public enum PrometheusDataResource
      */
     private static Map<PrometheusCryptographyDataType, TethysBundleId> buildListMap() {
         /* Create the map and return it */
-        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new HashMap<>();
+        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
         myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
         myMap.put(PrometheusCryptographyDataType.CONTROLDATA, CONTROLDATA_LIST);

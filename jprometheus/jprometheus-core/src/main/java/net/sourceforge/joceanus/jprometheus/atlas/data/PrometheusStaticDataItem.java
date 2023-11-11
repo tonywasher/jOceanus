@@ -24,13 +24,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -44,32 +39,18 @@ public abstract class PrometheusStaticDataItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATA_NAME.getValue(), PrometheusEncryptedDataItem.FIELD_DEFS);
+    private static final PrometheusEncryptedFieldSet<PrometheusStaticDataItem> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusStaticDataItem.class);
 
-    /**
-     * Name Field Id.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
-
-    /**
-     * Description Field Id.
-     */
-    public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
-
-    /**
-     * Enabled Field Id.
-     */
-    public static final MetisLetheField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.STATICDATA_ENABLED.getValue(), MetisDataType.BOOLEAN);
-
-    /**
-     * Order Field Id.
-     */
-    public static final MetisLetheField FIELD_ORDER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_SORT.getValue(), MetisDataType.INTEGER);
-
-    /**
-     * Class Field Id.
-     */
-    public static final MetisLetheField FIELD_CLASS = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.STATICDATA_CLASS.getValue(), MetisDataType.ENUM);
+    static {
+        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);
+        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);
+        FIELD_DEFS.declareBooleanField(PrometheusDataResource.STATICDATA_ENABLED);
+        FIELD_DEFS.declareIntegerField(PrometheusDataResource.STATICDATA_SORT);
+        FIELD_DEFS.declareEnumField(PrometheusDataResource.STATICDATA_CLASS);
+    }
 
     /**
      * BadId error.
@@ -95,7 +76,7 @@ public abstract class PrometheusStaticDataItem
                                        final PrometheusStaticDataItem pSource) {
         super(pList, pSource);
         theEnumClass = pSource.getEnumClass();
-        setId(pSource.getId());
+        setIndexedId(pSource.getIndexedId());
     }
 
     /**
@@ -139,7 +120,7 @@ public abstract class PrometheusStaticDataItem
         setNextDataKeySet();
 
         /* Access classId and order */
-        setId(pClass.getClassId());
+        setIndexedId(pClass.getClassId());
         setValueOrder(pClass.getOrder());
 
         /* Record the name */
@@ -170,7 +151,7 @@ public abstract class PrometheusStaticDataItem
             theEnumClass = pList.getEnumClass();
 
             /* Store the Name */
-            Object myValue = pValues.getValue(FIELD_NAME);
+            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);
             if (myValue instanceof String) {
                 setValueName((String) myValue);
             } else if (myValue instanceof byte[]) {
@@ -178,7 +159,7 @@ public abstract class PrometheusStaticDataItem
             }
 
             /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
+            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);
             if (myValue instanceof String) {
                 setValueDesc((String) myValue);
             } else if (myValue instanceof byte[]) {
@@ -186,15 +167,15 @@ public abstract class PrometheusStaticDataItem
             }
 
             /* Store the class */
-            myValue = pValues.getValue(FIELD_CLASS);
+            myValue = pValues.getValue(PrometheusDataResource.STATICDATA_CLASS);
             if (myValue instanceof String) {
                 parseEnumValue((String) myValue);
             } else {
-                parseEnumValue(getId());
+                parseEnumValue(getIndexedId());
             }
 
             /* Store the Order */
-            myValue = pValues.getValue(FIELD_ORDER);
+            myValue = pValues.getValue(PrometheusDataResource.STATICDATA_SORT);
             if (myValue instanceof Integer) {
                 setValueOrder((Integer) myValue);
             } else if (myValue instanceof String) {
@@ -202,7 +183,7 @@ public abstract class PrometheusStaticDataItem
             }
 
             /* Store the Enabled flag */
-            myValue = pValues.getValue(FIELD_ENABLED);
+            myValue = pValues.getValue(PrometheusDataResource.STATICDATA_ENABLED);
             if (myValue instanceof Boolean) {
                 setValueEnabled((Boolean) myValue);
             } else if (myValue instanceof String) {
@@ -220,7 +201,7 @@ public abstract class PrometheusStaticDataItem
     }
 
     @Override
-    public MetisFields declareFields() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -235,28 +216,8 @@ public abstract class PrometheusStaticDataItem
     }
 
     @Override
-    public boolean includeXmlField(final MetisLetheField pField) {
-        /* Determine whether fields should be included */
-        if (FIELD_NAME.equals(pField)) {
-            return true;
-        }
-        if (FIELD_DESC.equals(pField)) {
-            return getDesc() != null;
-        }
-        if (FIELD_ENABLED.equals(pField)) {
-            return !getEnabled();
-        }
-        if (FIELD_CLASS.equals(pField)) {
-            return !getName().equalsIgnoreCase(getStaticClass().name());
-        }
-
-        /* Pass call on */
-        return super.includeXmlField(pField);
-    }
-
-    @Override
     public final String getName() {
-        return getName(getValueSet());
+        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);
     }
 
     /**
@@ -264,7 +225,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted name
      */
     public final byte[] getNameBytes() {
-        return getNameBytes(getValueSet());
+        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);
     }
 
     /**
@@ -272,7 +233,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted field
      */
     private PrometheusEncryptedPair getNameField() {
-        return getNameField(getValueSet());
+        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);
     }
 
     /**
@@ -280,7 +241,7 @@ public abstract class PrometheusStaticDataItem
      * @return the description
      */
     public final String getDesc() {
-        return getDesc(getValueSet());
+        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);
     }
 
     /**
@@ -288,7 +249,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted description
      */
     public final byte[] getDescBytes() {
-        return getDescBytes(getValueSet());
+        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);
     }
 
     /**
@@ -296,7 +257,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted name
      */
     private PrometheusEncryptedPair getDescField() {
-        return getDescField(getValueSet());
+        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);
     }
 
     /**
@@ -304,7 +265,7 @@ public abstract class PrometheusStaticDataItem
      * @return the order
      */
     public final Integer getOrder() {
-        return getOrder(getValueSet());
+        return getValues().getValue(PrometheusDataResource.STATICDATA_SORT, Integer.class);
     }
 
     /**
@@ -312,7 +273,7 @@ public abstract class PrometheusStaticDataItem
      * @return the class
      */
     public final PrometheusStaticDataClass getStaticClass() {
-        return getStaticClass(getValueSet(), theEnumClass);
+        return getValues().getValue(PrometheusDataResource.STATICDATA_CLASS, PrometheusStaticDataClass.class);
     }
 
     /**
@@ -320,96 +281,12 @@ public abstract class PrometheusStaticDataItem
      * @return <code>true/false</code>
      */
     public final boolean getEnabled() {
-        return getEnabled(getValueSet());
+        return getValues().getValue(PrometheusDataResource.STATICDATA_ENABLED, Boolean.class);
     }
 
     @Override
     public boolean isDisabled() {
         return !getEnabled();
-    }
-
-    /**
-     * Return the name of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the name
-     */
-    public static String getName(final PrometheusEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
-    }
-
-    /**
-     * Return the encrypted name of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the encrypted name
-     */
-    public static byte[] getNameBytes(final PrometheusEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
-    }
-
-    /**
-     * Return the encrypted name field of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the encrypted name field
-     */
-    private static PrometheusEncryptedPair getNameField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, PrometheusEncryptedPair.class);
-    }
-
-    /**
-     * Return the description of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the description
-     */
-    public static String getDesc(final PrometheusEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
-    }
-
-    /**
-     * Return the encrypted description of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the encrypted description
-     */
-    public static byte[] getDescBytes(final PrometheusEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
-    }
-
-    /**
-     * Return the encrypted description field of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the encrypted description field
-     */
-    private static PrometheusEncryptedPair getDescField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, PrometheusEncryptedPair.class);
-    }
-
-    /**
-     * Return the sort order of the Static Data.
-     * @param pValueSet the valueSet
-     * @return the order
-     */
-    public static Integer getOrder(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ORDER, Integer.class);
-    }
-
-    /**
-     * Return the Static class of the Static Data.
-     * @param pValueSet the Value Set
-     * @param <Y> the Enum Type
-     * @param pClass the Enum class
-     * @return the class
-     */
-    public static <Y extends PrometheusStaticDataClass> Y getStaticClass(final MetisValueSet pValueSet,
-                                                                         final Class<Y> pClass) {
-        return pValueSet.getValue(FIELD_CLASS, pClass);
-    }
-
-    /**
-     * Is the Static item enabled.
-     * @param pValueSet the valueSet
-     * @return <code>true/false</code>
-     */
-    public static boolean getEnabled(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ENABLED, Boolean.class);
     }
 
     /**
@@ -426,7 +303,7 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void setValueName(final String pValue) throws OceanusException {
-        setEncryptedValue(FIELD_NAME, pValue);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);
     }
 
     /**
@@ -435,7 +312,7 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void setValueName(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(FIELD_NAME, pBytes, String.class);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);
     }
 
     /**
@@ -443,7 +320,7 @@ public abstract class PrometheusStaticDataItem
      * @param pField the encrypted name
      */
     private void setValueName(final PrometheusEncryptedPair pField) {
-        getValueSet().setValue(FIELD_NAME, pField);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pField);
     }
 
     /**
@@ -452,7 +329,7 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     protected final void setValueDesc(final String pValue) throws OceanusException {
-        setEncryptedValue(FIELD_DESC, pValue);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);
     }
 
     /**
@@ -461,7 +338,7 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void setValueDesc(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(FIELD_DESC, pBytes, String.class);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);
     }
 
     /**
@@ -469,7 +346,7 @@ public abstract class PrometheusStaticDataItem
      * @param pField the encrypted description
      */
     private void setValueDesc(final PrometheusEncryptedPair pField) {
-        getValueSet().setValue(FIELD_DESC, pField);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pField);
     }
 
     /**
@@ -477,7 +354,7 @@ public abstract class PrometheusStaticDataItem
      * @param isEnabled TRUE/FALSE
      */
     protected final void setValueEnabled(final Boolean isEnabled) {
-        getValueSet().setValue(FIELD_ENABLED, isEnabled);
+        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_ENABLED, isEnabled);
     }
 
     /**
@@ -485,7 +362,7 @@ public abstract class PrometheusStaticDataItem
      * @param pOrder the order
      */
     private void setValueOrder(final Integer pOrder) {
-        getValueSet().setValue(FIELD_ORDER, pOrder);
+        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_SORT, pOrder);
     }
 
     /**
@@ -493,7 +370,7 @@ public abstract class PrometheusStaticDataItem
      * @param pClass the class
      */
     private void setValueClass(final PrometheusStaticDataClass pClass) {
-        getValueSet().setValue(FIELD_CLASS, pClass);
+        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_CLASS, pClass);
     }
 
     @Override
@@ -521,40 +398,40 @@ public abstract class PrometheusStaticDataItem
 
         /* Name must be non-null */
         if (myName == null) {
-            addError(ERROR_MISSING, FIELD_NAME);
+            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
 
             /* Else check the name */
         } else {
             /* The name must not be too long */
             if (PrometheusDataItem.byteLength(myName) > NAMELEN) {
-                addError(ERROR_LENGTH, FIELD_NAME);
+                addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* The name must only contain valid characters */
             if (!PrometheusDataItem.validString(myName, null)) {
-                addError(ERROR_BADNAME, FIELD_NAME);
+                addError(ERROR_BADNAME, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* Check that the name is unique */
             if (!myMap.validNameCount(myName)) {
-                addError(ERROR_DUPLICATE, FIELD_NAME);
+                addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
         }
 
         /* Check description length */
         if (myDesc != null
                 && PrometheusDataItem.byteLength(myDesc) > DESCLEN) {
-            addError(ERROR_LENGTH, FIELD_NAME);
+            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
 
         /* The order must not be negative */
         if (getOrder() < 0) {
-            addError(ERROR_NEGATIVE, FIELD_ORDER);
+            addError(ERROR_NEGATIVE, PrometheusDataResource.STATICDATA_SORT);
         }
 
         /* Cannot have duplicate order */
         if (!myMap.validOrderCount(getOrder())) {
-            addError(ERROR_DUPLICATE, FIELD_ORDER);
+            addError(ERROR_DUPLICATE, PrometheusDataResource.STATICDATA_SORT);
         }
 
         /* Set validation flag */
@@ -585,7 +462,7 @@ public abstract class PrometheusStaticDataItem
                 setValueClass(myValue);
 
                 /* Access classId and order */
-                setId(myValue.getClassId());
+                setIndexedId(myValue.getClassId());
                 setValueOrder(myValue.getOrder());
                 break;
             }
@@ -614,7 +491,7 @@ public abstract class PrometheusStaticDataItem
                 setValueClass(myValue);
 
                 /* Access classId and order */
-                setId(myValue.getClassId());
+                setIndexedId(myValue.getClassId());
                 setValueOrder(myValue.getOrder());
                 break;
             }

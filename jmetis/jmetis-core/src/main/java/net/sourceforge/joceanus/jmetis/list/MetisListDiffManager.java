@@ -242,7 +242,7 @@ public final class MetisListDiffManager {
         final T myNew = pList.newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
-        MetisFieldVersionValues myBaseSet = pBase.getValueSet();
+        MetisFieldVersionValues myBaseSet = pBase.getValues();
         final MetisFieldVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
@@ -273,11 +273,11 @@ public final class MetisListDiffManager {
         final T myNew = pList.newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisFieldVersionValues mySet = pCurr.getValueSet();
+        MetisFieldVersionValues mySet = pCurr.getValues();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the value set as the base value */
-        MetisFieldVersionValues myBaseSet = pBase.getValueSet();
+        MetisFieldVersionValues myBaseSet = pBase.getValues();
         myBaseSet = myBaseSet.cloneIt();
 
         /* Record as the history of the item */
@@ -301,7 +301,7 @@ public final class MetisListDiffManager {
         final T myNew = pList.newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisFieldVersionValues mySet = pCurr.getValueSet();
+        MetisFieldVersionValues mySet = pCurr.getValues();
         mySet = mySet.cloneIt();
         mySet.setVersion(1);
 

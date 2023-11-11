@@ -239,13 +239,13 @@ public class PrometheusDataValues {
         }
 
         /* Store the Info Type */
-        theFields.put(PrometheusDataInfoItem.FIELD_INFOTYPE, pInfo.getName());
+        theFields.put(PrometheusDataResource.DATAINFO_TYPE, pInfo.getName());
 
         /* Store the Owner */
-        theFields.put(PrometheusDataInfoItem.FIELD_OWNER, pOwner.getIndexedId());
+        theFields.put(PrometheusDataResource.DATAINFO_OWNER, pOwner.getIndexedId());
 
         /* Store the value */
-        theFields.put(PrometheusDataInfoItem.FIELD_VALUE, pInfo.getValue());
+        theFields.put(PrometheusDataResource.DATAINFO_VALUE, pInfo.getValue());
 
         /* Set other fields to null */
         theInfoItems = null;

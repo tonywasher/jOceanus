@@ -211,6 +211,15 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
     }
 
     /**
+     * Declare versioned enum field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisFieldVersioned<T> declareEnumField(final MetisDataFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.ENUM, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
      * Declare versioned link field.
      * @param pId the fieldId
      * @return the field

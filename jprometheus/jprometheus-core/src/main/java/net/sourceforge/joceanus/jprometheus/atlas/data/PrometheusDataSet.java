@@ -647,12 +647,7 @@ public abstract class PrometheusDataSet
         }
 
         /* Compare the maps */
-        if (!theListMap.equals(myThat.getListMap())) {
-            return false;
-        }
-
-        /* We are identical */
-        return true;
+        return theListMap.equals(myThat.getListMap());
     }
 
     @Override

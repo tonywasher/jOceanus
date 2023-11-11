@@ -18,10 +18,12 @@ package net.sourceforge.joceanus.jmetis.field;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDeletableItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldUpdatableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldValidation.MetisFieldError;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -29,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * Data Version Control.
  */
 public abstract class MetisFieldVersionedItem
-        implements MetisFieldTableItem {
+        implements MetisFieldTableItem, MetisDataDeletableItem, MetisFieldUpdatableItem {
     /**
      * Report fields.
      */
@@ -334,6 +336,14 @@ public abstract class MetisFieldVersionedItem
         theHistory.pushHistory(myVersion);
     }
 
+    /**
+     * Push history to a specific version
+     * @param pVersion the version
+     */
+    public void pushHistory(final int pVersion) {
+        theHistory.pushHistory(pVersion);
+    }
+
     @Override
     public void popHistory() {
         theHistory.popTheHistory();
@@ -401,6 +411,15 @@ public abstract class MetisFieldVersionedItem
     public MetisDataDifference fieldChanged(final MetisDataFieldId pField) {
         final MetisFieldDef myField = getDataFieldSet().getField(pField);
         return theHistory.fieldChanged(myField);
+    }
+
+    /**
+     * Determines whether a particular field has changed.
+     * @param pField the field
+     * @return the difference
+     */
+    public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
+        return theHistory.fieldChanged(pField);
     }
 
     /**

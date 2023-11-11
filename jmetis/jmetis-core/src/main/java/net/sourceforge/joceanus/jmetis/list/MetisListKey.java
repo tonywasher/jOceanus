@@ -79,7 +79,4 @@ public interface MetisListKey
      * @return the new item
      */
     <T extends MetisFieldVersionedItem> T newItem(MetisListSetVersioned pListSet);
-
-    @Override
-    <T extends MetisFieldVersionedItem> Class<T> getClazz();
 }

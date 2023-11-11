@@ -333,10 +333,7 @@ public abstract class PrometheusDataItem
         return theList.getStyle();
     }
 
-    /**
-     * Get the type of the item.
-     * @return the item type
-     */
+    @Override
     public PrometheusListKey getItemType() {
         return theList.getItemType();
     }
@@ -375,10 +372,7 @@ public abstract class PrometheusDataItem
         return !isDeleted();
     }
 
-    /**
-     * Is this item a header?
-     * @return true/false
-     */
+    @Override
     public boolean isHeader() {
         return isHeader;
     }
@@ -537,14 +531,9 @@ public abstract class PrometheusDataItem
         getValuesHistory().setHistory(pBase.getOriginalValues());
     }
 
-    /**
-     * Determine whether a particular field has changed in this edit view.
-     * @param pField the field to test
-     * @return <code>true/false</code>
-     */
+    @Override
     public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
-        return (pField != null
-                && pField instanceof MetisFieldVersionedDef)
+        return pField instanceof MetisFieldVersionedDef
                 ? getValuesHistory().fieldChanged(pField)
                 : MetisDataDifference.IDENTICAL;
     }
@@ -563,11 +552,7 @@ public abstract class PrometheusDataItem
         }
     }
 
-    /**
-     * Add an error for this item.
-     * @param pError the error text
-     * @param pField the associated field
-     */
+    @Override
     public void addError(final String pError,
                          final MetisFieldDef pField) {
         /* Set edit state and add the error */

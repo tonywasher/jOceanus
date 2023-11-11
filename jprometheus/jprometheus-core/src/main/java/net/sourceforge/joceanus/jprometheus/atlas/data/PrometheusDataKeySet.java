@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
-import java.io.OptionalDataException;
-
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -30,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusFieldGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -78,9 +75,9 @@ public class PrometheusDataKeySet
     private GordianFactory theSecurityFactory;
 
     /**
-     * The Encryption Field Generator.
+     * The Encryptor.
      */
-    private PrometheusFieldGenerator theGenerator;
+    private PrometheusEncryptor theEncryptor;
 
     /**
      * Copy Constructor.
@@ -97,7 +94,7 @@ public class PrometheusDataKeySet
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
                 final GordianKeySet myKeySet = pSource.getKeySet();
-                theGenerator = new PrometheusFieldGenerator(getDataSet().getDataFormatter(), myKeySet);
+                theEncryptor = new PrometheusEncryptor(getDataSet().getDataFormatter(), myKeySet);
                 setValueKeySet(myKeySet);
                 break;
             default:
@@ -153,7 +150,7 @@ public class PrometheusDataKeySet
             setValueKeySet((GordianKeySet) myValue);
         } else if (getSecuredKeySetDef() != null) {
             final GordianKeySet myKeySet = myControl.getKeySetHash().getKeySet().deriveKeySet(getSecuredKeySetDef());
-            theGenerator = new PrometheusFieldGenerator(myFormatter, myKeySet);
+            theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         }
 
@@ -195,7 +192,7 @@ public class PrometheusDataKeySet
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
             final GordianKeySet myKeySet = myKeySets.generateKeySet(new GordianKeySetSpec());
-            theGenerator = new PrometheusFieldGenerator(myFormatter, myKeySet);
+            theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
@@ -220,8 +217,8 @@ public class PrometheusDataKeySet
      * Get the Field Generator.
      * @return the generator
      */
-    public PrometheusFieldGenerator getFieldGenerator() {
-        return theGenerator;
+    public PrometheusEncryptor getEncryptor() {
+        return theEncryptor;
     }
 
     /**

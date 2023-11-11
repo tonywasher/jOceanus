@@ -290,7 +290,7 @@ public class MetisListEditSession
         final T myNew = myList.newListItem(myList.getNextId());
 
         /* Start editing */
-        final MetisFieldVersionValues myValues = myNew.getValueSet();
+        final MetisFieldVersionValues myValues = myNew.getValues();
         myValues.setVersion(theNewVersion);
         myNew.adjustState();
 
@@ -328,7 +328,7 @@ public class MetisListEditSession
         prepareItemForEdit(pItem);
 
         /* Set the item as deleted */
-        pItem.getValueSet().setDeletion(true);
+        pItem.getValues().setDeletion(true);
 
         /* Commit the version */
         commitEditVersion();
@@ -376,7 +376,7 @@ public class MetisListEditSession
 
                     /* else just pop the history */
                 } else {
-                    myCurr.popTheHistory();
+                    myCurr.popHistory();
                 }
             }
         }
@@ -598,7 +598,7 @@ public class MetisListEditSession
 
         /* Commit the item */
         final T myItem = newItemFromBase(myBaseList, pItem);
-        myItem.getValueSet().setVersion(theNewVersion);
+        myItem.getValues().setVersion(theNewVersion);
         myBaseList.add(myItem);
         myItem.adjustState();
 
@@ -656,8 +656,8 @@ public class MetisListEditSession
         if (!myBase.equals(pItem)) {
             /* Set values in changed item */
             myBase.pushHistory(theNewVersion);
-            final MetisFieldVersionValues myBaseSet = myBase.getValueSet();
-            final MetisFieldVersionValues mySet = pItem.getValueSet();
+            final MetisFieldVersionValues myBaseSet = myBase.getValues();
+            final MetisFieldVersionValues mySet = pItem.getValues();
             myBaseSet.copyFrom(mySet);
             myBase.adjustState();
 
@@ -688,10 +688,10 @@ public class MetisListEditSession
         final T myNew = pList.newListItem(pBase.getIndexedId());
 
         /* Access the valueSet */
-        final MetisFieldVersionValues mySet = myNew.getValueSet();
+        final MetisFieldVersionValues mySet = myNew.getValues();
 
         /* Obtain a clone of the value set as the base value */
-        final MetisFieldVersionValues myBaseSet = pBase.getValueSet();
+        final MetisFieldVersionValues myBaseSet = pBase.getValues();
         mySet.copyFrom(myBaseSet);
         pBase.adjustState();
 

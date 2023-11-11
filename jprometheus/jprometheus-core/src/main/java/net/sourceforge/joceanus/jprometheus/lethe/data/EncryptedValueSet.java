@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusFieldGenerator;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusFieldGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

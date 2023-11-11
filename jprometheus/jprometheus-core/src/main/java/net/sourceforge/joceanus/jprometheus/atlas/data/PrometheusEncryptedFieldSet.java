@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.field;
+package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
  * Prometheus Data fieldSet.
  * @param <T> the data type
  */
-public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
+public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
         extends MetisFieldVersionedSet<T> {
     /**
      * Constructor.
@@ -47,7 +47,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static <T extends PrometheusEncryptedItem> PrometheusEncryptedFieldSet<T> newEncryptedFieldSet(final Class<T> pClazz) {
+    public static <T extends PrometheusEncryptedDataItem> PrometheusEncryptedFieldSet<T> newEncryptedFieldSet(final Class<T> pClazz) {
         /* Synchronise on class */
         synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
@@ -172,6 +172,15 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
      */
     public PrometheusEncryptedField<T> declareEncryptedRatioField(final MetisDataFieldId pId) {
         return declareEncryptedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted versioned context field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedContextField(final MetisDataFieldId pId) {
+        return declareEncryptedField(pId, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH);
     }
 
     /**

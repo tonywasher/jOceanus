@@ -21,12 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -44,19 +41,18 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
     public static final String ITEM_SEP = TethysUIConstant.LIST_SEP;
 
     /**
-     * The local fields.
+     * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataInfoLinkSet.class.getSimpleName());
+    @SuppressWarnings("")
+    private static final PrometheusEncryptedFieldSet<PrometheusDataInfoLinkSet> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusDataInfoLinkSet.class);
 
-    /**
-     * The Active LinkSet.
+    /*
+     * FieldIds.
      */
-    private static final MetisLetheField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE.getValue());
-
-    /**
-     * The LinkSet.
-     */
-    private static final MetisLetheField FIELD_LINKSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET.getValue());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE, PrometheusDataInfoLinkSet::getActive);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET, PrometheusDataInfoLinkSet::getLinkSet);
+    }
 
     /**
      * List of active items.
@@ -130,21 +126,8 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisLetheField pField) {
-        if (FIELD_ACTIVE.equals(pField)) {
-            return theActive;
-        }
-        if (FIELD_LINKSET.equals(pField)) {
-            return theLinkSet;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -175,6 +158,14 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
         return theActive.isEmpty()
                 ? null
                 : theActive.getUnderlyingList();
+    }
+
+    /**
+     * Obtain Active Links.
+     * @return the Owner
+     */
+    private PrometheusDataList<T> getLinkSet() {
+        return theLinkSet;
     }
 
     /**

@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -454,7 +454,7 @@ public class PrometheusDataValuesFormatter {
         }
 
         /* Access field types for list */
-        final MetisFieldSet myFields = pList.getItemFields();
+        final MetisFieldSetDef myFields = pList.getItemFields();
 
         /* Access the Data formatter */
         final TethysUIDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
