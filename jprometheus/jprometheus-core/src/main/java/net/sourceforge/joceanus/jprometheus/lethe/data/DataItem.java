@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldStateX;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation;
@@ -1170,55 +1170,55 @@ public abstract class DataItem
     }
 
     @Override
-    public MetisFieldState getFieldState(final MetisLetheField pField) {
+    public MetisFieldStateX getFieldState(final MetisLetheField pField) {
         /* Determine DELETED state */
         if (isDeleted()) {
-            return MetisFieldState.DELETED;
+            return MetisFieldStateX.DELETED;
 
             /* Determine Error state */
         } else if (hasErrors() && hasErrors(pField)) {
-            return MetisFieldState.ERROR;
+            return MetisFieldStateX.ERROR;
 
             /* Determine Changed state */
         } else if (fieldChanged(pField).isDifferent()) {
-            return MetisFieldState.CHANGED;
+            return MetisFieldStateX.CHANGED;
 
             /* Determine standard states */
         } else {
             switch (getState()) {
                 case NEW:
-                    return MetisFieldState.NEW;
+                    return MetisFieldStateX.NEW;
                 case RECOVERED:
-                    return MetisFieldState.RESTORED;
+                    return MetisFieldStateX.RESTORED;
                 default:
-                    return MetisFieldState.NORMAL;
+                    return MetisFieldStateX.NORMAL;
             }
         }
     }
 
     @Override
-    public MetisFieldState getItemState() {
+    public MetisFieldStateX getItemState() {
         /* Determine DELETED state */
         if (isDeleted()) {
-            return MetisFieldState.DELETED;
+            return MetisFieldStateX.DELETED;
 
             /* Determine Error state */
         } else if (hasErrors()) {
-            return MetisFieldState.ERROR;
+            return MetisFieldStateX.ERROR;
 
             /* Determine Changed state */
         } else if (hasHistory()) {
-            return MetisFieldState.CHANGED;
+            return MetisFieldStateX.CHANGED;
 
             /* Determine standard states */
         } else {
             switch (getState()) {
                 case NEW:
-                    return MetisFieldState.NEW;
+                    return MetisFieldStateX.NEW;
                 case RECOVERED:
-                    return MetisFieldState.RESTORED;
+                    return MetisFieldStateX.RESTORED;
                 default:
-                    return MetisFieldState.NORMAL;
+                    return MetisFieldStateX.NORMAL;
             }
         }
     }

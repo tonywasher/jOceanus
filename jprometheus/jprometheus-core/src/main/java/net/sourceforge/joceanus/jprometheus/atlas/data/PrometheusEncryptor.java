@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.field;
+package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -22,6 +22,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -36,9 +37,9 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
- * FieldGenerator.
+ * Encryptor/Decryptor.
  */
-public class PrometheusFieldGenerator {
+public class PrometheusEncryptor {
     /**
      * Encrypted data conversion failure message.
      */
@@ -69,8 +70,8 @@ public class PrometheusFieldGenerator {
      * @param pFormatter the formatter
      * @param pKeySet the keySet
      */
-    public PrometheusFieldGenerator(final TethysUIDataFormatter pFormatter,
-                                    final GordianKeySet pKeySet) {
+    public PrometheusEncryptor(final TethysUIDataFormatter pFormatter,
+                               final GordianKeySet pKeySet) {
         theFormatter = pFormatter;
         theKeySet = pKeySet;
     }
@@ -131,17 +132,68 @@ public class PrometheusFieldGenerator {
     }
 
     /**
-     * Decrypt bytes.
-     * @param pBytes the bytes to decrypt.
-     * @param pClazz the class of the value
+     * Encrypt a value.
+     * @param pValue the value to encrypt.
+     * @param pField the field definition
      * @return the encryptedPair.
      * @throws OceanusException on error
      */
-    public PrometheusEncryptedPair decryptValue(final byte[] pBytes,
-                                                final Class<?> pClazz) throws OceanusException {
+    public PrometheusEncryptedPair encryptValue(final Object pValue,
+                                                final MetisFieldDef pField) throws OceanusException {
+        /* Handle Context dataType */
+        MetisDataType myDataType = pField.getDataType();
+        if (myDataType == MetisDataType.CONTEXT) {
+            myDataType = getDataTypeForValue(pValue);
+        }
+
+        /* Access the encryptor */
+        final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
+        if (myEncryptor == null) {
+            throw new PrometheusLogicException("Unsupported Data Type");
+        }
+
+        /* Encrypt the data */
+        final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);
+        final byte[] myEncrypted = theKeySet.encryptBytes(myBytes);
+        return new PrometheusEncryptedPair(theKeySet, pValue, myEncrypted);
+    }
+
+    /**
+     * Decrypt bytes.
+     * @param pBytes the bytes to decrypt.
+     * @param pField the field definition
+     * @return the encryptedPair.
+     * @throws OceanusException on error
+     */
+    PrometheusEncryptedPair decryptValue(final byte[] pBytes,
+                                         final MetisFieldDef pField) throws OceanusException {
+        /* Access the encryptor */
+        final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(pField.getDataType());
+        if (myEncryptor == null) {
+            throw new PrometheusLogicException("Unsupported Data Type");
+        }
+
+        /* Decrypt the data */
+        final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);
+        final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);
+        return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);
+    }
+
+    /**
+     * Decrypt bytes.
+     * @param pBytes the bytes to decrypt.
+     * @param pClazz the class to decrypt to
+     * @return the encryptedPair.
+     * @throws OceanusException on error
+     */
+    PrometheusEncryptedPair decryptValue(final byte[] pBytes,
+                                         final Class<?> pClazz) throws OceanusException {
         /* Access the encryptor */
         final MetisDataType myDataType = getDataTypeForClass(pClazz);
         final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
+        if (myEncryptor == null) {
+            throw new PrometheusLogicException("Unsupported Data Type");
+        }
 
         /* Decrypt the data */
         final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);
@@ -206,7 +258,7 @@ public class PrometheusFieldGenerator {
      * @return the dataType
      * @throws OceanusException on error
      */
-    private static MetisDataType getDataTypeForClass(final Class<?> pClazz) throws OceanusException {
+    static MetisDataType getDataTypeForClass(final Class<?> pClazz) throws OceanusException {
         if (String.class.equals(pClazz)) {
             return MetisDataType.STRING;
         }
@@ -272,7 +324,6 @@ public class PrometheusFieldGenerator {
         return myMap;
     }
 
-
     /**
      * Adopt Encryption.
      * @param pTarget the target field
@@ -314,7 +365,7 @@ public class PrometheusFieldGenerator {
      * DateEncryptor.
      */
     private static class PrometheusDateEncryptor
-            implements PrometheusDataEncryptor {
+        implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
@@ -349,6 +400,7 @@ public class PrometheusFieldGenerator {
             return TethysDataConverter.byteArrayToShort(pBytes);
         }
     }
+
     /**
      * IntegerEncryptor.
      */
@@ -468,7 +520,7 @@ public class PrometheusFieldGenerator {
      * PriceEncryptor.
      */
     private static class PrometheusPriceEncryptor
-            extends PrometheusMoneyEncryptor {
+            extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {

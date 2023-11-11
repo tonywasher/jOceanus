@@ -17,10 +17,13 @@
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldItemType;
+
 /**
  * ListKey.
  */
-public interface PrometheusListKey {
+public interface PrometheusListKey
+    extends MetisFieldItemType {
     /**
      * Obtain the item key.
      * @return the item key

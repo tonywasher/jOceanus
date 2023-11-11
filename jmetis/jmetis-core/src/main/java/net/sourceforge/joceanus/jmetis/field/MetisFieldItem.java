@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jmetis.field;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDeletableItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
@@ -192,10 +193,95 @@ public interface MetisFieldItem
 
         /**
          * Obtain the class of the item.
-         * @param <T> the item type
          * @return the clazz
          */
-        <T extends MetisFieldVersionedItem> Class<T> getClazz();
+        Class<? extends MetisFieldVersionedItem> getClazz();
+    }
+
+    /**
+     * Updateable Item interface.
+     */
+    public interface MetisFieldUpdatableItem {
+        /**
+         * Push current values into history buffer ready for changes to be made.
+         */
+        void pushHistory();
+
+        /**
+         * Obtain the next version for the history.
+         * @return the next version
+         */
+        int getNextVersion();
+
+        /**
+         * Remove the last changes for the history buffer and restore values from it.
+         */
+        void popHistory();
+
+        /**
+         * Check to see whether any changes were made. If no changes were made remove last saved
+         * history since it is not needed.
+         * @return <code>true</code> if changes were made, <code>false</code> otherwise
+         */
+        boolean checkForHistory();
+
+        /**
+         * Determine whether a particular field has Errors.
+         * @param pField the particular field
+         * @return <code>true/false</code>
+         */
+        default boolean hasErrors(final MetisDataFieldId pField) {
+            return false;
+        }
+
+        /**
+         * Obtain error details for a field
+         * @param pField the field
+         * @return the error details
+         */
+        String getFieldErrors(MetisDataFieldId pField);
+
+        /**
+         * Obtain error details for a set of fields
+         * @param pFields the fields
+         * @return the error details
+         */
+        String getFieldErrors(MetisDataFieldId[] pFields);
+
+        /**
+         * Is the item editable?
+         * @return true/false
+         */
+        default boolean isEditable() {
+            return false;
+        }
+
+        /**
+         * Obtain Object ValueSet.
+         * @return the ValueSet of the object
+         */
+        MetisFieldVersionValues getValues();
+
+        /**
+         * Obtain original Object ValueSet.
+         * @return the ValueSet of the object
+         */
+        MetisFieldVersionValues getOriginalValues();
+
+        /**
+         * Obtain Object ValueSet History.
+         * @return the ValueSet of the object
+         */
+        MetisFieldVersionHistory getValuesHistory();
+
+        /**
+         * Should we skip a ValueSet object?.
+         * @param pField the field
+         * @return true/false
+         */
+        default boolean skipField(MetisDataFieldId pField) {
+            return false;
+        }
     }
 
     /**

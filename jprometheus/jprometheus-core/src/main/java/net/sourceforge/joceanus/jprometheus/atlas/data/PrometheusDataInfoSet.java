@@ -26,16 +26,13 @@ import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem.PrometheusDataInfoList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem.PrometheusStaticList;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -45,21 +42,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the data type
  */
 public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
-        implements MetisDataContents, Iterable<T> {
+        implements MetisFieldItem, Iterable<T> {
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisFieldSet<PrometheusDataInfoSet> FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataInfoSet.class);
 
-    /**
-     * Owner Field Id.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER.getValue());
-
-    /**
-     * Values Field Id.
-     */
-    public static final MetisLetheField FIELD_VALUES = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES.getValue());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER, PrometheusDataInfoSet::getOwner);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES, PrometheusDataInfoSet::getValues);
+    }
 
     /**
      * The Owner to which this set belongs.
@@ -106,19 +101,8 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
     }
 
     @Override
-    public Object getFieldValue(final MetisLetheField pField) {
-        if (FIELD_OWNER.equals(pField)) {
-            return theOwner;
-        }
-        if (FIELD_VALUES.equals(pField)) {
-            return theMap;
-        }
-        return MetisDataFieldValue.UNKNOWN;
-    }
-
-    @Override
     public String formatObject(final TethysUIDataFormatter pFormatter) {
-        return getDataFields().getName();
+        return this.getDataFieldSet().getName();
     }
 
     /**
@@ -127,6 +111,14 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
      */
     public PrometheusDataItem getOwner() {
         return theOwner;
+    }
+
+    /**
+     * Obtain values.
+     * @return the values
+     */
+    private Map<PrometheusDataInfoClass, PrometheusDataInfoItem> getValues() {
+        return theMap;
     }
 
     /**
@@ -496,7 +488,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
             final PrometheusDataInfoItem myValue = theMap.get(myClass);
 
             /* Reject if duplicate and not re-registration */
-            if ((myValue != null) && !myValue.getId().equals(pInfo.getId())) {
+            if ((myValue != null) && !myValue.getIndexedId().equals(pInfo.getIndexedId())) {
                 throw new IllegalArgumentException("Duplicate information type " + pInfo.getInfoClass());
             }
 

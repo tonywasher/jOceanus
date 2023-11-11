@@ -171,7 +171,7 @@ public final class MetisListBaseManager {
                 /* Loop while version is too high */
                 while (myVersion > pVersion) {
                     /* Pop history */
-                    myCurr.popTheHistory();
+                    myCurr.popHistory();
                     myVersion = myCurr.getVersion();
                 }
 
@@ -353,7 +353,7 @@ public final class MetisListBaseManager {
             /* If the item does not exist in the old list */
             if (myItem == null) {
                 /* Set the version to 1 */
-                myCurr.getValueSet().setVersion(1);
+                myCurr.getValues().setVersion(1);
                 myChange.registerChanged(myCurr);
                 hasChanges = true;
 
@@ -362,7 +362,7 @@ public final class MetisListBaseManager {
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* ReBase the history */
-                    final MetisFieldVersionValues myBase = myItem.getValueSet().cloneIt();
+                    final MetisFieldVersionValues myBase = myItem.getValues().cloneIt();
                     myCurr.setHistory(myBase);
                     myChange.registerChanged(myItem);
                     hasChanges = true;

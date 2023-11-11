@@ -19,13 +19,11 @@ package net.sourceforge.joceanus.jprometheus.atlas.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataKeySet.PrometheusDataKeySetList;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusFieldGenerator;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -38,22 +36,19 @@ public abstract class PrometheusEncryptedDataItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.ENCRYPTED_NAME.getValue(), PrometheusDataItem.FIELD_DEFS);
+    private static final MetisFieldVersionedSet<PrometheusEncryptedDataItem> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusEncryptedDataItem.class);
+
+    /*
+     * FieldIds.
+     */
+    static {
+        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.DATAKEYSET);
+    }
 
     /**
-     * Data Key Set Field Id.
+     * Encryptor field.
      */
-    public static final MetisLetheField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(PrometheusDataKeySet.OBJECT_NAME, MetisDataType.LINK);
-
-    /**
-     * Error message for bad usage.
-     */
-    public static final String ERROR_USAGE = PrometheusDataResource.ENCRYPTED_ERROR_USAGE.getValue();
-
-    /**
-     * Generator field.
-     */
-    private PrometheusFieldGenerator theGenerator;
+    private PrometheusEncryptor theEncryptor;
 
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when
@@ -64,7 +59,7 @@ public abstract class PrometheusEncryptedDataItem
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
                                           final Integer pId) {
         super(pList, pId);
-        theGenerator = new PrometheusFieldGenerator(pList.getDataSet().getDataFormatter(), null);
+        theEncryptor = new PrometheusEncryptor(pList.getDataSet().getDataFormatter(), null);
     }
 
     /**
@@ -75,7 +70,7 @@ public abstract class PrometheusEncryptedDataItem
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
                                           final PrometheusEncryptedDataItem pSource) {
         super(pList, pSource);
-        theGenerator = pSource.theGenerator;
+        theEncryptor = pSource.theEncryptor;
     }
 
     /**
@@ -90,22 +85,27 @@ public abstract class PrometheusEncryptedDataItem
         super(pList, pValues);
 
         /* Access dataKeySet id */
-        final Integer myId = pValues.getValue(FIELD_KEYSET, Integer.class);
+        final Integer myId = pValues.getValue(PrometheusCryptographyDataType.DATAKEYSET, Integer.class);
         if (myId != null) {
             setDataKeySet(myId);
         } else {
-            theGenerator = new PrometheusFieldGenerator(pList.getDataSet().getDataFormatter(), null);
+            theEncryptor = new PrometheusEncryptor(pList.getDataSet().getDataFormatter(), null);
         }
     }
 
     @Override
-    public PrometheusEncryptedValueSet getValueSet() {
-        return (PrometheusEncryptedValueSet) super.getValueSet();
+    protected PrometheusEncryptedValues newVersionValues() {
+        return new PrometheusEncryptedValues(this);
     }
 
     @Override
-    public PrometheusEncryptedValueSet getOriginalValues() {
-        return (PrometheusEncryptedValueSet) super.getOriginalValues();
+    public PrometheusEncryptedValues getValues() {
+        return (PrometheusEncryptedValues) super.getValues();
+    }
+
+    @Override
+    public PrometheusEncryptedValues getOriginalValues() {
+        return (PrometheusEncryptedValues) super.getOriginalValues();
     }
 
     /**
@@ -113,7 +113,7 @@ public abstract class PrometheusEncryptedDataItem
      * @return the DataKeySet
      */
     public final PrometheusDataKeySet getDataKeySet() {
-        return getDataKeySet(getValueSet());
+        return getValues().getValue(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySet.class);
     }
 
     /**
@@ -124,16 +124,7 @@ public abstract class PrometheusEncryptedDataItem
         final PrometheusDataKeySet mySet = getDataKeySet();
         return (mySet == null)
                 ? null
-                : mySet.getId();
-    }
-
-    /**
-     * Get the ControlKey for this item.
-     * @param pValueSet the valueSet
-     * @return the ControlKey
-     */
-    public static PrometheusDataKeySet getDataKeySet(final PrometheusEncryptedValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEYSET, PrometheusDataKeySet.class);
+                : mySet.getIndexedId();
     }
 
     /**
@@ -141,9 +132,9 @@ public abstract class PrometheusEncryptedDataItem
      * @param pSet the dataKeySet
      */
     private void setValueDataKeySet(final PrometheusDataKeySet pSet) {
-        getValueSet().setValue(FIELD_KEYSET, pSet);
+        getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pSet);
         if (pSet != null) {
-            theGenerator = pSet.getFieldGenerator();
+            theEncryptor = pSet.getEncryptor();
         }
     }
 
@@ -152,7 +143,7 @@ public abstract class PrometheusEncryptedDataItem
      * @param pId the keySet id
      */
     private void setValueDataKeySet(final Integer pId) {
-        getValueSet().setValue(FIELD_KEYSET, pId);
+        getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pId);
     }
 
     @Override
@@ -186,21 +177,22 @@ public abstract class PrometheusEncryptedDataItem
 
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
-        theGenerator = getDataKeySet().getFieldGenerator();
+        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());
+        theEncryptor = getDataKeySet().getEncryptor();
     }
 
     /**
      * Set encrypted value.
-     * @param pField the field to set
+     * @param pFieldId the fieldId to set
      * @param pValue the value to set
      * @throws OceanusException on error
      */
-    protected final void setEncryptedValue(final MetisLetheField pField,
+    protected final void setEncryptedValue(final MetisDataFieldId pFieldId,
                                            final Object pValue) throws OceanusException {
         /* Obtain the existing value */
-        final PrometheusEncryptedValueSet myValueSet = getValueSet();
-        Object myCurrent = myValueSet.getValue(pField);
+        final MetisFieldDef myFieldDef = getDataFieldSet().getField(pFieldId);
+        final PrometheusEncryptedValues myValueSet = getValues();
+        Object myCurrent = myValueSet.getValue(myFieldDef);
 
         /* Handle switched usage */
         if (myCurrent != null && !(myCurrent instanceof PrometheusEncryptedPair)) {
@@ -209,27 +201,44 @@ public abstract class PrometheusEncryptedDataItem
 
         /* Create the new encrypted value */
         final PrometheusEncryptedPair myCurr = (PrometheusEncryptedPair) myCurrent;
-        final PrometheusEncryptedPair myField = theGenerator.encryptValue(myCurr, pValue);
+        final PrometheusEncryptedPair myField = theEncryptor.encryptValue(myCurr, pValue);
 
         /* Store the new value */
-        myValueSet.setValue(pField, myField);
+        myValueSet.setValue(myFieldDef, myField);
     }
 
     /**
      * Set encrypted value.
-     * @param pField the field to set
+     * @param pFieldId the fieldId to set
      * @param pEncrypted the encrypted value to set
-     * @param pClass the class of the value
-     * @throws OceanusException on error
+      * @throws OceanusException on error
      */
-    protected final void setEncryptedValue(final MetisLetheField pField,
-                                           final byte[] pEncrypted,
-                                           final Class<?> pClass) throws OceanusException {
+    protected final void setEncryptedValue(final MetisDataFieldId pFieldId,
+                                           final byte[] pEncrypted) throws OceanusException {
         /* Create the new encrypted value */
-        final PrometheusEncryptedPair myField = theGenerator.decryptValue(pEncrypted, pClass);
+        final MetisFieldDef myFieldDef = getDataFieldSet().getField(pFieldId);
+        final PrometheusEncryptedPair myField = theEncryptor.decryptValue(pEncrypted, myFieldDef);
 
         /* Store the new value */
-        getValueSet().setValue(pField, myField);
+        getValues().setValue(myFieldDef, myField);
+    }
+
+    /**
+     * Set encrypted value.
+     * @param pFieldId the fieldId to set
+     * @param pEncrypted the encrypted value to set
+     * @param pClazz the class to decrypt to
+     * @throws OceanusException on error
+     */
+    protected final void setEncryptedValue(final MetisDataFieldId pFieldId,
+                                           final byte[] pEncrypted,
+                                           final Class<?> pClazz) throws OceanusException {
+        /* Create the new encrypted value */
+        final MetisFieldDef myFieldDef = getDataFieldSet().getField(pFieldId);
+        final PrometheusEncryptedPair myField = theEncryptor.decryptValue(pEncrypted, pClazz);
+
+        /* Store the new value */
+        getValues().setValue(myFieldDef, myField);
     }
 
     /**
@@ -260,7 +269,7 @@ public abstract class PrometheusEncryptedDataItem
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
+        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());
     }
 
     /**
@@ -275,10 +284,10 @@ public abstract class PrometheusEncryptedDataItem
         setValueDataKeySet(pKeySet);
 
         /* Access underlying values if they exist */
-        final PrometheusEncryptedValueSet myBaseValues = pBase.getValueSet();
+        final PrometheusEncryptedValues myBaseValues = pBase.getValues();
 
         /* Try to adopt the underlying */
-        getValueSet().adoptSecurity(theGenerator, myBaseValues);
+        getValues().adoptSecurity(myBaseValues);
     }
 
     /**
@@ -291,7 +300,7 @@ public abstract class PrometheusEncryptedDataItem
         setValueDataKeySet(pKeySet);
 
         /* Initialise security */
-        getValueSet().adoptSecurity(theGenerator, null);
+        getValues().adoptSecurity(null);
     }
 
     /**
@@ -312,7 +321,7 @@ public abstract class PrometheusEncryptedDataItem
         setDataKeySet(pKeySet);
 
         /* Update all elements */
-        getValueSet().updateSecurity(theGenerator);
+        getValues().updateSecurity();
     }
 
     /**
@@ -441,7 +450,7 @@ public abstract class PrometheusEncryptedDataItem
             while (myIterator.hasNext()) {
                 /* Locate the item in the base list */
                 final PrometheusEncryptedDataItem myCurr = myIterator.next();
-                final PrometheusEncryptedDataItem myBase = pBase.findItemById(myCurr.getId());
+                final PrometheusEncryptedDataItem myBase = pBase.findItemById(myCurr.getIndexedId());
 
                 /* Access target correctly */
                 final T myTarget = myClass.cast(myCurr);
@@ -453,7 +462,7 @@ public abstract class PrometheusEncryptedDataItem
 
                     /* Obtain required KeySet */
                     PrometheusDataKeySet mySet = myBase.getDataKeySet();
-                    mySet = mySets.findItemById(mySet.getId());
+                    mySet = mySets.findItemById(mySet.getIndexedId());
 
                     /* Adopt the security */
                     myTarget.adoptSecurity(mySet, mySource);

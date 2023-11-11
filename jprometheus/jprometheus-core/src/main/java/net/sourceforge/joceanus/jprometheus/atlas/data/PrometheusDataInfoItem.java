@@ -18,14 +18,9 @@ package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
-import net.sourceforge.joceanus.jprometheus.atlas.field.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -51,27 +46,17 @@ public abstract class PrometheusDataInfoItem
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_NAME.getValue(), PrometheusEncryptedDataItem.FIELD_DEFS);
+    private static final PrometheusEncryptedFieldSet<PrometheusDataInfoItem> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusDataInfoItem.class);
 
-    /**
-     * InfoType Field Id.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue(), MetisDataType.LINK);
-
-    /**
-     * Owner Field Id.
-     */
-    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue(), MetisDataType.LINK);
-
-    /**
-     * Value Field Id.
-     */
-    public static final MetisLetheField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue(), MetisDataType.CONTEXT);
-
-    /**
-     * Link Field Id.
-     */
-    public static final MetisLetheField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
+    static {
+        FIELD_DEFS.declareLinkField(PrometheusDataResource.DATAINFO_TYPE);
+        FIELD_DEFS.declareLinkField(PrometheusDataResource.DATAINFO_OWNER);
+        FIELD_DEFS.declareEncryptedContextField(PrometheusDataResource.DATAINFO_VALUE);
+        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.DATAINFO_LINK);
+    }
 
     /**
      * Invalid Data Type Error.
@@ -164,7 +149,7 @@ public abstract class PrometheusDataInfoItem
         super(pList, pValues);
 
         /* Store the InfoType */
-        Object myValue = pValues.getValue(FIELD_INFOTYPE);
+        Object myValue = pValues.getValue(PrometheusDataResource.DATAINFO_TYPE);
         if (myValue instanceof Integer) {
             setValueInfoType((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -174,7 +159,7 @@ public abstract class PrometheusDataInfoItem
         }
 
         /* Store the Owner */
-        myValue = pValues.getValue(FIELD_OWNER);
+        myValue = pValues.getValue(PrometheusDataResource.DATAINFO_OWNER);
         if (myValue instanceof Integer) {
             setValueOwner((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -185,42 +170,10 @@ public abstract class PrometheusDataInfoItem
     }
 
     @Override
-    public MetisFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public boolean skipField(final MetisLetheField pField) {
-        if ((FIELD_LINK.equals(pField)) && !isInfoLink()) {
-            return true;
-        }
-        if ((FIELD_VALUE.equals(pField)) && isInfoLink()) {
-            return true;
-        }
-        return super.skipField(pField);
-    }
-
-    /**
-     * Is this item a link as far as skipField is concerned?
-     * @return true/false
-     */
-    private boolean isInfoLink() {
-        /* Access Info Class Value */
-        final PrometheusEncryptedValueSet myValues = getValueSet();
-        final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
-        if (!(myType instanceof PrometheusStaticDataItem)) {
-            return false;
-        }
-
-        /* Access class */
-        return getInfoClass().isLink();
-    }
-
-    @Override
     public String toString() {
         /* Access Info Type Value */
-        final PrometheusEncryptedValueSet myValues = getValueSet();
-        final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        final PrometheusEncryptedValues myValues = getValues();
+        final Object myType = myValues.getValue(PrometheusDataResource.DATAINFO_TYPE, Object.class);
         if (!(myType instanceof PrometheusStaticDataItem)) {
             return super.toString();
         }
@@ -235,8 +188,8 @@ public abstract class PrometheusDataInfoItem
     @Override
     public String formatObject(final TethysUIDataFormatter pFormatter) {
         /* Access Info Type Value */
-        final PrometheusEncryptedValueSet myValues = getValueSet();
-        final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        final PrometheusEncryptedValues myValues = getValues();
+        final Object myType = myValues.getValue(PrometheusDataResource.DATAINFO_TYPE, Object.class);
         if (!(myType instanceof PrometheusStaticDataItem)) {
             return super.formatObject(pFormatter);
         }
@@ -275,7 +228,7 @@ public abstract class PrometheusDataInfoItem
      * @return the InfoTypeId
      */
     public Integer getInfoTypeId() {
-        return getInfoType(getValueSet(), PrometheusDataItem.class).getId();
+        return getInfoType().getIndexedId();
     }
 
     /**
@@ -289,7 +242,7 @@ public abstract class PrometheusDataInfoItem
      * @return the OwnerId
      */
     public Integer getOwnerId() {
-        return getOwner(getValueSet(), PrometheusDataItem.class).getId();
+        return getOwner().getIndexedId();
     }
 
     /**
@@ -299,7 +252,7 @@ public abstract class PrometheusDataInfoItem
      * @return the Link
      */
     public <X extends PrometheusDataItem> X getLink(final Class<X> pClass) {
-        return getLink(getValueSet(), pClass);
+        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, pClass);
     }
 
     /**
@@ -315,7 +268,7 @@ public abstract class PrometheusDataInfoItem
      * @return the Link
      */
     protected PrometheusDataItem getLink() {
-        return getLink(getValueSet());
+        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, PrometheusDataItem.class);
     }
 
     /**
@@ -325,7 +278,7 @@ public abstract class PrometheusDataInfoItem
      * @return the Value
      */
     public <X> X getValue(final Class<X> pClass) {
-        return getValue(getValueSet(), pClass);
+        return getValues().getValue(PrometheusDataResource.DATAINFO_VALUE, pClass);
     }
 
     /**
@@ -333,7 +286,7 @@ public abstract class PrometheusDataInfoItem
      * @return the Value
      */
     public PrometheusEncryptedPair getField() {
-        return getField(getValueSet());
+        return getField(getValues());
     }
 
     /**
@@ -341,40 +294,7 @@ public abstract class PrometheusDataInfoItem
      * @return the Bytes
      */
     public byte[] getValueBytes() {
-        return getValueBytes(getValueSet());
-    }
-
-    /**
-     * Obtain InfoType.
-     * @param <X> the infoType
-     * @param pValueSet the valueSet
-     * @param pClass the class of the infoType
-     * @return the Info types
-     */
-    protected static <X> X getInfoType(final MetisValueSet pValueSet,
-                                       final Class<X> pClass) {
-        return pValueSet.getValue(FIELD_INFOTYPE, pClass);
-    }
-
-    /**
-     * Obtain Owner.
-     * @param <X> the infoType
-     * @param pValueSet the valueSet
-     * @param pClass the class of the owner
-     * @return the Owner
-     */
-    protected static <X> X getOwner(final MetisValueSet pValueSet,
-                                    final Class<X> pClass) {
-        return pValueSet.getValue(FIELD_OWNER, pClass);
-    }
-
-    /**
-     * Obtain Encrypted Bytes.
-     * @param pValueSet the valueSet
-     * @return the Bytes
-     */
-    public static byte[] getValueBytes(final PrometheusEncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_VALUE);
+        return getValues().getEncryptedBytes(PrometheusDataResource.DATAINFO_VALUE);
     }
 
     /**
@@ -384,11 +304,11 @@ public abstract class PrometheusDataInfoItem
      * @param pClass the object class
      * @return the Value
      */
-    public static <X> X getValue(final PrometheusEncryptedValueSet pValueSet,
+    public static <X> X getValue(final PrometheusEncryptedValues pValueSet,
                                  final Class<X> pClass) {
         return pValueSet.isDeletion()
                 ? null
-                : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
+                : pValueSet.getValue(PrometheusDataResource.DATAINFO_VALUE, pClass);
     }
 
     /**
@@ -396,41 +316,19 @@ public abstract class PrometheusDataInfoItem
      * @param pValueSet the valueSet
      * @return the Value
      */
-    public static PrometheusEncryptedPair getField(final PrometheusEncryptedValueSet pValueSet) {
+    public static PrometheusEncryptedPair getField(final PrometheusEncryptedValues pValueSet) {
         return pValueSet.isDeletion()
                 ? null
-                : pValueSet.getValue(FIELD_VALUE, PrometheusEncryptedPair.class);
+                : pValueSet.getEncryptedPair(PrometheusDataResource.DATAINFO_VALUE);
     }
 
-    /**
-     * Obtain Associated Link.
-     * @param <X> the link type
-     * @param pValueSet the valueSet
-     * @param pClass the class of the link
-     * @return the Link
-     */
-    public static <X extends PrometheusDataItem> X getLink(final MetisValueSet pValueSet,
-                                                 final Class<X> pClass) {
-        return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_LINK, pClass);
-    }
-
-    /**
-     * Obtain Associated Link.
-     * @param pValueSet the valueSet
-     * @return the Link
-     */
-    protected static PrometheusDataItem getLink(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_LINK, PrometheusDataItem.class);
-    }
 
     /**
      * Set InfoType.
      * @param pValue the info Type
      */
     protected final void setValueInfoType(final PrometheusStaticDataItem pValue) {
-        getValueSet().setValue(FIELD_INFOTYPE, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_TYPE, pValue);
     }
 
     /**
@@ -438,7 +336,7 @@ public abstract class PrometheusDataInfoItem
      * @param pId the info Type id
      */
     protected final void setValueInfoType(final Integer pId) {
-        getValueSet().setValue(FIELD_INFOTYPE, pId);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_TYPE, pId);
     }
 
     /**
@@ -446,7 +344,7 @@ public abstract class PrometheusDataInfoItem
      * @param pName the info Type name
      */
     protected final void setValueInfoType(final String pName) {
-        getValueSet().setValue(FIELD_INFOTYPE, pName);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_TYPE, pName);
     }
 
     /**
@@ -454,7 +352,7 @@ public abstract class PrometheusDataInfoItem
      * @param pValue the owner
      */
     protected final void setValueOwner(final PrometheusDataItem pValue) {
-        getValueSet().setValue(FIELD_OWNER, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_OWNER, pValue);
     }
 
     /**
@@ -462,7 +360,7 @@ public abstract class PrometheusDataInfoItem
      * @param pId the owner id
      */
     protected final void setValueOwner(final Integer pId) {
-        getValueSet().setValue(FIELD_OWNER, pId);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_OWNER, pId);
     }
 
     /**
@@ -470,7 +368,7 @@ public abstract class PrometheusDataInfoItem
      * @param pName the owner name
      */
     protected final void setValueOwner(final String pName) {
-        getValueSet().setValue(FIELD_OWNER, pName);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_OWNER, pName);
     }
 
     /**
@@ -479,8 +377,8 @@ public abstract class PrometheusDataInfoItem
      * @throws OceanusException on error
      */
     protected void setValueValue(final Object pValue) throws OceanusException {
-        getValueSet().setDeletion(false);
-        setEncryptedValue(FIELD_VALUE, pValue);
+        getValues().setDeletion(false);
+        setEncryptedValue(PrometheusDataResource.DATAINFO_VALUE, pValue);
     }
 
     /**
@@ -488,9 +386,9 @@ public abstract class PrometheusDataInfoItem
      * @param pValue the value
      */
     protected void setValueValue(final PrometheusEncryptedPair pValue) {
-        final MetisValueSet myValues = getValueSet();
+        final PrometheusEncryptedValues myValues = getValues();
         myValues.setDeletion(false);
-        myValues.setValue(FIELD_VALUE, pValue);
+        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_VALUE, pValue);
     }
 
     /**
@@ -502,7 +400,7 @@ public abstract class PrometheusDataInfoItem
      */
     protected <X> void setValueBytes(final byte[] pBytes,
                                      final Class<X> pClass) throws OceanusException {
-        setEncryptedValue(FIELD_VALUE, pBytes, pClass);
+        setEncryptedValue(PrometheusDataResource.DATAINFO_VALUE, pBytes, pClass);
     }
 
     /**
@@ -510,9 +408,9 @@ public abstract class PrometheusDataInfoItem
      * @param pLink the link
      */
     protected void setValueLink(final PrometheusDataItem pLink) {
-        final MetisValueSet myValues = getValueSet();
+        final PrometheusEncryptedValues myValues = getValues();
         myValues.setDeletion(false);
-        myValues.setValue(FIELD_LINK, pLink);
+        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pLink);
     }
 
     /**
@@ -520,8 +418,8 @@ public abstract class PrometheusDataInfoItem
      * @param pId the linkId
      */
     private void setValueLink(final Integer pId) {
-        final MetisValueSet myValues = getValueSet();
-        myValues.setValue(FIELD_LINK, pId);
+        final PrometheusEncryptedValues myValues = getValues();
+        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pId);
     }
 
     /**
@@ -529,8 +427,8 @@ public abstract class PrometheusDataInfoItem
      * @param pName the linkName
      */
     protected void setValueLink(final String pName) {
-        final MetisValueSet myValues = getValueSet();
-        myValues.setValue(FIELD_LINK, pName);
+        final PrometheusEncryptedValues myValues = getValues();
+        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pName);
     }
 
     /**
@@ -538,7 +436,7 @@ public abstract class PrometheusDataInfoItem
      */
     public void markDeleted() {
         /* Set deletion indication */
-        getValueSet().setDeletion(true);
+        getValues().setDeletion(true);
     }
 
     @Override
@@ -688,7 +586,7 @@ public abstract class PrometheusDataInfoItem
                 return true;
             } else if (pValue instanceof PrometheusDataItem) {
                 final PrometheusDataItem myItem = (PrometheusDataItem) pValue;
-                setValueValue(myItem.getId());
+                setValueValue(myItem.getIndexedId());
                 setValueLink(myItem);
                 return true;
             }
@@ -860,17 +758,17 @@ public abstract class PrometheusDataInfoItem
 
         /* InfoType must be non-null */
         if (myType == null) {
-            addError(ERROR_MISSING, FIELD_INFOTYPE);
+            addError(ERROR_MISSING, PrometheusDataResource.DATAINFO_TYPE);
         }
 
         /* Owner must be non-null */
         if (myOwner == null) {
-            addError(ERROR_MISSING, FIELD_OWNER);
+            addError(ERROR_MISSING, PrometheusDataResource.DATAINFO_OWNER);
         }
 
         /* Value must be non-null */
         if (myValue == null) {
-            addError(ERROR_MISSING, FIELD_VALUE);
+            addError(ERROR_MISSING, PrometheusDataResource.DATAINFO_VALUE);
         }
 
         /* Set validation flag */

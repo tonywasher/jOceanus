@@ -14,10 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.field;
+package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
@@ -38,7 +39,7 @@ public class PrometheusEncryptedValues
      * Constructor.
      * @param pItem the associated item
      */
-    public PrometheusEncryptedValues(final PrometheusEncryptedItem pItem) {
+    public PrometheusEncryptedValues(final PrometheusEncryptedDataItem pItem) {
         super(pItem);
     }
 
@@ -51,8 +52,8 @@ public class PrometheusEncryptedValues
     }
 
     @Override
-    protected PrometheusEncryptedItem getItem() {
-        return (PrometheusEncryptedItem) super.getItem();
+    protected PrometheusEncryptedDataItem getItem() {
+        return (PrometheusEncryptedDataItem) super.getItem();
     }
 
     @Override
@@ -80,6 +81,17 @@ public class PrometheusEncryptedValues
 
     /**
      * Obtain the encrypted bytes.
+     * @param pFieldId the fieldId
+     * @return the encrypted bytes
+     */
+    public byte[] getEncryptedBytes(final MetisDataFieldId pFieldId) {
+        /* Access the underlying object */
+        final MetisFieldDef myField = getItem().getDataFieldSet().getField(pFieldId);
+        return getEncryptedBytes(myField);
+    }
+
+    /**
+     * Obtain the encrypted bytes.
      * @param pField the field
      * @return the encrypted bytes
      */
@@ -89,8 +101,34 @@ public class PrometheusEncryptedValues
 
         /* If this is an encrypted value */
         return myValue instanceof PrometheusEncryptedPair
-               ? ((PrometheusEncryptedPair) myValue).getBytes()
-               : null;
+                ? ((PrometheusEncryptedPair) myValue).getBytes()
+                : null;
+    }
+
+    /**
+     * Obtain the encrypted pair.
+     * @param pFieldId the fieldId
+     * @return the encrypted pair
+     */
+    public PrometheusEncryptedPair getEncryptedPair(final MetisDataFieldId pFieldId) {
+        /* Access the underlying object */
+        final MetisFieldDef myField = getItem().getDataFieldSet().getField(pFieldId);
+        return getEncryptedPair(myField);
+    }
+
+    /**
+     * Obtain the encrypted pair.
+     * @param pField the field
+     * @return the encrypted pair
+     */
+    public PrometheusEncryptedPair getEncryptedPair(final MetisFieldDef pField) {
+        /* Access the underlying object */
+        final Object myValue = super.getValue(pField);
+
+        /* If this is an encrypted value */
+        return myValue instanceof PrometheusEncryptedPair
+                ? (PrometheusEncryptedPair) myValue
+                : null;
     }
 
     @Override
@@ -178,12 +216,10 @@ public class PrometheusEncryptedValues
 
     /**
      * Adopt security for the values.
-     * @param pGenerator the generator
      * @param pBaseValues the base values
      * @throws OceanusException on error
      */
-    public void adoptSecurity(final PrometheusFieldGenerator pGenerator,
-                              final PrometheusEncryptedValues pBaseValues) throws OceanusException {
+    public void adoptSecurity(final PrometheusEncryptedValues pBaseValues) throws OceanusException {
         /* Loop through the fields */
         final MetisFieldSetDef myFieldSet = getFields();
         final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();

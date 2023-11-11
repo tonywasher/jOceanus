@@ -110,6 +110,17 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
     }
 
     /**
+     * Declare versioned byteArray field.
+     * @param pId the fieldId
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisFieldVersioned<T> declareByteArrayField(final MetisDataFieldId pId,
+                                                        final int pMaxLength) {
+        return declareEqualityVersionedField(pId, MetisDataType.BYTEARRAY, pMaxLength);
+    }
+
+    /**
      * Declare versioned short field.
      * @param pId the fieldId
      * @return the field
@@ -197,6 +208,15 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      */
     public MetisFieldVersioned<T> declareRatioField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned enum field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisFieldVersioned<T> declareEnumField(final MetisDataFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.ENUM, FIELD_NO_MAXLENGTH);
     }
 
     /**

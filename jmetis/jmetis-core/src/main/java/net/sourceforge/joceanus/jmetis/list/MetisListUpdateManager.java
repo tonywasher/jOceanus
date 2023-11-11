@@ -192,7 +192,7 @@ public final class MetisListUpdateManager {
             /* If this is to be handled in this phase */
             if (pPhase.checkStateInPhase(myState)) {
                 /* Access further details */
-                final MetisFieldVersionValues myValues = myCurr.getValueSet();
+                final MetisFieldVersionValues myValues = myCurr.getValues();
                 final int myId = myCurr.getIndexedId();
                 final T myBase = myBaseList.getItemById(myId);
 
@@ -456,8 +456,8 @@ public final class MetisListUpdateManager {
             pUpdates.removeFromList(pCurr);
         } else {
             /* Replace the current values */
-            final MetisFieldVersionValues myBase = pBase.getValueSet();
-            final MetisFieldVersionValues mySet = pCurr.getValueSet();
+            final MetisFieldVersionValues myBase = pBase.getValues();
+            final MetisFieldVersionValues mySet = pCurr.getValues();
             mySet.copyFrom(myBase);
         }
     }
@@ -550,7 +550,7 @@ public final class MetisListUpdateManager {
         final T myNew = pList.newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisFieldVersionValues mySet = pCurr.getValueSet();
+        MetisFieldVersionValues mySet = pCurr.getValues();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the original value set as the base value */
@@ -578,7 +578,7 @@ public final class MetisListUpdateManager {
         final T myNew = pList.newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
-        final MetisFieldVersionValues myBaseSet = pBase.getValueSet();
+        final MetisFieldVersionValues myBaseSet = pBase.getValues();
         final MetisFieldVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
         mySet.setVersion(1);

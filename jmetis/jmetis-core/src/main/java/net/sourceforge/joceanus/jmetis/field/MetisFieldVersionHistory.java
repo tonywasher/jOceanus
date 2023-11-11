@@ -127,7 +127,7 @@ public class MetisFieldVersionHistory
      * Push Item to the history.
      * @param pVersion the new version
      */
-    protected void pushHistory(final int pVersion) {
+    public void pushHistory(final int pVersion) {
         /* Create a new ValueSet */
         final MetisFieldVersionValues mySet = theCurr.cloneIt();
         mySet.setVersion(pVersion);
@@ -201,7 +201,7 @@ public class MetisFieldVersionHistory
      * Set history explicitly.
      * @param pBase the base item
      */
-    protected void setHistory(final MetisFieldVersionValues pBase) {
+    public void setHistory(final MetisFieldVersionValues pBase) {
         theStack.clear();
         theDeltas.clear();
         theOriginal = theCurr.cloneIt();
@@ -249,7 +249,7 @@ public class MetisFieldVersionHistory
      * @param pField the field
      * @return the difference
      */
-    protected MetisDataDifference fieldChanged(final MetisFieldDef pField) {
+    public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
         /* Handle irrelevant cases */
         if (!(pField instanceof MetisFieldVersionedDef)) {
             return MetisDataDifference.IDENTICAL;

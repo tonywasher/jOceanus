@@ -26,12 +26,9 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
@@ -63,37 +60,16 @@ public final class PrometheusControlKey
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, PrometheusDataItem.FIELD_DEFS);
+    private static final MetisFieldVersionedSet<PrometheusControlKey> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusControlKey.class);
 
-    /**
-     * HashPrime Field Id.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
-
-    /**
-     * Field ID for PrimeHashBytes.
-     */
-    public static final MetisLetheField FIELD_PRIMEBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIMEBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
-
-    /**
-     * Field ID for AltHashBytes.
-     */
-    public static final MetisLetheField FIELD_ALTBYTES = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_ALTBYTES.getValue(), MetisDataType.BYTEARRAY, HASHLEN);
-
-    /**
-     * Field ID for Prime keySetHash.
-     */
-    public static final MetisLetheField FIELD_PRIMEHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_PRIMEHASH.getValue());
-
-    /**
-     * Field ID for Alternate keySetHash.
-     */
-    public static final MetisLetheField FIELD_ALTHASH = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.CONTROLKEY_ALTHASH.getValue());
-
-    /**
-     * Field ID for DataKeySet.
-     */
-    public static final MetisLetheField FIELD_SETS = FIELD_DEFS.declareLocalField(PrometheusDataKeySet.LIST_NAME);
+    static {
+        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.CONTROLKEY_BYTES, HASHLEN);
+        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.CONTROLKEY_HASH);
+        FIELD_DEFS.declareLocalField(PrometheusDataKeySet.LIST_NAME, PrometheusControlKey::getDataKeySets);
+    }
 
     /**
      * Name of Database.
@@ -120,26 +96,41 @@ public final class PrometheusControlKey
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
+     * @throws OceanusException on error
      */
     private PrometheusControlKey(final PrometheusControlKeyList pList,
-                                 final PrometheusDataValues pValues) {
+                                 final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Store Prime indication */
-        Object myValue = pValues.getValue(FIELD_HASHPRIME);
-        if (myValue instanceof Boolean) {
-            setValueHashPrime((Boolean) myValue);
-        }
+        /* Protect against exceptions */
+        try {
+            /* Store HashBytes */
+            Object myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_BYTES);
+            if (myValue instanceof byte[]) {
+                setValueHashBytes((byte[]) myValue);
+            }
 
-        /* Store the Prime/AltHashBytes */
-        myValue = pValues.getValue(FIELD_PRIMEBYTES);
-        if (myValue instanceof byte[]) {
-            setValuePrimeHashBytes((byte[]) myValue);
-        }
-        myValue = pValues.getValue(FIELD_ALTBYTES);
-        if (myValue instanceof byte[]) {
-            setValueAltHashBytes((byte[]) myValue);
+            /* Store/Resolve Hash */
+            myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_HASH);
+            if (myValue instanceof GordianKeySetHash) {
+                setValueKeySetHash((GordianKeySetHash) myValue);
+            } else if (getHashBytes() != null) {
+                /* Access the Security manager */
+                final PrometheusDataSet myData = getDataSet();
+                final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
+
+                /* Resolve the keySetHash */
+                final GordianKeySetHash myHash = myPasswordMgr.resolveKeySetHash(getHashBytes(), NAME_DATABASE);
+
+                /* Store the keySetHash */
+                setValueKeySetHash(myHash);
+            }
+
+            /* Catch Exceptions */
+        } catch (OceanusException e) {
+            /* Pass on exception */
+            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -164,8 +155,8 @@ public final class PrometheusControlKey
             final GordianKeySetHash myHash = myPasswordMgr.newKeySetHash(NAME_DATABASE);
 
             /* Store the password hash */
-            setValueHashPrime(Boolean.TRUE);
-            setValuePrimeKeySetHash(myHash);
+            setValueHashBytes(myHash.getHash());
+            setValueKeySetHash(myHash);
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);
@@ -202,8 +193,8 @@ public final class PrometheusControlKey
             final GordianKeySetHash myHash = myPasswordMgr.similarKeySetHash(myData.getKeySetHash());
 
             /* Store the password Hash */
-            setValueHashPrime(Boolean.TRUE);
-            setValuePrimeKeySetHash(myHash);
+            setValueHashBytes(myHash.getHash());
+            setValueKeySetHash(myHash);
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);
@@ -216,155 +207,50 @@ public final class PrometheusControlKey
     }
 
     @Override
-    public MetisFields declareFields() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
-    @Override
-    public Object getFieldValue(final MetisLetheField pField) {
-        if (FIELD_SETS.equals(pField)) {
-            return theDataKeySet;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    /**
-     * Is the prime hash active?
-     * @return true/false
+   /**
+     * Obtain the dataKeySetResource.
+     * @return the dataKeySets
      */
-    public Boolean isHashPrime() {
-        return isHashPrime(getValueSet());
+    private DataKeySetResource getDataKeySets() {
+        return theDataKeySet;
     }
 
     /**
-     * Get the PrimeHashBytes.
+     * Get the HashBytes.
      * @return the hash bytes
      */
-    public byte[] getPrimeHashBytes() {
-        return getPrimeHashBytes(getValueSet());
+    public byte[] getHashBytes() {
+        return getValues().getValue(PrometheusDataResource.CONTROLKEY_BYTES, byte[].class);
     }
 
     /**
-     * Get the AltHashBytes.
-     * @return the hash bytes
-     */
-    public byte[] getAltHashBytes() {
-        return getAltHashBytes(getValueSet());
-    }
-
-    /**
-     * Get the Prime keySetHash.
+     * Get the keySetHash.
      * @return the prime keySetHash
-     * @throws OceanusException on error
      */
-    GordianKeySetHash getPrimeKeySetHash() throws OceanusException {
-        final GordianKeySetHash myHash = getPrimeKeySetHash(getValueSet());
-        return (myHash == null)
-                ? resolvePrimeHash()
-                : myHash;
-    }
-
-    /**
-     * Get the Alternate keySetHash.
-     * @return the alternate keySetHash
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash getAltKeySetHash() throws OceanusException {
-        final GordianKeySetHash myHash = getAltKeySetHash(getValueSet());
-        return (myHash == null)
-                ? resolveAltHash()
-                : myHash;
-    }
-
-    /**
-     * Is the prime hash active?
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isHashPrime(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_HASHPRIME, Boolean.class);
-    }
-
-    /**
-     * Get the PrimeHashBytes for the valueSet.
-     * @param pValueSet the ValueSet
-     * @return the hash bytes
-     */
-    public static byte[] getPrimeHashBytes(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRIMEBYTES, byte[].class);
-    }
-
-    /**
-     * Get the AltHashBytes for the valueSet.
-     * @param pValueSet the ValueSet
-     * @return the hash bytes
-     */
-    public static byte[] getAltHashBytes(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ALTBYTES, byte[].class);
-    }
-
-    /**
-     * Get the Prime keySetHash for the valueSet.
-     * @param pValueSet the ValueSet
-     * @return the keySetHash
-     */
-    static GordianKeySetHash getPrimeKeySetHash(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PRIMEHASH, GordianKeySetHash.class);
-    }
-
-    /**
-     * Get the Alternate keySetHash for the valueSet.
-     * @param pValueSet the ValueSet
-     * @return the keySetHash
-     */
-    static GordianKeySetHash getAltKeySetHash(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ALTHASH, GordianKeySetHash.class);
-    }
-
-    /**
-     * Set the HashPrime indicator.
-     * @param pPrime true/false
-     */
-    private void setValueHashPrime(final Boolean pPrime) {
-        getValueSet().setValue(FIELD_HASHPRIME, pPrime);
-    }
-
-    /**
-     * Set the PrimeKeySetHash.
-     * @param pValue the keySetHash
-     */
-    private void setValuePrimeKeySetHash(final GordianKeySetHash pValue) {
-        getValueSet().setValue(FIELD_PRIMEHASH, pValue);
-        setValuePrimeHashBytes((pValue == null)
-                ? null
-                : pValue.getHash());
-    }
-
-    /**
-     * Set the AltKeySetHash.
-     * @param pValue the keySetHash
-     */
-    private void setValueAltKeySetHash(final GordianKeySetHash pValue) {
-        getValueSet().setValue(FIELD_ALTHASH, pValue);
-        setValueAltHashBytes((pValue == null)
-                ? null
-                : pValue.getHash());
+    public GordianKeySetHash getKeySetHash() {
+        return getValues().getValue(PrometheusDataResource.CONTROLKEY_HASH, GordianKeySetHash.class);
     }
 
     /**
      * Set the Prime Hash Bytes.
      * @param pValue the Hash bytes
+     * @throws OceanusException on error
      */
-    private void setValuePrimeHashBytes(final byte[] pValue) {
-        getValueSet().setValue(FIELD_PRIMEBYTES, pValue);
+    private void setValueHashBytes(final byte[] pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.CONTROLKEY_BYTES, pValue);
     }
 
     /**
-     * Set the Alternate Hash Bytes.
-     * @param pValue the Hash bytes
+     * Set the PrimeKeySetHash.
+     * @param pValue the keySetHash
+     * @throws OceanusException on error
      */
-    private void setValueAltHashBytes(final byte[] pValue) {
-        getValueSet().setValue(FIELD_ALTBYTES, pValue);
+    private void setValueKeySetHash(final GordianKeySetHash pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.CONTROLKEY_HASH, pValue);
     }
 
     @Override
@@ -383,75 +269,6 @@ public final class PrometheusControlKey
      */
     PrometheusDataKeySet getNextDataKeySet() {
         return theDataKeySet.getNextDataKeySet();
-    }
-
-    /**
-     * Obtain the active keySetHash.
-     * @return the active keySetHash
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash getKeySetHash() throws OceanusException {
-        return getKeySetHash(isHashPrime());
-    }
-
-    /**
-     * Obtain the required keySetHash.
-     * @param pUsePrime return prime hash (true/false)
-     * @return the requested keySetHash
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash getKeySetHash(final Boolean pUsePrime) throws OceanusException {
-        return Boolean.TRUE.equals(pUsePrime)
-                ? getPrimeKeySetHash()
-                : getAltKeySetHash();
-    }
-
-    /**
-     * Resolve the active Hash.
-     * @throws OceanusException on error
-     */
-    void resolveHash() throws OceanusException {
-        if (Boolean.TRUE.equals(isHashPrime())) {
-            resolvePrimeHash();
-        } else {
-            resolveAltHash();
-        }
-    }
-
-    /**
-     * Resolve prime Hash.
-     * @return the resolved Hash
-     * @throws OceanusException on error
-     */
-    private GordianKeySetHash resolvePrimeHash() throws OceanusException {
-        /* Access the Security manager */
-        final PrometheusDataSet myData = getDataSet();
-        final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
-
-        /* Resolve the keySetHash */
-        final GordianKeySetHash myHash = myPasswordMgr.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
-
-        /* Store the keySetHash */
-        setValuePrimeKeySetHash(myHash);
-        return myHash;
-    }
-
-    /**
-     * Resolve alternate Hash.
-     * @return the resolved Hash
-     * @throws OceanusException on error
-     */
-    private GordianKeySetHash resolveAltHash() throws OceanusException {
-        /* Access the Security manager */
-        final PrometheusDataSet myData = getDataSet();
-        final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
-
-        /* Resolve the keySetHash */
-        final GordianKeySetHash myHash = myPasswordMgr.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);
-
-        /* Store the keySetHash */
-        setValueAltKeySetHash(myHash);
-        return myHash;
     }
 
     @Override
@@ -500,22 +317,11 @@ public final class PrometheusControlKey
      * @throws OceanusException on error
      */
     void updatePasswordHash(final GordianKeySetHash pHash) throws OceanusException {
-        /* Access current mode */
-        Boolean isHashPrime = isHashPrime();
-
         /* Store the current detail into history */
         pushHistory();
 
-        /* Flip hash Prime */
-        isHashPrime = !isHashPrime;
-        setValueHashPrime(isHashPrime);
-
         /* Update the keySetHash */
-        if (Boolean.TRUE.equals(isHashPrime)) {
-            setValuePrimeKeySetHash(pHash);
-        } else {
-            setValueAltKeySetHash(pHash);
-        }
+        setValueKeySetHash(pHash);
 
         /* Update the hash for the KeySet */
         ensureKeySetHash();
@@ -530,11 +336,10 @@ public final class PrometheusControlKey
      */
     void ensureKeySetHash() throws OceanusException {
         /* Access current mode */
-        final Boolean isHashPrime = isHashPrime();
         final GordianKeySetHash myHash = getKeySetHash();
 
         /* Update the hash for the KeySet */
-        if (theDataKeySet.updateKeySetHash(isHashPrime, myHash)) {
+        if (theDataKeySet.updateKeySetHash(myHash)) {
             final PrometheusDataSet myData = getDataSet();
             myData.setVersion(myData.getVersion() + 1);
         }
@@ -596,7 +401,7 @@ public final class PrometheusControlKey
         }
 
         @Override
-        public MetisFields getItemFields() {
+        public MetisFieldSet<PrometheusControlKey> getItemFields() {
             return PrometheusControlKey.FIELD_DEFS;
         }
 
@@ -647,8 +452,8 @@ public final class PrometheusControlKey
             final PrometheusControlKey myKey = new PrometheusControlKey(this, pValues);
 
             /* Check that this keyId has not been previously added */
-            if (!isIdUnique(myKey.getId())) {
-                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
+            if (!isIdUnique(myKey.getIndexedId())) {
+                myKey.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
                 throw new PrometheusDataException(myKey, ERROR_VALIDATION);
             }
 
@@ -743,10 +548,9 @@ public final class PrometheusControlKey
         private PrometheusControlKey cloneControlKey(final PrometheusControlKey pControlKey) throws OceanusException {
             /* Build data values */
             final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusControlKey.OBJECT_NAME);
-            myValues.addValue(PrometheusControlKey.FIELD_ID, pControlKey.getId());
-            myValues.addValue(PrometheusControlKey.FIELD_HASHPRIME, pControlKey.isHashPrime());
-            myValues.addValue(PrometheusControlKey.FIELD_PRIMEBYTES, pControlKey.getPrimeHashBytes());
-            myValues.addValue(PrometheusControlKey.FIELD_ALTBYTES, pControlKey.getAltHashBytes());
+            myValues.addValue(MetisDataResource.DATA_ID, pControlKey.getIndexedId());
+            myValues.addValue(PrometheusDataResource.CONTROLKEY_BYTES, pControlKey.getHashBytes());
+            myValues.addValue(PrometheusDataResource.CONTROLKEY_HASH, pControlKey.getKeySetHash());
 
             /* Clone the control key */
             final PrometheusControlKey myControl = addValuesItem(myValues);
@@ -878,13 +682,11 @@ public final class PrometheusControlKey
 
         /**
          * Update the Password Hash.
-         * @param pPrimeHash this is the prime hash
          * @param pHash the new keySetHash
          * @return were there changes? true/false
          * @throws OceanusException on error
          */
-        private boolean updateKeySetHash(final Boolean pPrimeHash,
-                                         final GordianKeySetHash pHash) throws OceanusException {
+        private boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
             /* Loop through the KeySets */
             boolean bChanges = false;
             final Iterator<PrometheusDataKeySet> myIterator = iterator();
@@ -892,7 +694,7 @@ public final class PrometheusControlKey
                 final PrometheusDataKeySet mySet = myIterator.next();
 
                 /* Update the KeySet */
-                bChanges |= mySet.updateKeySetHash(pPrimeHash, pHash);
+                bChanges |= mySet.updateKeySetHash(pHash);
             }
 
             /* return the flag */

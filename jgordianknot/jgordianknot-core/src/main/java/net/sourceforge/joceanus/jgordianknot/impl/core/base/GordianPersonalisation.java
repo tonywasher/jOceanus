@@ -38,7 +38,7 @@ public class GordianPersonalisation {
     /**
      * The Base personalisation.
      */
-    private static final String BASE_PERSONAL = "jG0rd1anKn0t";
+    protected static final String BASE_PERSONAL = "jG0rd1anKn0t";
 
     /**
      * Default iterations.

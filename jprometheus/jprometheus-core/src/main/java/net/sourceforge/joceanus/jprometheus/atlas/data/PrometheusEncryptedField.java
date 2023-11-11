@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.field;
+package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldVersioned;
  * Prometheus Data fields.
  * @param <T> the data type
  */
-public class PrometheusEncryptedField<T extends PrometheusEncryptedItem>
+public class PrometheusEncryptedField<T extends PrometheusEncryptedDataItem>
         extends MetisFieldVersioned<T> {
     /**
      * Constructor.

@@ -85,14 +85,4 @@ public class PrometheusDataErrorList
     public List<PrometheusDataItem> getUnderlyingList() {
         return theList;
     }
-
-    /// **
-    // * Obtain the first error
-    // * @return the first error (or null)
-    // */
-    // public DataItem<E> getFirst() {
-    // return isEmpty()
-    // ? null
-    // : theList.get(0);
-    // }
 }

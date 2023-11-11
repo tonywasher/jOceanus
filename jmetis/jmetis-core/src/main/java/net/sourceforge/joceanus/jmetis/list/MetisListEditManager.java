@@ -236,10 +236,10 @@ public final class MetisListEditManager {
                 /* else this is a standard changed item */
             } else {
                 /* Access set to be changed */
-                final MetisFieldVersionValues mySet = myItem.getValueSet();
+                final MetisFieldVersionValues mySet = myItem.getValues();
 
                 /* Access base set */
-                final MetisFieldVersionValues myBase = myCurr.getValueSet();
+                final MetisFieldVersionValues myBase = myCurr.getValues();
 
                 /* Reset values in the item */
                 mySet.copyFrom(myBase);
@@ -300,10 +300,10 @@ public final class MetisListEditManager {
         final T myNew = pList.newListItem(pBase.getIndexedId());
 
         /* Access the valueSet */
-        final MetisFieldVersionValues mySet = myNew.getValueSet();
+        final MetisFieldVersionValues mySet = myNew.getValues();
 
         /* Obtain a clone of the value set as the base value */
-        final MetisFieldVersionValues myBaseSet = pBase.getValueSet();
+        final MetisFieldVersionValues myBaseSet = pBase.getValues();
         mySet.copyFrom(myBaseSet);
         myNew.adjustState();
 

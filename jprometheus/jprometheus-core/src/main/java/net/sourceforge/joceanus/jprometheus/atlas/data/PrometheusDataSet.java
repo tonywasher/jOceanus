@@ -24,8 +24,10 @@ import java.util.Map.Entry;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlData.PrometheusControlDataList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlKey.PrometheusControlKeyList;
@@ -645,12 +647,7 @@ public abstract class PrometheusDataSet
         }
 
         /* Compare the maps */
-        if (!theListMap.equals(myThat.getListMap())) {
-            return false;
-        }
-
-        /* We are identical */
-        return true;
+        return theListMap.equals(myThat.getListMap());
     }
 
     @Override
@@ -966,7 +963,7 @@ public abstract class PrometheusDataSet
      * Cryptography Data Enum Types.
      */
     public enum PrometheusCryptographyDataType
-            implements PrometheusListKey {
+            implements PrometheusListKey, MetisDataFieldId {
         /**
          * ControlData.
          */
@@ -1028,6 +1025,19 @@ public abstract class PrometheusDataSet
         }
 
         @Override
+        public Class<? extends MetisFieldVersionedItem> getClazz() {
+            switch (this) {
+                case CONTROLDATA:
+                    return PrometheusControlData.class;
+                case CONTROLKEY:
+                    return PrometheusControlKey.class;
+                case DATAKEYSET:
+                    return PrometheusDataKeySet.class;
+            }
+            return null;
+        }
+
+        @Override
         public String getListName() {
             /* If we have not yet loaded the name */
             if (theListName == null) {
@@ -1042,6 +1052,11 @@ public abstract class PrometheusDataSet
         @Override
         public Integer getItemKey() {
             return theKey;
+        }
+
+        @Override
+        public String getId() {
+            return toString();
         }
     }
 }

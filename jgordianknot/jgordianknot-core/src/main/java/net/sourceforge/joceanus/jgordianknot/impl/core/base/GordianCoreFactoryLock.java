@@ -228,6 +228,7 @@ public class GordianCoreFactoryLock
             /* Initialise the macs */
             final GordianMac myMac = myMacs[i];
             myMac.initKeyBytes(myPassword);
+            myMac.update(TethysDataConverter.stringToByteArray(GordianPersonalisation.BASE_PERSONAL));
             myMac.update(theInit);
 
             /* Finish the update and store the buffer */
