@@ -14,83 +14,138 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.statics;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusListKey;
 
 /**
  * MoneyWise Item Types.
  */
-public enum MoneyWiseStaticDataType
+public enum MoneyWiseBasicDataType
         implements PrometheusListKey, MetisDataFieldId {
     /**
-     * DepositType.
+     * TransactionTag.
      */
-    DEPOSITTYPE(PrometheusCryptographyDataType.MAXKEYID + 1),
+    TRANSTAG(MoneyWiseStaticDataType.MAXKEYID + 1),
 
     /**
-     * CashType.
+     * Region.
      */
-    CASHTYPE(PrometheusCryptographyDataType.MAXKEYID + 2),
+    REGION(MoneyWiseStaticDataType.MAXKEYID + 2),
 
     /**
-     * LoanType.
+     * DepositCategory.
      */
-    LOANTYPE(PrometheusCryptographyDataType.MAXKEYID + 3),
+    DEPOSITCATEGORY(MoneyWiseStaticDataType.MAXKEYID + 3),
 
     /**
-     * PortfolioType.
+     * CashCategory.
      */
-    PORTFOLIOTYPE(PrometheusCryptographyDataType.MAXKEYID + 4),
+    CASHCATEGORY(MoneyWiseStaticDataType.MAXKEYID + 4),
 
     /**
-     * SecurityType.
+     * LoanCategory.
      */
-    SECURITYTYPE(PrometheusCryptographyDataType.MAXKEYID + 5),
+    LOANCATEGORY(MoneyWiseStaticDataType.MAXKEYID + 5),
 
     /**
-     * PayeeType.
+     * TransactionCategory.
      */
-    PAYEETYPE(PrometheusCryptographyDataType.MAXKEYID + 6),
+    TRANSCATEGORY(MoneyWiseStaticDataType.MAXKEYID + 6),
 
     /**
-     * TransactionType.
+     * ExchangeRate.
      */
-    TRANSTYPE(PrometheusCryptographyDataType.MAXKEYID + 7),
+    EXCHANGERATE(MoneyWiseStaticDataType.MAXKEYID + 7),
 
     /**
-     * TaxBasis.
+     * Payee.
      */
-    TAXBASIS(PrometheusCryptographyDataType.MAXKEYID + 8),
+    PAYEE(MoneyWiseStaticDataType.MAXKEYID + 8),
 
     /**
-     * Currency.
+     * PayeeInfo.
      */
-    CURRENCY(PrometheusCryptographyDataType.MAXKEYID + 9),
+    PAYEEINFO(MoneyWiseStaticDataType.MAXKEYID + 9),
 
     /**
-     * Frequency.
+     * Securities.
      */
-    FREQUENCY(PrometheusCryptographyDataType.MAXKEYID + 10),
+    SECURITY(MoneyWiseStaticDataType.MAXKEYID + 10),
 
     /**
-     * AccountInfoType.
+     * SecurityInfo.
      */
-    ACCOUNTINFOTYPE(PrometheusCryptographyDataType.MAXKEYID + 11),
+    SECURITYINFO(MoneyWiseStaticDataType.MAXKEYID + 11),
 
     /**
-     * TransactionInfoType.
+     * SecurityPrice.
      */
-    TRANSINFOTYPE(PrometheusCryptographyDataType.MAXKEYID + 12);
+    SECURITYPRICE(MoneyWiseStaticDataType.MAXKEYID + 12),
 
     /**
-     * Maximum keyId.
+     * Deposit.
      */
-    public static final Integer MAXKEYID = TRANSINFOTYPE.getItemKey();
+    DEPOSIT(MoneyWiseStaticDataType.MAXKEYID + 13),
+
+    /**
+     * DepositInfo.
+     */
+    DEPOSITINFO(MoneyWiseStaticDataType.MAXKEYID + 14),
+
+    /**
+     * DepositRate.
+     */
+    DEPOSITRATE(MoneyWiseStaticDataType.MAXKEYID + 15),
+
+    /**
+     * Cash.
+     */
+    CASH(MoneyWiseStaticDataType.MAXKEYID + 16),
+
+    /**
+     * CashInfo.
+     */
+    CASHINFO(MoneyWiseStaticDataType.MAXKEYID + 17),
+
+    /**
+     * Loan.
+     */
+    LOAN(MoneyWiseStaticDataType.MAXKEYID + 18),
+
+    /**
+     * LoanInfo.
+     */
+    LOANINFO(MoneyWiseStaticDataType.MAXKEYID + 19),
+
+    /**
+     * Portfolio.
+     */
+    PORTFOLIO(MoneyWiseStaticDataType.MAXKEYID + 20),
+
+    /**
+     * PortfolioInfo.
+     */
+    PORTFOLIOINFO(MoneyWiseStaticDataType.MAXKEYID + 21),
+
+    /**
+     * Transaction.
+     */
+    TRANSACTION(MoneyWiseStaticDataType.MAXKEYID + 22),
+
+    /**
+     * TransactionInfo.
+     */
+    TRANSACTIONINFO(MoneyWiseStaticDataType.MAXKEYID + 23),
+
+    /**
+     * Schedule.
+     */
+    SCHEDULE(MoneyWiseStaticDataType.MAXKEYID + 24);
 
     /**
      * The list key.
@@ -111,7 +166,7 @@ public enum MoneyWiseStaticDataType
      * Constructor.
      * @param pKey the keyId
      */
-    MoneyWiseStaticDataType(final Integer pKey) {
+    MoneyWiseBasicDataType(final Integer pKey) {
         theKey = pKey;
     }
 
@@ -129,7 +184,7 @@ public enum MoneyWiseStaticDataType
         /* If we have not yet loaded the id */
         if (theNameId == null) {
             /* Load the id */
-            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseStaticResource.getKeyForDataType(this));
+            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseBasicResource.getKeyForDataType(this));
         }
 
         /* Return the name id */
@@ -153,7 +208,7 @@ public enum MoneyWiseStaticDataType
         /* If we have not yet loaded the id */
         if (theListId == null) {
             /* Load the id */
-            theListId = MetisFieldSimpleId.convertResource(MoneyWiseStaticResource.getKeyForDataList(this));
+            theListId = MetisFieldSimpleId.convertResource(MoneyWiseBasicResource.getKeyForDataList(this));
         }
 
         /* return the list id */
@@ -176,30 +231,18 @@ public enum MoneyWiseStaticDataType
     @Override
     public Class<? extends MetisFieldVersionedItem> getClazz() {
         switch (this) {
-            case DEPOSITTYPE:
-                return MoneyWiseDepositCategoryType.class;
-            case CASHTYPE:
-                return MoneyWiseCashCategoryType.class;
-            case LOANTYPE:
-                return MoneyWiseLoanCategoryType.class;
-            case PAYEETYPE:
-                return MoneyWisePayeeType.class;
-            case PORTFOLIOTYPE:
-                return MoneyWisePortfolioType.class;
-            case SECURITYTYPE:
-                return MoneyWiseSecurityType.class;
-            case TRANSTYPE:
-                return MoneyWiseTransCategoryType.class;
-            case FREQUENCY:
-                return MoneyWiseFrequency.class;
-            case CURRENCY:
-                return MoneyWiseCurrency.class;
-            case TAXBASIS:
-                return MoneyWiseTaxBasis.class;
-            case ACCOUNTINFOTYPE:
-                return MoneyWiseAccountInfoType.class;
-            case TRANSINFOTYPE:
-                return MoneyWiseTransInfoType.class;
+            case TRANSTAG:
+                return MoneyWiseTransTag.class;
+            case REGION:
+                return MoneyWiseRegion.class;
+            case DEPOSITCATEGORY:
+                return MoneyWiseDepositCategory.class;
+            case CASHCATEGORY:
+                return MoneyWiseCashCategory.class;
+            case LOANCATEGORY:
+                return MoneyWiseLoanCategory.class;
+            case TRANSCATEGORY:
+                return MoneyWiseTransCategory.class;
             default:
                 return null;
         }
