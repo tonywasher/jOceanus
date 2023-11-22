@@ -64,6 +64,16 @@ public enum MoneyWiseAssetType {
     SECURITYHOLDING(8);
 
     /**
+     * The asset shift for external Ids.
+     */
+    public static final int ASSETSHIFT = 60;
+
+    /**
+     * The asset mask for external Ids.
+     */
+    public static final long ASSETMASK = 0xFL;
+
+    /**
      * The String name.
      */
     private String theName;

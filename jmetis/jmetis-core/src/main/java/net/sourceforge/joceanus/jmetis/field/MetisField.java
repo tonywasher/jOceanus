@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
@@ -54,6 +55,11 @@ public class MetisField<T extends MetisFieldItem>
     private final Function<T, Object> theValue;
 
     /**
+     * The field multi-value function.
+     */
+    private final BiFunction<T, MetisDataFieldId, Object> theMultiValue;
+
+    /**
      * Constructor.
      * @param pAnchor the anchor
      * @param pId the id of the field
@@ -70,6 +76,7 @@ public class MetisField<T extends MetisFieldItem>
         theDataType = pDataType;
         theMaxLength = pMaxLength;
         theValue = null;
+        theMultiValue = null;
 
         /* Check Validity */
         checkValidity();
@@ -82,7 +89,7 @@ public class MetisField<T extends MetisFieldItem>
      */
     MetisField(final MetisFieldSet<T> pAnchor,
                final MetisDataFieldId pId) {
-        this(pAnchor, pId, null);
+        this(pAnchor, pId, (Function<T, Object>) null);
     }
 
     /**
@@ -100,6 +107,28 @@ public class MetisField<T extends MetisFieldItem>
         theDataType = MetisDataType.OBJECT;
         theMaxLength = MetisFieldSet.FIELD_NO_MAXLENGTH;
         theValue = pValue;
+        theMultiValue = null;
+
+        /* Check Validity */
+        checkValidity();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnchor the anchor
+     * @param pId the id of the field
+     * @param pValue the value supplier
+     */
+    MetisField(final MetisFieldSet<T> pAnchor,
+               final MetisDataFieldId pId,
+               final BiFunction<T, MetisDataFieldId, Object> pValue) {
+        /* Store parameters */
+        theAnchor = pAnchor;
+        theId = pId;
+        theDataType = MetisDataType.OBJECT;
+        theMaxLength = MetisFieldSet.FIELD_NO_MAXLENGTH;
+        theValue = null;
+        theMultiValue = pValue;
 
         /* Check Validity */
         checkValidity();
@@ -130,7 +159,7 @@ public class MetisField<T extends MetisFieldItem>
 
     @Override
     public boolean isCalculated() {
-        return theValue == null;
+        return theValue == null && theMultiValue == null;
     }
 
     /**
@@ -195,7 +224,9 @@ public class MetisField<T extends MetisFieldItem>
     @Override
     public Object getFieldValue(final Object pObject) {
         final T myObject = theAnchor.getFieldClass().cast(pObject);
-        return theValue.apply(myObject);
+        return theValue != null
+                ? theValue.apply(myObject)
+                : theMultiValue.apply(myObject, theId);
     }
 
     @Override

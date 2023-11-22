@@ -21,11 +21,20 @@ import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositInfo.MoneyWiseDepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -491,7 +500,7 @@ public class MoneyWiseDataSet
      * Obtain security prices map.
      * @return the prices map
      */
-    public SecurityPriceDataMap getSecurityPriceDataMap() {
+    public MoneyWiseSecurityPriceDataMap getSecurityPriceDataMap() {
         return getSecurityPrices().getDataMap();
     }
 
@@ -586,21 +595,21 @@ public class MoneyWiseDataSet
             case EXCHANGERATE:
                 return new MoneyWiseExchangeRateList(this);
             case PAYEE:
-                return new PayeeList(this);
+                return new MoneyWisePayeeList(this);
             case PAYEEINFO:
-                return new PayeeInfoList(this);
+                return new MoneyWisePayeeInfoList(this);
             case SECURITY:
-                return new SecurityList(this);
+                return new MoneyWiseSecurityList(this);
             case SECURITYPRICE:
-                return new SecurityPriceList(this);
+                return new MoneyWiseSecurityPriceList(this);
             case SECURITYINFO:
-                return new SecurityInfoList(this);
+                return new MoneyWiseSecurityInfoList(this);
             case DEPOSIT:
-                return new DepositList(this);
+                return new MoneyWiseDepositList(this);
             case DEPOSITRATE:
-                return new DepositRateList(this);
+                return new MoneyWiseDepositRateList(this);
             case DEPOSITINFO:
-                return new DepositInfoList(this);
+                return new MoneyWiseDepositInfoList(this);
             case CASH:
                 return new CashList(this);
             case CASHINFO:

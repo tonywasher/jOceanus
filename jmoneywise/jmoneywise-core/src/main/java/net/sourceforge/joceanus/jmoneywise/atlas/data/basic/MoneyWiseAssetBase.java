@@ -14,31 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInstanceMap;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusListStyle;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedValueSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResourceX;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -47,88 +43,54 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Class representing an account that can be part of a transaction.
  */
-public abstract class AssetBase
-        extends EncryptedItem
-        implements TransactionAsset {
+public abstract class MoneyWiseAssetBase
+        extends PrometheusEncryptedDataItem
+        implements MoneyWiseTransAsset {
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(AssetBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    private static final PrometheusEncryptedFieldSet<MoneyWiseAssetBase> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseAssetBase.class);
 
-    /**
-     * Name Field Id.
+    /*
+     * FieldIds.
      */
-    public static final MetisLetheField FIELD_NAME = FIELD_DEFS.declareComparisonEncryptedField(PrometheusDataResourceX.DATAITEM_FIELD_NAME.getValue(), MetisDataType.STRING, NAMELEN);
-
-    /**
-     * Description Field Id.
-     */
-    public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResourceX.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
-
-    /**
-     * AccountCategory Field Id.
-     */
-    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.CATEGORY_NAME.getValue(), MetisDataType.LINK);
-
-    /**
-     * Parent Field Id.
-     */
-    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
-
-    /**
-     * Currency Field Id.
-     */
-    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * isClosed Field Id.
-     */
-    public static final MetisLetheField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_CLOSED.getValue(), MetisDataType.BOOLEAN);
-
-    /**
-     * CloseDate Field Id.
-     */
-    public static final MetisLetheField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_CLOSEDATE.getValue());
-
-    /**
-     * firstEvent Field Id.
-     */
-    public static final MetisLetheField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_FIRSTEVENT.getValue());
-
-    /**
-     * lastEvent Field Id.
-     */
-    public static final MetisLetheField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_LASTEVENT.getValue());
-
-    /**
-     * isRelevant Field Id.
-     */
-    public static final MetisLetheField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_RELEVANT.getValue());
+    static {
+        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);
+        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);
+        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.CATEGORY_NAME);
+        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.ASSET_PARENT);
+        FIELD_DEFS.declareLinkField(MoneyWiseStaticDataType.CURRENCY);
+        FIELD_DEFS.declareBooleanField(MoneyWiseBasicResource.ASSET_CLOSED);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_CLOSEDATE, MoneyWiseAssetBase::getCloseDate);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_FIRSTEVENT, MoneyWiseAssetBase::getEarliest);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_LASTEVENT, MoneyWiseAssetBase::getLatest);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_RELEVANT, MoneyWiseAssetBase::isRelevant);
+    }
 
     /**
      * Bad category error.
      */
-    protected static final String ERROR_BADCATEGORY = MoneyWiseDataResource.ASSET_ERROR_BADCAT.getValue();
+    protected static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();
 
     /**
      * Bad parent error.
      */
-    protected static final String ERROR_BADPARENT = MoneyWiseDataResource.ASSET_ERROR_BADPARENT.getValue();
+    protected static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();
 
     /**
      * Bad InfoSet Error Text.
      */
-    protected static final String ERROR_BADINFOSET = PrometheusDataResourceX.DATAINFOSET_ERROR_BADSET.getValue();
+    protected static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
 
     /**
      * Parent Closed Error Text.
      */
-    protected static final String ERROR_PARCLOSED = MoneyWiseDataResource.ASSET_ERROR_PARENTCLOSED.getValue();
+    protected static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();
 
     /**
      * Reserved name error.
      */
-    protected static final String ERROR_RESERVED = MoneyWiseDataResource.ASSET_ERROR_RESERVED.getValue();
+    protected static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();
 
     /**
      * Close Date.
@@ -138,12 +100,12 @@ public abstract class AssetBase
     /**
      * Earliest Transaction.
      */
-    private Transaction theEarliest;
+    private MoneyWiseTransaction theEarliest;
 
     /**
      * Latest Transaction.
      */
-    private Transaction theLatest;
+    private MoneyWiseTransaction theLatest;
 
     /**
      * Is this relevant?
@@ -155,15 +117,15 @@ public abstract class AssetBase
      * @param pList the list
      * @param pAsset The Asset to copy
      */
-    protected AssetBase(final AssetBaseList<?> pList,
-                        final AssetBase pAsset) {
+    protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList<?> pList,
+                                 final MoneyWiseAssetBase pAsset) {
         /* Set standard values */
         super(pList, pAsset);
 
         /* If we are creating an edit copy from core */
-        final ListStyle myBaseStyle = pAsset.getList().getStyle();
-        if ((pList.getStyle() == ListStyle.EDIT)
-            && (myBaseStyle == ListStyle.CORE)) {
+        final PrometheusListStyle myBaseStyle = pAsset.getList().getStyle();
+        if (pList.getStyle() == PrometheusListStyle.EDIT
+                && myBaseStyle == PrometheusListStyle.CORE) {
             /* Update underlying flags */
             theCloseDate = pAsset.getCloseDate();
             theEarliest = pAsset.getEarliest();
@@ -178,8 +140,8 @@ public abstract class AssetBase
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected AssetBase(final AssetBaseList<?> pList,
-                        final DataValues pValues) throws OceanusException {
+    protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList<?> pList,
+                                 final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -189,7 +151,7 @@ public abstract class AssetBase
         /* Protect against exceptions */
         try {
             /* Store the name */
-            Object myValue = pValues.getValue(FIELD_NAME);
+            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);
             if (myValue instanceof String) {
                 setValueName((String) myValue);
             } else if (myValue instanceof byte[]) {
@@ -197,7 +159,7 @@ public abstract class AssetBase
             }
 
             /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
+            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);
             if (myValue instanceof String) {
                 setValueDesc((String) myValue);
             } else if (myValue instanceof byte[]) {
@@ -205,7 +167,7 @@ public abstract class AssetBase
             }
 
             /* Store the Category */
-            myValue = pValues.getValue(FIELD_CATEGORY);
+            myValue = pValues.getValue(MoneyWiseBasicResource.CATEGORY_NAME);
             if (myValue instanceof Integer) {
                 setValueCategory((Integer) myValue);
             } else if (myValue instanceof String) {
@@ -213,7 +175,7 @@ public abstract class AssetBase
             }
 
             /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
+            myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_PARENT);
             if (myValue instanceof Integer) {
                 setValueParent((Integer) myValue);
             } else if (myValue instanceof String) {
@@ -221,17 +183,17 @@ public abstract class AssetBase
             }
 
             /* Store the Currency */
-            myValue = pValues.getValue(FIELD_CURRENCY);
+            myValue = pValues.getValue(MoneyWiseStaticDataType.CURRENCY);
             if (myValue instanceof Integer) {
                 setValueCurrency((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCurrency((String) myValue);
-            } else if (myValue instanceof AssetCurrency) {
-                setValueCurrency((AssetCurrency) myValue);
+            } else if (myValue instanceof MoneyWiseCurrency) {
+                setValueCurrency((MoneyWiseCurrency) myValue);
             }
 
             /* Store the closed flag */
-            myValue = pValues.getValue(FIELD_CLOSED);
+            myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);
             if (myValue instanceof Boolean) {
                 setValueClosed((Boolean) myValue);
             } else if (myValue instanceof String) {
@@ -249,7 +211,7 @@ public abstract class AssetBase
      * Edit Constructor.
      * @param pList the list
      */
-    protected AssetBase(final AssetBaseList<?> pList) {
+    protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList<?> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }
@@ -265,41 +227,15 @@ public abstract class AssetBase
     }
 
     @Override
-    public Object getFieldValue(final MetisLetheField pField) {
-        /* Handle flags */
-        if (FIELD_CLOSEDATE.equals(pField)) {
-            return theCloseDate != null
-                                        ? theCloseDate
-                                        : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_EVTFIRST.equals(pField)) {
-            return theEarliest != null
-                                       ? theEarliest
-                                       : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_EVTLAST.equals(pField)) {
-            return theLatest != null
-                                     ? theLatest
-                                     : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_ISRELEVANT.equals(pField)) {
-            return isRelevant;
-        }
-
-        /* Pass onwards */
-        return super.getFieldValue(pField);
-    }
-
-    @Override
-    public boolean includeXmlField(final MetisLetheField pField) {
+    public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-        if (FIELD_NAME.equals(pField)) {
+        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {
             return true;
         }
-        if (FIELD_DESC.equals(pField)) {
+        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {
             return getDesc() != null;
         }
-        if (FIELD_CLOSED.equals(pField)) {
+        if (MoneyWiseBasicResource.ASSET_CLOSED.equals(pField)) {
             return isClosed();
         }
 
@@ -311,11 +247,11 @@ public abstract class AssetBase
      * Obtain Category.
      * @return the category
      */
-    public abstract AssetCategory getCategory();
+    public abstract MoneyWiseAssetCategory getCategory();
 
     @Override
-    public Payee getParent() {
-        return getParent(getValueSet());
+    public MoneyWisePayee getParent() {
+        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class);
     }
 
     /**
@@ -323,10 +259,10 @@ public abstract class AssetBase
      * @return the parentId
      */
     public Integer getParentId() {
-        final Payee myParent = getParent();
+        final MoneyWisePayee myParent = getParent();
         return myParent == null
                 ? null
-                : myParent.getId();
+                : myParent.getIndexedId();
     }
 
     /**
@@ -334,24 +270,24 @@ public abstract class AssetBase
      * @return the parentName
      */
     public String getParentName() {
-        final Payee myParent = getParent();
+        final MoneyWisePayee myParent = getParent();
         return myParent == null
                 ? null
                 : myParent.getName();
     }
 
     @Override
-    public AssetCurrency getAssetCurrency() {
-        return getCurrency(getValueSet());
-    }
+    public MoneyWiseCurrency getAssetCurrency() {
+        return getValues().getValue(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrency.class);
+     }
 
     /**
      * Obtain CurrencyId.
      * @return the currencyId
      */
     public Integer getAssetCurrencyId() {
-        final AssetCurrency myCurrency = getAssetCurrency();
-        return myCurrency == null ? null : myCurrency.getId();
+        final MoneyWiseCurrency myCurrency = getAssetCurrency();
+        return myCurrency == null ? null : myCurrency.getIndexedId();
     }
 
     /**
@@ -359,16 +295,16 @@ public abstract class AssetBase
      * @return the currencyName
      */
     public String getAssetCurrencyName() {
-        final AssetCurrency myCurrency = getAssetCurrency();
+        final MoneyWiseCurrency myCurrency = getAssetCurrency();
         return myCurrency == null ? null : myCurrency.getName();
     }
 
     @Override
     public Currency getCurrency() {
-        AssetCurrency myCurrency = getAssetCurrency();
+        MoneyWiseCurrency myCurrency = getAssetCurrency();
         myCurrency = myCurrency == null
-                                        ? getDataSet().getDefaultCurrency()
-                                        : myCurrency;
+                ? getDataSet().getDefaultCurrency()
+                : myCurrency;
         return myCurrency == null ? null : myCurrency.getCurrency();
     }
 
@@ -399,7 +335,7 @@ public abstract class AssetBase
      * Obtain Earliest transaction.
      * @return the event
      */
-    public Transaction getEarliest() {
+    public MoneyWiseTransaction getEarliest() {
         return theEarliest;
     }
 
@@ -407,7 +343,7 @@ public abstract class AssetBase
      * Obtain Latest Transaction.
      * @return the event
      */
-    public Transaction getLatest() {
+    public MoneyWiseTransaction getLatest() {
         return theLatest;
     }
 
@@ -440,20 +376,20 @@ public abstract class AssetBase
     }
 
     @Override
-    public AssetType getAssetType() {
-        switch ((MoneyWiseDataType) getItemType()) {
+    public MoneyWiseAssetType getAssetType() {
+        switch ((MoneyWiseBasicDataType) getItemType()) {
             case DEPOSIT:
-                return AssetType.DEPOSIT;
+                return MoneyWiseAssetType.DEPOSIT;
             case CASH:
-                return AssetType.CASH;
+                return MoneyWiseAssetType.CASH;
             case LOAN:
-                return AssetType.LOAN;
+                return MoneyWiseAssetType.LOAN;
             case PORTFOLIO:
-                return AssetType.PORTFOLIO;
+                return MoneyWiseAssetType.PORTFOLIO;
             case SECURITY:
-                return AssetType.SECURITY;
+                return MoneyWiseAssetType.SECURITY;
             case PAYEE:
-                return AssetType.PAYEE;
+                return MoneyWiseAssetType.PAYEE;
             default:
                 throw new IllegalStateException();
         }
@@ -461,7 +397,7 @@ public abstract class AssetBase
 
     @Override
     public String getName() {
-        return getName(getValueSet());
+        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);
     }
 
     /**
@@ -469,7 +405,7 @@ public abstract class AssetBase
      * @return the bytes
      */
     public byte[] getNameBytes() {
-        return getNameBytes(getValueSet());
+        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);
     }
 
     /**
@@ -477,7 +413,7 @@ public abstract class AssetBase
      * @return the Field
      */
     private PrometheusEncryptedPair getNameField() {
-        return getNameField(getValueSet());
+        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);
     }
 
     /**
@@ -485,7 +421,7 @@ public abstract class AssetBase
      * @return the description
      */
     public String getDesc() {
-        return getDesc(getValueSet());
+        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);
     }
 
     /**
@@ -493,7 +429,7 @@ public abstract class AssetBase
      * @return the bytes
      */
     public byte[] getDescBytes() {
-        return getDescBytes(getValueSet());
+        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);
     }
 
     /**
@@ -501,12 +437,12 @@ public abstract class AssetBase
      * @return the Field
      */
     private PrometheusEncryptedPair getDescField() {
-        return getDescField(getValueSet());
+        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);
     }
 
     @Override
     public Boolean isClosed() {
-        return isClosed(getValueSet());
+        return getValues().getValue(MoneyWiseBasicResource.ASSET_CLOSED, Boolean.class);
     }
 
     @Override
@@ -515,93 +451,12 @@ public abstract class AssetBase
     }
 
     /**
-     * Obtain Name.
-     * @param pValueSet the valueSet
-     * @return the Name
-     */
-    public static String getName(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
-    }
-
-    /**
-     * Obtain Encrypted Name.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
-    }
-
-    /**
-     * Obtain Encrypted name field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static PrometheusEncryptedPair getNameField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, PrometheusEncryptedPair.class);
-    }
-
-    /**
-     * Obtain Description.
-     * @param pValueSet the valueSet
-     * @return the description
-     */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
-    }
-
-    /**
-     * Obtain Encrypted description field.
-     * @param pValueSet the valueSet
-     * @return the Field
-     */
-    private static PrometheusEncryptedPair getDescField(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, PrometheusEncryptedPair.class);
-    }
-
-    /**
-     * Obtain Parent.
-     * @param pValueSet the valueSet
-     * @return the Parent
-     */
-    public static Payee getParent(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, Payee.class);
-    }
-
-    /**
-     * Obtain Currency.
-     * @param pValueSet the valueSet
-     * @return the Currency
-     */
-    public static AssetCurrency getCurrency(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Is the asset closed?
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isClosed(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
-    }
-
-    /**
      * Set name value.
      * @param pValue the value
      * @throws OceanusException on error
      */
     private void setValueName(final String pValue) throws OceanusException {
-        setEncryptedValue(FIELD_NAME, pValue);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);
     }
 
     /**
@@ -610,7 +465,7 @@ public abstract class AssetBase
      * @throws OceanusException on error
      */
     private void setValueName(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(FIELD_NAME, pBytes, String.class);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);
     }
 
     /**
@@ -618,7 +473,7 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueName(final PrometheusEncryptedPair pValue) {
-        getValueSet().setValue(FIELD_NAME, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);
     }
 
     /**
@@ -627,7 +482,7 @@ public abstract class AssetBase
      * @throws OceanusException on error
      */
     private void setValueDesc(final String pValue) throws OceanusException {
-        setEncryptedValue(FIELD_DESC, pValue);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);
     }
 
     /**
@@ -636,7 +491,7 @@ public abstract class AssetBase
      * @throws OceanusException on error
      */
     private void setValueDesc(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(FIELD_DESC, pBytes, String.class);
+        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);
     }
 
     /**
@@ -644,15 +499,15 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueDesc(final PrometheusEncryptedPair pValue) {
-        getValueSet().setValue(FIELD_DESC, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);
     }
 
     /**
      * Set category value.
      * @param pValue the value
      */
-    private void setValueCategory(final AssetCategory pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
+    private void setValueCategory(final MoneyWiseAssetCategory pValue) {
+        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);
     }
 
     /**
@@ -660,7 +515,7 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueCategory(final Integer pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
+        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);
     }
 
     /**
@@ -668,15 +523,15 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueCategory(final String pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
+        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);
     }
 
     /**
      * Set parent value.
      * @param pValue the value
      */
-    private void setValueParent(final Payee pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
+    private void setValueParent(final MoneyWisePayee pValue) {
+        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);
     }
 
     /**
@@ -684,7 +539,7 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
+        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);
     }
 
     /**
@@ -692,15 +547,15 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueParent(final String pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
+        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);
     }
 
     /**
      * Set currency value.
      * @param pValue the value
      */
-    private void setValueCurrency(final AssetCurrency pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    private void setValueCurrency(final MoneyWiseCurrency pValue) {
+        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);
     }
 
     /**
@@ -708,7 +563,7 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueCurrency(final Integer pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
+        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);
     }
 
     /**
@@ -716,7 +571,7 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueCurrency(final String pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
+        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);
     }
 
     /**
@@ -724,17 +579,17 @@ public abstract class AssetBase
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, pValue);
+        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_CLOSED, pValue);
     }
 
     @Override
-    public MoneyWiseData getDataSet() {
-        return (MoneyWiseData) super.getDataSet();
+    public MoneyWiseDataSet getDataSet() {
+        return (MoneyWiseDataSet) super.getDataSet();
     }
 
     @Override
-    public AssetBaseList<?> getList() {
-        return (AssetBaseList<?>) super.getList();
+    public MoneyWiseAssetBaseList<?> getList() {
+        return (MoneyWiseAssetBaseList<?>) super.getList();
     }
 
     @Override
@@ -755,8 +610,8 @@ public abstract class AssetBase
      * @param pYear the taxYear
      * @return detailed category
      */
-    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
-                                                   final MoneyWiseTaxCredit pYear) {
+    public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
+                                                      final MoneyWiseTaxCredit pYear) {
         /* return the unchanged category */
         return pCategory;
     }
@@ -783,11 +638,11 @@ public abstract class AssetBase
     }
 
     @Override
-    public void touchItem(final DataItem pSource) {
+    public void touchItem(final PrometheusDataItem pSource) {
         /* If we are being touched by a transaction */
-        if (pSource instanceof Transaction) {
+        if (pSource instanceof MoneyWiseTransaction) {
             /* Access as transaction */
-            final Transaction myTrans = (Transaction) pSource;
+            final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pSource;
 
             /* Record the transaction */
             if (theEarliest == null) {
@@ -802,16 +657,16 @@ public abstract class AssetBase
             }
 
             /* Touch parent if it exists */
-            final AssetBase myParent = getParent();
+            final MoneyWiseAssetBase myParent = getParent();
             if (myParent != null) {
                 myParent.touchItem(pSource);
             }
         }
 
         /* If we are being touched by an asset */
-        if (pSource instanceof AssetBase) {
+        if (pSource instanceof MoneyWiseAssetBase) {
             /* Access as assetBase */
-            final AssetBase myAsset = (AssetBase) pSource;
+            final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) pSource;
 
             /* Mark as relevant if child is open */
             if (!myAsset.isClosed()) {
@@ -829,10 +684,10 @@ public abstract class AssetBase
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MetisValueSet myValues = getValueSet();
+        final PrometheusEncryptedValues myValues = getValues();
 
         /* Adjust Closed */
-        final Object myClosed = myValues.getValue(FIELD_CLOSED);
+        final Object myClosed = myValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);
         if (myClosed == null) {
             setValueClosed(Boolean.FALSE);
         }
@@ -869,7 +724,7 @@ public abstract class AssetBase
      * Set a new category.
      * @param pCategory the new category
      */
-    public void setCategory(final AssetCategory pCategory) {
+    public void setCategory(final MoneyWiseAssetCategory pCategory) {
         setValueCategory(pCategory);
     }
 
@@ -877,7 +732,7 @@ public abstract class AssetBase
      * Set a new currency.
      * @param pCurrency the new currency
      */
-    public void setAssetCurrency(final AssetCurrency pCurrency) {
+    public void setAssetCurrency(final MoneyWiseCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -885,7 +740,7 @@ public abstract class AssetBase
      * Set a new parent.
      * @param pParent the parent
      */
-    public void setParent(final Payee pParent) {
+    public void setParent(final MoneyWisePayee pParent) {
         setValueParent(pParent);
     }
 
@@ -904,7 +759,7 @@ public abstract class AssetBase
 
         /* Name must be non-null */
         if (myName == null) {
-            addError(ERROR_MISSING, FIELD_NAME);
+            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
 
             /* Check that the name is unique */
         } else {
@@ -914,7 +769,7 @@ public abstract class AssetBase
 
         /* Check description length */
         if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, FIELD_DESC);
+            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
     }
 
@@ -924,21 +779,21 @@ public abstract class AssetBase
      */
     protected void validateName(final String pName) {
         /* Access the list */
-        final AssetBaseList<?> myList = getList();
+        final MoneyWiseAssetBaseList<?> myList = getList();
 
         /* The name must not be too long */
         if (pName.length() > NAMELEN) {
-            addError(ERROR_LENGTH, FIELD_NAME);
+            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
 
         /* Check name count */
         if (!myList.validNameCount(pName)) {
-            addError(ERROR_DUPLICATE, FIELD_NAME);
+            addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
 
         /* Check that the name does not contain invalid characters */
         if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
-            addError(ERROR_INVALIDCHAR, FIELD_NAME);
+            addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
     }
 
@@ -946,7 +801,7 @@ public abstract class AssetBase
      * Update base asset from an edited asset.
      * @param pAsset the edited asset
      */
-    protected void applyBasicChanges(final AssetBase pAsset) {
+    protected void applyBasicChanges(final MoneyWiseAssetBase pAsset) {
         /* Update the name if required */
         if (!MetisDataDifference.isEqual(getName(), pAsset.getName())) {
             setValueName(pAsset.getNameField());
@@ -982,13 +837,13 @@ public abstract class AssetBase
      * The Asset List class.
      * @param <T> the dataType
      */
-    public abstract static class AssetBaseList<T extends AssetBase>
-            extends EncryptedList<T> {
+    public abstract static class MoneyWiseAssetBaseList<T extends MoneyWiseAssetBase>
+            extends PrometheusEncryptedList<T> {
         /*
          * Report fields.
          */
         static {
-            MetisFieldSet.newFieldSet(AssetBaseList.class);
+            MetisFieldSet.newFieldSet(MoneyWiseAssetBaseList.class);
         }
 
         /**
@@ -997,23 +852,23 @@ public abstract class AssetBase
          * @param pClass the class of the item
          * @param pItemType the item type
          */
-        protected AssetBaseList(final MoneyWiseData pData,
-                                final Class<T> pClass,
-                                final MoneyWiseDataType pItemType) {
-            super(pClass, pData, pItemType, ListStyle.CORE);
+        protected MoneyWiseAssetBaseList(final MoneyWiseDataSet pData,
+                                         final Class<T> pClass,
+                                         final MoneyWiseBasicDataType pItemType) {
+            super(pClass, pData, pItemType, PrometheusListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected AssetBaseList(final AssetBaseList<T> pSource) {
+        protected MoneyWiseAssetBaseList(final MoneyWiseAssetBaseList<T> pSource) {
             super(pSource);
         }
 
         @Override
-        public MoneyWiseData getDataSet() {
-            return (MoneyWiseData) super.getDataSet();
+        public MoneyWiseDataSet getDataSet() {
+            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override
@@ -1069,12 +924,12 @@ public abstract class AssetBase
     /**
      * The dataMap class.
      */
-    protected static class AssetDataMap
-            extends DataInstanceMap<AssetBase, String> {
+    protected static class MoneyWiseAssetDataMap
+            extends PrometheusDataInstanceMap<MoneyWiseAssetBase, String> {
         @Override
-        public void adjustForItem(final DataItem pItem) {
+        public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access item */
-            final AssetBase myItem = (AssetBase) pItem;
+            final MoneyWiseAssetBase myItem = (MoneyWiseAssetBase) pItem;
 
             /* Adjust name count */
             adjustForItem(myItem, myItem.getName());
@@ -1085,7 +940,7 @@ public abstract class AssetBase
          * @param pName the name to look up
          * @return the matching item
          */
-        public AssetBase findAssetByName(final String pName) {
+        public MoneyWiseAssetBase findAssetByName(final String pName) {
             return findItemByKey(pName);
         }
 
