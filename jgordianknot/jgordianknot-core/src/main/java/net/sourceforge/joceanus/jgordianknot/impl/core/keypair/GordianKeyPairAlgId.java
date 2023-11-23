@@ -696,43 +696,31 @@ public class GordianKeyPairAlgId {
                     new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256F)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256s_r3,
                     new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_192f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA192F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_192s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA192S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256S)));
 
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128S_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128S_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA192F_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA192F_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA192S_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA192S_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA256F_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA256F_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA256S_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA256S_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128F_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128F_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128S_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128S_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192F_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192F_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192S_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192S_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256F_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256F_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256S_S)));
+                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256S_R)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128f_r3_simple,
                     new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128F_S)));
             pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128s_r3_simple,
@@ -913,9 +901,6 @@ public class GordianKeyPairAlgId {
             pIdManager.registerParser(BCObjectIdentifiers.kyber512, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512)));
             pIdManager.registerParser(BCObjectIdentifiers.kyber768, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER768)));
             pIdManager.registerParser(BCObjectIdentifiers.kyber1024, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER1024)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber512_aes, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512AES)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber768_aes, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER768AES)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber1024_aes, new GordianKyberEncodedParser(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER1024AES)));
         }
 
         @Override
@@ -954,9 +939,6 @@ public class GordianKeyPairAlgId {
             pIdManager.registerParser(BCObjectIdentifiers.dilithium2, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM2)));
             pIdManager.registerParser(BCObjectIdentifiers.dilithium3, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM3)));
             pIdManager.registerParser(BCObjectIdentifiers.dilithium5, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM5)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium2_aes, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM2AES)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium3_aes, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM3AES)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium5_aes, new GordianDilithiumEncodedParser(GordianKeyPairSpec.dilithium(GordianDILITHIUMSpec.DILITHIUM5AES)));
         }
 
         @Override

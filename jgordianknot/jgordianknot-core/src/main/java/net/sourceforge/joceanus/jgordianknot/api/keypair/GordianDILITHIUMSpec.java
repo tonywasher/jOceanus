@@ -36,22 +36,7 @@ public enum GordianDILITHIUMSpec {
     /**
      * Dilithium5.
      */
-    DILITHIUM5,
-
-    /**
-     * Dilithium2AES.
-     */
-    DILITHIUM2AES,
-
-    /**
-     * Dilithium3AES.
-     */
-    DILITHIUM3AES,
-
-    /**
-     * Dilithium5AES.
-     */
-    DILITHIUM5AES;
+    DILITHIUM5;
 
     /**
      * Obtain Dilithium Parameters.
@@ -62,9 +47,6 @@ public enum GordianDILITHIUMSpec {
             case DILITHIUM2:    return DilithiumParameters.dilithium2;
             case DILITHIUM3:    return DilithiumParameters.dilithium3;
             case DILITHIUM5:    return DilithiumParameters.dilithium5;
-            case DILITHIUM2AES: return DilithiumParameters.dilithium2_aes;
-            case DILITHIUM3AES: return DilithiumParameters.dilithium3_aes;
-            case DILITHIUM5AES: return DilithiumParameters.dilithium5_aes;
             default: throw new IllegalArgumentException();
         }
     }
@@ -78,9 +60,6 @@ public enum GordianDILITHIUMSpec {
             case DILITHIUM2:    return DilithiumParameterSpec.dilithium2;
             case DILITHIUM3:    return DilithiumParameterSpec.dilithium3;
             case DILITHIUM5:    return DilithiumParameterSpec.dilithium5;
-            case DILITHIUM2AES: return DilithiumParameterSpec.dilithium2_aes;
-            case DILITHIUM3AES: return DilithiumParameterSpec.dilithium3_aes;
-            case DILITHIUM5AES: return DilithiumParameterSpec.dilithium5_aes;
             default: throw new IllegalArgumentException();
         }
     }
