@@ -28,17 +28,14 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositInfo.MoneyWiseDepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanInfo.MoneyWiseLoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataMapItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
@@ -47,42 +44,41 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.Prom
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
- * Deposit class.
+ * Loan class.
  */
-public class MoneyWiseDeposit
+public class MoneyWiseLoan
         extends MoneyWiseAssetBase
         implements PrometheusInfoSetItem {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseBasicDataType.DEPOSIT.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseBasicDataType.LOAN.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseBasicDataType.DEPOSIT.getListName();
+    public static final String LIST_NAME = MoneyWiseBasicDataType.LOAN.getListName();
 
     /**
      * Local Report fields.
      */
-    private static final MetisFieldVersionedSet<MoneyWiseDeposit> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWiseDeposit.class);
+    private static final MetisFieldVersionedSet<MoneyWiseLoan> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWiseLoan.class);
 
     /*
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseDeposit::getInfoSet);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseLoan::getInfoSet);
     }
 
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.DEPOSIT_NEWACCOUNT.getValue();
+    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.LOAN_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -95,31 +91,31 @@ public class MoneyWiseDeposit
     private final boolean useInfoSet;
 
     /**
-     * DepositInfoSet.
+     * LoanInfoSet.
      */
-    private final MoneyWiseDepositInfoSet theInfoSet;
+    private final MoneyWiseLoanInfoSet theInfoSet;
 
     /**
      * Copy Constructor.
      * @param pList the list
-     * @param pDeposit The Deposit to copy
+     * @param pLoan The Loan to copy
      */
-    protected MoneyWiseDeposit(final MoneyWiseDepositList pList,
-                               final MoneyWiseDeposit pDeposit) {
+    protected MoneyWiseLoan(final MoneyWiseLoanList pList,
+                            final MoneyWiseLoan pLoan) {
         /* Set standard values */
-        super(pList, pDeposit);
+        super(pList, pLoan);
 
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new MoneyWiseDepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
-                theInfoSet.cloneDataInfoSet(pDeposit.getInfoSet());
+                theInfoSet = new MoneyWiseLoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
+                theInfoSet.cloneDataInfoSet(pLoan.getInfoSet());
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
             case CLONE:
             case CORE:
-                theInfoSet = new MoneyWiseDepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+                theInfoSet = new MoneyWiseLoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
                 break;
@@ -137,13 +133,13 @@ public class MoneyWiseDeposit
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    private MoneyWiseDeposit(final MoneyWiseDepositList pList,
-                             final PrometheusDataValues pValues) throws OceanusException {
+    private MoneyWiseLoan(final MoneyWiseLoanList pList,
+                          final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
         /* Create the InfoSet */
-        theInfoSet = new MoneyWiseDepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+        theInfoSet = new MoneyWiseLoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
         hasInfoSet = true;
         useInfoSet = false;
     }
@@ -152,11 +148,11 @@ public class MoneyWiseDeposit
      * Edit Constructor.
      * @param pList the list
      */
-    public MoneyWiseDeposit(final MoneyWiseDepositList pList) {
+    public MoneyWiseLoan(final MoneyWiseLoanList pList) {
         super(pList);
 
         /* Build InfoSet */
-        theInfoSet = new MoneyWiseDepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
+        theInfoSet = new MoneyWiseLoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
         hasInfoSet = true;
         useInfoSet = true;
     }
@@ -185,22 +181,12 @@ public class MoneyWiseDeposit
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.DEPOSIT.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return getIndexedId() + (((long) MoneyWiseAssetType.LOAN.getId()) << MoneyWiseAssetType.ASSETSHIFT);
     }
 
     @Override
-    public MoneyWiseDepositInfoSet getInfoSet() {
+    public MoneyWiseLoanInfoSet getInfoSet() {
         return theInfoSet;
-    }
-
-    /**
-     * Obtain Maturity.
-     * @return the maturity date
-     */
-    public TethysDate getMaturity() {
-        return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.MATURITY, TethysDate.class)
-                : null;
     }
 
     /**
@@ -254,8 +240,8 @@ public class MoneyWiseDeposit
     }
 
     @Override
-    public MoneyWiseDepositCategory getCategory() {
-        return getValues().getValue(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseDepositCategory.class);
+    public MoneyWiseLoanCategory getCategory() {
+        return getValues().getValue(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseLoanCategory.class);
     }
 
     /**
@@ -263,7 +249,7 @@ public class MoneyWiseDeposit
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        final MoneyWiseDepositCategory myCategory = getCategory();
+        final MoneyWiseLoanCategory myCategory = getCategory();
         return myCategory == null
                 ? null
                 : myCategory.getIndexedId();
@@ -274,37 +260,21 @@ public class MoneyWiseDeposit
      * @return the categoryName
      */
     public String getCategoryName() {
-        final MoneyWiseDepositCategory myCategory = getCategory();
+        final MoneyWiseLoanCategory myCategory = getCategory();
         return myCategory == null
                 ? null
                 : myCategory.getName();
     }
 
     /**
-     * Obtain DepositCategoryClass.
-     * @return the categoryClass
+     * Obtain AccountCategoryClass.
+     * @return the actCategoryClass
      */
-    public MoneyWiseDepositCategoryClass getCategoryClass() {
-        final MoneyWiseDepositCategory myCategory = getCategory();
+    public MoneyWiseLoanCategoryClass getCategoryClass() {
+        final MoneyWiseLoanCategory myCategory = getCategory();
         return myCategory == null
                 ? null
                 : myCategory.getCategoryTypeClass();
-    }
-
-    @Override
-    public Boolean isGross() {
-        final MoneyWiseDepositCategory myCategory = getCategory();
-        return myCategory == null
-                ? Boolean.FALSE
-                : myCategory.getCategoryTypeClass().isGross();
-    }
-
-    @Override
-    public Boolean isTaxFree() {
-        final MoneyWiseDepositCategory myCategory = getCategory();
-        return myCategory == null
-                ? Boolean.FALSE
-                : myCategory.getCategoryTypeClass().isTaxFree();
     }
 
     @Override
@@ -314,13 +284,13 @@ public class MoneyWiseDeposit
     }
 
     @Override
-    public MoneyWiseDeposit getBase() {
-        return (MoneyWiseDeposit) super.getBase();
+    public MoneyWiseLoan getBase() {
+        return (MoneyWiseLoan) super.getBase();
     }
 
     @Override
-    public MoneyWiseDepositList getList() {
-        return (MoneyWiseDepositList) super.getList();
+    public MoneyWiseLoanList getList() {
+        return (MoneyWiseLoanList) super.getList();
     }
 
     @Override
@@ -411,7 +381,7 @@ public class MoneyWiseDeposit
     @Override
     public MetisDataDifference fieldChanged(final MetisDataFieldId pField) {
         /* Handle InfoSet fields */
-        final MoneyWiseAccountInfoClass myClass = MoneyWiseDepositInfoSet.getClassForField(pField);
+        final MoneyWiseAccountInfoClass myClass = MoneyWiseLoanInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                     ? theInfoSet.fieldChanged(myClass)
@@ -434,11 +404,11 @@ public class MoneyWiseDeposit
     }
 
     /**
-     * Is this deposit the required class.
-     * @param pClass the required deposit class.
+     * Is this payee the required class.
+     * @param pClass the required payee class.
      * @return true/false
      */
-    public boolean isDepositClass(final MoneyWiseDepositCategoryClass pClass) {
+    public boolean isLoanClass(final MoneyWiseLoanCategoryClass pClass) {
         /* Check for match */
         return getCategoryClass() == pClass;
     }
@@ -458,41 +428,32 @@ public class MoneyWiseDeposit
     }
 
     /**
-     * autoCorrect values after change.
+     * adjust values after change.
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
     public void autoCorrect(final UpdateSet pUpdateSet) throws OceanusException {
-        /* Access category class */
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
+        /* Access category class and parent */
+        final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
         final MoneyWisePayee myParent = getParent();
 
-        /* Ensure that we have a valid parent */
+        /* Ensure that we have valid parent */
         if ((myParent == null)
-                || !myParent.getCategoryClass().canParentDeposit(myClass)) {
+                || !myParent.getCategoryClass().canParentLoan(myClass)) {
             setParent(getDefaultParent(pUpdateSet));
-        }
-
-        /* Adjust bond date if required */
-        if (!MoneyWiseDepositCategoryClass.BOND.equals(myClass)) {
-            setMaturity(null);
-        } else if (getMaturity() == null) {
-            final TethysDate myDate = new TethysDate();
-            myDate.adjustYear(1);
-            setMaturity(myDate);
         }
     }
 
     /**
-     * Obtain default category for new deposit account.
+     * Obtain default category for new loan account.
      * @return the default category
      */
-    private MoneyWiseDepositCategory getDefaultCategory() {
+    public MoneyWiseLoanCategory getDefaultCategory() {
         /* loop through the categories */
-        final MoneyWiseDepositCategoryList myCategories = getDataSet().getDepositCategories();
-        final Iterator<MoneyWiseDepositCategory> myIterator = myCategories.iterator();
+        final MoneyWiseLoanCategoryList myCategories = getDataSet().getLoanCategories();
+        final Iterator<MoneyWiseLoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseDepositCategory myCategory = myIterator.next();
+            final MoneyWiseLoanCategory myCategory = myIterator.next();
 
             /* Ignore deleted categories */
             if (myCategory.isDeleted()) {
@@ -500,7 +461,7 @@ public class MoneyWiseDeposit
             }
 
             /* If the category is not a parent */
-            if (!myCategory.isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
+            if (!myCategory.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
                 return myCategory;
             }
         }
@@ -510,14 +471,14 @@ public class MoneyWiseDeposit
     }
 
     /**
-     * Obtain default parent for new deposit.
+     * Obtain default parent for new loan.
      * @param pUpdateSet the update set
      * @return the default parent
      */
     private MoneyWisePayee getDefaultParent(final UpdateSet pUpdateSet) {
         /* Access details */
         final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
+        final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
         final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
@@ -530,7 +491,7 @@ public class MoneyWiseDeposit
             }
 
             /* If the payee can parent */
-            if (myPayee.getCategoryClass().canParentDeposit(myClass)) {
+            if (myPayee.getCategoryClass().canParentLoan(myClass)) {
                 return myPayee;
             }
         }
@@ -542,7 +503,7 @@ public class MoneyWiseDeposit
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Check the category and then the name */
-        final MoneyWiseDeposit myThat = (MoneyWiseDeposit) pThat;
+        final MoneyWiseLoan myThat = (MoneyWiseLoan) pThat;
         int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
         if (iDiff == 0) {
             iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());
@@ -557,7 +518,7 @@ public class MoneyWiseDeposit
 
         /* Resolve data links */
         final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getDepositCategories());
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getLoanCategories());
         resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myData.getPayees());
     }
@@ -567,15 +528,6 @@ public class MoneyWiseDeposit
         /* Resolve parent within list */
         final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
-    }
-
-    /**
-     * Set a new Maturity.
-     * @param pMaturity the new maturity
-     * @throws OceanusException on error
-     */
-    public void setMaturity(final TethysDate pMaturity) throws OceanusException {
-        setInfoSetValue(MoneyWiseAccountInfoClass.MATURITY, pMaturity);
     }
 
     /**
@@ -641,48 +593,6 @@ public class MoneyWiseDeposit
     }
 
     @Override
-    public void adjustClosed() throws OceanusException {
-        /* Adjust closed date */
-        super.adjustClosed();
-
-        /* If the maturity is null for a bond set it to close date */
-        if (isDepositClass(MoneyWiseDepositCategoryClass.BOND) && getMaturity() == null) {
-            /* Record a date for maturity */
-            setMaturity(getCloseDate());
-        }
-    }
-
-    @Override
-    public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
-                                                      final MoneyWiseTaxCredit pYear) {
-        /* Switch on category type */
-        final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
-        switch (pCategory.getCategoryTypeClass()) {
-            case INTEREST:
-                if (isTaxFree()) {
-                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
-                }
-                if (isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER)) {
-                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.PEER2PEERINTEREST);
-                }
-                return myCategories.getSingularClass(isGross()
-                        || !pYear.isTaxCreditRequired()
-                        ? MoneyWiseTransCategoryClass.GROSSINTEREST
-                        : MoneyWiseTransCategoryClass.TAXEDINTEREST);
-            case LOYALTYBONUS:
-                if (isTaxFree()) {
-                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
-                }
-                return myCategories.getSingularClass(isGross()
-                        || !pYear.isTaxCreditRequired()
-                        ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS
-                        : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);
-            default:
-                return pCategory;
-        }
-    }
-
-    @Override
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
@@ -697,10 +607,6 @@ public class MoneyWiseDeposit
 
     @Override
     public void touchOnUpdate() {
-        /* Reset touches from update set */
-        clearTouches(MoneyWiseBasicDataType.DEPOSITRATE);
-        clearTouches(MoneyWiseBasicDataType.PORTFOLIO);
-
         /* Touch parent */
         getParent().touchItem(this);
     }
@@ -708,9 +614,9 @@ public class MoneyWiseDeposit
     @Override
     public void validate() {
         final MoneyWisePayee myParent = getParent();
-        final MoneyWiseDepositCategory myCategory = getCategory();
+        final MoneyWiseLoanCategory myCategory = getCategory();
         final MoneyWiseCurrency myCurrency = getAssetCurrency();
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
+        final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
 
         /* Validate base components */
         super.validate();
@@ -729,7 +635,7 @@ public class MoneyWiseDeposit
             addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
         }
 
-        /* Deposit must be a child */
+        /* Loan must be a child */
         if (!myClass.isChild()) {
             addError(ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
 
@@ -738,13 +644,13 @@ public class MoneyWiseDeposit
             addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* Parent must be suitable */
-            if (!myParent.getCategoryClass().canParentDeposit(myClass)) {
+            if (!myParent.getCategoryClass().canParentLoan(myClass)) {
                 addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
             }
 
             /* If we are open then parent must be open */
             if (!isClosed() && myParent.isClosed()) {
-                addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                addError(ERROR_PARCLOSED, FIELD_CLOSED);
             }
         }
 
@@ -761,23 +667,23 @@ public class MoneyWiseDeposit
     }
 
     /**
-     * Update base deposit from an edited deposit.
-     * @param pDeposit the edited deposit
+     * Update base loan from an edited loan.
+     * @param pLoan the edited loan
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final PrometheusDataItem pDeposit) {
-        /* Can only update from a deposit */
-        if (!(pDeposit instanceof MoneyWiseDeposit)) {
+    public boolean applyChanges(final PrometheusDataItem pLoan) {
+        /* Can only update from a loan */
+        if (!(pLoan instanceof MoneyWiseLoan)) {
             return false;
         }
-        final MoneyWiseDeposit myDeposit = (MoneyWiseDeposit) pDeposit;
+        final MoneyWiseLoan myLoan = (MoneyWiseLoan) pLoan;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Apply basic changes */
-        applyBasicChanges(myDeposit);
+        applyBasicChanges(myLoan);
 
         /* Check for changes */
         return checkForHistory();
@@ -785,25 +691,25 @@ public class MoneyWiseDeposit
 
     @Override
     public void adjustMapForItem() {
-        final MoneyWiseDepositList myList = getList();
-        final MoneyWiseDepositDataMap myMap = myList.getDataMap();
+        final MoneyWiseLoanList myList = getList();
+        final MoneyWiseLoanDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
     /**
-     * The Deposit List class.
+     * The Loan List class.
      */
-    public static class MoneyWiseDepositList
-            extends MoneyWiseAssetBaseList<MoneyWiseDeposit> {
+    public static class MoneyWiseLoanList
+            extends MoneyWiseAssetBaseList<MoneyWiseLoan> {
         /**
          * Report fields.
          */
-        private static final MetisFieldSet<MoneyWiseDepositList> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositList.class);
+        private static final MetisFieldSet<MoneyWiseLoanList> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanList.class);
 
         /**
-         * The DepositInfo List.
+         * The LoanInfo List.
          */
-        private MoneyWiseDepositInfoList theInfoList;
+        private MoneyWiseLoanInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
@@ -814,20 +720,20 @@ public class MoneyWiseDeposit
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
-        public MoneyWiseDepositList(final MoneyWiseDataSet pData) {
-            super(pData, MoneyWiseDeposit.class, MoneyWiseBasicDataType.DEPOSIT);
+        public MoneyWiseLoanList(final MoneyWiseDataSet pData) {
+            super(pData, MoneyWiseLoan.class, MoneyWiseBasicDataType.LOAN);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected MoneyWiseDepositList(final MoneyWiseDepositList pSource) {
+        protected MoneyWiseLoanList(final MoneyWiseLoanList pSource) {
             super(pSource);
         }
 
         @Override
-        public MetisFieldSet<MoneyWiseDepositList> getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseLoanList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -838,21 +744,21 @@ public class MoneyWiseDeposit
 
         @Override
         public MetisFieldSetDef getItemFields() {
-            return MoneyWiseDeposit.FIELD_DEFS;
+            return MoneyWiseLoan.FIELD_DEFS;
         }
 
         @Override
-        protected MoneyWiseDepositDataMap getDataMap() {
-            return (MoneyWiseDepositDataMap) super.getDataMap();
+        protected MoneyWiseLoanDataMap getDataMap() {
+            return (MoneyWiseLoanDataMap) super.getDataMap();
         }
 
         /**
          * Obtain the depositInfoList.
          * @return the deposit info list
          */
-        public MoneyWiseDepositInfoList getDepositInfo() {
+        public MoneyWiseLoanInfoList getLoanInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getDepositInfo();
+                theInfoList = getDataSet().getLoanInfo();
             }
             return theInfoList;
         }
@@ -869,8 +775,8 @@ public class MoneyWiseDeposit
         }
 
         @Override
-        protected MoneyWiseDepositList getEmptyList(final PrometheusListStyle pStyle) {
-            final MoneyWiseDepositList myList = new MoneyWiseDepositList(this);
+        protected MoneyWiseLoanList getEmptyList(final PrometheusListStyle pStyle) {
+            final MoneyWiseLoanList myList = new MoneyWiseLoanList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -881,9 +787,9 @@ public class MoneyWiseDeposit
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWiseDepositList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWiseLoanList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
-            final MoneyWiseDepositList myList = getEmptyList(PrometheusListStyle.EDIT);
+            final MoneyWiseLoanList myList = getEmptyList(PrometheusListStyle.EDIT);
             final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
 
@@ -891,26 +797,26 @@ public class MoneyWiseDeposit
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            final MoneyWiseDepositInfoList myDepInfo = getDepositInfo();
-            myList.theInfoList = myDepInfo.getEmptyList(PrometheusListStyle.EDIT);
+            final MoneyWiseLoanInfoList myLoanInfo = getLoanInfo();
+            myList.theInfoList = myLoanInfo.getEmptyList(PrometheusListStyle.EDIT);
 
-            /* Loop through the deposits */
-            final Iterator<MoneyWiseDeposit> myIterator = iterator();
+            /* Loop through the loans */
+            final Iterator<MoneyWiseLoan> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final MoneyWiseDeposit myCurr = myIterator.next();
+                final MoneyWiseLoan myCurr = myIterator.next();
 
                 /* Ignore deleted deposits */
                 if (myCurr.isDeleted()) {
                     continue;
                 }
 
-                /* Build the new linked deposit and add it to the list */
-                final MoneyWiseDeposit myDeposit = new MoneyWiseDeposit(myList, myCurr);
-                myDeposit.resolveUpdateSetLinks(pUpdateSet);
-                myList.add(myDeposit);
+                /* Build the new linked loan and add it to the list */
+                final MoneyWiseLoan myLoan = new MoneyWiseLoan(myList, myCurr);
+                myLoan.resolveUpdateSetLinks(pUpdateSet);
+                myList.add(myLoan);
 
                 /* Adjust the map */
-                myDeposit.adjustMapForItem();
+                myLoan.adjustMapForItem();
             }
 
             /* Return the list */
@@ -918,7 +824,7 @@ public class MoneyWiseDeposit
         }
 
         @Override
-        public MoneyWiseDeposit findItemByName(final String pName) {
+        public MoneyWiseLoan findItemByName(final String pName) {
             /* look up the name in the map */
             return getDataMap().findItemByName(pName);
         }
@@ -936,37 +842,37 @@ public class MoneyWiseDeposit
         }
 
         @Override
-        public MoneyWiseDeposit addCopyItem(final PrometheusDataItem pDeposit) {
-            /* Can only clone a Deposit */
-            if (!(pDeposit instanceof MoneyWiseDeposit)) {
+        public MoneyWiseLoan addCopyItem(final PrometheusDataItem pLoan) {
+            /* Can only clone a Loan */
+            if (!(pLoan instanceof MoneyWiseLoan)) {
                 throw new UnsupportedOperationException();
             }
 
-            final MoneyWiseDeposit myDeposit = new MoneyWiseDeposit(this, (MoneyWiseDeposit) pDeposit);
-            add(myDeposit);
-            return myDeposit;
+            final MoneyWiseLoan myLoan = new MoneyWiseLoan(this, (MoneyWiseLoan) pLoan);
+            add(myLoan);
+            return myLoan;
         }
 
         @Override
-        public MoneyWiseDeposit addNewItem() {
-            final MoneyWiseDeposit myDeposit = new MoneyWiseDeposit(this);
-            add(myDeposit);
-            return myDeposit;
+        public MoneyWiseLoan addNewItem() {
+            final MoneyWiseLoan myLoan = new MoneyWiseLoan(this);
+            add(myLoan);
+            return myLoan;
         }
 
         @Override
-        public MoneyWiseDeposit addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
-            /* Create the deposit */
-            final MoneyWiseDeposit myDeposit = new MoneyWiseDeposit(this, pValues);
+        public MoneyWiseLoan addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the loan */
+            final MoneyWiseLoan myLoan = new MoneyWiseLoan(this, pValues);
 
-            /* Check that this DepositId has not been previously added */
-            if (!isIdUnique(myDeposit.getIndexedId())) {
-                myDeposit.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
-                throw new MoneyWiseDataException(myDeposit, ERROR_VALIDATION);
+            /* Check that this LoanId has not been previously added */
+            if (!isIdUnique(myLoan.getIndexedId())) {
+                myLoan.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
+                throw new MoneyWiseDataException(myLoan, ERROR_VALIDATION);
             }
 
             /* Add to the list */
-            add(myDeposit);
+            add(myLoan);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
@@ -976,39 +882,13 @@ public class MoneyWiseDeposit
                     final PrometheusInfoItem myItem = myIterator.next();
 
                     /* Build info */
-                    final PrometheusDataValues myValues = myItem.getValues(myDeposit);
+                    final PrometheusDataValues myValues = myItem.getValues(myLoan);
                     theInfoList.addValuesItem(myValues);
                 }
             }
 
             /* Return it */
-            return myDeposit;
-        }
-
-        /**
-         * Obtain default holding for portfolio.
-         * @param pParent the parent
-         * @param isTaxFree should holding be taxFree?
-         * @return the default holding
-         */
-        public MoneyWiseDeposit getDefaultHolding(final MoneyWisePayee pParent,
-                                                  final Boolean isTaxFree) {
-            /* loop through the deposits */
-            final Iterator<MoneyWiseDeposit> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseDeposit myDeposit = myIterator.next();
-
-                /* Ignore deleted and closed deposits and wrong taxFree status */
-                boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
-                bIgnore |= !pParent.equals(myDeposit.getParent());
-                bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
-                if (!bIgnore) {
-                    return myDeposit;
-                }
-            }
-
-            /* Return no deposit */
-            return null;
+            return myLoan;
         }
 
         /**
@@ -1016,12 +896,12 @@ public class MoneyWiseDeposit
          * @param pPayees the payee list
          */
         private void ensureMap(final MoneyWisePayeeList pPayees) {
-            setDataMap(new MoneyWiseDepositDataMap(pPayees));
+            setDataMap(new MoneyWiseLoanDataMap(pPayees));
         }
 
         @Override
-        protected MoneyWiseDepositDataMap allocateDataMap() {
-            return new MoneyWiseDepositDataMap(getDataSet().getPayees());
+        protected MoneyWiseLoanDataMap allocateDataMap() {
+            return new MoneyWiseLoanDataMap(getDataSet().getPayees());
         }
 
         @Override
@@ -1035,18 +915,18 @@ public class MoneyWiseDeposit
     /**
      * The dataMap class.
      */
-    protected static class MoneyWiseDepositDataMap
+    protected static class MoneyWiseLoanDataMap
             implements PrometheusDataMapItem, MetisFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFieldSet<MoneyWiseDepositDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositDataMap.class);
+        private static final MetisFieldSet<MoneyWiseLoanDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanDataMap.class);
 
         /*
          * UnderlyingMap Field Id.
          */
         static {
-            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_UNDERLYING, MoneyWiseDepositDataMap::getUnderlyingMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_UNDERLYING, MoneyWiseLoanDataMap::getUnderlyingMap);
         }
 
         /**
@@ -1058,12 +938,12 @@ public class MoneyWiseDeposit
          * Constructor.
          * @param pPayees the payee list
          */
-        protected MoneyWiseDepositDataMap(final MoneyWisePayeeList pPayees) {
+        protected MoneyWiseLoanDataMap(final MoneyWisePayeeList pPayees) {
             theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();
         }
 
         @Override
-        public MetisFieldSet<MoneyWiseDepositDataMap> getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseLoanDataMap> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1096,10 +976,10 @@ public class MoneyWiseDeposit
          * @param pName the name to look up
          * @return the matching item
          */
-        public MoneyWiseDeposit findItemByName(final String pName) {
+        public MoneyWiseLoan findItemByName(final String pName) {
             final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
-            return myAsset instanceof MoneyWiseDeposit
-                    ? (MoneyWiseDeposit) myAsset
+            return myAsset instanceof MoneyWiseLoan
+                    ? (MoneyWiseLoan) myAsset
                     : null;
         }
 
