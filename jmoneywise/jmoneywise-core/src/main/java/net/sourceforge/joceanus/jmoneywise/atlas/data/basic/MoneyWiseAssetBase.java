@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataIt
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -698,7 +698,7 @@ public abstract class MoneyWiseAssetBase
      * @param pUpdateSet the updateSet
      * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
         /* No action by default */
     }
 
@@ -792,7 +792,7 @@ public abstract class MoneyWiseAssetBase
         }
 
         /* Check that the name does not contain invalid characters */
-        if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
+        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
             addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
     }

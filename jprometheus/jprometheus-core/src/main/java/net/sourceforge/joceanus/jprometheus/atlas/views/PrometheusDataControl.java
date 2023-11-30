@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
+package net.sourceforge.joceanus.jprometheus.atlas.views;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -26,11 +26,9 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -44,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 /**
  * Provides top-level control of data.
  */
-public abstract class DataControl
+public abstract class PrometheusDataControl
         implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * The Event Manager.
@@ -54,12 +52,12 @@ public abstract class DataControl
     /**
      * The DataSet.
      */
-    private DataSet theData;
+    private PrometheusDataSet theData;
 
     /**
      * The Update DataSet.
      */
-    private DataSet theUpdates;
+    private PrometheusDataSet theUpdates;
 
     /**
      * The Error List.
@@ -85,7 +83,7 @@ public abstract class DataControl
      * Constructor for default control.
      * @param pToolkit the toolkit
      */
-    protected DataControl(final PrometheusToolkit pToolkit) {
+    protected PrometheusDataControl(final PrometheusToolkit pToolkit) {
         /* Store the parameters */
         theToolkit = pToolkit;
         theMetisToolkit = pToolkit.getToolkit();
@@ -110,7 +108,7 @@ public abstract class DataControl
      * Record new DataSet.
      * @param pData the new DataSet
      */
-    public void setData(final DataSet pData) {
+    public void setData(final PrometheusDataSet pData) {
         /* If we already have data */
         if (theData != null) {
             /* Bump the generation */
@@ -144,7 +142,7 @@ public abstract class DataControl
      * Obtain current DataSet.
      * @return the current DataSet
      */
-    public DataSet getData() {
+    public PrometheusDataSet getData() {
         return theData;
     }
 
@@ -165,7 +163,7 @@ public abstract class DataControl
      * Obtain current Updates.
      * @return the current Updates
      */
-    public DataSet getUpdates() {
+    public PrometheusDataSet getUpdates() {
         return theUpdates;
     }
 
@@ -297,7 +295,7 @@ public abstract class DataControl
      * Obtain DataSet object.
      * @return dataSet object
      */
-    public abstract DataSet getNewData();
+    public abstract PrometheusDataSet getNewData();
 
     /**
      * Analyse the data in the view.

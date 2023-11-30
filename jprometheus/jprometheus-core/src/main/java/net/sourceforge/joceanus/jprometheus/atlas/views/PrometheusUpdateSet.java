@@ -14,13 +14,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
+package net.sourceforge.joceanus.jprometheus.atlas.views;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
@@ -45,25 +50,25 @@ import java.util.Map;
 /**
  * Provides control of a set of update-able DataLists.
  */
-public class UpdateSet
-        implements MetisFieldItem, TethysEventProvider<PrometheusDataEvent>, DataListSet {
+public class PrometheusUpdateSet
+        implements MetisFieldItem, TethysEventProvider<PrometheusDataEvent>, PrometheusDataListSet {
     /**
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisFieldSet<UpdateSet> FIELD_DEFS = MetisFieldSet.newFieldSet(UpdateSet.class);
+    private static final MetisFieldSet<PrometheusUpdateSet> FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusUpdateSet.class);
 
     /*
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_VERSION, UpdateSet::getVersion);
+        FIELD_DEFS.declareLocalField(PrometheusDataResourceX.DATASET_VERSION, PrometheusUpdateSet::getVersion);
     }
 
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(UpdateSet.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusUpdateSet.class);
 
     /**
      * The Event Manager.
@@ -74,17 +79,17 @@ public class UpdateSet
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private final MetisFieldSet<UpdateSet> theLocalFields;
+    private final MetisFieldSet<PrometheusUpdateSet> theLocalFields;
 
     /**
      * The entry map.
      */
-    private final Map<PrometheusListKeyX, UpdateEntry<?>> theMap;
+    private final Map<PrometheusListKey, PrometheusUpdateEntry<?>> theMap;
 
     /**
      * The DataControl.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
 
     /**
      * The version.
@@ -100,7 +105,7 @@ public class UpdateSet
      * Constructor for an update list.
      * @param pControl the Data Control
      */
-    public UpdateSet(final DataControl pControl) {
+    public PrometheusUpdateSet(final PrometheusDataControl pControl) {
         /* Store the Control */
         theControl = pControl;
 
@@ -116,7 +121,7 @@ public class UpdateSet
 
     @SuppressWarnings("rawtypes")
     @Override
-    public MetisFieldSet<UpdateSet> getDataFieldSet() {
+    public MetisFieldSet<PrometheusUpdateSet> getDataFieldSet() {
         return theLocalFields;
     }
 
@@ -150,7 +155,7 @@ public class UpdateSet
      * Obtain the dataSet.
      * @return the dataSet
      */
-    public  DataSet getDataSet() {
+    public PrometheusDataSet getDataSet() {
         return theControl.getData();
     }
 
@@ -160,13 +165,13 @@ public class UpdateSet
      * @param pDataType the data type
      * @return the list class entry
      */
-    public <T extends DataItem> UpdateEntry<T> registerType(final PrometheusListKeyX pDataType) {
+    public <T extends PrometheusDataItem> PrometheusUpdateEntry<T> registerType(final PrometheusListKey pDataType) {
         /* Locate any existing entry */
         @SuppressWarnings("unchecked")
-        UpdateEntry<T> myEntry = (UpdateEntry<T>) theMap.get(pDataType);
+        PrometheusUpdateEntry<T> myEntry = (PrometheusUpdateEntry<T>) theMap.get(pDataType);
         if (myEntry == null) {
             /* Not found , so add it */
-            final UpdateEntry<T> myNewEntry = new UpdateEntry<>(pDataType);
+            final PrometheusUpdateEntry<T> myNewEntry = new PrometheusUpdateEntry<>(pDataType);
             theMap.put(pDataType, myNewEntry);
             theLocalFields.declareLocalField(myNewEntry.getName(), n -> myNewEntry);
             myEntry = myNewEntry;
@@ -187,15 +192,15 @@ public class UpdateSet
      * @return the list
      */
     @Override
-    public <L extends DataList<?>> L getDataList(final PrometheusListKeyX pDataType,
-                                                 final Class<L> pClass) {
+    public <L extends PrometheusDataList<?>> L getDataList(final PrometheusListKey pDataType,
+                                                           final Class<L> pClass) {
         /* Locate an existing entry */
-        final UpdateEntry<?> myEntry = theMap.get(pDataType);
+        final PrometheusUpdateEntry<?> myEntry = theMap.get(pDataType);
 
         /* Cast correctly */
         return myEntry != null
-                               ? pClass.cast(myEntry.getDataList())
-                               : theControl.getData().getDataList(pDataType, pClass);
+                ? pClass.cast(myEntry.getDataList())
+                : theControl.getData().getDataList(pDataType, pClass);
     }
 
     /**
@@ -209,11 +214,11 @@ public class UpdateSet
         theVersion++;
 
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Increment the version if the list exists */
             if (myDataList != null) {
@@ -247,11 +252,11 @@ public class UpdateSet
         theVersion = pVersion;
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* If the list exists */
             if (myDataList != null) {
@@ -268,8 +273,8 @@ public class UpdateSet
         myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* If the list exists */
             if (myDataList != null) {
@@ -392,9 +397,9 @@ public class UpdateSet
         /* Protect against exceptions */
         try {
             /* Loop through the items in the list */
-            final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+            final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
-                final UpdateEntry<?> myEntry = myIterator.next();
+                final PrometheusUpdateEntry<?> myEntry = myIterator.next();
 
                 /* Note the new step */
                 myTask.startTask(myEntry.getName());
@@ -422,9 +427,9 @@ public class UpdateSet
         myTask = myTask.startTask("commitChanges");
 
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            final UpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
 
             /* Note the new step */
             myTask.startTask(myEntry.getName());
@@ -450,9 +455,9 @@ public class UpdateSet
         myTask = myTask.startTask("rollBackChanges");
 
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            final UpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
 
             /* Note the new step */
             myTask.startTask(myEntry.getName());
@@ -480,11 +485,11 @@ public class UpdateSet
      */
     public boolean hasErrors() {
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access entry */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Determine whether there are errors */
             if ((myDataList != null) && (myDataList.hasErrors())) {
@@ -505,11 +510,11 @@ public class UpdateSet
         myTask = myTask.startTask("validate");
 
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* if list exists */
             if (myDataList != null) {
@@ -531,12 +536,12 @@ public class UpdateSet
      */
     public MetisDataEditState getEditState() {
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         MetisDataEditState myState = MetisDataEditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -630,11 +635,11 @@ public class UpdateSet
      */
     private void condenseHistory(final int pNewVersion) {
         /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?>> myIterator = theMap.values().iterator();
+        final Iterator<PrometheusUpdateEntry<?>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            final UpdateEntry<?> myEntry = myIterator.next();
-            final DataList<?> myDataList = myEntry.getDataList();
+            final PrometheusUpdateEntry<?> myEntry = myIterator.next();
+            final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Condense history in the list */
             if (myDataList != null) {

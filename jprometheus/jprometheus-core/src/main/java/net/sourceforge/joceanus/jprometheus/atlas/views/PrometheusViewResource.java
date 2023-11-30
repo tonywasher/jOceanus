@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
+package net.sourceforge.joceanus.jprometheus.atlas.views;
 
 import java.util.EnumMap;
 import java.util.Map;

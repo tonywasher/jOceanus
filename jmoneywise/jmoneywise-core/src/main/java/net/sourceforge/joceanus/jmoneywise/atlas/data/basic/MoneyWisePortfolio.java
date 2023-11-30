@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolio
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataMapItem;
@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -466,7 +466,7 @@ public class MoneyWisePortfolio
 
     @Override
     public void deRegister() {
-        final SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
         myMap.deRegister(this);
     }
 
@@ -475,7 +475,7 @@ public class MoneyWisePortfolio
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultPortfolioType());
@@ -489,7 +489,7 @@ public class MoneyWisePortfolio
      * @param pUpdateSet the update set
      * @return the default parent
      */
-    private static MoneyWisePayee getDefaultParent(final UpdateSet pUpdateSet) {
+    private static MoneyWisePayee getDefaultParent(final PrometheusUpdateSet pUpdateSet) {
         /* loop through the payees */
         final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
@@ -553,7 +553,7 @@ public class MoneyWisePortfolio
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent/holding within list */
         final MoneyWiseDataSet myData = getDataSet();
         final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
@@ -770,7 +770,7 @@ public class MoneyWisePortfolio
         super.validateName(pName);
 
         /* Check that the name does not contain invalid characters */
-        if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
+        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
             addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
     }
@@ -896,7 +896,7 @@ public class MoneyWisePortfolio
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWisePortfolioList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWisePortfolioList deriveEditList(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWisePortfolioList myList = getEmptyList(PrometheusListStyle.EDIT);
             final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);

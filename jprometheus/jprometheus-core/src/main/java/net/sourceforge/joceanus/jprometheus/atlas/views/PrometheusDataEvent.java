@@ -14,54 +14,49 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
+package net.sourceforge.joceanus.jprometheus.atlas.views;
 
 /**
- * Prometheus UI events.
+ * Prometheus Data Events.
  */
-public enum PrometheusUIEvent {
+public enum PrometheusDataEvent {
     /**
-     * OK.
+     * Refresh Views.
      */
-    OK,
+    REFRESHVIEWS,
 
     /**
-     * Undo.
+     * Rewind Updates.
      */
-    UNDO,
+    REWINDUPDATES,
 
     /**
-     * ReWind.
+     * GoTo Window.
      */
-    REWIND,
+    GOTOWINDOW,
 
     /**
-     * Reset.
+     * Adjust Visibility.
      */
-    RESET,
+    ADJUSTVISIBILITY,
 
     /**
-     * Cancel.
+     * Selection Changed.
      */
-    CANCEL,
+    SELECTIONCHANGED,
 
     /**
-     * BuildGoToMenu.
+     * Download.
      */
-    BUILDGOTO,
+    DOWNLOAD,
 
     /**
-     * GoTo.
+     * Print.
      */
-    GOTO,
+    PRINT,
 
     /**
-     * Edit.
+     * SaveToFile.
      */
-    EDIT,
-
-    /**
-     * Delete.
-     */
-    DELETE,
+    SAVETOFILE,
 }

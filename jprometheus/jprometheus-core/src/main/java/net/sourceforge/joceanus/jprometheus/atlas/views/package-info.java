@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Prometheus: Application Framework
  * Copyright 2012,2023 Tony Washer
  *
@@ -14,49 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
-
 /**
- * Prometheus Data Events.
+ * Provides top-level control of data.
  */
-public enum PrometheusDataEvent {
-    /**
-     * Refresh Views.
-     */
-    REFRESHVIEWS,
-
-    /**
-     * Rewind Updates.
-     */
-    REWINDUPDATES,
-
-    /**
-     * GoTo Window.
-     */
-    GOTOWINDOW,
-
-    /**
-     * Adjust Visibility.
-     */
-    ADJUSTVISIBILITY,
-
-    /**
-     * Selection Changed.
-     */
-    SELECTIONCHANGED,
-
-    /**
-     * Download.
-     */
-    DOWNLOAD,
-
-    /**
-     * Print.
-     */
-    PRINT,
-
-    /**
-     * SaveToFile.
-     */
-    SAVETOFILE,
-}
+package net.sourceforge.joceanus.jprometheus.atlas.views;
