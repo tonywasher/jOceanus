@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
@@ -42,8 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseSecurityT
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
@@ -194,7 +193,7 @@ public class MoneyWiseSecurity
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.SECURITY.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.SECURITY, getIndexedId());
     }
 
     /**
@@ -504,7 +503,7 @@ public class MoneyWiseSecurity
      */
     private MoneyWisePayee getDefaultParent(final UpdateSet pUpdateSet) {
         /* Access details */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         final MoneyWiseSecurityClass myClass = getCategoryClass();
 
         /* loop through the payees */
@@ -553,7 +552,7 @@ public class MoneyWiseSecurity
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
     }
 

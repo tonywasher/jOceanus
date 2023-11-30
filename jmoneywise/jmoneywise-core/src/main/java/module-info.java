@@ -43,4 +43,5 @@ module net.sourceforge.joceanus.jmoneywise.core {
     exports net.sourceforge.joceanus.jmoneywise.ui.controls;
     exports net.sourceforge.joceanus.jmoneywise.lethe.views;
     exports net.sourceforge.joceanus.jmoneywise.launch;
+    exports net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 }

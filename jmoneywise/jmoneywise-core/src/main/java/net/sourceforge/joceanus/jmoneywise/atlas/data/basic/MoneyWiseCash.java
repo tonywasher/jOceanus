@@ -179,7 +179,7 @@ public class MoneyWiseCash
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.CASH.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.CASH, getIndexedId());
     }
 
     @Override

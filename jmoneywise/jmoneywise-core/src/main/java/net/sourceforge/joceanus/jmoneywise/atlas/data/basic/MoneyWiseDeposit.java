@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataMapItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
@@ -185,7 +185,7 @@ public class MoneyWiseDeposit
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.DEPOSIT.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.DEPOSIT, getIndexedId());
     }
 
     @Override

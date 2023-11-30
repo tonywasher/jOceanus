@@ -71,7 +71,7 @@ public enum MoneyWiseAssetType {
     /**
      * The asset mask for external Ids.
      */
-    public static final long ASSETMASK = 0xFL;
+    public static final int ASSETMASK = 0xF0000000;
 
     /**
      * The String name.
@@ -97,6 +97,49 @@ public enum MoneyWiseAssetType {
      */
     public int getId() {
         return theId;
+    }
+
+    /**
+     * Obtain the external id
+     * @param pBaseId the id
+     * @return the external id
+     */
+    public static long createExternalId(final MoneyWiseAssetType pType,
+                                        final long pBaseId) {
+        return pBaseId
+                + (((long) pType.getId()) << ASSETSHIFT);
+    }
+
+    /**
+     * Obtain the external id
+     * @param pBaseId the id
+     * @return the external id
+     */
+    public static long createExternalId(final MoneyWiseAssetType pType,
+                                        final int pMajorId,
+                                        final int pBaseId) {
+        return pBaseId
+                + ((long) pMajorId) << Integer.SIZE
+                + (((long) pType.getId()) << ASSETSHIFT);
+    }
+
+    /**
+     * Obtain the base id
+     * @param pId the id
+     * @return the base id
+     */
+    public static int getMajorId(final long pId) {
+        int myId = (int) (pId >>> Integer.SIZE);
+        return myId & ~ASSETMASK;
+    }
+
+    /**
+     * Obtain the qualifying id
+     * @param pId the id
+     * @return the base id
+     */
+    public static int getBaseId(final long pId) {
+        return (int) pId;
     }
 
     @Override

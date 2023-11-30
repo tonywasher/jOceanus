@@ -181,7 +181,7 @@ public class MoneyWisePayee
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.PAYEE.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.PAYEE, getIndexedId());
     }
 
     /**

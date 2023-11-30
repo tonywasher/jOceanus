@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.M
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
@@ -59,9 +60,8 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticRes
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxFactory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Schedule.ScheduleList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
@@ -105,7 +105,7 @@ public class MoneyWiseDataSet
     /**
      * SecurityHoldings Map.
      */
-    private SecurityHoldingMap theSecurityHoldings;
+    private MoneyWiseSecurityHoldingMap theSecurityHoldings;
 
     /**
      * Check Closed Accounts.
@@ -478,11 +478,11 @@ public class MoneyWiseDataSet
      * Obtain security holdings map.
      * @return the holdings map
      */
-    public SecurityHoldingMap getSecurityHoldingsMap() {
+    public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
         /* If we have note yet created the map */
         if (theSecurityHoldings == null) {
             /* Create the holdings map */
-            theSecurityHoldings = new SecurityHoldingMap(this);
+            theSecurityHoldings = new MoneyWiseSecurityHoldingMap(this);
         }
         return theSecurityHoldings;
     }

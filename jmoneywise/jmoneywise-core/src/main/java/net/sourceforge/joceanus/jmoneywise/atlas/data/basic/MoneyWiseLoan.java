@@ -181,7 +181,7 @@ public class MoneyWiseLoan
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.LOAN.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.LOAN, getIndexedId());
     }
 
     @Override

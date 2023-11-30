@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxFactory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseSheet;

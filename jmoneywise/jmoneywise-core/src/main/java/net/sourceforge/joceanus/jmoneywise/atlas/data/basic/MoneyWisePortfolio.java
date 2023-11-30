@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolio
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHoldingMap;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
@@ -194,7 +194,7 @@ public class MoneyWisePortfolio
 
     @Override
     public Long getExternalId() {
-        return getIndexedId() + (((long) MoneyWiseAssetType.PORTFOLIO.getId()) << MoneyWiseAssetType.ASSETSHIFT);
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.PORTFOLIO, getIndexedId());
     }
 
     @Override
