@@ -303,8 +303,8 @@ public class PrometheusDataValuesFormatter {
             final PrometheusDataItem myItem = (PrometheusDataItem) myObject;
 
             /* Skip over child items */
-            if ((myItem instanceof PrometheusGroupedItem)
-                    && (((PrometheusGroupedItem) myItem).isChild())) {
+            if (myItem instanceof PrometheusGroupedItem
+                    && ((PrometheusGroupedItem) myItem).isChild()) {
                 continue;
             }
 

@@ -27,6 +27,8 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;

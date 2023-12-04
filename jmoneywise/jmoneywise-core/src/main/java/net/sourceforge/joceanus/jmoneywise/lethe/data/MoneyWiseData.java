@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate.ExchangeRateL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxFactory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;

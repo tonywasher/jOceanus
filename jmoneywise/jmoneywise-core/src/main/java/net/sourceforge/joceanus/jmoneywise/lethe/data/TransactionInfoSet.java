@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;

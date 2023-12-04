@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;

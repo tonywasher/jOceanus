@@ -142,6 +142,7 @@ public class PrometheusDataValues {
         final Iterator<MetisFieldDef> myIterator = pItem.getDataFieldSet().fieldIterator();
         while (myIterator.hasNext()) {
             final MetisFieldDef myField = myIterator.next();
+            final MetisDataFieldId myFieldId = myField.getFieldId();
 
             /* Ignore field if it is irrelevant */
             if (!(myField instanceof MetisFieldVersionedDef)
@@ -150,9 +151,9 @@ public class PrometheusDataValues {
             }
 
             /* If the field is to be included */
-            if (pItem.includeXmlField(myField)) {
+            if (pItem.includeXmlField(myFieldId)) {
                 /* Store the value if it is non-null */
-                theFields.put(myField.getFieldId(), myValues.getValue(myField));
+                theFields.put(myFieldId, myValues.getValue(myField));
             }
         }
 

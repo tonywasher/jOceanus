@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

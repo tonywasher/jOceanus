@@ -14,71 +14,54 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
+package net.sourceforge.joceanus.jprometheus.atlas.views;
 
 /**
- * Standard Viewer Entries.
+ * Prometheus UI events.
  */
-public enum PrometheusViewerEntryId {
+public enum PrometheusUIEvent {
     /**
-     * Error.
+     * OK.
      */
-    ERROR,
-
-    /**
-     * Profile.
-     */
-    PROFILE,
+    OK,
 
     /**
-     * Data.
+     * Undo.
      */
-    DATA,
+    UNDO,
 
     /**
-     * View.
+     * ReWind.
      */
-    VIEW,
+    REWIND,
 
     /**
-     * DataSet.
+     * Reset.
      */
-    DATASET,
+    RESET,
 
     /**
-     * Updates.
+     * Cancel.
      */
-    UPDATES,
+    CANCEL,
 
     /**
-     * Analysis.
+     * BuildGoToMenu.
      */
-    ANALYSIS,
+    BUILDGOTO,
 
     /**
-     * Maintenance.
+     * GoTo.
      */
-    MAINTENANCE,
+    GOTO,
 
     /**
-     * StaticData.
+     * Edit.
      */
-    STATIC;
+    EDIT,
 
     /**
-     * The String name.
+     * Delete.
      */
-    private String theName;
-
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = PrometheusViewResource.getKeyForViewerEntry(this).getValue();
-        }
-
-        /* return the name */
-        return theName;
-    }
+    DELETE,
 }

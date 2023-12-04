@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Prometheus: Application Framework
+ * MoneyWise: Finance Application
  * Copyright 2012,2023 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,54 +14,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.views;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.statics;
+
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataClass;
 
 /**
- * Prometheus UI events.
+ * Interface for Category statics.
  */
-public enum PrometheusUIEvent {
+public interface MoneyWiseCategoryInterface
+        extends PrometheusStaticDataClass {
     /**
-     * OK.
+     * Is this class a totals class?
+     * @return true/false
      */
-    OK,
-
-    /**
-     * Undo.
-     */
-    UNDO,
-
-    /**
-     * ReWind.
-     */
-    REWIND,
-
-    /**
-     * Reset.
-     */
-    RESET,
-
-    /**
-     * Cancel.
-     */
-    CANCEL,
-
-    /**
-     * BuildGoToMenu.
-     */
-    BUILDGOTO,
-
-    /**
-     * GoTo.
-     */
-    GOTO,
-
-    /**
-     * Edit.
-     */
-    EDIT,
-
-    /**
-     * Delete.
-     */
-    DELETE,
+    boolean isTotals();
 }

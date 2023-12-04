@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -65,7 +67,7 @@ public abstract class PrometheusStaticDataItem
     /**
      * The Enum Class for this Static Data.
      */
-    private Class<? extends PrometheusStaticDataClass> theEnumClass;
+    private final Class<? extends PrometheusStaticDataClass> theEnumClass;
 
     /**
      * Copy Constructor.
@@ -213,6 +215,26 @@ public abstract class PrometheusStaticDataItem
     @Override
     public String toString() {
         return getName();
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {
+            return true;
+        }
+        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {
+            return getDesc() != null;
+        }
+        if (PrometheusDataResource.STATICDATA_ENABLED.equals(pField)) {
+            return !getEnabled();
+        }
+        if (PrometheusDataResource.STATICDATA_CLASS.equals(pField)) {
+            return !getName().equalsIgnoreCase(getStaticClass().name());
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
     }
 
     @Override

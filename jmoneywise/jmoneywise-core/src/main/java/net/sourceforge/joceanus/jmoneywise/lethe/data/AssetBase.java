@@ -20,7 +20,6 @@ import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -28,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
@@ -49,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  */
 public abstract class AssetBase
         extends EncryptedItem
-        implements MetisDataNamedItem, TransactionAsset {
+        implements TransactionAsset {
     /**
      * Local Report fields.
      */

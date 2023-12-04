@@ -633,7 +633,7 @@ public abstract class PrometheusDataItem
      * @param pField the field to check
      * @return true/false
      */
-    public boolean includeXmlField(final MetisFieldDef pField) {
+    public boolean includeXmlField(final MetisDataFieldId pField) {
         return false;
     }
 

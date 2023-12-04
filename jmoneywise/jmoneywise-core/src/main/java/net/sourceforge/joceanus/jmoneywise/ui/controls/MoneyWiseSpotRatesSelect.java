@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

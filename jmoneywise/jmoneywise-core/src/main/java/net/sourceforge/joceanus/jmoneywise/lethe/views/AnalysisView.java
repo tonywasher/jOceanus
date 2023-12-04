@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -201,7 +201,7 @@ public class AnalysisView
         /* If we have a range */
         if (theRange != null) {
             /* Obtain the required analysis and reset to it */
-            theBaseAnalysis = theManager.getAnalysis(theRange);
+            theBaseAnalysis = theManager.getRangedAnalysis(theRange);
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
@@ -231,7 +231,7 @@ public class AnalysisView
             /* Obtain the required analysis and reset to it */
             theRange = pRange;
             theBaseAnalysis = theManager != null
-                                                 ? theManager.getAnalysis(theRange)
+                                                 ? theManager.getRangedAnalysis(theRange)
                                                  : null;
             theAnalysis = theBaseAnalysis;
 

@@ -21,6 +21,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;

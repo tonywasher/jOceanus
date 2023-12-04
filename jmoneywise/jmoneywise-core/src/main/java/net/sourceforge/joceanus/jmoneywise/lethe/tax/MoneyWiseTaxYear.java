@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 

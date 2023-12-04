@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

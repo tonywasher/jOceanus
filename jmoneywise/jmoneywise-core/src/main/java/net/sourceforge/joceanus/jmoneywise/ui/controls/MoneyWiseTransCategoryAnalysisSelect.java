@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TransactionCategoryFilter;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;

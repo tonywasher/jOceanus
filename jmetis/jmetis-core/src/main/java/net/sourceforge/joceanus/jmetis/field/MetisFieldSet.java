@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -335,6 +336,17 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     /**
+     * Declare local field not used for equality.
+     * @param pId the id of the field
+     * @param pValue the value supplier
+     * @return the field
+     */
+    public MetisField<T> declareLocalField(final MetisDataFieldId pId,
+                                           final BiFunction<T, MetisDataFieldId, Object> pValue) {
+        return declareDataField(pId, pValue);
+    }
+
+    /**
      * Declare local non-equality fields one for each Enum.
      * @param <E> the Enum
      * @param pClazz the class of the Enum
@@ -364,7 +376,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @return the field
      */
     public MetisField<T> declareCalculatedField(final MetisDataFieldId pId) {
-        return declareDataField(pId, null);
+        return declareDataField(pId, (Function<T, Object>) null);
     }
 
     /**
@@ -390,6 +402,24 @@ public class MetisFieldSet<T extends MetisFieldItem>
      */
     private MetisField<T> declareDataField(final MetisDataFieldId pId,
                                            final Function<T, Object> pValue) {
+        /* Create the field */
+        final MetisField<T> myField = new MetisField<>(this, pId, pValue);
+
+        /* Register the field */
+        registerField(myField);
+
+        /* Return the index */
+        return myField;
+    }
+
+    /**
+     * Declare non-versioned field.
+     * @param pId the fieldId
+     * @param pValue the value supplier
+     * @return the field
+     */
+    private MetisField<T> declareDataField(final MetisDataFieldId pId,
+                                           final BiFunction<T, MetisDataFieldId, Object> pValue) {
         /* Create the field */
         final MetisField<T> myField = new MetisField<>(this, pId, pValue);
 
@@ -493,6 +523,67 @@ public class MetisFieldSet<T extends MetisFieldItem>
     @Override
     public int hashCode() {
         return theAnchorId;
+    }
+
+    /**
+     * FieldMap interface.
+     */
+    @FunctionalInterface
+    public interface MetisFieldMap<E extends Enum<E>> {
+        MetisDataFieldId getFieldIdForEnum(E pEnum);
+    }
+
+    /**
+     * Build field set for enum class.
+     * @param pClass the enum class
+     * @param pValueLookup the Lookup Function
+     * @return the map from field to enum.
+     */
+    public <E extends Enum<E> & MetisFieldMap<E>> Map<MetisDataFieldId, E> buildFieldMap(final Class<E> pClass,
+                                                                                         BiFunction<T, MetisDataFieldId, Object> pValueLookup) {
+        /* Create the map */
+        final Map<MetisDataFieldId, E> myMap = new HashMap<>();
+
+        /* Loop through the enum values */
+        for (E myValue : pClass.getEnumConstants()) {
+            /* Determine name */
+            final MetisDataFieldId myId = myValue.getFieldIdForEnum(myValue);
+
+            /* Declare a field for the value */
+            declareLocalField(myId, pValueLookup);
+
+            /* Add to the map */
+            myMap.put(myId, myValue);
+        }
+
+        /* Return the map */
+        return myMap;
+    }
+
+    /**
+     * Reverse field set to enum map.
+     * @param <E> the enum type
+     * @param pSourceMap the source map
+     * @param pClass the enum class
+     * @return the map from field to enum.
+     */
+    public static <E extends Enum<E>> Map<E, MetisDataFieldId> reverseFieldMap(final Map<MetisDataFieldId, E> pSourceMap,
+                                                                               final Class<E> pClass) {
+        /* Create the map */
+        final Map<E, MetisDataFieldId> myMap = new EnumMap<>(pClass);
+
+        /* Loop through the enum values */
+        for (Entry<MetisDataFieldId, E> myEntry : pSourceMap.entrySet()) {
+            /* Access Key and Value */
+            final MetisDataFieldId myFieldId = myEntry.getKey();
+            final E myEnum = myEntry.getValue();
+
+            /* Add to the map */
+            myMap.put(myEnum, myFieldId);
+        }
+
+        /* Return the map */
+        return myMap;
     }
 
     /**

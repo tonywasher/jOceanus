@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;

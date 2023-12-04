@@ -1033,8 +1033,9 @@ public abstract class PrometheusDataSet
                     return PrometheusControlKey.class;
                 case DATAKEYSET:
                     return PrometheusDataKeySet.class;
+                default:
+                    return null;
             }
-            return null;
         }
 
         @Override
