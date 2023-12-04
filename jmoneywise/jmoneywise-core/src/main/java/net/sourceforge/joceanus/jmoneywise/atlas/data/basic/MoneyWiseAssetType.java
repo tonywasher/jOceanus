@@ -142,6 +142,17 @@ public enum MoneyWiseAssetType {
         return (int) pId;
     }
 
+    /**
+     * Obtain the assetType
+     * @param pId the id
+     * @return the assetType
+     * @throws OceanusException on error
+     */
+    public static MoneyWiseAssetType getAssetType(final long pId) throws OceanusException {
+        int myId = (int) (pId >>> ASSETSHIFT);
+        return fromId(myId);
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */

@@ -260,8 +260,8 @@ public class MoneyWiseReportTab
 
         /* Access the appropriate analysis */
         final Analysis myAnalysis = myReportType.isPointInTime()
-                                                                 ? myManager.getAnalysis(myRange.getEnd())
-                                                                 : myManager.getAnalysis(myRange);
+                                                                 ? myManager.getDatedAnalysis(myRange.getEnd())
+                                                                 : myManager.getRangedAnalysis(myRange);
 
         /* Record analysis and build report */
         theSelect.setAnalysis(myAnalysis);

@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -375,7 +376,7 @@ public final class MoneyWiseSecurityHolding
          * Constructor.
          * @param pUpdateSet the updateSet
          */
-        public MoneyWiseSecurityHoldingMap(final UpdateSet pUpdateSet) {
+        public MoneyWiseSecurityHoldingMap(final PrometheusUpdateSet pUpdateSet) {
             /* Access lists */
             thePortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
             theSecurities = pUpdateSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);

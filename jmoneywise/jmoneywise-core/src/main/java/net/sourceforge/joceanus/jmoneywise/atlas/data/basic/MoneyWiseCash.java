@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
@@ -43,7 +42,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -179,7 +178,7 @@ public class MoneyWiseCash
 
     @Override
     public Long getExternalId() {
-        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.CASH, getIndexedId());
+        return MoneyWiseAssetType.createExternalId(isAutoExpense() ? MoneyWiseAssetType.AUTOEXPENSE : MoneyWiseAssetType.CASH, getIndexedId());
     }
 
     @Override
@@ -408,7 +407,7 @@ public class MoneyWiseCash
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final UpdateSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
@@ -422,7 +421,7 @@ public class MoneyWiseCash
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet pUpdateSet) throws OceanusException {
+    public void autoCorrect(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
         /* autoCorrect the infoSet */
         theInfoSet.autoCorrect(pUpdateSet);
     }
@@ -704,7 +703,7 @@ public class MoneyWiseCash
          * @param pUpdateSet the updateSet
          * @return the edit list
          */
-        public MoneyWiseCashList deriveEditList(final UpdateSet pUpdateSet) {
+        public MoneyWiseCashList deriveEditList(final PrometheusUpdateSet pUpdateSet) {
             /* Build an empty List */
             final MoneyWiseCashList myList = getEmptyList(PrometheusListStyle.EDIT);
             final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);

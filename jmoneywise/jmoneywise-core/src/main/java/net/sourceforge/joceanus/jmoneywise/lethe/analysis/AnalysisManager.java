@@ -146,7 +146,7 @@ public class AnalysisManager
      * @param pDate the date for the analysis.
      * @return the analysis
      */
-    public Analysis getAnalysis(final TethysDate pDate) {
+    public Analysis getDatedAnalysis(final TethysDate pDate) {
         /* Create the new Range */
         final TethysDateRange myRange = new TethysDateRange(null, pDate);
 
@@ -173,7 +173,7 @@ public class AnalysisManager
      * @param pRange the date range for the analysis.
      * @return the analysis
      */
-    public Analysis getAnalysis(final TethysDateRange pRange) {
+    public Analysis getRangedAnalysis(final TethysDateRange pRange) {
         /* Look for the existing analysis */
         Analysis myAnalysis = theAnalysisMap.get(pRange);
         if (myAnalysis == null) {

@@ -201,7 +201,7 @@ public class AnalysisView
         /* If we have a range */
         if (theRange != null) {
             /* Obtain the required analysis and reset to it */
-            theBaseAnalysis = theManager.getAnalysis(theRange);
+            theBaseAnalysis = theManager.getRangedAnalysis(theRange);
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
@@ -231,7 +231,7 @@ public class AnalysisView
             /* Obtain the required analysis and reset to it */
             theRange = pRange;
             theBaseAnalysis = theManager != null
-                                                 ? theManager.getAnalysis(theRange)
+                                                 ? theManager.getRangedAnalysis(theRange)
                                                  : null;
             theAnalysis = theBaseAnalysis;
 

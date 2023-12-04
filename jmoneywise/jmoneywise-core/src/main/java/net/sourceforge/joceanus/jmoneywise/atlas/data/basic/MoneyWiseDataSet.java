@@ -44,7 +44,9 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInf
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryType.MoneyWiseCashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
@@ -61,9 +63,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTaxBasis.
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Schedule.ScheduleList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusListKey;
@@ -438,14 +437,6 @@ public class MoneyWiseDataSet
     }
 
     /**
-     * Obtain Schedules.
-     * @return the Schedules
-     */
-    public MoneyWiseScheduleList getSchedules() {
-        return getDataList(MoneyWiseBasicDataType.SCHEDULE, MoneyWiseScheduleList.class);
-    }
-
-    /**
      * Obtain Tax Factory.
      * @return the taxFactory
      */
@@ -614,11 +605,9 @@ public class MoneyWiseDataSet
             case PORTFOLIOINFO:
                 return new MoneyWisePortfolioInfoList(this);
             case TRANSACTION:
-                return new TransactionList(this);
+                return new MoneyWiseTransactionList(this);
             case TRANSACTIONINFO:
-                return new TransactionInfoList(this);
-            case SCHEDULE:
-                return new ScheduleList(this);
+                return new MoneyWiseTransInfoList(this);
             default:
                 throw new IllegalArgumentException(pListType.toString());
         }

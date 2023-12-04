@@ -835,7 +835,7 @@ public enum MoneyWiseBasicResource
     /**
      * The Asset Direction Map.
      */
-   // private static final Map<MoneyWiseAssetDirection, TethysBundleId> DIRECTION_MAP = buildDirectionMap();
+    private static final Map<MoneyWiseAssetDirection, TethysBundleId> DIRECTION_MAP = buildDirectionMap();
 
     /**
      * The Resource Loader.
@@ -928,22 +928,22 @@ public enum MoneyWiseBasicResource
      * Build asset direction map.
      * @return the map
      */
-    //private static Map<MoneyWiseAssetDirection, TethysBundleId> buildDirectionMap() {
+    private static Map<MoneyWiseAssetDirection, TethysBundleId> buildDirectionMap() {
         /* Create the map and return it */
-    //    final Map<MoneyWiseAssetDirection, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAssetDirection.class);
-    //    myMap.put(MoneyWiseAssetDirection.TO, ASSETDIRECTION_TO);
-    //    myMap.put(MoneyWiseAssetDirection.FROM, ASSETDIRECTION_FROM);
-    //    return myMap;
-    //}
+        final Map<MoneyWiseAssetDirection, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAssetDirection.class);
+        myMap.put(MoneyWiseAssetDirection.TO, ASSETDIRECTION_TO);
+        myMap.put(MoneyWiseAssetDirection.FROM, ASSETDIRECTION_FROM);
+        return myMap;
+    }
 
     /**
      * Obtain key for asset direction.
      * @param pValue the Value
      * @return the resource key
      */
-    //protected static TethysBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
-    //    return TethysBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
-    //}
+    protected static TethysBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
+        return TethysBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
+    }
 
     /**
      * Build name map.
@@ -975,7 +975,6 @@ public enum MoneyWiseBasicResource
         myMap.put(MoneyWiseBasicDataType.PORTFOLIOINFO, PORTFOLIOINFO_NAME);
         myMap.put(MoneyWiseBasicDataType.TRANSACTION, TRANSACTION_NAME);
         myMap.put(MoneyWiseBasicDataType.TRANSACTIONINFO, TRANSINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.SCHEDULE, SCHEDULE_NAME);
         return myMap;
     }
 
@@ -1018,7 +1017,6 @@ public enum MoneyWiseBasicResource
         myMap.put(MoneyWiseBasicDataType.PORTFOLIOINFO, PORTFOLIOINFO_LIST);
         myMap.put(MoneyWiseBasicDataType.TRANSACTION, TRANSACTION_LIST);
         myMap.put(MoneyWiseBasicDataType.TRANSACTIONINFO, TRANSINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.SCHEDULE, SCHEDULE_LIST);
         return myMap;
     }
 

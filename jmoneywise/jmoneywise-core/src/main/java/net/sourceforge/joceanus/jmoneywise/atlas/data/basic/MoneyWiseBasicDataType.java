@@ -140,12 +140,7 @@ public enum MoneyWiseBasicDataType
     /**
      * TransactionInfo.
      */
-    TRANSACTIONINFO(MoneyWiseStaticDataType.MAXKEYID + 23),
-
-    /**
-     * Schedule.
-     */
-    SCHEDULE(MoneyWiseStaticDataType.MAXKEYID + 24);
+    TRANSACTIONINFO(MoneyWiseStaticDataType.MAXKEYID + 23);
 
     /**
      * The list key.

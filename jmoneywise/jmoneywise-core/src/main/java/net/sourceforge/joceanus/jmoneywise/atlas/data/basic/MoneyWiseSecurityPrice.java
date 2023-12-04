@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataIt
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -389,7 +389,7 @@ public class MoneyWiseSecurityPrice
      * @param pUpdateSet the update Set
      * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final UpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final MoneyWiseSecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);
         resolveDataLink(MoneyWiseBasicDataType.SECURITY, mySecurities);
@@ -631,7 +631,7 @@ public class MoneyWiseSecurityPrice
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWiseSecurityPriceList deriveEditList(final UpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWiseSecurityPriceList deriveEditList(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseSecurityPriceList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
