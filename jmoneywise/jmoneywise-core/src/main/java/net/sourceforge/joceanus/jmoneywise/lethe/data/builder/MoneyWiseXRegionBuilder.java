@@ -18,20 +18,20 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Tag Builder.
+ * Region Builder.
  */
-public class MoneyWiseTagBuilder {
+public class MoneyWiseXRegionBuilder {
     /**
      * DataSet.
      */
     private final MoneyWiseData theDataSet;
 
     /**
-     * The TagName.
+     * The RegionName.
      */
     private String theName;
 
@@ -39,9 +39,9 @@ public class MoneyWiseTagBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseTagBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXRegionBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
-        theDataSet.getTransactionTags().ensureMap();
+        theDataSet.getRegions().ensureMap();
     }
 
     /**
@@ -49,9 +49,18 @@ public class MoneyWiseTagBuilder {
      * @param pName the name of the tag.
      * @return the builder
      */
-    public MoneyWiseTagBuilder name(final String pName) {
+    public MoneyWiseXRegionBuilder name(final String pName) {
         theName = pName;
         return this;
+    }
+
+    /**
+     * Obtain the region.
+     * @param pRegion the region.
+     * @return the region
+     */
+    public Region lookupRegion(final String pRegion) {
+        return theDataSet.getRegions().findItemByName(pRegion);
     }
 
     /**
@@ -59,23 +68,23 @@ public class MoneyWiseTagBuilder {
      * @return the new tag
      * @throws OceanusException on error
      */
-    public TransactionTag build() throws OceanusException {
-        /* Create the tag */
-        final TransactionTag myTag = theDataSet.getTransactionTags().addNewItem();
-        myTag.setName(theName);
+    public Region build() throws OceanusException {
+        /* Create the region */
+        final Region myRegion = theDataSet.getRegions().addNewItem();
+        myRegion.setName(theName);
 
         /* Check for errors */
-        myTag.adjustMapForItem();
-        myTag.validate();
-        if (myTag.hasErrors()) {
-            theDataSet.getTransactionTags().remove(myTag);
-            throw new MoneyWiseDataException(myTag, "Failed validation");
+        myRegion.adjustMapForItem();
+        myRegion.validate();
+        if (myRegion.hasErrors()) {
+            theDataSet.getRegions().remove(myRegion);
+            throw new MoneyWiseDataException(myRegion, "Failed validation");
         }
 
         /* Reset values */
         theName = null;
 
-        /* Return the tag */
-        return myTag;
+        /* Return the region */
+        return myRegion;
     }
 }

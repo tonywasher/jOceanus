@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 /**
  * Transaction Builder.
  */
-public class MoneyWiseTransactionBuilder {
+public class MoneyWiseXTransactionBuilder {
     /**
      * DataSet.
      */
@@ -153,7 +153,7 @@ public class MoneyWiseTransactionBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTransactionBuilder(final MoneyWiseData pDataSet) {
+    MoneyWiseXTransactionBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         theReconciled = Boolean.FALSE;
         theTags = new ArrayList<>();
@@ -164,7 +164,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pDate the date of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder date(final TethysDate pDate) {
+    public MoneyWiseXTransactionBuilder date(final TethysDate pDate) {
         theDate = pDate;
         return this;
     }
@@ -174,7 +174,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pDate the Date of the rate.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder date(final String pDate) {
+    public MoneyWiseXTransactionBuilder date(final String pDate) {
         return date(new TethysDate(pDate));
     }
 
@@ -184,8 +184,8 @@ public class MoneyWiseTransactionBuilder {
      * @param pTo the to account.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder pair(final TransactionAsset pFrom,
-                                            final TransactionAsset pTo) {
+    public MoneyWiseXTransactionBuilder pair(final TransactionAsset pFrom,
+                                             final TransactionAsset pTo) {
         switchDirection = pFrom instanceof Payee;
         theAccount = switchDirection ? pTo : pFrom;
         thePartner = switchDirection ? pFrom : pTo;
@@ -198,8 +198,8 @@ public class MoneyWiseTransactionBuilder {
      * @param pTo the to account.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder pair(final String pFrom,
-                                            final String pTo) {
+    public MoneyWiseXTransactionBuilder pair(final String pFrom,
+                                             final String pTo) {
         return pair(resolveTransactionAsset(pFrom), resolveTransactionAsset(pTo));
     }
 
@@ -208,7 +208,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pCategory the category.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder category(final TransactionCategory pCategory) {
+    public MoneyWiseXTransactionBuilder category(final TransactionCategory pCategory) {
         theCategory = pCategory;
         return this;
     }
@@ -218,7 +218,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pCategory the category.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder category(final String pCategory) {
+    public MoneyWiseXTransactionBuilder category(final String pCategory) {
         return category(theDataSet.getTransCategories().findItemByName(pCategory));
     }
 
@@ -227,7 +227,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pAmount the amount of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder amount(final TethysMoney pAmount) {
+    public MoneyWiseXTransactionBuilder amount(final TethysMoney pAmount) {
         theAmount = pAmount;
         return this;
     }
@@ -237,7 +237,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pAmount the amount of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder amount(final String pAmount) {
+    public MoneyWiseXTransactionBuilder amount(final String pAmount) {
         return amount(new TethysMoney(pAmount, theAccount.getCurrency()));
     }
 
@@ -246,7 +246,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pTaxCredit the taxCredit of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder taxCredit(final TethysMoney pTaxCredit) {
+    public MoneyWiseXTransactionBuilder taxCredit(final TethysMoney pTaxCredit) {
         theTaxCredit = pTaxCredit;
         return this;
     }
@@ -256,7 +256,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pTaxCredit the taxCredit of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder taxCredit(final String pTaxCredit) {
+    public MoneyWiseXTransactionBuilder taxCredit(final String pTaxCredit) {
         return taxCredit(new TethysMoney(pTaxCredit, theDataSet.getDefaultCurrency().getCurrency()));
     }
 
@@ -265,7 +265,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pNI the EmployersNI of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder employersNI(final TethysMoney pNI) {
+    public MoneyWiseXTransactionBuilder employersNI(final TethysMoney pNI) {
         theErNI = pNI;
         return this;
     }
@@ -275,7 +275,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pNI the EmployersNI of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder employersNI(final String pNI) {
+    public MoneyWiseXTransactionBuilder employersNI(final String pNI) {
         return employersNI(new TethysMoney(pNI, theDataSet.getDefaultCurrency().getCurrency()));
     }
 
@@ -284,7 +284,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pNI the EmployeesNI of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder employeesNI(final TethysMoney pNI) {
+    public MoneyWiseXTransactionBuilder employeesNI(final TethysMoney pNI) {
         theEeNI = pNI;
         return this;
     }
@@ -294,7 +294,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pNI the EmployeesNI of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder employeesNI(final String pNI) {
+    public MoneyWiseXTransactionBuilder employeesNI(final String pNI) {
         return employeesNI(new TethysMoney(pNI, theDataSet.getDefaultCurrency().getCurrency()));
     }
 
@@ -303,7 +303,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pBenefit the benefit of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder benefit(final TethysMoney pBenefit) {
+    public MoneyWiseXTransactionBuilder benefit(final TethysMoney pBenefit) {
         theBenefit = pBenefit;
         return this;
     }
@@ -313,7 +313,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pBenefit the benefit of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder benefit(final String pBenefit) {
+    public MoneyWiseXTransactionBuilder benefit(final String pBenefit) {
         return benefit(new TethysMoney(pBenefit, theDataSet.getDefaultCurrency().getCurrency()));
      }
 
@@ -322,7 +322,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pWithheld the withheld of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder withheld(final TethysMoney pWithheld) {
+    public MoneyWiseXTransactionBuilder withheld(final TethysMoney pWithheld) {
         theWithheld = pWithheld;
         return this;
     }
@@ -332,7 +332,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pWithheld the withheld of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder withheld(final String pWithheld) {
+    public MoneyWiseXTransactionBuilder withheld(final String pWithheld) {
         return withheld(new TethysMoney(pWithheld, theDataSet.getDefaultCurrency().getCurrency()));
     }
 
@@ -341,7 +341,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pAmount the partner amount of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder partnerAmount(final TethysMoney pAmount) {
+    public MoneyWiseXTransactionBuilder partnerAmount(final TethysMoney pAmount) {
         thePartnerAmount = pAmount;
         return this;
     }
@@ -351,7 +351,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pAmount the partner amount of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder partnerAmount(final String pAmount) {
+    public MoneyWiseXTransactionBuilder partnerAmount(final String pAmount) {
         return partnerAmount(new TethysMoney(pAmount, thePartner.getCurrency()));
     }
 
@@ -360,7 +360,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pUnits the debit units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder debitUnits(final TethysUnits pUnits) {
+    public MoneyWiseXTransactionBuilder debitUnits(final TethysUnits pUnits) {
         final TethysUnits myUnits = new TethysUnits(pUnits);
         myUnits.negate();
         if (switchDirection) {
@@ -376,7 +376,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pUnits the debit units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder debitUnits(final String pUnits) {
+    public MoneyWiseXTransactionBuilder debitUnits(final String pUnits) {
         return debitUnits(new TethysUnits(pUnits));
     }
 
@@ -385,7 +385,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pUnits the credit units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder creditUnits(final TethysUnits pUnits) {
+    public MoneyWiseXTransactionBuilder creditUnits(final TethysUnits pUnits) {
         if (switchDirection) {
             theAccountUnits = pUnits;
         } else {
@@ -399,7 +399,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pUnits the credit units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder creditUnits(final String pUnits) {
+    public MoneyWiseXTransactionBuilder creditUnits(final String pUnits) {
         return creditUnits(new TethysUnits(pUnits));
     }
 
@@ -408,7 +408,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pDilution the dilution of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder dilution(final TethysRatio pDilution) {
+    public MoneyWiseXTransactionBuilder dilution(final TethysRatio pDilution) {
         theDilution = pDilution;
         return this;
     }
@@ -418,7 +418,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pDilution the dilution of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder dilution(final String pDilution) {
+    public MoneyWiseXTransactionBuilder dilution(final String pDilution) {
         return dilution(new TethysRatio(pDilution));
     }
 
@@ -427,7 +427,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pYears the qualifyYears of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder qualifyYears(final Integer pYears) {
+    public MoneyWiseXTransactionBuilder qualifyYears(final Integer pYears) {
         theQualifyYears = pYears;
         return this;
     }
@@ -438,8 +438,8 @@ public class MoneyWiseTransactionBuilder {
      * @param pAccount the account to which the cash was returned
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder returnedCash(final TethysMoney pCash,
-                                                    final TransactionAsset pAccount) {
+    public MoneyWiseXTransactionBuilder returnedCash(final TethysMoney pCash,
+                                                     final TransactionAsset pAccount) {
         theReturnedCash = pCash;
         theReturnedCashAccount = pAccount;
         return this;
@@ -451,8 +451,8 @@ public class MoneyWiseTransactionBuilder {
      * @param pAccount the account to which the cash was returned
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder returnedCash(final String pCash,
-                                                    final String pAccount) {
+    public MoneyWiseXTransactionBuilder returnedCash(final String pCash,
+                                                     final String pAccount) {
         final TransactionAsset myAsset = resolveTransactionAsset(pAccount);
         return returnedCash(new TethysMoney(pCash, myAsset == null ? null : myAsset.getCurrency()), myAsset);
     }
@@ -462,7 +462,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pPrice the price of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder price(final TethysPrice pPrice) {
+    public MoneyWiseXTransactionBuilder price(final TethysPrice pPrice) {
         thePrice = pPrice;
         return this;
     }
@@ -472,7 +472,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pPrice the price of the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder price(final String pPrice) {
+    public MoneyWiseXTransactionBuilder price(final String pPrice) {
         return price(new TethysPrice(pPrice, theAccount.getCurrency()));
     }
 
@@ -481,7 +481,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pTag the tag for the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder tag(final TransactionTag pTag) {
+    public MoneyWiseXTransactionBuilder tag(final TransactionTag pTag) {
         if (!theTags.contains(pTag)) {
             theTags.add(pTag);
         }
@@ -493,7 +493,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pTag the tag for the transaction.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder tag(final String pTag) {
+    public MoneyWiseXTransactionBuilder tag(final String pTag) {
         return tag(theDataSet.getTransactionTags().findItemByName(pTag));
     }
 
@@ -501,7 +501,7 @@ public class MoneyWiseTransactionBuilder {
      * Set reconciled.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder reconciled() {
+    public MoneyWiseXTransactionBuilder reconciled() {
         theReconciled = Boolean.TRUE;
         return this;
     }

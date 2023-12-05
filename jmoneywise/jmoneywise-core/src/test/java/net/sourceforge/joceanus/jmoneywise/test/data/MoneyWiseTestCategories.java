@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseCashCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseDepositCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseLoanCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseRegionBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseStaticBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseTagBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseTransCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXchgRateBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXCashCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXDepositCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXLoanCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXRegionBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXStaticBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXTagBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXTransCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXXchgRateBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
@@ -234,42 +234,42 @@ public class MoneyWiseTestCategories {
     /**
      * StaticBuilder.
      */
-    private final MoneyWiseStaticBuilder theStaticBuilder;
+    private final MoneyWiseXStaticBuilder theStaticBuilder;
 
     /**
      * DepositCAtegoryBuilder.
      */
-    private final MoneyWiseDepositCategoryBuilder theDepositBuilder;
+    private final MoneyWiseXDepositCategoryBuilder theDepositBuilder;
 
     /**
      * CashCategoryBuilder.
      */
-    private final MoneyWiseCashCategoryBuilder theCashBuilder;
+    private final MoneyWiseXCashCategoryBuilder theCashBuilder;
 
     /**
      * LoanCategoryBuilder.
      */
-    private final MoneyWiseLoanCategoryBuilder theLoanBuilder;
+    private final MoneyWiseXLoanCategoryBuilder theLoanBuilder;
 
     /**
      * TransCategoryBuilder.
      */
-    private final MoneyWiseTransCategoryBuilder theTransBuilder;
+    private final MoneyWiseXTransCategoryBuilder theTransBuilder;
 
     /**
      * RegionBuilder.
      */
-    private final MoneyWiseRegionBuilder theRegionBuilder;
+    private final MoneyWiseXRegionBuilder theRegionBuilder;
 
     /**
      * TagBuilder.
      */
-    private final MoneyWiseTagBuilder theTagBuilder;
+    private final MoneyWiseXTagBuilder theTagBuilder;
 
     /**
      * XchgRateBuilder.
      */
-    private final MoneyWiseXchgRateBuilder theXchgRateBuilder;
+    private final MoneyWiseXXchgRateBuilder theXchgRateBuilder;
 
     /**
      * Constructor.
@@ -277,14 +277,14 @@ public class MoneyWiseTestCategories {
      */
     MoneyWiseTestCategories(final MoneyWiseData pDataSet) {
         /* Create the builders */
-        theStaticBuilder = new MoneyWiseStaticBuilder(pDataSet);
-        theDepositBuilder = new MoneyWiseDepositCategoryBuilder(pDataSet);
-        theCashBuilder = new MoneyWiseCashCategoryBuilder(pDataSet);
-        theLoanBuilder = new MoneyWiseLoanCategoryBuilder(pDataSet);
-        theTransBuilder = new MoneyWiseTransCategoryBuilder(pDataSet);
-        theRegionBuilder = new MoneyWiseRegionBuilder(pDataSet);
-        theTagBuilder = new MoneyWiseTagBuilder(pDataSet);
-        theXchgRateBuilder = new MoneyWiseXchgRateBuilder(pDataSet);
+        theStaticBuilder = new MoneyWiseXStaticBuilder(pDataSet);
+        theDepositBuilder = new MoneyWiseXDepositCategoryBuilder(pDataSet);
+        theCashBuilder = new MoneyWiseXCashCategoryBuilder(pDataSet);
+        theLoanBuilder = new MoneyWiseXLoanCategoryBuilder(pDataSet);
+        theTransBuilder = new MoneyWiseXTransCategoryBuilder(pDataSet);
+        theRegionBuilder = new MoneyWiseXRegionBuilder(pDataSet);
+        theTagBuilder = new MoneyWiseXTagBuilder(pDataSet);
+        theXchgRateBuilder = new MoneyWiseXXchgRateBuilder(pDataSet);
     }
 
     /**

@@ -14,24 +14,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Region Builder.
+ * Tag Builder.
  */
-public class MoneyWiseRegionBuilder {
+public class MoneyWiseTagBuilder {
     /**
      * DataSet.
      */
-    private final MoneyWiseData theDataSet;
+    private final MoneyWiseDataSet theDataSet;
 
     /**
-     * The RegionName.
+     * The TagName.
      */
     private String theName;
 
@@ -39,9 +39,9 @@ public class MoneyWiseRegionBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseRegionBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseTagBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
-        theDataSet.getRegions().ensureMap();
+        theDataSet.getTransactionTags().ensureMap();
     }
 
     /**
@@ -49,18 +49,9 @@ public class MoneyWiseRegionBuilder {
      * @param pName the name of the tag.
      * @return the builder
      */
-    public MoneyWiseRegionBuilder name(final String pName) {
+    public MoneyWiseTagBuilder name(final String pName) {
         theName = pName;
         return this;
-    }
-
-    /**
-     * Obtain the region.
-     * @param pRegion the region.
-     * @return the region
-     */
-    public Region lookupRegion(final String pRegion) {
-        return theDataSet.getRegions().findItemByName(pRegion);
     }
 
     /**
@@ -68,23 +59,23 @@ public class MoneyWiseRegionBuilder {
      * @return the new tag
      * @throws OceanusException on error
      */
-    public Region build() throws OceanusException {
-        /* Create the region */
-        final Region myRegion = theDataSet.getRegions().addNewItem();
-        myRegion.setName(theName);
+    public MoneyWiseTransTag build() throws OceanusException {
+        /* Create the tag */
+        final MoneyWiseTransTag myTag = theDataSet.getTransactionTags().addNewItem();
+        myTag.setName(theName);
 
         /* Check for errors */
-        myRegion.adjustMapForItem();
-        myRegion.validate();
-        if (myRegion.hasErrors()) {
-            theDataSet.getRegions().remove(myRegion);
-            throw new MoneyWiseDataException(myRegion, "Failed validation");
+        myTag.adjustMapForItem();
+        myTag.validate();
+        if (myTag.hasErrors()) {
+            theDataSet.getTransactionTags().remove(myTag);
+            throw new MoneyWiseDataException(myTag, "Failed validation");
         }
 
         /* Reset values */
         theName = null;
 
-        /* Return the region */
-        return myRegion;
+        /* Return the tag */
+        return myTag;
     }
 }

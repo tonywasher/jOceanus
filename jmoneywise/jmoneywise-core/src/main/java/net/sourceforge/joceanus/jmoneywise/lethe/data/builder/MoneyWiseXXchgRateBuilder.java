@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 /**
  * ExchangeRate Builder.
  */
-public class MoneyWiseXchgRateBuilder {
+public class MoneyWiseXXchgRateBuilder {
     /**
      * DataSet.
      */
@@ -53,7 +53,7 @@ public class MoneyWiseXchgRateBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseXchgRateBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXXchgRateBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getExchangeRates().ensureMap();
     }
@@ -63,7 +63,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder currency(final AssetCurrency pCurrency) {
+    public MoneyWiseXXchgRateBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
     }
@@ -73,7 +73,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder currency(final AssetCurrencyClass pCurrency) {
+    public MoneyWiseXXchgRateBuilder currency(final AssetCurrencyClass pCurrency) {
         theCurrency = lookupCurrency(pCurrency);
         return this;
     }
@@ -92,7 +92,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pRate the rate.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder rate(final TethysRatio pRate) {
+    public MoneyWiseXXchgRateBuilder rate(final TethysRatio pRate) {
         theRate = pRate;
         return this;
     }
@@ -102,7 +102,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pRate the rate.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder rate(final String pRate) {
+    public MoneyWiseXXchgRateBuilder rate(final String pRate) {
         return rate(new TethysRatio(pRate));
     }
 
@@ -111,7 +111,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pDate the Date of the rate.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder date(final TethysDate pDate) {
+    public MoneyWiseXXchgRateBuilder date(final TethysDate pDate) {
         theDate = pDate;
         return this;
     }
@@ -121,7 +121,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pDate the Date of the rate.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder date(final String pDate) {
+    public MoneyWiseXXchgRateBuilder date(final String pDate) {
         return date(new TethysDate(pDate));
     }
 

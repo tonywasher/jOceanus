@@ -14,16 +14,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -33,7 +33,7 @@ public class MoneyWisePortfolioBuilder {
     /**
      * DataSet.
      */
-    private final MoneyWiseData theDataSet;
+    private final MoneyWiseDataSet theDataSet;
 
     /**
      * The PortfolioName.
@@ -43,23 +43,23 @@ public class MoneyWisePortfolioBuilder {
     /**
      * The Parent.
      */
-    private Payee theParent;
+    private MoneyWisePayee theParent;
 
     /**
      * The PortfolioType.
      */
-    private PortfolioType theType;
+    private MoneyWisePortfolioType theType;
 
     /**
      * The Currency.
      */
-    private AssetCurrency theCurrency;
+    private MoneyWiseCurrency theCurrency;
 
     /**
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWisePortfolioBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWisePortfolioBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getPortfolios().ensureMap();
         defaultCurrency();
@@ -80,7 +80,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder parent(final Payee pParent) {
+    public MoneyWisePortfolioBuilder parent(final MoneyWisePayee pParent) {
         theParent = pParent;
         return this;
     }
@@ -99,7 +99,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pType the type of the portfolio.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder type(final PortfolioType pType) {
+    public MoneyWisePortfolioBuilder type(final MoneyWisePortfolioType pType) {
         theType = pType;
         return this;
     }
@@ -109,7 +109,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pType the type of the portfolio.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder type(final PortfolioTypeClass pType) {
+    public MoneyWisePortfolioBuilder type(final MoneyWisePortfolioClass pType) {
         return type(theDataSet.getPortfolioTypes().findItemByClass(pType));
     }
 
@@ -118,7 +118,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pCurrency the currency of the loan.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder currency(final AssetCurrency pCurrency) {
+    public MoneyWisePortfolioBuilder currency(final MoneyWiseCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
     }
@@ -128,7 +128,7 @@ public class MoneyWisePortfolioBuilder {
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
-    public MoneyWisePortfolioBuilder currency(final AssetCurrencyClass pCurrency) {
+    public MoneyWisePortfolioBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
         return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
@@ -143,7 +143,7 @@ public class MoneyWisePortfolioBuilder {
      * Obtain the default currency.
      * @return the currency
      */
-    private AssetCurrency lookupDefaultCurrency() {
+    private MoneyWiseCurrency lookupDefaultCurrency() {
         return theDataSet.getDefaultCurrency();
     }
 
@@ -152,9 +152,9 @@ public class MoneyWisePortfolioBuilder {
      * @return the new Portfolio
      * @throws OceanusException on error
      */
-    public Portfolio build() throws OceanusException {
+    public MoneyWisePortfolio build() throws OceanusException {
         /* Create the payee */
-        final Portfolio myPortfolio = theDataSet.getPortfolios().addNewItem();
+        final MoneyWisePortfolio myPortfolio = theDataSet.getPortfolios().addNewItem();
         myPortfolio.setName(theName);
         myPortfolio.setParent(theParent);
         myPortfolio.setCategory(theType);

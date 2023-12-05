@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseCashBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseDepositBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseLoanBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWisePayeeBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWisePortfolioBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseSecurityBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseSecurityPriceBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXCashBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXDepositBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXLoanBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXPayeeBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXPortfolioBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXSecurityBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXSecurityPriceBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
@@ -91,37 +91,37 @@ public class MoneyWiseTestAccounts {
     /**
      * PayeeBuilder.
      */
-    private final MoneyWisePayeeBuilder thePayeeBuilder;
+    private final MoneyWiseXPayeeBuilder thePayeeBuilder;
 
     /**
      * DepositBuilder.
      */
-    private final MoneyWiseDepositBuilder theDepositBuilder;
+    private final MoneyWiseXDepositBuilder theDepositBuilder;
 
     /**
      * CashBuilder.
      */
-    private final MoneyWiseCashBuilder theCashBuilder;
+    private final MoneyWiseXCashBuilder theCashBuilder;
 
     /**
      * LoanBuilder.
      */
-    private final MoneyWiseLoanBuilder theLoanBuilder;
+    private final MoneyWiseXLoanBuilder theLoanBuilder;
 
     /**
      * PortfolioBuilder.
      */
-    private final MoneyWisePortfolioBuilder thePortfolioBuilder;
+    private final MoneyWiseXPortfolioBuilder thePortfolioBuilder;
 
     /**
      * SecurityBuilder.
      */
-    private final MoneyWiseSecurityBuilder theSecurityBuilder;
+    private final MoneyWiseXSecurityBuilder theSecurityBuilder;
 
     /**
      * SecurityPriceBuilder.
      */
-    private final MoneyWiseSecurityPriceBuilder theSecurityPriceBuilder;
+    private final MoneyWiseXSecurityPriceBuilder theSecurityPriceBuilder;
 
     /**
      * Constructor.
@@ -129,13 +129,13 @@ public class MoneyWiseTestAccounts {
      */
     MoneyWiseTestAccounts(final MoneyWiseData pDataSet) {
         /* Create the builders */
-        thePayeeBuilder = new MoneyWisePayeeBuilder(pDataSet);
-        theDepositBuilder = new MoneyWiseDepositBuilder(pDataSet);
-        theCashBuilder = new MoneyWiseCashBuilder(pDataSet);
-        theLoanBuilder = new MoneyWiseLoanBuilder(pDataSet);
-        thePortfolioBuilder = new MoneyWisePortfolioBuilder(pDataSet);
-        theSecurityBuilder = new MoneyWiseSecurityBuilder(pDataSet);
-        theSecurityPriceBuilder = new MoneyWiseSecurityPriceBuilder(pDataSet);
+        thePayeeBuilder = new MoneyWiseXPayeeBuilder(pDataSet);
+        theDepositBuilder = new MoneyWiseXDepositBuilder(pDataSet);
+        theCashBuilder = new MoneyWiseXCashBuilder(pDataSet);
+        theLoanBuilder = new MoneyWiseXLoanBuilder(pDataSet);
+        thePortfolioBuilder = new MoneyWiseXPortfolioBuilder(pDataSet);
+        theSecurityBuilder = new MoneyWiseXSecurityBuilder(pDataSet);
+        theSecurityPriceBuilder = new MoneyWiseXSecurityPriceBuilder(pDataSet);
     }
 
     /**

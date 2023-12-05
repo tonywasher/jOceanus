@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 /**
  * Security Builder.
  */
-public class MoneyWiseSecurityBuilder {
+public class MoneyWiseXSecurityBuilder {
     /**
      * DataSet.
      */
@@ -81,7 +81,7 @@ public class MoneyWiseSecurityBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseSecurityBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXSecurityBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getSecurities().ensureMap();
         defaultCurrency();
@@ -92,7 +92,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pName the name of the loan.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder name(final String pName) {
+    public MoneyWiseXSecurityBuilder name(final String pName) {
         theName = pName;
         return this;
     }
@@ -102,7 +102,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder parent(final Payee pParent) {
+    public MoneyWiseXSecurityBuilder parent(final Payee pParent) {
         theParent = pParent;
         return this;
     }
@@ -112,7 +112,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder parent(final String pParent) {
+    public MoneyWiseXSecurityBuilder parent(final String pParent) {
         return parent(theDataSet.getPayees().findItemByName(pParent));
     }
 
@@ -121,7 +121,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pType the type of the security.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder type(final SecurityType pType) {
+    public MoneyWiseXSecurityBuilder type(final SecurityType pType) {
         theType = pType;
         return this;
     }
@@ -131,7 +131,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pType the type of the security.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder type(final SecurityTypeClass pType) {
+    public MoneyWiseXSecurityBuilder type(final SecurityTypeClass pType) {
         return type(theDataSet.getSecurityTypes().findItemByClass(pType));
     }
 
@@ -140,7 +140,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pCurrency the currency of the loan.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder currency(final AssetCurrency pCurrency) {
+    public MoneyWiseXSecurityBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
     }
@@ -150,7 +150,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder currency(final AssetCurrencyClass pCurrency) {
+    public MoneyWiseXSecurityBuilder currency(final AssetCurrencyClass pCurrency) {
         return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
@@ -174,7 +174,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pSymbol the symbol of the security.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder symbol(final String pSymbol) {
+    public MoneyWiseXSecurityBuilder symbol(final String pSymbol) {
         theSymbol = pSymbol;
         return this;
     }
@@ -184,7 +184,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pRegion the region.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder region(final Region pRegion) {
+    public MoneyWiseXSecurityBuilder region(final Region pRegion) {
         theRegion = pRegion;
         return this;
     }
@@ -194,7 +194,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pRegion the region.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder region(final String pRegion) {
+    public MoneyWiseXSecurityBuilder region(final String pRegion) {
         return region(theDataSet.getRegions().findItemByName(pRegion));
     }
 
@@ -203,7 +203,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pUnderlying the underlying.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder underlying(final Security pUnderlying) {
+    public MoneyWiseXSecurityBuilder underlying(final Security pUnderlying) {
         theUnderlying = pUnderlying;
         return this;
     }
@@ -213,7 +213,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pPrice the optionPrice of the security.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder optionPrice(final TethysPrice pPrice) {
+    public MoneyWiseXSecurityBuilder optionPrice(final TethysPrice pPrice) {
         theOptionPrice = pPrice;
         return this;
     }

@@ -14,46 +14,46 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * CashCategory Builder.
+ * LoanCategory Builder.
  */
-public class MoneyWiseCashCategoryBuilder {
+public class MoneyWiseLoanCategoryBuilder {
     /**
      * DataSet.
      */
-    private final MoneyWiseData theDataSet;
+    private final MoneyWiseDataSet theDataSet;
 
     /**
-     * The categoryName.
+     * The CategoryName.
      */
     private String theName;
 
     /**
      * The Parent.
      */
-    private CashCategory theParent;
+    private MoneyWiseLoanCategory theParent;
 
     /**
      * The CategoryType.
      */
-    private CashCategoryType theType;
+    private MoneyWiseLoanCategoryType theType;
 
     /**
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseCashCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseLoanCategoryBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
-        theDataSet.getCashCategories().ensureMap();
+        theDataSet.getLoanCategories().ensureMap();
     }
 
     /**
@@ -61,7 +61,7 @@ public class MoneyWiseCashCategoryBuilder {
      * @param pName the name of the category.
      * @return the builder
      */
-    public MoneyWiseCashCategoryBuilder name(final String pName) {
+    public MoneyWiseLoanCategoryBuilder name(final String pName) {
         final int myIndex = pName.lastIndexOf(':');
         if (myIndex == -1) {
             theName = pName;
@@ -78,7 +78,7 @@ public class MoneyWiseCashCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseCashCategoryBuilder type(final CashCategoryType pType) {
+    public MoneyWiseLoanCategoryBuilder type(final MoneyWiseLoanCategoryType pType) {
         theType = pType;
         return this;
     }
@@ -88,27 +88,27 @@ public class MoneyWiseCashCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseCashCategoryBuilder type(final CashCategoryClass pType) {
-        return type(theDataSet.getCashCategoryTypes().findItemByClass(pType));
+    public MoneyWiseLoanCategoryBuilder type(final MoneyWiseLoanCategoryClass pType) {
+        return type(theDataSet.getLoanCategoryTypes().findItemByClass(pType));
     }
 
     /**
-     * Obtain the cashCategory.
+     * Obtain the loanCategory.
      * @param pCategory the name of the category.
-     * @return the cashCategory
+     * @return the loanCategory
      */
-    private CashCategory lookupCategory(final String pCategory) {
-        return theDataSet.getCashCategories().findItemByName(pCategory);
+    private MoneyWiseLoanCategory lookupCategory(final String pCategory) {
+        return theDataSet.getLoanCategories().findItemByName(pCategory);
     }
 
     /**
-     * Build the cashCategory.
+     * Build the loanCategory.
      * @return the new Category
      * @throws OceanusException on error
      */
-    public CashCategory build() throws OceanusException {
+    public MoneyWiseLoanCategory build() throws OceanusException {
         /* Create the category */
-        final CashCategory myCategory = theDataSet.getCashCategories().addNewItem();
+        final MoneyWiseLoanCategory myCategory = theDataSet.getLoanCategories().addNewItem();
         myCategory.setCategoryType(theType);
         myCategory.setParentCategory(theParent);
         myCategory.setSubCategoryName(theName);
@@ -117,7 +117,7 @@ public class MoneyWiseCashCategoryBuilder {
         myCategory.adjustMapForItem();
         myCategory.validate();
         if (myCategory.hasErrors()) {
-            theDataSet.getCashCategories().remove(myCategory);
+            theDataSet.getLoanCategories().remove(myCategory);
             throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 

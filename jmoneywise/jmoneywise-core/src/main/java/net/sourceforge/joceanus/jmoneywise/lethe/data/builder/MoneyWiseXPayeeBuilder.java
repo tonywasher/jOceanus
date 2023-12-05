@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Payee Builder.
  */
-public class MoneyWisePayeeBuilder {
+public class MoneyWiseXPayeeBuilder {
     /**
      * DataSet.
      */
@@ -46,7 +46,7 @@ public class MoneyWisePayeeBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWisePayeeBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXPayeeBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getPayees().ensureMap();
     }
@@ -56,7 +56,7 @@ public class MoneyWisePayeeBuilder {
      * @param pName the name of the payee.
      * @return the builder
      */
-    public MoneyWisePayeeBuilder name(final String pName) {
+    public MoneyWiseXPayeeBuilder name(final String pName) {
         theName = pName;
         return this;
     }
@@ -66,7 +66,7 @@ public class MoneyWisePayeeBuilder {
      * @param pType the type of the payee.
      * @return the builder
      */
-    public MoneyWisePayeeBuilder type(final PayeeTypeClass pType) {
+    public MoneyWiseXPayeeBuilder type(final PayeeTypeClass pType) {
         return type(theDataSet.getPayeeTypes().findItemByClass(pType));
     }
 
@@ -75,7 +75,7 @@ public class MoneyWisePayeeBuilder {
      * @param pType the type of the payee.
      * @return the builder
      */
-    public MoneyWisePayeeBuilder type(final PayeeType pType) {
+    public MoneyWiseXPayeeBuilder type(final PayeeType pType) {
         theType = pType;
         return this;
     }

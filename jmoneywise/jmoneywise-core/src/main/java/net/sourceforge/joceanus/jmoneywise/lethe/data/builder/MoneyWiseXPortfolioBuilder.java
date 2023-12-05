@@ -17,26 +17,26 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
- * Deposit Builder.
+ * Portfolio Builder.
  */
-public class MoneyWiseDepositBuilder {
+public class MoneyWiseXPortfolioBuilder {
     /**
      * DataSet.
      */
     private final MoneyWiseData theDataSet;
 
     /**
-     * The DepositName.
+     * The PortfolioName.
      */
     private String theName;
 
@@ -46,9 +46,9 @@ public class MoneyWiseDepositBuilder {
     private Payee theParent;
 
     /**
-     * The Deposit Category.
+     * The PortfolioType.
      */
-    private DepositCategory theCategory;
+    private PortfolioType theType;
 
     /**
      * The Currency.
@@ -56,26 +56,21 @@ public class MoneyWiseDepositBuilder {
     private AssetCurrency theCurrency;
 
     /**
-     * The Opening Balance.
-     */
-    private TethysMoney theOpeningBalance;
-
-    /**
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseDepositBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXPortfolioBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
-        theDataSet.getDeposits().ensureMap();
+        theDataSet.getPortfolios().ensureMap();
         defaultCurrency();
     }
 
     /**
      * Set Name.
-     * @param pName the name of the loan.
+     * @param pName the name of the portfolio.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder name(final String pName) {
+    public MoneyWiseXPortfolioBuilder name(final String pName) {
         theName = pName;
         return this;
     }
@@ -85,7 +80,7 @@ public class MoneyWiseDepositBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder parent(final Payee pParent) {
+    public MoneyWiseXPortfolioBuilder parent(final Payee pParent) {
         theParent = pParent;
         return this;
     }
@@ -95,35 +90,35 @@ public class MoneyWiseDepositBuilder {
      * @param pParent the parent.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder parent(final String pParent) {
+    public MoneyWiseXPortfolioBuilder parent(final String pParent) {
         return parent(theDataSet.getPayees().findItemByName(pParent));
     }
 
     /**
-     * Set the depositCategory.
-     * @param pCategory the category of the deposit.
+     * Set the portfolioType.
+     * @param pType the type of the portfolio.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder category(final DepositCategory pCategory) {
-        theCategory = pCategory;
+    public MoneyWiseXPortfolioBuilder type(final PortfolioType pType) {
+        theType = pType;
         return this;
     }
 
     /**
-     * Set the depositCategory.
-     * @param pCategory the category of the deposit.
+     * Set the portfolioType.
+     * @param pType the type of the portfolio.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder category(final String pCategory) {
-        return category(theDataSet.getDepositCategories().findItemByName(pCategory));
+    public MoneyWiseXPortfolioBuilder type(final PortfolioTypeClass pType) {
+        return type(theDataSet.getPortfolioTypes().findItemByClass(pType));
     }
 
     /**
      * Set the currency.
-     * @param pCurrency the currency of the deposit.
+     * @param pCurrency the currency of the loan.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder currency(final AssetCurrency pCurrency) {
+    public MoneyWiseXPortfolioBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
         return this;
     }
@@ -133,7 +128,7 @@ public class MoneyWiseDepositBuilder {
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
-    public MoneyWiseDepositBuilder currency(final AssetCurrencyClass pCurrency) {
+    public MoneyWiseXPortfolioBuilder currency(final AssetCurrencyClass pCurrency) {
         return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));
     }
 
@@ -153,55 +148,33 @@ public class MoneyWiseDepositBuilder {
     }
 
     /**
-     * Set the openingBalance.
-     * @param pOpening the opening Balance
-     * @return the builder
-     */
-    public MoneyWiseDepositBuilder openingBalance(final TethysMoney pOpening) {
-        theOpeningBalance = pOpening;
-        return this;
-    }
-
-    /**
-     * Set the openingBalance.
-     * @param pOpening the opening Balance
-     * @return the builder
-     */
-    public MoneyWiseDepositBuilder openingBalance(final String pOpening) {
-        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
-    }
-
-    /**
-     * Build the deposit.
-     * @return the new Deposit
+     * Build the portfolio.
+     * @return the new Portfolio
      * @throws OceanusException on error
      */
-    public Deposit build() throws OceanusException {
-        /* Create the deposit */
-        final Deposit myDeposit = theDataSet.getDeposits().addNewItem();
-        myDeposit.setName(theName);
-        myDeposit.setParent(theParent);
-        myDeposit.setCategory(theCategory);
-        myDeposit.setAssetCurrency(theCurrency);
-        myDeposit.setOpeningBalance(theOpeningBalance);
-        myDeposit.setClosed(Boolean.FALSE);
+    public Portfolio build() throws OceanusException {
+        /* Create the payee */
+        final Portfolio myPortfolio = theDataSet.getPortfolios().addNewItem();
+        myPortfolio.setName(theName);
+        myPortfolio.setParent(theParent);
+        myPortfolio.setCategory(theType);
+        myPortfolio.setAssetCurrency(theCurrency);
+        myPortfolio.setClosed(Boolean.FALSE);
 
         /* Check for errors */
-        myDeposit.adjustMapForItem();
-        myDeposit.validate();
-        if (myDeposit.hasErrors()) {
-            theDataSet.getDeposits().remove(myDeposit);
-            throw new MoneyWiseDataException(myDeposit, "Failed validation");
+        myPortfolio.adjustMapForItem();
+        myPortfolio.validate();
+        if (myPortfolio.hasErrors()) {
+            theDataSet.getPortfolios().remove(myPortfolio);
+            throw new MoneyWiseDataException(myPortfolio, "Failed validation");
         }
 
         /* Reset values */
         theName = null;
-        theCategory = null;
         theParent = null;
-        theOpeningBalance = null;
-        defaultCurrency();
+        theType = null;
 
-        /* Return the deposit */
-        return myDeposit;
+        /* Return the portfolio */
+        return myPortfolio;
     }
 }

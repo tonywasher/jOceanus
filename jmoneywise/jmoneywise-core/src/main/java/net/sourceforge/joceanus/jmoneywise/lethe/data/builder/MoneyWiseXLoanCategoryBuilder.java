@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * LoanCategory Builder.
  */
-public class MoneyWiseLoanCategoryBuilder {
+public class MoneyWiseXLoanCategoryBuilder {
     /**
      * DataSet.
      */
@@ -51,7 +51,7 @@ public class MoneyWiseLoanCategoryBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseLoanCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXLoanCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getLoanCategories().ensureMap();
     }
@@ -61,7 +61,7 @@ public class MoneyWiseLoanCategoryBuilder {
      * @param pName the name of the category.
      * @return the builder
      */
-    public MoneyWiseLoanCategoryBuilder name(final String pName) {
+    public MoneyWiseXLoanCategoryBuilder name(final String pName) {
         final int myIndex = pName.lastIndexOf(':');
         if (myIndex == -1) {
             theName = pName;
@@ -78,7 +78,7 @@ public class MoneyWiseLoanCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseLoanCategoryBuilder type(final LoanCategoryType pType) {
+    public MoneyWiseXLoanCategoryBuilder type(final LoanCategoryType pType) {
         theType = pType;
         return this;
     }
@@ -88,7 +88,7 @@ public class MoneyWiseLoanCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseLoanCategoryBuilder type(final LoanCategoryClass pType) {
+    public MoneyWiseXLoanCategoryBuilder type(final LoanCategoryClass pType) {
         return type(theDataSet.getLoanCategoryTypes().findItemByClass(pType));
     }
 

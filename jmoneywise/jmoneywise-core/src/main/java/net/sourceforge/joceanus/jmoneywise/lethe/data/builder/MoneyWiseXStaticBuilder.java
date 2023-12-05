@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Static Builder.
  */
-public class MoneyWiseStaticBuilder {
+public class MoneyWiseXStaticBuilder {
     /**
      * DataSet.
      */
@@ -68,7 +68,7 @@ public class MoneyWiseStaticBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseStaticBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXStaticBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -77,7 +77,7 @@ public class MoneyWiseStaticBuilder {
      * @throws OceanusException on error
      * @return the builder
      */
-    public MoneyWiseStaticBuilder buildBasic() throws OceanusException {
+    public MoneyWiseXStaticBuilder buildBasic() throws OceanusException {
         return buildBasic(Currency.getInstance(Locale.getDefault()));
     }
 
@@ -87,7 +87,7 @@ public class MoneyWiseStaticBuilder {
      * @throws OceanusException on error
      * @return the builder
      */
-    public MoneyWiseStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
+    public MoneyWiseXStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
         /* Create default currency */
         buildDefaultCurrency(pDefault);
 

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * DepositCategory Builder.
  */
-public class MoneyWiseDepositCategoryBuilder {
+public class MoneyWiseXDepositCategoryBuilder {
     /**
      * DataSet.
      */
@@ -51,7 +51,7 @@ public class MoneyWiseDepositCategoryBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseDepositCategoryBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseXDepositCategoryBuilder(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getDepositCategories().ensureMap();
     }
@@ -61,7 +61,7 @@ public class MoneyWiseDepositCategoryBuilder {
      * @param pName the name of the category.
      * @return the builder
      */
-    public MoneyWiseDepositCategoryBuilder name(final String pName) {
+    public MoneyWiseXDepositCategoryBuilder name(final String pName) {
         final int myIndex = pName.lastIndexOf(':');
         if (myIndex == -1) {
             theName = pName;
@@ -78,7 +78,7 @@ public class MoneyWiseDepositCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseDepositCategoryBuilder type(final DepositCategoryType pType) {
+    public MoneyWiseXDepositCategoryBuilder type(final DepositCategoryType pType) {
         theType = pType;
         return this;
     }
@@ -88,7 +88,7 @@ public class MoneyWiseDepositCategoryBuilder {
      * @param pType the type of the category.
      * @return the builder
      */
-    public MoneyWiseDepositCategoryBuilder type(final DepositCategoryClass pType) {
+    public MoneyWiseXDepositCategoryBuilder type(final DepositCategoryClass pType) {
         return type(theDataSet.getDepositCategoryTypes().findItemByClass(pType));
     }
 

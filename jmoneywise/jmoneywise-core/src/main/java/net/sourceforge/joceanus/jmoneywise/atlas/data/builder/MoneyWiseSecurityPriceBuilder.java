@@ -14,12 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.data.builder;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.builder;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -31,12 +31,12 @@ public class MoneyWiseSecurityPriceBuilder {
     /**
      * DataSet.
      */
-    private final MoneyWiseData theDataSet;
+    private final MoneyWiseDataSet theDataSet;
 
     /**
      * The Security.
      */
-    private Security theSecurity;
+    private MoneyWiseSecurity theSecurity;
 
     /**
      * The Date.
@@ -52,7 +52,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    public MoneyWiseSecurityPriceBuilder(final MoneyWiseData pDataSet) {
+    public MoneyWiseSecurityPriceBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getSecurityPrices().ensureMap();
     }
@@ -62,7 +62,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @param pSecurity the security
      * @return the builder
      */
-    public MoneyWiseSecurityPriceBuilder security(final Security pSecurity) {
+    public MoneyWiseSecurityPriceBuilder security(final MoneyWiseSecurity pSecurity) {
         theSecurity = pSecurity;
         return this;
     }
@@ -119,9 +119,9 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the new Rate
      * @throws OceanusException on error
      */
-    public SecurityPrice build() throws OceanusException {
+    public MoneyWiseSecurityPrice build() throws OceanusException {
         /* Create the price */
-        final SecurityPrice myPrice = theDataSet.getSecurityPrices().addNewItem();
+        final MoneyWiseSecurityPrice myPrice = theDataSet.getSecurityPrices().addNewItem();
         myPrice.setSecurity(theSecurity);
         myPrice.setPrice(thePrice);
         myPrice.setDate(theDate);
