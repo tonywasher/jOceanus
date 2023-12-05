@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Prometheus Preference Manager,
+ * Prometheus Preference Manager.
  */
 public class PrometheusPreferenceManager
     extends MetisPreferenceManager {

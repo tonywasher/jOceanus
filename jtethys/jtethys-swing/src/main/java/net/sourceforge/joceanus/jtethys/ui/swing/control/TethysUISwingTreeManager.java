@@ -385,7 +385,7 @@ public class TethysUISwingTreeManager<T>
     /**
      * TreeCellRenderer.
      */
-    private class TethysTreeCellRenderer
+    private final class TethysTreeCellRenderer
             extends DefaultTreeCellRenderer {
         @Override
         public Component getTreeCellRendererComponent(final JTree pTree,

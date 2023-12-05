@@ -21,6 +21,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIChildDialog;
 
+/**
+ * Core child dialog.
+ */
 public abstract class TethysUICoreChildDialog
     implements TethysUIChildDialog {
     /**

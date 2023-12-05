@@ -21,7 +21,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
  */
 public enum MoneyWiseAssetDirection {
     /**
-     * Payment.git checkout master
+     * To.
      */
     TO(1),
 

@@ -92,6 +92,7 @@ public class TethysTestHelper {
 
     /**
      * Constructor.
+     * @param pFactory the factpry
      */
     TethysTestHelper(final TethysUIFactory<?> pFactory) {
         theFactory = pFactory;

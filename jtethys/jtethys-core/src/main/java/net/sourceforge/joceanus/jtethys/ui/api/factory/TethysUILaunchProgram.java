@@ -5,6 +5,9 @@ import java.io.InputStream;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
 
+/**
+ * Launch Program interface.
+ */
 public abstract class TethysUILaunchProgram
     extends TethysUIProgram {
     /**

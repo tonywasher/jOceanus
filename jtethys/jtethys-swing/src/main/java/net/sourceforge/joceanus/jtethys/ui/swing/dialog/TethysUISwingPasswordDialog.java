@@ -134,7 +134,7 @@ public class TethysUISwingPasswordDialog
     /**
      * Focus traversal policy, used so that you tab straight to confirm from password.
      */
-    private class TraversalPolicy
+    private final class TraversalPolicy
             extends FocusTraversalPolicy {
         @Override
         public Component getComponentAfter(final Container pRoot,

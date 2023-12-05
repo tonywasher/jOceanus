@@ -527,20 +527,27 @@ public class MetisFieldSet<T extends MetisFieldItem>
 
     /**
      * FieldMap interface.
+     * @param <E> the enum for the field
      */
     @FunctionalInterface
     public interface MetisFieldMap<E extends Enum<E>> {
+        /**
+         * get fieldId for enum.
+         * @param pEnum the Enum
+         * @return the fieldId
+         */
         MetisDataFieldId getFieldIdForEnum(E pEnum);
     }
 
     /**
      * Build field set for enum class.
+     * @param <E> the enum type
      * @param pClass the enum class
      * @param pValueLookup the Lookup Function
      * @return the map from field to enum.
      */
     public <E extends Enum<E> & MetisFieldMap<E>> Map<MetisDataFieldId, E> buildFieldMap(final Class<E> pClass,
-                                                                                         BiFunction<T, MetisDataFieldId, Object> pValueLookup) {
+                                                                                         final BiFunction<T, MetisDataFieldId, Object> pValueLookup) {
         /* Create the map */
         final Map<MetisDataFieldId, E> myMap = new HashMap<>();
 

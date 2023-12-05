@@ -494,7 +494,7 @@ public class TethysUISwingScrollMenu<T>
     /**
      * ScrollListener.
      */
-    private class ScrollListener
+    private final class ScrollListener
             implements FocusListener, KeyListener, MouseWheelListener {
         @Override
         public void focusGained(final FocusEvent e) {

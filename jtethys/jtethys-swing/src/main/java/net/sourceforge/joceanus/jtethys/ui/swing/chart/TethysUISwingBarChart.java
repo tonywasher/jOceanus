@@ -180,7 +180,7 @@ public class TethysUISwingBarChart
     /**
      * Money Format class.
      */
-    private class MoneyFormat extends HexNumberFormat {
+    private final class MoneyFormat extends HexNumberFormat {
         private static final long serialVersionUID = -1151614975043008941L;
 
         @Override

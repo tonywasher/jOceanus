@@ -87,7 +87,7 @@ class GordianPipedStream {
     /**
      * The inputStream class.
      */
-    private class GordianPipedInputStream
+    private final class GordianPipedInputStream
             extends InputStream {
         /**
          * The currently active element.
@@ -225,7 +225,7 @@ class GordianPipedStream {
     /**
      * The outputStream class.
      */
-    private class GordianPipedOutputStream
+    private final class GordianPipedOutputStream
             extends OutputStream {
         /**
          * has this stream been closed.

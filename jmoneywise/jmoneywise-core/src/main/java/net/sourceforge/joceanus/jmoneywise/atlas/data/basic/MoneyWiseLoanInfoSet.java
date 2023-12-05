@@ -75,7 +75,7 @@ public class MoneyWiseLoanInfoSet
     }
 
     /**
-     * Obtain fieldValue for infoSet
+     * Obtain fieldValue for infoSet.
      * @param pFieldId the fieldId
      * @return the value
      */

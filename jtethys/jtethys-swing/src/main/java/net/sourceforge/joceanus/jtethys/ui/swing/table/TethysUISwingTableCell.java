@@ -423,7 +423,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
     /**
      * Data Cell Editor.
      */
-    private class TethysUISwingTableCellRenderer
+    private final class TethysUISwingTableCellRenderer
             extends DefaultTableCellRenderer {
         /**
          * Serial Id.

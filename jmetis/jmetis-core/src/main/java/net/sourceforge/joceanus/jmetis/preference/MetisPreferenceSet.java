@@ -169,7 +169,7 @@ public abstract class MetisPreferenceSet
     }
 
     /**
-     * Obtain the preference manager
+     * Obtain the preference manager.
      * @return the manager
      */
     public MetisPreferenceManager getPreferenceManager() {

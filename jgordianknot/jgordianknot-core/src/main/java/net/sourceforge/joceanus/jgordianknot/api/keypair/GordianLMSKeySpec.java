@@ -36,7 +36,7 @@ public class GordianLMSKeySpec {
     private static final String SEP = "-";
 
     /**
-     * Invalid length error,
+     * Invalid length error.
      */
     private static final String INVALID_LENGTH = "Invalid Length: ";
 
@@ -446,6 +446,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the sigParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMSigParameters getSigParameter(final GordianLMSHash pHash,
@@ -462,6 +464,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the H5 sigParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMSigParameters getH5Parameter(final GordianLMSHash pHash,
@@ -478,6 +482,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the H10 sigParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMSigParameters getH10Parameter(final GordianLMSHash pHash,
@@ -494,6 +500,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the H15 sigParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMSigParameters getH15Parameter(final GordianLMSHash pHash,
@@ -510,6 +518,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the H20 sigParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMSigParameters getH20Parameter(final GordianLMSHash pHash,
@@ -526,6 +536,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the H25 sigParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMSigParameters getH25Parameter(final GordianLMSHash pHash,
@@ -581,7 +593,9 @@ public class GordianLMSKeySpec {
         W8;
 
         /**
-         * Obtain the sigParameter.
+         * Obtain the otsParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMOtsParameters getOtsParameter(final GordianLMSHash pHash,
@@ -597,6 +611,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the W1 otsParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMOtsParameters getW1Parameter(final GordianLMSHash pHash,
@@ -613,6 +629,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the W2 otsParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMOtsParameters getW2Parameter(final GordianLMSHash pHash,
@@ -629,6 +647,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the W4 otsParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMOtsParameters getW4Parameter(final GordianLMSHash pHash,
@@ -645,6 +665,8 @@ public class GordianLMSKeySpec {
 
         /**
          * Obtain the W8 otsParameter.
+         * @param pHash the hash
+         * @param pLength the length
          * @return the parameter
          */
         private LMOtsParameters getW8Parameter(final GordianLMSHash pHash,

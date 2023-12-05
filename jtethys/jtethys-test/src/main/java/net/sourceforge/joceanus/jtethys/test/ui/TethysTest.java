@@ -22,6 +22,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
 
+/**
+ * Test program.
+ */
 public class TethysTest
         extends TethysUILaunchProgram {
     /**

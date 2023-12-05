@@ -208,7 +208,7 @@ public class PrometheusFieldGenerator {
     /**
      * DateEncryptor.
      */
-    private static class PrometheusDateEncryptor
+    private static final class PrometheusDateEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -230,7 +230,7 @@ public class PrometheusFieldGenerator {
     /**
      * IntegerEncryptor.
      */
-    private static class PrometheusShortEncryptor
+    private static final class PrometheusShortEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -247,7 +247,7 @@ public class PrometheusFieldGenerator {
     /**
      * IntegerEncryptor.
      */
-    private static class PrometheusIntegerEncryptor
+    private static final class PrometheusIntegerEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -265,7 +265,7 @@ public class PrometheusFieldGenerator {
     /**
      * LongEncryptor.
      */
-    private static class PrometheusLongEncryptor
+    private static final class PrometheusLongEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -283,7 +283,7 @@ public class PrometheusFieldGenerator {
     /**
      * BooleanEncryptor.
      */
-    private static class PrometheusBooleanEncryptor
+    private static final class PrometheusBooleanEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -302,7 +302,7 @@ public class PrometheusFieldGenerator {
     /**
      * StringEncryptor.
      */
-    private static class PrometheusStringEncryptor
+    private static final class PrometheusStringEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -320,7 +320,7 @@ public class PrometheusFieldGenerator {
     /**
      * CharArrayEncryptor.
      */
-    private static class PrometheusCharArrayEncryptor
+    private static final class PrometheusCharArrayEncryptor
             implements PrometheusDataEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
@@ -362,7 +362,7 @@ public class PrometheusFieldGenerator {
     /**
      * PriceEncryptor.
      */
-    private static class PrometheusPriceEncryptor
+    private static final class PrometheusPriceEncryptor
             extends PrometheusMoneyEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
@@ -374,7 +374,7 @@ public class PrometheusFieldGenerator {
     /**
      * RatioEncryptor.
      */
-    private static class PrometheusRatioEncryptor
+    private static final class PrometheusRatioEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
@@ -386,7 +386,7 @@ public class PrometheusFieldGenerator {
     /**
      * UnitsEncryptor.
      */
-    private static class PrometheusUnitsEncryptor
+    private static final class PrometheusUnitsEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
@@ -398,7 +398,7 @@ public class PrometheusFieldGenerator {
     /**
      * RateEncryptor.
      */
-    private static class PrometheusRateEncryptor
+    private static final class PrometheusRateEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,

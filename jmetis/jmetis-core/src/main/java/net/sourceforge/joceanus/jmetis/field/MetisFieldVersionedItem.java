@@ -265,7 +265,7 @@ public abstract class MetisFieldVersionedItem
     /**
      * Add an error for this item.
      * @param pError the error text
-     * @param pField the associated field
+     * @param pFieldId the associated field
      */
     public void addError(final String pError,
                          final MetisDataFieldId pFieldId) {
@@ -337,7 +337,7 @@ public abstract class MetisFieldVersionedItem
     }
 
     /**
-     * Push history to a specific version
+     * Push history to a specific version.
      * @param pVersion the version
      */
     public void pushHistory(final int pVersion) {

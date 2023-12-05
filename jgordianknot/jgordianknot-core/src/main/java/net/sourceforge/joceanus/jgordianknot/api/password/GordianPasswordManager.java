@@ -31,6 +31,7 @@ public interface GordianPasswordManager
 
     /**
      * Set the dialog controller.
+     * @param pDialog the dialog controller
      */
     void setDialogController(GordianDialogController pDialog);
 }

@@ -217,7 +217,8 @@ public class GordianBasePasswordManager
     }
 
     @Override
-    public GordianFactoryLock similarFactoryLock(GordianFactory pFactory, Object pReference) throws OceanusException {
+    public GordianFactoryLock similarFactoryLock(final GordianFactory pFactory,
+                                                 final Object pReference) throws OceanusException {
         /* LookUp the password */
         final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
 

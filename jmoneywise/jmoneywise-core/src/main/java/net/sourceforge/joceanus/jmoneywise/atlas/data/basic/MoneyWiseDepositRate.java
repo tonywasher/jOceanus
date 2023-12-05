@@ -449,7 +449,7 @@ public class MoneyWiseDepositRate
         }
 
         /* If the date differs */
-        int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());
+        final int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;

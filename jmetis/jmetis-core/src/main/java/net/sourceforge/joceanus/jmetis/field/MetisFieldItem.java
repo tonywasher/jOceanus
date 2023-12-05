@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.field;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDeletableItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
@@ -201,7 +200,7 @@ public interface MetisFieldItem
     /**
      * Updateable Item interface.
      */
-    public interface MetisFieldUpdatableItem {
+    interface MetisFieldUpdatableItem {
         /**
          * Push current values into history buffer ready for changes to be made.
          */
@@ -235,14 +234,14 @@ public interface MetisFieldItem
         }
 
         /**
-         * Obtain error details for a field
+         * Obtain error details for a field.
          * @param pField the field
          * @return the error details
          */
         String getFieldErrors(MetisDataFieldId pField);
 
         /**
-         * Obtain error details for a set of fields
+         * Obtain error details for a set of fields.
          * @param pFields the fields
          * @return the error details
          */

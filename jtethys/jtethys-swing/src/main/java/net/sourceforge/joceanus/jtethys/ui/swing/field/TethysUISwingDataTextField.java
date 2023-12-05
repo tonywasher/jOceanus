@@ -632,7 +632,7 @@ public abstract class TethysUISwingDataTextField<T>
         /**
          * Key Listener class.
          */
-        private class DataKeyListener
+        private final class DataKeyListener
                 implements KeyListener {
             @Override
             public void keyTyped(final KeyEvent e) {

@@ -468,7 +468,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set partner value.
-Set     * @param pValue the value
+     * @param pValue the value
      */
     protected final void setValuePartner(final MoneyWiseTransAsset pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pValue);
@@ -743,6 +743,7 @@ Set     * @param pValue the value
      * Resolve transAsset.
      * @param pData the dataSet
      * @param pValue the value to convert
+     * @return the asset
      * @throws OceanusException on error
      */
     protected MoneyWiseTransAsset resolveTransactionAsset(final MoneyWiseDataSet pData,
@@ -782,6 +783,7 @@ Set     * @param pValue the value
      * Resolve transAsset.
      * @param pData the owning dataSet
      * @param pId the item id
+     * @return the asset
      * @throws OceanusException on error
      */
     private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
@@ -812,6 +814,7 @@ Set     * @param pValue the value
      * Resolve transAsset.
      * @param pData the owning dataSet
      * @param pName the item name
+     * @return the asset
      */
     private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
                                                          final String pName) {

@@ -32,7 +32,7 @@ public class TethysNewDecimal {
     private static final long INTEGER_BOOST = 0x100000000L;
 
     /**
-     * The Integer mask
+     * The Integer mask.
      */
     private static final long INTEGER_MASK = 0xFFFFFFFFL;
 
@@ -126,7 +126,7 @@ public class TethysNewDecimal {
     }
 
     /**
-     * Obtain the integral part of the decimal
+     * Obtain the integral part of the decimal.
      * @return the integral part of the decimal
      */
     public long integralValue() {
@@ -134,7 +134,7 @@ public class TethysNewDecimal {
     }
 
     /**
-     * Obtain the sign of the decimal
+     * Obtain the sign of the decimal.
      * @return -1, 0, or 1 as the value of this Decimal is negative, zero, or positive
      */
     public int signum() {
@@ -142,7 +142,7 @@ public class TethysNewDecimal {
     }
 
     /**
-     * Obtain the fractional part of the decimal
+     * Obtain the fractional part of the decimal.
      * @return the fractional part of the decimal
      */
     public int fractionalValue() {
@@ -150,7 +150,7 @@ public class TethysNewDecimal {
     }
 
     /**
-     * Obtain the scale of the decimal
+     * Obtain the scale of the decimal.
      * @return the scale of the decimal
      */
     public int scale() {
@@ -277,9 +277,9 @@ public class TethysNewDecimal {
      * + x<sub>2</sub>*y<sub>2</sub>
      * + x<sub>1</sub>*z<sub>2</sub>*2<sup>32</sup>*10<sup>-t</sup>
      * + x<sub>2</sub>*z<sub>1</sub>*2<sup>32</sup>*10<sup>-s</sup>
-     * + y<sub>1</sub>*z<sub>2</sub></sup>*10<sup>-t</sub></sup>
-     * + y<sub>2</sub>*z<sub>1</sub></sup>*10<sup>-s</sup>
-     * + z<sub>1</sub>*z<sub>2</sub></sup>*10<sup>-s-t</sup>
+     * + y<sub>1</sub>*z<sub>2</sub>*10<sup>-t</sup>
+     * + y<sub>2</sub>*z<sub>1</sub>*10<sup>-s</sup>
+     * + z<sub>1</sub>*z<sub>2</sub>*10<sup>-s-t</sup>
      *
      * @param pMultiplicand the decimal to multiply by
      */
@@ -352,7 +352,7 @@ public class TethysNewDecimal {
     }
 
     /**
-     * Divide by another decimal
+     * Divide by another decimal.
      * <p>
      * This function uses BigDecimal to perform the calculation
      * @param pDivisor the decimal to divide by

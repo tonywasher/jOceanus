@@ -333,7 +333,7 @@ public final class TethysUISwingDateDialog
     /**
      * CalendarAction Handle escape action.
      */
-    private class CalendarAction
+    private final class CalendarAction
             extends AbstractAction {
         /**
          * SerialId.
@@ -349,7 +349,7 @@ public final class TethysUISwingDateDialog
     /**
      * CalendarFocus Handle loss of focus.
      */
-    private class CalendarFocus
+    private final class CalendarFocus
             extends WindowAdapter {
         @Override
         public void windowLostFocus(final WindowEvent e) {

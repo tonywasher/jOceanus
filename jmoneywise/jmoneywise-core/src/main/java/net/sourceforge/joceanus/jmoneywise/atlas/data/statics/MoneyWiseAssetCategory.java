@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.data.statics;
 
 /**
- * Asset Category Marker
+ * Asset Category Marker.
  */
 public interface MoneyWiseAssetCategory {
 }

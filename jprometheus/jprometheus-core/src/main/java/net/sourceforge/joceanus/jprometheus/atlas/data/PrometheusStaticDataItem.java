@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -407,7 +406,7 @@ public abstract class PrometheusStaticDataItem
         }
 
         /* Compare on order and name */
-        int iDiff = getOrder() - myThat.getOrder();
+        final int iDiff = getOrder() - myThat.getOrder();
         return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 

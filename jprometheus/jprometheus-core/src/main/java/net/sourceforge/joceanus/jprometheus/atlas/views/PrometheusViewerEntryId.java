@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.views;
 
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewResource;
-
 /**
  * Standard Viewer Entries.
  */

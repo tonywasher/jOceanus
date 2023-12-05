@@ -268,7 +268,9 @@ public class MetisPreferenceView
 
     /**
      * Create view for preference.
+     * @param pFactory the gui factory
      * @param pSet the set to register
+     * @return the view
      */
     protected MetisPreferenceSetView createView(final TethysUIFactory<?> pFactory,
                                                 final MetisPreferenceSet pSet) {

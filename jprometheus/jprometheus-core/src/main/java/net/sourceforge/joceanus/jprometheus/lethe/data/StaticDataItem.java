@@ -508,7 +508,7 @@ public abstract class StaticDataItem
         }
 
         /* Compare on order and name */
-        int iDiff = getOrder() - myThat.getOrder();
+        final int iDiff = getOrder() - myThat.getOrder();
         return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 

@@ -141,7 +141,7 @@ public class TethysUISwingLaunchState {
     /**
      * Window Close Adapter.
      */
-    private class WindowClose
+    private final class WindowClose
             extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {

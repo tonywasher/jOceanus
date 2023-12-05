@@ -298,7 +298,7 @@ public class TethysDecimalFormatter {
         }
 
         /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theLocale.getMoneyDecimal());
+        final StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theLocale.getMoneyDecimal());
 
         /* If we have a leading minus sign */
         final char myMinus = theLocale.getMinusSign();

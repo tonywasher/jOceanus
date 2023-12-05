@@ -668,7 +668,7 @@ public abstract class PrometheusDataItem
 
             /* Skip if not used in equality */
             if (!(myField instanceof MetisFieldVersionedDef)
-                || !((MetisFieldVersionedDef)myField).isEquality()) {
+                || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
@@ -810,7 +810,7 @@ public abstract class PrometheusDataItem
     }
 
     /**
-     * Obtain the field state
+     * Obtain the field state.
      * @param pField the field
      * @return the state
      */

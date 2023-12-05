@@ -48,14 +48,14 @@ public abstract class GordianCoreFactory
      */
     public interface GordianKeySetGenerate {
         /**
-         * create and build a keySet from seed
+         * create and build a keySet from seed.
          * @param pSeed the base seed
          * @param pIV the IV
          * @return the keySet
          * @throws OceanusException on error
          */
-        GordianKeySet generateKeySet(final byte[] pSeed,
-                                     final byte[] pIV) throws OceanusException;
+        GordianKeySet generateKeySet(byte[] pSeed,
+                                     byte[] pIV) throws OceanusException;
     }
 
     /**

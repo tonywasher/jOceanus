@@ -171,12 +171,12 @@ public class GordianNTRUPrimeSpec {
      */
     public enum GordianNTRUPrimeType {
         /**
-         * NTRULPrime
+         * NTRULPrime.
          */
         NTRUL,
 
         /**
-         * SNTRUPrime
+         * SNTRUPrime.
          */
         SNTRU;
     }

@@ -205,7 +205,7 @@ public class TethysUISwingHTMLManager
     /**
      * HyperLinkListener.
      */
-    private class HTMLListener
+    private final class HTMLListener
             implements HyperlinkListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent e) {

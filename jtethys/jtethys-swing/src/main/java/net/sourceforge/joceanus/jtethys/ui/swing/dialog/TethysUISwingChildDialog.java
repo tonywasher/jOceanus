@@ -112,7 +112,7 @@ public class TethysUISwingChildDialog
     /**
      * Window adapter class.
      */
-    private class ViewerWindowAdapter
+    private final class ViewerWindowAdapter
             extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent e) {

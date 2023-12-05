@@ -100,7 +100,8 @@ public enum MoneyWiseAssetType {
     }
 
     /**
-     * Obtain the external id
+     * Obtain the external id.
+     * @param pType the asset type
      * @param pBaseId the id
      * @return the external id
      */
@@ -111,7 +112,9 @@ public enum MoneyWiseAssetType {
     }
 
     /**
-     * Obtain the external id
+     * Obtain the external id.
+     * @param pType the asset type
+     * @param pMajorId the major id
      * @param pBaseId the id
      * @return the external id
      */
@@ -124,17 +127,17 @@ public enum MoneyWiseAssetType {
     }
 
     /**
-     * Obtain the base id
+     * Obtain the base id.
      * @param pId the id
      * @return the base id
      */
     public static int getMajorId(final long pId) {
-        int myId = (int) (pId >>> Integer.SIZE);
+        final int myId = (int) (pId >>> Integer.SIZE);
         return myId & ~ASSETMASK;
     }
 
     /**
-     * Obtain the qualifying id
+     * Obtain the qualifying id.
      * @param pId the id
      * @return the base id
      */
@@ -143,13 +146,13 @@ public enum MoneyWiseAssetType {
     }
 
     /**
-     * Obtain the assetType
+     * Obtain the assetType.
      * @param pId the id
      * @return the assetType
      * @throws OceanusException on error
      */
     public static MoneyWiseAssetType getAssetType(final long pId) throws OceanusException {
-        int myId = (int) (pId >>> ASSETSHIFT);
+        final int myId = (int) (pId >>> ASSETSHIFT);
         return fromId(myId);
     }
 

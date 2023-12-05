@@ -209,7 +209,7 @@ public class GordianCoreFactoryLock
     }
 
     /**
-     * Process the work buffer
+     * Process the work buffer.
      * @param pFactory the factory
      * @param pPassword the password
      * @throws OceanusException on error

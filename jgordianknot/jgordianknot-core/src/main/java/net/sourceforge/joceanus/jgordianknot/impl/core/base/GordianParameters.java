@@ -225,7 +225,7 @@ public class GordianParameters {
         }
 
         /* Check Differences */
-        if (!Arrays.equals(theKeySetSeed,myThat.getKeySetSeed())) {
+        if (!Arrays.equals(theKeySetSeed, myThat.getKeySetSeed())) {
             return false;
         }
 

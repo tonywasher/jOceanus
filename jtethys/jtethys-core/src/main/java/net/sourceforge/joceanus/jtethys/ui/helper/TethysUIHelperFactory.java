@@ -107,7 +107,8 @@ public class TethysUIHelperFactory
     }
 
     @Override
-    public TethysUIIcon resolveIcon(TethysUIIconId pIconId, int pWidth) {
+    public TethysUIIcon resolveIcon(final TethysUIIconId pIconId,
+                                    final int pWidth) {
         return null;
     }
 
@@ -127,7 +128,7 @@ public class TethysUIHelperFactory
     }
 
     @Override
-    public TethysProfile getNewProfile(String pTask) {
+    public TethysProfile getNewProfile(final String pTask) {
         return new TethysProfile(pTask);
     }
 
@@ -189,7 +190,7 @@ public class TethysUIHelperFactory
     /**
      * Thread factory stub.
      */
-    private static class ThreadFactoryStub
+    private static final class ThreadFactoryStub
             implements TethysUIThreadFactory {
         @Override
         public TethysUIThreadManager newThreadManager() {
@@ -200,7 +201,7 @@ public class TethysUIHelperFactory
     /**
      * Thread factory stub.
      */
-    private static class ThreadManagerStub
+    private static final class ThreadManagerStub
             implements TethysUIThreadManager {
         /**
          * Event Manager.
@@ -333,7 +334,7 @@ public class TethysUIHelperFactory
     /**
      * Sink Stub.
      */
-    private static class SinkStub
+    private static final class SinkStub
             implements TethysUILogTextArea {
         @Override
         public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
@@ -341,7 +342,7 @@ public class TethysUIHelperFactory
         }
 
         @Override
-        public void writeLogMessage(String pMessage) {
+        public void writeLogMessage(final String pMessage) {
             /* TODO */
         }
 

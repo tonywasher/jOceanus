@@ -192,7 +192,7 @@ public class TethysUISwingAreaChart
     /**
      * Money Format class.
      */
-    private class MoneyFormat extends HexNumberFormat {
+    private final class MoneyFormat extends HexNumberFormat {
         private static final long serialVersionUID = 1200795726700321267L;
 
         @Override
@@ -207,7 +207,7 @@ public class TethysUISwingAreaChart
     /**
      * Extended DateAxis.
      */
-    private static class TethysDateAxis extends DateAxis {
+    private static final class TethysDateAxis extends DateAxis {
         private static final long serialVersionUID = 1976939393800292546L;
 
         @SuppressWarnings("unchecked")
