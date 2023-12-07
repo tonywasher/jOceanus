@@ -14,11 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.test.data;
+package net.sourceforge.joceanus.jmoneywise.test.data.lethe;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
@@ -27,17 +26,17 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 /**
  * Test security.
  */
-public class MoneyWiseTestSecurity {
+public class MoneyWiseXTestSecurity {
     /**
      * The DataSet.
      */
-    private final MoneyWiseDataSet theDataSet;
+    private final MoneyWiseData theDataSet;
 
     /**
      * Constructor.
      * @param pDataSet the DataSet
      */
-    MoneyWiseTestSecurity(final MoneyWiseDataSet pDataSet) {
+    MoneyWiseXTestSecurity(final MoneyWiseData pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -50,7 +49,7 @@ public class MoneyWiseTestSecurity {
         myManager.setDialogController(new DialogStub());
 
         /* Create the cloneSet and initialise security */
-        final MoneyWiseDataSet myNullData = theDataSet.deriveCloneSet();
+        final MoneyWiseData myNullData = theDataSet.deriveCloneSet();
 
         /* Create the control data */
         theDataSet.getControlData().addNewControl(0);

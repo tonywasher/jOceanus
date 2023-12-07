@@ -68,7 +68,7 @@ public final class PrometheusControlKey
     static {
         FIELD_DEFS.declareByteArrayField(PrometheusDataResource.CONTROLKEY_BYTES, HASHLEN);
         FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.CONTROLKEY_HASH);
-        FIELD_DEFS.declareLocalField(PrometheusDataKeySet.LIST_NAME, PrometheusControlKey::getDataKeySets);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_DATAKEYS, PrometheusControlKey::getDataKeySets);
     }
 
     /**

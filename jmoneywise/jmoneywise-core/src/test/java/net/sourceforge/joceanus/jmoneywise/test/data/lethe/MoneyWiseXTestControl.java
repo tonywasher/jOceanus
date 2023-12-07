@@ -14,9 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.test.data;
+package net.sourceforge.joceanus.jmoneywise.test.data.lethe;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.ui.helper.TethysUIHelperFactory;
 /**
  * Test security.
  */
-public class MoneyWiseTestControl {
+public class MoneyWiseXTestControl {
     /**
      * Main entry point.
      * @param pArgs the arguments
@@ -36,12 +36,12 @@ public class MoneyWiseTestControl {
             /* Create the data */
             final TethysUIHelperFactory myFactory = new TethysUIHelperFactory();
             final PrometheusToolkit myToolkit = new PrometheusToolkit(myFactory);
-            final MoneyWiseDataSet myData = new MoneyWiseDataSet(myToolkit, new MoneyWiseUKTaxYearCache());
+            final MoneyWiseData myData = new MoneyWiseData(myToolkit, new MoneyWiseUKTaxYearCache());
 
             /* Initialise the data */
-            new MoneyWiseTestSecurity(myData).initSecurity();
-            new MoneyWiseTestCategories(myData).buildBasic();
-            new MoneyWiseTestAccounts(myData).createAccounts();
+            new MoneyWiseXTestSecurity(myData).initSecurity();
+            new MoneyWiseXTestCategories(myData).buildBasic();
+            new MoneyWiseXTestAccounts(myData).createAccounts();
 
             /* Catch exceptions */
         } catch (OceanusException e) {

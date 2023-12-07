@@ -73,19 +73,14 @@ public enum MoneyWiseStaticDataType
     CURRENCY(PrometheusCryptographyDataType.MAXKEYID + 9),
 
     /**
-     * Frequency.
-     */
-    FREQUENCY(PrometheusCryptographyDataType.MAXKEYID + 10),
-
-    /**
      * AccountInfoType.
      */
-    ACCOUNTINFOTYPE(PrometheusCryptographyDataType.MAXKEYID + 11),
+    ACCOUNTINFOTYPE(PrometheusCryptographyDataType.MAXKEYID + 10),
 
     /**
      * TransactionInfoType.
      */
-    TRANSINFOTYPE(PrometheusCryptographyDataType.MAXKEYID + 12);
+    TRANSINFOTYPE(PrometheusCryptographyDataType.MAXKEYID + 11);
 
     /**
      * Maximum keyId.
@@ -190,8 +185,6 @@ public enum MoneyWiseStaticDataType
                 return MoneyWiseSecurityType.class;
             case TRANSTYPE:
                 return MoneyWiseTransCategoryType.class;
-            case FREQUENCY:
-                return MoneyWiseFrequency.class;
             case CURRENCY:
                 return MoneyWiseCurrency.class;
             case TAXBASIS:

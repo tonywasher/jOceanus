@@ -204,7 +204,7 @@ public abstract class PrometheusEncryptedDataItem
         final PrometheusEncryptedPair myField = theEncryptor.encryptValue(myCurr, pValue);
 
         /* Store the new value */
-        myValueSet.setValue(myFieldDef, myField);
+        myValueSet.setUncheckedValue(myFieldDef, myField);
     }
 
     /**
