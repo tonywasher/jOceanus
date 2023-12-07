@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetWriter;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXWriter;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class MoneyWiseWriter
-        extends PrometheusSheetWriter {
+        extends PrometheusSheetXWriter {
     /**
      * Constructor.
      * @param pFactory the gui factory

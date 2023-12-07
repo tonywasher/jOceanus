@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetReader;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXReader;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class MoneyWiseReader
-        extends PrometheusSheetReader {
+        extends PrometheusSheetXReader {
     /**
      * Constructor.
      * @param pFactory the gui factory

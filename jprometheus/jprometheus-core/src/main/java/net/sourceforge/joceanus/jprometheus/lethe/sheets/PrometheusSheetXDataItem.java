@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetDataItem<T extends DataItem> {
+public abstract class PrometheusSheetXDataItem<T extends DataItem> {
     /**
      * ID column.
      */
@@ -58,7 +58,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem> {
     /**
      * The input sheet.
      */
-    private PrometheusSheetReader theReader;
+    private PrometheusSheetXReader theReader;
 
     /**
      * The workbook.
@@ -110,8 +110,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem> {
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected PrometheusSheetDataItem(final PrometheusSheetReader pReader,
-                                      final String pRange) {
+    protected PrometheusSheetXDataItem(final PrometheusSheetXReader pReader,
+                                       final String pRange) {
         /* Store parameters */
         theReport = pReader.getReport();
         theReader = pReader;
@@ -123,8 +123,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem> {
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected PrometheusSheetDataItem(final PrometheusSheetWriter pWriter,
-                                      final String pRange) {
+    protected PrometheusSheetXDataItem(final PrometheusSheetXWriter pWriter,
+                                       final String pRange) {
         /* Store parameters */
         theReport = pWriter.getReport();
         theWorkBook = pWriter.getWorkBook();

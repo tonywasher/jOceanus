@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * Load control for spreadsheets.
  * @author Tony Washer
  */
-public abstract class PrometheusSheetReader {
+public abstract class PrometheusSheetXReader {
     /**
      * Gui Factory.
      */
@@ -72,7 +72,7 @@ public abstract class PrometheusSheetReader {
     /**
      * The WorkSheets.
      */
-    private List<PrometheusSheetDataItem<?>> theSheets;
+    private List<PrometheusSheetXDataItem<?>> theSheets;
 
     /**
      * Constructor.
@@ -80,9 +80,9 @@ public abstract class PrometheusSheetReader {
      * @param pReport the report
      * @param pPasswordMgr the password manager
      */
-    protected PrometheusSheetReader(final TethysUIFactory<?> pFactory,
-                                    final TethysUIThreadStatusReport pReport,
-                                    final GordianPasswordManager pPasswordMgr) {
+    protected PrometheusSheetXReader(final TethysUIFactory<?> pFactory,
+                                     final TethysUIThreadStatusReport pReport,
+                                     final GordianPasswordManager pPasswordMgr) {
         theGuiFactory = pFactory;
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
@@ -116,7 +116,7 @@ public abstract class PrometheusSheetReader {
      * Add Sheet to list.
      * @param pSheet the sheet
      */
-    protected void addSheet(final PrometheusSheetDataItem<?> pSheet) {
+    protected void addSheet(final PrometheusSheetXDataItem<?> pSheet) {
         theSheets.add(pSheet);
     }
 
@@ -154,7 +154,7 @@ public abstract class PrometheusSheetReader {
             myEntry = myIterator.next();
 
             /* Break loop if we have the right entry */
-            if (myEntry.getFileName().startsWith(PrometheusSpreadSheet.FILE_NAME)) {
+            if (myEntry.getFileName().startsWith(PrometheusXSpreadSheet.FILE_NAME)) {
                 break;
             }
         }
@@ -213,9 +213,9 @@ public abstract class PrometheusSheetReader {
         theSheets = new ArrayList<>();
 
         /* Add security details */
-        theSheets.add(new PrometheusSheetControlKey(this));
-        theSheets.add(new PrometheusSheetDataKeySet(this));
-        theSheets.add(new PrometheusSheetControlData(this));
+        theSheets.add(new PrometheusSheetXControlKey(this));
+        theSheets.add(new PrometheusSheetXDataKeySet(this));
+        theSheets.add(new PrometheusSheetXControlData(this));
 
         /* register additional sheets */
         registerSheets();
@@ -242,7 +242,7 @@ public abstract class PrometheusSheetReader {
         theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        for (PrometheusSheetDataItem<?> mySheet : theSheets) {
+        for (PrometheusSheetXDataItem<?> mySheet : theSheets) {
             /* Access the next sheet */
             /* Load data for the sheet */
             myTask.startTask(mySheet.toString());

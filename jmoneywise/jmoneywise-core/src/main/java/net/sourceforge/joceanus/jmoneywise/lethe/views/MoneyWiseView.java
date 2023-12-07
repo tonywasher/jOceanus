@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -148,7 +148,7 @@ public class MoneyWiseView
      * @return new DataSet
      */
     @Override
-    public PrometheusSpreadSheet getSpreadSheet() {
+    public PrometheusXSpreadSheet getSpreadSheet() {
         return new MoneyWiseSheet(getGuiFactory());
     }
 

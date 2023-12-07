@@ -16,87 +16,80 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey;
+import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * SheetDataItem extension for ControlKey.
+ * SheetDataItem extension for ControlData.
  * @author Tony Washer
  */
-public class PrometheusSheetControlKey
-        extends PrometheusSheetDataItem<ControlKey> {
+public class PrometheusSheetXControlData
+        extends PrometheusSheetXDataItem<ControlData> {
     /**
-     * SheetName for Keys.
+     * SheetName for ControlData.
      */
-    private static final String SHEET_NAME = ControlKey.class.getSimpleName();
+    private static final String SHEET_NAME = ControlData.class.getSimpleName();
 
     /**
-     * KeyData column.
+     * Version column.
      */
-    private static final int COL_HASHPRIME = COL_ID + 1;
+    private static final int COL_VERSION = COL_ID + 1;
 
     /**
-     * KeyData column.
+     * ControlKey column.
      */
-    private static final int COL_PRIMEKEYDATA = COL_HASHPRIME + 1;
-
-    /**
-     * KeyData column.
-     */
-    private static final int COL_ALTKEYDATA = COL_PRIMEKEYDATA + 1;
+    private static final int COL_CONTROLID = COL_VERSION + 1;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected PrometheusSheetControlKey(final PrometheusSheetReader pReader) {
+    protected PrometheusSheetXControlData(final PrometheusSheetXReader pReader) {
         /* Call super constructor */
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
         final DataSet myData = pReader.getData();
-        setDataList(myData.getControlKeys());
+        setDataList(myData.getControlData());
     }
 
     /**
      * Constructor for creating a spreadsheet.
-     * @param pWriter the Spreadsheet writer
+     * @param pWriter the spreadsheet writer
      */
-    protected PrometheusSheetControlKey(final PrometheusSheetWriter pWriter) {
+    protected PrometheusSheetXControlData(final PrometheusSheetXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
         final DataSet myData = pWriter.getData();
-        setDataList(myData.getControlKeys());
+        setDataList(myData.getControlData());
     }
 
     @Override
     protected DataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues myValues = getRowValues(ControlKey.OBJECT_NAME);
-        myValues.addValue(ControlKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
-        myValues.addValue(ControlKey.FIELD_PRIMEBYTES, loadBytes(COL_PRIMEKEYDATA));
-        myValues.addValue(ControlKey.FIELD_ALTBYTES, loadBytes(COL_ALTKEYDATA));
+        final DataValues myValues = getRowValues(ControlData.OBJECT_NAME);
+        myValues.addValue(ControlData.FIELD_DATAVERSION, loadInteger(COL_VERSION));
+        myValues.addValue(ControlData.FIELD_CONTROLKEY, loadInteger(COL_CONTROLID));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final ControlKey pItem) throws OceanusException {
+    protected void insertSecureItem(final ControlData pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
-        writeBytes(COL_PRIMEKEYDATA, pItem.getPrimeHashBytes());
-        writeBytes(COL_ALTKEYDATA, pItem.getAltHashBytes());
+        writeInteger(COL_VERSION, pItem.getDataVersion());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_ALTKEYDATA;
+        return COL_CONTROLID;
     }
 }

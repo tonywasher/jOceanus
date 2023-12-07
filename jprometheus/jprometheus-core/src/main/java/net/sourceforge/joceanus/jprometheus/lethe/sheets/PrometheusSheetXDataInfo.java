@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetDataInfo<T extends DataInfoItem>
-        extends PrometheusSheetEncrypted<T> {
+public abstract class PrometheusSheetXDataInfo<T extends DataInfoItem>
+        extends PrometheusSheetXEncrypted<T> {
     /**
      * InfoType column.
      */
@@ -47,8 +47,8 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfoItem>
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected PrometheusSheetDataInfo(final PrometheusSheetReader pReader,
-                                      final String pRange) {
+    protected PrometheusSheetXDataInfo(final PrometheusSheetXReader pReader,
+                                       final String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
     }
@@ -58,8 +58,8 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfoItem>
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected PrometheusSheetDataInfo(final PrometheusSheetWriter pWriter,
-                                      final String pRange) {
+    protected PrometheusSheetXDataInfo(final PrometheusSheetXWriter pWriter,
+                                       final String pRange) {
         /* Call super constructor */
         super(pWriter, pRange);
     }

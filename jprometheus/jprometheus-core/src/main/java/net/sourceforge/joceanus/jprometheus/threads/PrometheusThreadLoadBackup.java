@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
@@ -97,7 +97,7 @@ public class PrometheusThreadLoadBackup
         }
 
         /* Load workbook */
-        final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
+        final PrometheusXSpreadSheet mySheet = theControl.getSpreadSheet();
         final DataSet myData = theControl.getNewData();
         mySheet.loadBackup(pManager, myPasswordMgr, myData, myFile);
 

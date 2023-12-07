@@ -14,11 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.sheets;
+package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataKeySet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -26,11 +28,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class PrometheusSheetDataKeySet
-        extends PrometheusSheetDataItem<DataKeySet> {
+        extends PrometheusSheetDataItem<PrometheusDataKeySet> {
     /**
      * SheetName for KeySets.
      */
-    private static final String SHEET_NAME = DataKeySet.class.getSimpleName();
+    private static final String SHEET_NAME = PrometheusDataKeySet.class.getSimpleName();
 
     /**
      * ControlId column.
@@ -41,11 +43,6 @@ public class PrometheusSheetDataKeySet
      * CreationDate column.
      */
     private static final int COL_CREATEDATE = COL_CONTROL + 1;
-
-    /**
-     * HashPrime column.
-     */
-    private static final int COL_HASHPRIME = COL_CREATEDATE + 1;
 
     /**
      * KeySetDef column.
@@ -61,7 +58,7 @@ public class PrometheusSheetDataKeySet
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        final DataSet myData = pReader.getData();
+        final PrometheusDataSet myData = pReader.getData();
         setDataList(myData.getDataKeySets());
     }
 
@@ -74,30 +71,28 @@ public class PrometheusSheetDataKeySet
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        final DataSet myData = pWriter.getData();
+        final PrometheusDataSet myData = pWriter.getData();
         setDataList(myData.getDataKeySets());
     }
 
     @Override
-    protected DataValues loadSecureValues() throws OceanusException {
+    protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-        final DataValues myValues = getRowValues(DataKeySet.OBJECT_NAME);
-        myValues.addValue(DataKeySet.FIELD_CONTROLKEY, loadInteger(COL_CONTROL));
-        myValues.addValue(DataKeySet.FIELD_CREATEDATE, loadDate(COL_CREATEDATE));
-        myValues.addValue(DataKeySet.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
-        myValues.addValue(DataKeySet.FIELD_KEYSETDEF, loadBytes(COL_KEYSETDEF));
+        final PrometheusDataValues myValues = getRowValues(PrometheusDataKeySet.OBJECT_NAME);
+        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, loadInteger(COL_CONTROL));
+        myValues.addValue(PrometheusDataResource.DATAKEYSET_CREATION, loadDate(COL_CREATEDATE));
+        myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, loadBytes(COL_KEYSETDEF));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final DataKeySet pItem) throws OceanusException {
+    protected void insertSecureItem(final PrometheusDataKeySet pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_CONTROL, pItem.getControlKeyId());
         writeDate(COL_CREATEDATE, pItem.getCreationDate());
-        writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
         writeBytes(COL_KEYSETDEF, pItem.getSecuredKeySetDef());
     }
 

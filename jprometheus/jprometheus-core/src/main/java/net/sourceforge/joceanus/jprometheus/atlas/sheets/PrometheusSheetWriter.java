@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.sheets;
+package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvider;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
@@ -61,7 +61,7 @@ public abstract class PrometheusSheetWriter {
     /**
      * The DataSet.
      */
-    private DataSet theData;
+    private PrometheusDataSet theData;
 
     /**
      * The WorkSheets.
@@ -99,7 +99,7 @@ public abstract class PrometheusSheetWriter {
      * get dataSet.
      * @return the dataSet
      */
-    public DataSet getData() {
+    public PrometheusDataSet getData() {
         return theData;
     }
 
@@ -118,7 +118,7 @@ public abstract class PrometheusSheetWriter {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    public void createBackup(final DataSet pData,
+    public void createBackup(final PrometheusDataSet pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
@@ -148,7 +148,7 @@ public abstract class PrometheusSheetWriter {
             writeWorkBook(myStream);
 
         } catch (IOException
-                | OceanusException e) {
+                 | OceanusException e) {
             /* Report the error */
             writeFailed = true;
             throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);

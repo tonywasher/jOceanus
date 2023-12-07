@@ -14,10 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.sheets;
+package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -25,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class PrometheusSheetEncrypted<T extends EncryptedItem>
+public abstract class PrometheusSheetEncrypted<T extends PrometheusEncryptedDataItem>
         extends PrometheusSheetDataItem<T> {
     /**
      * KeySetId column.
@@ -61,12 +62,12 @@ public abstract class PrometheusSheetEncrypted<T extends EncryptedItem>
     }
 
     @Override
-    protected DataValues getRowValues(final String pName) throws OceanusException {
+    protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        final DataValues myValues = super.getRowValues(pName);
+        final PrometheusDataValues myValues = super.getRowValues(pName);
 
         /* Add the control id and return the new values */
-        myValues.addValue(EncryptedItem.FIELD_KEYSET, loadInteger(COL_KEYSETID));
+        myValues.addValue(PrometheusCryptographyDataType.DATAKEYSET, loadInteger(COL_KEYSETID));
         return myValues;
     }
 }

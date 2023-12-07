@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * Spreadsheet control.
  * @author Tony Washer
  */
-public abstract class PrometheusSpreadSheet {
+public abstract class PrometheusXSpreadSheet {
     /**
      * The Data file name.
      */
@@ -40,15 +40,15 @@ public abstract class PrometheusSpreadSheet {
      * @param pPasswordMgr the password manager
      * @return the sheet reader
      */
-    protected abstract PrometheusSheetReader getSheetReader(TethysUIThreadStatusReport pReport,
-                                                            GordianPasswordManager pPasswordMgr);
+    protected abstract PrometheusSheetXReader getSheetReader(TethysUIThreadStatusReport pReport,
+                                                             GordianPasswordManager pPasswordMgr);
 
     /**
      * Obtain a sheet writer.
      * @param pReport the report
      * @return the sheet writer
      */
-    protected abstract PrometheusSheetWriter getSheetWriter(TethysUIThreadStatusReport pReport);
+    protected abstract PrometheusSheetXWriter getSheetWriter(TethysUIThreadStatusReport pReport);
 
     /**
      * Load a Backup Workbook.
@@ -63,7 +63,7 @@ public abstract class PrometheusSpreadSheet {
                            final DataSet pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */
-        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);
+        final PrometheusSheetXReader myReader = getSheetReader(pReport, pPasswordMgr);
 
         /* Load the backup */
         myReader.loadBackup(pFile, pData);
@@ -82,7 +82,7 @@ public abstract class PrometheusSpreadSheet {
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
-        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);
+        final PrometheusSheetXWriter myWriter = getSheetWriter(pReport);
 
         /* Create the backup */
         myWriter.createBackup(pData, pFile, pType);

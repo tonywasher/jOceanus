@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Schedule;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetDataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetSchedule
-        extends PrometheusSheetDataItem<Schedule> {
+        extends PrometheusSheetXDataItem<Schedule> {
     /**
      * NamedArea for Schedules.
      */

@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetDataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXDataItem;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetExchangeRate
-        extends PrometheusSheetDataItem<ExchangeRate> {
+        extends PrometheusSheetXDataItem<ExchangeRate> {
     /**
      * NamedArea for Rates.
      */
