@@ -72,7 +72,7 @@ public class SheetCash
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetCash(final MoneyWiseReader pReader) {
+    protected SheetCash(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_CASH);
 
@@ -85,7 +85,7 @@ public class SheetCash
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetCash(final MoneyWiseWriter pWriter) {
+    protected SheetCash(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_CASH);
 

@@ -66,7 +66,7 @@ public class SheetExchangeRate
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetExchangeRate(final MoneyWiseReader pReader) {
+    protected SheetExchangeRate(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_XCHGRATES);
 
@@ -79,7 +79,7 @@ public class SheetExchangeRate
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetExchangeRate(final MoneyWiseWriter pWriter) {
+    protected SheetExchangeRate(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_XCHGRATES);
 

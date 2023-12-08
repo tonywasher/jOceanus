@@ -79,7 +79,7 @@ public class SheetPortfolio
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetPortfolio(final MoneyWiseReader pReader) {
+    protected SheetPortfolio(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PORTFOLIOS);
 
@@ -92,7 +92,7 @@ public class SheetPortfolio
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetPortfolio(final MoneyWiseWriter pWriter) {
+    protected SheetPortfolio(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PORTFOLIOS);
 

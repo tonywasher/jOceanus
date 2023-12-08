@@ -50,7 +50,7 @@ public class SheetAssetCurrency
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAssetCurrency(final MoneyWiseReader pReader) {
+    protected SheetAssetCurrency(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
@@ -63,7 +63,7 @@ public class SheetAssetCurrency
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAssetCurrency(final MoneyWiseWriter pWriter) {
+    protected SheetAssetCurrency(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTCURRENCIES);
 

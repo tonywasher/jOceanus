@@ -57,7 +57,7 @@ public class SheetDepositCategory
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDepositCategory(final MoneyWiseReader pReader) {
+    protected SheetDepositCategory(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_DEPCATEGORIES);
 
@@ -70,7 +70,7 @@ public class SheetDepositCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetDepositCategory(final MoneyWiseWriter pWriter) {
+    protected SheetDepositCategory(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_DEPCATEGORIES);
 

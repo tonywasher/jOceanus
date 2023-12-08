@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
-import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseXSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -149,7 +149,7 @@ public class MoneyWiseView
      */
     @Override
     public PrometheusXSpreadSheet getSpreadSheet() {
-        return new MoneyWiseSheet(getGuiFactory());
+        return new MoneyWiseXSheet(getGuiFactory());
     }
 
     /**

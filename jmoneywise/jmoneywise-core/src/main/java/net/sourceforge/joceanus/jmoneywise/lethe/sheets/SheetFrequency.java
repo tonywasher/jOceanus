@@ -45,7 +45,7 @@ public class SheetFrequency
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetFrequency(final MoneyWiseReader pReader) {
+    protected SheetFrequency(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_FREQUENCIES);
 
@@ -58,7 +58,7 @@ public class SheetFrequency
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetFrequency(final MoneyWiseWriter pWriter) {
+    protected SheetFrequency(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_FREQUENCIES);
 

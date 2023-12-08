@@ -45,7 +45,7 @@ public class SheetLoanCategoryType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetLoanCategoryType(final MoneyWiseReader pReader) {
+    protected SheetLoanCategoryType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_LOANCATTYPES);
 
@@ -58,7 +58,7 @@ public class SheetLoanCategoryType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetLoanCategoryType(final MoneyWiseWriter pWriter) {
+    protected SheetLoanCategoryType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_LOANCATTYPES);
 

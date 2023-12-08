@@ -16,28 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXReader;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXWriter;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
- * SheetReader extension for MoneyWiseData.
+ * SheetWriter extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class MoneyWiseReader
-        extends PrometheusSheetXReader {
+public class MoneyWiseXWriter
+        extends PrometheusSheetXWriter {
     /**
      * Constructor.
      * @param pFactory the gui factory
      * @param pReport the report
-     * @param pPasswordMgr the password manager
      */
-    public MoneyWiseReader(final TethysUIFactory<?> pFactory,
-                           final TethysUIThreadStatusReport pReport,
-                           final GordianPasswordManager pPasswordMgr) {
+    public MoneyWiseXWriter(final TethysUIFactory<?> pFactory,
+                            final TethysUIThreadStatusReport pReport) {
         /* Call super-constructor */
-        super(pFactory, pReport, pPasswordMgr);
+        super(pFactory, pReport);
     }
 
     /**

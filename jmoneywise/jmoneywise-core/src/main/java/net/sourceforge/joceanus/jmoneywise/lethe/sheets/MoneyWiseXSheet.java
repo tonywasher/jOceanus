@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * SpreadSheet extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class MoneyWiseSheet
+public class MoneyWiseXSheet
         extends PrometheusXSpreadSheet {
     /**
      * The Data file name.
@@ -38,7 +38,7 @@ public class MoneyWiseSheet
      * Constructor.
      * @param pFactory the factory
      */
-    public MoneyWiseSheet(final TethysUIFactory<?> pFactory) {
+    public MoneyWiseXSheet(final TethysUIFactory<?> pFactory) {
         theGuiFactory = pFactory;
     }
 
@@ -46,12 +46,12 @@ public class MoneyWiseSheet
     protected PrometheusSheetXReader getSheetReader(final TethysUIThreadStatusReport pReport,
                                                     final GordianPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
-        return new MoneyWiseReader(theGuiFactory, pReport, pPasswordMgr);
+        return new MoneyWiseXReader(theGuiFactory, pReport, pPasswordMgr);
     }
 
     @Override
     protected PrometheusSheetXWriter getSheetWriter(final TethysUIThreadStatusReport pReport) {
         /* Create a MoneyWise Writer object and return it */
-        return new MoneyWiseWriter(theGuiFactory, pReport);
+        return new MoneyWiseXWriter(theGuiFactory, pReport);
     }
 }

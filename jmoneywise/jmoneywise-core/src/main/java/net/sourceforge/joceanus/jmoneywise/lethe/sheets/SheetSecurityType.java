@@ -45,7 +45,7 @@ public class SheetSecurityType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurityType(final MoneyWiseReader pReader) {
+    protected SheetSecurityType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_SECURITYTYPES);
 
@@ -58,7 +58,7 @@ public class SheetSecurityType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurityType(final MoneyWiseWriter pWriter) {
+    protected SheetSecurityType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_SECURITYTYPES);
 

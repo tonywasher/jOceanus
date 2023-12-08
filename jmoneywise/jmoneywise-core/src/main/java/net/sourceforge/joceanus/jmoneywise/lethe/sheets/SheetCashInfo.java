@@ -37,7 +37,7 @@ public class SheetCashInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetCashInfo(final MoneyWiseReader pReader) {
+    protected SheetCashInfo(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_CASHINFO);
 
@@ -50,7 +50,7 @@ public class SheetCashInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetCashInfo(final MoneyWiseWriter pWriter) {
+    protected SheetCashInfo(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_CASHINFO);
 

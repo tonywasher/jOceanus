@@ -45,7 +45,7 @@ public class SheetTaxBasis
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTaxBasis(final MoneyWiseReader pReader) {
+    protected SheetTaxBasis(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TAXBASES);
 
@@ -58,7 +58,7 @@ public class SheetTaxBasis
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTaxBasis(final MoneyWiseWriter pWriter) {
+    protected SheetTaxBasis(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TAXBASES);
 

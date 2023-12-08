@@ -45,7 +45,7 @@ public class SheetPortfolioType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetPortfolioType(final MoneyWiseReader pReader) {
+    protected SheetPortfolioType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_PORTFOLIOTYPES);
 
@@ -58,7 +58,7 @@ public class SheetPortfolioType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetPortfolioType(final MoneyWiseWriter pWriter) {
+    protected SheetPortfolioType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_PORTFOLIOTYPES);
 

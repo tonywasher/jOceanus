@@ -37,7 +37,7 @@ public class SheetSecurityInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurityInfo(final MoneyWiseReader pReader) {
+    protected SheetSecurityInfo(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_SECURITYINFO);
 
@@ -50,7 +50,7 @@ public class SheetSecurityInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurityInfo(final MoneyWiseWriter pWriter) {
+    protected SheetSecurityInfo(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_SECURITYINFO);
 

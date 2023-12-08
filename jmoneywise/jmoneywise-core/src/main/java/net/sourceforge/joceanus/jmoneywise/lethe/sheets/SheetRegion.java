@@ -54,7 +54,7 @@ public class SheetRegion
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetRegion(final MoneyWiseReader pReader) {
+    protected SheetRegion(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_REGIONS);
 
@@ -67,7 +67,7 @@ public class SheetRegion
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetRegion(final MoneyWiseWriter pWriter) {
+    protected SheetRegion(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_REGIONS);
 

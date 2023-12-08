@@ -88,7 +88,7 @@ public class SheetTransaction
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransaction(final MoneyWiseReader pReader) {
+    protected SheetTransaction(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_TRANS);
 
@@ -101,7 +101,7 @@ public class SheetTransaction
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransaction(final MoneyWiseWriter pWriter) {
+    protected SheetTransaction(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_TRANS);
 

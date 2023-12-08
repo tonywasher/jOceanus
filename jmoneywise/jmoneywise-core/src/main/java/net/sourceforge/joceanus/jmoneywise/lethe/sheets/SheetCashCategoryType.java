@@ -45,7 +45,7 @@ public class SheetCashCategoryType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetCashCategoryType(final MoneyWiseReader pReader) {
+    protected SheetCashCategoryType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_CASHCATTYPES);
 
@@ -58,7 +58,7 @@ public class SheetCashCategoryType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetCashCategoryType(final MoneyWiseWriter pWriter) {
+    protected SheetCashCategoryType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_CASHCATTYPES);
 

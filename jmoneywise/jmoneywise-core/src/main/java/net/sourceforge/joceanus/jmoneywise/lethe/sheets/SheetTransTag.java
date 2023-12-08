@@ -55,7 +55,7 @@ public class SheetTransTag
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransTag(final MoneyWiseReader pReader) {
+    protected SheetTransTag(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_TRANSTAGS);
 
@@ -68,7 +68,7 @@ public class SheetTransTag
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransTag(final MoneyWiseWriter pWriter) {
+    protected SheetTransTag(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_TRANSTAGS);
 

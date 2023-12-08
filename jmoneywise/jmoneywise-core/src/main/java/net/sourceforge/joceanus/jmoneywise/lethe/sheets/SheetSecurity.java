@@ -76,7 +76,7 @@ public class SheetSecurity
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurity(final MoneyWiseReader pReader) {
+    protected SheetSecurity(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_SECURITIES);
 
@@ -89,7 +89,7 @@ public class SheetSecurity
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurity(final MoneyWiseWriter pWriter) {
+    protected SheetSecurity(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_SECURITIES);
 

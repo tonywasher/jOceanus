@@ -46,7 +46,7 @@ public class SheetTransCategoryType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransCategoryType(final MoneyWiseReader pReader) {
+    protected SheetTransCategoryType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_CATTYPES);
 
@@ -59,7 +59,7 @@ public class SheetTransCategoryType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransCategoryType(final MoneyWiseWriter pWriter) {
+    protected SheetTransCategoryType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_CATTYPES);
 

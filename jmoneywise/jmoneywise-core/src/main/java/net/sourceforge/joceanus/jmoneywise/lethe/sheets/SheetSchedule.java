@@ -67,7 +67,7 @@ public class SheetSchedule
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSchedule(final MoneyWiseReader pReader) {
+    protected SheetSchedule(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_SCHEDULES);
 
@@ -80,7 +80,7 @@ public class SheetSchedule
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSchedule(final MoneyWiseWriter pWriter) {
+    protected SheetSchedule(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_SCHEDULES);
 

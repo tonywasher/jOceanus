@@ -61,7 +61,7 @@ public class SheetSecurityPrice
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurityPrice(final MoneyWiseReader pReader) {
+    protected SheetSecurityPrice(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PRICES);
 
@@ -74,7 +74,7 @@ public class SheetSecurityPrice
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurityPrice(final MoneyWiseWriter pWriter) {
+    protected SheetSecurityPrice(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PRICES);
 

@@ -67,7 +67,7 @@ public class SheetDepositRate
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDepositRate(final MoneyWiseReader pReader) {
+    protected SheetDepositRate(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_RATES);
 
@@ -80,7 +80,7 @@ public class SheetDepositRate
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetDepositRate(final MoneyWiseWriter pWriter) {
+    protected SheetDepositRate(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_RATES);
 

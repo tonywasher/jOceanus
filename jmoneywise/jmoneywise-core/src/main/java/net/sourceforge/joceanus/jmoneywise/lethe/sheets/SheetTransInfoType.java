@@ -45,7 +45,7 @@ public class SheetTransInfoType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransInfoType(final MoneyWiseReader pReader) {
+    protected SheetTransInfoType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TRANSINFOTYPES);
 
@@ -58,7 +58,7 @@ public class SheetTransInfoType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransInfoType(final MoneyWiseWriter pWriter) {
+    protected SheetTransInfoType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TRANSINFOTYPES);
 

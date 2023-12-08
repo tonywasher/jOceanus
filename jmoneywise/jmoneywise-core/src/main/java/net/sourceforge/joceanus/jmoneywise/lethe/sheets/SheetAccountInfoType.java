@@ -45,7 +45,7 @@ public class SheetAccountInfoType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountInfoType(final MoneyWiseReader pReader) {
+    protected SheetAccountInfoType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTINFOTYPES);
 
@@ -58,7 +58,7 @@ public class SheetAccountInfoType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountInfoType(final MoneyWiseWriter pWriter) {
+    protected SheetAccountInfoType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTINFOTYPES);
 
