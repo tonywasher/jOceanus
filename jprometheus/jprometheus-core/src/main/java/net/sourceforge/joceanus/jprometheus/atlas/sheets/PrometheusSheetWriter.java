@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -121,6 +122,31 @@ public abstract class PrometheusSheetWriter {
     public void createBackup(final PrometheusDataSet pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
+        boolean writeFailed = false;
+        try {
+            createBackup(pData, new FileOutputStream(pFile), pType);
+        } catch (IOException
+                 | OceanusException e) {
+            writeFailed = true;
+            throw new PrometheusIOException("Failed to create backup Workbook", e);
+        } finally {
+            /* Try to delete the file if required */
+            if (writeFailed) {
+                MetisToolkit.cleanUpFile(pFile);
+            }
+        }
+    }
+
+    /**
+     * Create a Backup Workbook.
+     * @param pData Data to write out
+     * @param pZipStream the backup file to write to
+     * @param pType the workBookType
+     * @throws OceanusException on error
+     */
+    public void createBackup(final PrometheusDataSet pData,
+                             final OutputStream pZipStream,
+                             final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
         TethysProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
@@ -135,8 +161,7 @@ public abstract class PrometheusSheetWriter {
         final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
-        boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pFile);
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pZipStream);
              OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
             /* Record the DataSet */
             theData = pData;
@@ -150,13 +175,7 @@ public abstract class PrometheusSheetWriter {
         } catch (IOException
                  | OceanusException e) {
             /* Report the error */
-            writeFailed = true;
-            throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
-        } finally {
-            /* Try to delete the file if required */
-            if (writeFailed) {
-                MetisToolkit.cleanUpFile(pFile);
-            }
+            throw new PrometheusIOException("Failed to create Backup Workbook", e);
         }
 
         /* Complete task */

@@ -102,7 +102,7 @@ public class MoneyWiseTransTag
             }
 
             /* Store the Description */
-            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);
+            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);
             if (myValue instanceof String) {
                 setValueDesc((String) myValue);
             } else if (myValue instanceof byte[]) {

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -122,12 +123,29 @@ public abstract class PrometheusSheetReader {
 
     /**
      * Load a Backup Workbook.
-     * @param pFile the backup file to load from
-     * @param pData the data to load into
+     * @param pData DataSet to load into
+     * @param pFile the file to load
      * @throws OceanusException on error
      */
     public void loadBackup(final File pFile,
                            final PrometheusDataSet pData) throws OceanusException {
+        try {
+            loadBackup(new FileInputStream(pFile), pData, pFile.getName());
+        } catch (IOException e) {
+            throw new PrometheusIOException("Failed to access Backup", e);
+        }
+    }
+
+    /**
+     * Load a Backup Workbook.
+     * @param pInStream the zip input stream
+     * @param pData the data to load into
+     * @param pName the filename
+     * @throws OceanusException on error
+     */
+    public void loadBackup(final InputStream pInStream,
+                           final PrometheusDataSet pData,
+                           final String pName) throws OceanusException {
         /* Start the task */
         TethysProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Loading");
@@ -135,13 +153,13 @@ public abstract class PrometheusSheetReader {
 
         /* Access the zip file */
         final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
-        final GordianZipReadFile myFile = myZips.openZipFile(pFile);
+        final GordianZipReadFile myFile = myZips.openZipFile(pInStream);
 
         /* Obtain the lock from the file */
         final GordianLock myLock = myFile.getLock();
 
         /* Resolve the lock */
-        thePasswordMgr.resolveZipLock(myLock, pFile.getName());
+        thePasswordMgr.resolveZipLock(myLock, pName);
 
         /* Access ZipFile contents */
         final GordianZipFileContents myContents = myFile.getContents();

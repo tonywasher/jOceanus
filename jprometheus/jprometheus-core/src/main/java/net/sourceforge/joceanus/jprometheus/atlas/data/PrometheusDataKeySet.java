@@ -243,7 +243,7 @@ public class PrometheusDataKeySet
      */
     public Integer getControlKeyId() {
         final PrometheusControlKey myKey = getControlKey();
-        return (myKey == null)
+        return myKey == null
                 ? null
                 : myKey.getIndexedId();
     }
@@ -295,7 +295,7 @@ public class PrometheusDataKeySet
      * @param pValue the securedKeySetDef
      */
     private void setValueSecuredKeySetDef(final byte[] pValue) {
-        getValues().setUncheckedValue(PrometheusCryptographyDataType.CONTROLKEY, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, pValue);
     }
 
     /**

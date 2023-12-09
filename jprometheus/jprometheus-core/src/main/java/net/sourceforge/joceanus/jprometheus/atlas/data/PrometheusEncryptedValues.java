@@ -160,6 +160,16 @@ public class PrometheusEncryptedValues
      * @param pEncryptor the encryptor
      * @throws OceanusException on error
      */
+    void setTheEncryptor(final PrometheusEncryptor pEncryptor) throws OceanusException {
+        /* Record the encryptor */
+        theEncryptor = pEncryptor;
+    }
+
+    /**
+     * Set the encryptor.
+     * @param pEncryptor the encryptor
+     * @throws OceanusException on error
+     */
     void setEncryptor(final PrometheusEncryptor pEncryptor) throws OceanusException {
         /* Record the encryptor */
         theEncryptor = pEncryptor;
@@ -227,8 +237,11 @@ public class PrometheusEncryptedValues
             final MetisFieldDef myField = myIterator.next();
 
             /* Ignore non-encrypted fields */
-            final Object myValue = getValue(myField);
-            if (!(myValue instanceof PrometheusEncryptedPair)) {
+            if (!(myField instanceof PrometheusEncryptedField)) {
+                continue;
+            }
+            final Object myValue = getEncryptedPair(myField);
+            if (myValue == null) {
                 continue;
             }
 
@@ -241,6 +254,9 @@ public class PrometheusEncryptedValues
             }
 
             /* Adopt encryption */
+            if (theEncryptor == null) {
+                int i = 0;
+            }
             theEncryptor.adoptEncryption((PrometheusEncryptedPair) myValue, (PrometheusEncryptedPair) myBaseObj);
         }
     }

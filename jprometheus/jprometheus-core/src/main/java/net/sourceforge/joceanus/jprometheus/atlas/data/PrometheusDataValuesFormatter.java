@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -131,6 +133,29 @@ public class PrometheusDataValuesFormatter {
      */
     public void createBackup(final PrometheusDataSet pData,
                              final File pFile) throws OceanusException {
+        boolean writeFailed = false;
+        try {
+            createBackup(pData, new FileOutputStream(pFile));
+        } catch (IOException
+                 | OceanusException e) {
+            writeFailed = true;
+            throw new PrometheusIOException("Failed to create backup XML", e);
+        } finally {
+            /* Try to delete the file if required */
+            if (writeFailed) {
+                MetisToolkit.cleanUpFile(pFile);
+            }
+        }
+    }
+
+    /**
+     * Create a Backup ZipFile.
+     * @param pData Data to write out
+     * @param pZipStream the output stream
+     * @throws OceanusException on error
+     */
+    public void createBackup(final PrometheusDataSet pData,
+                             final OutputStream pZipStream) throws OceanusException {
         /* Obtain the active profile */
         final TethysProfile myTask = theReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask("Writing");
@@ -148,8 +173,7 @@ public class PrometheusDataValuesFormatter {
         theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pFile)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pZipStream)) {
             /* Loop through the data lists */
             final Iterator<PrometheusDataList<?>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
@@ -171,6 +195,23 @@ public class PrometheusDataValuesFormatter {
 
         } catch (IOException
                  | OceanusException e) {
+            throw new PrometheusIOException("Failed to create backup XML", e);
+        }
+    }
+
+    /**
+     * Create a Backup ZipFile.
+     * @param pData Data to write out
+     * @param pFile the backup file to write to
+     * @throws OceanusException on error
+     */
+    public void createExtract(final PrometheusDataSet pData,
+                              final File pFile) throws OceanusException {
+        boolean writeFailed = false;
+        try {
+            createExtract(pData, new FileOutputStream(pFile));
+        } catch (IOException
+                 | OceanusException e) {
             writeFailed = true;
             throw new PrometheusIOException("Failed to create backup XML", e);
         } finally {
@@ -184,11 +225,11 @@ public class PrometheusDataValuesFormatter {
     /**
      * Create an Extract ZipFile.
      * @param pData Data to write out
-     * @param pFile the extract file to write to
+     * @param pZipStream the output stream
      * @throws OceanusException on error
      */
     public void createExtract(final PrometheusDataSet pData,
-                              final File pFile) throws OceanusException {
+                              final OutputStream pZipStream) throws OceanusException {
         /* Obtain the active profile */
         final TethysProfile myTask = theReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask("Writing");
@@ -201,8 +242,7 @@ public class PrometheusDataValuesFormatter {
         final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Protect the workbook access */
-        boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(pFile)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(pZipStream)) {
             /* Loop through the data lists */
             final Iterator<PrometheusDataList<?>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
@@ -224,13 +264,7 @@ public class PrometheusDataValuesFormatter {
 
         } catch (IOException
                  | OceanusException e) {
-            writeFailed = true;
             throw new PrometheusIOException("Failed to create extract XML", e);
-        } finally {
-            /* Try to delete the file if required */
-            if (writeFailed) {
-                MetisToolkit.cleanUpFile(pFile);
-            }
         }
     }
 
@@ -328,6 +362,23 @@ public class PrometheusDataValuesFormatter {
      */
     public void loadZipFile(final PrometheusDataSet pData,
                             final File pFile) throws OceanusException {
+        try {
+            loadZipFile(pData, new FileInputStream(pFile), pFile.getName());
+        } catch (IOException e) {
+            throw new PrometheusIOException("Failed to access ZipFile", e);
+        }
+    }
+
+    /**
+     * Load a ZipFile.
+     * @param pData DataSet to load into
+     * @param pInStream the input stream
+     * @param pName the file to load
+     * @throws OceanusException on error
+     */
+    public void loadZipFile(final PrometheusDataSet pData,
+                            final InputStream pInStream,
+                            final String pName) throws OceanusException {
         /* Obtain the active profile */
         final TethysProfile myTask = theReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask("Loading");
@@ -335,7 +386,7 @@ public class PrometheusDataValuesFormatter {
 
         /* Access the zip file */
         final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
-        final GordianZipReadFile myZipFile = myZips.openZipFile(pFile);
+        final GordianZipReadFile myZipFile = myZips.openZipFile(pInStream);
 
         /* Obtain the hash bytes from the file */
         final GordianLock myLock = myZipFile.getLock();
@@ -343,7 +394,7 @@ public class PrometheusDataValuesFormatter {
         /* If this is a secure ZipFile */
         if (myLock != null) {
             /* Resolve the lock */
-            thePasswordMgr.resolveZipLock(myLock, pFile.getName());
+            thePasswordMgr.resolveZipLock(myLock, pName);
         }
 
         /* Parse the Zip File */

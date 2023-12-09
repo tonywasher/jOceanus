@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResour
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetEncrypted;
@@ -93,7 +94,7 @@ public class MoneyWiseSheetTransCategory
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(MoneyWiseTransCategory.OBJECT_NAME);
-        myValues.addValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, loadInteger(COL_TYPE));
+        myValues.addValue(MoneyWiseStaticDataType.TRANSTYPE, loadInteger(COL_TYPE));
         myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, loadBytes(COL_DESC));
@@ -170,7 +171,7 @@ public class MoneyWiseSheetTransCategory
 
                 /* Build data values */
                 final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseTransCategory.OBJECT_NAME);
-                myValues.addValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, myType);
+                myValues.addValue(MoneyWiseStaticDataType.TRANSTYPE, myType);
                 myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
                 myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 

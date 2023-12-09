@@ -20,6 +20,8 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogControlle
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
@@ -43,14 +45,15 @@ public class MoneyWiseTestSecurity {
 
     /**
      * Initialise security.
+     * @param pToolkit the toolkit
      */
-    public void initSecurity() throws OceanusException {
+    public void initSecurity(final PrometheusToolkit pToolkit) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final GordianPasswordManager myManager = theDataSet.getPasswordMgr();
         myManager.setDialogController(new DialogStub());
 
         /* Create the cloneSet and initialise security */
-        final MoneyWiseDataSet myNullData = theDataSet.deriveCloneSet();
+        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Create the control data */
         theDataSet.getControlData().addNewControl(0);
@@ -60,7 +63,7 @@ public class MoneyWiseTestSecurity {
     /**
      * Dialog stub.
      */
-    private static class DialogStub
+    static class DialogStub
             implements GordianDialogController {
         @Override
         public void createTheDialog(String pTitle, boolean pNeedConfirm) {
@@ -88,7 +91,7 @@ public class MoneyWiseTestSecurity {
     /**
      * Report stub.
      */
-    private static class ReporterStub
+    static class ReporterStub
         implements TethysUIThreadStatusReport {
         /**
          * The active task.

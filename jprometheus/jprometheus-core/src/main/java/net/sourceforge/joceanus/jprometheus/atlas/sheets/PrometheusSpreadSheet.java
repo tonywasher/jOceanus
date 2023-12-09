@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
@@ -70,6 +72,27 @@ public abstract class PrometheusSpreadSheet {
     }
 
     /**
+     * Load a Backup Workbook.
+     * @param pReport the report
+     * @param pPasswordMgr the password manager
+     * @param pData the data to load into
+     * @param pInStream the input stream to load from
+     * @param pName the filename
+     * @throws OceanusException on error
+     */
+    public void loadBackup(final TethysUIThreadStatusReport pReport,
+                           final GordianPasswordManager pPasswordMgr,
+                           final PrometheusDataSet pData,
+                           final InputStream pInStream,
+                           final String pName) throws OceanusException {
+        /* Create a sheet reader object */
+        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);
+
+        /* Load the backup */
+        myReader.loadBackup(pInStream, pData, pName);
+    }
+
+    /**
      * Create a Backup Workbook.
      * @param pReport the report
      * @param pData Data to write out
@@ -86,5 +109,24 @@ public abstract class PrometheusSpreadSheet {
 
         /* Create the backup */
         myWriter.createBackup(pData, pFile, pType);
+    }
+
+    /**
+     * Create a Backup Workbook.
+     * @param pReport the report
+     * @param pData Data to write out
+     * @param pFile the backup file to write to
+     * @param pType the workBookType
+     * @throws OceanusException on error
+     */
+    public void createBackup(final TethysUIThreadStatusReport pReport,
+                             final PrometheusDataSet pData,
+                             final OutputStream pZipStream,
+                             final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Create a sheet writer object */
+        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);
+
+        /* Create the backup */
+        myWriter.createBackup(pData, pZipStream, pType);
     }
 }

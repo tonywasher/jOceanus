@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCate
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
@@ -140,7 +141,7 @@ public final class MoneyWiseSheetAccountCategory {
         if (myClass.equals(MoneyWiseBasicDataType.DEPOSIT.toString())) {
             /* Build data values */
             final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseDepositCategory.OBJECT_NAME);
-            myValues.addValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, myCat);
+            myValues.addValue(MoneyWiseStaticDataType.DEPOSITTYPE, myCat);
             myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 
@@ -152,7 +153,7 @@ public final class MoneyWiseSheetAccountCategory {
         } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {
             /* Build data values */
             final  PrometheusDataValues myValues = new  PrometheusDataValues(MoneyWiseCashCategory.OBJECT_NAME);
-            myValues.addValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, myCat);
+            myValues.addValue(MoneyWiseStaticDataType.CASHTYPE, myCat);
             myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 
@@ -164,7 +165,7 @@ public final class MoneyWiseSheetAccountCategory {
         } else if (myClass.equals(MoneyWiseBasicDataType.LOAN.toString())) {
             /* Build data values */
             final  PrometheusDataValues myValues = new  PrometheusDataValues(MoneyWiseLoanCategory.OBJECT_NAME);
-            myValues.addValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, myCat);
+            myValues.addValue(MoneyWiseStaticDataType.LOANTYPE, myCat);
             myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 

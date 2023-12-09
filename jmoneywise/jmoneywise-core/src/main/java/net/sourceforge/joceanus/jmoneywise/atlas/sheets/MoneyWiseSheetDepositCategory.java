@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.sheets;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetEncrypted;
@@ -85,7 +86,7 @@ public class MoneyWiseSheetDepositCategory
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(MoneyWiseDepositCategory.OBJECT_NAME);
-        myValues.addValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, loadInteger(COL_TYPE));
+        myValues.addValue(MoneyWiseStaticDataType.DEPOSITTYPE, loadInteger(COL_TYPE));
         myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, loadBytes(COL_DESC));

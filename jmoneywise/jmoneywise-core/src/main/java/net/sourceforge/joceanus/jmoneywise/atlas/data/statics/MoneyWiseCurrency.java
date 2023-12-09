@@ -20,6 +20,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
@@ -124,6 +125,17 @@ public class MoneyWiseCurrency
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+        if (MoneyWiseStaticResource.CURRENCY_DEFAULT.equals(pField)) {
+            return true;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
     }
 
     /**
