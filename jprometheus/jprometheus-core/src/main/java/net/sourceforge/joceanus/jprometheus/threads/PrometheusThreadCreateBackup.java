@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -117,7 +117,7 @@ public class PrometheusThreadCreateBackup
             myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);
 
             /* Create backup */
-            final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
+            final PrometheusXSpreadSheet mySheet = theControl.getSpreadSheet();
             final DataSet myOldData = theControl.getData();
             mySheet.createBackup(pManager, myOldData, myFile, myType);
 

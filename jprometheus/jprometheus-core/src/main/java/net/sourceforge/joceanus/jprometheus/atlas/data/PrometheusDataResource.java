@@ -391,6 +391,11 @@ public enum PrometheusDataResource
     CONTROLKEY_LIST("ControlKey.List"),
 
     /**
+     * ControlKey List.
+     */
+    CONTROLKEY_DATAKEYS("ControlKey.DataKeys"),
+
+    /**
      * ControlKey Prime Hash.
      */
     CONTROLKEY_HASH("ControlKey.Hash"),

@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetPortfolioType
-        extends PrometheusSheetStaticData<PortfolioType> {
+        extends PrometheusSheetXStaticData<PortfolioType> {
     /**
      * NamedArea for SecurityTypes.
      */
@@ -45,7 +45,7 @@ public class SheetPortfolioType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetPortfolioType(final MoneyWiseReader pReader) {
+    protected SheetPortfolioType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_PORTFOLIOTYPES);
 
@@ -58,7 +58,7 @@ public class SheetPortfolioType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetPortfolioType(final MoneyWiseWriter pWriter) {
+    protected SheetPortfolioType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_PORTFOLIOTYPES);
 

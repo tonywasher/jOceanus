@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetAccountInfoType
-        extends PrometheusSheetStaticData<AccountInfoType> {
+        extends PrometheusSheetXStaticData<AccountInfoType> {
     /**
      * NamedArea for AccountInfoType.
      */
@@ -45,7 +45,7 @@ public class SheetAccountInfoType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountInfoType(final MoneyWiseReader pReader) {
+    protected SheetAccountInfoType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTINFOTYPES);
 
@@ -58,7 +58,7 @@ public class SheetAccountInfoType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountInfoType(final MoneyWiseWriter pWriter) {
+    protected SheetAccountInfoType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTINFOTYPES);
 

@@ -204,7 +204,7 @@ public abstract class PrometheusEncryptedDataItem
         final PrometheusEncryptedPair myField = theEncryptor.encryptValue(myCurr, pValue);
 
         /* Store the new value */
-        myValueSet.setValue(myFieldDef, myField);
+        myValueSet.setUncheckedValue(myFieldDef, myField);
     }
 
     /**
@@ -238,7 +238,7 @@ public abstract class PrometheusEncryptedDataItem
         final PrometheusEncryptedPair myField = theEncryptor.decryptValue(pEncrypted, pClazz);
 
         /* Store the new value */
-        getValues().setValue(myFieldDef, myField);
+        getValues().setUncheckedValue(myFieldDef, myField);
     }
 
     /**
@@ -287,6 +287,7 @@ public abstract class PrometheusEncryptedDataItem
         final PrometheusEncryptedValues myBaseValues = pBase.getValues();
 
         /* Try to adopt the underlying */
+        getValues().setTheEncryptor(pBase.theEncryptor);
         getValues().adoptSecurity(myBaseValues);
     }
 
@@ -300,6 +301,7 @@ public abstract class PrometheusEncryptedDataItem
         setValueDataKeySet(pKeySet);
 
         /* Initialise security */
+        getValues().setTheEncryptor(theEncryptor);
         getValues().adoptSecurity(null);
     }
 

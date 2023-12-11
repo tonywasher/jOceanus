@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTaxBasis
-        extends PrometheusSheetStaticData<TaxBasis> {
+        extends PrometheusSheetXStaticData<TaxBasis> {
     /**
      * NamedArea for Tax Bases.
      */
@@ -45,7 +45,7 @@ public class SheetTaxBasis
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTaxBasis(final MoneyWiseReader pReader) {
+    protected SheetTaxBasis(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TAXBASES);
 
@@ -58,7 +58,7 @@ public class SheetTaxBasis
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTaxBasis(final MoneyWiseWriter pWriter) {
+    protected SheetTaxBasis(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TAXBASES);
 

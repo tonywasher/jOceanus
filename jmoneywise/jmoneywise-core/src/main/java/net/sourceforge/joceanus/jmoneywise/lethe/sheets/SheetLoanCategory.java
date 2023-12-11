@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetLoanCategory
-        extends PrometheusSheetEncrypted<LoanCategory> {
+        extends PrometheusSheetXEncrypted<LoanCategory> {
     /**
      * NamedArea for Categories.
      */
@@ -57,7 +57,7 @@ public class SheetLoanCategory
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetLoanCategory(final MoneyWiseReader pReader) {
+    protected SheetLoanCategory(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_LOANCATEGORIES);
 
@@ -70,7 +70,7 @@ public class SheetLoanCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetLoanCategory(final MoneyWiseWriter pWriter) {
+    protected SheetLoanCategory(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_LOANCATEGORIES);
 

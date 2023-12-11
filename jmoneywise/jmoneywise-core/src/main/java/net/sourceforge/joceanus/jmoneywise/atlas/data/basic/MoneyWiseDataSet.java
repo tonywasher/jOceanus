@@ -52,7 +52,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCateg
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseFrequency.MoneyWiseFrequencyList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
@@ -86,6 +85,7 @@ public class MoneyWiseDataSet
      * Declare Fields.
      */
     static {
+        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseStaticDataType.class, MoneyWiseDataSet::getFieldListValue);
         FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseBasicDataType.class, MoneyWiseDataSet::getFieldListValue);
         FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_DEFAULT, MoneyWiseDataSet::getDefaultCurrency);
         FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_HOLDINGSMAP, MoneyWiseDataSet::getSecurityHoldingsMap);
@@ -226,14 +226,6 @@ public class MoneyWiseDataSet
      */
     public MoneyWiseCurrencyList getAccountCurrencies() {
         return getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);
-    }
-
-    /**
-     * Obtain Frequencies.
-     * @return the Frequencies
-     */
-    public MoneyWiseFrequencyList getFrequencys() {
-        return getDataList(MoneyWiseStaticDataType.FREQUENCY, MoneyWiseFrequencyList.class);
     }
 
     /**
@@ -543,12 +535,10 @@ public class MoneyWiseDataSet
                 return new MoneyWiseTaxBasisList(this);
             case CURRENCY:
                 return new MoneyWiseCurrencyList(this);
-            case FREQUENCY:
-                return new MoneyWiseFrequencyList(this);
             case ACCOUNTINFOTYPE:
                 return new MoneyWiseAccountInfoTypeList(this);
             case TRANSINFOTYPE:
-                return new MoneyWiseDepositCategoryTypeList(this);
+                return new MoneyWiseTransInfoTypeList(this);
             default:
                 throw new IllegalArgumentException(pListType.toString());
         }
@@ -571,7 +561,7 @@ public class MoneyWiseDataSet
             case CASHCATEGORY:
                 return new MoneyWiseCashCategoryList(this);
             case LOANCATEGORY:
-                return new MoneyWiseCashCategoryList(this);
+                return new MoneyWiseLoanCategoryList(this);
             case TRANSCATEGORY:
                 return new MoneyWiseTransCategoryList(this);
             case EXCHANGERATE:

@@ -121,9 +121,10 @@ public enum MoneyWiseAssetType {
     public static long createExternalId(final MoneyWiseAssetType pType,
                                         final int pMajorId,
                                         final int pBaseId) {
-        return pBaseId
-                + ((long) pMajorId) << Integer.SIZE
-                + (((long) pType.getId()) << ASSETSHIFT);
+        final long myBase = pBaseId;
+        final long myMajor = ((long) pMajorId) << Integer.SIZE;
+        final long myAsset = (((long) pType.getId()) << ASSETSHIFT);
+        return myAsset + myMajor + myBase;
     }
 
     /**

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXEncrypted;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetCash
-        extends PrometheusSheetEncrypted<Cash> {
+        extends PrometheusSheetXEncrypted<Cash> {
     /**
      * NamedArea for Cash.
      */
@@ -72,7 +72,7 @@ public class SheetCash
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetCash(final MoneyWiseReader pReader) {
+    protected SheetCash(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_CASH);
 
@@ -85,7 +85,7 @@ public class SheetCash
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetCash(final MoneyWiseWriter pWriter) {
+    protected SheetCash(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_CASH);
 

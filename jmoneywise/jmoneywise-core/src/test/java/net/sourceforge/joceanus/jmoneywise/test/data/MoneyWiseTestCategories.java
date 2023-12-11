@@ -16,21 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseCashCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseDepositCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseLoanCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseRegionBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseStaticBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseTagBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseTransCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseXchgRateBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseCashCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseDepositCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseLoanCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseRegionBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseStaticBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseTagBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseTransCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseXchgRateBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -275,7 +275,7 @@ public class MoneyWiseTestCategories {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTestCategories(final MoneyWiseData pDataSet) {
+    MoneyWiseTestCategories(final MoneyWiseDataSet pDataSet) {
         /* Create the builders */
         theStaticBuilder = new MoneyWiseStaticBuilder(pDataSet);
         theDepositBuilder = new MoneyWiseDepositCategoryBuilder(pDataSet);
@@ -315,8 +315,8 @@ public class MoneyWiseTestCategories {
      */
     private void buildStatic() throws OceanusException {
         theStaticBuilder.buildBasic();
-        theStaticBuilder.buildCurrency(AssetCurrencyClass.EUR);
-        theStaticBuilder.buildCurrency(AssetCurrencyClass.USD);
+        theStaticBuilder.buildCurrency(MoneyWiseCurrencyClass.EUR);
+        theStaticBuilder.buildCurrency(MoneyWiseCurrencyClass.USD);
     }
 
     /**
@@ -324,13 +324,13 @@ public class MoneyWiseTestCategories {
      * @throws OceanusException on error
      */
     private void buildDeposits() throws OceanusException {
-        theDepositBuilder.name(idDC_Main).type(DepositCategoryClass.PARENT).build();
-        theDepositBuilder.name(idDC_Current).type(DepositCategoryClass.CHECKING).build();
-        theDepositBuilder.name(idDC_Savings).type(DepositCategoryClass.SAVINGS).build();
-        theDepositBuilder.name(idDC_TaxFreeSavings).type(DepositCategoryClass.TAXFREESAVINGS).build();
-        theDepositBuilder.name(idDC_Peer2Peer).type(DepositCategoryClass.PEER2PEER).build();
-        theDepositBuilder.name(idDC_Bonds).type(DepositCategoryClass.BOND).build();
-        theDepositBuilder.name(idDC_TaxFreeBonds).type(DepositCategoryClass.TAXFREEBOND).build();
+        theDepositBuilder.name(idDC_Main).type(MoneyWiseDepositCategoryClass.PARENT).build();
+        theDepositBuilder.name(idDC_Current).type(MoneyWiseDepositCategoryClass.CHECKING).build();
+        theDepositBuilder.name(idDC_Savings).type(MoneyWiseDepositCategoryClass.SAVINGS).build();
+        theDepositBuilder.name(idDC_TaxFreeSavings).type(MoneyWiseDepositCategoryClass.TAXFREESAVINGS).build();
+        theDepositBuilder.name(idDC_Peer2Peer).type(MoneyWiseDepositCategoryClass.PEER2PEER).build();
+        theDepositBuilder.name(idDC_Bonds).type(MoneyWiseDepositCategoryClass.BOND).build();
+        theDepositBuilder.name(idDC_TaxFreeBonds).type(MoneyWiseDepositCategoryClass.TAXFREEBOND).build();
     }
 
     /**
@@ -338,9 +338,9 @@ public class MoneyWiseTestCategories {
      * @throws OceanusException on error
      */
     private void buildCash() throws OceanusException {
-        theCashBuilder.name(idCC_Main).type(CashCategoryClass.PARENT).build();
-        theCashBuilder.name(idCC_Cash).type(CashCategoryClass.AUTOEXPENSE).build();
-        theCashBuilder.name(idCC_Foreign).type(CashCategoryClass.CASH).build();
+        theCashBuilder.name(idCC_Main).type(MoneyWiseCashCategoryClass.PARENT).build();
+        theCashBuilder.name(idCC_Cash).type(MoneyWiseCashCategoryClass.AUTOEXPENSE).build();
+        theCashBuilder.name(idCC_Foreign).type(MoneyWiseCashCategoryClass.CASH).build();
     }
 
     /**
@@ -348,12 +348,12 @@ public class MoneyWiseTestCategories {
      * @throws OceanusException on error
      */
     private void buildLoans() throws OceanusException {
-        theLoanBuilder.name(idLC_Main).type(LoanCategoryClass.PARENT).build();
-        theLoanBuilder.name(idLC_Private).type(LoanCategoryClass.PRIVATELOAN).build();
-        theLoanBuilder.name(idLC_Commercial).type(LoanCategoryClass.LOAN).build();
-        theLoanBuilder.name(idLC_Mortgage).type(LoanCategoryClass.LOAN).build();
-        theLoanBuilder.name(idLC_CreditCards).type(LoanCategoryClass.CREDITCARD).build();
-        theLoanBuilder.name(idLC_Pending).type(LoanCategoryClass.LOAN).build();
+        theLoanBuilder.name(idLC_Main).type(MoneyWiseLoanCategoryClass.PARENT).build();
+        theLoanBuilder.name(idLC_Private).type(MoneyWiseLoanCategoryClass.PRIVATELOAN).build();
+        theLoanBuilder.name(idLC_Commercial).type(MoneyWiseLoanCategoryClass.LOAN).build();
+        theLoanBuilder.name(idLC_Mortgage).type(MoneyWiseLoanCategoryClass.LOAN).build();
+        theLoanBuilder.name(idLC_CreditCards).type(MoneyWiseLoanCategoryClass.CREDITCARD).build();
+        theLoanBuilder.name(idLC_Pending).type(MoneyWiseLoanCategoryClass.LOAN).build();
     }
 
     /**
@@ -362,186 +362,186 @@ public class MoneyWiseTestCategories {
      */
     private void buildTrans() throws OceanusException {
         /* Transfer */
-        final TransactionCategory myTotals = theTransBuilder.name(idTC_Totals).type(TransactionCategoryClass.TOTALS).build();
+        final MoneyWiseTransCategory myTotals = theTransBuilder.name(idTC_Totals).type(MoneyWiseTransCategoryClass.TOTALS).build();
 
         /* Transfer */
-        theTransBuilder.name(idTC_Transfer).type(TransactionCategoryClass.TRANSFER).build();
+        theTransBuilder.name(idTC_Transfer).type(MoneyWiseTransCategoryClass.TRANSFER).build();
 
         /* Income */
-        theTransBuilder.name(idTC_Income).parent(myTotals).type(TransactionCategoryClass.INCOMETOTALS).build();
-        theTransBuilder.name(idTC_Interest).type(TransactionCategoryClass.INTEREST).build();
-        theTransBuilder.name(idTC_Dividend).type(TransactionCategoryClass.DIVIDEND).build();
-        theTransBuilder.name(idTC_Salary).type(TransactionCategoryClass.TAXEDINCOME).build();
-        theTransBuilder.name(idTC_Benefit).type(TransactionCategoryClass.VIRTUALINCOME).build();
-        theTransBuilder.name(idTC_CashBack).type(TransactionCategoryClass.CASHBACK).build();
-        theTransBuilder.name(idTC_Peer2PeerInterest).type(TransactionCategoryClass.PEER2PEERINTEREST).build();
-        theTransBuilder.name(idTC_EmployeeNI).type(TransactionCategoryClass.EMPLOYEENATINS).build();
-        theTransBuilder.name(idTC_EmployerNI).type(TransactionCategoryClass.EMPLOYERNATINS).build();
-        theTransBuilder.name(idTC_Inheritance).type(TransactionCategoryClass.INHERITED).build();
-        theTransBuilder.name(idTC_IncGifts).type(TransactionCategoryClass.GIFTEDINCOME).build();
-        theTransBuilder.name(idTC_LoanInterest).type(TransactionCategoryClass.LOANINTERESTEARNED).build();
-        theTransBuilder.name(idTC_OpeningBal).type(TransactionCategoryClass.OPENINGBALANCE).build();
-        theTransBuilder.name(idTC_TaxedInterest).type(TransactionCategoryClass.TAXEDINTEREST).build();
-        theTransBuilder.name(idTC_TaxFreeInt).type(TransactionCategoryClass.TAXFREEINTEREST).build();
-        theTransBuilder.name(idTC_TaxFreeDiv).type(TransactionCategoryClass.TAXFREEDIVIDEND).build();
-        theTransBuilder.name(idTC_ShareDiv).type(TransactionCategoryClass.SHAREDIVIDEND).build();
-        theTransBuilder.name(idTC_UnitTrustDiv).type(TransactionCategoryClass.UNITTRUSTDIVIDEND).build();
-        theTransBuilder.name(idTC_IncExpenses).type(TransactionCategoryClass.RECOVEREDEXPENSES).build();
-        theTransBuilder.name(idTC_ForeignDividend).type(TransactionCategoryClass.FOREIGNDIVIDEND).build();
-        theTransBuilder.name(idTC_Grant).type(TransactionCategoryClass.TAXEDINCOME).build();
-        theTransBuilder.name(idTC_GrossInterest).type(TransactionCategoryClass.GROSSINTEREST).build();
-        theTransBuilder.name(idTC_GrossLoyaltyBonus).type(TransactionCategoryClass.GROSSLOYALTYBONUS).build();
-        theTransBuilder.name(idTC_LoyaltyBonus).type(TransactionCategoryClass.LOYALTYBONUS).build();
-        theTransBuilder.name(idTC_TaxedLoyaltyBonus).type(TransactionCategoryClass.TAXEDLOYALTYBONUS).build();
-        theTransBuilder.name(idTC_TaxFreeLoyaltyBonus).type(TransactionCategoryClass.TAXFREELOYALTYBONUS).build();
-        theTransBuilder.name(idTC_OptionsExercise).type(TransactionCategoryClass.OPTIONSEXERCISE).build();
-        theTransBuilder.name(idTC_RentalIncome).type(TransactionCategoryClass.RENTALINCOME).build();
-        theTransBuilder.name(idTC_RoomRental).type(TransactionCategoryClass.ROOMRENTALINCOME).build();
-        theTransBuilder.name(idTC_Pension).type(TransactionCategoryClass.TAXEDINCOME).build();
-        theTransBuilder.name(idTC_StatePension).type(TransactionCategoryClass.GROSSINCOME).build();
-        theTransBuilder.name(idTC_PensionContrib).type(TransactionCategoryClass.PENSIONCONTRIB).build();
-        theTransBuilder.name(idTC_SocialSecurity).type(TransactionCategoryClass.GROSSINCOME).build();
+        theTransBuilder.name(idTC_Income).parent(myTotals).type(MoneyWiseTransCategoryClass.INCOMETOTALS).build();
+        theTransBuilder.name(idTC_Interest).type(MoneyWiseTransCategoryClass.INTEREST).build();
+        theTransBuilder.name(idTC_Dividend).type(MoneyWiseTransCategoryClass.DIVIDEND).build();
+        theTransBuilder.name(idTC_Salary).type(MoneyWiseTransCategoryClass.TAXEDINCOME).build();
+        theTransBuilder.name(idTC_Benefit).type(MoneyWiseTransCategoryClass.VIRTUALINCOME).build();
+        theTransBuilder.name(idTC_CashBack).type(MoneyWiseTransCategoryClass.CASHBACK).build();
+        theTransBuilder.name(idTC_Peer2PeerInterest).type(MoneyWiseTransCategoryClass.PEER2PEERINTEREST).build();
+        theTransBuilder.name(idTC_EmployeeNI).type(MoneyWiseTransCategoryClass.EMPLOYEENATINS).build();
+        theTransBuilder.name(idTC_EmployerNI).type(MoneyWiseTransCategoryClass.EMPLOYERNATINS).build();
+        theTransBuilder.name(idTC_Inheritance).type(MoneyWiseTransCategoryClass.INHERITED).build();
+        theTransBuilder.name(idTC_IncGifts).type(MoneyWiseTransCategoryClass.GIFTEDINCOME).build();
+        theTransBuilder.name(idTC_LoanInterest).type(MoneyWiseTransCategoryClass.LOANINTERESTEARNED).build();
+        theTransBuilder.name(idTC_OpeningBal).type(MoneyWiseTransCategoryClass.OPENINGBALANCE).build();
+        theTransBuilder.name(idTC_TaxedInterest).type(MoneyWiseTransCategoryClass.TAXEDINTEREST).build();
+        theTransBuilder.name(idTC_TaxFreeInt).type(MoneyWiseTransCategoryClass.TAXFREEINTEREST).build();
+        theTransBuilder.name(idTC_TaxFreeDiv).type(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND).build();
+        theTransBuilder.name(idTC_ShareDiv).type(MoneyWiseTransCategoryClass.SHAREDIVIDEND).build();
+        theTransBuilder.name(idTC_UnitTrustDiv).type(MoneyWiseTransCategoryClass.UNITTRUSTDIVIDEND).build();
+        theTransBuilder.name(idTC_IncExpenses).type(MoneyWiseTransCategoryClass.RECOVEREDEXPENSES).build();
+        theTransBuilder.name(idTC_ForeignDividend).type(MoneyWiseTransCategoryClass.FOREIGNDIVIDEND).build();
+        theTransBuilder.name(idTC_Grant).type(MoneyWiseTransCategoryClass.TAXEDINCOME).build();
+        theTransBuilder.name(idTC_GrossInterest).type(MoneyWiseTransCategoryClass.GROSSINTEREST).build();
+        theTransBuilder.name(idTC_GrossLoyaltyBonus).type(MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS).build();
+        theTransBuilder.name(idTC_LoyaltyBonus).type(MoneyWiseTransCategoryClass.LOYALTYBONUS).build();
+        theTransBuilder.name(idTC_TaxedLoyaltyBonus).type(MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS).build();
+        theTransBuilder.name(idTC_TaxFreeLoyaltyBonus).type(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS).build();
+        theTransBuilder.name(idTC_OptionsExercise).type(MoneyWiseTransCategoryClass.OPTIONSEXERCISE).build();
+        theTransBuilder.name(idTC_RentalIncome).type(MoneyWiseTransCategoryClass.RENTALINCOME).build();
+        theTransBuilder.name(idTC_RoomRental).type(MoneyWiseTransCategoryClass.ROOMRENTALINCOME).build();
+        theTransBuilder.name(idTC_Pension).type(MoneyWiseTransCategoryClass.TAXEDINCOME).build();
+        theTransBuilder.name(idTC_StatePension).type(MoneyWiseTransCategoryClass.GROSSINCOME).build();
+        theTransBuilder.name(idTC_PensionContrib).type(MoneyWiseTransCategoryClass.PENSIONCONTRIB).build();
+        theTransBuilder.name(idTC_SocialSecurity).type(MoneyWiseTransCategoryClass.GROSSINCOME).build();
 
         /* Market */
-        theTransBuilder.name(idTC_Market).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_MktGrowth).type(TransactionCategoryClass.MARKETGROWTH).build();
-        theTransBuilder.name(idTC_MktCurrAdjust).type(TransactionCategoryClass.CURRENCYFLUCTUATION).build();
-        theTransBuilder.name(idTC_MktCapGain).type(TransactionCategoryClass.CAPITALGAIN).build();
-        theTransBuilder.name(idTC_MktChgGain).type(TransactionCategoryClass.CHARGEABLEGAIN).build();
-        theTransBuilder.name(idTC_MktResGain).type(TransactionCategoryClass.RESIDENTIALGAIN).build();
-        theTransBuilder.name(idTC_MktTaxFreeGain).type(TransactionCategoryClass.TAXFREEGAIN).build();
+        theTransBuilder.name(idTC_Market).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_MktGrowth).type(MoneyWiseTransCategoryClass.MARKETGROWTH).build();
+        theTransBuilder.name(idTC_MktCurrAdjust).type(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION).build();
+        theTransBuilder.name(idTC_MktCapGain).type(MoneyWiseTransCategoryClass.CAPITALGAIN).build();
+        theTransBuilder.name(idTC_MktChgGain).type(MoneyWiseTransCategoryClass.CHARGEABLEGAIN).build();
+        theTransBuilder.name(idTC_MktResGain).type(MoneyWiseTransCategoryClass.RESIDENTIALGAIN).build();
+        theTransBuilder.name(idTC_MktTaxFreeGain).type(MoneyWiseTransCategoryClass.TAXFREEGAIN).build();
 
         /* Car */
-        theTransBuilder.name(idTC_Car).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_CarPetrol).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_CarParking).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_CarRental).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_CarService).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_CarLease).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_CarElectric).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Car).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_CarPetrol).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_CarParking).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_CarRental).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_CarService).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_CarLease).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_CarElectric).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Charges */
-        theTransBuilder.name(idTC_Charges).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_ChgFees).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ChgFines).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ChgInterest).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Charges).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_ChgFees).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ChgFines).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ChgInterest).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Expenses */
-        theTransBuilder.name(idTC_Expenses).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_ExpBusiness).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpCash).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpEstate).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpHotel).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpMisc).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpNewspaper).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpPets).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpRent).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpRental).type(TransactionCategoryClass.RENTALEXPENSE).build();
-        theTransBuilder.name(idTC_ExpTravel).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ExpVirtual).type(TransactionCategoryClass.WITHHELD).build();
+        theTransBuilder.name(idTC_Expenses).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_ExpBusiness).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpCash).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpEstate).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpHotel).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpMisc).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpNewspaper).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpPets).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpRent).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpRental).type(MoneyWiseTransCategoryClass.RENTALEXPENSE).build();
+        theTransBuilder.name(idTC_ExpTravel).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ExpVirtual).type(MoneyWiseTransCategoryClass.WITHHELD).build();
 
         /* Gifts */
-        theTransBuilder.name(idTC_Gifts).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_GiftBDay).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_GiftXmas).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_GiftCharity).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_GiftOther).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Gifts).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_GiftBDay).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_GiftXmas).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_GiftCharity).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_GiftOther).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Health */
-        theTransBuilder.name(idTC_Health).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_HealthDental).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HealthHaircut).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HealthMedical).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HealthOpticians).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Health).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_HealthDental).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HealthHaircut).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HealthMedical).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HealthOpticians).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Holiday */
-        theTransBuilder.name(idTC_Holiday).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_HolHotels).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HolTravel).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HolEntertainment).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Holiday).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_HolHotels).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HolTravel).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HolEntertainment).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Household */
-        theTransBuilder.name(idTC_Household).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_HouseCleaning).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseLaundry).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseComputing).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseElectric).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseFurnishings).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseFurniture).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseGarden).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseWhiteGoods).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_HouseEstate).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Household).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_HouseCleaning).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseLaundry).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseComputing).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseElectric).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseFurnishings).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseFurniture).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseGarden).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseWhiteGoods).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_HouseEstate).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Insurance */
-        theTransBuilder.name(idTC_Insurance).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_InsBreakdown).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_InsDriving).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_InsTravel).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_InsHouse).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Insurance).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_InsBreakdown).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_InsDriving).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_InsTravel).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_InsHouse).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Leisure */
-        theTransBuilder.name(idTC_Leisure).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_LeisAlcohol).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisBooks).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisCinema).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisDining).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisEBooks).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisEvents).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisGames).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisMisc).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisMusic).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisMovies).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisSports).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_LeisTheatre).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Leisure).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_LeisAlcohol).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisBooks).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisCinema).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisDining).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisEBooks).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisEvents).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisGames).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisMisc).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisMusic).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisMovies).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisSports).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_LeisTheatre).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Loans */
-        theTransBuilder.name(idTC_Loan).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_LoanWriteDown).type(TransactionCategoryClass.WRITEOFF).build();
+        theTransBuilder.name(idTC_Loan).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_LoanWriteDown).type(MoneyWiseTransCategoryClass.WRITEOFF).build();
 
         /* Loans */
-        theTransBuilder.name(idTC_Mortgage).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_MortgageDeedAdmin).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_MortgageInterest).type(TransactionCategoryClass.LOANINTERESTCHARGED).build();
+        theTransBuilder.name(idTC_Mortgage).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_MortgageDeedAdmin).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_MortgageInterest).type(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED).build();
 
         /* Security */
-        theTransBuilder.name(idTC_Security).parent(myTotals).type(TransactionCategoryClass.SECURITYPARENT).build();
-        theTransBuilder.name(idTC_SecAdjust).type(TransactionCategoryClass.UNITSADJUST).build();
-        theTransBuilder.name(idTC_SecClose).type(TransactionCategoryClass.SECURITYCLOSURE).build();
-        theTransBuilder.name(idTC_SecDeMerger).type(TransactionCategoryClass.STOCKDEMERGER).build();
-        theTransBuilder.name(idTC_SecOptExpire).type(TransactionCategoryClass.OPTIONSEXPIRE).build();
-        theTransBuilder.name(idTC_SecOptGrant).type(TransactionCategoryClass.OPTIONSGRANT).build();
-        theTransBuilder.name(idTC_SecOptVest).type(TransactionCategoryClass.OPTIONSVEST).build();
-        theTransBuilder.name(idTC_SecReplace).type(TransactionCategoryClass.SECURITYREPLACE).build();
-        theTransBuilder.name(idTC_SecPortXfer).type(TransactionCategoryClass.PORTFOLIOXFER).build();
-        theTransBuilder.name(idTC_SecRightsIssue).type(TransactionCategoryClass.STOCKRIGHTSISSUE).build();
-        theTransBuilder.name(idTC_SecStockSplit).type(TransactionCategoryClass.STOCKSPLIT).build();
-        theTransBuilder.name(idTC_SecTakeover).type(TransactionCategoryClass.STOCKTAKEOVER).build();
+        theTransBuilder.name(idTC_Security).parent(myTotals).type(MoneyWiseTransCategoryClass.SECURITYPARENT).build();
+        theTransBuilder.name(idTC_SecAdjust).type(MoneyWiseTransCategoryClass.UNITSADJUST).build();
+        theTransBuilder.name(idTC_SecClose).type(MoneyWiseTransCategoryClass.SECURITYCLOSURE).build();
+        theTransBuilder.name(idTC_SecDeMerger).type(MoneyWiseTransCategoryClass.STOCKDEMERGER).build();
+        theTransBuilder.name(idTC_SecOptExpire).type(MoneyWiseTransCategoryClass.OPTIONSEXPIRE).build();
+        theTransBuilder.name(idTC_SecOptGrant).type(MoneyWiseTransCategoryClass.OPTIONSGRANT).build();
+        theTransBuilder.name(idTC_SecOptVest).type(MoneyWiseTransCategoryClass.OPTIONSVEST).build();
+        theTransBuilder.name(idTC_SecReplace).type(MoneyWiseTransCategoryClass.SECURITYREPLACE).build();
+        theTransBuilder.name(idTC_SecPortXfer).type(MoneyWiseTransCategoryClass.PORTFOLIOXFER).build();
+        theTransBuilder.name(idTC_SecRightsIssue).type(MoneyWiseTransCategoryClass.STOCKRIGHTSISSUE).build();
+        theTransBuilder.name(idTC_SecStockSplit).type(MoneyWiseTransCategoryClass.STOCKSPLIT).build();
+        theTransBuilder.name(idTC_SecTakeover).type(MoneyWiseTransCategoryClass.STOCKTAKEOVER).build();
 
         /* Shopping */
-        theTransBuilder.name(idTC_Shopping).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_ShopAlcohol).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ShopFood).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ShopClothes).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ShopHousehold).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_ShopPets).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Shopping).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_ShopAlcohol).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ShopFood).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ShopClothes).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ShopHousehold).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_ShopPets).type(MoneyWiseTransCategoryClass.EXPENSE).build();
 
         /* Taxes */
-        theTransBuilder.name(idTC_Taxes).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_TaxCar).type(TransactionCategoryClass.LOCALTAXES).build();
-        theTransBuilder.name(idTC_TaxCouncil).type(TransactionCategoryClass.LOCALTAXES).build();
-        theTransBuilder.name(idTC_TaxIncome).type(TransactionCategoryClass.INCOMETAX).build();
-        theTransBuilder.name(idTC_TaxInterest).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_TaxRelief).type(TransactionCategoryClass.TAXRELIEF).build();
-        theTransBuilder.name(idTC_TaxTVLicence).type(TransactionCategoryClass.LOCALTAXES).build();
+        theTransBuilder.name(idTC_Taxes).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_TaxCar).type(MoneyWiseTransCategoryClass.LOCALTAXES).build();
+        theTransBuilder.name(idTC_TaxCouncil).type(MoneyWiseTransCategoryClass.LOCALTAXES).build();
+        theTransBuilder.name(idTC_TaxIncome).type(MoneyWiseTransCategoryClass.INCOMETAX).build();
+        theTransBuilder.name(idTC_TaxInterest).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_TaxRelief).type(MoneyWiseTransCategoryClass.TAXRELIEF).build();
+        theTransBuilder.name(idTC_TaxTVLicence).type(MoneyWiseTransCategoryClass.LOCALTAXES).build();
 
         /* Utilities */
-        theTransBuilder.name(idTC_Utilities).parent(myTotals).type(TransactionCategoryClass.EXPENSETOTALS).build();
-        theTransBuilder.name(idTC_UtilElectric).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_UtilGas).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_UtilInternet).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_UtilPhone).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_UtilTV).type(TransactionCategoryClass.EXPENSE).build();
-        theTransBuilder.name(idTC_UtilWater).type(TransactionCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_Utilities).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_UtilElectric).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilGas).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilInternet).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilPhone).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilTV).type(MoneyWiseTransCategoryClass.EXPENSE).build();
+        theTransBuilder.name(idTC_UtilWater).type(MoneyWiseTransCategoryClass.EXPENSE).build();
     }
 
     /**
@@ -573,9 +573,9 @@ public class MoneyWiseTestCategories {
      * @throws OceanusException on error
      */
     private void buildXchgRates() throws OceanusException {
-        theXchgRateBuilder.currency(AssetCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
-        theXchgRateBuilder.currency(AssetCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
-        theXchgRateBuilder.currency(AssetCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
-        theXchgRateBuilder.currency(AssetCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
     }
 }

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetDepositCategory
-        extends PrometheusSheetEncrypted<DepositCategory> {
+        extends PrometheusSheetXEncrypted<DepositCategory> {
     /**
      * NamedArea for Categories.
      */
@@ -57,7 +57,7 @@ public class SheetDepositCategory
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDepositCategory(final MoneyWiseReader pReader) {
+    protected SheetDepositCategory(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_DEPCATEGORIES);
 
@@ -70,7 +70,7 @@ public class SheetDepositCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetDepositCategory(final MoneyWiseWriter pWriter) {
+    protected SheetDepositCategory(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_DEPCATEGORIES);
 

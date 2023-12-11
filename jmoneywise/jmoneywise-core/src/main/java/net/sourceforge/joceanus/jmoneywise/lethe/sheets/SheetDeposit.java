@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXEncrypted;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  */
 public class SheetDeposit
-        extends PrometheusSheetEncrypted<Deposit> {
+        extends PrometheusSheetXEncrypted<Deposit> {
     /**
      * NamedArea for Deposits.
      */
@@ -75,7 +75,7 @@ public class SheetDeposit
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDeposit(final MoneyWiseReader pReader) {
+    protected SheetDeposit(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_DEPOSITS);
 
@@ -88,7 +88,7 @@ public class SheetDeposit
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetDeposit(final MoneyWiseWriter pWriter) {
+    protected SheetDeposit(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_DEPOSITS);
 

@@ -25,12 +25,12 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
-import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseXSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -148,8 +148,8 @@ public class MoneyWiseView
      * @return new DataSet
      */
     @Override
-    public PrometheusSpreadSheet getSpreadSheet() {
-        return new MoneyWiseSheet(getGuiFactory());
+    public PrometheusXSpreadSheet getSpreadSheet() {
+        return new MoneyWiseXSheet(getGuiFactory());
     }
 
     /**

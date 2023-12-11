@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetFrequency
-        extends PrometheusSheetStaticData<Frequency> {
+        extends PrometheusSheetXStaticData<Frequency> {
     /**
      * NamedArea for Frequencies.
      */
@@ -45,7 +45,7 @@ public class SheetFrequency
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetFrequency(final MoneyWiseReader pReader) {
+    protected SheetFrequency(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_FREQUENCIES);
 
@@ -58,7 +58,7 @@ public class SheetFrequency
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetFrequency(final MoneyWiseWriter pWriter) {
+    protected SheetFrequency(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_FREQUENCIES);
 

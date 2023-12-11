@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetDataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetSecurityInfo
-        extends PrometheusSheetDataInfo<SecurityInfo> {
+        extends PrometheusSheetXDataInfo<SecurityInfo> {
     /**
      * NamedArea for SecurityInfo.
      */
@@ -37,7 +37,7 @@ public class SheetSecurityInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurityInfo(final MoneyWiseReader pReader) {
+    protected SheetSecurityInfo(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_SECURITYINFO);
 
@@ -50,7 +50,7 @@ public class SheetSecurityInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurityInfo(final MoneyWiseWriter pWriter) {
+    protected SheetSecurityInfo(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_SECURITYINFO);
 

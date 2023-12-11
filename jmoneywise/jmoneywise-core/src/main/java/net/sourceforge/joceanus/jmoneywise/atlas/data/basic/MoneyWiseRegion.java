@@ -54,7 +54,7 @@ public class MoneyWiseRegion
     /**
      * Local Report fields.
      */
-    private static final PrometheusEncryptedFieldSet<MoneyWiseTransTag> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseTransTag.class);
+    private static final PrometheusEncryptedFieldSet<MoneyWiseRegion> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseRegion.class);
 
     /*
      * FieldIds.

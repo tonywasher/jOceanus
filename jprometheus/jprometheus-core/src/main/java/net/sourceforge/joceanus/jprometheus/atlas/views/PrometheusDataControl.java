@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -282,7 +282,7 @@ public abstract class PrometheusDataControl
      * Obtain SpreadSheet object.
      * @return SpreadSheet object
      */
-    public abstract PrometheusSpreadSheet getSpreadSheet();
+    public abstract PrometheusXSpreadSheet getSpreadSheet();
 
     /**
      * Obtain Database object.

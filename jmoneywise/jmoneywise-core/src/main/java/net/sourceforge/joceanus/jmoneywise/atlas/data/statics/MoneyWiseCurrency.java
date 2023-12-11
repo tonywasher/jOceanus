@@ -20,9 +20,11 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
@@ -51,13 +53,13 @@ public class MoneyWiseCurrency
     /**
      * Report fields.
      */
-    private static final MetisFieldSet<MoneyWiseCurrency> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCurrency.class);
+    private static final MetisFieldVersionedSet<MoneyWiseCurrency> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWiseCurrency.class);
 
     /*
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_DEFAULT, MoneyWiseCurrency::isDefault);
+        FIELD_DEFS.declareBooleanField(MoneyWiseStaticResource.CURRENCY_DEFAULT);
     }
 
     /**
@@ -123,6 +125,17 @@ public class MoneyWiseCurrency
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+        if (MoneyWiseStaticResource.CURRENCY_DEFAULT.equals(pField)) {
+            return true;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
     }
 
     /**

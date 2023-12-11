@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTransInfoType
-        extends PrometheusSheetStaticData<TransactionInfoType> {
+        extends PrometheusSheetXStaticData<TransactionInfoType> {
     /**
      * NamedArea for InfoType.
      */
@@ -45,7 +45,7 @@ public class SheetTransInfoType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransInfoType(final MoneyWiseReader pReader) {
+    protected SheetTransInfoType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TRANSINFOTYPES);
 
@@ -58,7 +58,7 @@ public class SheetTransInfoType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransInfoType(final MoneyWiseWriter pWriter) {
+    protected SheetTransInfoType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TRANSINFOTYPES);
 

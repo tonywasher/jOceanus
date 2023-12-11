@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetDepositCategoryType
-        extends PrometheusSheetStaticData<DepositCategoryType> {
+        extends PrometheusSheetXStaticData<DepositCategoryType> {
     /**
      * NamedArea for DepositCategoryTypes.
      */
@@ -45,7 +45,7 @@ public class SheetDepositCategoryType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDepositCategoryType(final MoneyWiseReader pReader) {
+    protected SheetDepositCategoryType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_DEPOSITCATTYPES);
 
@@ -58,7 +58,7 @@ public class SheetDepositCategoryType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetDepositCategoryType(final MoneyWiseWriter pWriter) {
+    protected SheetDepositCategoryType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_DEPOSITCATTYPES);
 

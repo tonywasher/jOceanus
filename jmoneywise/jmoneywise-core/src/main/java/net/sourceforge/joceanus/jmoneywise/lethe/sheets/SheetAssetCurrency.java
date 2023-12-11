@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelExcept
  * @author Tony Washer
  */
 public class SheetAssetCurrency
-        extends PrometheusSheetStaticData<AssetCurrency> {
+        extends PrometheusSheetXStaticData<AssetCurrency> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -50,7 +50,7 @@ public class SheetAssetCurrency
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAssetCurrency(final MoneyWiseReader pReader) {
+    protected SheetAssetCurrency(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
@@ -63,7 +63,7 @@ public class SheetAssetCurrency
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAssetCurrency(final MoneyWiseWriter pWriter) {
+    protected SheetAssetCurrency(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTCURRENCIES);
 

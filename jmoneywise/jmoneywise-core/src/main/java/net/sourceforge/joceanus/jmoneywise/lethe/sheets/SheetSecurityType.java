@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXStaticData;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetSecurityType
-        extends PrometheusSheetStaticData<SecurityType> {
+        extends PrometheusSheetXStaticData<SecurityType> {
     /**
      * NamedArea for SecurityTypes.
      */
@@ -45,7 +45,7 @@ public class SheetSecurityType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetSecurityType(final MoneyWiseReader pReader) {
+    protected SheetSecurityType(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_SECURITYTYPES);
 
@@ -58,7 +58,7 @@ public class SheetSecurityType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetSecurityType(final MoneyWiseWriter pWriter) {
+    protected SheetSecurityType(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_SECURITYTYPES);
 

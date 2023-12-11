@@ -142,6 +142,20 @@ public abstract class PrometheusSheetCell {
     public abstract Long getLong() throws OceanusException;
 
     /**
+     * Obtain long value of the cell.
+     * @return the long value
+     * @throws OceanusException on error
+     */
+    public Long getLongFromString() throws OceanusException {
+        try {
+            final String myValue = getString();
+            return Long.parseLong(myValue);
+        } catch (NumberFormatException e) {
+            throw new PrometheusSheetException("Failed to parse Long", e);
+        }
+    }
+
+    /**
      * Obtain money value of the cell.
      * @return the money value
      * @throws OceanusException on error
@@ -316,6 +330,25 @@ public abstract class PrometheusSheetCell {
             setNullValue();
         } else {
             setLongValue(pValue);
+        }
+    }
+
+    /**
+     * Set long value of the cell.
+     * @param pValue the integer value
+     * @throws OceanusException on error
+     */
+    public void setLongAsString(final Long pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
+        /* Handle null values */
+        if (pValue == null) {
+            setNullValue();
+        } else {
+            setStringValue(Long.toString(pValue));
         }
     }
 

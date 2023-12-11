@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetDataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class SheetTransactionInfo
-        extends PrometheusSheetDataInfo<TransactionInfo> {
+        extends PrometheusSheetXDataInfo<TransactionInfo> {
     /**
      * NamedArea for TransactionInfo.
      */
@@ -37,7 +37,7 @@ public class SheetTransactionInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransactionInfo(final MoneyWiseReader pReader) {
+    protected SheetTransactionInfo(final MoneyWiseXReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TRANSINFO);
 
@@ -50,7 +50,7 @@ public class SheetTransactionInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransactionInfo(final MoneyWiseWriter pWriter) {
+    protected SheetTransactionInfo(final MoneyWiseXWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TRANSINFO);
 

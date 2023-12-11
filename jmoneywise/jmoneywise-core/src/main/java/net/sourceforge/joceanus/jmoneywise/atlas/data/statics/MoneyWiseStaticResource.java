@@ -1061,11 +1061,6 @@ public enum MoneyWiseStaticResource
     private static final Map<MoneyWiseTaxClass, TethysBundleId> TAXBASIS_MAP = buildTaxBasisMap();
 
     /**
-     * The Frequency Map.
-     */
-    private static final Map<MoneyWiseFrequencyClass, TethysBundleId> FREQUENCY_MAP = buildFrequencyMap();
-
-    /**
      * The AccountInfo Map.
      */
     private static final Map<MoneyWiseAccountInfoClass, TethysBundleId> ACCOUNTINFO_MAP = buildAccountInfoMap();
@@ -1409,40 +1404,6 @@ public enum MoneyWiseStaticResource
     }
 
     /**
-     * Build frequency map.
-     * @return the map
-     */
-    private static Map<MoneyWiseFrequencyClass, TethysBundleId> buildFrequencyMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseFrequencyClass, TethysBundleId> myMap = new EnumMap<>(MoneyWiseFrequencyClass.class);
-        myMap.put(MoneyWiseFrequencyClass.ONCE, FREQUENCY_ONCE);
-        myMap.put(MoneyWiseFrequencyClass.DAILY, FREQUENCY_DAILY);
-        myMap.put(MoneyWiseFrequencyClass.WEEKLY, FREQUENCY_WEEKLY);
-        myMap.put(MoneyWiseFrequencyClass.MONTHLY, FREQUENCY_MONTHLY);
-        myMap.put(MoneyWiseFrequencyClass.ANNUALLY, FREQUENCY_ANNUALLY);
-        myMap.put(MoneyWiseFrequencyClass.EVERY, FREQUENCY_EVERY);
-        myMap.put(MoneyWiseFrequencyClass.ALTERNATE, FREQUENCY_ALTERNATE);
-        myMap.put(MoneyWiseFrequencyClass.EVERYTHIRD, FREQUENCY_EVERYTHIRD);
-        myMap.put(MoneyWiseFrequencyClass.EVERYFOURTH, FREQUENCY_EVERYFOURTH);
-        myMap.put(MoneyWiseFrequencyClass.EVERYSIXTH, FREQUENCY_EVERYSIXTH);
-        myMap.put(MoneyWiseFrequencyClass.FIRSTWEEK, FREQUENCY_FIRSTWEEK);
-        myMap.put(MoneyWiseFrequencyClass.SECONDWEEK, FREQUENCY_SECONDWEEK);
-        myMap.put(MoneyWiseFrequencyClass.THIRDWEEK, FREQUENCY_THIRDWEEK);
-        myMap.put(MoneyWiseFrequencyClass.FOURTHWEEK, FREQUENCY_FOURTHWEEK);
-        myMap.put(MoneyWiseFrequencyClass.LASTWEEK, FREQUENCY_LASTWEEK);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for frequency.
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static TethysBundleId getKeyForFrequency(final MoneyWiseFrequencyClass pValue) {
-        return TethysBundleLoader.getKeyForEnum(FREQUENCY_MAP, pValue);
-    }
-
-    /**
      * Build accountInfo map.
      * @return the map
      */
@@ -1528,7 +1489,6 @@ public enum MoneyWiseStaticResource
         myMap.put(MoneyWiseStaticDataType.PAYEETYPE, PAYEETYPE_NAME);
         myMap.put(MoneyWiseStaticDataType.TRANSTYPE, TRANSTYPE_NAME);
         myMap.put(MoneyWiseStaticDataType.TAXBASIS, TAXBASIS_NAME);
-        myMap.put(MoneyWiseStaticDataType.FREQUENCY, FREQUENCY_NAME);
         myMap.put(MoneyWiseStaticDataType.CURRENCY, CURRENCY_NAME);
         myMap.put(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_NAME);
         myMap.put(MoneyWiseStaticDataType.TRANSINFOTYPE, TRANSINFOTYPE_NAME);
@@ -1540,7 +1500,7 @@ public enum MoneyWiseStaticResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDataType(final MoneyWiseStaticDataType pValue) {
+    static TethysBundleId getKeyForDataType(final MoneyWiseStaticDataType pValue) {
         return TethysBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
@@ -1559,7 +1519,6 @@ public enum MoneyWiseStaticResource
         myMap.put(MoneyWiseStaticDataType.PAYEETYPE, PAYEETYPE_LIST);
         myMap.put(MoneyWiseStaticDataType.TRANSTYPE, TRANSTYPE_LIST);
         myMap.put(MoneyWiseStaticDataType.TAXBASIS, TAXBASIS_LIST);
-        myMap.put(MoneyWiseStaticDataType.FREQUENCY, FREQUENCY_LIST);
         myMap.put(MoneyWiseStaticDataType.CURRENCY, CURRENCY_LIST);
         myMap.put(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_LIST);
         myMap.put(MoneyWiseStaticDataType.TRANSINFOTYPE, TRANSINFOTYPE_LIST);
@@ -1571,7 +1530,7 @@ public enum MoneyWiseStaticResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDataList(final MoneyWiseStaticDataType pValue) {
+    static TethysBundleId getKeyForDataList(final MoneyWiseStaticDataType pValue) {
         return TethysBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

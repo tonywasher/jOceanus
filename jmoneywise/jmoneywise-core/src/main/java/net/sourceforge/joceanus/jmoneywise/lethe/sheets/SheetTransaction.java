@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoCla
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetXEncrypted;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * @author Tony Washer
  */
 public class SheetTransaction
-        extends PrometheusSheetEncrypted<Transaction> {
+        extends PrometheusSheetXEncrypted<Transaction> {
     /**
      * NamedArea for Transactions.
      */
@@ -88,7 +88,7 @@ public class SheetTransaction
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransaction(final MoneyWiseReader pReader) {
+    protected SheetTransaction(final MoneyWiseXReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_TRANS);
 
@@ -101,7 +101,7 @@ public class SheetTransaction
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransaction(final MoneyWiseWriter pWriter) {
+    protected SheetTransaction(final MoneyWiseXWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_TRANS);
 

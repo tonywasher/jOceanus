@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseCashBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseDepositBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseLoanBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWisePayeeBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWisePortfolioBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseSecurityBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.builder.MoneyWiseSecurityPriceBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseCashBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseDepositBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseLoanBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePayeeBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePortfolioBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityPriceBuilder;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -127,7 +127,7 @@ public class MoneyWiseTestAccounts {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTestAccounts(final MoneyWiseData pDataSet) {
+    MoneyWiseTestAccounts(final MoneyWiseDataSet pDataSet) {
         /* Create the builders */
         thePayeeBuilder = new MoneyWisePayeeBuilder(pDataSet);
         theDepositBuilder = new MoneyWiseDepositBuilder(pDataSet);
@@ -157,23 +157,23 @@ public class MoneyWiseTestAccounts {
      * @throws OceanusException on error
      */
     private void createPayees() throws OceanusException {
-        thePayeeBuilder.name(idPY_Barclays).type(PayeeTypeClass.INSTITUTION).build();
-        thePayeeBuilder.name(idPY_Nationwide).type(PayeeTypeClass.INSTITUTION).build();
-        thePayeeBuilder.name(idPY_Starling).type(PayeeTypeClass.INSTITUTION).build();
-        thePayeeBuilder.name(idPY_BallCorp).type(PayeeTypeClass.INSTITUTION).build();
-        thePayeeBuilder.name(idPY_InteractiveInvestor).type(PayeeTypeClass.INSTITUTION).build();
-        thePayeeBuilder.name(idPY_Government).type(PayeeTypeClass.GOVERNMENT).build();
-        thePayeeBuilder.name(idPY_HMRC).type(PayeeTypeClass.TAXMAN).build();
-        thePayeeBuilder.name(idPY_Market).type(PayeeTypeClass.MARKET).build();
-        thePayeeBuilder.name(idPY_IBM).type(PayeeTypeClass.EMPLOYER).build();
-        thePayeeBuilder.name(idPY_Damage).type(PayeeTypeClass.INDIVIDUAL).build();
-        thePayeeBuilder.name(idPY_ASDA).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_CoOp).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_Tesco).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_Petrol).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_Parking).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_Potters).type(PayeeTypeClass.PAYEE).build();
-        thePayeeBuilder.name(idPY_CashExpense).type(PayeeTypeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_Barclays).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_Nationwide).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_Starling).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_BallCorp).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_InteractiveInvestor).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_Government).type(MoneyWisePayeeClass.GOVERNMENT).build();
+        thePayeeBuilder.name(idPY_HMRC).type(MoneyWisePayeeClass.TAXMAN).build();
+        thePayeeBuilder.name(idPY_Market).type(MoneyWisePayeeClass.MARKET).build();
+        thePayeeBuilder.name(idPY_IBM).type(MoneyWisePayeeClass.EMPLOYER).build();
+        thePayeeBuilder.name(idPY_Damage).type(MoneyWisePayeeClass.INDIVIDUAL).build();
+        thePayeeBuilder.name(idPY_ASDA).type(MoneyWisePayeeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_CoOp).type(MoneyWisePayeeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_Tesco).type(MoneyWisePayeeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_Petrol).type(MoneyWisePayeeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_Parking).type(MoneyWisePayeeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_Potters).type(MoneyWisePayeeClass.PAYEE).build();
+        thePayeeBuilder.name(idPY_CashExpense).type(MoneyWisePayeeClass.PAYEE).build();
     }
 
     /**
@@ -185,7 +185,7 @@ public class MoneyWiseTestAccounts {
         theDepositBuilder.name(idDP_NatWideFlexDirect).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
         theDepositBuilder.name(idDP_NatWideLoyalty).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Savings).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
-        theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(AssetCurrencyClass.EUR).build();
+        theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.EUR).build();
     }
 
     /**
@@ -212,7 +212,7 @@ public class MoneyWiseTestAccounts {
      * @throws OceanusException on error
      */
     private void createPortfolios() throws OceanusException {
-        thePortfolioBuilder.name(idPF_InteractiveInvestorStock).parent(idPY_InteractiveInvestor).type(PortfolioTypeClass.TAXFREE).build();
+        thePortfolioBuilder.name(idPF_InteractiveInvestorStock).parent(idPY_InteractiveInvestor).type(MoneyWisePortfolioClass.TAXFREE).build();
     }
 
     /**
@@ -220,8 +220,8 @@ public class MoneyWiseTestAccounts {
      * @throws OceanusException on error
      */
     private void createSecurities() throws OceanusException {
-        theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(SecurityTypeClass.SHARES).symbol("BARC.L").build();
-        theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(SecurityTypeClass.SHARES).symbol("BALL.NY").currency(AssetCurrencyClass.USD).build();
+        theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES).symbol("BARC.L").build();
+        theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(MoneyWiseSecurityClass.SHARES).symbol("BALL.NY").currency(MoneyWiseCurrencyClass.USD).build();
     }
 
     /**
