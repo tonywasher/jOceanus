@@ -477,7 +477,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
         /* Return the value */
         return myCell != null
-                ? myCell.getLong()
+                ? myCell.getLongFromString()
                 : null;
     }
 
@@ -666,7 +666,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
         if (pValue != null) {
             /* Create the cell and set its value */
             final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
-            myCell.setLong(pValue);
+            myCell.setLongAsString(pValue);
         }
     }
 

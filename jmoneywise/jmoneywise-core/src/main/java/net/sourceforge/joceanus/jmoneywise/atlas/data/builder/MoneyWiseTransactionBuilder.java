@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio;
@@ -153,7 +154,7 @@ public class MoneyWiseTransactionBuilder {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTransactionBuilder(final MoneyWiseDataSet pDataSet) {
+    public MoneyWiseTransactionBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theReconciled = Boolean.FALSE;
         theTags = new ArrayList<>();
@@ -517,6 +518,7 @@ public class MoneyWiseTransactionBuilder {
         myTrans.setDate(theDate);
         myTrans.setAccount(theAccount);
         myTrans.setPartner(thePartner);
+        myTrans.setDirection(MoneyWiseAssetDirection.TO);
         if (switchDirection) {
             myTrans.switchDirection();
         }

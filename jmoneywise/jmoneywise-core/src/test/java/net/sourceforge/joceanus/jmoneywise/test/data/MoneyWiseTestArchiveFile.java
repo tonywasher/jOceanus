@@ -56,8 +56,7 @@ public class MoneyWiseTestArchiveFile {
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public void performTest(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+    public void performTest(final PrometheusToolkit pToolkit) throws OceanusException {
         /* Create the new dataSet and access preferences */
         final MoneyWiseDataSet myBaseData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
         final PrometheusPreferenceManager myMgr = pToolkit.getPreferenceManager();
@@ -66,6 +65,10 @@ public class MoneyWiseTestArchiveFile {
         /* Access the Password manager and disable prompting */
         final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pToolkit.getToolkit().getGuiFactory());
         myLoader.loadArchive(theManager, myBaseData, myPrefs);
+
+        /* Initialise the security, from the original data */
+        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        myBaseData.initialiseSecurity(theManager, myNullData);
 
         /* Test the XML File creation */
         new MoneyWiseTestXMLFile(new ThreadMgrStub()).performTest(myBaseData, pToolkit);

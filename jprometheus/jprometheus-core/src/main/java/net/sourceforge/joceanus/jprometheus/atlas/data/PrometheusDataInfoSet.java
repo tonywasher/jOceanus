@@ -320,11 +320,12 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
         PrometheusDataInfoLinkSet<T> mySet = getInfoLinkSet(pInfoClass);
 
         /* If we now have no selected values */
-        if (pLinks == null) {
+        if (pLinks == null || pLinks.isEmpty()) {
             /* If we have a set */
             if (mySet != null) {
                 /* Clear all values in linkSet */
                 mySet.clearAllLinks();
+                theMap.remove(pInfoClass);
             }
 
             /* Else we have selected values */
@@ -364,7 +365,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
         /* Return the info */
         final PrometheusDataInfoItem myInfo = theMap.get(pInfoClass);
-        return PrometheusDataInfoLinkSet.class.cast(myInfo);
+        return (PrometheusDataInfoLinkSet) myInfo;
     }
 
     /**
@@ -542,6 +543,9 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
             if (mySet != null) {
                 /* reSort the links */
                 mySet.sortLinks();
+            } else {
+                /* Remove the set from the map */
+                theMap.remove(myClass);
             }
 
             /* illegal operation */

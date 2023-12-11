@@ -47,6 +47,7 @@ public class MoneyWiseTestControl {
             /* Initialise the data */
             new MoneyWiseTestCategories(myData).buildBasic();
             new MoneyWiseTestAccounts(myData).createAccounts();
+            new MoneyWiseTestTransactions(myData).createTransfers();
             new MoneyWiseTestSecurity(myData).initSecurity(myToolkit);
 
             /* Test the XML File creation */
@@ -56,7 +57,7 @@ public class MoneyWiseTestControl {
             new MoneyWiseTestODSFile(new ThreadMgrStub()).performTest(myData, myToolkit);
 
             /* Test the Archive File load */
-            new MoneyWiseTestArchiveFile(new ThreadMgrStub()).performTest(myData, myToolkit);
+            new MoneyWiseTestArchiveFile(new ThreadMgrStub()).performTest(myToolkit);
 
             /* Catch exceptions */
         } catch (OceanusException e) {

@@ -133,7 +133,7 @@ public class MoneyWiseSheetTransaction
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeDate(COL_DATE, pItem.getDate());
-        writeBoolean(COL_DIRECTION, pItem.getDirection().isTo());
+        writeBoolean(COL_DIRECTION, pItem.getDirection().isFrom());
         writeLong(COL_ACCOUNT, pItem.getAccountId());
         writeLong(COL_PARTNER, pItem.getPartnerId());
         writeInteger(COL_CATEGORY, pItem.getCategoryId());

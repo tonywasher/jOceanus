@@ -372,8 +372,8 @@ public abstract class MoneyWiseTransBase
             return null;
         }
         return Boolean.TRUE.equals(myValue)
-                ? MoneyWiseAssetDirection.TO
-                : MoneyWiseAssetDirection.FROM;
+                ? MoneyWiseAssetDirection.FROM
+                : MoneyWiseAssetDirection.TO;
     }
 
     /**
@@ -506,7 +506,7 @@ public abstract class MoneyWiseTransBase
         if (pValue == null) {
             setValueDirection((Boolean) null);
         } else {
-            setValueDirection(MoneyWiseAssetDirection.TO.equals(pValue));
+            setValueDirection(MoneyWiseAssetDirection.FROM.equals(pValue));
         }
     }
 
@@ -518,7 +518,7 @@ public abstract class MoneyWiseTransBase
         if (pValue == null) {
             setValueDirection((Boolean) null);
         } else {
-            setValueDirection(MoneyWiseAssetDirection.TO.toString().equals(pValue));
+            setValueDirection(Boolean.valueOf(pValue));
         }
     }
 
@@ -587,6 +587,12 @@ public abstract class MoneyWiseTransBase
         final Object myReconciled = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED);
         if (myReconciled == null) {
             setValueReconciled(Boolean.FALSE);
+        }
+
+        /* Adjust Reconciled */
+        final Object myDirection = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);
+        if (myDirection == null) {
+            setValueDirection(MoneyWiseAssetDirection.TO);
         }
 
         /* Resolve data links */
@@ -686,6 +692,15 @@ public abstract class MoneyWiseTransBase
     }
 
     /**
+     * Set a direction.
+     * @param pDirection the direction
+     */
+    public void setDirection(final MoneyWiseAssetDirection pDirection) {
+        /* Set partner value */
+        setValueDirection(pDirection);
+    }
+
+    /**
      * Switch direction.
      */
     public void switchDirection() {
@@ -702,6 +717,7 @@ public abstract class MoneyWiseTransBase
         final MoneyWiseTransAsset myPartner = getPartner();
         setValueAccount(myPartner);
         setValuePartner(myAccount);
+        switchDirection();
     }
 
     /**
@@ -788,6 +804,7 @@ public abstract class MoneyWiseTransBase
      */
     private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
                                                          final Long pId) throws OceanusException {
+        try {
         /* Access the assetType */
         final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);
 
@@ -807,6 +824,8 @@ public abstract class MoneyWiseTransBase
             return pData.getPortfolios().findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else {
             return null;
+        } }  catch (Exception e) {
+          throw e;
         }
     }
 
