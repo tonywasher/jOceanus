@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableSecurityType
-        extends PrometheusTableStaticData<SecurityType> {
+        extends PrometheusXTableStaticData<SecurityType> {
     /**
      * The table name.
      */
@@ -39,7 +39,7 @@ public class TableSecurityType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableSecurityType(final PrometheusDataStore pDatabase) {
+    protected TableSecurityType(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

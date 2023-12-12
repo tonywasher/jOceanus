@@ -14,13 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.database;
+package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -200,7 +200,7 @@ public abstract class PrometheusDataStore {
      * @throws OceanusException on error
      */
     public void loadDatabase(final TethysUIThreadStatusReport pReport,
-                             final DataSet pData) throws OceanusException {
+                             final PrometheusDataSet pData) throws OceanusException {
         /* Initialise task */
         pReport.initTask("loadDatabase");
         pReport.setNumStages(theTables.size());
@@ -229,7 +229,7 @@ public abstract class PrometheusDataStore {
      * @throws OceanusException on error
      */
     public void updateDatabase(final TethysUIThreadStatusReport pReport,
-                               final DataSet pData) throws OceanusException {
+                               final PrometheusDataSet pData) throws OceanusException {
         final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
 
         /* Set the number of stages */

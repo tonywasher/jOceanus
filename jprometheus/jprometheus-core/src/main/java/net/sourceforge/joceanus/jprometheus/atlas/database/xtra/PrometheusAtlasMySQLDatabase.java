@@ -14,52 +14,44 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.database;
+package net.sourceforge.joceanus.jprometheus.atlas.database.xtra;
 
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 
 /**
- * SQLServer Database.
+ * MySQL Database.
  */
-public class PrometheusAtlasSQLServerDatabase
+public class PrometheusAtlasMySQLDatabase
         extends PrometheusAtlasDatabase {
     /**
      * Constructor.
      * @param pPreferences the preferences
      */
-    protected PrometheusAtlasSQLServerDatabase(final PrometheusDatabasePreferences pPreferences) {
-        super(PrometheusAtlasDatabaseType.SQLSERVER, pPreferences);
+    protected PrometheusAtlasMySQLDatabase(final PrometheusDatabasePreferences pPreferences) {
+        super(PrometheusAtlasDatabaseType.MYSQL, pPreferences);
     }
 
     @Override
     protected String getMaintenanceDatabase() {
-        return "master";
+        return "";
     }
 
     @Override
     protected String getConnectionString(final String pDatabase) {
         /* Create the buffer */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        myBuilder.append("jdbc:jtds:sqlserver://")
+        myBuilder.append("jdbc:mysql://")
                 .append(getPreferences().getStringValue(PrometheusDatabasePreferenceKey.DBSERVER))
                 .append('/')
-                .append(getDatabaseName(pDatabase))
-                .append(";instance=")
-                .append(getPreferences().getStringValue(PrometheusDatabasePreferenceKey.DBINSTANCE));
+                .append(getDatabaseName(pDatabase));
         return myBuilder.toString();
     }
 
     @Override
     protected String getListDatabaseCommand() {
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        final String myPrefix = getPrefix();
-        myBuilder.append("select name from sys.databases");
-        if (myPrefix != null) {
-            myBuilder.append(" where name like '");
-            myBuilder.append(myPrefix);
-            myBuilder.append("%'");
-        }
+        myBuilder.append("show databases");
         return myBuilder.toString();
     }
 }

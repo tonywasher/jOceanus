@@ -254,9 +254,6 @@ public class PrometheusEncryptedValues
             }
 
             /* Adopt encryption */
-            if (theEncryptor == null) {
-                int i = 0;
-            }
             theEncryptor.adoptEncryption((PrometheusEncryptedPair) myValue, (PrometheusEncryptedPair) myBaseObj);
         }
     }

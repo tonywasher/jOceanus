@@ -14,11 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.database;
+package net.sourceforge.joceanus.jprometheus.atlas.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -26,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableEncrypted<T extends EncryptedItem>
+public abstract class PrometheusTableEncrypted<T extends PrometheusEncryptedDataItem>
         extends PrometheusTableDataItem<T> {
     /**
      * Constructor.
@@ -37,15 +38,15 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem>
                                        final String pTabName) {
         super(pDatabase, pTabName);
         final PrometheusTableDefinition myTableDef = getTableDef();
-        myTableDef.addReferenceColumn(EncryptedItem.FIELD_KEYSET, PrometheusTableDataKeySet.TABLE_NAME);
+        myTableDef.addReferenceColumn(PrometheusCryptographyDataType.DATAKEYSET, PrometheusTableDataKeySet.TABLE_NAME);
     }
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final MetisLetheField iField) throws OceanusException {
+                                 final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (EncryptedItem.FIELD_KEYSET.equals(iField)) {
+        if (PrometheusCryptographyDataType.DATAKEYSET.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getDataKeySetId());
         } else {
             super.setFieldValue(pItem, iField);
@@ -53,13 +54,13 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem>
     }
 
     @Override
-    protected DataValues getRowValues(final String pName) throws OceanusException {
+    protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        final DataValues myValues = super.getRowValues(pName);
+        final PrometheusDataValues myValues = super.getRowValues(pName);
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the control id and return the new values */
-        myValues.addValue(EncryptedItem.FIELD_KEYSET, myTableDef.getIntegerValue(EncryptedItem.FIELD_KEYSET));
+        myValues.addValue(PrometheusCryptographyDataType.DATAKEYSET, myTableDef.getIntegerValue(PrometheusCryptographyDataType.DATAKEYSET));
         return myValues;
     }
 }

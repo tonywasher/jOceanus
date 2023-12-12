@@ -21,11 +21,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableCashCategory
-        extends PrometheusTableEncrypted<CashCategory> {
+        extends PrometheusXTableEncrypted<CashCategory> {
     /**
      * The name of the Category table.
      */
@@ -43,13 +43,13 @@ public class TableCashCategory
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableCashCategory(final PrometheusDataStore pDatabase) {
+    protected TableCashCategory(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(CashCategory.FIELD_CATTYPE, TableCashCategoryType.TABLE_NAME);
-        final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(CashCategory.FIELD_PARENT);
+        final PrometheusXColumnDefinition myCatCol = myTableDef.addReferenceColumn(CashCategory.FIELD_CATTYPE, TableCashCategoryType.TABLE_NAME);
+        final PrometheusXColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(CashCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(CashCategory.FIELD_NAME, CashCategory.NAMELEN);
         myTableDef.addNullEncryptedColumn(CashCategory.FIELD_DESC, CashCategory.DESCLEN);
 
@@ -67,7 +67,7 @@ public class TableCashCategory
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(CashCategory.OBJECT_NAME);
@@ -84,7 +84,7 @@ public class TableCashCategory
     protected void setFieldValue(final CashCategory pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (CashCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
         } else if (CashCategory.FIELD_PARENT.equals(iField)) {

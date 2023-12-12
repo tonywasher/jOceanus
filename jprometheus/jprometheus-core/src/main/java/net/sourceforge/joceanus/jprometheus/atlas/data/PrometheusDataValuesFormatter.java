@@ -68,6 +68,11 @@ public class PrometheusDataValuesFormatter {
     private static final String SUFFIX_ENTRY = ".xml";
 
     /**
+     * Error text.
+     */
+    private static final String ERROR_BACKUP = "Failed to create backup XML";
+
+    /**
      * The report.
      */
     private final TethysUIThreadStatusReport theReport;
@@ -139,7 +144,7 @@ public class PrometheusDataValuesFormatter {
         } catch (IOException
                  | OceanusException e) {
             writeFailed = true;
-            throw new PrometheusIOException("Failed to create backup XML", e);
+            throw new PrometheusIOException(ERROR_BACKUP, e);
         } finally {
             /* Try to delete the file if required */
             if (writeFailed) {
@@ -195,7 +200,7 @@ public class PrometheusDataValuesFormatter {
 
         } catch (IOException
                  | OceanusException e) {
-            throw new PrometheusIOException("Failed to create backup XML", e);
+            throw new PrometheusIOException(ERROR_BACKUP, e);
         }
     }
 
@@ -213,7 +218,7 @@ public class PrometheusDataValuesFormatter {
         } catch (IOException
                  | OceanusException e) {
             writeFailed = true;
-            throw new PrometheusIOException("Failed to create backup XML", e);
+            throw new PrometheusIOException(ERROR_BACKUP, e);
         } finally {
             /* Try to delete the file if required */
             if (writeFailed) {

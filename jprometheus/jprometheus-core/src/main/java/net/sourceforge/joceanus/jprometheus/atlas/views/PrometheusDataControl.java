@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -289,7 +289,7 @@ public abstract class PrometheusDataControl
      * @return database object
      * @throws OceanusException on error
      */
-    public abstract PrometheusDataStore getDatabase() throws OceanusException;
+    public abstract PrometheusXDataStore getDatabase() throws OceanusException;
 
     /**
      * Obtain DataSet object.

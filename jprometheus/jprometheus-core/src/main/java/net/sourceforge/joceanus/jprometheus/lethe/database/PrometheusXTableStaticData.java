@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.database;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,21 +27,21 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * extend this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableStaticData<T extends StaticDataItem>
-        extends PrometheusTableEncrypted<T> {
+public abstract class PrometheusXTableStaticData<T extends StaticDataItem>
+        extends PrometheusXTableEncrypted<T> {
     /**
      * Constructor.
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected PrometheusTableStaticData(final PrometheusDataStore pDatabase,
-                                        final String pTabName) {
+    protected PrometheusXTableStaticData(final PrometheusXDataStore pDatabase,
+                                         final String pTabName) {
         super(pDatabase, pTabName);
 
         /* Define the columns */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         myTableDef.addBooleanColumn(StaticDataItem.FIELD_ENABLED);
-        final PrometheusColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticDataItem.FIELD_ORDER);
+        final PrometheusXColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticDataItem.FIELD_ORDER);
         myTableDef.addEncryptedColumn(StaticDataItem.FIELD_NAME, StaticDataItem.NAMELEN);
         myTableDef.addNullEncryptedColumn(StaticDataItem.FIELD_DESC, StaticDataItem.DESCLEN);
 
@@ -53,7 +53,7 @@ public abstract class PrometheusTableStaticData<T extends StaticDataItem>
     protected void setFieldValue(final T pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (StaticDataItem.FIELD_ENABLED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.getEnabled());
         } else if (StaticDataItem.FIELD_ORDER.equals(iField)) {
@@ -71,7 +71,7 @@ public abstract class PrometheusTableStaticData<T extends StaticDataItem>
     protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         final DataValues myValues = super.getRowValues(pName);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */
         myValues.addValue(StaticDataItem.FIELD_NAME, myTableDef.getBinaryValue(StaticDataItem.FIELD_NAME));

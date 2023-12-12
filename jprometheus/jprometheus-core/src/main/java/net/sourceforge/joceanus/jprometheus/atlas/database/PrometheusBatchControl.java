@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.database;
+package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.
@@ -42,7 +42,7 @@ public class PrometheusBatchControl {
     /**
      * The List of tables associated with this batch.
      */
-    private List<BatchTable> theList;
+    private List<PrometheusBatchTable> theList;
 
     /**
      * The Currently active Database table.
@@ -76,7 +76,8 @@ public class PrometheusBatchControl {
      * @return true/false is the batch full
      */
     protected boolean isFull() {
-        return (theCapacity != 0) && (theItems >= theCapacity);
+        return theCapacity != 0
+                && theItems >= theCapacity;
     }
 
     /**
@@ -110,7 +111,7 @@ public class PrometheusBatchControl {
         /* If the current table is not active */
         if (!isTableActive) {
             /* Create the batch entry */
-            final BatchTable myTable = new BatchTable();
+            final PrometheusBatchTable myTable = new PrometheusBatchTable();
 
             /* Add to the batch list */
             theList.add(myTable);
@@ -123,12 +124,12 @@ public class PrometheusBatchControl {
      */
     protected void commitItems() {
         /* Access iterator for the list */
-        final Iterator<BatchTable> myIterator = theList.iterator();
+        final Iterator<PrometheusBatchTable> myIterator = theList.iterator();
 
         /* Loop through the items */
         while (myIterator.hasNext()) {
             /* Access the next entry */
-            final BatchTable myTable = myIterator.next();
+            final PrometheusBatchTable myTable = myIterator.next();
 
             /* Commit batch items in the table */
             switch (myTable.theState) {
@@ -150,7 +151,7 @@ public class PrometheusBatchControl {
     /**
      * Table step.
      */
-    private final class BatchTable {
+    private final class PrometheusBatchTable {
         /**
          * The table that is being controlled.
          */
@@ -164,7 +165,7 @@ public class PrometheusBatchControl {
         /**
          * Constructor.
          */
-        private BatchTable() {
+        private PrometheusBatchTable() {
             /* Store the details */
             theTable = theCurrTable;
             theState = theCurrMode;
@@ -179,7 +180,7 @@ public class PrometheusBatchControl {
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                final DataItem myCurr = (DataItem) myIterator.next();
+                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.next();
 
                 /* Ignore items that are not this type */
                 if (myCurr.getState() != theState) {
@@ -198,17 +199,17 @@ public class PrometheusBatchControl {
          */
         private void commitDeleteBatch() {
             /* Access the iterator */
-            final DataList<?> myList = theTable.getList();
+            final PrometheusDataList<?> myList = theTable.getList();
             final ListIterator<?> myIterator = myList.listIterator(myList.size());
 
             /* Loop through the list */
             while (myIterator.hasPrevious()) {
-                final DataItem myCurr = (DataItem) myIterator.previous();
+                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.previous();
 
                 /* Ignore items that are not this type */
                 final MetisDataState myState = myCurr.getState();
                 if ((myState != MetisDataState.DELETED)
-                    && (myState != MetisDataState.DELNEW)) {
+                        && (myState != MetisDataState.DELNEW)) {
                     continue;
                 }
 
@@ -224,9 +225,9 @@ public class PrometheusBatchControl {
          * @param pItem the item to commit
          * @return have we reached the end of the batch?
          */
-        private boolean commitItem(final DataItem pItem) {
+        private boolean commitItem(final PrometheusDataItem pItem) {
             /* Access the underlying element */
-            final DataItem myBase = pItem.getBase();
+            final PrometheusDataItem myBase = pItem.getBase();
 
             /* If we are handling deletions */
             if (theState == MetisDataState.DELETED) {
@@ -247,7 +248,8 @@ public class PrometheusBatchControl {
 
             /* If we have to worry about batch space */
             /* Adjust batch and note if we are finished */
-            return (theCapacity > 0) && (--theItems == 0);
+            return theCapacity > 0
+                    && --theItems == 0;
         }
     }
 }

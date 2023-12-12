@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Database table class for ControlData.
  */
-public class PrometheusTableControlData
-        extends PrometheusTableDataItem<ControlData> {
+public class PrometheusXTableControlData
+        extends PrometheusXTableDataItem<ControlData> {
     /**
      * The name of the Static table.
      */
@@ -36,13 +36,13 @@ public class PrometheusTableControlData
      * Constructor.
      * @param pDatabase the database control
      */
-    protected PrometheusTableControlData(final PrometheusDataStore pDatabase) {
+    protected PrometheusXTableControlData(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
         myTableDef.addIntegerColumn(ControlData.FIELD_DATAVERSION);
-        myTableDef.addReferenceColumn(ControlData.FIELD_CONTROLKEY, PrometheusTableControlKeys.TABLE_NAME);
+        myTableDef.addReferenceColumn(ControlData.FIELD_CONTROLKEY, PrometheusXTableControlKeys.TABLE_NAME);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PrometheusTableControlData
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(ControlData.OBJECT_NAME);
@@ -68,7 +68,7 @@ public class PrometheusTableControlData
     protected void setFieldValue(final ControlData pItem,
                                  final MetisLetheField pField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (ControlData.FIELD_DATAVERSION.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getDataVersion());
         } else if (ControlData.FIELD_CONTROLKEY.equals(pField)) {

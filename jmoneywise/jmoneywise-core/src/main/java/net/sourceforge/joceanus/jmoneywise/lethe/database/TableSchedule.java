@@ -21,11 +21,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Schedule;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableSchedule
-        extends PrometheusTableDataItem<Schedule> {
+        extends PrometheusXTableDataItem<Schedule> {
     /**
      * The name of the Schedules table.
      */
@@ -43,9 +43,9 @@ public class TableSchedule
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableSchedule(final PrometheusDataStore pDatabase) {
+    protected TableSchedule(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addDateColumn(Schedule.FIELD_STARTDATE);
@@ -53,7 +53,7 @@ public class TableSchedule
         myTableDef.addReferenceColumn(Schedule.FIELD_FREQ, TableFrequency.TABLE_NAME);
         myTableDef.addNullIntegerColumn(Schedule.FIELD_REPFREQ);
         myTableDef.addNullIntegerColumn(Schedule.FIELD_PATTERN);
-        final PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(Schedule.FIELD_NEXTDATE);
+        final PrometheusXColumnDefinition myDateCol = myTableDef.addNullDateColumn(Schedule.FIELD_NEXTDATE);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -68,7 +68,7 @@ public class TableSchedule
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(Schedule.OBJECT_NAME);
@@ -87,7 +87,7 @@ public class TableSchedule
     protected void setFieldValue(final Schedule pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (Schedule.FIELD_STARTDATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getStartDate());
         } else if (Schedule.FIELD_ENDDATE.equals(iField)) {

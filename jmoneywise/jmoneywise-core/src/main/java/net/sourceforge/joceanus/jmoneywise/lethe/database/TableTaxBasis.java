@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTaxBasis
-        extends PrometheusTableStaticData<TaxBasis> {
+        extends PrometheusXTableStaticData<TaxBasis> {
     /**
      * The name of the TaxBasis table.
      */
@@ -39,7 +39,7 @@ public class TableTaxBasis
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTaxBasis(final PrometheusDataStore pDatabase) {
+    protected TableTaxBasis(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

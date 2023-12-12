@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Database table class for ControlKey.
  */
-public class PrometheusTableDataKeySet
-        extends PrometheusTableDataItem<DataKeySet> {
+public class PrometheusXTableDataKeySet
+        extends PrometheusXTableDataItem<DataKeySet> {
     /**
      * The name of the DataKeySet table.
      */
@@ -36,12 +36,12 @@ public class PrometheusTableDataKeySet
      * Constructor.
      * @param pDatabase the database control
      */
-    protected PrometheusTableDataKeySet(final PrometheusDataStore pDatabase) {
+    protected PrometheusXTableDataKeySet(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addReferenceColumn(DataKeySet.FIELD_CONTROLKEY, PrometheusTableControlKeys.TABLE_NAME);
+        myTableDef.addReferenceColumn(DataKeySet.FIELD_CONTROLKEY, PrometheusXTableControlKeys.TABLE_NAME);
         myTableDef.addDateColumn(DataKeySet.FIELD_CREATEDATE);
         myTableDef.addBooleanColumn(DataKeySet.FIELD_HASHPRIME);
         myTableDef.addBinaryColumn(DataKeySet.FIELD_KEYSETDEF, DataKeySet.WRAPLEN);
@@ -55,7 +55,7 @@ public class PrometheusTableDataKeySet
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(DataKeySet.OBJECT_NAME);
@@ -72,7 +72,7 @@ public class PrometheusTableDataKeySet
     protected void setFieldValue(final DataKeySet pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (DataKeySet.FIELD_CONTROLKEY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
         } else if (DataKeySet.FIELD_CREATEDATE.equals(iField)) {

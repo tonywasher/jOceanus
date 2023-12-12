@@ -87,9 +87,9 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 public class MoneyWiseArchiveLoader {
     /**
      * Number of base archive load areas.
-     * 12xStatic,TransactionTags,Regions,2*Category,XchgRate,Rate,Price,Account.
+     * 11xStatic,TransactionTags,Regions,2*Category,XchgRate,Rate,Price,Account.
      */
-    private static final int NUM_ARCHIVE_AREAS = 20;
+    private static final int NUM_ARCHIVE_AREAS = 19;
 
     /**
      * Year boundary.

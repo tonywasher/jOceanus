@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Database table class for ControlKey.
  */
-public class PrometheusTableControlKeys
-        extends PrometheusTableDataItem<ControlKey> {
+public class PrometheusXTableControlKeys
+        extends PrometheusXTableDataItem<ControlKey> {
     /**
      * The name of the ControlKeys table.
      */
@@ -36,9 +36,9 @@ public class PrometheusTableControlKeys
      * Constructor.
      * @param pDatabase the database control
      */
-    protected PrometheusTableControlKeys(final PrometheusDataStore pDatabase) {
+    protected PrometheusXTableControlKeys(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
         myTableDef.addBooleanColumn(ControlKey.FIELD_HASHPRIME);
@@ -54,7 +54,7 @@ public class PrometheusTableControlKeys
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(ControlKey.OBJECT_NAME);
@@ -70,7 +70,7 @@ public class PrometheusTableControlKeys
     protected void setFieldValue(final ControlKey pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (ControlKey.FIELD_HASHPRIME.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isHashPrime());
         } else if (ControlKey.FIELD_PRIMEBYTES.equals(iField)) {

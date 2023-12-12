@@ -19,8 +19,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.sheets;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfoItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

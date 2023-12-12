@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.database;
+package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,15 +23,16 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
  * Database Table class. This controls should be extended for each DataType/Table.
  * @param <T> the DataType
  */
-public abstract class PrometheusTableDataItem<T extends DataItem> {
+public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
     /**
      * The Database control.
      */
@@ -53,7 +54,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
     /**
      * The list of items for this table.
      */
-    private DataList<T> theList;
+    private PrometheusDataList<T> theList;
 
     /**
      * The prepared statement.
@@ -245,13 +246,13 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * Declare DataSet.
      * @param pData the Data set
      */
-    protected abstract void declareData(DataSet pData);
+    protected abstract void declareData(PrometheusDataSet pData);
 
     /**
      * Set the list of items.
      * @param pList the list of items
      */
-    protected void setList(final DataList<T> pList) {
+    protected void setList(final PrometheusDataList<T> pList) {
         theList = pList;
     }
 
@@ -259,7 +260,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * Obtain the list of items.
      * @return the list of items
      */
-    protected DataList<T> getList() {
+    protected PrometheusDataList<T> getList() {
         return theList;
     }
 
@@ -268,7 +269,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * @return the values for the row
      * @throws OceanusException on error
      */
-    protected abstract DataValues loadValues() throws OceanusException;
+    protected abstract PrometheusDataValues loadValues() throws OceanusException;
 
     /**
      * Set a field value for an item.
@@ -277,10 +278,10 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * @throws OceanusException on error
      */
     protected void setFieldValue(final T pItem,
-                                 final MetisLetheField pField) throws OceanusException {
+                                 final MetisDataFieldId pField) throws OceanusException {
         /* Switch on field id */
-        if (pField.equals(DataItem.FIELD_ID)) {
-            theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
+        if (pField.equals(MetisDataResource.DATA_ID)) {
+            theTable.setIntegerValue(MetisDataResource.DATA_ID, pItem.getIndexedId());
         }
     }
 
@@ -300,7 +301,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * @throws OceanusException on error
      */
     protected void loadItems(final TethysUIThreadStatusReport pReport,
-                             final DataSet pData) throws OceanusException {
+                             final PrometheusDataSet pData) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage(getTableName());
 
@@ -375,7 +376,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * @throws OceanusException on error
      */
     protected void insertItems(final TethysUIThreadStatusReport pReport,
-                               final DataSet pData,
+                               final PrometheusDataSet pData,
                                final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Inserting " + getTableName());
@@ -412,7 +413,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
                 /* Loop through the columns */
                 for (PrometheusColumnDefinition myCol : theTable.getColumns()) {
                     /* Access the column id */
-                    final MetisLetheField iField = myCol.getColumnId();
+                    final MetisDataFieldId iField = myCol.getColumnId();
 
                     /* Set the field value */
                     setFieldValue(myCurr, iField);
@@ -478,12 +479,12 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
                 /* Ignore non-changed items */
                 myCurr = myIterator.next();
                 if ((myCurr.getState() != MetisDataState.CHANGED)
-                    || !updateItem(myCurr)) {
+                        || !updateItem(myCurr)) {
                     continue;
                 }
 
                 /* Record the id and access the update string */
-                theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+                theTable.setIntegerValue(MetisDataResource.DATA_ID, myCurr.getIndexedId());
                 final String myUpdate = theTable.getUpdateString();
 
                 /* Prepare the statement and declare values */
@@ -523,8 +524,8 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      */
     private boolean updateItem(final T pItem) throws OceanusException {
         /* Access the object and base */
-        final MetisValueSet myCurr = pItem.getValueSet();
-        final MetisValueSet myBase = pItem.getOriginalValues();
+        final MetisFieldVersionValues myCurr = pItem.getValues();
+        final MetisFieldVersionValues myBase = pItem.getOriginalValues();
         boolean isUpdated = false;
 
         /* Loop through the fields */
@@ -535,11 +536,11 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
             }
 
             /* Access the column id */
-            final MetisLetheField iField = myCol.getColumnId();
+            final MetisDataFieldId iField = myCol.getColumnId();
 
             /* If the non-Id field has changed */
-            if (!DataItem.FIELD_ID.equals(myCol.getColumnId())
-                && myCurr.fieldChanged(iField, myBase).isDifferent()) {
+            if (!MetisDataResource.DATA_ID.equals(myCol.getColumnId())
+                    && myCurr.fieldChanged(iField, myBase).isDifferent()) {
                 /* Record the change */
                 isUpdated = true;
                 setFieldValue(pItem, iField);
@@ -588,7 +589,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
                 myCurr = myIterator.previous();
                 final MetisDataState myState = myCurr.getState();
                 if ((myState != MetisDataState.DELETED)
-                    && (myState != MetisDataState.DELNEW)) {
+                        && (myState != MetisDataState.DELNEW)) {
                     continue;
                 }
 
@@ -598,7 +599,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
                 /* Ignore DelNew items as far as the database is concerned */
                 if (myState != MetisDataState.DELNEW) {
                     /* Apply the id */
-                    theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+                    theTable.setIntegerValue(MetisDataResource.DATA_ID, myCurr.getIndexedId());
                     theTable.updateValues(theStmt);
 
                     /* Add to the statement batch */
@@ -695,12 +696,12 @@ public abstract class PrometheusTableDataItem<T extends DataItem> {
      * @return the row values.
      * @throws OceanusException on error
      */
-    protected DataValues getRowValues(final String pName) throws OceanusException {
+    protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        final DataValues myValues = new DataValues(pName);
+        final PrometheusDataValues myValues = new PrometheusDataValues(pName);
 
         /* Add the id and return the new values */
-        myValues.addValue(DataItem.FIELD_ID, theTable.getIntegerValue(DataItem.FIELD_ID));
+        myValues.addValue(MetisDataResource.DATA_ID, theTable.getIntegerValue(MetisDataResource.DATA_ID));
         return myValues;
     }
 }

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class MoneyWiseDatabase
-        extends PrometheusDataStore {
+        extends PrometheusXDataStore {
     /**
      * Construct a new Database class for load.
      * @param pPreferences the preferences

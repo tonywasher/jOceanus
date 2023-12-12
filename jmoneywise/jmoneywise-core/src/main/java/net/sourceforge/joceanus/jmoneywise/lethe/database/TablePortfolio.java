@@ -21,18 +21,18 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * TableEncrypted extension for Portfolio.
  */
 public class TablePortfolio
-        extends PrometheusTableEncrypted<Portfolio> {
+        extends PrometheusXTableEncrypted<Portfolio> {
     /**
      * The name of the table.
      */
@@ -42,12 +42,12 @@ public class TablePortfolio
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TablePortfolio(final PrometheusDataStore pDatabase) {
+    protected TablePortfolio(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Portfolio.FIELD_CATEGORY, TablePortfolioType.TABLE_NAME);
+        final PrometheusXColumnDefinition myCatCol = myTableDef.addReferenceColumn(Portfolio.FIELD_CATEGORY, TablePortfolioType.TABLE_NAME);
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
         myTableDef.addReferenceColumn(Portfolio.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Portfolio.FIELD_PARENT, TablePayee.TABLE_NAME);
@@ -67,7 +67,7 @@ public class TablePortfolio
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(Portfolio.OBJECT_NAME);
@@ -86,7 +86,7 @@ public class TablePortfolio
     protected void setFieldValue(final Portfolio pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (Portfolio.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Portfolio.FIELD_DESC.equals(iField)) {

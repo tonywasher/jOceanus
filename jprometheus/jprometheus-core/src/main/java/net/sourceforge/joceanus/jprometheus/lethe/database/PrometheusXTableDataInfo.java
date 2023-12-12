@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * this class.
  * @param <T> the data type
  */
-public abstract class PrometheusTableDataInfo<T extends DataInfoItem>
-        extends PrometheusTableEncrypted<T> {
+public abstract class PrometheusXTableDataInfo<T extends DataInfoItem>
+        extends PrometheusXTableEncrypted<T> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -35,14 +35,14 @@ public abstract class PrometheusTableDataInfo<T extends DataInfoItem>
      * @param pInfoTable the InfoTypes table name
      * @param pOwnerTable the Owner table name
      */
-    protected PrometheusTableDataInfo(final PrometheusDataStore pDatabase,
-                                      final String pTabName,
-                                      final String pInfoTable,
-                                      final String pOwnerTable) {
+    protected PrometheusXTableDataInfo(final PrometheusXDataStore pDatabase,
+                                       final String pTabName,
+                                       final String pInfoTable,
+                                       final String pOwnerTable) {
         super(pDatabase, pTabName);
 
         /* Define the columns */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         myTableDef.addReferenceColumn(DataInfoItem.FIELD_INFOTYPE, pInfoTable);
         myTableDef.addReferenceColumn(DataInfoItem.FIELD_OWNER, pOwnerTable);
         myTableDef.addEncryptedColumn(DataInfoItem.FIELD_VALUE, DataInfoItem.DATALEN);
@@ -52,7 +52,7 @@ public abstract class PrometheusTableDataInfo<T extends DataInfoItem>
     protected void setFieldValue(final T pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (DataInfoItem.FIELD_INFOTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());
         } else if (DataInfoItem.FIELD_OWNER.equals(iField)) {
@@ -68,7 +68,7 @@ public abstract class PrometheusTableDataInfo<T extends DataInfoItem>
     protected DataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
         final DataValues myValues = super.getRowValues(pName);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */
         myValues.addValue(DataInfoItem.FIELD_INFOTYPE, myTableDef.getIntegerValue(DataInfoItem.FIELD_INFOTYPE));

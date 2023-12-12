@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.threads;
 
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
@@ -53,7 +53,7 @@ public class PrometheusThreadPurgeDatabase
         pManager.initTask(getTaskName());
 
         /* Create interface */
-        final PrometheusDataStore myDatabase = theControl.getDatabase();
+        final PrometheusXDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {

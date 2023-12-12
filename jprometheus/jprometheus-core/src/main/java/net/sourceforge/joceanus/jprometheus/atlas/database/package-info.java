@@ -15,6 +15,6 @@
  * the License.
  ******************************************************************************/
 /**
- * JDataModel.database is a package that simply maps data-types to and from the database.
+ * Handles mapping to/from database.
  */
 package net.sourceforge.joceanus.jprometheus.atlas.database;

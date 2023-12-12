@@ -404,6 +404,18 @@ public class MetisFieldVersionValues {
 
     /**
      * Check for a difference in a particular field.
+     * @param pFieldId the field to check for differences
+     * @param pOriginal the original value set
+     * @return the difference
+     */
+    public MetisDataDifference fieldChanged(final MetisDataFieldId pFieldId,
+                                            final MetisFieldVersionValues pOriginal) {
+        final MetisFieldDef myField = theFields.getField(pFieldId);
+        return fieldChanged(myField, pOriginal);
+    }
+
+    /**
+     * Check for a difference in a particular field.
      * @param pField the field to check for differences
      * @param pOriginal the original value set
      * @return the difference
@@ -412,7 +424,7 @@ public class MetisFieldVersionValues {
                                             final MetisFieldVersionValues pOriginal) {
         /* No difference if field does not exist, is not-equality or is not versioned */
         if (!(pField instanceof MetisFieldVersionedDef)
-            || !((MetisFieldVersionedDef) pField).isEquality()) {
+                || !((MetisFieldVersionedDef) pField).isEquality()) {
             return MetisDataDifference.IDENTICAL;
         }
 

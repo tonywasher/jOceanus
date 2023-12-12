@@ -51,6 +51,11 @@ public class PrometheusEncryptor {
     private static final String ERROR_CLASS = "Invalid Object Class for Encryption ";
 
     /**
+     * Unsupported dataType error text.
+     */
+    private static final String ERROR_DATATYPE = "Unsupported Data Type";
+
+    /**
      * The Encryptor map.
      */
     private static final Map<MetisDataType, PrometheusDataEncryptor> ENCRYPTORS = buildEncryptorMap();
@@ -149,7 +154,7 @@ public class PrometheusEncryptor {
         /* Access the encryptor */
         final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
         if (myEncryptor == null) {
-            throw new PrometheusLogicException("Unsupported Data Type");
+            throw new PrometheusLogicException(ERROR_DATATYPE);
         }
 
         /* Encrypt the data */
@@ -170,7 +175,7 @@ public class PrometheusEncryptor {
         /* Access the encryptor */
         final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(pField.getDataType());
         if (myEncryptor == null) {
-            throw new PrometheusLogicException("Unsupported Data Type");
+            throw new PrometheusLogicException(ERROR_DATATYPE);
         }
 
         /* Decrypt the data */
@@ -192,7 +197,7 @@ public class PrometheusEncryptor {
         final MetisDataType myDataType = getDataTypeForClass(pClazz);
         final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
         if (myEncryptor == null) {
-            throw new PrometheusLogicException("Unsupported Data Type");
+            throw new PrometheusLogicException(ERROR_DATATYPE);
         }
 
         /* Decrypt the data */

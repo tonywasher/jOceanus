@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.database;
+package net.sourceforge.joceanus.jprometheus.atlas.database.xtra;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

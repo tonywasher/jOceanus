@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -102,7 +102,7 @@ public class PrometheusThreadLoadBackup
         mySheet.loadBackup(pManager, myPasswordMgr, myData, myFile);
 
         /* Create interface */
-        final PrometheusDataStore myDatabase = theControl.getDatabase();
+        final PrometheusXDataStore myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
         final DataSet myStore = theControl.getNewData();

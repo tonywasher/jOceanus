@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableAssetCurrency
-        extends PrometheusTableStaticData<AssetCurrency> {
+        extends PrometheusXTableStaticData<AssetCurrency> {
     /**
      * The table name.
      */
@@ -41,9 +41,9 @@ public class TableAssetCurrency
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableAssetCurrency(final PrometheusDataStore pDatabase) {
+    protected TableAssetCurrency(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         myTableDef.addBooleanColumn(AssetCurrency.FIELD_DEFAULT);
     }
 
@@ -56,7 +56,7 @@ public class TableAssetCurrency
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(AssetCurrency.OBJECT_NAME);
@@ -70,7 +70,7 @@ public class TableAssetCurrency
     protected void setFieldValue(final AssetCurrency pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (AssetCurrency.FIELD_DEFAULT.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isDefault());
         } else {
