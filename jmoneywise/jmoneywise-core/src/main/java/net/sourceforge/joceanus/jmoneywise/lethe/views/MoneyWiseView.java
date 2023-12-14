@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
+import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseXDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseXSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -140,7 +140,7 @@ public class MoneyWiseView
 
     @Override
     public PrometheusXDataStore getDatabase() throws OceanusException {
-        return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class));
+        return new MoneyWiseXDatabase(getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class));
     }
 
     /**

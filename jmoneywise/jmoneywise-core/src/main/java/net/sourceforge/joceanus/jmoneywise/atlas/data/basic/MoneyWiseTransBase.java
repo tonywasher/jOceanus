@@ -804,8 +804,7 @@ public abstract class MoneyWiseTransBase
      */
     private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
                                                          final Long pId) throws OceanusException {
-        try {
-        /* Access the assetType */
+         /* Access the assetType */
         final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);
 
         /* If the name is a security holding */
@@ -824,8 +823,6 @@ public abstract class MoneyWiseTransBase
             return pData.getPortfolios().findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else {
             return null;
-        } }  catch (Exception e) {
-          throw e;
         }
     }
 

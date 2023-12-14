@@ -3,7 +3,7 @@ package net.sourceforge.joceanus.jmoneywise.test.lethe.data.statics;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisEnumPreference;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
+import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseXDatabase;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
@@ -37,7 +37,7 @@ public final class CreateH2Database {
             myPrefs.storeChanges();
 
             /* Access Database */
-            final MoneyWiseDatabase myDatabase = new MoneyWiseDatabase(myPrefs);
+            final MoneyWiseXDatabase myDatabase = new MoneyWiseXDatabase(myPrefs);
 
             /* Create database */
             myDatabase.createTables(new NullStatusReport());

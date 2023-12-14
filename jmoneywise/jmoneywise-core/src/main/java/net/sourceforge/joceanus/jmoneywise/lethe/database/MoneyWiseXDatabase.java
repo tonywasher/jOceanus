@@ -24,14 +24,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Database extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class MoneyWiseDatabase
+public class MoneyWiseXDatabase
         extends PrometheusXDataStore {
     /**
      * Construct a new Database class for load.
      * @param pPreferences the preferences
      * @throws OceanusException on error
      */
-    public MoneyWiseDatabase(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
+    public MoneyWiseXDatabase(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
         /* Call super-constructor */
         super(pPreferences);
 
