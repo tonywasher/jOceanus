@@ -16,22 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.database.MoneyWiseDataStore;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValuesFormatter;
+import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullThreadStatusReport;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
- * Test XML File.
+ * Test Database.
  */
-public class MoneyWiseTestXMLFile {
+public class MoneyWiseTestDatabase {
     /**
      * The Thread manager.
      */
@@ -39,41 +37,44 @@ public class MoneyWiseTestXMLFile {
 
     /**
      * Constructor.
+     *
      * @param pManager the thread manager
      */
-    public MoneyWiseTestXMLFile(final TethysUIThreadManager pManager) {
+    public MoneyWiseTestDatabase(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 
     /**
      * Perform test.
-     * @param pData the data to test with.
+     *
+     * @param pData    the data to test with.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
     public void performTest(final MoneyWiseDataSet pData,
                             final PrometheusToolkit pToolkit) throws OceanusException {
-        /* Access the Password manager and disable prompting */
-        final GordianPasswordManager myManager = pData.getPasswordMgr();
-        myManager.setDialogController(new NullPasswordDialog());
+        /* Create config */
+        final PrometheusDBConfig myConfig = PrometheusDBConfig.h2();
 
-        /* Create a new formatter */
-        final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(theManager, myManager);
+        /* Access Database */
+        final MoneyWiseDataStore myDatabase = new MoneyWiseDataStore("TestDB", myConfig);
 
-        /* Create the output xmlZipFile */
-        final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
-        myFormatter.createBackup(pData, myZipStream);
-        final byte[] myBytes = myZipStream.toByteArray();
+        /* Create database */
+        final TethysUIThreadStatusReport myReport = new NullThreadStatusReport();
+        myDatabase.createTables(myReport);
+
+        /* Update the database */
+        final MoneyWiseDataSet myUpdates = pData.deriveUpdateSet();
+        myDatabase.updateDatabase(myReport, myUpdates);
 
         /* Create the new dataSet */
         final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
 
-        /* Access the file */
-        final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);
-        myFormatter.loadZipFile(myNewData, myInputStream, "Test");
+        /* Load the database */
+        myDatabase.loadDatabase(myReport, myNewData);
 
-        /* Initialise the security, from the original data */
-        myNewData.initialiseSecurity(theManager, pData);
+        /* Purge the data */
+        myDatabase.purgeTables(myReport);
 
         /* Create a difference set between the two data copies */
         final MoneyWiseDataSet myDiff = myNewData.getDifferenceSet(theManager, pData);

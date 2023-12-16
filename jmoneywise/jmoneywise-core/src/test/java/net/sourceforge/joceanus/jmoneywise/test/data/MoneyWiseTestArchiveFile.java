@@ -16,20 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.sheets.MoneyWiseArchiveLoader;
-import net.sourceforge.joceanus.jmoneywise.atlas.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestControl.ThreadMgrStub;
-import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.DialogStub;
+import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestControl.NullThreadMgr;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
@@ -52,7 +45,6 @@ public class MoneyWiseTestArchiveFile {
 
     /**
      * Perform test.
-     * @param pData the data to test with.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
@@ -69,12 +61,16 @@ public class MoneyWiseTestArchiveFile {
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
         myBaseData.initialiseSecurity(theManager, myNullData);
+        myBaseData.reBase(theManager, myNullData);
 
         /* Test the XML File creation */
-        new MoneyWiseTestXMLFile(new ThreadMgrStub()).performTest(myBaseData, pToolkit);
+        new MoneyWiseTestXMLFile(theManager).performTest(myBaseData, pToolkit);
 
         /* Test the ODS File creation */
-        new MoneyWiseTestODSFile(new ThreadMgrStub()).performTest(myBaseData, pToolkit);
+        new MoneyWiseTestODSFile(theManager).performTest(myBaseData, pToolkit);
+
+        /* Test the Database creation */
+        new MoneyWiseTestDatabase(theManager).performTest(myBaseData, pToolkit);
         int i = 0;
     }
 }

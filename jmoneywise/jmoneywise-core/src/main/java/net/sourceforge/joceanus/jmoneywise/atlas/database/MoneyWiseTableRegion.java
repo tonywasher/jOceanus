@@ -48,7 +48,7 @@ public class MoneyWiseTableRegion
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_NAME, PrometheusDataItem.NAMELEN);
-        myTableDef.addNullEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_NAME, PrometheusDataItem.DESCLEN);
+        myTableDef.addNullEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_DESC, PrometheusDataItem.DESCLEN);
     }
 
     @Override

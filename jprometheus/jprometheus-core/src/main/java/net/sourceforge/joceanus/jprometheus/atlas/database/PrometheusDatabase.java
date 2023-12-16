@@ -14,10 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.preference;
+package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceResource;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

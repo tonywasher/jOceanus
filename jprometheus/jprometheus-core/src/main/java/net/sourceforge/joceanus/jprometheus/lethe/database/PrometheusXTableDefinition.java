@@ -28,7 +28,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition.BooleanColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition.DateColumn;

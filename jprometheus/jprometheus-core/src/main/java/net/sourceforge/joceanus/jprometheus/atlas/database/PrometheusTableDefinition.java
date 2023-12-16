@@ -41,7 +41,6 @@ import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusColumnDefin
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusColumnDefinition.PrometheusReferenceColumn;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusColumnDefinition.PrometheusStringColumn;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusColumnDefinition.PrometheusUnitsColumn;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;

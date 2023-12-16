@@ -29,7 +29,7 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusColumnType;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;

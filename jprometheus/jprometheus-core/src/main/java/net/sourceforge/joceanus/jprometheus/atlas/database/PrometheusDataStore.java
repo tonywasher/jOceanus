@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -87,31 +84,33 @@ public abstract class PrometheusDataStore {
 
     /**
      * Construct a new Database class.
-     * @param pPreferences the preferences
+     * @param pDatabase the database
+     * @param pConfig the config
      * @throws OceanusException on error
      */
-    protected PrometheusDataStore(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
+    protected PrometheusDataStore(final String pDatabase,
+                                  final PrometheusDBConfig pConfig) throws OceanusException {
         /* Create the connection */
         try {
             /* Access the batch size */
-            theBatchSize = pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBBATCH);
+            theBatchSize = pConfig.getBatchSize();
 
             /* Access the JDBC Driver */
-            theDriver = pPreferences.getEnumValue(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
+            theDriver = pConfig.getDriver();
 
             /* Obtain the connection */
-            final String myConnString = theDriver.getConnectionString(pPreferences);
+            final String myConnString = theDriver.getConnectionString(pDatabase, pConfig.getServer());
 
             /* Create the properties and record user */
             final Properties myProperties = new Properties();
-            final String myUser = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBUSER);
-            final char[] myPass = pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS);
+            final String myUser = pConfig.getUser();
+            final char[] myPass = pConfig.getPassword();
             myProperties.setProperty(PROPERTY_USER, myUser);
             myProperties.setProperty(PROPERTY_PASS, new String(myPass));
 
             /* If we are using instance */
             if (theDriver.useInstance()) {
-                final String myInstance = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBINSTANCE);
+                final String myInstance = pConfig.getInstance();
                 myProperties.setProperty(PROPERTY_INSTANCE, myInstance);
             }
 
@@ -119,8 +118,7 @@ public abstract class PrometheusDataStore {
             theConn = DriverManager.getConnection(myConnString, myProperties);
 
             /* Connect to the correct database */
-            final String myCatalog = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME);
-            theConn.setCatalog(myCatalog);
+            theConn.setCatalog(pDatabase);
 
             /* Switch off autoCommit */
             theConn.setAutoCommit(false);

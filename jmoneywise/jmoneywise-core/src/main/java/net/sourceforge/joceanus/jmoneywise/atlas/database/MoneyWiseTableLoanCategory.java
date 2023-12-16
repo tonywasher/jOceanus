@@ -54,7 +54,7 @@ public class MoneyWiseTableLoanCategory
         final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(MoneyWiseStaticDataType.LOANTYPE, MoneyWiseTableLoanCategoryType.TABLE_NAME);
         final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(PrometheusDataResource.DATAGROUP_PARENT);
         myTableDef.addEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_NAME, PrometheusDataItem.NAMELEN);
-        myTableDef.addNullEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_NAME, PrometheusDataItem.DESCLEN);
+        myTableDef.addNullEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_DESC, PrometheusDataItem.DESCLEN);
 
         /* Declare Sort Columns */
         myParentCol.setSortOrder(PrometheusSortOrder.DESCENDING);

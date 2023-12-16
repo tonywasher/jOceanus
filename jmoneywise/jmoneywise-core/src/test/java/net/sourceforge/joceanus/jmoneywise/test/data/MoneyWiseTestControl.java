@@ -51,13 +51,17 @@ public class MoneyWiseTestControl {
             new MoneyWiseTestSecurity(myData).initSecurity(myToolkit);
 
             /* Test the XML File creation */
-            new MoneyWiseTestXMLFile(new ThreadMgrStub()).performTest(myData, myToolkit);
+            final TethysUIThreadManager myThreadMgr = new NullThreadMgr();
+            new MoneyWiseTestXMLFile(myThreadMgr).performTest(myData, myToolkit);
 
             /* Test the ODS File creation */
-            new MoneyWiseTestODSFile(new ThreadMgrStub()).performTest(myData, myToolkit);
+            new MoneyWiseTestODSFile(myThreadMgr).performTest(myData, myToolkit);
+
+            /* Test the Database creation */
+            new MoneyWiseTestDatabase(myThreadMgr).performTest(myData, myToolkit);
 
             /* Test the Archive File load */
-            new MoneyWiseTestArchiveFile(new ThreadMgrStub()).performTest(myToolkit);
+            new MoneyWiseTestArchiveFile(myThreadMgr).performTest(myToolkit);
 
             /* Catch exceptions */
         } catch (OceanusException e) {
@@ -68,7 +72,7 @@ public class MoneyWiseTestControl {
     /**
      * ThreadManager stub.
      */
-    static class ThreadMgrStub
+    static class NullThreadMgr
             implements TethysUIThreadManager {
         /**
          * The active task.
@@ -78,7 +82,7 @@ public class MoneyWiseTestControl {
         /**
          * Constructor.
          */
-        ThreadMgrStub() {
+        NullThreadMgr() {
             theProfile = new TethysProfile("Dummy");
         }
 

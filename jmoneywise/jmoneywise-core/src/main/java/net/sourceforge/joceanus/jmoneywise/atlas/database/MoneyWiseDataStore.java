@@ -16,24 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.database;
 
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Database extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class MoneyWiseDatabase
+public class MoneyWiseDataStore
         extends PrometheusDataStore {
     /**
      * Construct a new Database class for load.
-     * @param pPreferences the preferences
+     * @param pDatabase the database
+     * @param pConfig the config
      * @throws OceanusException on error
      */
-    public MoneyWiseDatabase(final PrometheusDatabasePreferences pPreferences) throws OceanusException {
+    public MoneyWiseDataStore(final String pDatabase,
+                              final PrometheusDBConfig pConfig) throws OceanusException {
         /* Call super-constructor */
-        super(pPreferences);
+        super(pDatabase, pConfig);
 
         /* Add additional tables */
         declareTables();
