@@ -45,32 +45,23 @@ public class MoneyWiseTestArchiveFile {
 
     /**
      * Perform test.
+     * @param pData    the data to test with.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public void performTest(final PrometheusToolkit pToolkit) throws OceanusException {
+    public void performTest(final MoneyWiseDataSet pData,
+                            final PrometheusToolkit pToolkit) throws OceanusException {
         /* Create the new dataSet and access preferences */
-        final MoneyWiseDataSet myBaseData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
         final PrometheusPreferenceManager myMgr = pToolkit.getPreferenceManager();
         final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Access the Password manager and disable prompting */
         final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pToolkit.getToolkit().getGuiFactory());
-        myLoader.loadArchive(theManager, myBaseData, myPrefs);
+        myLoader.loadArchive(theManager, pData, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
-        myBaseData.initialiseSecurity(theManager, myNullData);
-        myBaseData.reBase(theManager, myNullData);
-
-        /* Test the XML File creation */
-        new MoneyWiseTestXMLFile(theManager).performTest(myBaseData, pToolkit);
-
-        /* Test the ODS File creation */
-        new MoneyWiseTestODSFile(theManager).performTest(myBaseData, pToolkit);
-
-        /* Test the Database creation */
-        new MoneyWiseTestDatabase(theManager).performTest(myBaseData, pToolkit);
-        int i = 0;
+        pData.initialiseSecurity(theManager, myNullData);
+        pData.reBase(theManager, myNullData);
     }
 }

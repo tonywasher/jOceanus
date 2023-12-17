@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.database;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceResource;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -34,37 +33,37 @@ public interface PrometheusDatabase {
         /**
          * Database Driver.
          */
-        DBDRIVER("DBDriver", PrometheusPreferenceResource.DBPREF_DRIVER),
+        DBDRIVER("DBDriver", PrometheusDBResource.DBPREF_DRIVER),
 
         /**
          * Database Server.
          */
-        DBSERVER("DBServer", PrometheusPreferenceResource.DBPREF_SERVER),
+        DBSERVER("DBServer", PrometheusDBResource.DBPREF_SERVER),
 
         /**
          * Database Instance.
          */
-        DBINSTANCE("DBInstance", PrometheusPreferenceResource.DBPREF_INSTANCE),
+        DBINSTANCE("DBInstance", PrometheusDBResource.DBPREF_INSTANCE),
 
         /**
          * Database Name.
          */
-        DBNAME("DBName", PrometheusPreferenceResource.DBPREF_NAME),
+        DBNAME("DBName", PrometheusDBResource.DBPREF_NAME),
 
         /**
          * Database Batch.
          */
-        DBBATCH("DBBatchSize", PrometheusPreferenceResource.DBPREF_BATCH),
+        DBBATCH("DBBatchSize", PrometheusDBResource.DBPREF_BATCH),
 
         /**
          * Database User.
          */
-        DBUSER("DBUser", PrometheusPreferenceResource.DBPREF_USER),
+        DBUSER("DBUser", PrometheusDBResource.DBPREF_USER),
 
         /**
          * Database Password.
          */
-        DBPASS("DBPass", PrometheusPreferenceResource.DBPREF_PASS);
+        DBPASS("DBPass", PrometheusDBResource.DBPREF_PASS);
 
         /**
          * The name of the Preference.
@@ -82,7 +81,7 @@ public interface PrometheusDatabase {
          * @param pDisplay the display string;
          */
         PrometheusDatabasePreferenceKey(final String pName,
-                                        final PrometheusPreferenceResource pDisplay) {
+                                        final PrometheusDBResource pDisplay) {
             theName = pName;
             theDisplay = pDisplay.getValue();
         }
@@ -114,7 +113,7 @@ public interface PrometheusDatabase {
          * @throws OceanusException on error
          */
         public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super((PrometheusPreferenceManager) pManager, PrometheusPreferenceResource.DBPREF_PREFNAME);
+            super((PrometheusPreferenceManager) pManager, PrometheusDBResource.DBPREF_PREFNAME);
         }
 
         @Override

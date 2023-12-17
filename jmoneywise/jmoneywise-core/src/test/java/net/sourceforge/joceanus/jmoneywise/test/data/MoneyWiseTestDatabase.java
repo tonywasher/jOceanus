@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
+import org.junit.jupiter.api.Assertions;
+
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.database.MoneyWiseDataStore;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
@@ -78,8 +80,6 @@ public class MoneyWiseTestDatabase {
 
         /* Create a difference set between the two data copies */
         final MoneyWiseDataSet myDiff = myNewData.getDifferenceSet(theManager, pData);
-        if (!myDiff.isEmpty()) {
-            int i = 0;
-        }
+        Assertions.assertTrue(myDiff.isEmpty(), "Failed to save/load database");
     }
 }

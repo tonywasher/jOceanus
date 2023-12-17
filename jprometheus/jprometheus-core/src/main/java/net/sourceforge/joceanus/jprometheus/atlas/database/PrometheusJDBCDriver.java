@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jprometheus.atlas.database;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusColumnType;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceResource;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
@@ -60,7 +59,7 @@ public enum PrometheusJDBCDriver {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = PrometheusPreferenceResource.getKeyForDriver(this).getValue();
+            theName = PrometheusDBResource.getKeyForDriver(this).getValue();
         }
 
         /* return the name */
