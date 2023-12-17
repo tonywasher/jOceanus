@@ -72,11 +72,6 @@ public abstract class MetisFieldVersionedItem
     private MetisFieldItemType theItemType;
 
     /**
-     * The dataState.
-     */
-    private MetisDataState theDataState;
-
-    /**
      * The editState.
      */
     private MetisDataEditState theEditState;
@@ -91,6 +86,7 @@ public abstract class MetisFieldVersionedItem
 
         /* Allocate the validation */
         theValidation = new MetisFieldValidation();
+        theEditState = MetisDataEditState.CLEAN;
     }
 
     /**
@@ -147,7 +143,7 @@ public abstract class MetisFieldVersionedItem
      * @return the state
      */
     public MetisDataState getState() {
-        return theDataState;
+        return determineState();
     }
 
     /**
@@ -426,7 +422,6 @@ public abstract class MetisFieldVersionedItem
      * Adjust State of item.
      */
     public void adjustState() {
-        theDataState = determineState();
         theEditState = determineEditState();
     }
 

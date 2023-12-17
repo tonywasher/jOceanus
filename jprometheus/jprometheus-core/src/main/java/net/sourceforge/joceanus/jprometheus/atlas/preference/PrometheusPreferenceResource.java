@@ -39,66 +39,6 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
     TYPE_CHARARRAY("preference.type.CHARARRAY"),
 
     /**
-     * DBDriver SQLServer.
-     */
-    DRIVER_SQLSERVER("DBDriver.SQLSERVER"),
-
-    /**
-     * DBDriver PostgreSQL.
-     */
-    DRIVER_POSTGRESQL("DBDriver.POSTGRESQL"),
-
-    /**
-     * DBDriver SQLServer.
-     */
-    DRIVER_MYSQL("DBDriver.MYSQL"),
-
-    /**
-     * DBDriver H2.
-     */
-    DRIVER_H2("DBDriver.H2"),
-
-    /**
-     * DatabasePreference Display Name.
-     */
-    DBPREF_PREFNAME("dbpref.prefname"),
-
-    /**
-     * DatabasePreference Driver.
-     */
-    DBPREF_DRIVER("dbpref.driver"),
-
-    /**
-     * DatabasePreference Server.
-     */
-    DBPREF_SERVER("dbpref.server"),
-
-    /**
-     * DatabasePreference Instance.
-     */
-    DBPREF_INSTANCE("dbpref.instance"),
-
-    /**
-     * DatabasePreference Name.
-     */
-    DBPREF_NAME("dbpref.name"),
-
-    /**
-     * DatabasePreference Batch.
-     */
-    DBPREF_BATCH("dbpref.batch"),
-
-    /**
-     * DatabasePreference User.
-     */
-    DBPREF_USER("dbpref.user"),
-
-    /**
-     * DatabasePreference Password.
-     */
-    DBPREF_PASS("dbpref.password"),
-
-    /**
      * BackUpPreference Display Name.
      */
     BUPREF_PREFNAME("bupref.prefname"),
@@ -142,11 +82,6 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
      * DataListPreference Granularity.
      */
     DLPREF_GRANULARITY("dlpref.granularity");
-
-    /**
-     * The Driver Map.
-     */
-    private static final Map<PrometheusJDBCDriver, TethysBundleId> DRIVER_MAP = buildDriverMap();
 
     /**
      * The PreferenceType Map.
@@ -197,29 +132,6 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build driver map.
-     * @return the map
-     */
-    private static Map<PrometheusJDBCDriver, TethysBundleId> buildDriverMap() {
-        /* Create the map and return it */
-        final Map<PrometheusJDBCDriver, TethysBundleId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
-        myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
-        myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
-        myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
-        myMap.put(PrometheusJDBCDriver.H2, DRIVER_H2);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for DBDriver.
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static TethysBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-        return TethysBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);
     }
 
     /**

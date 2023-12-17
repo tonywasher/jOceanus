@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.test.data;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -50,20 +49,22 @@ public class MoneyWiseTestSecurity {
     public void initSecurity(final PrometheusToolkit pToolkit) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final GordianPasswordManager myManager = theDataSet.getPasswordMgr();
-        myManager.setDialogController(new DialogStub());
+        myManager.setDialogController(new NullPasswordDialog());
 
         /* Create the cloneSet and initialise security */
         final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Create the control data */
+        final TethysUIThreadStatusReport myReport = new NullThreadStatusReport();
         theDataSet.getControlData().addNewControl(0);
-        theDataSet.initialiseSecurity(new ReporterStub(), myNullData);
+        theDataSet.initialiseSecurity(myReport, myNullData);
+        theDataSet.reBase(myReport, myNullData);
     }
 
     /**
      * Dialog stub.
      */
-    static class DialogStub
+    static class NullPasswordDialog
             implements GordianDialogController {
         @Override
         public void createTheDialog(String pTitle, boolean pNeedConfirm) {
@@ -91,7 +92,7 @@ public class MoneyWiseTestSecurity {
     /**
      * Report stub.
      */
-    static class ReporterStub
+    static class NullThreadStatusReport
         implements TethysUIThreadStatusReport {
         /**
          * The active task.
@@ -101,7 +102,7 @@ public class MoneyWiseTestSecurity {
         /**
          * Constructor.
          */
-        ReporterStub() {
+        NullThreadStatusReport() {
             theProfile = new TethysProfile("Dummy");
         }
 

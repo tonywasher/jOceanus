@@ -22,11 +22,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableTransCategory
-        extends PrometheusTableEncrypted<TransactionCategory> {
+        extends PrometheusXTableEncrypted<TransactionCategory> {
     /**
      * The name of the Category table.
      */
@@ -44,13 +44,13 @@ public class TableTransCategory
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransCategory(final PrometheusDataStore pDatabase) {
+    protected TableTransCategory(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(TransactionCategory.FIELD_CATTYPE, TableTransCategoryType.TABLE_NAME);
-        final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(TransactionCategory.FIELD_PARENT);
+        final PrometheusXColumnDefinition myCatCol = myTableDef.addReferenceColumn(TransactionCategory.FIELD_CATTYPE, TableTransCategoryType.TABLE_NAME);
+        final PrometheusXColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(TransactionCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(TransactionCategory.FIELD_NAME, StaticDataItem.NAMELEN);
         myTableDef.addNullEncryptedColumn(TransactionCategory.FIELD_DESC, StaticDataItem.DESCLEN);
 
@@ -68,7 +68,7 @@ public class TableTransCategory
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(TransactionCategory.OBJECT_NAME);
@@ -85,7 +85,7 @@ public class TableTransCategory
     protected void setFieldValue(final TransactionCategory pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (TransactionCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
         } else if (TransactionCategory.FIELD_PARENT.equals(iField)) {

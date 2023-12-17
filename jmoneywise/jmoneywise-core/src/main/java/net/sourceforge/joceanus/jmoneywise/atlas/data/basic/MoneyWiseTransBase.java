@@ -61,7 +61,7 @@ public abstract class MoneyWiseTransBase
      */
     static {
         FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
-        FIELD_DEFS.declareBooleanField(MoneyWiseBasicResource.TRANSACTION_DIRECTION);
+        FIELD_DEFS.declareEnumField(MoneyWiseBasicResource.TRANSACTION_DIRECTION);
         FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.TRANSACTION_PARTNER);
         FIELD_DEFS.declareEncryptedMoneyField(MoneyWiseBasicResource.TRANSACTION_AMOUNT);
         FIELD_DEFS.declareLinkField(MoneyWiseBasicDataType.TRANSCATEGORY);
@@ -367,13 +367,7 @@ public abstract class MoneyWiseTransBase
      * @return the direction
      */
     public MoneyWiseAssetDirection getDirection() {
-        final Boolean myValue = getValues().getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, Boolean.class);
-        if (myValue == null) {
-            return null;
-        }
-        return Boolean.TRUE.equals(myValue)
-                ? MoneyWiseAssetDirection.FROM
-                : MoneyWiseAssetDirection.TO;
+        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, MoneyWiseAssetDirection.class);
     }
 
     /**
@@ -494,7 +488,7 @@ public abstract class MoneyWiseTransBase
      * Set direction state.
      * @param pValue the value
      */
-    protected final void setValueDirection(final Boolean pValue) {
+    protected final void setValueDirection(final MoneyWiseAssetDirection pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, pValue);
     }
 
@@ -502,24 +496,20 @@ public abstract class MoneyWiseTransBase
      * Set direction state.
      * @param pValue the value
      */
-    protected final void setValueDirection(final MoneyWiseAssetDirection pValue) {
-        if (pValue == null) {
-            setValueDirection((Boolean) null);
-        } else {
-            setValueDirection(MoneyWiseAssetDirection.FROM.equals(pValue));
-        }
+    private void setValueDirection(final Boolean pValue) {
+        final MoneyWiseAssetDirection myValue = Boolean.TRUE.equals(pValue)
+                ? MoneyWiseAssetDirection.FROM
+                : MoneyWiseAssetDirection.TO;
+        setValueDirection(myValue);
     }
 
     /**
      * Set direction state.
      * @param pValue the value
      */
-    protected final void setValueDirection(final String pValue) {
-        if (pValue == null) {
-            setValueDirection((Boolean) null);
-        } else {
-            setValueDirection(Boolean.valueOf(pValue));
-        }
+    private void setValueDirection(final String pValue) {
+        final MoneyWiseAssetDirection myValue = MoneyWiseAssetDirection.fromName(pValue);
+        setValueDirection(myValue);
     }
 
     /**
@@ -804,8 +794,7 @@ public abstract class MoneyWiseTransBase
      */
     private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
                                                          final Long pId) throws OceanusException {
-        try {
-        /* Access the assetType */
+         /* Access the assetType */
         final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);
 
         /* If the name is a security holding */
@@ -824,8 +813,6 @@ public abstract class MoneyWiseTransBase
             return pData.getPortfolios().findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else {
             return null;
-        } }  catch (Exception e) {
-          throw e;
         }
     }
 

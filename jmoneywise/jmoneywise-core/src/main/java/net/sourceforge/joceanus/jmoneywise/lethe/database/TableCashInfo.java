@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDataInfo;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableCashInfo
-        extends PrometheusTableDataInfo<CashInfo> {
+        extends PrometheusXTableDataInfo<CashInfo> {
     /**
      * The name of the table.
      */
@@ -39,7 +39,7 @@ public class TableCashInfo
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableCashInfo(final PrometheusDataStore pDatabase) {
+    protected TableCashInfo(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME, TableAccountInfoType.TABLE_NAME, TableCash.TABLE_NAME);
     }
 

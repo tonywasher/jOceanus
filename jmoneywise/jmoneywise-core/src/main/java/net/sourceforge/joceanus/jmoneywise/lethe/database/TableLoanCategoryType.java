@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableStaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public class TableLoanCategoryType
-        extends PrometheusTableStaticData<LoanCategoryType> {
+        extends PrometheusXTableStaticData<LoanCategoryType> {
     /**
      * The table name.
      */
@@ -39,7 +39,7 @@ public class TableLoanCategoryType
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableLoanCategoryType(final PrometheusDataStore pDatabase) {
+    protected TableLoanCategoryType(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 

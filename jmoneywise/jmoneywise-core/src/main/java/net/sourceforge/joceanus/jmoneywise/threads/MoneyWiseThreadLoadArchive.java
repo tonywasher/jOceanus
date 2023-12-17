@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
@@ -72,7 +72,7 @@ public class MoneyWiseThreadLoadArchive
         pManager.initTask("Accessing DataStore");
 
         /* Create interface */
-        final PrometheusDataStore myDatabase = theView.getDatabase();
+        final PrometheusXDataStore myDatabase = theView.getDatabase();
 
         /* Protect against failures */
         try {

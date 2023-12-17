@@ -24,12 +24,12 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
+import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseXDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseXSheet;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
@@ -139,8 +139,8 @@ public class MoneyWiseView
     }
 
     @Override
-    public PrometheusDataStore getDatabase() throws OceanusException {
-        return new MoneyWiseDatabase(getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class));
+    public PrometheusXDataStore getDatabase() throws OceanusException {
+        return new MoneyWiseXDatabase(getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class));
     }
 
     /**

@@ -19,11 +19,13 @@ package net.sourceforge.joceanus.jmoneywise.test.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.junit.jupiter.api.Assertions;
+
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.DialogStub;
+import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -56,7 +58,7 @@ public class MoneyWiseTestODSFile {
                             final PrometheusToolkit pToolkit) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final GordianPasswordManager myManager = pData.getPasswordMgr();
-        myManager.setDialogController(new DialogStub());
+        myManager.setDialogController(new NullPasswordDialog());
 
         /* Create a new sheet */
         final MoneyWiseSheet mySheet = new MoneyWiseSheet(pToolkit.getToolkit().getGuiFactory());
@@ -75,8 +77,6 @@ public class MoneyWiseTestODSFile {
 
         /* Create a difference set between the two data copies */
         final MoneyWiseDataSet myDiff = myNewData.getDifferenceSet(theManager, pData);
-        if (!myDiff.isEmpty()) {
-            int i = 0;
-        }
+        Assertions.assertTrue(myDiff.isEmpty(), "Failed to save/load ODS File");
     }
 }

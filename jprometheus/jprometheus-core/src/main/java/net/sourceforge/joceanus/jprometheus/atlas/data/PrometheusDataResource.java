@@ -546,6 +546,11 @@ public enum PrometheusDataResource
         return getValue();
     }
 
+    @Override
+    public String toString() {
+        return getValue();
+    }
+
     /**
      * Build item map.
      * @return the map

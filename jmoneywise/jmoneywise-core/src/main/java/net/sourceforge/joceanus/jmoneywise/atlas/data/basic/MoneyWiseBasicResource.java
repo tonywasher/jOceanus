@@ -896,6 +896,11 @@ public enum MoneyWiseBasicResource
         return getValue();
     }
 
+    @Override
+    public String toString() {
+        return getValue();
+    }
+
     /**
      * Build asset type map.
      * @return the map

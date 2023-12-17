@@ -99,7 +99,7 @@ public enum MoneyWiseAssetDirection {
      * @param pName the name value
      * @return the corresponding enum object
      */
-    private static MoneyWiseAssetDirection fromName(final String pName) {
+    public static MoneyWiseAssetDirection fromName(final String pName) {
         for (MoneyWiseAssetDirection myDir : values()) {
             if (pName.equals(myDir.toString())) {
                 return myDir;

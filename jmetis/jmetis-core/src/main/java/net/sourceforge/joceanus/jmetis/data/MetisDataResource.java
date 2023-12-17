@@ -197,6 +197,11 @@ public enum MetisDataResource
     }
 
     @Override
+    public String toString() {
+        return getValue();
+    }
+
+    @Override
     public String getId() {
         return getValue();
     }

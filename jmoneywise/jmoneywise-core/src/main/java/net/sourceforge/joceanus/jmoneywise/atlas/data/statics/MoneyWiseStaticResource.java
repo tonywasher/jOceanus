@@ -1130,6 +1130,11 @@ public enum MoneyWiseStaticResource
         return getValue();
     }
 
+    @Override
+    public String toString() {
+        return getValue();
+    }
+
     /**
      * Build deposit type map.
      * @return the map

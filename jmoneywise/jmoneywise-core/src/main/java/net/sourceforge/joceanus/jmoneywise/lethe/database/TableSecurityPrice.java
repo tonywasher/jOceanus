@@ -21,11 +21,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableEncrypted;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableDefinition.SortOrder;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXTableEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class TableSecurityPrice
-        extends PrometheusTableEncrypted<SecurityPrice> {
+        extends PrometheusXTableEncrypted<SecurityPrice> {
     /**
      * The name of the Prices table.
      */
@@ -44,13 +44,13 @@ public class TableSecurityPrice
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableSecurityPrice(final PrometheusDataStore pDatabase) {
+    protected TableSecurityPrice(final PrometheusXDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
-        final PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
+        final PrometheusXColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
+        final PrometheusXColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
         myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, TethysMoney.BYTE_LEN);
 
         /* Declare Sort Columns */
@@ -67,7 +67,7 @@ public class TableSecurityPrice
     @Override
     protected DataValues loadValues() throws OceanusException {
         /* Access the table definition */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
         final DataValues myValues = getRowValues(SecurityPrice.OBJECT_NAME);
@@ -83,7 +83,7 @@ public class TableSecurityPrice
     protected void setFieldValue(final SecurityPrice pItem,
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
-        final PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusXTableDefinition myTableDef = getTableDef();
         if (SecurityPrice.FIELD_SECURITY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getSecurityId());
         } else if (SecurityPrice.FIELD_DATE.equals(iField)) {
