@@ -16,8 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.database;
 
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusTableDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,48 +40,110 @@ public class MoneyWiseDataStore
         /* Call super-constructor */
         super(pDatabase, pConfig);
 
-        /* Add additional tables */
-        declareTables();
+        /* Loop through the static types */
+        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {
+            /* Create the table */
+            addTable(newTable(myType));
+        }
+
+        /* Loop through the basic types */
+        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {
+            /* Create the table */
+            addTable(newTbble(myType));
+        }
     }
 
     /**
-     * Declare tables.
+     * Create new table of required type.
+     * @param pDataType the data type
+     * @return the new table
      */
-    private void declareTables() {
-        /* Add additional tables */
-        addTable(new MoneyWiseTableDepositCategoryType(this));
-        addTable(new MoneyWiseTableCashCategoryType(this));
-        addTable(new MoneyWiseTableLoanCategoryType(this));
-        addTable(new MoneyWiseTablePayeeType(this));
-        addTable(new MoneyWiseTablePortfolioType(this));
-        addTable(new MoneyWiseTableSecurityType(this));
-        addTable(new MoneyWiseTableTransCategoryType(this));
-        addTable(new MoneyWiseTableTaxBasis(this));
-        addTable(new MoneyWiseTableCurrency(this));
-        addTable(new MoneyWiseTableAccountInfoType(this));
-        addTable(new MoneyWiseTableTransInfoType(this));
-        addTable(new MoneyWiseTableTransTag(this));
-        addTable(new MoneyWiseTableRegion(this));
-        addTable(new MoneyWiseTableDepositCategory(this));
-        addTable(new MoneyWiseTableCashCategory(this));
-        addTable(new MoneyWiseTableLoanCategory(this));
-        addTable(new MoneyWiseTableTransCategory(this));
-        addTable(new MoneyWiseTableExchangeRate(this));
-        addTable(new MoneyWiseTablePayee(this));
-        addTable(new MoneyWiseTablePayeeInfo(this));
-        addTable(new MoneyWiseTableSecurity(this));
-        addTable(new MoneyWiseTableSecurityInfo(this));
-        addTable(new MoneyWiseTableSecurityPrice(this));
-        addTable(new MoneyWiseTableDeposit(this));
-        addTable(new MoneyWiseTableDepositInfo(this));
-        addTable(new MoneyWiseTableDepositRate(this));
-        addTable(new MoneyWiseTableCash(this));
-        addTable(new MoneyWiseTableCashInfo(this));
-        addTable(new MoneyWiseTableLoan(this));
-        addTable(new MoneyWiseTableLoanInfo(this));
-        addTable(new MoneyWiseTablePortfolio(this));
-        addTable(new MoneyWiseTablePortfolioInfo(this));
-        addTable(new MoneyWiseTableTransaction(this));
-        addTable(new MoneyWiseTableTransInfo(this));
+    private PrometheusTableDataItem<?> newTable(final MoneyWiseStaticDataType pDataType) {
+        /* Switch on data Type */
+        switch (pDataType) {
+            case DEPOSITTYPE:
+                return new MoneyWiseTableDepositCategoryType(this);
+            case CASHTYPE:
+                return new MoneyWiseTableCashCategoryType(this);
+            case LOANTYPE:
+                return new MoneyWiseTableLoanCategoryType(this);
+            case PORTFOLIOTYPE:
+                return new MoneyWiseTablePortfolioType(this);
+            case PAYEETYPE:
+                return new MoneyWiseTablePayeeType(this);
+            case SECURITYTYPE:
+                return new MoneyWiseTableSecurityType(this);
+            case TRANSTYPE:
+                return new MoneyWiseTableTransCategoryType(this);
+            case ACCOUNTINFOTYPE:
+                return new MoneyWiseTableAccountInfoType(this);
+            case TRANSINFOTYPE:
+                return new MoneyWiseTableTransInfoType(this);
+            case CURRENCY:
+                return new MoneyWiseTableCurrency(this);
+            case TAXBASIS:
+                return new MoneyWiseTableTaxBasis(this);
+            default:
+                throw new IllegalArgumentException(pDataType.toString());
+        }
+    }
+
+    /**
+     * Create new table of required type.
+     * @param pDataType the data type
+     * @return the new table
+     */
+    private PrometheusTableDataItem<?> newTbble(final MoneyWiseBasicDataType pDataType) {
+        /* Switch on data Type */
+        switch (pDataType) {
+            case TRANSTAG:
+                return new MoneyWiseTableTransTag(this);
+            case REGION:
+                return new MoneyWiseTableRegion(this);
+            case DEPOSITCATEGORY:
+                return new MoneyWiseTableDepositCategory(this);
+            case CASHCATEGORY:
+                return new MoneyWiseTableCashCategory(this);
+            case LOANCATEGORY:
+                return new MoneyWiseTableLoanCategory(this);
+            case TRANSCATEGORY:
+                return new MoneyWiseTableTransCategory(this);
+            case EXCHANGERATE:
+                return new MoneyWiseTableExchangeRate(this);
+            case PAYEE:
+                return new MoneyWiseTablePayee(this);
+            case PAYEEINFO:
+                return new MoneyWiseTablePayeeInfo(this);
+            case SECURITY:
+                return new MoneyWiseTableSecurity(this);
+            case SECURITYPRICE:
+                return new MoneyWiseTableSecurityPrice(this);
+            case SECURITYINFO:
+                return new MoneyWiseTableSecurityInfo(this);
+            case DEPOSIT:
+                return new MoneyWiseTableDeposit(this);
+            case DEPOSITRATE:
+                return new MoneyWiseTableDepositRate(this);
+            case DEPOSITINFO:
+                return new MoneyWiseTableDepositInfo(this);
+            case CASH:
+                return new MoneyWiseTableCash(this);
+            case CASHINFO:
+                return new MoneyWiseTableCashInfo(this);
+            case LOAN:
+                return new MoneyWiseTableLoan(this);
+            case LOANINFO:
+                return new MoneyWiseTableLoanInfo(this);
+            case PORTFOLIO:
+                return new MoneyWiseTablePortfolio(this);
+            case PORTFOLIOINFO:
+                return new MoneyWiseTablePortfolioInfo(this);
+            case TRANSACTION:
+                return new MoneyWiseTableTransaction(this);
+            case TRANSACTIONINFO:
+                return new MoneyWiseTableTransInfo(this);
+            default:
+                throw new IllegalArgumentException(pDataType.toString());
+        }
     }
 }

@@ -17,6 +17,9 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.sheets;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
@@ -45,40 +48,110 @@ public class MoneyWiseReader
      */
     @Override
     protected void registerSheets() {
-        /* Register the sheets */
-        addSheet(new MoneyWiseSheetDepositCategoryType(this));
-        addSheet(new MoneyWiseSheetCashCategoryType(this));
-        addSheet(new MoneyWiseSheetLoanCategoryType(this));
-        addSheet(new MoneyWiseSheetPayeeType(this));
-        addSheet(new MoneyWiseSheetPortfolioType(this));
-        addSheet(new MoneyWiseSheetSecurityType(this));
-        addSheet(new MoneyWiseSheetTransCategoryType(this));
-        addSheet(new MoneyWiseSheetTaxBasis(this));
-        addSheet(new MoneyWiseSheetCurrency(this));
-        addSheet(new MoneyWiseSheetAccountInfoType(this));
-        addSheet(new MoneyWiseSheetTransInfoType(this));
-        addSheet(new MoneyWiseSheetTransTag(this));
-        addSheet(new MoneyWiseSheetRegion(this));
-        addSheet(new MoneyWiseSheetDepositCategory(this));
-        addSheet(new MoneyWiseSheetCashCategory(this));
-        addSheet(new MoneyWiseSheetLoanCategory(this));
-        addSheet(new MoneyWiseSheetTransCategory(this));
-        addSheet(new MoneyWiseSheetExchangeRate(this));
-        addSheet(new MoneyWiseSheetPayee(this));
-        addSheet(new MoneyWiseSheetPayeeInfo(this));
-        addSheet(new MoneyWiseSheetSecurity(this));
-        addSheet(new MoneyWiseSheetSecurityInfo(this));
-        addSheet(new MoneyWiseSheetSecurityPrice(this));
-        addSheet(new MoneyWiseSheetDeposit(this));
-        addSheet(new MoneyWiseSheetDepositInfo(this));
-        addSheet(new MoneyWiseSheetDepositRate(this));
-        addSheet(new MoneyWiseSheetCash(this));
-        addSheet(new MoneyWiseSheetCashInfo(this));
-        addSheet(new MoneyWiseSheetLoan(this));
-        addSheet(new MoneyWiseSheetLoanInfo(this));
-        addSheet(new MoneyWiseSheetPortfolio(this));
-        addSheet(new MoneyWiseSheetPortfolioInfo(this));
-        addSheet(new MoneyWiseSheetTransaction(this));
-        addSheet(new MoneyWiseSheetTransInfo(this));
+        /* Loop through the static types */
+        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {
+            /* Create the sheet */
+            addSheet(newSheet(myType));
+        }
+
+        /* Loop through the basic types */
+        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {
+            /* Create the sheet */
+            addSheet(newSheet(myType));
+        }
+    }
+
+    /**
+     * Create new sheet of required type.
+     * @param pDataType the data type
+     * @return the new sheet
+     */
+    private PrometheusSheetDataItem<?> newSheet(final MoneyWiseStaticDataType pDataType) {
+        /* Switch on data Type */
+        switch (pDataType) {
+            case DEPOSITTYPE:
+                return new MoneyWiseSheetDepositCategoryType(this);
+            case CASHTYPE:
+                return new MoneyWiseSheetCashCategoryType(this);
+            case LOANTYPE:
+                return new MoneyWiseSheetLoanCategoryType(this);
+            case PORTFOLIOTYPE:
+                return new MoneyWiseSheetPortfolioType(this);
+            case PAYEETYPE:
+                return new MoneyWiseSheetPayeeType(this);
+            case SECURITYTYPE:
+                return new MoneyWiseSheetSecurityType(this);
+            case TRANSTYPE:
+                return new MoneyWiseSheetTransCategoryType(this);
+            case ACCOUNTINFOTYPE:
+                return new MoneyWiseSheetAccountInfoType(this);
+            case TRANSINFOTYPE:
+                return new MoneyWiseSheetTransInfoType(this);
+            case CURRENCY:
+                return new MoneyWiseSheetCurrency(this);
+            case TAXBASIS:
+                return new MoneyWiseSheetTaxBasis(this);
+            default:
+                throw new IllegalArgumentException(pDataType.toString());
+        }
+    }
+
+    /**
+     * Create new sheet of required type.
+     * @param pDataType the data type
+     * @return the new sheet
+     */
+    private PrometheusSheetDataItem<?> newSheet(final MoneyWiseBasicDataType pDataType) {
+        /* Switch on data Type */
+        switch (pDataType) {
+            case TRANSTAG:
+                return new MoneyWiseSheetTransTag(this);
+            case REGION:
+                return new MoneyWiseSheetRegion(this);
+            case DEPOSITCATEGORY:
+                return new MoneyWiseSheetDepositCategory(this);
+            case CASHCATEGORY:
+                return new MoneyWiseSheetCashCategory(this);
+            case LOANCATEGORY:
+                return new MoneyWiseSheetLoanCategory(this);
+            case TRANSCATEGORY:
+                return new MoneyWiseSheetTransCategory(this);
+            case EXCHANGERATE:
+                return new MoneyWiseSheetExchangeRate(this);
+            case PAYEE:
+                return new MoneyWiseSheetPayee(this);
+            case PAYEEINFO:
+                return new MoneyWiseSheetPayeeInfo(this);
+            case SECURITY:
+                return new MoneyWiseSheetSecurity(this);
+            case SECURITYPRICE:
+                return new MoneyWiseSheetSecurityPrice(this);
+            case SECURITYINFO:
+                return new MoneyWiseSheetSecurityInfo(this);
+            case DEPOSIT:
+                return new MoneyWiseSheetDeposit(this);
+            case DEPOSITRATE:
+                return new MoneyWiseSheetDepositRate(this);
+            case DEPOSITINFO:
+                return new MoneyWiseSheetDepositInfo(this);
+            case CASH:
+                return new MoneyWiseSheetCash(this);
+            case CASHINFO:
+                return new MoneyWiseSheetCashInfo(this);
+            case LOAN:
+                return new MoneyWiseSheetLoan(this);
+            case LOANINFO:
+                return new MoneyWiseSheetLoanInfo(this);
+            case PORTFOLIO:
+                return new MoneyWiseSheetPortfolio(this);
+            case PORTFOLIOINFO:
+                return new MoneyWiseSheetPortfolioInfo(this);
+            case TRANSACTION:
+                return new MoneyWiseSheetTransaction(this);
+            case TRANSACTIONINFO:
+                return new MoneyWiseSheetTransInfo(this);
+            default:
+                throw new IllegalArgumentException(pDataType.toString());
+        }
     }
 }
