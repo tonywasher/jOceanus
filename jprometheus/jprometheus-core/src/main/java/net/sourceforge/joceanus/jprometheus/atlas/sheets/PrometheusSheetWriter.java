@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvider;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
@@ -199,13 +200,33 @@ public abstract class PrometheusSheetWriter {
         /* Initialise the list */
         theSheets = new ArrayList<>();
 
-        /* Add security details */
-        theSheets.add(new PrometheusSheetControlKey(this));
-        theSheets.add(new PrometheusSheetDataKeySet(this));
-        theSheets.add(new PrometheusSheetControlData(this));
+        /* Loop through the list types */
+        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {
+            /* Create the sheet */
+            theSheets.add(newSheet(myType));
+        }
 
         /* register additional sheets */
         registerSheets();
+    }
+
+    /**
+     * Create new sheet of required type.
+     * @param pListType the list type
+     * @return the new sheet
+     */
+    private PrometheusSheetDataItem<?> newSheet(final PrometheusCryptographyDataType pListType) {
+        /* Switch on list Type */
+        switch (pListType) {
+            case CONTROLDATA:
+                return new PrometheusSheetControlData(this);
+            case CONTROLKEY:
+                return new PrometheusSheetControlKey(this);
+            case DATAKEYSET:
+                return new PrometheusSheetDataKeySet(this);
+            default:
+                throw new IllegalArgumentException(pListType.toString());
+        }
     }
 
     /**

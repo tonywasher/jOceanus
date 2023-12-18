@@ -66,9 +66,6 @@ public abstract class PrometheusDataSet
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, PrometheusDataSet::getGeneration);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusDataSet::getVersion);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST, PrometheusDataSet::getControlKeys);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST, PrometheusDataSet::getDataKeySets);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST, PrometheusDataSet::getControlData);
     }
 
     /**
@@ -105,21 +102,6 @@ public abstract class PrometheusDataSet
      * Password Manager.
      */
     private final GordianPasswordManager thePasswordMgr;
-
-    /**
-     * ControlKeys.
-     */
-    private PrometheusControlKeyList theControlKeys;
-
-    /**
-     * DataKeySets.
-     */
-    private PrometheusDataKeySetList theDataKeySets;
-
-    /**
-     * ControlData.
-     */
-    private PrometheusControlDataList theControlData;
 
     /**
      * Number of activeKeySets.
@@ -164,13 +146,14 @@ public abstract class PrometheusDataSet
         final PrometheusSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);
         theNumActiveKeySets = mySecPreferences.getIntegerValue(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
 
-        /* Create the empty security lists */
-        theControlKeys = new PrometheusControlKeyList(this);
-        theDataKeySets = new PrometheusDataKeySetList(this);
-        theControlData = new PrometheusControlDataList(this);
-
         /* Create the map of additional DataLists */
         theListMap = new LinkedHashMap<>();
+
+        /* Loop through the list types */
+        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {
+            /* Create the empty list */
+            addList(myType, newList(myType));
+        }
 
         /* record formatter */
         final MetisToolkit myToolkit = pToolkit.getToolkit();
@@ -222,7 +205,7 @@ public abstract class PrometheusDataSet
      * @return the controlKeys
      */
     public PrometheusControlKeyList getControlKeys() {
-        return theControlKeys;
+        return getDataList(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKeyList.class);
     }
 
     /**
@@ -230,7 +213,7 @@ public abstract class PrometheusDataSet
      * @return the dataKeySets
      */
     public PrometheusDataKeySetList getDataKeySets() {
-        return theDataKeySets;
+        return getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);
     }
 
     /**
@@ -238,7 +221,7 @@ public abstract class PrometheusDataSet
      * @return the controlData
      */
     public PrometheusControlDataList getControlData() {
-        return theControlData;
+        return getDataList(PrometheusCryptographyDataType.CONTROLDATA, PrometheusControlDataList.class);
     }
 
     /**
@@ -281,16 +264,30 @@ public abstract class PrometheusDataSet
     public abstract PrometheusDataSet deriveCloneSet() throws OceanusException;
 
     /**
+     * Create new list of required type.
+     * @param pListType the list type
+     * @return the new list
+     */
+    private PrometheusDataList<?> newList(final PrometheusCryptographyDataType pListType) {
+        /* Switch on list Type */
+        switch (pListType) {
+            case CONTROLDATA:
+                return new PrometheusControlDataList(this);
+            case CONTROLKEY:
+                return new PrometheusControlKeyList(this);
+            case DATAKEYSET:
+                return new PrometheusDataKeySetList(this);
+            default:
+                throw new IllegalArgumentException(pListType.toString());
+        }
+    }
+
+    /**
      * Build an empty clone dataSet.
      * @param pSource the source DataSet
      * @throws OceanusException on error
      */
     protected void buildEmptyCloneSet(final PrometheusDataSet pSource) throws OceanusException {
-        /* Clone the Security items */
-        theControlKeys = pSource.getControlKeys().getEmptyList(PrometheusListStyle.CLONE);
-        theDataKeySets = pSource.getDataKeySets().getEmptyList(PrometheusListStyle.CLONE);
-        theControlData = pSource.getControlData().getEmptyList(PrometheusListStyle.CLONE);
-
         /* Loop through the source lists */
         final Iterator<Entry<PrometheusListKey, PrometheusDataList<?>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
@@ -311,11 +308,6 @@ public abstract class PrometheusDataSet
      * @throws OceanusException on error
      */
     protected void deriveCloneSet(final PrometheusDataSet pSource) throws OceanusException {
-        /* Clone the Security items */
-        theControlKeys.cloneList(this, pSource.getControlKeys());
-        theDataKeySets.cloneList(this, pSource.getDataKeySets());
-        theControlData.cloneList(this, pSource.getControlData());
-
         /* Obtain listMaps */
         final Map<PrometheusListKey, PrometheusDataList<?>> myOldMap = pSource.getListMap();
 
@@ -347,11 +339,6 @@ public abstract class PrometheusDataSet
      * @throws OceanusException on error
      */
     protected void deriveUpdateSet(final PrometheusDataSet pSource) throws OceanusException {
-        /* Build the security extract */
-        theControlKeys = pSource.getControlKeys().deriveList(PrometheusListStyle.UPDATE);
-        theDataKeySets = pSource.getDataKeySets().deriveList(PrometheusListStyle.UPDATE);
-        theControlData = pSource.getControlData().deriveList(PrometheusListStyle.UPDATE);
-
         /* Loop through the source lists */
         final Iterator<Entry<PrometheusListKey, PrometheusDataList<?>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
@@ -402,11 +389,6 @@ public abstract class PrometheusDataSet
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_DATADIFF);
 
-        /* Build the security differences */
-        theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
-        theDataKeySets = pNew.getDataKeySets().deriveDifferences(this, pOld.getDataKeySets());
-        theControlData = pNew.getControlData().deriveDifferences(this, pOld.getControlData());
-
         /* Obtain listMaps */
         final Map<PrometheusListKey, PrometheusDataList<?>> myOldMap = pOld.getListMap();
 
@@ -441,15 +423,11 @@ public abstract class PrometheusDataSet
         final TethysProfile myTask = pReport.getActiveTask();
         final TethysProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
-        /* ReBase the security items */
-        boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
-        bUpdates |= theDataKeySets.reBase(pOld.getDataKeySets());
-        bUpdates |= theControlData.reBase(pOld.getControlData());
-
         /* Obtain old listMap */
         final Map<PrometheusListKey, PrometheusDataList<?>> myMap = pOld.getListMap();
 
         /* Loop through the lists */
+        boolean bUpdates = false;
         final Iterator<Entry<PrometheusListKey, PrometheusDataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
             final Entry<PrometheusListKey, PrometheusDataList<?>> myEntry = myIterator.next();
@@ -548,11 +526,6 @@ public abstract class PrometheusDataSet
         /* Record the generation */
         theGeneration = pGeneration;
 
-        /* Set the security lists */
-        theControlKeys.setGeneration(pGeneration);
-        theDataKeySets.setGeneration(pGeneration);
-        theControlData.setGeneration(pGeneration);
-
         /* Loop through the List values */
         final Iterator<PrometheusDataList<?>> myIterator = iterator();
         while (myIterator.hasNext()) {
@@ -571,11 +544,6 @@ public abstract class PrometheusDataSet
         /* Record the version */
         theVersion = pVersion;
 
-        /* Set the security lists */
-        theControlKeys.setVersion(pVersion);
-        theDataKeySets.setVersion(pVersion);
-        theControlData.setVersion(pVersion);
-
         /* Loop through the List values */
         final Iterator<PrometheusDataList<?>> myIterator = iterator();
         while (myIterator.hasNext()) {
@@ -593,11 +561,6 @@ public abstract class PrometheusDataSet
     public void rewindToVersion(final int pVersion) {
         /* Record the version */
         theVersion = pVersion;
-
-        /* rewind the security lists */
-        theControlKeys.rewindToVersion(pVersion);
-        theDataKeySets.rewindToVersion(pVersion);
-        theControlData.rewindToVersion(pVersion);
 
         /* Loop through the List values */
         final Iterator<PrometheusDataList<?>> myIterator = iterator();
@@ -635,17 +598,6 @@ public abstract class PrometheusDataSet
             return false;
         }
 
-        /* Compare security data */
-        if (!theControlKeys.equals(myThat.getControlKeys())) {
-            return false;
-        }
-        if (!theDataKeySets.equals(myThat.getDataKeySets())) {
-            return false;
-        }
-        if (!theControlData.equals(myThat.getControlData())) {
-            return false;
-        }
-
         /* Compare the maps */
         return theListMap.equals(myThat.getListMap());
     }
@@ -653,11 +605,7 @@ public abstract class PrometheusDataSet
     @Override
     public int hashCode() {
         /* Build initial hashCode */
-        int myHashCode = theControlKeys.hashCode();
-        myHashCode *= HASH_PRIME;
-        myHashCode += theDataKeySets.hashCode();
-        myHashCode *= HASH_PRIME;
-        myHashCode += theControlData.hashCode();
+        int myHashCode = 0;
 
         /* Loop through the List values */
         final Iterator<PrometheusDataList<?>> myIterator = iterator();
@@ -678,13 +626,6 @@ public abstract class PrometheusDataSet
      * @return <code>true</code> if the DataSet has entries
      */
     public boolean isEmpty() {
-        /* Determine whether the security data is empty */
-        if (!theControlKeys.isEmpty()
-                || !theControlData.isEmpty()
-                || !theDataKeySets.isEmpty()) {
-            return false;
-        }
-
         /* Loop through the List values */
         final Iterator<PrometheusDataList<?>> myIterator = iterator();
         while (myIterator.hasNext()) {
@@ -705,13 +646,6 @@ public abstract class PrometheusDataSet
      * @return <code>true</code> if the Data-set has updates, <code>false</code> if not
      */
     public boolean hasUpdates() {
-        /* Determine whether we have updates */
-        if (theControlKeys.hasUpdates()
-                || theControlData.hasUpdates()
-                || theDataKeySets.hasUpdates()) {
-            return true;
-        }
-
         /* Loop through the List values */
         final Iterator<PrometheusDataList<?>> myIterator = iterator();
         while (myIterator.hasNext()) {
@@ -771,7 +705,7 @@ public abstract class PrometheusDataSet
         pReport.setNumStages(theNumEncrypted);
 
         /* Initialise Security */
-        theControlKeys.initialiseSecurity(pBase);
+        getControlKeys().initialiseSecurity(pBase);
 
         /* Obtain base listMap */
         final Map<PrometheusListKey, PrometheusDataList<?>> myMap = pBase.getListMap();
@@ -812,7 +746,7 @@ public abstract class PrometheusDataSet
         final PrometheusControlData myControl = getControl();
 
         /* Clone the control key */
-        final PrometheusControlKey myKey = theControlKeys.cloneItem(myControl.getControlKey());
+        final PrometheusControlKey myKey = getControlKeys().cloneItem(myControl.getControlKey());
 
         /* Declare the New Control Key */
         myControl.setControlKey(myKey);
@@ -835,7 +769,7 @@ public abstract class PrometheusDataSet
         final TethysProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
-        if (theControlKeys.size() > 1) {
+        if (getControlKeys().size() > 1) {
             /* Update to the selected controlKey */
             updateSecurity(pReport);
         } else {
@@ -877,7 +811,7 @@ public abstract class PrometheusDataSet
         }
 
         /* Delete old ControlSets */
-        theControlKeys.purgeOldControlKeys();
+        getControlKeys().purgeOldControlKeys();
         setVersion(1);
     }
 
@@ -965,19 +899,19 @@ public abstract class PrometheusDataSet
     public enum PrometheusCryptographyDataType
             implements PrometheusListKey, MetisDataFieldId {
         /**
-         * ControlData.
-         */
-        CONTROLDATA(1),
-
-        /**
          * ControlKey.
          */
-        CONTROLKEY(2),
+        CONTROLKEY(1),
 
         /**
          * DataKey.
          */
-        DATAKEYSET(3);
+        DATAKEYSET(2),
+
+        /**
+         * ControlData.
+         */
+        CONTROLDATA(3);
 
         /**
          * Maximum keyId.

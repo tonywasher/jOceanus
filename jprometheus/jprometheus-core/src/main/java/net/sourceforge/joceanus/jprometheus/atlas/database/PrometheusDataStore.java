@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -130,9 +131,31 @@ public abstract class PrometheusDataStore {
 
         /* Create table list and add the tables to the list */
         theTables = new ArrayList<>();
-        theTables.add(new PrometheusTableControlKeys(this));
-        theTables.add(new PrometheusTableDataKeySet(this));
-        theTables.add(new PrometheusTableControlData(this));
+
+        /* Loop through the tables */
+        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {
+            /* Create the sheet */
+            theTables.add(newTable(myType));
+        }
+    }
+
+    /**
+     * Create new sheet of required type.
+     * @param pListType the list type
+     * @return the new sheet
+     */
+    private PrometheusTableDataItem<?> newTable(final PrometheusCryptographyDataType pListType) {
+        /* Switch on list Type */
+        switch (pListType) {
+            case CONTROLDATA:
+                return new PrometheusTableControlData(this);
+            case CONTROLKEY:
+                return new PrometheusTableControlKeys(this);
+            case DATAKEYSET:
+                return new PrometheusTableDataKeySet(this);
+            default:
+                throw new IllegalArgumentException(pListType.toString());
+        }
     }
 
     /**
