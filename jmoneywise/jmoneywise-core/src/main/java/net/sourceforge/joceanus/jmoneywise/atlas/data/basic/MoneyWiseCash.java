@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -407,7 +407,7 @@ public class MoneyWiseCash
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusEditSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
@@ -421,7 +421,7 @@ public class MoneyWiseCash
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    public void autoCorrect(final PrometheusEditSet pUpdateSet) throws OceanusException {
         /* autoCorrect the infoSet */
         theInfoSet.autoCorrect(pUpdateSet);
     }
@@ -703,7 +703,7 @@ public class MoneyWiseCash
          * @param pUpdateSet the updateSet
          * @return the edit list
          */
-        public MoneyWiseCashList deriveEditList(final PrometheusUpdateSet pUpdateSet) {
+        public MoneyWiseCashList deriveEditList(final PrometheusEditSet pUpdateSet) {
             /* Build an empty List */
             final MoneyWiseCashList myList = getEmptyList(PrometheusListStyle.EDIT);
             final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);

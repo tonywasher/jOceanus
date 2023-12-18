@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Update entry items.
  * @param <T> the data type
  */
-public final class PrometheusUpdateEntry<T extends PrometheusDataItem>
+public final class PrometheusEditEntry<T extends PrometheusDataItem>
         implements MetisDataList<T> {
     /**
      * The data type.
@@ -45,7 +45,7 @@ public final class PrometheusUpdateEntry<T extends PrometheusDataItem>
      * Constructor.
      * @param pDataType the dataType
      */
-    PrometheusUpdateEntry(final PrometheusListKey pDataType) {
+    PrometheusEditEntry(final PrometheusListKey pDataType) {
         /* Store details */
         theDataType = pDataType;
         theDataList = null;

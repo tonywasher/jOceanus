@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -449,7 +449,7 @@ public class MoneyWiseSecurity
      * @param pUpdateSet the update set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusEditSet pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultSecurityType());
@@ -463,7 +463,7 @@ public class MoneyWiseSecurity
      * autoCorrect values after change.
      * @param pUpdateSet the update set
      */
-    public void autoCorrect(final PrometheusUpdateSet pUpdateSet) {
+    public void autoCorrect(final PrometheusEditSet pUpdateSet) {
         /* Access category class and parent */
         final MoneyWiseSecurityClass myClass = getCategoryClass();
         final MoneyWisePayee myParent = getParent();
@@ -501,7 +501,7 @@ public class MoneyWiseSecurity
      * @param pUpdateSet the update set
      * @return the default parent
      */
-    private MoneyWisePayee getDefaultParent(final PrometheusUpdateSet pUpdateSet) {
+    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pUpdateSet) {
         /* Access details */
         final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         final MoneyWiseSecurityClass myClass = getCategoryClass();
@@ -550,7 +550,7 @@ public class MoneyWiseSecurity
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveUpdateSetLinks(final PrometheusEditSet pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
         final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
@@ -875,7 +875,7 @@ public class MoneyWiseSecurity
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWiseSecurityList deriveEditList(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWiseSecurityList deriveEditList(final PrometheusEditSet pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseSecurityList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();

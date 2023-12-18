@@ -357,51 +357,41 @@ public class MoneyWiseTransactionBuilder {
     }
 
     /**
-     * Set the debit units.
-     * @param pUnits the debit units.
+     * Set the account units.
+     * @param pUnits the account units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder debitUnits(final TethysUnits pUnits) {
-        final TethysUnits myUnits = new TethysUnits(pUnits);
-        myUnits.negate();
-        if (switchDirection) {
-            thePartnerUnits = myUnits;
-        } else {
-            theAccountUnits = myUnits;
-        }
+    public MoneyWiseTransactionBuilder accountUnits(final TethysUnits pUnits) {
+        theAccountUnits = pUnits;
         return this;
     }
 
     /**
-     * Set the debit units.
-     * @param pUnits the debit units.
+     * Set the account units.
+     * @param pUnits the account units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder debitUnits(final String pUnits) {
-        return debitUnits(new TethysUnits(pUnits));
+    public MoneyWiseTransactionBuilder accountUnits(final String pUnits) {
+        return accountUnits(new TethysUnits(pUnits));
     }
 
     /**
-     * Set the credit units.
-     * @param pUnits the credit units.
+     * Set the partner units.
+     * @param pUnits the partner units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder creditUnits(final TethysUnits pUnits) {
-        if (switchDirection) {
-            theAccountUnits = pUnits;
-        } else {
-            thePartnerUnits = pUnits;
-        }
+    public MoneyWiseTransactionBuilder partnerUnits(final TethysUnits pUnits) {
+        thePartnerUnits = pUnits;
         return this;
     }
 
     /**
-     * Set the credit units.
-     * @param pUnits the credit units.
+     * Set the partner units.
+     * @param pUnits the partner units.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder creditUnits(final String pUnits) {
-        return creditUnits(new TethysUnits(pUnits));
+    public MoneyWiseTransactionBuilder partnerUnits(final String pUnits) {
+        return partnerUnits(new TethysUnits(pUnits));
     }
 
     /**
