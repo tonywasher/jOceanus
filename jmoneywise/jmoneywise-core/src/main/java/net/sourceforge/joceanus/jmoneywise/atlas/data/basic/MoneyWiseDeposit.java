@@ -445,24 +445,24 @@ public class MoneyWiseDeposit
 
     /**
      * Set defaults.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
-        autoCorrect(pUpdateSet);
+        autoCorrect(pEditSet);
     }
 
     /**
      * autoCorrect values after change.
-     * @param pUpdateSet the update set
+     * @param pEditSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pUpdateSet) throws OceanusException {
+    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Access category class */
         final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
         final MoneyWisePayee myParent = getParent();
@@ -470,7 +470,7 @@ public class MoneyWiseDeposit
         /* Ensure that we have a valid parent */
         if ((myParent == null)
                 || !myParent.getCategoryClass().canParentDeposit(myClass)) {
-            setParent(getDefaultParent(pUpdateSet));
+            setParent(getDefaultParent(pEditSet));
         }
 
         /* Adjust bond date if required */
@@ -511,12 +511,12 @@ public class MoneyWiseDeposit
 
     /**
      * Obtain default parent for new deposit.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @return the default parent
      */
-    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pUpdateSet) {
+    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
         /* Access details */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
@@ -563,10 +563,12 @@ public class MoneyWiseDeposit
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final PrometheusEditSet pUpdateSet) throws OceanusException {
-        /* Resolve parent within list */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Resolve edit dependencies */
+        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWiseDepositCategoryList myCategories = pEditSet.getDataList(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseDepositCategoryList.class);
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myCategories);
     }
 
     /**
@@ -877,14 +879,14 @@ public class MoneyWiseDeposit
 
         /**
          * Derive Edit list.
-         * @param pUpdateSet the updateSet
+         * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWiseDepositList deriveEditList(final PrometheusEditSet pUpdateSet) throws OceanusException {
+        public MoneyWiseDepositList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseDepositList myList = getEmptyList(PrometheusListStyle.EDIT);
-            final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+            final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
 
             /* Store InfoType list */
@@ -906,7 +908,7 @@ public class MoneyWiseDeposit
 
                 /* Build the new linked deposit and add it to the list */
                 final MoneyWiseDeposit myDeposit = new MoneyWiseDeposit(myList, myCurr);
-                myDeposit.resolveUpdateSetLinks(pUpdateSet);
+                myDeposit.resolveEditSetLinks(pEditSet);
                 myList.add(myDeposit);
 
                 /* Adjust the map */

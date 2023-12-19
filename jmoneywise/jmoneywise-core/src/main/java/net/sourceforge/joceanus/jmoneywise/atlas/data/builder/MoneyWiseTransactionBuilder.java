@@ -581,7 +581,7 @@ public class MoneyWiseTransactionBuilder {
 
             /* Build security holding */
             if (mySec != null && myPort != null) {
-                return theDataSet.getSecurityHoldingsMap().declareHolding(myPort, mySec);
+                return theDataSet.getPortfolios().getSecurityHoldingsMap().declareHolding(myPort, mySec);
             } else {
                 return null;
             }

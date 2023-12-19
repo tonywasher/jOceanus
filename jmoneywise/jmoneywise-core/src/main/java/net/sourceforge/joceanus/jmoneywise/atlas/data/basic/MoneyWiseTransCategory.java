@@ -233,7 +233,7 @@ public final class MoneyWiseTransCategory
     }
 
     @Override
-    protected void resolveUpdateSetLinks() throws OceanusException {
+    protected void resolveEditSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());
     }

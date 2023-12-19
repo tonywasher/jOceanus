@@ -410,10 +410,10 @@ public abstract class MoneyWiseCategoryBase
     }
 
     /**
-     * Resolve links within an update set.
+     * Resolve links within an edit set.
      * @throws OceanusException on error
      */
-    protected abstract void resolveUpdateSetLinks() throws OceanusException;
+    protected abstract void resolveEditSetLinks() throws OceanusException;
 
     /**
      * Resolve subCategory name.
@@ -745,7 +745,7 @@ public abstract class MoneyWiseCategoryBase
             final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 final T myCurr = myIterator.next();
-                myCurr.resolveUpdateSetLinks();
+                myCurr.resolveEditSetLinks();
             }
         }
 

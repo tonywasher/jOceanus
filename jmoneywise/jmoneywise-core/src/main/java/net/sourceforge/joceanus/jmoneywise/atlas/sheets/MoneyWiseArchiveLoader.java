@@ -461,7 +461,7 @@ public class MoneyWiseArchiveLoader {
      */
     protected void resolveSecurityHoldings(final MoneyWiseDataSet pData) {
         /* Access securityHoldingsMap and Portfolio list */
-        final MoneyWiseSecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
         final MoneyWisePortfolioList myPortfolios = pData.getPortfolios();
 
         /* Loop through the name map */
@@ -500,7 +500,7 @@ public class MoneyWiseArchiveLoader {
         }
         final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pTarget;
 
-        final MoneyWiseSecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the name map */
         final Iterator<Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();

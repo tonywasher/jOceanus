@@ -404,26 +404,26 @@ public class MoneyWiseCash
 
     /**
      * Set defaults.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
-        autoCorrect(pUpdateSet);
+        autoCorrect(pEditSet);
     }
 
     /**
      * autoCorrect values after change.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pUpdateSet) throws OceanusException {
+    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
         /* autoCorrect the infoSet */
-        theInfoSet.autoCorrect(pUpdateSet);
+        theInfoSet.autoCorrect(pEditSet);
     }
 
     /**
@@ -472,6 +472,13 @@ public class MoneyWiseCash
         final MoneyWiseDataSet myData = getDataSet();
         resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getCashCategories());
         resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
+    }
+
+    @Override
+    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Resolve edit dependencies */
+        final MoneyWiseCashCategoryList myCategories = pEditSet.getDataList(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseCashCategoryList.class);
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myCategories);
     }
 
     /**
@@ -700,13 +707,13 @@ public class MoneyWiseCash
 
         /**
          * Derive Edit list.
-         * @param pUpdateSet the updateSet
+         * @param pEditSet the editSet
          * @return the edit list
          */
-        public MoneyWiseCashList deriveEditList(final PrometheusEditSet pUpdateSet) {
+        public MoneyWiseCashList deriveEditList(final PrometheusEditSet pEditSet) {
             /* Build an empty List */
             final MoneyWiseCashList myList = getEmptyList(PrometheusListStyle.EDIT);
-            final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+            final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
 
             /* Store InfoType list */

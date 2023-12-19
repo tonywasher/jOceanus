@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
@@ -748,12 +749,32 @@ public abstract class MoneyWiseTransBase
     /**
      * Resolve transAsset.
      * @param pData the dataSet
+     * @param pOwner the owning transaction
+     * @param pField the fieldId
+     * @throws OceanusException on error
+     */
+    protected void resolveTransactionAsset(final MoneyWiseDataSet pData,
+                                           final MoneyWiseTransBase pOwner,
+                                           final MetisDataFieldId pField) throws OceanusException {
+        /* If we are being passed a TransactionAsset, convert to Id */
+        final Object myBaseValue = pOwner.getValues().getValue(pField);
+        final Object myValue = resolveTransactionAsset(pData, myBaseValue);
+        if (myValue == null) {
+            pOwner.addError(ERROR_UNKNOWN, pField);
+            throw new PrometheusDataException(this, ERROR_RESOLUTION);
+        }
+        pOwner.getValues().setUncheckedValue(pField, myValue);
+    }
+
+    /**
+     * Resolve transAsset.
+     * @param pData the dataSet
      * @param pValue the value to convert
      * @return the asset
      * @throws OceanusException on error
      */
-    protected MoneyWiseTransAsset resolveTransactionAsset(final MoneyWiseDataSet pData,
-                                                          final Object pValue) throws OceanusException {
+    private MoneyWiseTransAsset resolveTransactionAsset(final MoneyWiseDataSet pData,
+                                                        final Object pValue) throws OceanusException {
         /* If we are being passed a TransactionAsset, convert to Id */
         Object myValue = pValue;
         if (myValue instanceof MoneyWiseTransAsset) {
@@ -771,22 +792,6 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Resolve transAsset.
-     * @param pData the dataSet
-     * @param pOwner the owning transaction
-     * @param pField the fieldId
-     * @throws OceanusException on error
-     */
-    protected void resolveTransactionAsset(final MoneyWiseDataSet pData,
-                                           final MoneyWiseTransBase pOwner,
-                                           final MetisDataFieldId pField) throws OceanusException {
-        /* If we are being passed a TransactionAsset, convert to Id */
-        final Object myBaseValue = pOwner.getValues().getValue(pField);
-        final Object myValue = resolveTransactionAsset(pData, myBaseValue);
-        pOwner.getValues().setUncheckedValue(pField, myValue);
-    }
-
-    /**
-     * Resolve transAsset.
      * @param pData the owning dataSet
      * @param pId the item id
      * @return the asset
@@ -799,7 +804,7 @@ public abstract class MoneyWiseTransBase
 
         /* If the name is a security holding */
         if (myAssetType.isSecurityHolding()) {
-            final MoneyWiseSecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
             return myMap.findHoldingById(pId);
         } else if (myAssetType.isPayee()) {
             return pData.getPayees().findItemById(MoneyWiseAssetType.getBaseId(pId));
@@ -826,7 +831,7 @@ public abstract class MoneyWiseTransBase
                                                          final String pName) {
         /* If the name is a security holding */
         if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            final MoneyWiseSecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
             return myMap.findHoldingByName(pName);
         } else {
             MoneyWiseTransAsset myAsset = pData.getPayees().findItemByName(pName);

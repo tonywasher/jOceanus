@@ -74,11 +74,6 @@ public final class MoneyWiseSecurityHolding
     private final Long theId;
 
     /**
-     * The name of the holding.
-     */
-    private String theName;
-
-    /**
      * The portfolio of the holding.
      */
     private MoneyWisePortfolio thePortfolio;
@@ -150,17 +145,7 @@ public final class MoneyWiseSecurityHolding
 
     @Override
     public String getName() {
-        if (theName == null) {
-            theName = generateName();
-        }
-        return theName;
-    }
-
-    /**
-     * Reset the name.
-     */
-    protected void resetName() {
-        theName = null;
+        return generateName();
     }
 
     @Override
@@ -373,12 +358,12 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Constructor.
-         * @param pUpdateSet the updateSet
+         * @param pEditSet the editSet
          */
-        public MoneyWiseSecurityHoldingMap(final PrometheusEditSet pUpdateSet) {
+        public MoneyWiseSecurityHoldingMap(final PrometheusEditSet pEditSet) {
             /* Access lists */
-            thePortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-            theSecurities = pUpdateSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);
+            thePortfolios = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+            theSecurities = pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);
             theMap = new HashMap<>();
         }
 
@@ -534,23 +519,6 @@ public final class MoneyWiseSecurityHolding
             /* Look up in the map */
             final Integer myId = myPortfolio.getIndexedId();
             return theMap.computeIfAbsent(myId, i -> new MoneyWisePortfolioHoldingsMap(myPortfolio, theSecurities));
-        }
-
-        /**
-         * Reset names.
-         */
-        public void resetNames() {
-            /* Iterate through the portfolio maps */
-            final Iterator<MoneyWisePortfolioHoldingsMap> myIterator = theMap.values().iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWisePortfolioHoldingsMap myMap = myIterator.next();
-
-                /* If the portfolio is not deleted */
-                if (!myMap.thePortfolio.isDeleted()) {
-                    /* Reset names for the portfolio */
-                    myMap.resetNames();
-                }
-            }
         }
 
         /**
@@ -762,20 +730,6 @@ public final class MoneyWiseSecurityHolding
             /* Look up in the map */
             final Integer myId = mySecurity.getIndexedId();
             return theMap.computeIfAbsent(myId, i -> new MoneyWiseSecurityHolding(thePortfolio, mySecurity));
-        }
-
-        /**
-         * Reset names.
-         */
-        private void resetNames() {
-            /* Iterate through the security holdings */
-            final Iterator<MoneyWiseSecurityHolding> myIterator = theMap.values().iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseSecurityHolding myHolding = myIterator.next();
-
-                /* Reset the name */
-                myHolding.resetName();
-            }
         }
 
         /**

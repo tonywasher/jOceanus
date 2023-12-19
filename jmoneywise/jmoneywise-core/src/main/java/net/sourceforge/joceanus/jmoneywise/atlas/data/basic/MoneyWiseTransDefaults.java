@@ -633,7 +633,7 @@ public class MoneyWiseTransDefaults {
         /* Access Portfolios and Holdings Map */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pUpdateSet.getDataSet();
         final MoneyWisePortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -666,18 +666,18 @@ public class MoneyWiseTransDefaults {
 
     /**
      * Obtain the default partner security holding from the security map.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pAccount the account
      * @param pCategory the category
      * @return the default partner
      */
-    private static MoneyWiseSecurityHolding getDefaultPartnerHolding(final PrometheusEditSet pUpdateSet,
+    private static MoneyWiseSecurityHolding getDefaultPartnerHolding(final PrometheusEditSet pEditSet,
                                                                      final MoneyWiseTransAsset pAccount,
                                                                      final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pUpdateSet.getDataSet();
-        final MoneyWisePortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pEditSet.getDataSet();
+        final MoneyWisePortfolioList myPortfolios = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+        final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
