@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataIt
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -694,11 +694,11 @@ public abstract class MoneyWiseAssetBase
     }
 
     /**
-     * Resolve update Set links.
-     * @param pUpdateSet the updateSet
+     * Resolve edit Set links.
+     * @param pEditSet the updateSet
      * @throws OceanusException on error
      */
-    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* No action by default */
     }
 

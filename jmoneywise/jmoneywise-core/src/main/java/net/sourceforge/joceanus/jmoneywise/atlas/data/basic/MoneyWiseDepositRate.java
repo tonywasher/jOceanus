@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataIt
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -471,12 +471,12 @@ public class MoneyWiseDepositRate
 
     /**
      * Resolve links in an updateSet.
-     * @param pUpdateSet the update Set
+     * @param pEditSet the edit Set
      * @throws OceanusException on error
      */
-    private void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    private void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Resolve parent within list */
-        final MoneyWiseDepositList myDeposits = pUpdateSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);
+        final MoneyWiseDepositList myDeposits = pEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);
         resolveDataLink(MoneyWiseBasicDataType.DEPOSIT, myDeposits);
     }
 
@@ -671,11 +671,11 @@ public class MoneyWiseDepositRate
 
         /**
          * Construct an edit extract of a Rate list.
-         * @param pUpdateSet the updateSet
+         * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWiseDepositRateList deriveEditList(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWiseDepositRateList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseDepositRateList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
@@ -687,7 +687,7 @@ public class MoneyWiseDepositRate
 
                 /* Copy the item */
                 final MoneyWiseDepositRate myItem = new MoneyWiseDepositRate(myList, myCurr);
-                myItem.resolveUpdateSetLinks(pUpdateSet);
+                myItem.resolveEditSetLinks(pEditSet);
                 myList.add(myItem);
 
                 /* Adjust the map */

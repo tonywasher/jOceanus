@@ -1091,9 +1091,6 @@ public class MoneyWiseTransaction
             }
             myTrans.setDate(myDate);
 
-            /* Create a default pair */
-            //myTrans.setValueAssetPair(getAssetPairManager().getDefaultPair());
-
             /* Add to list and return */
             add(myTrans);
             return myTrans;

@@ -88,7 +88,6 @@ public class MoneyWiseDataSet
         FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseStaticDataType.class, MoneyWiseDataSet::getFieldListValue);
         FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseBasicDataType.class, MoneyWiseDataSet::getFieldListValue);
         FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_DEFAULT, MoneyWiseDataSet::getDefaultCurrency);
-        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_HOLDINGSMAP, MoneyWiseDataSet::getSecurityHoldingsMap);
     }
 
     /**
@@ -100,11 +99,6 @@ public class MoneyWiseDataSet
      * Default Currency.
      */
     private MoneyWiseCurrency theDefaultCurrency;
-
-    /**
-     * SecurityHoldings Map.
-     */
-    private MoneyWiseSecurityHoldingMap theSecurityHoldings;
 
     /**
      * Check Closed Accounts.
@@ -458,19 +452,6 @@ public class MoneyWiseDataSet
     }
 
     /**
-     * Obtain security holdings map.
-     * @return the holdings map
-     */
-    public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
-        /* If we have note yet created the map */
-        if (theSecurityHoldings == null) {
-            /* Create the holdings map */
-            theSecurityHoldings = new MoneyWiseSecurityHoldingMap(this);
-        }
-        return theSecurityHoldings;
-    }
-
-    /**
      * Obtain security prices map.
      * @return the prices map
      */
@@ -666,13 +647,5 @@ public class MoneyWiseDataSet
             final PrometheusDataList<?> myList = myEntry.getValue();
             myList.prepareForAnalysis();
         }
-    }
-
-    /**
-     * Adjust security map.
-     */
-    public void adjustSecurityMap() {
-        /* Reset security map names */
-        getSecurityHoldingsMap().resetNames();
     }
 }

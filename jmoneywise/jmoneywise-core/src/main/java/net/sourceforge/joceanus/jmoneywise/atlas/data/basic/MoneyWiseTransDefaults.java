@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHol
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -50,7 +50,7 @@ public class MoneyWiseTransDefaults {
     /**
      * The updateSet.
      */
-    private final PrometheusUpdateSet theUpdateSet;
+    private final PrometheusEditSet theUpdateSet;
 
     /**
      * The Date Range.
@@ -66,7 +66,7 @@ public class MoneyWiseTransDefaults {
      * Constructor.
      * @param pUpdateSet the updateSet
      */
-    public MoneyWiseTransDefaults(final PrometheusUpdateSet pUpdateSet) {
+    public MoneyWiseTransDefaults(final PrometheusEditSet pUpdateSet) {
         theUpdateSet = pUpdateSet;
     }
 
@@ -628,12 +628,12 @@ public class MoneyWiseTransDefaults {
      * @param pCategory the category
      * @return the default partner
      */
-    private static MoneyWiseSecurityHolding getDefaultHolding(final PrometheusUpdateSet pUpdateSet,
+    private static MoneyWiseSecurityHolding getDefaultHolding(final PrometheusEditSet pUpdateSet,
                                                               final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pUpdateSet.getDataSet();
         final MoneyWisePortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -666,18 +666,18 @@ public class MoneyWiseTransDefaults {
 
     /**
      * Obtain the default partner security holding from the security map.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pAccount the account
      * @param pCategory the category
      * @return the default partner
      */
-    private static MoneyWiseSecurityHolding getDefaultPartnerHolding(final PrometheusUpdateSet pUpdateSet,
+    private static MoneyWiseSecurityHolding getDefaultPartnerHolding(final PrometheusEditSet pEditSet,
                                                                      final MoneyWiseTransAsset pAccount,
                                                                      final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pUpdateSet.getDataSet();
-        final MoneyWisePortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pEditSet.getDataSet();
+        final MoneyWisePortfolioList myPortfolios = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+        final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();

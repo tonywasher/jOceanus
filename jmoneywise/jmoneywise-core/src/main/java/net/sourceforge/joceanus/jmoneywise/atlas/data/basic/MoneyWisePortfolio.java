@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -466,32 +466,32 @@ public class MoneyWisePortfolio
 
     @Override
     public void deRegister() {
-        final MoneyWiseSecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = getList().getSecurityHoldingsMap();
         myMap.deRegister(this);
     }
 
     /**
      * Set defaults.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultPortfolioType());
-        setParent(getDefaultParent(pUpdateSet));
+        setParent(getDefaultParent(pEditSet));
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
     }
 
     /**
      * Obtain default parent for portfolio.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @return the default parent
      */
-    private static MoneyWisePayee getDefaultParent(final PrometheusUpdateSet pUpdateSet) {
+    private static MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
         /* loop through the payees */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
             final MoneyWisePayee myPayee = myIterator.next();
@@ -553,10 +553,10 @@ public class MoneyWisePortfolio
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Resolve parent/holding within list */
         final MoneyWiseDataSet myData = getDataSet();
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getPortfolioTypes());
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
     }
@@ -657,7 +657,7 @@ public class MoneyWisePortfolio
         final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
-                if (isTaxFree()) {
+                if (Boolean.TRUE.equals(isTaxFree())) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass(isGross()
@@ -665,14 +665,14 @@ public class MoneyWisePortfolio
                         ? MoneyWiseTransCategoryClass.GROSSINTEREST
                         : MoneyWiseTransCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
-                if (isTaxFree()) {
+                if (Boolean.TRUE.equals(isTaxFree())) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(isGross()
+                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
                         ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS
                         : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);
             case DIVIDEND:
-                return isTaxFree()
+                return Boolean.TRUE.equals(isTaxFree())
                         ? myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND)
                         : pCategory;
             default:
@@ -815,6 +815,13 @@ public class MoneyWisePortfolio
          */
         private static final MetisFieldSet<MoneyWisePortfolioList> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioList.class);
 
+        /*
+         * FieldIds.
+         */
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_HOLDINGSMAP, MoneyWisePortfolioList::getSecurityHoldingsMap);
+        }
+
         /**
          * The PortfolioInfo List.
          */
@@ -824,6 +831,16 @@ public class MoneyWisePortfolio
          * The AccountInfoType list.
          */
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
+
+        /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
+         * SecurityHoldings Map.
+         */
+        private MoneyWiseSecurityHoldingMap theSecurityHoldings;
 
         /**
          * Construct an empty CORE Portfolio list.
@@ -883,6 +900,27 @@ public class MoneyWisePortfolio
             return theInfoTypeList;
         }
 
+        /**
+         * Obtain security holdings map.
+         * @return the holdings map
+         */
+        public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
+            if (theSecurityHoldings == null) {
+                theSecurityHoldings = getEditSet() == null
+                        ? new MoneyWiseSecurityHoldingMap(getDataSet())
+                        : new MoneyWiseSecurityHoldingMap(getEditSet());
+            }
+            return theSecurityHoldings;
+        }
+
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
+        }
+
         @Override
         protected MoneyWisePortfolioList getEmptyList(final PrometheusListStyle pStyle) {
             final MoneyWisePortfolioList myList = new MoneyWisePortfolioList(this);
@@ -892,14 +930,14 @@ public class MoneyWisePortfolio
 
         /**
          * Derive Edit list.
-         * @param pUpdateSet the updateSet
+         * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWisePortfolioList deriveEditList(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWisePortfolioList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWisePortfolioList myList = getEmptyList(PrometheusListStyle.EDIT);
-            final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+            final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
 
             /* Store InfoType list */
@@ -908,6 +946,9 @@ public class MoneyWisePortfolio
             /* Create info List */
             final MoneyWisePortfolioInfoList myPortInfo = getPortfolioInfo();
             myList.theInfoList = myPortInfo.getEmptyList(PrometheusListStyle.EDIT);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
 
             /* Loop through the portfolios */
             final Iterator<MoneyWisePortfolio> myIterator = iterator();
@@ -921,7 +962,7 @@ public class MoneyWisePortfolio
 
                 /* Build the new linked portfolio and add it to the list */
                 final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(myList, myCurr);
-                myPortfolio.resolveUpdateSetLinks(pUpdateSet);
+                myPortfolio.resolveEditSetLinks(pEditSet);
                 myList.add(myPortfolio);
 
                 /* Adjust the map */

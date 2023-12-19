@@ -76,7 +76,7 @@
     <JSONVersion>20231013</JSONVersion>
     <ApacheMavenVersion>3.9.5</ApacheMavenVersion>
     <MySQLVersion>8.0.33</MySQLVersion>
-    <PostGreSQLVersion>42.7.0</PostGreSQLVersion>
+    <PostGreSQLVersion>42.7.1</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>2.2.224</H2Version>
     <ApachePOIVersion>5.2.5</ApachePOIVersion>
@@ -86,7 +86,7 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.9</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.12.5</CheckStyleVersion>
+    <CheckStyleVersion>10.12.6</CheckStyleVersion>
     <PMDVersion>6.55.0</PMDVersion>
     <CleanPluginVersion>3.3.2</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
@@ -97,18 +97,18 @@
     <CompilerPluginVersion>3.11.0</CompilerPluginVersion>
     <ShadePluginVersion>3.5.1</ShadePluginVersion>
     <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
-    <SurefirePluginVersion>3.2.1</SurefirePluginVersion>
+    <SurefirePluginVersion>3.2.3</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.1.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.4.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.3.0</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.4.5</ProjectInfoPluginVersion>
+    <ProjectInfoPluginVersion>3.5.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.3.1</JxrPluginVersion>
-    <JavaDocPluginVersion>3.6.0</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.6.3</JavaDocPluginVersion>
     <SourcePluginVersion>3.3.0</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
-    <PMDPluginVersion>3.21.0</PMDPluginVersion>
+    <PMDPluginVersion>3.21.2</PMDPluginVersion>
     <JacocoPluginVersion>0.8.11</JacocoPluginVersion>
     <GPGPluginVersion>3.1.0</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>

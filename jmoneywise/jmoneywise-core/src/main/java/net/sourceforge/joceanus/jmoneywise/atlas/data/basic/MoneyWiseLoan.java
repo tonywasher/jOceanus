@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUpdateSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -415,24 +415,24 @@ public class MoneyWiseLoan
 
     /**
      * Set defaults.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
-        autoCorrect(pUpdateSet);
+        autoCorrect(pEditSet);
     }
 
     /**
      * adjust values after change.
-     * @param pUpdateSet the update set
+     * @param pEditSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Access category class and parent */
         final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
         final MoneyWisePayee myParent = getParent();
@@ -440,7 +440,7 @@ public class MoneyWiseLoan
         /* Ensure that we have valid parent */
         if ((myParent == null)
                 || !myParent.getCategoryClass().canParentLoan(myClass)) {
-            setParent(getDefaultParent(pUpdateSet));
+            setParent(getDefaultParent(pEditSet));
         }
     }
 
@@ -472,12 +472,12 @@ public class MoneyWiseLoan
 
     /**
      * Obtain default parent for new loan.
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @return the default parent
      */
-    private MoneyWisePayee getDefaultParent(final PrometheusUpdateSet pUpdateSet) {
+    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
         /* Access details */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
         final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
@@ -524,10 +524,12 @@ public class MoneyWiseLoan
     }
 
     @Override
-    protected void resolveUpdateSetLinks(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Resolve parent within list */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWiseLoanCategoryList myCategories = pEditSet.getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class);
         resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myCategories);
     }
 
     /**
@@ -783,14 +785,14 @@ public class MoneyWiseLoan
 
         /**
          * Derive Edit list.
-         * @param pUpdateSet the updateSet
+         * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
          */
-        public MoneyWiseLoanList deriveEditList(final PrometheusUpdateSet pUpdateSet) throws OceanusException {
+        public MoneyWiseLoanList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseLoanList myList = getEmptyList(PrometheusListStyle.EDIT);
-            final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+            final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
 
             /* Store InfoType list */
@@ -812,7 +814,7 @@ public class MoneyWiseLoan
 
                 /* Build the new linked loan and add it to the list */
                 final MoneyWiseLoan myLoan = new MoneyWiseLoan(myList, myCurr);
-                myLoan.resolveUpdateSetLinks(pUpdateSet);
+                myLoan.resolveEditSetLinks(pEditSet);
                 myList.add(myLoan);
 
                 /* Adjust the map */
