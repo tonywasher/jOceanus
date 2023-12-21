@@ -22,10 +22,10 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseTaxBasisAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseTaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXTaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -51,32 +51,32 @@ public class MoneyWiseTaxTotals
     /**
      * The top-level totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> theTotals;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> theTotals;
 
     /**
      * The initial totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> theInitial;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> theInitial;
 
     /**
      * The payees.
      */
-    private final List<MoneyWiseTaxBasisBucket> theTaxBases;
+    private final List<MoneyWiseXTaxBasisBucket> theTaxBases;
 
     /**
      * Constructor.
      *
      * @param pAnalysis the analysis
      */
-    MoneyWiseTaxTotals(final MoneyWiseAnalysis pAnalysis) {
+    MoneyWiseTaxTotals(final MoneyWiseXAnalysis pAnalysis) {
         /* Create fields */
         final AssetCurrency myCurrency = pAnalysis.getReportingCurrency();
-        theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseTaxBasisAttr.class, myCurrency);
-        theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseTaxBasisAttr.class, myCurrency);
+        theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXTaxBasisAttr.class, myCurrency);
+        theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXTaxBasisAttr.class, myCurrency);
         theTaxBases = new ArrayList<>();
 
         /* Loop through the taxBasis buckets */
-        for (MoneyWiseTaxBasisBucket myBucket : pAnalysis.getTaxBases().values()) {
+        for (MoneyWiseXTaxBasisBucket myBucket : pAnalysis.getTaxBases().values()) {
             /* Adjust totals */
             addToTotals(theTotals, myBucket.getValues());
             addToTotals(theInitial, myBucket.getInitial());
@@ -84,7 +84,7 @@ public class MoneyWiseTaxTotals
         }
 
         /* Sort the taxBases */
-        theTaxBases.sort(Comparator.comparing(MoneyWiseTaxBasisBucket::getOwner));
+        theTaxBases.sort(Comparator.comparing(MoneyWiseXTaxBasisBucket::getOwner));
     }
 
     /**
@@ -92,7 +92,7 @@ public class MoneyWiseTaxTotals
      *
      * @return the totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> getTotals() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> getTotals() {
         return theTotals;
     }
 
@@ -101,7 +101,7 @@ public class MoneyWiseTaxTotals
      *
      * @return the initial totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> getInitial() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> getInitial() {
         return theInitial;
     }
 
@@ -110,7 +110,7 @@ public class MoneyWiseTaxTotals
      *
      * @return the taxBases
      */
-    public List<MoneyWiseTaxBasisBucket> getTaxBases() {
+    public List<MoneyWiseXTaxBasisBucket> getTaxBases() {
         return theTaxBases;
     }
 
@@ -124,11 +124,11 @@ public class MoneyWiseTaxTotals
      * @param pTotals the totals
      * @param pDelta the delta
      */
-    static void addToTotals(final MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> pTotals,
-                            final MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> pDelta) {
-        addToTotals(pTotals, pDelta, MoneyWiseTaxBasisAttr.GROSS);
-        addToTotals(pTotals, pDelta, MoneyWiseTaxBasisAttr.NETT);
-        addToTotals(pTotals, pDelta, MoneyWiseTaxBasisAttr.TAXCREDIT);
+    static void addToTotals(final MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> pTotals,
+                            final MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> pDelta) {
+        addToTotals(pTotals, pDelta, MoneyWiseXTaxBasisAttr.GROSS);
+        addToTotals(pTotals, pDelta, MoneyWiseXTaxBasisAttr.NETT);
+        addToTotals(pTotals, pDelta, MoneyWiseXTaxBasisAttr.TAXCREDIT);
     }
 
     /**
@@ -137,9 +137,9 @@ public class MoneyWiseTaxTotals
      * @param pDelta the delta
      * @param pAttr the attribute
      */
-    private static void addToTotals(final MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> pTotals,
-                                    final MoneyWiseAnalysisValues<MoneyWiseTaxBasisAttr> pDelta,
-                                    final MoneyWiseTaxBasisAttr pAttr) {
+    private static void addToTotals(final MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> pTotals,
+                                    final MoneyWiseXAnalysisValues<MoneyWiseXTaxBasisAttr> pDelta,
+                                    final MoneyWiseXTaxBasisAttr pAttr) {
         final TethysMoney myTotals = pTotals.getMoneyValue(pAttr);
         final TethysMoney myDelta = pDelta.getMoneyValue(pAttr);
         myTotals.addAmount(myDelta);

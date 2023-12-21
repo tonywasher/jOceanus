@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.jmoneywise.atlas.analysis.totals;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBaseResource;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAccountAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseIncomeAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisBaseResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXIncomeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXTaxBasisAttr;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -47,7 +47,7 @@ public class MoneyWiseTotals
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_RANGE, MoneyWiseTotals::getRange);
+        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.HISTORY_RANGE, MoneyWiseTotals::getRange);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisTotalsResource.TOTALS_ASSETS, MoneyWiseTotals::getAssets);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisTotalsResource.TOTALS_PAYEES, MoneyWiseTotals::getPayees);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisTotalsResource.TOTALS_TRANS, MoneyWiseTotals::getTrans);
@@ -83,7 +83,7 @@ public class MoneyWiseTotals
      * Constructor.
      * @param pAnalysis the analysis
      */
-    MoneyWiseTotals(final MoneyWiseAnalysis pAnalysis) {
+    MoneyWiseTotals(final MoneyWiseXAnalysis pAnalysis) {
         /* Create fields */
         theRange = pAnalysis.getRange();
         theAssets = new MoneyWiseAssetTotals(pAnalysis);
@@ -145,26 +145,26 @@ public class MoneyWiseTotals
      */
     private void checkTotals() {
         /* Access asset totals */
-        final TethysMoney myAssets = new TethysMoney(theAssets.getTotals().getMoneyValue(MoneyWiseAccountAttr.VALUATION));
-        myAssets.subtractAmount(theAssets.getInitial().getMoneyValue(MoneyWiseAccountAttr.VALUATION));
+        final TethysMoney myAssets = new TethysMoney(theAssets.getTotals().getMoneyValue(MoneyWiseXAccountAttr.VALUATION));
+        myAssets.subtractAmount(theAssets.getInitial().getMoneyValue(MoneyWiseXAccountAttr.VALUATION));
 
         /* Check payees */
-        final TethysMoney myPayees = new TethysMoney(thePayees.getTotals().getMoneyValue(MoneyWiseIncomeAttr.PROFIT));
-        myPayees.subtractAmount(thePayees.getInitial().getMoneyValue(MoneyWiseIncomeAttr.PROFIT));
+        final TethysMoney myPayees = new TethysMoney(thePayees.getTotals().getMoneyValue(MoneyWiseXIncomeAttr.PROFIT));
+        myPayees.subtractAmount(thePayees.getInitial().getMoneyValue(MoneyWiseXIncomeAttr.PROFIT));
         if (!myAssets.equals(myPayees)) {
             LOGGER.error("Payee total mismatch");
         }
 
         /* Check transactions */
-        final TethysMoney myTrans = new TethysMoney(theTrans.getTotals().getMoneyValue(MoneyWiseIncomeAttr.PROFIT));
-        myPayees.subtractAmount(theTrans.getInitial().getMoneyValue(MoneyWiseIncomeAttr.PROFIT));
+        final TethysMoney myTrans = new TethysMoney(theTrans.getTotals().getMoneyValue(MoneyWiseXIncomeAttr.PROFIT));
+        myPayees.subtractAmount(theTrans.getInitial().getMoneyValue(MoneyWiseXIncomeAttr.PROFIT));
         if (!myAssets.equals(myTrans)) {
             LOGGER.error("TransactionCategory total mismatch");
         }
 
         /* Check tax */
-        final TethysMoney myTax = new TethysMoney(theTax.getTotals().getMoneyValue(MoneyWiseTaxBasisAttr.NETT));
-        myPayees.subtractAmount(theTax.getInitial().getMoneyValue(MoneyWiseTaxBasisAttr.NETT));
+        final TethysMoney myTax = new TethysMoney(theTax.getTotals().getMoneyValue(MoneyWiseXTaxBasisAttr.NETT));
+        myPayees.subtractAmount(theTax.getInitial().getMoneyValue(MoneyWiseXTaxBasisAttr.NETT));
         if (!myAssets.equals(myTax)) {
             LOGGER.error("TaxBasis total mismatch");
         }

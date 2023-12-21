@@ -22,10 +22,10 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseIncomeAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWisePayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXIncomeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXPayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -51,32 +51,32 @@ public class MoneyWisePayeeTotals
     /**
      * The top-level totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> theTotals;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> theTotals;
 
     /**
      * The initial totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> theInitial;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> theInitial;
 
     /**
      * The payees.
      */
-    private final List<MoneyWisePayeeBucket> thePayees;
+    private final List<MoneyWiseXPayeeBucket> thePayees;
 
     /**
      * Constructor.
      *
      * @param pAnalysis the analysis
      */
-    MoneyWisePayeeTotals(final MoneyWiseAnalysis pAnalysis) {
+    MoneyWisePayeeTotals(final MoneyWiseXAnalysis pAnalysis) {
         /* Create fields */
         final AssetCurrency myCurrency = pAnalysis.getReportingCurrency();
-        theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseIncomeAttr.class, myCurrency);
-        theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseIncomeAttr.class, myCurrency);
+        theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXIncomeAttr.class, myCurrency);
+        theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXIncomeAttr.class, myCurrency);
         thePayees = new ArrayList<>();
 
         /* Loop through the payee buckets */
-        for (MoneyWisePayeeBucket myBucket : pAnalysis.getPayees().values()) {
+        for (MoneyWiseXPayeeBucket myBucket : pAnalysis.getPayees().values()) {
             /* Adjust totals */
             addToTotals(theTotals, myBucket.getValues());
             addToTotals(theInitial, myBucket.getInitial());
@@ -84,7 +84,7 @@ public class MoneyWisePayeeTotals
         }
 
         /* Sort the payees */
-        thePayees.sort(Comparator.comparing(MoneyWisePayeeBucket::getOwner));
+        thePayees.sort(Comparator.comparing(MoneyWiseXPayeeBucket::getOwner));
     }
 
     /**
@@ -92,7 +92,7 @@ public class MoneyWisePayeeTotals
      *
      * @return the totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> getTotals() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> getTotals() {
         return theTotals;
     }
 
@@ -101,7 +101,7 @@ public class MoneyWisePayeeTotals
      *
      * @return the initial totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> getInitial() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> getInitial() {
         return theInitial;
     }
 
@@ -110,7 +110,7 @@ public class MoneyWisePayeeTotals
      *
      * @return the payees
      */
-    public List<MoneyWisePayeeBucket> getPayees() {
+    public List<MoneyWiseXPayeeBucket> getPayees() {
         return thePayees;
     }
 
@@ -124,11 +124,11 @@ public class MoneyWisePayeeTotals
      * @param pTotals the totals
      * @param pDelta the delta
      */
-    static void addToTotals(final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> pTotals,
-                            final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> pDelta) {
-        addToTotals(pTotals, pDelta, MoneyWiseIncomeAttr.INCOME);
-        addToTotals(pTotals, pDelta, MoneyWiseIncomeAttr.EXPENSE);
-        addToTotals(pTotals, pDelta, MoneyWiseIncomeAttr.PROFIT);
+    static void addToTotals(final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> pTotals,
+                            final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> pDelta) {
+        addToTotals(pTotals, pDelta, MoneyWiseXIncomeAttr.INCOME);
+        addToTotals(pTotals, pDelta, MoneyWiseXIncomeAttr.EXPENSE);
+        addToTotals(pTotals, pDelta, MoneyWiseXIncomeAttr.PROFIT);
     }
 
     /**
@@ -137,9 +137,9 @@ public class MoneyWisePayeeTotals
      * @param pDelta the delta
      * @param pAttr the attribute
      */
-    private static void addToTotals(final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> pTotals,
-                                    final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> pDelta,
-                                    final MoneyWiseIncomeAttr pAttr) {
+    private static void addToTotals(final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> pTotals,
+                                    final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> pDelta,
+                                    final MoneyWiseXIncomeAttr pAttr) {
         final TethysMoney myTotals = pTotals.getMoneyValue(pAttr);
         final TethysMoney myDelta = pDelta.getMoneyValue(pAttr);
         myTotals.addAmount(myDelta);

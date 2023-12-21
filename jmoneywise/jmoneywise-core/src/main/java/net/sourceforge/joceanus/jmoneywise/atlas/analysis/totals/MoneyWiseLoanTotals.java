@@ -24,11 +24,11 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAccountAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseLoanBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXLoanBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 
@@ -54,12 +54,12 @@ public class MoneyWiseLoanTotals
     /**
      * The top-level totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> theTotals;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> theTotals;
 
     /**
      * The top-level initial totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> theInitial;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> theInitial;
 
     /**
      * The categories.
@@ -70,16 +70,16 @@ public class MoneyWiseLoanTotals
      * Constructor.
      * @param pAnalysis the analysis
      */
-    MoneyWiseLoanTotals(final MoneyWiseAnalysis pAnalysis) {
+    MoneyWiseLoanTotals(final MoneyWiseXAnalysis pAnalysis) {
         /* Create fields */
         final AssetCurrency myCurrency = pAnalysis.getReportingCurrency();
-        theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, myCurrency);
-        theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, myCurrency);
+        theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXAccountAttr.class, myCurrency);
+        theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXAccountAttr.class, myCurrency);
         theCategories = new ArrayList<>();
 
         /* Loop through the loan buckets */
         final Map<Integer, MoneyWiseLoanCategoryTotals> myMap = new HashMap<>();
-        for (MoneyWiseLoanBucket myBucket : pAnalysis.getLoans().values()) {
+        for (MoneyWiseXLoanBucket myBucket : pAnalysis.getLoans().values()) {
             /* Add to category totals */
             final LoanCategory myCategory = myBucket.getOwner().getCategory();
             final MoneyWiseLoanCategoryTotals myTotals = myMap.computeIfAbsent(myCategory.getId(),
@@ -106,7 +106,7 @@ public class MoneyWiseLoanTotals
      * Obtain the totals.
      * @return the totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseAccountAttr> getTotals() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> getTotals() {
         return theTotals;
     }
 
@@ -114,7 +114,7 @@ public class MoneyWiseLoanTotals
      * Obtain the initial.
      * @return the initial totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseAccountAttr> getInitial() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> getInitial() {
         return theInitial;
     }
 
@@ -159,17 +159,17 @@ public class MoneyWiseLoanTotals
         /**
          * The category totals.
          */
-        private final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> theTotals;
+        private final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> theTotals;
 
         /**
          * The category initial totals.
          */
-        private final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> theInitial;
+        private final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> theInitial;
 
         /**
          * The loan buckets.
          */
-        private final List<MoneyWiseLoanBucket> theBuckets;
+        private final List<MoneyWiseXLoanBucket> theBuckets;
 
         /**
          * Constructor.
@@ -179,8 +179,8 @@ public class MoneyWiseLoanTotals
         MoneyWiseLoanCategoryTotals(final LoanCategory pCategory,
                                     final AssetCurrency pCurrency) {
             theCategory = pCategory;
-            theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, pCurrency);
-            theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, pCurrency);
+            theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXAccountAttr.class, pCurrency);
+            theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXAccountAttr.class, pCurrency);
             theBuckets = new ArrayList<>();
         }
 
@@ -196,7 +196,7 @@ public class MoneyWiseLoanTotals
          * Obtain the totals.
          * @return the totals
          */
-        public MoneyWiseAnalysisValues<MoneyWiseAccountAttr> getTotals() {
+        public MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> getTotals() {
             return theTotals;
         }
 
@@ -204,7 +204,7 @@ public class MoneyWiseLoanTotals
          * Obtain the initial.
          * @return the initial totals
          */
-        public MoneyWiseAnalysisValues<MoneyWiseAccountAttr> getInitial() {
+        public MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> getInitial() {
             return theInitial;
         }
 
@@ -212,7 +212,7 @@ public class MoneyWiseLoanTotals
          * Obtain the loan buckets.
          * @return the buckets
          */
-        public List<MoneyWiseLoanBucket> getBuckets() {
+        public List<MoneyWiseXLoanBucket> getBuckets() {
             return theBuckets;
         }
 
@@ -225,7 +225,7 @@ public class MoneyWiseLoanTotals
          * Add bucket.
          * @param pBucket the bucket
          */
-        void addBucket(final MoneyWiseLoanBucket pBucket) {
+        void addBucket(final MoneyWiseXLoanBucket pBucket) {
             MoneyWiseAssetTotals.addToTotals(theTotals, pBucket.getValues());
             MoneyWiseAssetTotals.addToTotals(theInitial, pBucket.getInitial());
             theBuckets.add(pBucket);
@@ -235,7 +235,7 @@ public class MoneyWiseLoanTotals
          * Sort the list.
          */
         void sortTheList() {
-            theBuckets.sort(Comparator.comparing(MoneyWiseAnalysisBucket::getOwner));
+            theBuckets.sort(Comparator.comparing(MoneyWiseXAnalysisBucket::getOwner));
         }
     }
 }

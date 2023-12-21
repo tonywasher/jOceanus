@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.jmoneywise.atlas.analysis.totals;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAccountAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -49,12 +49,12 @@ public class MoneyWiseAssetTotals
     /**
      * The top-level totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> theTotals;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> theTotals;
 
     /**
      * The initial totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> theInitial;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> theInitial;
 
     /**
      * The deposit totals.
@@ -80,11 +80,11 @@ public class MoneyWiseAssetTotals
      * Constructor.
      * @param pAnalysis the analysis
      */
-    MoneyWiseAssetTotals(final MoneyWiseAnalysis pAnalysis) {
+    MoneyWiseAssetTotals(final MoneyWiseXAnalysis pAnalysis) {
         /* Create fields */
         final AssetCurrency myCurrency = pAnalysis.getReportingCurrency();
-        theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, myCurrency);
-        theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, myCurrency);
+        theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXAccountAttr.class, myCurrency);
+        theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXAccountAttr.class, myCurrency);
         theDeposits = new MoneyWiseDepositTotals(pAnalysis);
         theCash = new MoneyWiseCashTotals(pAnalysis);
         thePortfolios = new MoneyWisePortfolioTotals(pAnalysis);
@@ -98,7 +98,7 @@ public class MoneyWiseAssetTotals
      * Obtain the totals.
      * @return the totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseAccountAttr> getTotals() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> getTotals() {
         return theTotals;
     }
 
@@ -106,7 +106,7 @@ public class MoneyWiseAssetTotals
      * Obtain the initial totals.
      * @return the initial totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseAccountAttr> getInitial() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> getInitial() {
         return theInitial;
     }
 
@@ -169,10 +169,10 @@ public class MoneyWiseAssetTotals
      * @param pTotals the totals
      * @param pDelta the delta
      */
-    static void addToTotals(final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> pTotals,
-                            final MoneyWiseAnalysisValues<MoneyWiseAccountAttr> pDelta) {
-        final TethysMoney myTotals = pTotals.getMoneyValue(MoneyWiseAccountAttr.VALUATION);
-        final TethysMoney myDelta = pDelta.getMoneyValue(MoneyWiseAccountAttr.VALUATION);
+    static void addToTotals(final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> pTotals,
+                            final MoneyWiseXAnalysisValues<MoneyWiseXAccountAttr> pDelta) {
+        final TethysMoney myTotals = pTotals.getMoneyValue(MoneyWiseXAccountAttr.VALUATION);
+        final TethysMoney myDelta = pDelta.getMoneyValue(MoneyWiseXAccountAttr.VALUATION);
         myTotals.addAmount(myDelta);
     }
 }

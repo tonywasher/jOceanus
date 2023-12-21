@@ -24,10 +24,10 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseIncomeAttr;
-import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseTransactionBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseXAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXIncomeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.data.MoneyWiseXTransactionBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 
@@ -53,12 +53,12 @@ public class MoneyWiseTransTotals
     /**
      * The top-level totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> theTotals;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> theTotals;
 
     /**
      * The initial totals.
      */
-    private final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> theInitial;
+    private final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> theInitial;
 
     /**
      * The categories.
@@ -69,16 +69,16 @@ public class MoneyWiseTransTotals
      * Constructor.
      * @param pAnalysis the analysis
      */
-    MoneyWiseTransTotals(final MoneyWiseAnalysis pAnalysis) {
+    MoneyWiseTransTotals(final MoneyWiseXAnalysis pAnalysis) {
         /* Create fields */
         final AssetCurrency myCurrency = pAnalysis.getReportingCurrency();
-        theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseIncomeAttr.class, myCurrency);
-        theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseIncomeAttr.class, myCurrency);
+        theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXIncomeAttr.class, myCurrency);
+        theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXIncomeAttr.class, myCurrency);
         theCategories = new ArrayList<>();
 
         /* Loop through the transaction buckets */
         final Map<Integer, MoneyWiseTransCategoryTotals> myMap = new HashMap<>();
-        for (MoneyWiseTransactionBucket myBucket : pAnalysis.getTrans().values()) {
+        for (MoneyWiseXTransactionBucket myBucket : pAnalysis.getTrans().values()) {
             /* Add to category totals */
             final TransactionCategory myCategory = myBucket.getOwner();
             final MoneyWiseTransCategoryTotals myTotals = myMap.computeIfAbsent(myCategory.getId(),
@@ -115,7 +115,7 @@ public class MoneyWiseTransTotals
      * Obtain the totals.
      * @return the totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> getTotals() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> getTotals() {
         return theTotals;
     }
 
@@ -123,7 +123,7 @@ public class MoneyWiseTransTotals
      * Obtain the initial totals.
      * @return the initial totals
      */
-    public MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> getInitial() {
+    public MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> getInitial() {
         return theInitial;
     }
 
@@ -186,12 +186,12 @@ public class MoneyWiseTransTotals
         /**
          * The category totals.
          */
-        private final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> theTotals;
+        private final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> theTotals;
 
         /**
          * The category initial totals.
          */
-        private final MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> theInitial;
+        private final MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> theInitial;
 
         /**
          * The underlying categories.
@@ -201,7 +201,7 @@ public class MoneyWiseTransTotals
         /**
          * The explicit bucket.
          */
-        private MoneyWiseTransactionBucket theBucket;
+        private MoneyWiseXTransactionBucket theBucket;
 
         /**
          * Constructor.
@@ -211,8 +211,8 @@ public class MoneyWiseTransTotals
         MoneyWiseTransCategoryTotals(final TransactionCategory pCategory,
                                      final AssetCurrency pCurrency) {
             theCategory = pCategory;
-            theTotals = new MoneyWiseAnalysisValues<>(MoneyWiseIncomeAttr.class, pCurrency);
-            theInitial = new MoneyWiseAnalysisValues<>(MoneyWiseIncomeAttr.class, pCurrency);
+            theTotals = new MoneyWiseXAnalysisValues<>(MoneyWiseXIncomeAttr.class, pCurrency);
+            theInitial = new MoneyWiseXAnalysisValues<>(MoneyWiseXIncomeAttr.class, pCurrency);
             theCategories = new ArrayList<>();
         }
 
@@ -236,7 +236,7 @@ public class MoneyWiseTransTotals
          * Obtain the totals.
          * @return the totals
          */
-        public MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> getTotals() {
+        public MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> getTotals() {
             return theTotals;
         }
 
@@ -244,7 +244,7 @@ public class MoneyWiseTransTotals
          * Obtain the initial totals.
          * @return the initial totals
          */
-        public MoneyWiseAnalysisValues<MoneyWiseIncomeAttr> getInitial() {
+        public MoneyWiseXAnalysisValues<MoneyWiseXIncomeAttr> getInitial() {
             return theInitial;
         }
 
@@ -252,7 +252,7 @@ public class MoneyWiseTransTotals
          * Obtain the bucket.
          * @return the bucket
          */
-        public MoneyWiseTransactionBucket getBucket() {
+        public MoneyWiseXTransactionBucket getBucket() {
             return theBucket;
         }
 
@@ -273,7 +273,7 @@ public class MoneyWiseTransTotals
          * Set bucket.
          * @param pBucket the bucket
          */
-        void setBucket(final MoneyWiseTransactionBucket pBucket) {
+        void setBucket(final MoneyWiseXTransactionBucket pBucket) {
             theBucket = pBucket;
         }
 
