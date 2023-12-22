@@ -90,8 +90,8 @@ public class MoneyWiseAnalysisPortfolioCashBucket
      * @param pSource the source portfolio
      * @param pTrans the transaction helper
      */
-    protected void adjustForXfer(final MoneyWiseAnalysisPortfolioCashBucket pSource,
-                                 final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void adjustForXfer(final MoneyWiseAnalysisPortfolioCashBucket pSource,
+                              final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Access transfer amount */
         final MoneyWiseAnalysisAccountValues myValues = pSource.getValues();
         TethysMoney myAmount = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);

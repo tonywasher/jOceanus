@@ -445,8 +445,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
-                            final Object pValue) {
+    public void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
+                         final Object pValue) {
         /* Set the value into the list */
         theValues.setValue(pAttr, pValue);
     }
@@ -481,8 +481,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAttr the attribute
      * @param pDelta the delta
      */
-    protected void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
-                                 final TethysMoney pDelta) {
+    public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
+                              final TethysMoney pDelta) {
         TethysMoney myValue = theValues.getMoneyValue(pAttr);
         myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
@@ -494,8 +494,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAttr the attribute
      * @param pDelta the delta
      */
-    protected void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
-                                 final TethysUnits pDelta) {
+    public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
+                              final TethysUnits pDelta) {
         TethysUnits myValue = theValues.getUnitsValue(pAttr);
         myValue = new TethysUnits(myValue);
         myValue.addUnits(pDelta);
@@ -507,7 +507,7 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pHelper the helper
      * @return the registered values
      */
-    protected MoneyWiseAnalysisSecurityValues registerTransaction(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public MoneyWiseAnalysisSecurityValues registerTransaction(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Register the event in the history */
         return theHistory.registerTransaction(pHelper.getTransaction(), theValues);
     }
@@ -722,7 +722,7 @@ public final class MoneyWiseAnalysisSecurityBucket
      * Adjust security for natInsurance payments.
      * @param pTrans the transaction causing the payments
      */
-    protected void adjustForNIPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void adjustForNIPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Assume no NatInsurance */
         TethysMoney myAmount = null;
 

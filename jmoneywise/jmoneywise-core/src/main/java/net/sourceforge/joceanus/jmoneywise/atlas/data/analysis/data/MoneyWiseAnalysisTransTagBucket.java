@@ -416,8 +416,8 @@ public final class MoneyWiseAnalysisTransTagBucket
          * @param pTrans the transaction
          * @param pIterator the transaction tag iterator
          */
-        protected void processTransaction(final MoneyWiseTransaction pTrans,
-                                          final Iterator<MoneyWiseTransTag> pIterator) {
+        public void processTransaction(final MoneyWiseTransaction pTrans,
+                                       final Iterator<MoneyWiseTransTag> pIterator) {
             /* Loop through the tags */
             while (pIterator.hasNext()) {
                 final MoneyWiseTransTag myTag = pIterator.next();

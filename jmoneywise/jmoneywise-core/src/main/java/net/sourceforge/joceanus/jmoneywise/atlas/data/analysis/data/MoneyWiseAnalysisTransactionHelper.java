@@ -77,7 +77,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Constructor.
      * @param pData the dataSet
      */
-    protected MoneyWiseAnalysisTransactionHelper(final MoneyWiseDataSet pData) {
+    public MoneyWiseAnalysisTransactionHelper(final MoneyWiseDataSet pData) {
         /* Create the cursors */
         theRateCursor = new MoneyWiseAnalysisExchangeRateCursor(pData);
         thePriceCursor = new MoneyWiseAnalysisSecurityPriceCursor(pData);
@@ -90,7 +90,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain transaction.
      * @return the transaction
      */
-    protected MoneyWiseTransaction getTransaction() {
+    public MoneyWiseTransaction getTransaction() {
         return theCurrent;
     }
 
@@ -98,7 +98,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Set the transaction.
      * @param pTrans the transaction.
      */
-    protected void setTransaction(final MoneyWiseTransaction pTrans) {
+    public void setTransaction(final MoneyWiseTransaction pTrans) {
         /* Record date */
         theCurrent = pTrans;
         theDate = theCurrent.getDate();
@@ -112,7 +112,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Set the security (for PortfolioXfer).
      * @param pSecurity the security.
      */
-    protected void setSecurity(final MoneyWiseSecurity pSecurity) {
+    public void setSecurity(final MoneyWiseSecurity pSecurity) {
         final MoneyWiseCurrency myCurr = pSecurity.getAssetCurrency();
         final boolean isForeign = !MetisDataDifference.isEqual(myCurr, theCurrency);
         theDebitXchangeRate = isForeign ? theRateCursor.getExchangeRate(myCurr, theDate) : null;

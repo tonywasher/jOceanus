@@ -290,7 +290,7 @@ public final class MoneyWiseAnalysisCashCategoryBucket
          * Build categories.
          * @param pCash the cash account buckets
          */
-        protected void buildCategories(final MoneyWiseAnalysisCashBucketList pCash) {
+        public void buildCategories(final MoneyWiseAnalysisCashBucketList pCash) {
             /* Loop through the buckets */
             final Iterator<MoneyWiseAnalysisCashBucket> myIterator = pCash.iterator();
             while (myIterator.hasNext()) {

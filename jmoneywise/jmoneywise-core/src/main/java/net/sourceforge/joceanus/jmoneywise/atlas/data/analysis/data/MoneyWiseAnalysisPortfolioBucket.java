@@ -393,7 +393,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pHolding the security holding
      * @return the bucket
      */
-    protected MoneyWiseAnalysisSecurityBucket getSecurityBucket(final MoneyWiseSecurityHolding pHolding) {
+    public MoneyWiseAnalysisSecurityBucket getSecurityBucket(final MoneyWiseSecurityHolding pHolding) {
         /* Return the security bucket for the portfolio's list */
         return theSecurities.getBucket(pHolding);
     }
@@ -1018,7 +1018,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * Mark active securities.
          * @throws OceanusException on error
          */
-        protected void markActiveSecurities() throws OceanusException {
+        public void markActiveSecurities() throws OceanusException {
             /* Loop through the portfolio buckets */
             final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = iterator();
             while (myIterator.hasNext()) {

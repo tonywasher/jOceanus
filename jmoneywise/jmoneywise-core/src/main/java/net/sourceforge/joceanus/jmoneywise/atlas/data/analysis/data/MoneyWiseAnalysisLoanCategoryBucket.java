@@ -290,7 +290,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
          * Build categories.
          * @param pLoans the loan account buckets
          */
-        protected void buildCategories(final MoneyWiseAnalysisLoanBucketList pLoans) {
+        public void buildCategories(final MoneyWiseAnalysisLoanBucketList pLoans) {
             /* Loop through the buckets */
             final Iterator<MoneyWiseAnalysisLoanBucket> myIterator = pLoans.iterator();
             while (myIterator.hasNext()) {

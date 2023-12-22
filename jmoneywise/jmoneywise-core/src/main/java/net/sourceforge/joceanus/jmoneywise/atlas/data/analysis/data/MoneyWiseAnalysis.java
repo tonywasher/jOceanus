@@ -186,8 +186,8 @@ public class MoneyWiseAnalysis
      * @param pData the data to analyse events for
      * @param pPreferenceMgr the preference manager
      */
-    protected MoneyWiseAnalysis(final MoneyWiseDataSet pData,
-                                final MetisPreferenceManager pPreferenceMgr) {
+    public MoneyWiseAnalysis(final MoneyWiseDataSet pData,
+                             final MetisPreferenceManager pPreferenceMgr) {
         /* Store the data */
         theData = pData;
         theCurrency = pData.getDefaultCurrency();
@@ -222,7 +222,7 @@ public class MoneyWiseAnalysis
      * Constructor for a view analysis.
      * @param pSource the base analysis
      */
-    protected MoneyWiseAnalysis(final MoneyWiseAnalysis pSource) {
+    public MoneyWiseAnalysis(final MoneyWiseAnalysis pSource) {
         /* Store the data */
         theData = pSource.getData();
         theCurrency = pSource.getCurrency();
@@ -261,8 +261,8 @@ public class MoneyWiseAnalysis
      * @param pManager the analysis manager
      * @param pDate the date for the analysis
      */
-    protected MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
-                                final TethysDate pDate) {
+    public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
+                             final TethysDate pDate) {
         /* Store the data */
         final MoneyWiseAnalysis myBase = pManager.getAnalysis();
         theData = myBase.getData();
@@ -299,8 +299,8 @@ public class MoneyWiseAnalysis
      * @param pManager the analysis manager
      * @param pRange the range for the analysis
      */
-    protected MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
-                                final TethysDateRange pRange) {
+    public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
+                             final TethysDateRange pRange) {
         /* Store the data */
         final MoneyWiseAnalysis myBase = pManager.getAnalysis();
         theData = myBase.getData();
@@ -519,7 +519,7 @@ public class MoneyWiseAnalysis
      * Add opening balances for accounts.
      * @param pHelper the transaction helper
      */
-    protected void addOpeningBalances(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void addOpeningBalances(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Iterate through the deposits */
         final Iterator<MoneyWiseDeposit> myDepIterator = theData.getDeposits().iterator();
         while (myDepIterator.hasNext()) {

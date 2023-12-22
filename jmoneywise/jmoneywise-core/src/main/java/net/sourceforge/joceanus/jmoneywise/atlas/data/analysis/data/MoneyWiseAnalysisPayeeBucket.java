@@ -346,7 +346,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Adjust account for debit.
      * @param pTrans the transaction helper
      */
-    protected void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Access the class */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
         final boolean isIncome = myClass.isIncome();
@@ -472,7 +472,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Adjust account for credit.
      * @param pTrans the transaction helper
      */
-    protected void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Analyse the transaction */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
         final boolean isExpense = !myClass.isIncome();
@@ -533,7 +533,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Adjust account for tax credit.
      * @param pTrans the transaction helper
      */
-    protected void adjustForTaxCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void adjustForTaxCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Access amount */
         final TethysMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred.isNonZero()) {
@@ -555,7 +555,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Adjust account for tax payments.
      * @param pTrans the transaction causing the payments
      */
-    protected void adjustForTaxPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void adjustForTaxPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Determine transaction type */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
         TethysMoney myAmount = null;
@@ -585,7 +585,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Register the transaction.
      * @param pTrans the transaction helper
      */
-    protected void registerTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    public void registerTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Register the transaction in the history */
         theHistory.registerTransaction(pTrans.getTransaction(), theValues);
     }
@@ -594,7 +594,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Add income value.
      * @param pValue the value to add
      */
-    protected void addIncome(final TethysMoney pValue) {
+    public void addIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, pValue);
@@ -605,7 +605,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Subtract income value.
      * @param pValue the value to subtract
      */
-    protected void subtractIncome(final TethysMoney pValue) {
+    public void subtractIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             final TethysMoney myIncome = new TethysMoney(pValue);
@@ -619,8 +619,8 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pTrans the transaction causing the expense
      * @param pValue the value to add
      */
-    protected void addExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                              final TethysMoney pValue) {
+    public void addExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                           final TethysMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
@@ -632,7 +632,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Add expense value.
      * @param pValue the value to add
      */
-    protected void addExpense(final TethysMoney pValue) {
+    public void addExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, pValue);
@@ -644,8 +644,8 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pTrans the transaction causing the expense
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                   final TethysMoney pValue) {
+    public void subtractExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                final TethysMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
@@ -657,7 +657,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Subtract expense value.
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final TethysMoney pValue) {
+    public void subtractExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             final TethysMoney myExpense = new TethysMoney(pValue);
@@ -952,7 +952,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          * @param pPayee the payee
          * @return the bucket
          */
-        protected MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWiseAssetBase pPayee) {
+        public MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWiseAssetBase pPayee) {
             /* Handle null payee */
             if (pPayee == null) {
                 return null;
@@ -982,7 +982,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          * @param pClass the account category class
          * @return the bucket
          */
-        protected MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWisePayeeClass pClass) {
+        public MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWisePayeeClass pClass) {
             /* Determine required payee */
             final MoneyWisePayee myPayee = theData.getPayees().getSingularClass(pClass);
 

@@ -1244,8 +1244,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pTrans the transaction
          * @param isExpense true/false
          */
-        protected void adjustAutoExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                         final boolean isExpense) {
+        public void adjustAutoExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                      final boolean isExpense) {
             /* Determine value */
             TethysMoney myAmount = pTrans.getLocalAmount();
             if (!isExpense) {
@@ -1279,8 +1279,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pTrans the transaction
          * @param pGain the gain
          */
-        protected void recordChargeableGain(final MoneyWiseTransaction pTrans,
-                                            final TethysMoney pGain) {
+        public void recordChargeableGain(final MoneyWiseTransaction pTrans,
+                                         final TethysMoney pGain) {
             /* record the chargeable gain */
             theCharges.addTransaction(pTrans, pGain);
         }

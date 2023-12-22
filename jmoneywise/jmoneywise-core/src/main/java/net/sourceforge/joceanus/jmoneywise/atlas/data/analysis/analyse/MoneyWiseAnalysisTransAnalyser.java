@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -24,19 +24,29 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisAccountBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDilutionEvent.MoneyWiseAnalysisDilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransactionHelper;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash;
@@ -201,7 +211,7 @@ public class MoneyWiseAnalysisTransAnalyser
         final TethysProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
-        theHoldingMap = pData.getSecurityHoldingsMap();
+        theHoldingMap = pData.getPortfolios().getSecurityHoldingsMap();
         thePriceMap = pData.getSecurityPriceDataMap();
 
         /* Access the lists */
@@ -276,7 +286,7 @@ public class MoneyWiseAnalysisTransAnalyser
         /* Store the parameters */
         theAnalysis = new MoneyWiseAnalysis(pAnalysis);
         final MoneyWiseDataSet myData = theAnalysis.getData();
-        theHoldingMap = myData.getSecurityHoldingsMap();
+        theHoldingMap = myData.getPortfolios().getSecurityHoldingsMap();
         thePriceMap = myData.getSecurityPriceDataMap();
 
         /* Create new helper */
@@ -347,7 +357,7 @@ public class MoneyWiseAnalysisTransAnalyser
         /* If they exist, access the bucket */
         if (myPensionPort != null
                 && myStatePension != null) {
-            final MoneyWiseSecurityHolding myHolding = pData.getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
+            final MoneyWiseSecurityHolding myHolding = pData.getPortfolios().getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
             return thePortfolioBuckets.getBucket(myHolding);
         }
 

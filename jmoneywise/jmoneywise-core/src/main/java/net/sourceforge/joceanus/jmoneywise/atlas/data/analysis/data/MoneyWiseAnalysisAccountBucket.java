@@ -437,7 +437,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * Adjust account for debit.
      * @param pHelper the transaction helper
      */
-    protected void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Access event amount */
         TethysMoney myAmount = pHelper.getDebitAmount();
 
@@ -484,7 +484,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * Adjust account for credit.
      * @param pHelper the transaction helper
      */
-    protected void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Access event amount */
         final TethysMoney myAmount = pHelper.getCreditAmount();
 
@@ -527,7 +527,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * Adjust account for credit.
      * @param pHelper the transaction helper
      */
-    protected void adjustForReturnedCashCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void adjustForReturnedCashCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Access event amount */
         final TethysMoney myAmount = pHelper.getReturnedCash();
 
@@ -604,7 +604,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * Register the transaction.
      * @param pHelper the transaction helper
      */
-    protected void registerTransaction(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void registerTransaction(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Register the transaction in the history */
         theHistory.registerTransaction(pHelper.getTransaction(), theValues);
     }
@@ -613,7 +613,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * Register the transaction.
      * @param pTrans the transaction
      */
-    protected void registerTransaction(final MoneyWiseTransaction pTrans) {
+    public void registerTransaction(final MoneyWiseTransaction pTrans) {
         /* Register the transaction in the history */
         theHistory.registerTransaction(pTrans, theValues);
     }
@@ -950,7 +950,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          * @param pAccount the account
          * @return the bucket
          */
-        protected B getBucket(final T pAccount) {
+        public B getBucket(final T pAccount) {
             /* Locate the bucket in the list */
             B myItem = findItemById(pAccount.getIndexedId());
 
@@ -985,7 +985,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          * Mark active accounts.
          * @throws OceanusException on error
          */
-        protected void markActiveAccounts() throws OceanusException {
+        public void markActiveAccounts() throws OceanusException {
             /* Loop through the buckets */
             final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {

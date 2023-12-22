@@ -359,8 +359,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pTrans the transaction helper
      * @param pValue the value to add
      */
-    protected void addIncome(final MoneyWiseAnalysisTransactionHelper pTrans,
-                             final TethysMoney pValue) {
+    public void addIncome(final MoneyWiseAnalysisTransactionHelper pTrans,
+                          final TethysMoney pValue) {
         /* Add the expense */
         addIncome(pValue);
 
@@ -372,7 +372,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Add income value.
      * @param pValue the value to add
      */
-    protected void addIncome(final TethysMoney pValue) {
+    public void addIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseAnalysisTransAttr.INCOME, pValue);
@@ -383,7 +383,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Subtract income value.
      * @param pValue the value to subtract
      */
-    protected void subtractIncome(final TethysMoney pValue) {
+    public void subtractIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             final TethysMoney myIncome = new TethysMoney(pValue);
@@ -397,8 +397,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pTrans the transaction helper
      * @param pValue the value to add
      */
-    protected void addExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                              final TethysMoney pValue) {
+    public void addExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                           final TethysMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
@@ -410,7 +410,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Add expense value.
      * @param pValue the value to add
      */
-    protected void addExpense(final TethysMoney pValue) {
+    public void addExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseAnalysisTransAttr.EXPENSE, pValue);
@@ -422,8 +422,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pTrans the transaction causing the expense
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                   final TethysMoney pValue) {
+    public void subtractExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                final TethysMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
@@ -435,7 +435,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Subtract expense value.
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final TethysMoney pValue) {
+    public void subtractExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             final TethysMoney myExpense = new TethysMoney(pValue);
@@ -941,7 +941,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pCategory the transaction category
          * @return the bucket
          */
-        protected MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategory pCategory) {
+        public MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategory pCategory) {
             /* Handle null category */
             if (pCategory == null) {
                 throw new IllegalArgumentException();
@@ -968,7 +968,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pClass the transaction category class
          * @return the bucket
          */
-        protected MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategoryClass pClass) {
+        public MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine required category */
             final MoneyWiseTransCategory myCategory = theData.getTransCategories().getSingularClass(pClass);
 
@@ -1005,8 +1005,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pTrans the transaction helper
          * @param pCategory primary category
          */
-        protected void adjustCategories(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                        final MoneyWiseTransCategory pCategory) {
+        public void adjustCategories(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                     final MoneyWiseTransCategory pCategory) {
             /* Adjust the primary category bucket */
             final MoneyWiseAnalysisTransCategoryBucket myCatBucket = getBucket(pCategory);
 
@@ -1077,9 +1077,9 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pSource the source security holding
          * @param pGains the gains
          */
-        protected void adjustStandardGain(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                          final MoneyWiseSecurityHolding pSource,
-                                          final TethysMoney pGains) {
+        public void adjustStandardGain(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                       final MoneyWiseSecurityHolding pSource,
+                                       final TethysMoney pGains) {
             /* Access security and portfolio */
             final MoneyWiseSecurity mySecurity = pSource.getSecurity();
             final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
@@ -1107,8 +1107,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pTrans the transaction helper
          * @param pReduction the income reduction
          */
-        protected void adjustChargeableGain(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                            final TethysMoney pReduction) {
+        public void adjustChargeableGain(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                         final TethysMoney pReduction) {
             /* Adjust Taxable Gains */
             theChargeableGains.subtractIncome(pReduction);
             theChargeableGains.adjustValues(pTrans);

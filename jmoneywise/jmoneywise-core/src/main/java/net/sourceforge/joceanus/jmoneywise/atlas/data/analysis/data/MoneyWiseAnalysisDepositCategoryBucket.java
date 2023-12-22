@@ -234,7 +234,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
          * @param pCategory the category
          * @return the bucket
          */
-        protected MoneyWiseAnalysisDepositCategoryBucket getBucket(final MoneyWiseDepositCategory pCategory) {
+        public MoneyWiseAnalysisDepositCategoryBucket getBucket(final MoneyWiseDepositCategory pCategory) {
             /* Locate the bucket in the list */
             MoneyWiseAnalysisDepositCategoryBucket myItem = findItemById(pCategory.getIndexedId());
 
@@ -290,7 +290,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
          * Build categories.
          * @param pDeposits the deposit account buckets
          */
-        protected void buildCategories(final MoneyWiseAnalysisDepositBucketList pDeposits) {
+        public void buildCategories(final MoneyWiseAnalysisDepositBucketList pDeposits) {
             /* Loop through the buckets */
             final Iterator<MoneyWiseAnalysisDepositBucket> myIterator = pDeposits.iterator();
             while (myIterator.hasNext()) {

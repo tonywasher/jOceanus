@@ -198,7 +198,7 @@ public final class MoneyWiseAnalysisDepositBucket
     }
 
     @Override
-    protected void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
         if (isPeer2Peer
                 && isBadDebt(pHelper)) {
@@ -218,7 +218,7 @@ public final class MoneyWiseAnalysisDepositBucket
     }
 
     @Override
-    protected void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
         if (isPeer2Peer
                 && isBadDebt(pHelper)) {

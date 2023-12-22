@@ -359,7 +359,7 @@ public final class MoneyWiseAnalysisDilutionEvent
          * Add Dilution Event to Map.
          * @param pTrans the base transaction
          */
-        protected void addDilution(final MoneyWiseTransaction pTrans) {
+        public void addDilution(final MoneyWiseTransaction pTrans) {
             /* Create the dilution event */
             final MoneyWiseAnalysisDilutionEvent myDilution = new MoneyWiseAnalysisDilutionEvent(theNextId++, pTrans);
 

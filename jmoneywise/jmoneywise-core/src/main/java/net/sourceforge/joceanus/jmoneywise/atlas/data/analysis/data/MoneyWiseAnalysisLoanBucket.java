@@ -160,7 +160,7 @@ public final class MoneyWiseAnalysisLoanBucket
     }
 
     @Override
-    protected void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a credit card */
         if (isCreditCard) {
             /* Access the amount */
