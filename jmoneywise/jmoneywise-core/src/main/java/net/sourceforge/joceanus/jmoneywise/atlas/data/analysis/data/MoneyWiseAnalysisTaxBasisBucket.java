@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDat
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxSource;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -635,7 +635,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      */
     protected void adjustValue(final MoneyWiseAnalysisTransactionHelper pTrans,
                                final TethysMoney pValue,
-                               final TaxBasisAdjust pAdjust) {
+                               final MoneyWiseTaxBasisAdjust pAdjust) {
         /* Adjust the value */
         adjustValue(pValue, pAdjust);
 
@@ -655,7 +655,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pAdjust adjustment control
      */
     protected void adjustValue(final TethysMoney pValue,
-                               final TaxBasisAdjust pAdjust) {
+                               final MoneyWiseTaxBasisAdjust pAdjust) {
         /* If we are adjusting Gross */
         if (pAdjust.adjustGross()) {
             /* Access the existing value */
@@ -732,7 +732,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
     /**
      * Value adjust Modes.
      */
-    protected enum TaxBasisAdjust {
+    protected enum MoneyWiseTaxBasisAdjust {
         /**
          * Adjust both Gross and Nett.
          */
@@ -1208,7 +1208,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                                    final TethysMoney pIncome) {
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            myBucket.adjustValue(pTrans, pIncome, TaxBasisAdjust.STANDARD);
+            myBucket.adjustValue(pTrans, pIncome, MoneyWiseTaxBasisAdjust.STANDARD);
         }
 
         /**
@@ -1222,7 +1222,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                                         final TethysMoney pIncome) {
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            myBucket.adjustValue(pTrans, pIncome, TaxBasisAdjust.GROSS);
+            myBucket.adjustValue(pTrans, pIncome, MoneyWiseTaxBasisAdjust.GROSS);
         }
 
         /**
@@ -1236,7 +1236,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                                        final TethysMoney pIncome) {
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            myBucket.adjustValue(pTrans, pIncome, TaxBasisAdjust.NETT);
+            myBucket.adjustValue(pTrans, pIncome, MoneyWiseTaxBasisAdjust.NETT);
         }
 
         /**
@@ -1255,7 +1255,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
 
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(MoneyWiseTaxClass.EXPENSE);
-            myBucket.adjustValue(pTrans, myAmount, TaxBasisAdjust.STANDARD);
+            myBucket.adjustValue(pTrans, myAmount, MoneyWiseTaxBasisAdjust.STANDARD);
         }
 
         /**
@@ -1271,7 +1271,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
 
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(MoneyWiseTaxClass.MARKET);
-            myBucket.adjustValue(myDelta, TaxBasisAdjust.STANDARD);
+            myBucket.adjustValue(myDelta, MoneyWiseTaxBasisAdjust.STANDARD);
         }
 
         /**

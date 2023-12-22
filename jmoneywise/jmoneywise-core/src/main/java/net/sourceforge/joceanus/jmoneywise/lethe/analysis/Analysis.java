@@ -43,10 +43,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxAnalysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYear;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxYear;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -93,7 +93,7 @@ public class Analysis
     /**
      * The taxYear cache.
      */
-    private final MoneyWiseTaxYearCache theTaxYearCache;
+    private final MoneyWiseXTaxYearCache theTaxYearCache;
 
     /**
      * The Currency.
@@ -168,7 +168,7 @@ public class Analysis
     /**
      * The new tax calculations.
      */
-    private final MoneyWiseTaxAnalysis theTaxAnalysis;
+    private final MoneyWiseXTaxAnalysis theTaxAnalysis;
 
     /**
      * The dilutions.
@@ -194,7 +194,7 @@ public class Analysis
         theDateRange = theData.getDateRange();
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseXUKTaxYearCache) theData.getTaxFactory();
 
         /* Create a new set of buckets */
         theDeposits = new DepositBucketList(this);
@@ -229,7 +229,7 @@ public class Analysis
         theDateRange = pSource.getDateRange();
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseXUKTaxYearCache) theData.getTaxFactory();
 
         /* Access the underlying maps/lists */
         final TethysDate myStart = theDateRange.getStart();
@@ -270,7 +270,7 @@ public class Analysis
         theDateRange = new TethysDateRange(theData.getDateRange().getStart(), pDate);
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseXUKTaxYearCache) theData.getTaxFactory();
 
         /* Access the underlying maps/lists */
         theDilutions = myBase.getDilutions();
@@ -308,7 +308,7 @@ public class Analysis
         theDateRange = pRange;
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseXUKTaxYearCache) theData.getTaxFactory();
 
         /* Access the underlying maps/lists */
         theDilutions = myBase.getDilutions();
@@ -330,7 +330,7 @@ public class Analysis
         theLoanCategories = new LoanCategoryBucketList(this);
 
         /* Handle new tax calculations */
-        final MoneyWiseTaxYear myYear = theTaxYearCache.findTaxYearForRange(theDateRange);
+        final MoneyWiseXTaxYear myYear = theTaxYearCache.findTaxYearForRange(theDateRange);
         theTaxAnalysis = myYear != null
                                         ? myYear.analyseTaxYear(thePreferences, theTaxBasis)
                                         : null;
@@ -366,7 +366,7 @@ public class Analysis
      * Obtain the currency.
      * @return the currency
      */
-    private MoneyWiseTaxYearCache getTaxYearCache() {
+    private MoneyWiseXTaxYearCache getTaxYearCache() {
         return theTaxYearCache;
     }
 
@@ -494,7 +494,7 @@ public class Analysis
      * Obtain the tax analysis.
      * @return the analysis
      */
-    public MoneyWiseTaxAnalysis getTaxAnalysis() {
+    public MoneyWiseXTaxAnalysis getTaxAnalysis() {
         return theTaxAnalysis;
     }
 

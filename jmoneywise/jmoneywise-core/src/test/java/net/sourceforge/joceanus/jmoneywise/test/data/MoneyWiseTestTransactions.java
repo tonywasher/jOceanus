@@ -17,15 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseCashBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseDepositBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseLoanBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePayeeBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePortfolioBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityPriceBuilder;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseTransactionBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -33,9 +25,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class MoneyWiseTestTransactions {
     /**
-     * SecurityPriceBuilder.
+     * TrasnactionBuilder.
      */
     private final MoneyWiseTransactionBuilder theTransBuilder;
+
+    /**
+     * The dataSet.
+     */
     private final MoneyWiseDataSet theData;
 
     /**

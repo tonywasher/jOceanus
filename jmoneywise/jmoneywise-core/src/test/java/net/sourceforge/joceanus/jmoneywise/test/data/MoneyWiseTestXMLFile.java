@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Assertions;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -68,7 +68,7 @@ public class MoneyWiseTestXMLFile {
         final byte[] myBytes = myZipStream.toByteArray();
 
         /* Create the new dataSet */
-        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseXUKTaxYearCache());
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);

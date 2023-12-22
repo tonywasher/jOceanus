@@ -58,6 +58,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag;
@@ -67,7 +68,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePayeeClas
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseCashType;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -574,7 +575,11 @@ public class MoneyWiseAnalysisTransAnalyser
             /* Unknown combination */
         } else {
             throw new MoneyWiseLogicException("Invalid Asset Pair: "
-                    + pTrans.getAssetPair());
+                    + pTrans.getAccount().getAssetType()
+                    + " "
+                    + pTrans.getDirection()
+                    + " "
+                    + pTrans.getPartner().getAssetType());
         }
     }
 

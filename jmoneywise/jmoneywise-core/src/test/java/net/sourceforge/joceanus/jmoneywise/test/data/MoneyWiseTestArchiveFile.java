@@ -18,8 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.test.data;
 
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.sheets.MoneyWiseArchiveLoader;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestControl.NullThreadMgr;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -60,7 +59,7 @@ public class MoneyWiseTestArchiveFile {
         myLoader.loadArchive(theManager, pData, myPrefs);
 
         /* Initialise the security, from the original data */
-        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseXUKTaxYearCache());
         pData.initialiseSecurity(theManager, myNullData);
         pData.reBase(theManager, myNullData);
     }

@@ -44,10 +44,10 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxAnalysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYear;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseTaxAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseTaxYear;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -331,7 +331,7 @@ public class MoneyWiseAnalysis
         theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);
 
         /* Handle new tax calculations */
-        final MoneyWiseTaxYear myYear = theTaxYearCache.findTaxYearForRange(theDateRange);
+        final MoneyWiseTaxYear myYear = (MoneyWiseTaxYear) theTaxYearCache.findTaxYearForRange(theDateRange);
         theTaxAnalysis = myYear != null
                 ? myYear.analyseTaxYear(thePreferences, theTaxBasis)
                 : null;

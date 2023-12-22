@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.panel;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
@@ -125,7 +125,7 @@ public class MoneyWiseMainTab
         final PrometheusToolkit myToolkit = new PrometheusToolkit(pFactory);
 
         /* create the view */
-        theView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());
+        theView = new MoneyWiseView(myToolkit, new MoneyWiseXUKTaxYearCache());
 
         /* Build the main window */
         buildMainWindow(theView, myToolkit);

@@ -81,12 +81,14 @@ public class MoneyWiseTestAccounts {
      * Portfolio ids.
      */
     final static String idPF_InteractiveInvestorStock = "InteractiveInvestorStock";
+    final static String idPF_Pensions = "Pensions";
 
     /**
      * Security ids.
      */
     final static String idSC_BarclaysShares = "BarclaysShares";
     final static String idSC_BallShares = "BallShares";
+    final static String idSC_StatePension = "StatePension";
 
     /**
      * PayeeBuilder.
@@ -213,6 +215,7 @@ public class MoneyWiseTestAccounts {
      */
     private void createPortfolios() throws OceanusException {
         thePortfolioBuilder.name(idPF_InteractiveInvestorStock).parent(idPY_InteractiveInvestor).type(MoneyWisePortfolioClass.TAXFREE).build();
+        thePortfolioBuilder.name(idPF_Pensions).parent(idPY_Government).type(MoneyWisePortfolioClass.PENSION).build();
     }
 
     /**
@@ -222,6 +225,7 @@ public class MoneyWiseTestAccounts {
     private void createSecurities() throws OceanusException {
         theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES).symbol("BARC.L").build();
         theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(MoneyWiseSecurityClass.SHARES).symbol("BALL.NY").currency(MoneyWiseCurrencyClass.USD).build();
+        theSecurityBuilder.name(idSC_StatePension).parent(idPY_Government).type(MoneyWiseSecurityClass.STATEPENSION).build();
     }
 
     /**

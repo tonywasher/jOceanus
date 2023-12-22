@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
@@ -275,7 +275,7 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * AccountAttr DepositRate.
      */
-    ACCOUNTATTR_DEPOSITRATE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE),
+    ACCOUNTATTR_DEPOSITRATE(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE),
 
     /**
      * AccountAttr Delta.
@@ -320,12 +320,12 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * AccountAttr BadDebt.
      */
-    ACCOUNTATTR_BADDEBTCAPITAL(StaticDataResource.TRANSTYPE_BADDEBTCAPITAL),
+    ACCOUNTATTR_BADDEBTCAPITAL(MoneyWiseStaticResource.TRANSTYPE_BADDEBTCAPITAL),
 
     /**
      * AccountAttr BadDebt.
      */
-    ACCOUNTATTR_BADDEBTINTEREST(StaticDataResource.TRANSTYPE_BADDEBTINTEREST),
+    ACCOUNTATTR_BADDEBTINTEREST(MoneyWiseStaticResource.TRANSTYPE_BADDEBTINTEREST),
 
     /**
      * PayeeAttr Valuation.
@@ -340,7 +340,7 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * SecurityAttr Units.
      */
-    SECURITYATTR_UNITS(MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS),
+    SECURITYATTR_UNITS(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_UNITS),
 
     /**
      * SecurityAttr ResidualCost.
@@ -445,7 +445,7 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * SecurityAttr Price.
      */
-    SECURITYATTR_PRICE(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE),
+    SECURITYATTR_PRICE(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE),
 
     /**
      * SecurityAttr CashType.
@@ -520,7 +520,7 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysis.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

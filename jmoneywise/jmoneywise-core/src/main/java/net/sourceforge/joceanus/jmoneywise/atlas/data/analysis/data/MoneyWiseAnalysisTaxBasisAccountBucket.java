@@ -26,9 +26,9 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -48,7 +48,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.TRANSACTION_ACCOUNT, MoneyWiseAnalysisTaxBasisAccountBucket::getAccount);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, MoneyWiseAnalysisTaxBasisAccountBucket::getAccount);
     }
 
     /**
@@ -135,7 +135,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
 
     @Override
     public Integer getIndexedId() {
-        return theAccount.getId();
+        return theAccount.getExternalId().intValue();
     }
 
     /**
@@ -346,7 +346,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          */
         protected void adjustValue(final MoneyWiseAnalysisTransactionHelper pTrans,
                                    final TethysMoney pGross,
-                                   final TaxBasisAdjust pAdjust) {
+                                   final MoneyWiseTaxBasisAdjust pAdjust) {
             /* Determine required asset */
             final MoneyWiseTransAsset myAsset = deriveAsset(pTrans);
 
