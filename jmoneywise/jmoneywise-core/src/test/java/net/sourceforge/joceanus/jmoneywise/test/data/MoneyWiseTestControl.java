@@ -134,6 +134,7 @@ public class MoneyWiseTestControl {
         }
 
         /* Validate Payee totals */
+git add .
         final MoneyWiseAnalysisPayeeBucket myPayeeTotals = myAnalysis.getPayees().getTotals();
         TethysMoney myPayTotal = myPayeeTotals.getValues().getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT);
         if (myPayTotal == null) {
