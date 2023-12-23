@@ -30,11 +30,11 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxAnalysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxDueBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxYear;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxDueBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxDueBucket.MoneyWiseXTaxBandBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxYear;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -51,7 +51,7 @@ public class MoneyWiseReportTaxCalculation
     /**
      * The Income text.
      */
-    private static final String TEXT_INCOME = MoneyWiseTaxResource.TAXBANDS_INCOME.getValue();
+    private static final String TEXT_INCOME = MoneyWiseXTaxResource.TAXBANDS_INCOME.getValue();
 
     /**
      * The Rate text.
@@ -61,12 +61,12 @@ public class MoneyWiseReportTaxCalculation
     /**
      * The TaxDue text.
      */
-    private static final String TEXT_TAXDUE = MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue();
+    private static final String TEXT_TAXDUE = MoneyWiseXTaxResource.TAXBANDS_TAXDUE.getValue();
 
     /**
      * The Profit text.
      */
-    private static final String TEXT_PROFIT = MoneyWiseTaxResource.TAXYEAR_PROFIT.getValue();
+    private static final String TEXT_PROFIT = MoneyWiseXTaxResource.TAXYEAR_PROFIT.getValue();
 
     /**
      * HTML builder.
@@ -96,8 +96,8 @@ public class MoneyWiseReportTaxCalculation
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        final MoneyWiseTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();
-        final MoneyWiseTaxYear myYear = myTaxAnalysis.getTaxYear();
+        final MoneyWiseXTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();
+        final MoneyWiseXTaxYear myYear = myTaxAnalysis.getTaxYear();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -111,9 +111,9 @@ public class MoneyWiseReportTaxCalculation
         theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
 
         /* Loop through the Tax Due Buckets */
-        final Iterator<MoneyWiseTaxDueBucket> myTaxIterator = myTaxAnalysis.taxDueIterator();
+        final Iterator<MoneyWiseXTaxDueBucket> myTaxIterator = myTaxAnalysis.taxDueIterator();
         while (myTaxIterator.hasNext()) {
-            final MoneyWiseTaxDueBucket myBucket = myTaxIterator.next();
+            final MoneyWiseXTaxDueBucket myBucket = myTaxIterator.next();
 
             /* Format the line */
             theBuilder.startRow(myTable);
@@ -147,7 +147,7 @@ public class MoneyWiseReportTaxCalculation
      * @param pSummary the tax summary
      */
     public void makeTaxReport(final MetisHTMLTable pParent,
-                              final MoneyWiseTaxDueBucket pSummary) {
+                              final MoneyWiseXTaxDueBucket pSummary) {
         /* Format the detail */
         final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
         theBuilder.startRow(myTable);
@@ -156,9 +156,9 @@ public class MoneyWiseReportTaxCalculation
         theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
 
         /* Loop through the Transaction Detail Buckets */
-        final Iterator<MoneyWiseTaxBandBucket> myIterator = pSummary.taxBandIterator();
+        final Iterator<MoneyWiseXTaxBandBucket> myIterator = pSummary.taxBandIterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseTaxBandBucket myBucket = myIterator.next();
+            final MoneyWiseXTaxBandBucket myBucket = myIterator.next();
 
             /* Format the detail */
             theBuilder.startRow(myTable);

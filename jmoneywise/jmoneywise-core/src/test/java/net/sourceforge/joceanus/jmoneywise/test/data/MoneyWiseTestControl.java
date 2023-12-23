@@ -18,18 +18,31 @@ package net.sourceforge.joceanus.jmoneywise.test.data;
 
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
@@ -73,6 +86,76 @@ public class MoneyWiseTestControl {
         new MoneyWiseTestSecurity(pData).initSecurity(pToolkit);
     }
 
+
+    /**
+     * Analyse the data.
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    public void analyseData(final MoneyWiseDataSet pData,
+                            final PrometheusToolkit pToolkit) throws OceanusException {
+        /* Initialise the analysis */
+        pData.initialiseAnalysis();
+
+        /* Create the analysis */
+        final TethysProfile myTask = new TethysProfile("Dummy");
+        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, pData, pToolkit.getPreferenceManager());
+
+        /* Post process the analysis */
+        myAnalyser.postProcessAnalysis();
+
+        /* Access the analysis */
+        final MoneyWiseAnalysis myAnalysis = myAnalyser.getAnalysis();
+
+        /* Obtain deposit totals */
+        final MoneyWiseAnalysisDepositCategoryBucket myDepCat = myAnalysis.getDepositCategories().getTotals();
+        TethysMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
+        myDepTotal = myDepTotal == null ? new TethysMoney() : new TethysMoney(myDepTotal);
+
+        /* Add in cash totals */
+        final MoneyWiseAnalysisCashCategoryBucket myCashCat = myAnalysis.getCashCategories().getTotals();
+        final TethysMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
+        if (myCashTotal != null)  {
+            myDepTotal.addAmount(myCashTotal);
+        }
+
+        /* Add in loan totals */
+        final MoneyWiseAnalysisLoanCategoryBucket myLoanCat = myAnalysis.getLoanCategories().getTotals();
+        final TethysMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
+        if (myLoanTotal != null) {
+            myDepTotal.addAmount(myLoanTotal);
+        }
+
+        /* Add in portfolio totals */
+        final MoneyWiseAnalysisPortfolioBucket myPort = myAnalysis.getPortfolios().getTotals();
+        final TethysMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
+        if (myPortTotal != null) {
+            myDepTotal.addAmount(myPortTotal);
+        }
+
+        /* Validate Payee totals */
+git add .
+        final MoneyWiseAnalysisPayeeBucket myPayeeTotals = myAnalysis.getPayees().getTotals();
+        TethysMoney myPayTotal = myPayeeTotals.getValues().getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT);
+        if (myPayTotal == null) {
+            myPayTotal = new TethysMoney();
+        }
+        Assertions.assertEquals(myDepTotal, myPayTotal, "Payee total mismatch");
+
+        /* Validate transaction totals */
+        final MoneyWiseAnalysisTransCategoryBucket myTransTotals = myAnalysis.getTransCategories().getTotals();
+        TethysMoney myEvtTotal = myTransTotals.getValues().getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT);
+        if (myEvtTotal == null) {
+            myEvtTotal = new TethysMoney();
+        }
+        Assertions.assertEquals(myDepTotal, myEvtTotal, "Transaction total mismatch");
+
+        /* Validate tax totals */
+        final MoneyWiseAnalysisTaxBasisBucket myTaxTotals = myAnalysis.getTaxBasis().getTotals();
+        final TethysMoney myTaxTotal = myTaxTotals.getValues().getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        Assertions.assertEquals(myDepTotal, myTaxTotal, "TaxBasis total mismatch");
+    }
+
     /**
      * Create the localData tests.
      * @param pToolkit the toolkit
@@ -83,6 +166,7 @@ public class MoneyWiseTestControl {
         final MoneyWiseDataSet myData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pToolkit)));
         myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pToolkit))));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer("localData", myStream));
@@ -99,6 +183,7 @@ public class MoneyWiseTestControl {
         final TethysUIThreadManager myThreadMgr = new NullThreadMgr();
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> new MoneyWiseTestArchiveFile(myThreadMgr).performTest(myData, pToolkit)));
         myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pToolkit))));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer("archiveData", myStream));

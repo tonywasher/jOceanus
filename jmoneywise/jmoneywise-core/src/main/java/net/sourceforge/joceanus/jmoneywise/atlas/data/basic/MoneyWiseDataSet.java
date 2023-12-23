@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.M
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
@@ -643,9 +642,11 @@ public class MoneyWiseDataSet
         while (myIterator.hasNext()) {
             final Entry<PrometheusListKey, PrometheusDataList<?>> myEntry = myIterator.next();
 
-            /* Prepare list for analysis */
-            final PrometheusDataList<?> myList = myEntry.getValue();
-            myList.prepareForAnalysis();
+            /* Prepare list for analysis (ignoring cryptography tables) */
+            if (!(myEntry.getKey() instanceof PrometheusCryptographyDataType)) {
+                final PrometheusDataList<?> myList = myEntry.getValue();
+                myList.prepareForAnalysis();
+            }
         }
     }
 }

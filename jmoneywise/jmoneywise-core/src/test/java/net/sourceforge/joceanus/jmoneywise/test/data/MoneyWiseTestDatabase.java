@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Assertions;
 
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.database.MoneyWiseDataStore;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -70,7 +70,7 @@ public class MoneyWiseTestDatabase {
         myDatabase.updateDatabase(myReport, myUpdates);
 
         /* Create the new dataSet */
-        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseXUKTaxYearCache());
 
         /* Load the database */
         myDatabase.loadDatabase(myReport, myNewData);

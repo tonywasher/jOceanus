@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxSource;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXChargeableGainSlice.MoneyWiseXChargeableGainSliceList;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseXTaxSource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -840,7 +840,7 @@ public class TaxBasisBucket
      * TaxBasisBucketList class.
      */
     public static class TaxBasisBucketList
-            implements MetisFieldItem, MoneyWiseTaxSource, MetisDataList<TaxBasisBucket> {
+            implements MetisFieldItem, MoneyWiseXTaxSource, MetisDataList<TaxBasisBucket> {
         /**
          * Local Report fields.
          */
@@ -873,7 +873,7 @@ public class TaxBasisBucket
         /**
          * The chargeableGains.
          */
-        private final MoneyWiseChargeableGainSliceList theCharges;
+        private final MoneyWiseXChargeableGainSliceList theCharges;
 
         /**
          * The tax basis.
@@ -886,7 +886,7 @@ public class TaxBasisBucket
          * @param pGains the new Gains list
          */
         private TaxBasisBucketList(final Analysis pAnalysis,
-                                   final MoneyWiseChargeableGainSliceList pGains) {
+                                   final MoneyWiseXChargeableGainSliceList pGains) {
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theCharges = pGains;
@@ -900,7 +900,7 @@ public class TaxBasisBucket
          * @param pAnalysis the analysis
          */
         protected TaxBasisBucketList(final Analysis pAnalysis) {
-            this(pAnalysis, new MoneyWiseChargeableGainSliceList());
+            this(pAnalysis, new MoneyWiseXChargeableGainSliceList());
         }
 
         /**
@@ -913,7 +913,7 @@ public class TaxBasisBucket
                                      final TaxBasisBucketList pBase,
                                      final TethysDate pDate) {
             /* Initialise class */
-            this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
+            this(pAnalysis, new MoneyWiseXChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
 
             /* Loop through the buckets */
             final Iterator<TaxBasisBucket> myIterator = pBase.iterator();
@@ -941,7 +941,7 @@ public class TaxBasisBucket
                                      final TaxBasisBucketList pBase,
                                      final TethysDateRange pRange) {
             /* Initialise class */
-            this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
+            this(pAnalysis, new MoneyWiseXChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
 
             /* Loop through the buckets */
             final Iterator<TaxBasisBucket> myIterator = pBase.iterator();
@@ -994,7 +994,7 @@ public class TaxBasisBucket
         }
 
         @Override
-        public MoneyWiseChargeableGainSliceList getGainSlices() {
+        public MoneyWiseXChargeableGainSliceList getGainSlices() {
             return theCharges;
         }
 
