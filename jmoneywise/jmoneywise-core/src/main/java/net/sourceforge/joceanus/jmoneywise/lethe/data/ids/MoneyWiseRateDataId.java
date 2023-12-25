@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseViewResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXViewResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 
@@ -74,12 +74,12 @@ public enum MoneyWiseRateDataId
     /**
      * PreviousDate.
      */
-    PREVDATE(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotExchangeRate.FIELD_PREVDATE),
+    PREVDATE(MoneyWiseXViewResource.SPOTEVENT_PREVDATE, SpotExchangeRate.FIELD_PREVDATE),
 
     /**
      * PreviousRate.
      */
-    PREVRATE(MoneyWiseViewResource.SPOTPRICE_PREVPRICE, SpotExchangeRate.FIELD_PREVRATE);
+    PREVRATE(MoneyWiseXViewResource.SPOTPRICE_PREVPRICE, SpotExchangeRate.FIELD_PREVRATE);
 
     /**
      * The Value.

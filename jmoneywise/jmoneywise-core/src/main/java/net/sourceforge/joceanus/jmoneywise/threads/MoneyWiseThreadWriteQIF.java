@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFStreamWriter;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFWriter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -55,13 +55,13 @@ public class MoneyWiseThreadWriteQIF
     /**
      * Data View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadWriteQIF(final MoneyWiseView pView) {
+    public MoneyWiseThreadWriteQIF(final MoneyWiseXView pView) {
         theView = pView;
     }
 

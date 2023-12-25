@@ -25,12 +25,12 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.BucketAttribute;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
@@ -110,7 +110,7 @@ public class MoneyWiseAnalysisSelect
     /**
      * View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * Panel.
@@ -285,7 +285,7 @@ public class MoneyWiseAnalysisSelect
      * @param pNewButton the new button
      */
     public MoneyWiseAnalysisSelect(final TethysUIFactory<?> pFactory,
-                                   final MoneyWiseView pView,
+                                   final MoneyWiseXView pView,
                                    final AnalysisView pAnalysisView,
                                    final TethysUIButton pNewButton) {
         /* Access the analysis manager */

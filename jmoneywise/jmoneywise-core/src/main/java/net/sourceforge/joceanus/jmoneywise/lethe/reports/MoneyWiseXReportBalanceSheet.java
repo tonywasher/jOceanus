@@ -70,12 +70,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * BalanceSheet report builder.
  */
-public class MoneyWiseReportBalanceSheet
+public class MoneyWiseXReportBalanceSheet
         extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.BALANCESHEET_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.BALANCESHEET_TITLE.getValue();
 
     /**
      * The Portfolio cash account name.
@@ -101,7 +101,7 @@ public class MoneyWiseReportBalanceSheet
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MoneyWiseReportBalanceSheet(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    protected MoneyWiseXReportBalanceSheet(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -132,7 +132,7 @@ public class MoneyWiseReportBalanceSheet
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getStart()));
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_PROFIT);
 
         /* If we have deposits */
         if (!myDeposits.isEmpty()) {
@@ -278,7 +278,7 @@ public class MoneyWiseReportBalanceSheet
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotal);
         theBuilder.makeTotalCell(myTable, myBase);
         theBuilder.makeTotalCell(myTable, myDelta);

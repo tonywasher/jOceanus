@@ -28,16 +28,16 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportStyleSheet;
-import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
+import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseXReportBuilder;
+import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseXReportStyleSheet;
+import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseXReportType;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
@@ -75,7 +75,7 @@ public class MoneyWiseReportTab
     /**
      * The Data View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The Panel.
@@ -110,14 +110,14 @@ public class MoneyWiseReportTab
     /**
      * The ReportBuilder.
      */
-    private final MoneyWiseReportBuilder theBuilder;
+    private final MoneyWiseXReportBuilder theBuilder;
 
     /**
      * Constructor for Report Window.
      * @param pView the data view
      * @throws OceanusException on error
      */
-    MoneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {
+    MoneyWiseReportTab(final MoneyWiseXView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 
@@ -145,7 +145,7 @@ public class MoneyWiseReportTab
         theManager = new MetisReportManager<>(new MetisReportHTMLBuilder(pView.getDataFormatter()));
 
         /* Create the report builder */
-        theBuilder = new MoneyWiseReportBuilder(theManager);
+        theBuilder = new MoneyWiseXReportBuilder(theManager);
 
         /* Create the Report Selection panel */
         theSelect = new MoneyWiseReportSelect(myFactory);
@@ -167,7 +167,7 @@ public class MoneyWiseReportTab
         thePanel.setCentre(myHTMLScroll);
 
         /* Load the CSS */
-        theHTMLPane.setCSSContent(MoneyWiseReportStyleSheet.CSS_REPORT);
+        theHTMLPane.setCSSContent(MoneyWiseXReportStyleSheet.CSS_REPORT);
 
         /* Create listeners */
         theView.getEventRegistrar().addEventListener(e -> refreshData());
@@ -244,7 +244,7 @@ public class MoneyWiseReportTab
      */
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
-        final MoneyWiseReportType myReportType = theSelect.getReportType();
+        final MoneyWiseXReportType myReportType = theSelect.getReportType();
         final TethysDateRange myRange = theSelect.getDateRange();
         final AnalysisManager myManager = theView.getAnalysisManager();
         final SecurityBucket mySecurity = theSelect.getSecurity();
@@ -302,7 +302,7 @@ public class MoneyWiseReportTab
         final AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
 
         /* If we are currently showing Asset Gains */
-        if (MoneyWiseReportType.ASSETGAINS.equals(theSelect.getReportType())) {
+        if (MoneyWiseXReportType.ASSETGAINS.equals(theSelect.getReportType())) {
             /* Select the capital gains report */
             final SecurityBucket myBucket = ((SecurityFilter) myFilter).getBucket();
             theSelect.setSecurity(myBucket);

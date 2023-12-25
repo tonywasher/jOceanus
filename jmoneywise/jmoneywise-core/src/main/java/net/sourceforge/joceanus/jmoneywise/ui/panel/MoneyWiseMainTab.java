@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
@@ -29,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.S
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.ui.panel.PrometheusMainWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
@@ -83,7 +83,7 @@ public class MoneyWiseMainTab
     /**
      * The data view.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The tabs.
@@ -125,14 +125,14 @@ public class MoneyWiseMainTab
         final PrometheusToolkit myToolkit = new PrometheusToolkit(pFactory);
 
         /* create the view */
-        theView = new MoneyWiseView(myToolkit, new MoneyWiseXUKTaxYearCache());
+        theView = new MoneyWiseXView(myToolkit, new MoneyWiseXUKTaxYearCache());
 
         /* Build the main window */
         buildMainWindow(theView, myToolkit);
     }
 
     @Override
-    public MoneyWiseView getView() {
+    public MoneyWiseXView getView() {
         return theView;
     }
 

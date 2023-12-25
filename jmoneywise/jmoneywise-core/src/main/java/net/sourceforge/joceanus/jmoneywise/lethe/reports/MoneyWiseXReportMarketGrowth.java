@@ -45,17 +45,17 @@ import java.util.Iterator;
 /**
  * MarketGrowth report builder.
  */
-public class MoneyWiseReportMarketGrowth
+public class MoneyWiseXReportMarketGrowth
         extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseReportMarketGrowth.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseXReportMarketGrowth.class);
 
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.MARKETGROWTH_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.MARKETGROWTH_TITLE.getValue();
 
     /**
      * The Value text.
@@ -80,7 +80,7 @@ public class MoneyWiseReportMarketGrowth
     /**
      * The Base text.
      */
-    private static final String TEXT_BASE = MoneyWiseReportResource.MARKETGROWTH_BASE.getValue();
+    private static final String TEXT_BASE = MoneyWiseXReportResource.MARKETGROWTH_BASE.getValue();
 
     /**
      * The Growth text.
@@ -116,7 +116,7 @@ public class MoneyWiseReportMarketGrowth
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MoneyWiseReportMarketGrowth(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    protected MoneyWiseXReportMarketGrowth(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -189,7 +189,7 @@ public class MoneyWiseReportMarketGrowth
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(true));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));

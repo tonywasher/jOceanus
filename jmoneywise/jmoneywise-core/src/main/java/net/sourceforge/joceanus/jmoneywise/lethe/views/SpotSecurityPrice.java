@@ -66,12 +66,12 @@ public final class SpotSecurityPrice
     /**
      * Previous Date field Id.
      */
-    public static final MetisLetheField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+    public static final MetisLetheField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseXViewResource.SPOTEVENT_PREVDATE.getValue());
 
     /**
      * Previous Price field Id.
      */
-    public static final MetisLetheField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
+    public static final MetisLetheField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseXViewResource.SPOTPRICE_PREVPRICE.getValue());
 
     /**
      * the previous date.
@@ -241,8 +241,8 @@ public final class SpotSecurityPrice
         static {
             FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO, SpotSecurityList::getPortfolio);
             FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, SpotSecurityList::getDate);
-            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE, SpotSecurityList::getNext);
-            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotSecurityList::getPrev);
+            FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.SPOTEVENT_NEXTDATE, SpotSecurityList::getNext);
+            FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.SPOTEVENT_PREVDATE, SpotSecurityList::getPrev);
         }
 
         /**
@@ -253,7 +253,7 @@ public final class SpotSecurityPrice
         /**
          * The view.
          */
-        private final MoneyWiseView theView;
+        private final MoneyWiseXView theView;
 
         /**
          * The portfolio.
@@ -276,7 +276,7 @@ public final class SpotSecurityPrice
          * @param pPortfolio the portfolio
          * @param pDate the date
          */
-        public SpotSecurityList(final MoneyWiseView pView,
+        public SpotSecurityList(final MoneyWiseXView pView,
                                 final Portfolio pPortfolio,
                                 final TethysDate pDate) {
             /* Build initial list */

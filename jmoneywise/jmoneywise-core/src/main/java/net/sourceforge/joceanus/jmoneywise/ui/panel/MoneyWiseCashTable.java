@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseCashPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -64,7 +64,7 @@ public class MoneyWiseCashTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseCashTable(final MoneyWiseView pView,
+    MoneyWiseCashTable(final MoneyWiseXView pView,
                             final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */

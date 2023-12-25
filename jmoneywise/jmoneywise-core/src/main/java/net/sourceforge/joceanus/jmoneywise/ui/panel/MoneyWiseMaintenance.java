@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.jmoneywise.ui.panel;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceView;
@@ -73,7 +73,7 @@ public class MoneyWiseMaintenance
     /**
      * The Data View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The Tabs.
@@ -109,7 +109,7 @@ public class MoneyWiseMaintenance
      * Constructor.
      * @param pView the view
      */
-    MoneyWiseMaintenance(final MoneyWiseView pView) {
+    MoneyWiseMaintenance(final MoneyWiseXView pView) {
         /* Store details */
         theView = pView;
 
@@ -190,7 +190,7 @@ public class MoneyWiseMaintenance
      * Obtain the view.
      * @return the view
      */
-    protected MoneyWiseView getView() {
+    protected MoneyWiseXView getView() {
         return theView;
     }
 

@@ -57,8 +57,8 @@ public class AnalysisView
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE, AnalysisView::getBaseAnalysis);
-        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, AnalysisView::getUpdateSet);
+        FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.ANALYSISVIEW_BASE, AnalysisView::getBaseAnalysis);
+        FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.ANALYSISVIEW_UPDATESET, AnalysisView::getUpdateSet);
         FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, AnalysisView::getAnalysis);
     }
 
@@ -75,7 +75,7 @@ public class AnalysisView
     /**
      * The View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The UpdateSet.
@@ -122,7 +122,7 @@ public class AnalysisView
      * @param pView the view
      * @param pUpdateSet the update set
      */
-    public AnalysisView(final MoneyWiseView pView,
+    public AnalysisView(final MoneyWiseXView pView,
                         final UpdateSet pUpdateSet) {
         /* Store update set */
         theView = pView;

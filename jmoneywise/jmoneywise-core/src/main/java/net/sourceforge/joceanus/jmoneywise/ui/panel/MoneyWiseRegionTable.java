@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseRegionDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseRegionPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -67,7 +67,7 @@ public class MoneyWiseRegionTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseRegionTable(final MoneyWiseView pView,
+    MoneyWiseRegionTable(final MoneyWiseXView pView,
                          final UpdateSet pUpdateSet,
                          final MetisErrorPanel pError) {
         /* Store parameters */

@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseCategoryDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
@@ -83,7 +83,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase, S extends S
      * @param pClazz the dataType class
      * @param pDataType the dataType
      */
-    protected MoneyWiseCategoryTable(final MoneyWiseView pView,
+    protected MoneyWiseCategoryTable(final MoneyWiseXView pView,
                                      final UpdateSet pUpdateSet,
                                      final MetisErrorPanel pError,
                                      final Class<T> pClazz,

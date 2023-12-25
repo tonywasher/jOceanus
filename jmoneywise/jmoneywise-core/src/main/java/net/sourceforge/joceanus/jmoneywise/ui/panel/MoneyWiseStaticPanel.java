@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.Secur
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
@@ -72,7 +72,7 @@ public class MoneyWiseStaticPanel
     /**
      * The view.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The Event Manager.
@@ -144,7 +144,7 @@ public class MoneyWiseStaticPanel
      *
      * @param pView the view
      */
-    MoneyWiseStaticPanel(final MoneyWiseView pView) {
+    MoneyWiseStaticPanel(final MoneyWiseXView pView) {
         /* Store parameters */
         theView = pView;
 

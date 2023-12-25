@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 /**
  * Data Control for MoneyWiseApp.
  */
-public class MoneyWiseView
+public class MoneyWiseXView
         extends DataControl {
     /**
      * The TaxFactory.
@@ -77,8 +77,8 @@ public class MoneyWiseView
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
-    public MoneyWiseView(final PrometheusToolkit pUtilitySet,
-                         final MoneyWiseTaxFactory pTaxFactory) {
+    public MoneyWiseXView(final PrometheusToolkit pUtilitySet,
+                          final MoneyWiseTaxFactory pTaxFactory) {
         /* Call super-constructor */
         super(pUtilitySet);
 

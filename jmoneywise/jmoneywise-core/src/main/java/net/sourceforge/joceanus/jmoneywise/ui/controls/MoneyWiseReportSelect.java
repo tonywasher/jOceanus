@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
+import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseXReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;
@@ -74,7 +74,7 @@ public class MoneyWiseReportSelect
     /**
      * Reports scroll button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseReportType> theReportButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXReportType> theReportButton;
 
     /**
      * Holding scroll button.
@@ -118,7 +118,7 @@ public class MoneyWiseReportSelect
     public MoneyWiseReportSelect(final TethysUIFactory<?> pFactory) {
         /* Create the buttons */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        theReportButton = myButtons.newScrollButton(MoneyWiseReportType.class);
+        theReportButton = myButtons.newScrollButton(MoneyWiseXReportType.class);
         theHoldingButton = myButtons.newScrollButton(SecurityBucket.class);
 
         /* Create the Range Select and disable its border */
@@ -138,7 +138,7 @@ public class MoneyWiseReportSelect
         /* Create initial state */
         theState = new ReportState();
         theState.setRange(theRangeSelect);
-        theState.setType(MoneyWiseReportType.getDefault());
+        theState.setType(MoneyWiseXReportType.getDefault());
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -182,7 +182,7 @@ public class MoneyWiseReportSelect
      * Obtain the report type.
      * @return the report type
      */
-    public MoneyWiseReportType getReportType() {
+    public MoneyWiseXReportType getReportType() {
         return theState.getType();
     }
 
@@ -216,11 +216,11 @@ public class MoneyWiseReportSelect
     private void buildReportMenu() {
         /* Access builder */
         final boolean hasSecurities = theState.hasSecurities();
-        final TethysUIScrollMenu<MoneyWiseReportType> myBuilder = theReportButton.getMenu();
+        final TethysUIScrollMenu<MoneyWiseXReportType> myBuilder = theReportButton.getMenu();
         myBuilder.removeAllItems();
 
         /* Loop through the reports */
-        for (MoneyWiseReportType myType : MoneyWiseReportType.values()) {
+        for (MoneyWiseXReportType myType : MoneyWiseXReportType.values()) {
             /* If we can produce the report */
             if (hasSecurities
                 || !myType.needSecurities()) {
@@ -329,7 +329,7 @@ public class MoneyWiseReportSelect
     public void setSecurity(final SecurityBucket pSecurity) {
         /* Set the selected security */
         theState.setSecurity(pSecurity);
-        theState.setType(MoneyWiseReportType.CAPITALGAINS);
+        theState.setType(MoneyWiseXReportType.CAPITALGAINS);
 
         /* Notify that the state has changed */
         theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
@@ -441,7 +441,7 @@ public class MoneyWiseReportSelect
         /**
          * The selected report type.
          */
-        private MoneyWiseReportType theType;
+        private MoneyWiseXReportType theType;
 
         /**
          * Constructor.
@@ -497,7 +497,7 @@ public class MoneyWiseReportSelect
          * Obtain the selected report type.
          * @return the report type
          */
-        private MoneyWiseReportType getType() {
+        private MoneyWiseXReportType getType() {
             return theType;
         }
 
@@ -526,7 +526,7 @@ public class MoneyWiseReportSelect
                 hasSecurities = pSecurities;
                 if (!hasSecurities
                     && theType.needSecurities()) {
-                    theType = MoneyWiseReportType.getDefault();
+                    theType = MoneyWiseXReportType.getDefault();
                 }
             }
         }
@@ -558,7 +558,7 @@ public class MoneyWiseReportSelect
          * @param pType the new type
          * @return true/false did a change occur
          */
-        private boolean setType(final MoneyWiseReportType pType) {
+        private boolean setType(final MoneyWiseXReportType pType) {
             if (!pType.equals(theType)) {
                 /* Are we currently point in time */
                 final boolean isPointInTime = theType != null
@@ -576,7 +576,7 @@ public class MoneyWiseReportSelect
                     theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
-                } else if (theType == MoneyWiseReportType.TAXCALC) {
+                } else if (theType == MoneyWiseXReportType.TAXCALC) {
                     /* Switch explicitly to Fiscal Year */
                     theRangeSelect.setPeriod(TethysDatePeriod.FISCALYEAR);
                 }
@@ -598,7 +598,7 @@ public class MoneyWiseReportSelect
                                                          ? null
                                                          : theType.toString());
             theHoldingButton.setValue(theSecurity);
-            theHoldingButton.setVisible(MoneyWiseReportType.CAPITALGAINS.equals(theType));
+            theHoldingButton.setVisible(MoneyWiseXReportType.CAPITALGAINS.equals(theType));
         }
     }
 }

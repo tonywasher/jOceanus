@@ -37,10 +37,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.Asse
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -91,7 +91,7 @@ public class MoneyWiseSecurityPanel
      * @param pError the error panel
      */
     public MoneyWiseSecurityPanel(final TethysUIFactory<?> pFactory,
-                                  final MoneyWiseView pView,
+                                  final MoneyWiseXView pView,
                                   final UpdateSet pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Initialise the panel */

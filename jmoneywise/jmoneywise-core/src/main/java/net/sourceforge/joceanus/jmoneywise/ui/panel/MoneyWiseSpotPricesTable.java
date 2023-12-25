@@ -26,10 +26,10 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWisePriceDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotPricesSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
@@ -86,7 +86,7 @@ public class MoneyWiseSpotPricesTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseSpotPricesTable(final MoneyWiseView pView,
+    MoneyWiseSpotPricesTable(final MoneyWiseXView pView,
                              final UpdateSet pUpdateSet,
                              final MetisErrorPanel pError) {
         /* Store parameters */
@@ -341,7 +341,7 @@ public class MoneyWiseSpotPricesTable
          *
          * @param pView the data view
          */
-        public MoneyWiseSpotPricesPanel(final MoneyWiseView pView) {
+        public MoneyWiseSpotPricesPanel(final MoneyWiseXView pView) {
             /* Build the Update set and entry */
             theUpdateSet = new UpdateSet(pView);
 

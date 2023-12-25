@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.Tethy
 /**
  * Report StyleSheets.
  */
-public enum MoneyWiseReportStyleSheet implements TethysUIStyleSheetId {
+public enum MoneyWiseXReportStyleSheet implements TethysUIStyleSheetId {
     /**
      * Report StyleSheet.
      */
@@ -38,7 +38,7 @@ public enum MoneyWiseReportStyleSheet implements TethysUIStyleSheetId {
      * Constructor.
      * @param pSource the source
      */
-    MoneyWiseReportStyleSheet(final String pSource) {
+    MoneyWiseXReportStyleSheet(final String pSource) {
         theSource = pSource;
     }
 
@@ -49,6 +49,6 @@ public enum MoneyWiseReportStyleSheet implements TethysUIStyleSheetId {
 
     @Override
     public InputStream getInputStream() {
-        return MoneyWiseReportStyleSheet.class.getResourceAsStream(theSource);
+        return MoneyWiseXReportStyleSheet.class.getResourceAsStream(theSource);
     }
 }

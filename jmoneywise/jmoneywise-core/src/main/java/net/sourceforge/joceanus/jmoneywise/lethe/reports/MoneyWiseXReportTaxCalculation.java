@@ -41,12 +41,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * TaxCalculation report builder.
  */
-public class MoneyWiseReportTaxCalculation
+public class MoneyWiseXReportTaxCalculation
         extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.TAXCALC_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.TAXCALC_TITLE.getValue();
 
     /**
      * The Income text.
@@ -82,7 +82,7 @@ public class MoneyWiseReportTaxCalculation
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MoneyWiseReportTaxCalculation(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    protected MoneyWiseXReportTaxCalculation(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -127,7 +127,7 @@ public class MoneyWiseReportTaxCalculation
 
         /* Access the Totals */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxableIncome());
         theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxDue());
         theBuilder.startTotalRow(myTable);

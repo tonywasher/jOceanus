@@ -26,9 +26,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -77,7 +77,7 @@ public class MoneyWiseCategoryPanel
     /**
      * The Data View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The Panel.
@@ -168,7 +168,7 @@ public class MoneyWiseCategoryPanel
      * Constructor.
      * @param pView the data view
      */
-    MoneyWiseCategoryPanel(final MoneyWiseView pView) {
+    MoneyWiseCategoryPanel(final MoneyWiseXView pView) {
         /* Store details */
         theView = pView;
 

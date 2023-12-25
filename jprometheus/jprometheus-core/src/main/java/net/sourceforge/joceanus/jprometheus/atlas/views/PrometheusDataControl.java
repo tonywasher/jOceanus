@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -282,14 +282,14 @@ public abstract class PrometheusDataControl
      * Obtain SpreadSheet object.
      * @return SpreadSheet object
      */
-    public abstract PrometheusXSpreadSheet getSpreadSheet();
+    public abstract PrometheusSpreadSheet getSpreadSheet();
 
     /**
      * Obtain Database object.
      * @return database object
      * @throws OceanusException on error
      */
-    public abstract PrometheusXDataStore getDatabase() throws OceanusException;
+    public abstract PrometheusDataStore getDatabase() throws OceanusException;
 
     /**
      * Obtain DataSet object.
