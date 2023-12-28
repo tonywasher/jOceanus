@@ -14,70 +14,67 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
- * Thread to purge tables in a database that represent a data set. Existing loaded data will be
- * marked as new so that it will be written to the database via the store command.
+ * Thread to load data from the database.
  */
-public class PrometheusThreadPurgeDatabase
-        implements TethysUIThread<Void> {
+public class PrometheusThreadLoadDatabase
+        implements TethysUIThread<PrometheusDataSet> {
     /**
-     * Data Control.
+     * Data control.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadPurgeDatabase(final DataControl pControl) {
+    public PrometheusThreadLoadDatabase(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.PURGEDB.toString();
+        return PrometheusThreadId.LOADDB.toString();
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
-        /* Initialise the status window */
-        pManager.initTask(getTaskName());
-
-        /* Create interface */
-        final PrometheusXDataStore myDatabase = theControl.getDatabase();
+    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+        /* Access database */
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
-            /* Purge database */
-            myDatabase.purgeTables(pManager);
+            /* Load database */
+            final PrometheusDataSet myData = theControl.getNewData();
+            myDatabase.loadDatabase(pManager, myData);
 
-            /* Re-base this set on a null set */
-            final DataSet myNull = theControl.getNewData();
-            final DataSet myData = theControl.getData();
-            myData.reBase(pManager, myNull);
-
-            /* Derive the new set of updates */
-            theControl.deriveUpdates();
+            /* Check security on the database */
+            myData.checkSecurity(pManager);
 
             /* State that we have completed */
             pManager.setCompletion();
 
-            /* Return null */
-            return null;
+            /* Return the loaded data */
+            return myData;
 
             /* Make sure that the database is closed */
         } finally {
             /* Close the database */
             myDatabase.close();
         }
+    }
+
+    @Override
+    public void processResult(final PrometheusDataSet pResult) {
+        theControl.setData(pResult);
     }
 }

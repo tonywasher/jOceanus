@@ -14,30 +14,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
+import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataValuesFormatter;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
- * LoaderThread extension to load an XML backup.
+ * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database
+ * is loaded and the backup is re-based onto the database so that a correct list of additions,
+ * changes and deletions is built. These changes remain in memory and should be committed to the
+ * database later.
+ * @author Tony Washer
  */
-public class PrometheusThreadLoadXmlFile
-        implements TethysUIThread<DataSet> {
+public class PrometheusThreadLoadBackup
+        implements TethysUIThread<PrometheusDataSet> {
     /**
      * Select Backup Task.
      */
@@ -46,25 +51,26 @@ public class PrometheusThreadLoadXmlFile
     /**
      * Data control.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadXmlFile(final DataControl pControl) {
+    public PrometheusThreadLoadBackup(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.RESTOREXML.toString();
+        return PrometheusThreadId.RESTOREBACKUP.toString();
     }
 
     @Override
-    public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final MetisToolkit myToolkit = myPromToolkit.getToolkit();
         final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
 
         /* Initialise the status window */
@@ -78,7 +84,7 @@ public class PrometheusThreadLoadXmlFile
         final File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
 
         /* Determine the name of the file to load */
-        final TethysUIFileSelector myDialog = myPromToolkit.getToolkit().getGuiFactory().dialogFactory().newFileSelector();
+        final TethysUIFileSelector myDialog = myToolkit.getGuiFactory().dialogFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);
@@ -90,38 +96,33 @@ public class PrometheusThreadLoadXmlFile
             pManager.throwCancelException();
         }
 
-        /* Create a new formatter */
-        final DataValuesFormatter myFormatter = new DataValuesFormatter(pManager, myPasswordMgr);
-
-        /* Load data */
-        final DataSet myNewData = theControl.getNewData();
-        myFormatter.loadZipFile(myNewData, myFile);
+        /* Load workbook */
+        final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
+        final PrometheusDataSet myData = theControl.getNewData();
+        mySheet.loadBackup(pManager, myPasswordMgr, myData, myFile);
 
         /* Create interface */
-        final PrometheusXDataStore myDatabase = theControl.getDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        final DataSet myStore = theControl.getNewData();
+        final PrometheusDataSet myStore = theControl.getNewData();
         myDatabase.loadDatabase(pManager, myStore);
 
         /* Check security on the database */
         myStore.checkSecurity(pManager);
 
-        /* Initialise the security, either from database or with a new security control */
-        myNewData.initialiseSecurity(pManager, myStore);
-
         /* Re-base the loaded backup onto the database image */
-        myNewData.reBase(pManager, myStore);
+        myData.reBase(pManager, myStore);
 
         /* State that we have completed */
         pManager.setCompletion();
 
         /* Return the Data */
-        return myNewData;
+        return myData;
     }
 
     @Override
-    public void processResult(final DataSet pResult) {
+    public void processResult(final PrometheusDataSet pResult) {
         theControl.setData(pResult);
     }
 }

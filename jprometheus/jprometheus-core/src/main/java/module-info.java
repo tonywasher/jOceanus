@@ -40,9 +40,10 @@ module net.sourceforge.joceanus.jprometheus.core {
     exports net.sourceforge.joceanus.jprometheus.lethe.data;
     exports net.sourceforge.joceanus.jprometheus.lethe.database;
     exports net.sourceforge.joceanus.jprometheus.lethe.sheets;
-    exports net.sourceforge.joceanus.jprometheus.threads;
+    exports net.sourceforge.joceanus.jprometheus.lethe.threads;
     exports net.sourceforge.joceanus.jprometheus.ui;
     exports net.sourceforge.joceanus.jprometheus.lethe.views;
     exports net.sourceforge.joceanus.jprometheus.lethe.data.ids;
     exports net.sourceforge.joceanus.jprometheus.atlas.views;
+    exports net.sourceforge.joceanus.jprometheus.atlas.threads;
 }

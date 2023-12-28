@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
 import java.util.ResourceBundle;
 

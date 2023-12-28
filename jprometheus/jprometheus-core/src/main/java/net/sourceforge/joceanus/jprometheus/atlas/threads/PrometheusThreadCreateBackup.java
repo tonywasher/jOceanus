@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
 import java.io.File;
 
@@ -23,12 +23,12 @@ import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -54,13 +54,13 @@ public class PrometheusThreadCreateBackup
     /**
      * Data Control.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateBackup(final DataControl pControl) {
+    public PrometheusThreadCreateBackup(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
@@ -117,8 +117,8 @@ public class PrometheusThreadCreateBackup
             myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);
 
             /* Create backup */
-            final PrometheusXSpreadSheet mySheet = theControl.getSpreadSheet();
-            final DataSet myOldData = theControl.getData();
+            final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
+            final PrometheusDataSet myOldData = theControl.getData();
             mySheet.createBackup(pManager, myOldData, myFile, myType);
 
             /* File created, so delete on error */
@@ -128,11 +128,11 @@ public class PrometheusThreadCreateBackup
             pManager.initTask("Verifying Backup");
 
             /* Load workbook */
-            final DataSet myNewData = theControl.getNewData();
+            final PrometheusDataSet myNewData = theControl.getNewData();
             mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            final DataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+            final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

@@ -14,9 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -27,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * Thread to store changes in the DataSet to a database.
  */
-public class PrometheusThreadStoreDatabase
+public class PrometheusXThreadStoreDatabase
         implements TethysUIThread<Void> {
     /**
      * Data control.
@@ -38,7 +39,7 @@ public class PrometheusThreadStoreDatabase
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadStoreDatabase(final DataControl pControl) {
+    public PrometheusXThreadStoreDatabase(final DataControl pControl) {
         theControl = pControl;
     }
 

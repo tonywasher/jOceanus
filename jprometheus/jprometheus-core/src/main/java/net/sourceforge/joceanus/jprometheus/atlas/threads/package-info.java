@@ -17,4 +17,4 @@
 /**
  * Package containing utility threads to handle background tasks.
  */
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;

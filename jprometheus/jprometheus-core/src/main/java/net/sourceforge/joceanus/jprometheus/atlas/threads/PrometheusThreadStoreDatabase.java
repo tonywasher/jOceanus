@@ -14,38 +14,37 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
- * Thread to create tables in a database to represent a data set. Existing tables will be dropped
- * and redefined. Existing loaded data will be marked as new so that it will be written to the
- * database via the store command.
+ * Thread to store changes in the DataSet to a database.
  */
-public class PrometheusThreadCreateDatabase
+public class PrometheusThreadStoreDatabase
         implements TethysUIThread<Void> {
     /**
-     * Data Control.
+     * Data control.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateDatabase(final DataControl pControl) {
+    public PrometheusThreadStoreDatabase(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.CREATEDB.toString();
+        return PrometheusThreadId.STOREDB.toString();
     }
 
     @Override
@@ -53,26 +52,38 @@ public class PrometheusThreadCreateDatabase
         /* Initialise the status window */
         pManager.initTask(getTaskName());
 
-        /* Access Database */
-        final PrometheusXDataStore myDatabase = theControl.getDatabase();
+        /* Create interface */
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
-            /* Create database */
-            myDatabase.createTables(pManager);
+            /* Store database */
+            myDatabase.updateDatabase(pManager, theControl.getUpdates());
 
-            /* Re-base this set on a null set */
-            final DataSet myNull = theControl.getNewData();
-            final DataSet myData = theControl.getData();
-            myData.reBase(pManager, myNull);
+            /* Load database */
+            final PrometheusDataSet myStore = theControl.getNewData();
+            myDatabase.loadDatabase(pManager, myStore);
 
-            /* Derive the new set of updates */
+            /* Create a difference set between the two data copies */
+            final PrometheusDataSet myData = theControl.getData();
+            final PrometheusDataSet myDiff = myData.getDifferenceSet(pManager, myStore);
+
+            /* If the difference set is non-empty */
+            if (!myDiff.isEmpty()) {
+                /* Throw an exception */
+                throw new PrometheusDataException(myDiff, "DataStore is inconsistent");
+            }
+
+            /* DataSet version is now zero */
+            myData.setVersion(0);
+
+            /* Derive new update list */
             theControl.deriveUpdates();
 
             /* State that we have completed */
             pManager.setCompletion();
 
-            /* Return null value */
+            /* Return null */
             return null;
 
             /* Make sure that the database is closed */
