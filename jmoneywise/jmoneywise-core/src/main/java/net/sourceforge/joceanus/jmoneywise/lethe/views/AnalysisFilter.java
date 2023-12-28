@@ -69,8 +69,8 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET, AnalysisFilter::getBucket);
-        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR, AnalysisFilter::getCurrentAttribute);
+        FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.FILTER_BUCKET, AnalysisFilter::getBucket);
+        FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.FILTER_ATTR, AnalysisFilter::getCurrentAttribute);
     }
 
     /**

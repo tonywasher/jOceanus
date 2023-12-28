@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
  * Report Classes.
  * @author Tony Washer
  */
-public class MoneyWiseReportBuilder {
+public class MoneyWiseXReportBuilder {
     /**
      * The Total text.
      */
@@ -61,18 +61,18 @@ public class MoneyWiseReportBuilder {
     /**
      * Map of allocated reports.
      */
-    private final Map<MoneyWiseReportType, MetisReportBase<Analysis, AnalysisFilter<?, ?>>> theReportMap;
+    private final Map<MoneyWiseXReportType, MetisReportBase<Analysis, AnalysisFilter<?, ?>>> theReportMap;
 
     /**
      * Constructor.
      * @param pManager the report manager
      */
-    public MoneyWiseReportBuilder(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    public MoneyWiseXReportBuilder(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Record the details */
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<>(MoneyWiseReportType.class);
+        theReportMap = new EnumMap<>(MoneyWiseXReportType.class);
     }
 
     /**
@@ -83,7 +83,7 @@ public class MoneyWiseReportBuilder {
      * @return the Web document
      */
     public Document createReport(final Analysis pAnalysis,
-                                 final MoneyWiseReportType pType,
+                                 final MoneyWiseXReportType pType,
                                  final SecurityBucket pSecurity) {
         /* Access existing report */
         MetisReportBase<Analysis, AnalysisFilter<?, ?>> myReport = theReportMap.get(pType);
@@ -93,34 +93,34 @@ public class MoneyWiseReportBuilder {
             /* Switch on the report type */
             switch (pType) {
                 case NETWORTH:
-                    myReport = new MoneyWiseReportNetWorth(theManager);
+                    myReport = new MoneyWiseXReportNetWorth(theManager);
                     break;
                 case BALANCESHEET:
-                    myReport = new MoneyWiseReportBalanceSheet(theManager);
+                    myReport = new MoneyWiseXReportBalanceSheet(theManager);
                     break;
                 case CASHFLOW:
-                    myReport = new MoneyWiseReportCashFlow(theManager);
+                    myReport = new MoneyWiseXReportCashFlow(theManager);
                     break;
                 case INCOMEEXPENSE:
-                    myReport = new MoneyWiseReportIncomeExpense(theManager);
+                    myReport = new MoneyWiseXReportIncomeExpense(theManager);
                     break;
                 case PORTFOLIO:
-                    myReport = new MoneyWiseReportPortfolioView(theManager);
+                    myReport = new MoneyWiseXReportPortfolioView(theManager);
                     break;
                 case MARKETGROWTH:
-                    myReport = new MoneyWiseReportMarketGrowth(theManager);
+                    myReport = new MoneyWiseXReportMarketGrowth(theManager);
                     break;
                 case TAXBASIS:
-                    myReport = new MoneyWiseReportTaxationBasis(theManager);
+                    myReport = new MoneyWiseXReportTaxationBasis(theManager);
                     break;
                 case TAXCALC:
-                    myReport = new MoneyWiseReportTaxCalculation(theManager);
+                    myReport = new MoneyWiseXReportTaxCalculation(theManager);
                     break;
                 case ASSETGAINS:
-                    myReport = new MoneyWiseReportAssetGains(theManager);
+                    myReport = new MoneyWiseXReportAssetGains(theManager);
                     break;
                 case CAPITALGAINS:
-                    myReport = new MoneyWiseReportCapitalGains(theManager);
+                    myReport = new MoneyWiseXReportCapitalGains(theManager);
                     break;
                 default:
                     return null;
@@ -131,8 +131,8 @@ public class MoneyWiseReportBuilder {
         }
 
         /* If the report requires the security */
-        if (myReport instanceof MoneyWiseReportCapitalGains) {
-            ((MoneyWiseReportCapitalGains) myReport).setSecurity(pSecurity);
+        if (myReport instanceof MoneyWiseXReportCapitalGains) {
+            ((MoneyWiseXReportCapitalGains) myReport).setSecurity(pSecurity);
         }
 
         /* Set up the report */

@@ -29,9 +29,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCat
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseDepositCategoryPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -62,7 +62,7 @@ public class MoneyWiseDepositCategoryTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseDepositCategoryTable(final MoneyWiseView pView,
+    MoneyWiseDepositCategoryTable(final MoneyWiseXView pView,
                                   final UpdateSet pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */

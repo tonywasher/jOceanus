@@ -42,12 +42,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 /**
  * Income/Expense report builder.
  */
-public class MoneyWiseReportIncomeExpense
+public class MoneyWiseXReportIncomeExpense
         extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.INCEXP_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.INCEXP_TITLE.getValue();
 
     /**
      * HTML builder.
@@ -68,7 +68,7 @@ public class MoneyWiseReportIncomeExpense
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MoneyWiseReportIncomeExpense(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    protected MoneyWiseXReportIncomeExpense(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -92,9 +92,9 @@ public class MoneyWiseReportIncomeExpense
         final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_PROFIT);
 
         /* Loop through the SubTotal Buckets */
         final Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
@@ -129,7 +129,7 @@ public class MoneyWiseReportIncomeExpense
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.EXPENSE));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TransactionAttribute.PROFIT));

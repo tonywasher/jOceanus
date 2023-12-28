@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.threads;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -35,13 +35,13 @@ public class MoneyWiseThreadLoadArchive
     /**
      * Data Control.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadLoadArchive(final MoneyWiseView pView) {
+    public MoneyWiseThreadLoadArchive(final MoneyWiseXView pView) {
         theView = pView;
     }
 

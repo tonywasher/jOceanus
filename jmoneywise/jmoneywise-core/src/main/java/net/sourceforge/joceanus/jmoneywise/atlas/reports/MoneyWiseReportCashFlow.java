@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.reports;
+package net.sourceforge.joceanus.jmoneywise.atlas.reports;
 
 import java.util.Iterator;
 
@@ -26,13 +26,13 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeAttribute;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeValues;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * CashFlow report builder.
  */
 public class MoneyWiseReportCashFlow
-        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
+        extends MetisReportBase<MoneyWiseAnalysis, MoneyWiseAnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
@@ -60,20 +60,20 @@ public class MoneyWiseReportCashFlow
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MoneyWiseReportCashFlow(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    protected MoneyWiseReportCashFlow(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }
 
     @Override
-    public Document createReport(final Analysis pAnalysis) {
+    public Document createReport(final MoneyWiseAnalysis pAnalysis) {
         /* Access the bucket lists */
-        final PayeeBucketList myPayees = pAnalysis.getPayees();
+        final MoneyWiseAnalysisPayeeBucketList myPayees = pAnalysis.getPayees();
         final TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
-        final PayeeBucket myTotals = myPayees.getTotals();
+        final MoneyWiseAnalysisPayeeBucket myTotals = myPayees.getTotals();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -88,47 +88,47 @@ public class MoneyWiseReportCashFlow
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Payee Buckets */
-        final Iterator<PayeeBucket> myIterator = myPayees.iterator();
+        final Iterator<MoneyWiseAnalysisPayeeBucket> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            final PayeeBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisPayeeBucket myBucket = myIterator.next();
 
             /* Access bucket name */
             final String myName = myBucket.getName();
 
             /* Access values */
-            final PayeeValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisPayeeValues myValues = myBucket.getValues();
 
             /* Format the detail */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.PROFIT));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
         }
 
         /* Access values */
-        final PayeeValues myValues = myTotals.getValues();
+        final MoneyWiseAnalysisPayeeValues myValues = myTotals.getValues();
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.PROFIT));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT));
 
         /* Return the document */
         return theBuilder.getDocument();
     }
 
     @Override
-    public PayeeFilter processFilter(final Object pSource) {
+    public MoneyWiseAnalysisPayeeFilter processFilter(final Object pSource) {
         /* If this is an PayeeBucket */
-        if (pSource instanceof PayeeBucket) {
+        if (pSource instanceof MoneyWiseAnalysisPayeeBucket) {
             /* Create the new filter */
-            return new PayeeFilter((PayeeBucket) pSource);
+            return new MoneyWiseAnalysisPayeeFilter((MoneyWiseAnalysisPayeeBucket) pSource);
         }
         return null;
     }

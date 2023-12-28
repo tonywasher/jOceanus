@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseRateDataId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotRatesSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
@@ -79,7 +79,7 @@ public class MoneyWiseSpotRatesTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseSpotRatesTable(final MoneyWiseView pView,
+    MoneyWiseSpotRatesTable(final MoneyWiseXView pView,
                             final UpdateSet pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
@@ -324,7 +324,7 @@ public class MoneyWiseSpotRatesTable
          *
          * @param pView the data view
          */
-        public MoneyWiseSpotRatesPanel(final MoneyWiseView pView) {
+        public MoneyWiseSpotRatesPanel(final MoneyWiseXView pView) {
             /* Build the Update set and entry */
             theUpdateSet = new UpdateSet(pView);
 

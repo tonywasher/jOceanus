@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.reports;
+package net.sourceforge.joceanus.jmoneywise.atlas.reports;
 
 import java.util.Iterator;
 
@@ -28,42 +28,42 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTa
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket.CashCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket.LoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanCategoryBucket.LoanCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioCashBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PortfolioCashFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisAccountBucket.MoneyWiseAnalysisAccountValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDataResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisCashFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -72,7 +72,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * NetWorth report builder.
  */
 public class MoneyWiseReportNetWorth
-        extends MetisReportBase<Analysis, AnalysisFilter<?, ?>> {
+        extends MetisReportBase<MoneyWiseAnalysis, MoneyWiseAnalysisFilter<?, ?>> {
     /**
      * The Title text.
      */
@@ -86,37 +86,37 @@ public class MoneyWiseReportNetWorth
     /**
      * The Units text.
      */
-    private static final String TEXT_UNITS = MoneyWiseDataResource.MONEYWISEDATA_FIELD_UNITS.getValue();
+    private static final String TEXT_UNITS = MoneyWiseBasicResource.MONEYWISEDATA_FIELD_UNITS.getValue();
 
     /**
      * The Price text.
      */
-    private static final String TEXT_PRICE = MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue();
+    private static final String TEXT_PRICE = MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE.getValue();
 
     /**
      * The ForeignValue text.
      */
-    private static final String TEXT_FOREIGNVALUE = AnalysisResource.ACCOUNTATTR_FOREIGNVALUE.getValue();
+    private static final String TEXT_FOREIGNVALUE = MoneyWiseAnalysisDataResource.ACCOUNTATTR_FOREIGNVALUE.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = AnalysisResource.ACCOUNTATTR_VALUATION.getValue();
+    private static final String TEXT_VALUE = MoneyWiseAnalysisDataResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Account text.
      */
-    private static final String TEXT_ACCOUNT = AnalysisResource.BUCKET_ACCOUNT.getValue();
+    private static final String TEXT_ACCOUNT = MoneyWiseAnalysisDataResource.BUCKET_ACCOUNT.getValue();
 
     /**
      * The Rate text.
      */
-    private static final String TEXT_RATE = MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue();
+    private static final String TEXT_RATE = MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE.getValue();
 
     /**
      * The Maturity text.
      */
-    private static final String TEXT_MATURITY = AnalysisResource.ACCOUNTATTR_MATURITY.getValue();
+    private static final String TEXT_MATURITY = MoneyWiseAnalysisDataResource.ACCOUNTATTR_MATURITY.getValue();
 
     /**
      * HTML builder.
@@ -131,26 +131,26 @@ public class MoneyWiseReportNetWorth
     /**
      * Data Analysis.
      */
-    private Analysis theAnalysis;
+    private MoneyWiseAnalysis theAnalysis;
 
     /**
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected MoneyWiseReportNetWorth(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
+    protected MoneyWiseReportNetWorth(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }
 
     @Override
-    public Document createReport(final Analysis pAnalysis) {
+    public Document createReport(final MoneyWiseAnalysis pAnalysis) {
         /* Access the bucket lists */
         theAnalysis = pAnalysis;
-        final DepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
-        final CashCategoryBucketList myCash = theAnalysis.getCashCategories();
-        final LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
-        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final MoneyWiseAnalysisDepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
+        final MoneyWiseAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();
+        final MoneyWiseAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
+        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         final TethysDate myDate = theAnalysis.getDateRange().getEnd();
 
         /* Create the totals */
@@ -166,75 +166,75 @@ public class MoneyWiseReportNetWorth
         /* If we have deposits */
         if (!myDeposits.isEmpty()) {
             /* Loop through the SubTotal Buckets */
-            final Iterator<DepositCategoryBucket> myIterator = myDeposits.iterator();
+            final Iterator<MoneyWiseAnalysisDepositCategoryBucket> myIterator = myDeposits.iterator();
             while (myIterator.hasNext()) {
-                final DepositCategoryBucket myBucket = myIterator.next();
+                final MoneyWiseAnalysisDepositCategoryBucket myBucket = myIterator.next();
 
                 /* Only process active subTotal items */
                 if (!myBucket.isActive()
-                    || !myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
+                        || !myBucket.getAccountCategory().isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
                     continue;
                 }
 
                 /* Access values */
-                final AccountValues myValues = myBucket.getValues();
+                final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
                 /* Format the Category Total */
                 theBuilder.startRow(myTable);
                 theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
 
                 /* Add the category report */
                 makeCategoryReport(myTable, myBucket);
             }
 
             /* Access totals */
-            final DepositCategoryBucket myTotals = myDeposits.getTotals();
-            final AccountValues myValues = myTotals.getValues();
+            final MoneyWiseAnalysisDepositCategoryBucket myTotals = myDeposits.getTotals();
+            final MoneyWiseAnalysisAccountValues myValues = myTotals.getValues();
 
             /* Add to running totals */
-            myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
+            myTotal.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
         }
 
         /* If we have cash */
         if (!myCash.isEmpty()) {
             /* Loop through the SubTotal Buckets */
-            final Iterator<CashCategoryBucket> myIterator = myCash.iterator();
+            final Iterator<MoneyWiseAnalysisCashCategoryBucket> myIterator = myCash.iterator();
             while (myIterator.hasNext()) {
-                final CashCategoryBucket myBucket = myIterator.next();
+                final MoneyWiseAnalysisCashCategoryBucket myBucket = myIterator.next();
 
                 /* Only process active subTotal items */
                 if (!myBucket.isActive()
-                    || !myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
+                        || !myBucket.getAccountCategory().isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
                     continue;
                 }
 
                 /* Access values */
-                final AccountValues myValues = myBucket.getValues();
+                final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
                 /* Format the Category Total */
                 theBuilder.startRow(myTable);
                 theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
 
                 /* Add the category report */
                 makeCategoryReport(myTable, myBucket);
             }
 
             /* Access totals */
-            final CashCategoryBucket myTotals = myCash.getTotals();
-            final AccountValues myValues = myTotals.getValues();
+            final MoneyWiseAnalysisCashCategoryBucket myTotals = myCash.getTotals();
+            final MoneyWiseAnalysisAccountValues myValues = myTotals.getValues();
 
             /* Add to running totals */
-            myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
+            myTotal.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
         }
 
         /* If we have portfolios */
         if (!myPortfolios.isEmpty()) {
             /* Access totals */
-            final PortfolioBucket myTotals = myPortfolios.getTotals();
-            final SecurityValues myValues = myTotals.getValues();
-            final TethysMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
+            final MoneyWiseAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
+            final MoneyWiseAnalysisSecurityValues myValues = myTotals.getValues();
+            final TethysMoney myValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);
@@ -251,34 +251,34 @@ public class MoneyWiseReportNetWorth
         /* If we have loans */
         if (!myLoans.isEmpty()) {
             /* Loop through the SubTotal Buckets */
-            final Iterator<LoanCategoryBucket> myIterator = myLoans.iterator();
+            final Iterator<MoneyWiseAnalysisLoanCategoryBucket> myIterator = myLoans.iterator();
             while (myIterator.hasNext()) {
-                final LoanCategoryBucket myBucket = myIterator.next();
+                final MoneyWiseAnalysisLoanCategoryBucket myBucket = myIterator.next();
 
                 /* Only process active subTotal items */
                 if (!myBucket.isActive()
-                    || !myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
+                        || !myBucket.getAccountCategory().isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
                     continue;
                 }
 
                 /* Access values */
-                final AccountValues myValues = myBucket.getValues();
+                final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
                 /* Format the Category Total */
                 theBuilder.startRow(myTable);
                 theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
 
                 /* Add the category report */
                 makeCategoryReport(myTable, myBucket);
             }
 
             /* Access totals */
-            final LoanCategoryBucket myTotals = myLoans.getTotals();
-            final AccountValues myValues = myTotals.getValues();
+            final MoneyWiseAnalysisLoanCategoryBucket myTotals = myLoans.getTotals();
+            final MoneyWiseAnalysisAccountValues myValues = myTotals.getValues();
 
             /* Add to running totals */
-            myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
+            myTotal.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
         }
 
         /* Build the total row */
@@ -296,23 +296,23 @@ public class MoneyWiseReportNetWorth
      * @param pCategory the category bucket
      */
     private void makeCategoryReport(final MetisHTMLTable pParent,
-                                    final DepositCategoryBucket pCategory) {
+                                    final MoneyWiseAnalysisDepositCategoryBucket pCategory) {
         /* Access the category */
-        final DepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();
-        final DepositCategory myCategory = pCategory.getAccountCategory();
+        final MoneyWiseAnalysisDepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();
+        final MoneyWiseDepositCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
         final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        final Iterator<DepositCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseAnalysisDepositCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final DepositCategoryBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisDepositCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if inactive or incorrect category */
-            final DepositCategory myCurr = myBucket.getAccountCategory();
+            final MoneyWiseDepositCategory myCurr = myBucket.getAccountCategory();
             if (!myBucket.isActive()
-                || !MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
+                    || !MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -320,12 +320,12 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final AccountValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -341,23 +341,23 @@ public class MoneyWiseReportNetWorth
      * @param pCategory the category bucket
      */
     private void makeCategoryReport(final MetisHTMLTable pParent,
-                                    final CashCategoryBucket pCategory) {
+                                    final MoneyWiseAnalysisCashCategoryBucket pCategory) {
         /* Access the category */
-        final CashCategoryBucketList myCategories = theAnalysis.getCashCategories();
-        final CashCategory myCategory = pCategory.getAccountCategory();
+        final MoneyWiseAnalysisCashCategoryBucketList myCategories = theAnalysis.getCashCategories();
+        final MoneyWiseCashCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
         final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        final Iterator<CashCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseAnalysisCashCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final CashCategoryBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisCashCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if inactive or incorrect category */
-            final CashCategory myCurr = myBucket.getAccountCategory();
+            final MoneyWiseCashCategory myCurr = myBucket.getAccountCategory();
             if (!myBucket.isActive()
-                || !MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
+                    || !MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -365,12 +365,12 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final AccountValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -386,23 +386,23 @@ public class MoneyWiseReportNetWorth
      * @param pCategory the category bucket
      */
     private void makeCategoryReport(final MetisHTMLTable pParent,
-                                    final LoanCategoryBucket pCategory) {
+                                    final MoneyWiseAnalysisLoanCategoryBucket pCategory) {
         /* Access the category */
-        final LoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();
-        final LoanCategory myCategory = pCategory.getAccountCategory();
+        final MoneyWiseAnalysisLoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();
+        final MoneyWiseLoanCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
         final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        final Iterator<LoanCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseAnalysisLoanCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final LoanCategoryBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisLoanCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if inactive or incorrect category */
-            final LoanCategory myCurr = myBucket.getAccountCategory();
+            final MoneyWiseLoanCategory myCurr = myBucket.getAccountCategory();
             if (!myBucket.isActive()
-                || !MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
+                    || !MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
@@ -410,12 +410,12 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final AccountValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -431,15 +431,15 @@ public class MoneyWiseReportNetWorth
      */
     private void makePortfolioReport(final MetisHTMLTable pParent) {
         /* Access the portfolios */
-        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
 
         /* Create an embedded table */
         final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Portfolio Buckets */
-        final Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
+        final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
-            final PortfolioBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();
 
             /* Skip inactive portfolios */
             if (!myBucket.isActive()) {
@@ -450,12 +450,12 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final SecurityValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -469,17 +469,17 @@ public class MoneyWiseReportNetWorth
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
-        if (mySource instanceof DepositCategoryBucket) {
-            final DepositCategoryBucket mySourceBucket = (DepositCategoryBucket) mySource;
+        if (mySource instanceof MoneyWiseAnalysisDepositCategoryBucket) {
+            final MoneyWiseAnalysisDepositCategoryBucket mySourceBucket = (MoneyWiseAnalysisDepositCategoryBucket) mySource;
             return createDelayedDeposit(pTable.getParent(), mySourceBucket);
-        } else if (mySource instanceof CashCategoryBucket) {
-            final CashCategoryBucket mySourceBucket = (CashCategoryBucket) mySource;
+        } else if (mySource instanceof MoneyWiseAnalysisCashCategoryBucket) {
+            final MoneyWiseAnalysisCashCategoryBucket mySourceBucket = (MoneyWiseAnalysisCashCategoryBucket) mySource;
             return createDelayedCash(pTable.getParent(), mySourceBucket);
-        } else if (mySource instanceof LoanCategoryBucket) {
-            final LoanCategoryBucket mySourceBucket = (LoanCategoryBucket) mySource;
+        } else if (mySource instanceof MoneyWiseAnalysisLoanCategoryBucket) {
+            final MoneyWiseAnalysisLoanCategoryBucket mySourceBucket = (MoneyWiseAnalysisLoanCategoryBucket) mySource;
             return createDelayedLoan(pTable.getParent(), mySourceBucket);
-        } else if (mySource instanceof PortfolioBucket) {
-            final PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+        } else if (mySource instanceof MoneyWiseAnalysisPortfolioBucket) {
+            final MoneyWiseAnalysisPortfolioBucket mySourceBucket = (MoneyWiseAnalysisPortfolioBucket) mySource;
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -494,10 +494,10 @@ public class MoneyWiseReportNetWorth
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedDeposit(final MetisHTMLTable pParent,
-                                                final DepositCategoryBucket pSource) {
+                                                final MoneyWiseAnalysisDepositCategoryBucket pSource) {
         /* Access the category */
-        final DepositBucketList myAccounts = theAnalysis.getDeposits();
-        final DepositCategory myCategory = pSource.getAccountCategory();
+        final MoneyWiseAnalysisDepositBucketList myAccounts = theAnalysis.getDeposits();
+        final MoneyWiseDepositCategory myCategory = pSource.getAccountCategory();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
@@ -514,13 +514,13 @@ public class MoneyWiseReportNetWorth
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* Loop through the Deposit Buckets */
-        final Iterator<DepositBucket> myIterator = myAccounts.iterator();
+        final Iterator<MoneyWiseAnalysisDepositBucket> myIterator = myAccounts.iterator();
         while (myIterator.hasNext()) {
-            final DepositBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisDepositBucket myBucket = myIterator.next();
 
             /* Skip record if inactive or incorrect category */
             if (!myBucket.isActive()
-                || !MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {
+                    || !MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -528,24 +528,24 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final AccountValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.DEPOSITRATE));
-            theBuilder.makeValueCell(myTable, myValues.getDateValue(AccountAttribute.MATURITY));
+            theBuilder.makeValueCell(myTable, myValues.getRateValue(MoneyWiseAnalysisAccountAttr.DEPOSITRATE));
+            theBuilder.makeValueCell(myTable, myValues.getDateValue(MoneyWiseAnalysisAccountAttr.MATURITY));
 
             /* Handle foreign accounts */
             if (isForeign) {
                 if (myBucket.isForeignCurrency()) {
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 } else {
-                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 }
             } else {
-                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
             }
 
             /* Record the filter */
@@ -563,10 +563,10 @@ public class MoneyWiseReportNetWorth
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedCash(final MetisHTMLTable pParent,
-                                             final CashCategoryBucket pSource) {
+                                             final MoneyWiseAnalysisCashCategoryBucket pSource) {
         /* Access the category and class */
-        final CashBucketList myCash = theAnalysis.getCash();
-        final CashCategory myCategory = pSource.getAccountCategory();
+        final MoneyWiseAnalysisCashBucketList myCash = theAnalysis.getCash();
+        final MoneyWiseCashCategory myCategory = pSource.getAccountCategory();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
@@ -581,13 +581,13 @@ public class MoneyWiseReportNetWorth
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* Loop through the Cash Buckets */
-        final Iterator<CashBucket> myIterator = myCash.iterator();
+        final Iterator<MoneyWiseAnalysisCashBucket> myIterator = myCash.iterator();
         while (myIterator.hasNext()) {
-            final CashBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisCashBucket myBucket = myIterator.next();
 
             /* Skip record if inactive or incorrect category */
             if (!myBucket.isActive()
-                || !MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {
+                    || !MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -595,7 +595,7 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final AccountValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -604,13 +604,13 @@ public class MoneyWiseReportNetWorth
             /* Handle foreign accounts */
             if (isForeign) {
                 if (myBucket.isForeignCurrency()) {
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 } else {
-                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 }
             } else {
-                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
             }
 
             /* Record the filter */
@@ -628,10 +628,10 @@ public class MoneyWiseReportNetWorth
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedLoan(final MetisHTMLTable pParent,
-                                             final LoanCategoryBucket pSource) {
+                                             final MoneyWiseAnalysisLoanCategoryBucket pSource) {
         /* Access the category */
-        final LoanBucketList myLoans = theAnalysis.getLoans();
-        final LoanCategory myCategory = pSource.getAccountCategory();
+        final MoneyWiseAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
+        final MoneyWiseLoanCategory myCategory = pSource.getAccountCategory();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
@@ -646,13 +646,13 @@ public class MoneyWiseReportNetWorth
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
 
         /* Loop through the Loan Buckets */
-        final Iterator<LoanBucket> myIterator = myLoans.iterator();
+        final Iterator<MoneyWiseAnalysisLoanBucket> myIterator = myLoans.iterator();
         while (myIterator.hasNext()) {
-            final LoanBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisLoanBucket myBucket = myIterator.next();
 
             /* Skip record if inactive or incorrect category */
             if (!myBucket.isActive()
-                || !MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {
+                    || !MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {
                 continue;
             }
 
@@ -660,7 +660,7 @@ public class MoneyWiseReportNetWorth
             final String myName = myBucket.getName();
 
             /* Access values */
-            final AccountValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -669,13 +669,13 @@ public class MoneyWiseReportNetWorth
             /* Handle foreign accounts */
             if (isForeign) {
                 if (myBucket.isForeignCurrency()) {
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 } else {
-                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 }
             } else {
-                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
             }
 
             /* Record the filter */
@@ -693,10 +693,10 @@ public class MoneyWiseReportNetWorth
      * @return the new document fragment
      */
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                                  final PortfolioBucket pSource) {
+                                                  final MoneyWiseAnalysisPortfolioBucket pSource) {
         /* Access the securities */
-        final PortfolioCashBucket myCash = pSource.getPortfolioCash();
-        final SecurityBucketList mySecurities = pSource.getSecurities();
+        final MoneyWiseAnalysisPortfolioCashBucket myCash = pSource.getPortfolioCash();
+        final MoneyWiseAnalysisSecurityBucketList mySecurities = pSource.getSecurities();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create a new table */
@@ -715,7 +715,7 @@ public class MoneyWiseReportNetWorth
         /* If the portfolio cash is active */
         if (myCash.isActive()) {
             /* Access values */
-            final AccountValues myValues = myCash.getValues();
+            final MoneyWiseAnalysisAccountValues myValues = myCash.getValues();
 
             /* Access bucket name */
             final String myName = pSource.getName();
@@ -729,13 +729,13 @@ public class MoneyWiseReportNetWorth
             /* Handle foreign accounts */
             if (isForeign) {
                 if (myCash.isForeignCurrency()) {
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE));
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 } else {
-                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
                 }
             } else {
-                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));
             }
 
             /* Record the filter */
@@ -743,9 +743,9 @@ public class MoneyWiseReportNetWorth
         }
 
         /* Loop through the Security Buckets */
-        final Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+        final Iterator<MoneyWiseAnalysisSecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            final SecurityBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();
 
             /* Skip inactive securities */
             if (!myBucket.isActive()) {
@@ -758,24 +758,24 @@ public class MoneyWiseReportNetWorth
             myFullName = myFullName.replace(':', '-');
 
             /* Access values */
-            final SecurityValues myValues = myBucket.getValues();
+            final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myFullName, myName);
-            theBuilder.makeValueCell(myTable, myValues.getUnitsValue(SecurityAttribute.UNITS));
-            theBuilder.makeValueCell(myTable, myValues.getPriceValue(SecurityAttribute.PRICE));
+            theBuilder.makeValueCell(myTable, myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS));
+            theBuilder.makeValueCell(myTable, myValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE));
 
             /* Handle foreign securities */
             if (isForeign) {
                 if (myBucket.isForeignCurrency()) {
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.FOREIGNVALUE));
-                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE));
+                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
                 } else {
-                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
                 }
             } else {
-                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
             }
 
             /* Record the filter */
@@ -787,31 +787,31 @@ public class MoneyWiseReportNetWorth
     }
 
     @Override
-    public AnalysisFilter<?, ?> processFilter(final Object pSource) {
+    public MoneyWiseAnalysisFilter<?, ?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
-        if (pSource instanceof DepositBucket) {
+        if (pSource instanceof MoneyWiseAnalysisDepositBucket) {
             /* Create the new filter */
-            return new DepositFilter((DepositBucket) pSource);
+            return new MoneyWiseAnalysisDepositFilter((MoneyWiseAnalysisDepositBucket) pSource);
         }
         /* If this is a CashBucket */
-        if (pSource instanceof CashBucket) {
+        if (pSource instanceof MoneyWiseAnalysisCashBucket) {
             /* Create the new filter */
-            return new CashFilter((CashBucket) pSource);
+            return new MoneyWiseAnalysisCashFilter((MoneyWiseAnalysisCashBucket) pSource);
         }
         /* If this is a LoanBucket */
-        if (pSource instanceof LoanBucket) {
+        if (pSource instanceof MoneyWiseAnalysisLoanBucket) {
             /* Create the new filter */
-            return new LoanFilter((LoanBucket) pSource);
+            return new MoneyWiseAnalysisLoanFilter((MoneyWiseAnalysisLoanBucket) pSource);
         }
         /* If this is a SecurityBucket */
-        if (pSource instanceof SecurityBucket) {
+        if (pSource instanceof MoneyWiseAnalysisSecurityBucket) {
             /* Create the new filter */
-            return new SecurityFilter((SecurityBucket) pSource);
+            return new MoneyWiseAnalysisSecurityFilter((MoneyWiseAnalysisSecurityBucket) pSource);
         }
         /* If this is a PortfolioBucket */
-        if (pSource instanceof PortfolioBucket) {
+        if (pSource instanceof MoneyWiseAnalysisPortfolioBucket) {
             /* Create the new filter */
-            return new PortfolioCashFilter((PortfolioBucket) pSource);
+            return new MoneyWiseAnalysisPortfolioCashFilter((MoneyWiseAnalysisPortfolioBucket) pSource);
         }
         return null;
     }

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseLoanCategoryPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -62,7 +62,7 @@ public class MoneyWiseLoanCategoryTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseLoanCategoryTable(final MoneyWiseView pView,
+    MoneyWiseLoanCategoryTable(final MoneyWiseXView pView,
                                final UpdateSet pUpdateSet,
                                final MetisErrorPanel pError) {
         /* Store parameters */

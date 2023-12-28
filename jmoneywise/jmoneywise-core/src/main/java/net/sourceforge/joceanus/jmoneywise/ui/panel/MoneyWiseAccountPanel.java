@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -88,7 +88,7 @@ public class MoneyWiseAccountPanel
     /**
      * The Data View.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The Panel.
@@ -179,7 +179,7 @@ public class MoneyWiseAccountPanel
      * Constructor.
      * @param pView the data view
      */
-    MoneyWiseAccountPanel(final MoneyWiseView pView) {
+    MoneyWiseAccountPanel(final MoneyWiseXView pView) {
         /* Store details */
         theView = pView;
 

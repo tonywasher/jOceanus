@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -82,7 +82,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
      * @param pError     the error panel
      * @param pDataType  the dataType
      */
-    protected MoneyWiseAssetTable(final MoneyWiseView pView,
+    protected MoneyWiseAssetTable(final MoneyWiseXView pView,
                                   final UpdateSet pUpdateSet,
                                   final MetisErrorPanel pError,
                                   final MoneyWiseDataType pDataType) {

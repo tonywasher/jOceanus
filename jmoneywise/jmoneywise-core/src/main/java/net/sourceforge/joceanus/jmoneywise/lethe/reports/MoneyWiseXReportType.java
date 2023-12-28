@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.reports;
 /**
  * Report Types.
  */
-public enum MoneyWiseReportType {
+public enum MoneyWiseXReportType {
     /**
      * Net Worth Report.
      */
@@ -80,7 +80,7 @@ public enum MoneyWiseReportType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseReportResource.getKeyForReportType(this).getValue();
+            theName = MoneyWiseXReportResource.getKeyForReportType(this).getValue();
         }
 
         /* return the name */
@@ -123,7 +123,7 @@ public enum MoneyWiseReportType {
      * Obtain the default report.
      * @return the default
      */
-    public static MoneyWiseReportType getDefault() {
+    public static MoneyWiseXReportType getDefault() {
         return NETWORTH;
     }
 }

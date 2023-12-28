@@ -59,12 +59,12 @@ public final class SpotExchangeRate
     /**
      * Previous Date field Id.
      */
-    public static final MetisLetheField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+    public static final MetisLetheField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseXViewResource.SPOTEVENT_PREVDATE.getValue());
 
     /**
      * Previous Rate field Id.
      */
-    public static final MetisLetheField FIELD_PREVRATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTRATE_PREVRATE.getValue());
+    public static final MetisLetheField FIELD_PREVRATE = FIELD_DEFS.declareEqualityField(MoneyWiseXViewResource.SPOTRATE_PREVRATE.getValue());
 
     /**
      * the previous date.
@@ -202,8 +202,8 @@ public final class SpotExchangeRate
         static {
             FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY, SpotExchangeList::getCurrency);
             FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, SpotExchangeList::getDate);
-            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE, SpotExchangeList::getNext);
-            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotExchangeList::getPrev);
+            FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.SPOTEVENT_NEXTDATE, SpotExchangeList::getNext);
+            FIELD_DEFS.declareLocalField(MoneyWiseXViewResource.SPOTEVENT_PREVDATE, SpotExchangeList::getPrev);
         }
 
         /**
@@ -214,7 +214,7 @@ public final class SpotExchangeRate
         /**
          * The view.
          */
-        private final MoneyWiseView theView;
+        private final MoneyWiseXView theView;
 
         /**
          * The currency.
@@ -236,7 +236,7 @@ public final class SpotExchangeRate
          * @param pView the view
          * @param pDate the date
          */
-        public SpotExchangeList(final MoneyWiseView pView,
+        public SpotExchangeList(final MoneyWiseXView pView,
                                 final TethysDate pDate) {
             /* Build initial list */
             super((MoneyWiseData) pView.getData(), SpotExchangeRate.class, MoneyWiseDataType.SECURITYPRICE);

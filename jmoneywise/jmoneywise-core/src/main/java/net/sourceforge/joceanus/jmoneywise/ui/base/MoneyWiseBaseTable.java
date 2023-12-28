@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -119,7 +119,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem>
     /**
      * The view.
      */
-    private final MoneyWiseView theView;
+    private final MoneyWiseXView theView;
 
     /**
      * The ItemType.
@@ -173,7 +173,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem>
      * @param pError the error panel
      * @param pDataType the dataType
      */
-    protected MoneyWiseBaseTable(final MoneyWiseView pView,
+    protected MoneyWiseBaseTable(final MoneyWiseXView pView,
                                  final UpdateSet pUpdateSet,
                                  final MetisErrorPanel pError,
                                  final MoneyWiseDataType pDataType) {
@@ -257,7 +257,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem>
      * Obtain the view.
      * @return the view
      */
-    protected MoneyWiseView getView() {
+    protected MoneyWiseXView getView() {
         return theView;
     }
 

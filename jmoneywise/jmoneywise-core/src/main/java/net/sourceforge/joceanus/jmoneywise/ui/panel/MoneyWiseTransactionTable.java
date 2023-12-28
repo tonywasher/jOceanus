@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -42,7 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.S
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseTransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
@@ -152,7 +152,7 @@ public class MoneyWiseTransactionTable
      * @param pFilter the filter viewer entry
      * @param pAnalysis the analysis viewer entry
      */
-    MoneyWiseTransactionTable(final MoneyWiseView pView,
+    MoneyWiseTransactionTable(final MoneyWiseXView pView,
                               final UpdateSet pUpdateSet,
                               final MetisErrorPanel pError,
                               final MetisViewerEntry pFilter,
@@ -1032,7 +1032,7 @@ public class MoneyWiseTransactionTable
          *
          * @param pView the data view
          */
-        MoneyWiseStatementPanel(final MoneyWiseView pView) {
+        MoneyWiseStatementPanel(final MoneyWiseXView pView) {
             /* Build the Update set and entry */
             theUpdateSet = new UpdateSet(pView);
 

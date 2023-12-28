@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseDialogTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
@@ -69,7 +69,7 @@ public class MoneyWiseSecurityPriceTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    public MoneyWiseSecurityPriceTable(final MoneyWiseView pView,
+    public MoneyWiseSecurityPriceTable(final MoneyWiseXView pView,
                                        final UpdateSet pUpdateSet,
                                        final MetisErrorPanel pError) {
         /* Store parameters */

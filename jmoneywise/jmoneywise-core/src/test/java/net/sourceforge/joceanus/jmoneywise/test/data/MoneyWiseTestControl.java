@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAna
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
@@ -106,6 +107,8 @@ public class MoneyWiseTestControl {
 
         /* Access the analysis */
         final MoneyWiseAnalysis myAnalysis = myAnalyser.getAnalysis();
+        final MoneyWiseAnalysisManager myAnalysisMgr = new MoneyWiseAnalysisManager(myAnalysis);
+        myAnalysisMgr.analyseBase();
 
         /* Obtain deposit totals */
         final MoneyWiseAnalysisDepositCategoryBucket myDepCat = myAnalysis.getDepositCategories().getTotals();
@@ -134,7 +137,6 @@ public class MoneyWiseTestControl {
         }
 
         /* Validate Payee totals */
-git add .
         final MoneyWiseAnalysisPayeeBucket myPayeeTotals = myAnalysis.getPayees().getTotals();
         TethysMoney myPayTotal = myPayeeTotals.getValues().getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT);
         if (myPayTotal == null) {

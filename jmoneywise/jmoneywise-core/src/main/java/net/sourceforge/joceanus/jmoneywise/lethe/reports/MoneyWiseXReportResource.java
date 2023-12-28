@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 /**
  * Resource IDs for jMoneyWise Report Fields.
  */
-public enum MoneyWiseReportResource implements TethysBundleId {
+public enum MoneyWiseXReportResource implements TethysBundleId {
     /**
      * NetWorth ReportType.
      */
@@ -141,7 +141,7 @@ public enum MoneyWiseReportResource implements TethysBundleId {
     /**
      * The Report Map.
      */
-    private static final Map<MoneyWiseReportType, TethysBundleId> REPORT_MAP = buildReportMap();
+    private static final Map<MoneyWiseXReportType, TethysBundleId> REPORT_MAP = buildReportMap();
 
     /**
      * The Resource Loader.
@@ -163,7 +163,7 @@ public enum MoneyWiseReportResource implements TethysBundleId {
      * Constructor.
      * @param pKeyName the key name
      */
-    MoneyWiseReportResource(final String pKeyName) {
+    MoneyWiseXReportResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -193,19 +193,19 @@ public enum MoneyWiseReportResource implements TethysBundleId {
      * Build report map.
      * @return the map
      */
-    private static Map<MoneyWiseReportType, TethysBundleId> buildReportMap() {
+    private static Map<MoneyWiseXReportType, TethysBundleId> buildReportMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseReportType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseReportType.class);
-        myMap.put(MoneyWiseReportType.NETWORTH, TYPE_NETWORTH);
-        myMap.put(MoneyWiseReportType.BALANCESHEET, TYPE_BALANCESHEET);
-        myMap.put(MoneyWiseReportType.CASHFLOW, TYPE_CASHFLOW);
-        myMap.put(MoneyWiseReportType.INCOMEEXPENSE, TYPE_INCEXP);
-        myMap.put(MoneyWiseReportType.PORTFOLIO, TYPE_PORTFOLIO);
-        myMap.put(MoneyWiseReportType.MARKETGROWTH, TYPE_MARKET);
-        myMap.put(MoneyWiseReportType.TAXBASIS, TYPE_TAXBASIS);
-        myMap.put(MoneyWiseReportType.TAXCALC, TYPE_TAXCALC);
-        myMap.put(MoneyWiseReportType.ASSETGAINS, TYPE_ASSETGAINS);
-        myMap.put(MoneyWiseReportType.CAPITALGAINS, TYPE_CAPITALGAINS);
+        final Map<MoneyWiseXReportType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseXReportType.class);
+        myMap.put(MoneyWiseXReportType.NETWORTH, TYPE_NETWORTH);
+        myMap.put(MoneyWiseXReportType.BALANCESHEET, TYPE_BALANCESHEET);
+        myMap.put(MoneyWiseXReportType.CASHFLOW, TYPE_CASHFLOW);
+        myMap.put(MoneyWiseXReportType.INCOMEEXPENSE, TYPE_INCEXP);
+        myMap.put(MoneyWiseXReportType.PORTFOLIO, TYPE_PORTFOLIO);
+        myMap.put(MoneyWiseXReportType.MARKETGROWTH, TYPE_MARKET);
+        myMap.put(MoneyWiseXReportType.TAXBASIS, TYPE_TAXBASIS);
+        myMap.put(MoneyWiseXReportType.TAXCALC, TYPE_TAXCALC);
+        myMap.put(MoneyWiseXReportType.ASSETGAINS, TYPE_ASSETGAINS);
+        myMap.put(MoneyWiseXReportType.CAPITALGAINS, TYPE_CAPITALGAINS);
         return myMap;
     }
 
@@ -214,7 +214,7 @@ public enum MoneyWiseReportResource implements TethysBundleId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForReportType(final MoneyWiseReportType pValue) {
+    protected static TethysBundleId getKeyForReportType(final MoneyWiseXReportType pValue) {
         return TethysBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

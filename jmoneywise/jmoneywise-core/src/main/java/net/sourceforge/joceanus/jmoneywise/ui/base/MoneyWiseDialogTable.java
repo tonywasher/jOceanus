@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.base;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -54,7 +54,7 @@ public abstract class MoneyWiseDialogTable<T extends DataItem>
      * @param pError     the error panel
      * @param pDataType  the dataType
      */
-    protected MoneyWiseDialogTable(final MoneyWiseView pView,
+    protected MoneyWiseDialogTable(final MoneyWiseXView pView,
                                    final UpdateSet pUpdateSet,
                                    final MetisErrorPanel pError,
                                    final MoneyWiseDataType pDataType) {
