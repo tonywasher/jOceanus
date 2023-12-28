@@ -22,6 +22,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -47,6 +48,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -582,12 +584,13 @@ public final class GordianCoreKeySet
         /* Loop through the symmetricKeys values */
         final GordianLength myKeyLen = theSpec.getKeyLength();
         final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
+        final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, pInitVector);
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key and add to map */
                 final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);
-                final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, pSecret, pInitVector);
+                final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, pSecret, pInitVector, mySeededRandom);
                 theSymKeyMap.put(mySpec, myKey);
                 theCipher.declareSymKey(myKey);
             }
@@ -605,11 +608,12 @@ public final class GordianCoreKeySet
      */
     private <T extends GordianKeySpec> GordianKey<T> generateKey(final T pKeyType,
                                                                  final byte[] pSecret,
-                                                                 final byte[] pInitVector) throws OceanusException {
+                                                                 final byte[] pInitVector,
+                                                                 final Random pSeededRandom) throws OceanusException {
         /* Generate a new Secret Key from the secret */
         final GordianCipherFactory myFactory = theFactory.getCipherFactory();
         final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(pKeyType);
-        return myGenerator.generateKeyFromSecret(pSecret, pInitVector);
+        return myGenerator.generateKeyFromSecret(pSecret, pInitVector, pSeededRandom);
     }
 
     @Override

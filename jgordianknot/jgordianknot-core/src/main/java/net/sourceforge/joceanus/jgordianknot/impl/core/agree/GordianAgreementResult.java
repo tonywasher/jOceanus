@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.util.Random;
+
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -38,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
@@ -291,7 +294,8 @@ public class GordianAgreementResult {
             /* Derive the key */
             final GordianCipherFactory myCiphers = pFactory.getCipherFactory();
             final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myCiphers.getKeyGenerator(pKeyType);
-            return myGenerator.generateKeyFromSecret(mySecret, myIV);
+            final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, myIV);
+            return myGenerator.generateKeyFromSecret(mySecret, myIV, mySeededRandom);
 
             /* Clear buffers */
         } finally {

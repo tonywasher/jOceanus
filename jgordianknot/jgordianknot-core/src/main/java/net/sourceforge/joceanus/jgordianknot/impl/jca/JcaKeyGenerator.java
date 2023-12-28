@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
+import java.util.Random;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -73,8 +74,9 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
 
     @Override
     public JcaKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                           final byte[] pInitVector) throws OceanusException {
-        return (JcaKey<T>) super.generateKeyFromSecret(pSecret, pInitVector);
+                                           final byte[] pInitVector,
+                                           final Random pSeededRandom) throws OceanusException {
+        return (JcaKey<T>) super.generateKeyFromSecret(pSecret, pInitVector, pSeededRandom);
     }
 
     @Override

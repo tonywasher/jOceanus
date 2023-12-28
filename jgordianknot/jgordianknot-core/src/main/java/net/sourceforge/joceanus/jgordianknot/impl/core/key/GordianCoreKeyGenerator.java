@@ -115,11 +115,13 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
      * Generate a Key from a Secret.
      * @param pSecret the derived Secret
      * @param pInitVector the initialisation vector
+     * @param pSeededRandom the deterministic random
      * @return the new Secret Key
      * @throws OceanusException on error
      */
     public GordianKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                               final byte[] pInitVector) throws OceanusException {
+                                               final byte[] pInitVector,
+                                               final Random pSeededRandom) throws OceanusException {
         /* Determine the key length in bytes */
         final int myKeyLen = theKeyLength
                 / Byte.SIZE;
@@ -128,9 +130,8 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final byte[] myKeyBytes = new byte[myKeyLen];
         int myBuilt = 0;
 
-        /* Derive the two digestTypes from the initVector */
-        final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, pInitVector);
-        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeededRandom, 2);
+        /* Derive the two digestTypes from the seededRandom */
+        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(pSeededRandom, 2);
 
         /* Create the MACs and initialise them */
         final GordianMacFactory myFactory = theFactory.getMacFactory();
@@ -146,8 +147,13 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
 
         /* Protect against exceptions */
         try {
-            /* while we need to generate more bytes */
+            /* Create section count */
             final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
+            final byte[] myAdjust = new byte[Integer.BYTES];
+            pSeededRandom.nextBytes(myAdjust);
+            mySection.addTo(myAdjust);
+
+            /* while we need to generate more bytes */
             while (myBuilt < myKeyLen) {
                 /* Build the key part */
                 final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector);

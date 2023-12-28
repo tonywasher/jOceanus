@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import java.util.Random;
+
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 
@@ -73,8 +75,9 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
 
     @Override
     public BouncyKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                              final byte[] pInitVector) throws OceanusException {
-        return (BouncyKey<T>) super.generateKeyFromSecret(pSecret, pInitVector);
+                                              final byte[] pInitVector,
+                                              final Random pSeededRandom) throws OceanusException {
+        return (BouncyKey<T>) super.generateKeyFromSecret(pSecret, pInitVector, pSeededRandom);
     }
 
     @Override
