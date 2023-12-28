@@ -29,6 +29,8 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -40,9 +42,11 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -450,6 +454,55 @@ public final class GordianCoreKeySet
 
         /* Build the keySet and return it */
         return myEncoded.buildKeySet((GordianCoreKeySetFactory) theFactory.getKeySetFactory(), this);
+    }
+
+    @Override
+    public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws OceanusException {
+        /* Protect the operation */
+        byte[] myBuffer = new byte[GordianCoreFactoryLock.DATA_LEN];
+        try {
+            /* Access the parameters */
+            final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
+            final byte[] mySecSeed = myParams.getSecuritySeed();
+            final byte[] myKeySetSeed = myParams.getKeySetSeed();
+
+            /* Reject request if this is not a randomFactory */
+            if (myKeySetSeed == null) {
+                throw new GordianDataException("Unable to lock non-Random factory");
+            }
+
+            /* Build the buffer and encrypt it */
+            System.arraycopy(mySecSeed, 0, myBuffer, 0, mySecSeed.length);
+            System.arraycopy(myKeySetSeed, 0, myBuffer, mySecSeed.length, myKeySetSeed.length);
+            return encryptBytes(myBuffer);
+
+            /* Clear the buffer */
+        } finally {
+            Arrays.fill(myBuffer, (byte) 0);
+        }
+    }
+
+    @Override
+    public GordianFactory deriveFactory(final byte[] pSecuredFactory) throws OceanusException {
+        /* Decrypt the bytes */
+        final byte[] myBytes = decryptBytes(pSecuredFactory);
+
+        /* Check that the buffer is the correct length */
+        if (myBytes.length != GordianCoreFactoryLock.DATA_LEN) {
+            throw new IllegalArgumentException("Invalid secured factory");
+        }
+
+        /* Access the separate parts */
+        final int mySeedLen = GordianParameters.SEED_LEN;
+        final byte[] mySecSeed = Arrays.copyOfRange(myBytes,0,  mySeedLen);
+        final byte[] myKeySetSeed = Arrays.copyOfRange(myBytes, mySeedLen, myBytes.length);
+        Arrays.fill(myBytes, (byte) 0);
+
+        /* Create parameters and factory */
+        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
+        myParams.setSecuritySeeds(mySecSeed, myKeySetSeed);
+        myParams.setInternal();
+        return theFactory.newFactory(myParams);
     }
 
     /**

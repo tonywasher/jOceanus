@@ -366,6 +366,7 @@ class KeySetTest {
                 DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
                 DynamicTest.dynamicTest("encryptAAD", () -> checkEncryptAAD(myKeySet)),
                 DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
+                DynamicTest.dynamicTest("factory", () -> checkFactory(myKeySet)),
                 DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
         )));
     }
@@ -807,6 +808,20 @@ class KeySetTest {
         final GordianKeySet myKeySetResult = myKeySet.deriveKeySet(myKeySetSafe);
         Assertions.assertEquals(myKeySet, myKeySetResult, "Failed to wrap/unwrap keySet");
         Assertions.assertEquals(myKeySet.getKeySetWrapLength(), myKeySetSafe.length, "Incorrect wrapped keySetLength");
+    }
+
+    /**
+     * Check wrapping.
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    private void checkFactory(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Access the keys */
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final byte[] myWrapped = myKeySet.secureFactory(myFactory);
+        final GordianFactory myUnWrapped = myKeySet.deriveFactory(myWrapped);
+        Assertions.assertEquals(myFactory, myUnWrapped, "Failed to secure/derive factory");
     }
 
     /**

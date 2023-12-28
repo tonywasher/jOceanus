@@ -59,6 +59,11 @@ public class GordianCoreFactoryLock
     public static final GordianLength HASH_LEN = GordianLength.LEN_512;
 
     /**
+     * Hash length.
+     */
+    public static final int DATA_LEN = GordianLength.LEN_512.getByteLength() - MASK_LEN;
+
+    /**
      * The number of hash iterations.
      */
     private static final int NUM_ITERATIONS = 1024;

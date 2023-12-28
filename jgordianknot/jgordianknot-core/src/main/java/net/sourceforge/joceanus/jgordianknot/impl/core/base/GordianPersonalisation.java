@@ -48,7 +48,7 @@ public class GordianPersonalisation {
     /**
      * Internal iterations.
      */
-    public static final Integer INTERNAL_ITERATIONS = 32;
+    public static final Integer INTERNAL_ITERATIONS = 128;
 
     /**
      * The hash length.
