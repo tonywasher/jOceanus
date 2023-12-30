@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
@@ -140,12 +140,12 @@ public final class MoneyWiseSheetAccount {
         final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* If this is a Payee */
-        if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
+        if (myClass.equals(MoneyWiseBasicDataType.PAYEE.toString())) {
             /* Process as a payee */
             MoneyWiseSheetPayee.processPayee(pLoader, pData, pView, pRow);
 
             /* If this is a cash */
-        } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
+        } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {
             /* Process as a cash payee */
             MoneyWiseSheetCash.processCashPayee(pLoader, pData, pView, pRow);
         }
@@ -172,32 +172,32 @@ public final class MoneyWiseSheetAccount {
         final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* If this is a deposit */
-        if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
+        if (myClass.equals(MoneyWiseBasicDataType.DEPOSIT.toString())) {
             /* Process as a deposit */
             MoneyWiseSheetDeposit.processDeposit(pLoader, pData, pView, pRow);
 
             /* If this is a cash */
-        } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
+        } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {
             /* Process as a cash */
             MoneyWiseSheetCash.processCash(pLoader, pData, pView, pRow);
 
             /* If this is a loan */
-        } else if (myClass.equals(MoneyWiseDataType.LOAN.toString())) {
+        } else if (myClass.equals(MoneyWiseBasicDataType.LOAN.toString())) {
             /* Process as a loan */
             MoneyWiseSheetLoan.processLoan(pLoader, pData, pView, pRow);
 
             /* If this is a security */
-        } else if (myClass.equals(MoneyWiseDataType.SECURITY.toString())) {
+        } else if (myClass.equals(MoneyWiseBasicDataType.SECURITY.toString())) {
             /* Process as a security */
             MoneyWiseSheetSecurity.processSecurity(pLoader, pData, pView, pRow);
 
             /* If this is a portfolio */
-        } else if (myClass.equals(MoneyWiseDataType.PORTFOLIO.toString())) {
+        } else if (myClass.equals(MoneyWiseBasicDataType.PORTFOLIO.toString())) {
             /* Process as a portfolio */
             MoneyWiseSheetPortfolio.processPortfolio(pLoader, pData, pView, pRow);
 
             /* else reject if not payee */
-        } else if (!myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
+        } else if (!myClass.equals(MoneyWiseBasicDataType.PAYEE.toString())) {
             throw new MoneyWiseLogicException("Unexpected Account Class " + myClass);
         }
     }

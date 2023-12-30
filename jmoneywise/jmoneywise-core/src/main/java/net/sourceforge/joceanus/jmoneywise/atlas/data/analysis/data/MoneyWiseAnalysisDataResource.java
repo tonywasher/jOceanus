@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
@@ -305,7 +304,7 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * AccountAttr ExchangeRate.
      */
-    ACCOUNTATTR_EXCHANGERATE(MoneyWiseDataTypeResource.XCHGRATE_NAME),
+    ACCOUNTATTR_EXCHANGERATE(MoneyWiseBasicResource.XCHGRATE_NAME),
 
     /**
      * AccountAttr Maturity.
@@ -727,15 +726,15 @@ public enum MoneyWiseAnalysisDataResource
     private static Map<MoneyWiseAnalysisType, TethysBundleId> buildAnalysisMap() {
         /* Create the map and return it */
         final Map<MoneyWiseAnalysisType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisType.class);
-        myMap.put(MoneyWiseAnalysisType.DEPOSIT, MoneyWiseDataTypeResource.DEPOSIT_NAME);
-        myMap.put(MoneyWiseAnalysisType.CASH, MoneyWiseDataTypeResource.CASH_NAME);
-        myMap.put(MoneyWiseAnalysisType.LOAN, MoneyWiseDataTypeResource.LOAN_NAME);
-        myMap.put(MoneyWiseAnalysisType.PAYEE, MoneyWiseDataTypeResource.PAYEE_NAME);
-        myMap.put(MoneyWiseAnalysisType.SECURITY, MoneyWiseDataTypeResource.SECURITY_NAME);
-        myMap.put(MoneyWiseAnalysisType.PORTFOLIO, MoneyWiseDataTypeResource.PORTFOLIO_NAME);
-        myMap.put(MoneyWiseAnalysisType.CATEGORY, MoneyWiseDataTypeResource.TRANSCAT_NAME);
-        myMap.put(MoneyWiseAnalysisType.TAXBASIS, MoneyWiseDataTypeResource.TAXBASIS_NAME);
-        myMap.put(MoneyWiseAnalysisType.TRANSTAG, MoneyWiseDataTypeResource.TRANSTAG_NAME);
+        myMap.put(MoneyWiseAnalysisType.DEPOSIT, MoneyWiseBasicResource.DEPOSIT_NAME);
+        myMap.put(MoneyWiseAnalysisType.CASH, MoneyWiseBasicResource.CASH_NAME);
+        myMap.put(MoneyWiseAnalysisType.LOAN, MoneyWiseBasicResource.LOAN_NAME);
+        myMap.put(MoneyWiseAnalysisType.PAYEE, MoneyWiseBasicResource.PAYEE_NAME);
+        myMap.put(MoneyWiseAnalysisType.SECURITY, MoneyWiseBasicResource.SECURITY_NAME);
+        myMap.put(MoneyWiseAnalysisType.PORTFOLIO, MoneyWiseBasicResource.PORTFOLIO_NAME);
+        myMap.put(MoneyWiseAnalysisType.CATEGORY, MoneyWiseBasicResource.TRANSCAT_NAME);
+        myMap.put(MoneyWiseAnalysisType.TAXBASIS, MoneyWiseStaticResource.TAXBASIS_NAME);
+        myMap.put(MoneyWiseAnalysisType.TRANSTAG, MoneyWiseBasicResource.TRANSTAG_NAME);
         myMap.put(MoneyWiseAnalysisType.ALL, FILTER_ALL);
         return myMap;
     }

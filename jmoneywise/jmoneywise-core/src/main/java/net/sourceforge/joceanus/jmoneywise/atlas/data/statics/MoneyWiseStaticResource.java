@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
@@ -998,7 +997,7 @@ public enum MoneyWiseStaticResource
     /**
      * TransInfo XchangeRate.
      */
-    TRANSINFO_XCHANGERATE(MoneyWiseDataTypeResource.XCHGRATE_NAME),
+    TRANSINFO_XCHANGERATE("TransInfoType.XchangeRate"),
 
     /**
      * TransInfo Commission.
@@ -1008,7 +1007,7 @@ public enum MoneyWiseStaticResource
     /**
      * TransInfo TransactionTag.
      */
-    TRANSINFO_TRANSTAG(MoneyWiseDataTypeResource.TRANSTAG_NAME);
+    TRANSINFO_TRANSTAG("TransInfoType.TransTag");
 
     /**
      * The Name Map.

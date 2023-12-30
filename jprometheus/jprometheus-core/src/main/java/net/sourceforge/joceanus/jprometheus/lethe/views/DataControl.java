@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
@@ -69,7 +69,7 @@ public abstract class DataControl
     /**
      * The toolkit.
      */
-    private final PrometheusToolkit theToolkit;
+    private final PrometheusXToolkit theToolkit;
 
     /**
      * The metisToolkit.
@@ -85,7 +85,7 @@ public abstract class DataControl
      * Constructor for default control.
      * @param pToolkit the toolkit
      */
-    protected DataControl(final PrometheusToolkit pToolkit) {
+    protected DataControl(final PrometheusXToolkit pToolkit) {
         /* Store the parameters */
         theToolkit = pToolkit;
         theMetisToolkit = pToolkit.getToolkit();
@@ -196,7 +196,7 @@ public abstract class DataControl
      * Obtain toolkit.
      * @return the toolkit
      */
-    public PrometheusToolkit getToolkit() {
+    public PrometheusXToolkit getToolkit() {
         return theToolkit;
     }
 

@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadResource;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
@@ -66,7 +66,7 @@ public class PrometheusXThreadLoadXmlFile
     @Override
     public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final PrometheusXToolkit myPromToolkit = (PrometheusXToolkit) pManager.getThreadData();
         final GordianPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
 
         /* Initialise the status window */

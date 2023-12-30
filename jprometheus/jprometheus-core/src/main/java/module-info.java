@@ -30,6 +30,7 @@ module net.sourceforge.joceanus.jprometheus.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jprometheus;
+    exports net.sourceforge.joceanus.jprometheus.atlas;
     exports net.sourceforge.joceanus.jprometheus.atlas.data;
     exports net.sourceforge.joceanus.jprometheus.atlas.database;
     exports net.sourceforge.joceanus.jprometheus.atlas.preference;

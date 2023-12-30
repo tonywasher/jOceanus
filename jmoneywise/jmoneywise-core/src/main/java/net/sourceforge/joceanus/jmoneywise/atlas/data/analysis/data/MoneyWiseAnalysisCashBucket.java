@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -40,7 +40,7 @@ public final class MoneyWiseAnalysisCashBucket
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY, MoneyWiseAnalysisCashBucket::getCategory);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseAnalysisCashBucket::getCategory);
     }
 
     /**

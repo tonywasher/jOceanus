@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadCreateBackup;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadCreateDatabase;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadCreateXmlFile;
@@ -155,7 +155,7 @@ public abstract class PrometheusMainWindow
      * @throws OceanusException on error
      */
     public void buildMainWindow(final DataControl pView,
-                                final PrometheusToolkit pToolkit) throws OceanusException {
+                                final PrometheusXToolkit pToolkit) throws OceanusException {
         /* Store the view */
         theView = pView;
         theToolkit = pToolkit.getToolkit();

@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisAccountAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisAccountBucket.MoneyWiseAnalysisAccountValues;
@@ -51,6 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAna
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory;
@@ -238,7 +238,7 @@ public class MoneyWiseReportNetWorth
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);
-            theBuilder.makeTableLinkCell(myTable, MoneyWiseDataType.PORTFOLIO.getListName());
+            theBuilder.makeTableLinkCell(myTable, MoneyWiseBasicDataType.PORTFOLIO.getListName());
             theBuilder.makeTotalCell(myTable, myValuation);
 
             /* Make the portfolio report */
@@ -462,7 +462,7 @@ public class MoneyWiseReportNetWorth
         }
 
         /* Embed the table correctly */
-        theBuilder.embedTable(myTable, MoneyWiseDataType.PORTFOLIO.getListName());
+        theBuilder.embedTable(myTable, MoneyWiseBasicDataType.PORTFOLIO.getListName());
     }
 
     @Override

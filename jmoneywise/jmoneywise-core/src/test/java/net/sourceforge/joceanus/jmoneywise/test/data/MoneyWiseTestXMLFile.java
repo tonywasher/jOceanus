@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
+import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValuesFormatter;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
