@@ -26,9 +26,9 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.tax.MoneyWiseTaxDueBucket;
@@ -106,7 +106,7 @@ public class MoneyWiseReportTaxCalculation
         /* Format the header */
         final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseDataTypeResource.TAXBASIS_NAME.getValue());
+        theBuilder.makeTitleCell(myTable, MoneyWiseStaticResource.TAXBASIS_NAME.getValue());
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
         theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
 

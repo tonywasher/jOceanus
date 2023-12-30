@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.S
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.ui.panel.PrometheusMainWindow;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -122,7 +122,7 @@ public class MoneyWiseMainTab
      */
     public MoneyWiseMainTab(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create prometheus toolkit */
-        final PrometheusToolkit myToolkit = new PrometheusToolkit(pFactory);
+        final PrometheusXToolkit myToolkit = new PrometheusXToolkit(pFactory);
 
         /* create the view */
         theView = new MoneyWiseXView(myToolkit, new MoneyWiseXUKTaxYearCache());

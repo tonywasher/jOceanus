@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
@@ -153,7 +153,7 @@ public abstract class DataSet
      * Constructor for new empty DataSet.
      * @param pToolkit the toolkit set
      */
-    protected DataSet(final PrometheusToolkit pToolkit) {
+    protected DataSet(final PrometheusXToolkit pToolkit) {
         /* Store the password manager and Enum class */
         thePasswordMgr = pToolkit.getPasswordManager();
 

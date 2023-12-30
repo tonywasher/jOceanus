@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.sheets;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
@@ -145,7 +144,7 @@ public class MoneyWiseSheetDepositRate
         } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
-            throw new MoneyWiseIOException("Failed to Load " + MoneyWiseDataType.DEPOSITRATE.getListName(), e);
+            throw new MoneyWiseIOException("Failed to Load " + MoneyWiseBasicDataType.DEPOSITRATE.getListName(), e);
         }
     }
 

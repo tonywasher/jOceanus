@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseXDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseXSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusXDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
@@ -77,7 +77,7 @@ public class MoneyWiseXView
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
-    public MoneyWiseXView(final PrometheusToolkit pUtilitySet,
+    public MoneyWiseXView(final PrometheusXToolkit pUtilitySet,
                           final MoneyWiseTaxFactory pTaxFactory) {
         /* Call super-constructor */
         super(pUtilitySet);

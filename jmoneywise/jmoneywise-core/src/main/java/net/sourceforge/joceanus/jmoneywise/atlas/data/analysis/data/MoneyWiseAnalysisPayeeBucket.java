@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseAnalysisHistory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction;
@@ -58,7 +58,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      */
     static {
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisPayeeBucket::getAnalysis);
-        FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE, MoneyWiseAnalysisPayeeBucket::getPayee);
+        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.PAYEE, MoneyWiseAnalysisPayeeBucket::getPayee);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_BASEVALUES, MoneyWiseAnalysisPayeeBucket::getBaseValues);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_HISTORY, MoneyWiseAnalysisPayeeBucket::getHistoryMap);
         FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseAnalysisPayeeAttr.class, MoneyWiseAnalysisPayeeBucket::getAttributeValue);

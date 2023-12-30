@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWi
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.database.MoneyWiseDataStore;
 import net.sourceforge.joceanus.jmoneywise.atlas.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.Pr
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;

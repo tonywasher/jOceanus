@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
@@ -244,22 +243,22 @@ public enum MoneyWiseBasicResource
     /**
      * AssetType Payee.
      */
-    ASSETTYPE_PAYEE(MoneyWiseDataTypeResource.PAYEE_NAME),
+    ASSETTYPE_PAYEE("Payee.Name"),
 
     /**
      * AssetType Security.
      */
-    ASSETTYPE_SECURITY(MoneyWiseDataTypeResource.SECURITY_NAME),
+    ASSETTYPE_SECURITY("Security.Name"),
 
     /**
      * AssetType Deposit.
      */
-    ASSETTYPE_DEPOSIT(MoneyWiseDataTypeResource.DEPOSIT_NAME),
+    ASSETTYPE_DEPOSIT("Deposit.Name"),
 
     /**
      * AssetType Cash.
      */
-    ASSETTYPE_CASH(MoneyWiseDataTypeResource.CASH_NAME),
+    ASSETTYPE_CASH("Cash.Name"),
 
     /**
      * AssetType AutoExpense.
@@ -269,12 +268,12 @@ public enum MoneyWiseBasicResource
     /**
      * AssetType Loan.
      */
-    ASSETTYPE_LOAN(MoneyWiseDataTypeResource.LOAN_NAME),
+    ASSETTYPE_LOAN("Loan.Name"),
 
     /**
      * AssetType Portfolio.
      */
-    ASSETTYPE_PORTFOLIO(MoneyWiseDataTypeResource.PORTFOLIO_NAME),
+    ASSETTYPE_PORTFOLIO("Portfolio.Name"),
 
     /**
      * AssetType SecurityHolding.

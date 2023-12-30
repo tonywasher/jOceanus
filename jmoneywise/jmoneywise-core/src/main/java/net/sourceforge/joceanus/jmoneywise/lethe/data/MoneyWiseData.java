@@ -64,7 +64,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
@@ -117,7 +117,7 @@ public class MoneyWiseData
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
-    public MoneyWiseData(final PrometheusToolkit pUtilitySet,
+    public MoneyWiseData(final PrometheusXToolkit pUtilitySet,
                          final MoneyWiseTaxFactory pTaxFactory) {
         /* Call Super-constructor */
         super(pUtilitySet);

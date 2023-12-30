@@ -14,8 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -29,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * change there is no need to re-encrypt and data fields. Data will be left in the Updated state
  * ready for committing the change to the database.
  */
-public class PrometheusThreadUpdatePassword
+public class PrometheusXThreadUpdatePassword
         implements TethysUIThread<DataSet> {
     /**
      * Data Control.
@@ -40,7 +41,7 @@ public class PrometheusThreadUpdatePassword
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadUpdatePassword(final DataControl pControl) {
+    public PrometheusXThreadUpdatePassword(final DataControl pControl) {
         theControl = pControl;
     }
 

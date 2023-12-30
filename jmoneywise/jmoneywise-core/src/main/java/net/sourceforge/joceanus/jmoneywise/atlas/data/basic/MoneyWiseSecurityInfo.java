@@ -20,7 +20,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType;
@@ -41,12 +40,12 @@ public class MoneyWiseSecurityInfo
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.SECURITYINFO.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseBasicDataType.SECURITYINFO.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.SECURITYINFO.getListName();
+    public static final String LIST_NAME = MoneyWiseBasicDataType.SECURITYINFO.getListName();
 
     /**
      * Local Report fields.

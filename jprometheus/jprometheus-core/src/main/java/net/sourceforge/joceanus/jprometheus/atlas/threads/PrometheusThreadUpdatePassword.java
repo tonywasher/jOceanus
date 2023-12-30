@@ -14,62 +14,62 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
- * Thread to renew security in the data set. A new ControlKey will be created using the same
- * password as the existing security, together with a new set of encryption DataKeys. All encrypted
- * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
- * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
+ * Thread to change the password. The user will be prompted for a new password and this will be used
+ * to create a new Password Hash. The controlKey will be updated with this Hash and the encryption
+ * DataKeys will be updated with their new wrapped format. Since the DataKeys do not themselves
+ * change there is no need to re-encrypt and data fields. Data will be left in the Updated state
  * ready for committing the change to the database.
  */
-public class PrometheusThreadRenewSecurity
-        implements TethysUIThread<DataSet> {
+public class PrometheusThreadUpdatePassword
+        implements TethysUIThread<PrometheusDataSet> {
     /**
      * Data Control.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadRenewSecurity(final DataControl pControl) {
+    public PrometheusThreadUpdatePassword(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.RENEWSECURITY.toString();
+        return PrometheusThreadId.CHANGEPASS.toString();
     }
 
     @Override
-    public DataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
         /* Initialise the status window */
         pManager.initTask(getTaskName());
 
         /* Access Data */
-        DataSet myData = theControl.getData();
+        PrometheusDataSet myData = theControl.getData();
         myData = myData.deriveCloneSet();
 
-        /* ReNew Security */
-        myData.renewSecurity(pManager);
+        /* Update password */
+        myData.updatePasswordHash(pManager, "Database");
 
         /* State that we have completed */
         pManager.setCompletion();
 
-        /* Return null */
+        /* Return data */
         return myData;
     }
 
     @Override
-    public void processResult(final DataSet pResult) {
+    public void processResult(final PrometheusDataSet pResult) {
         theControl.setData(pResult);
     }
 }

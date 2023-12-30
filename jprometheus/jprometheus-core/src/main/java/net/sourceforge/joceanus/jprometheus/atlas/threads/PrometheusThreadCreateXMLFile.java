@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.threads;
+package net.sourceforge.joceanus.jprometheus.atlas.threads;
 
 import java.io.File;
 
@@ -23,23 +23,21 @@ import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusXSpreadSheet;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 
 /**
- * Thread to create an encrypted backup of a data set.
- * @author Tony Washer
+ * LoaderThread extension to create an XML backup.
  */
-public class PrometheusThreadCreateBackup
+public class PrometheusThreadCreateXMLFile
         implements TethysUIThread<Void> {
     /**
      * Buffer length.
@@ -52,21 +50,36 @@ public class PrometheusThreadCreateBackup
     private static final int TEN = 10;
 
     /**
+     * File indicator.
+     */
+    private static final String SUFFIX_FILE = "XML";
+
+    /**
      * Data Control.
      */
-    private final DataControl theControl;
+    private final PrometheusDataControl theControl;
+
+    /**
+     * Is this a Secure backup?
+     */
+    private final boolean isSecure;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
+     * @param pSecure is this a secure backup
      */
-    public PrometheusThreadCreateBackup(final DataControl pControl) {
+    public PrometheusThreadCreateXMLFile(final PrometheusDataControl pControl,
+                                         final boolean pSecure) {
+        isSecure = pSecure;
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.CREATEBACKUP.toString();
+        return isSecure
+                ? PrometheusThreadId.CREATEXML.toString()
+                : PrometheusThreadId.CREATEXTRACT.toString();
     }
 
     @Override
@@ -77,6 +90,7 @@ public class PrometheusThreadCreateBackup
         boolean doDelete = false;
         File myFile = null;
 
+        /* Catch Exceptions */
         try {
             /* Initialise the status window */
             pManager.initTask(getTaskName());
@@ -89,13 +103,13 @@ public class PrometheusThreadCreateBackup
             final String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
             final String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
             final boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
-            final PrometheusSheetWorkBookType myType = myProperties.getEnumValue(PrometheusBackupPreferenceKey.BACKUPTYPE, PrometheusSheetWorkBookType.class);
 
             /* Create the name of the file */
             final StringBuilder myName = new StringBuilder(BUFFER_LEN);
             myName.append(myBackupDir);
             myName.append(File.separator);
             myName.append(myPrefix);
+            myName.append(SUFFIX_FILE);
 
             /* If we are doing time-stamps */
             if (doTimeStamp) {
@@ -114,39 +128,56 @@ public class PrometheusThreadCreateBackup
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);
+            myFile = new File(myName.toString() + (isSecure
+                    ? GordianUtilities.SECUREZIPFILE_EXT
+                    : GordianUtilities.ZIPFILE_EXT));
+
+            /* Access the data */
+            final PrometheusDataSet myOldData = theControl.getData();
+
+            /* Create a new formatter */
+            final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pManager, myPasswordMgr);
 
             /* Create backup */
-            final PrometheusXSpreadSheet mySheet = theControl.getSpreadSheet();
-            final DataSet myOldData = theControl.getData();
-            mySheet.createBackup(pManager, myOldData, myFile, myType);
-
-            /* File created, so delete on error */
-            doDelete = true;
-
-            /* Initialise the status window */
-            pManager.initTask("Verifying Backup");
-
-            /* Load workbook */
-            final DataSet myNewData = theControl.getNewData();
-            mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);
-
-            /* Create a difference set between the two data copies */
-            final DataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
-
-            /* If the difference set is non-empty */
-            if (!myDiff.isEmpty()) {
-                /* Throw an exception */
-                throw new PrometheusDataException(myDiff, "Backup is inconsistent");
+            if (isSecure) {
+                myFormatter.createBackup(myOldData, myFile);
+            } else {
+                myFormatter.createExtract(myOldData, myFile);
             }
 
-            /* OK so switch off flag */
-            doDelete = false;
+            /* If this is a secure backup */
+            if (isSecure) {
+                /* File created, so delete on error */
+                doDelete = true;
 
-            /* State that we have completed */
-            pManager.setCompletion();
+                /* Check for cancellation */
 
-            /* Delete file on error */
+                /* Initialise the status window */
+                pManager.initTask("Reading Backup");
+
+                /* Load workbook */
+                final PrometheusDataSet myNewData = theControl.getNewData();
+                myFormatter.loadZipFile(myNewData, myFile);
+
+                /* Initialise the security, from the original data */
+                myNewData.initialiseSecurity(pManager, myOldData);
+
+                /* Initialise the status window */
+                pManager.initTask("Verifying Backup");
+
+                /* Create a difference set between the two data copies */
+                final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+
+                /* If the difference set is non-empty */
+                if (!myDiff.isEmpty()) {
+                    /* Throw an exception */
+                    throw new PrometheusDataException(myDiff, "Backup is inconsistent");
+                }
+
+                /* OK so switch off flag */
+                doDelete = false;
+            }
+
         } finally {
             /* Try to delete the file if required */
             if (doDelete) {

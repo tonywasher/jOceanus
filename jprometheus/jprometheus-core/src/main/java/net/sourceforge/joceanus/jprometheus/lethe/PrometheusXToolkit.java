@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * Prometheus Toolkit.
  */
-public class PrometheusToolkit {
+public class PrometheusXToolkit {
     /**
      * Toolkit.
      */
@@ -52,7 +52,7 @@ public class PrometheusToolkit {
      * @param pFactory the GUI factory
      * @throws OceanusException on error
      */
-    public PrometheusToolkit(final TethysUIFactory<?> pFactory) throws OceanusException {
+    public PrometheusXToolkit(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Store parameters */
         theToolkit = new MetisToolkit(pFactory, false);
 

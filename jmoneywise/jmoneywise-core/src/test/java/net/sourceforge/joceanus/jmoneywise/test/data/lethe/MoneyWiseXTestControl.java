@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.test.data.lethe;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.helper.TethysUIHelperFactory;
 
@@ -35,7 +35,7 @@ public class MoneyWiseXTestControl {
         try {
             /* Create the data */
             final TethysUIHelperFactory myFactory = new TethysUIHelperFactory();
-            final PrometheusToolkit myToolkit = new PrometheusToolkit(myFactory);
+            final PrometheusXToolkit myToolkit = new PrometheusXToolkit(myFactory);
             final MoneyWiseData myData = new MoneyWiseData(myToolkit, new MoneyWiseXUKTaxYearCache());
 
             /* Initialise the data */
