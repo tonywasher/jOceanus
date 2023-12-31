@@ -165,7 +165,9 @@ public class GordianPersonalisation {
 
             /* Finally build the initVector mask */
             final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
-            iterateHashes(myDigests, myHashes, myInitVec);
+            for (int i = 0; i < myIterations; i++) {
+                iterateHashes(myDigests, myHashes, myInitVec);
+            }
 
             /* Return the array */
             return new byte[][]
