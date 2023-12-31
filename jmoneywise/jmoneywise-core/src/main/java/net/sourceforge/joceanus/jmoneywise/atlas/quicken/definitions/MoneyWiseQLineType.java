@@ -14,40 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.threads;
-
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+package net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions;
 
 /**
- * MoneyWise Thread Ids.
+ * Interface for line types.
  */
-public enum MoneyWiseThreadId
-        implements TethysUIMenuId {
+public interface MoneyWiseQLineType {
     /**
-     * LoadArchive.
+     * Get line symbol.
+     * @return the symbol
      */
-    LOADARCHIVE(MoneyWiseThreadResource.LOADARCHIVE),
-
-    /**
-     * Create QIF.
-     */
-    CREATEQIF(MoneyWiseThreadResource.CREATEQIF);
-
-    /**
-     * The name.
-     */
-    private final String theName;
-
-    /**
-     * Constructor.
-     * @param pId the id
-     */
-    MoneyWiseThreadId(final MoneyWiseThreadResource pId) {
-        theName = pId.getValue();
-    }
-
-    @Override
-    public String toString() {
-        return theName;
-    }
+    String getSymbol();
 }

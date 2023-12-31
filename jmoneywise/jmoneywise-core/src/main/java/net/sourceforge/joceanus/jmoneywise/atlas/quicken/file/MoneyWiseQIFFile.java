@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.atlas.quicken.file;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,30 +22,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseXQIFPreferenceKey;
-import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseXQIFPreferences;
-import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
+import net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
+import net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions.MoneyWiseQIFType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * QIF File representation.
  */
-public class QIFFile {
+public class MoneyWiseQIFFile {
     /**
      * Hash multiplier.
      */
@@ -59,7 +59,7 @@ public class QIFFile {
     /**
      * Type of file.
      */
-    private final QIFType theFileType;
+    private final MoneyWiseQIFType theFileType;
 
     /**
      * Start event Date.
@@ -74,68 +74,68 @@ public class QIFFile {
     /**
      * Map of Accounts with Events.
      */
-    private final Map<String, QIFAccountEvents> theAccountMap;
+    private final Map<String, MoneyWiseQIFAccountEvents> theAccountMap;
 
     /**
      * Sorted List of Accounts with Events.
      */
-    private final List<QIFAccountEvents> theAccounts;
+    private final List<MoneyWiseQIFAccountEvents> theAccounts;
 
     /**
      * Map of Payees.
      */
-    private final Map<String, QIFPayee> thePayeeMap;
+    private final Map<String, MoneyWiseQIFPayee> thePayeeMap;
 
     /**
      * Sorted List of Payees.
      */
-    private final List<QIFPayee> thePayees;
+    private final List<MoneyWiseQIFPayee> thePayees;
 
     /**
      * Map of Securities with Prices.
      */
-    private final Map<String, QIFSecurityPrices> theSecurityMap;
+    private final Map<String, MoneyWiseQIFSecurityPrices> theSecurityMap;
 
     /**
      * Sorted List of Securities with Prices.
      */
-    private final List<QIFSecurityPrices> theSecurities;
+    private final List<MoneyWiseQIFSecurityPrices> theSecurities;
 
     /**
      * Map of Symbols to Securities.
      */
-    private final Map<String, QIFSecurity> theSymbolMap;
+    private final Map<String, MoneyWiseQIFSecurity> theSymbolMap;
 
     /**
      * Map of Parent Categories.
      */
-    private final Map<String, QIFParentCategory> theParentMap;
+    private final Map<String, MoneyWiseQIFParentCategory> theParentMap;
 
     /**
      * Sorted List of Parent Categories.
      */
-    private final List<QIFParentCategory> theParentCategories;
+    private final List<MoneyWiseQIFParentCategory> theParentCategories;
 
     /**
      * Map of Categories.
      */
-    private final Map<String, QIFEventCategory> theCategories;
+    private final Map<String, MoneyWiseQIFEventCategory> theCategories;
 
     /**
      * Map of Classes.
      */
-    private final Map<String, QIFClass> theClassMap;
+    private final Map<String, MoneyWiseQIFClass> theClassMap;
 
     /**
      * Sorted List of Classes.
      */
-    private final List<QIFClass> theClasses;
+    private final List<MoneyWiseQIFClass> theClasses;
 
     /**
      * Constructor.
      * @param pType the file type
      */
-    public QIFFile(final QIFType pType) {
+    public MoneyWiseQIFFile(final MoneyWiseQIFType pType) {
         /* Store file type */
         theFileType = pType;
 
@@ -160,7 +160,7 @@ public class QIFFile {
      * Obtain the file type.
      * @return the file type
      */
-    public QIFType getFileType() {
+    public MoneyWiseQIFType getFileType() {
         return theFileType;
     }
 
@@ -184,7 +184,7 @@ public class QIFFile {
      * Obtain the classes iterator.
      * @return the iterator
      */
-    protected Iterator<QIFClass> classIterator() {
+    protected Iterator<MoneyWiseQIFClass> classIterator() {
         return theClasses.iterator();
     }
 
@@ -200,7 +200,7 @@ public class QIFFile {
      * Obtain the category iterator.
      * @return the iterator
      */
-    protected Iterator<QIFParentCategory> categoryIterator() {
+    protected Iterator<MoneyWiseQIFParentCategory> categoryIterator() {
         return theParentCategories.iterator();
     }
 
@@ -216,7 +216,7 @@ public class QIFFile {
      * Obtain the account iterator.
      * @return the iterator
      */
-    protected Iterator<QIFAccountEvents> accountIterator() {
+    protected Iterator<MoneyWiseQIFAccountEvents> accountIterator() {
         return theAccounts.iterator();
     }
 
@@ -240,7 +240,7 @@ public class QIFFile {
      * Obtain the account iterator.
      * @return the iterator
      */
-    protected Iterator<QIFSecurityPrices> securityIterator() {
+    protected Iterator<MoneyWiseQIFSecurityPrices> securityIterator() {
         return theSecurities.iterator();
     }
 
@@ -256,9 +256,9 @@ public class QIFFile {
 
         /* Sort the categories */
         theParentCategories.sort(null);
-        final Iterator<QIFParentCategory> myCatIterator = categoryIterator();
+        final Iterator<MoneyWiseQIFParentCategory> myCatIterator = categoryIterator();
         while (myCatIterator.hasNext()) {
-            final QIFParentCategory myParent = myCatIterator.next();
+            final MoneyWiseQIFParentCategory myParent = myCatIterator.next();
 
             /* Sort the children */
             myParent.sortChildren();
@@ -266,9 +266,9 @@ public class QIFFile {
 
         /* Sort the securities */
         theSecurities.sort(null);
-        final Iterator<QIFSecurityPrices> mySecIterator = securityIterator();
+        final Iterator<MoneyWiseQIFSecurityPrices> mySecIterator = securityIterator();
         while (mySecIterator.hasNext()) {
-            final QIFSecurityPrices mySecurity = mySecIterator.next();
+            final MoneyWiseQIFSecurityPrices mySecurity = mySecIterator.next();
 
             /* Sort the prices */
             mySecurity.sortPrices();
@@ -276,9 +276,9 @@ public class QIFFile {
 
         /* Sort the accounts */
         theAccounts.sort(null);
-        final Iterator<QIFAccountEvents> myAccIterator = accountIterator();
+        final Iterator<MoneyWiseQIFAccountEvents> myAccIterator = accountIterator();
         while (myAccIterator.hasNext()) {
-            final QIFAccountEvents myAccount = myAccIterator.next();
+            final MoneyWiseQIFAccountEvents myAccount = myAccIterator.next();
 
             /* Sort the events */
             myAccount.sortEvents();
@@ -292,15 +292,15 @@ public class QIFFile {
      * @param pPreferences the preferences
      * @return the QIF File
      */
-    public static QIFFile buildQIFFile(final MoneyWiseData pData,
-                                       final Analysis pAnalysis,
-                                       final MoneyWiseXQIFPreferences pPreferences) {
+    public static MoneyWiseQIFFile buildQIFFile(final MoneyWiseDataSet pData,
+                                                final MoneyWiseAnalysis pAnalysis,
+                                                final MoneyWiseQIFPreferences pPreferences) {
         /* Access preference details */
-        final QIFType myType = pPreferences.getEnumValue(MoneyWiseXQIFPreferenceKey.QIFTYPE, QIFType.class);
-        final TethysDate myLastDate = pPreferences.getDateValue(MoneyWiseXQIFPreferenceKey.LASTEVENT);
+        final MoneyWiseQIFType myType = pPreferences.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);
+        final TethysDate myLastDate = pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);
 
         /* Create new QIF File */
-        final QIFFile myFile = new QIFFile(myType);
+        final MoneyWiseQIFFile myFile = new MoneyWiseQIFFile(myType);
 
         /* Build the data for the accounts */
         myFile.buildData(pData, pAnalysis, myLastDate);
@@ -315,13 +315,13 @@ public class QIFFile {
      * @param pClass the class
      * @return the QIFClass representation
      */
-    public QIFClass registerClass(final TransactionTag pClass) {
+    public MoneyWiseQIFClass registerClass(final MoneyWiseTransTag pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
-        QIFClass myClass = theClassMap.get(myName);
+        MoneyWiseQIFClass myClass = theClassMap.get(myName);
         if (myClass == null) {
             /* Create the new Class */
-            myClass = new QIFClass(this, pClass);
+            myClass = new MoneyWiseQIFClass(this, pClass);
             theClassMap.put(myName, myClass);
             theClasses.add(myClass);
         }
@@ -334,10 +334,10 @@ public class QIFFile {
      * Register class.
      * @param pClass the class
      */
-    public void registerClass(final QIFClass pClass) {
+    public void registerClass(final MoneyWiseQIFClass pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
-        final QIFClass myClass = theClassMap.get(myName);
+        final MoneyWiseQIFClass myClass = theClassMap.get(myName);
         if (myClass == null) {
             /* Register the new Class */
             theClassMap.put(myName, pClass);
@@ -350,13 +350,13 @@ public class QIFFile {
      * @param pCategory the category
      * @return the QIFEventCategory representation
      */
-    public QIFEventCategory registerCategory(final TransactionCategory pCategory) {
+    public MoneyWiseQIFEventCategory registerCategory(final MoneyWiseTransCategory pCategory) {
         /* Locate an existing category */
         final String myName = pCategory.getName();
-        QIFEventCategory myCat = theCategories.get(myName);
+        MoneyWiseQIFEventCategory myCat = theCategories.get(myName);
         if (myCat == null) {
             /* Create the new Category and add to the map */
-            myCat = new QIFEventCategory(this, pCategory);
+            myCat = new MoneyWiseQIFEventCategory(this, pCategory);
             theCategories.put(myName, myCat);
 
             /* Register against parent */
@@ -372,14 +372,14 @@ public class QIFFile {
      * @param pParent the parent category
      * @param pCategory the QIFEventCategory to register
      */
-    private void registerCategoryToParent(final TransactionCategory pParent,
-                                          final QIFEventCategory pCategory) {
+    private void registerCategoryToParent(final MoneyWiseTransCategory pParent,
+                                          final MoneyWiseQIFEventCategory pCategory) {
         /* Locate an existing parent category */
         final String myName = pParent.getName();
-        QIFParentCategory myParent = theParentMap.get(myName);
+        MoneyWiseQIFParentCategory myParent = theParentMap.get(myName);
         if (myParent == null) {
             /* Create the new Parent Category */
-            myParent = new QIFParentCategory(this, pParent);
+            myParent = new MoneyWiseQIFParentCategory(this, pParent);
             theParentMap.put(myName, myParent);
             theParentCategories.add(myParent);
         }
@@ -392,18 +392,18 @@ public class QIFFile {
      * Register category.
      * @param pCategory the category
      */
-    public void registerCategory(final QIFEventCategory pCategory) {
+    public void registerCategory(final MoneyWiseQIFEventCategory pCategory) {
         /* Locate an existing category */
         final String myName = pCategory.getName();
-        final QIFEventCategory myCat = theCategories.get(myName);
+        final MoneyWiseQIFEventCategory myCat = theCategories.get(myName);
         if (myCat == null) {
             /* Locate parent separator */
-            final int myPos = myName.indexOf(TransactionCategory.STR_SEP);
+            final int myPos = myName.indexOf(MoneyWiseTransCategory.STR_SEP);
 
             /* If this is a parent category */
             if (myPos < 0) {
                 /* Create the new Parent Category */
-                final QIFParentCategory myParent = new QIFParentCategory(pCategory);
+                final MoneyWiseQIFParentCategory myParent = new MoneyWiseQIFParentCategory(pCategory);
                 theParentMap.put(myName, myParent);
                 theParentCategories.add(myParent);
 
@@ -416,7 +416,7 @@ public class QIFFile {
                 final String myParentName = myName.substring(0, myPos);
 
                 /* Locate an existing parent category */
-                final QIFParentCategory myParent = theParentMap.get(myParentName);
+                final MoneyWiseQIFParentCategory myParent = theParentMap.get(myParentName);
 
                 /* Register against parent */
                 myParent.registerChild(pCategory);
@@ -429,13 +429,13 @@ public class QIFFile {
      * @param pAccount the account
      * @return the QIFAccount representation
      */
-    public QIFAccountEvents registerAccount(final TransactionAsset pAccount) {
+    public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseTransAsset pAccount) {
         /* Locate an existing account */
         final String myName = pAccount.getName();
-        QIFAccountEvents myAccount = theAccountMap.get(myName);
+        MoneyWiseQIFAccountEvents myAccount = theAccountMap.get(myName);
         if (myAccount == null) {
             /* Create the new Account and add to the map and list */
-            myAccount = new QIFAccountEvents(this, pAccount);
+            myAccount = new MoneyWiseQIFAccountEvents(this, pAccount);
             theAccountMap.put(myName, myAccount);
             theAccounts.add(myAccount);
         }
@@ -449,13 +449,13 @@ public class QIFFile {
      * @param pPortfolio the portfolio
      * @return the QIFAccount representation
      */
-    public QIFAccountEvents registerHoldingAccount(final Portfolio pPortfolio) {
+    public MoneyWiseQIFAccountEvents registerHoldingAccount(final MoneyWisePortfolio pPortfolio) {
         /* Locate an existing account */
         final String myName = pPortfolio.getName() + HOLDING_SUFFIX;
-        QIFAccountEvents myAccount = theAccountMap.get(myName);
+        MoneyWiseQIFAccountEvents myAccount = theAccountMap.get(myName);
         if (myAccount == null) {
             /* Create the new Account and add to the map and list */
-            myAccount = new QIFAccountEvents(this, myName);
+            myAccount = new MoneyWiseQIFAccountEvents(this, myName);
             theAccountMap.put(myName, myAccount);
             theAccounts.add(myAccount);
         }
@@ -469,13 +469,13 @@ public class QIFFile {
      * @param pAccount the account
      * @return the QIFAccount representation
      */
-    public QIFAccountEvents registerAccount(final QIFAccount pAccount) {
+    public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseQIFAccount pAccount) {
         /* Locate an existing account */
         final String myName = pAccount.getName();
-        QIFAccountEvents myAccount = theAccountMap.get(myName);
+        MoneyWiseQIFAccountEvents myAccount = theAccountMap.get(myName);
         if (myAccount == null) {
             /* Create the new Account and add to the map/list */
-            myAccount = new QIFAccountEvents(pAccount);
+            myAccount = new MoneyWiseQIFAccountEvents(pAccount);
             theAccountMap.put(myName, myAccount);
             theAccounts.add(myAccount);
         }
@@ -489,13 +489,13 @@ public class QIFFile {
      * @param pPayee the payee
      * @return the QIFPayee representation
      */
-    public QIFPayee registerPayee(final Payee pPayee) {
+    public MoneyWiseQIFPayee registerPayee(final MoneyWisePayee pPayee) {
         /* Locate an existing payee */
         final String myName = pPayee.getName();
-        QIFPayee myPayee = thePayeeMap.get(myName);
+        MoneyWiseQIFPayee myPayee = thePayeeMap.get(myName);
         if (myPayee == null) {
             /* Create the new Payee and add to the map and list */
-            myPayee = new QIFPayee(pPayee);
+            myPayee = new MoneyWiseQIFPayee(pPayee);
             thePayeeMap.put(myName, myPayee);
             thePayees.add(myPayee);
         }
@@ -509,12 +509,12 @@ public class QIFFile {
      * @param pPayee the payee
      * @return the QIFPayee representation
      */
-    public QIFPayee registerPayee(final String pPayee) {
+    public MoneyWiseQIFPayee registerPayee(final String pPayee) {
         /* Locate an existing payee */
-        QIFPayee myPayee = thePayeeMap.get(pPayee);
+        MoneyWiseQIFPayee myPayee = thePayeeMap.get(pPayee);
         if (myPayee == null) {
             /* Create the new Payee and add to the map and list */
-            myPayee = new QIFPayee(pPayee);
+            myPayee = new MoneyWiseQIFPayee(pPayee);
             thePayeeMap.put(pPayee, myPayee);
             thePayees.add(myPayee);
         }
@@ -528,13 +528,13 @@ public class QIFFile {
      * @param pSecurity the security
      * @return the QIFSecurity representation
      */
-    public QIFSecurity registerSecurity(final Security pSecurity) {
+    public MoneyWiseQIFSecurity registerSecurity(final MoneyWiseSecurity pSecurity) {
         /* Locate an existing security */
         final String myName = pSecurity.getName();
-        QIFSecurityPrices mySecurity = theSecurityMap.get(myName);
+        MoneyWiseQIFSecurityPrices mySecurity = theSecurityMap.get(myName);
         if (mySecurity == null) {
             /* Create the new Security and add to the maps/list */
-            mySecurity = new QIFSecurityPrices(this, pSecurity);
+            mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
             theSecurityMap.put(myName, mySecurity);
             theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
             theSecurities.add(mySecurity);
@@ -548,13 +548,13 @@ public class QIFFile {
      * Register security.
      * @param pSecurity the security
      */
-    public void registerSecurity(final QIFSecurity pSecurity) {
+    public void registerSecurity(final MoneyWiseQIFSecurity pSecurity) {
         /* Locate an existing security */
         final String myName = pSecurity.getName();
-        QIFSecurityPrices mySecurity = theSecurityMap.get(myName);
+        MoneyWiseQIFSecurityPrices mySecurity = theSecurityMap.get(myName);
         if (mySecurity == null) {
             /* Create the new Security and add to the map */
-            mySecurity = new QIFSecurityPrices(this, pSecurity);
+            mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
             theSecurityMap.put(myName, mySecurity);
             theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
             theSecurities.add(mySecurity);
@@ -565,10 +565,10 @@ public class QIFFile {
      * Register price.
      * @param pPrice the price
      */
-    public void registerPrice(final SecurityPrice pPrice) {
+    public void registerPrice(final MoneyWiseSecurityPrice pPrice) {
         /* Locate an existing security price list */
-        final Security mySecurity = pPrice.getSecurity();
-        final QIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());
+        final MoneyWiseSecurity mySecurity = pPrice.getSecurity();
+        final MoneyWiseQIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());
         if (mySecurityList != null) {
             /* Add price to the list */
             mySecurityList.addPrice(pPrice);
@@ -579,15 +579,15 @@ public class QIFFile {
      * Register price.
      * @param pPrice the price
      */
-    public void registerPrice(final QIFPrice pPrice) {
+    public void registerPrice(final MoneyWiseQIFPrice pPrice) {
         /* Locate an existing security price list */
-        final QIFSecurity mySecurity = pPrice.getSecurity();
-        final QIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());
+        final MoneyWiseQIFSecurity mySecurity = pPrice.getSecurity();
+        final MoneyWiseQIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());
         if (mySecurityList != null) {
             /* Loop through the prices */
-            final Iterator<QIFPrice> myIterator = pPrice.priceIterator();
+            final Iterator<MoneyWiseQIFPrice> myIterator = pPrice.priceIterator();
             while (myIterator.hasNext()) {
-                final QIFPrice myPrice = myIterator.next();
+                final MoneyWiseQIFPrice myPrice = myIterator.next();
 
                 /* Add price to the list */
                 mySecurityList.addPrice(myPrice);
@@ -600,7 +600,7 @@ public class QIFFile {
      * @param pName the name of the category
      * @return the category
      */
-    protected QIFEventCategory getCategory(final String pName) {
+    protected MoneyWiseQIFEventCategory getCategory(final String pName) {
         /* Lookup the category */
         return theCategories.get(pName);
     }
@@ -610,12 +610,12 @@ public class QIFFile {
      * @param pName the name of the account
      * @return the account
      */
-    protected QIFAccount getAccount(final String pName) {
+    protected MoneyWiseQIFAccount getAccount(final String pName) {
         /* Lookup the security */
-        final QIFAccountEvents myAccount = getAccountEvents(pName);
+        final MoneyWiseQIFAccountEvents myAccount = getAccountEvents(pName);
         return (myAccount == null)
-                                   ? null
-                                   : myAccount.getAccount();
+                ? null
+                : myAccount.getAccount();
     }
 
     /**
@@ -623,7 +623,7 @@ public class QIFFile {
      * @param pName the name of the account
      * @return the account
      */
-    protected QIFAccountEvents getAccountEvents(final String pName) {
+    protected MoneyWiseQIFAccountEvents getAccountEvents(final String pName) {
         /* Lookup the account */
         return theAccountMap.get(pName);
     }
@@ -633,12 +633,12 @@ public class QIFFile {
      * @param pName the name of the security
      * @return the security
      */
-    protected QIFSecurity getSecurity(final String pName) {
+    protected MoneyWiseQIFSecurity getSecurity(final String pName) {
         /* Lookup the security */
-        final QIFSecurityPrices myList = getSecurityPrices(pName);
-        return (myList == null)
-                                ? null
-                                : myList.getSecurity();
+        final MoneyWiseQIFSecurityPrices myList = getSecurityPrices(pName);
+        return myList == null
+                ? null
+                : myList.getSecurity();
     }
 
     /**
@@ -646,7 +646,7 @@ public class QIFFile {
      * @param pSymbol the symbol of the security
      * @return the security
      */
-    protected QIFSecurity getSecurityBySymbol(final String pSymbol) {
+    protected MoneyWiseQIFSecurity getSecurityBySymbol(final String pSymbol) {
         /* Lookup the security */
         return theSymbolMap.get(pSymbol);
     }
@@ -656,7 +656,7 @@ public class QIFFile {
      * @param pName the name of the security
      * @return the security
      */
-    protected QIFSecurityPrices getSecurityPrices(final String pName) {
+    protected MoneyWiseQIFSecurityPrices getSecurityPrices(final String pName) {
         /* Lookup the security */
         return theSecurityMap.get(pName);
     }
@@ -666,7 +666,7 @@ public class QIFFile {
      * @param pName the name of the class
      * @return the class
      */
-    protected QIFClass getClass(final String pName) {
+    protected MoneyWiseQIFClass getClass(final String pName) {
         /* Lookup the class */
         return theClassMap.get(pName);
     }
@@ -677,11 +677,11 @@ public class QIFFile {
      * @param pAnalysis the analysis
      * @param pLastDate the last date
      */
-    public void buildData(final MoneyWiseData pData,
-                          final Analysis pAnalysis,
+    public void buildData(final MoneyWiseDataSet pData,
+                          final MoneyWiseAnalysis pAnalysis,
                           final TethysDate pLastDate) {
         /* Create a builder */
-        final QIFBuilder myBuilder = new QIFBuilder(this, pData, pAnalysis);
+        final MoneyWiseQIFBuilder myBuilder = new MoneyWiseQIFBuilder(this, pData, pAnalysis);
 
         /* Store dates */
         theStartDate = pData.getDateRange().getStart();
@@ -691,10 +691,10 @@ public class QIFFile {
         buildOpeningBalances(myBuilder, pData.getDeposits());
 
         /* Loop through the events */
-        final TransactionList myEvents = pData.getTransactions();
-        final Iterator<Transaction> myIterator = myEvents.iterator();
+        final MoneyWiseTransactionList myEvents = pData.getTransactions();
+        final Iterator<MoneyWiseTransaction> myIterator = myEvents.iterator();
         while (myIterator.hasNext()) {
-            final Transaction myEvent = myIterator.next();
+            final MoneyWiseTransaction myEvent = myIterator.next();
 
             /* Break loop if the event is too late */
             final TethysDate myDate = myEvent.getDate();
@@ -715,12 +715,12 @@ public class QIFFile {
      * @param pBuilder the builder
      * @param pDepositList the deposit list
      */
-    private void buildOpeningBalances(final QIFBuilder pBuilder,
-                                      final DepositList pDepositList) {
+    private void buildOpeningBalances(final MoneyWiseQIFBuilder pBuilder,
+                                      final MoneyWiseDepositList pDepositList) {
         /* Loop through the prices */
-        final Iterator<Deposit> myIterator = pDepositList.iterator();
+        final Iterator<MoneyWiseDeposit> myIterator = pDepositList.iterator();
         while (myIterator.hasNext()) {
-            final Deposit myDeposit = myIterator.next();
+            final MoneyWiseDeposit myDeposit = myIterator.next();
 
             /* Ignore if no opening balance */
             final TethysMoney myBalance = myDeposit.getOpeningBalance();
@@ -737,11 +737,11 @@ public class QIFFile {
      * Build prices.
      * @param pPriceList the price list
      */
-    private void buildPrices(final SecurityPriceList pPriceList) {
+    private void buildPrices(final MoneyWiseSecurityPriceList pPriceList) {
         /* Loop through the prices */
-        final Iterator<SecurityPrice> myIterator = pPriceList.iterator();
+        final Iterator<MoneyWiseSecurityPrice> myIterator = pPriceList.iterator();
         while (myIterator.hasNext()) {
-            final SecurityPrice myPrice = myIterator.next();
+            final MoneyWiseSecurityPrice myPrice = myIterator.next();
 
             /* Break loop if the price is too late */
             final TethysDate myDate = myPrice.getDate();
@@ -765,12 +765,12 @@ public class QIFFile {
         }
 
         /* Check class */
-        if (!(pThat instanceof QIFFile)) {
+        if (!(pThat instanceof MoneyWiseQIFFile)) {
             return false;
         }
 
         /* Cast correctly */
-        final QIFFile myThat = (QIFFile) pThat;
+        final MoneyWiseQIFFile myThat = (MoneyWiseQIFFile) pThat;
 
         /* Check file type */
         if (!theFileType.equals(myThat.theFileType)) {
@@ -803,15 +803,15 @@ public class QIFFile {
 
     @Override
     public int hashCode() {
-        int myResult = QIFFile.HASH_BASE * theFileType.hashCode();
+        int myResult = MoneyWiseQIFFile.HASH_BASE * theFileType.hashCode();
         myResult += theClasses.hashCode();
-        myResult *= QIFFile.HASH_BASE;
+        myResult *= MoneyWiseQIFFile.HASH_BASE;
         myResult += theParentCategories.hashCode();
-        myResult *= QIFFile.HASH_BASE;
+        myResult *= MoneyWiseQIFFile.HASH_BASE;
         myResult += theSecurities.hashCode();
-        myResult *= QIFFile.HASH_BASE;
+        myResult *= MoneyWiseQIFFile.HASH_BASE;
         myResult += thePayees.hashCode();
-        myResult *= QIFFile.HASH_BASE;
+        myResult *= MoneyWiseQIFFile.HASH_BASE;
         myResult += theAccounts.hashCode();
         return myResult;
     }

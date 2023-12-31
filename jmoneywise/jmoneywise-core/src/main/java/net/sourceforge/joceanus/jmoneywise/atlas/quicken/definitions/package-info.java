@@ -15,6 +15,6 @@
  * the License.
  ******************************************************************************/
 /**
- * Thread support for jMoneyWise.
+ * Quicken definitions for jMoneyWise.
  */
-package net.sourceforge.joceanus.jmoneywise.threads;
+package net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions;
