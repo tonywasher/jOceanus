@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions;
+package net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -25,17 +25,17 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 /**
  * Quicken Preferences.
  */
-public final class QIFPreference {
+public final class MoneyWiseQIFPreference {
     /**
      * Constructor.
      */
-    private QIFPreference() {
+    private MoneyWiseQIFPreference() {
     }
 
     /**
      * QIFPreferenceKeys.
      */
-    public enum MoneyWiseXQIFPreferenceKey implements MetisPreferenceKey {
+    public enum MoneyWiseQIFPreferenceKey implements MetisPreferenceKey {
         /**
          * QIF directory.
          */
@@ -66,8 +66,8 @@ public final class QIFPreference {
          * @param pName the name
          * @param pDisplay the display string;
          */
-        MoneyWiseXQIFPreferenceKey(final String pName,
-                                   final String pDisplay) {
+        MoneyWiseQIFPreferenceKey(final String pName,
+                                  final String pDisplay) {
             theName = pName;
             theDisplay = pDisplay;
         }
@@ -86,40 +86,40 @@ public final class QIFPreference {
     /**
      * QIF Preferences.
      */
-    public static class MoneyWiseXQIFPreferences
+    public static class MoneyWiseQIFPreferences
             extends MetisPreferenceSet {
         /**
          * Constructor.
          * @param pManager the preference manager
          * @throws OceanusException on error
          */
-        public MoneyWiseXQIFPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+        public MoneyWiseQIFPreferences(final MetisPreferenceManager pManager) throws OceanusException {
             super(pManager, "QIF Preferences");
         }
 
         @Override
         protected void definePreferences() throws OceanusException {
-            defineDirectoryPreference(MoneyWiseXQIFPreferenceKey.QIFDIR);
-            defineEnumPreference(MoneyWiseXQIFPreferenceKey.QIFTYPE, QIFType.class);
-            defineDatePreference(MoneyWiseXQIFPreferenceKey.LASTEVENT);
+            defineDirectoryPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
+            defineEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);
+            defineDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
         }
 
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the directory is specified */
-            final MetisStringPreference myDirPref = getStringPreference(MoneyWiseXQIFPreferenceKey.QIFDIR);
+            final MetisStringPreference myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
             if (!myDirPref.isAvailable()) {
                 myDirPref.setValue(System.getProperty("user.home"));
             }
 
             /* Make sure that the QIFType is specified */
-            final MetisEnumPreference<QIFType> myTypePref = getEnumPreference(MoneyWiseXQIFPreferenceKey.QIFTYPE, QIFType.class);
+            final MetisEnumPreference<MoneyWiseQIFType> myTypePref = getEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);
             if (!myTypePref.isAvailable()) {
-                myTypePref.setValue(QIFType.ACEMONEY);
+                myTypePref.setValue(MoneyWiseQIFType.ACEMONEY);
             }
 
             /* Make sure that the eventDate is specified */
-            final MetisDatePreference myPref = getDatePreference(MoneyWiseXQIFPreferenceKey.LASTEVENT);
+            final MetisDatePreference myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
             if (!myPref.isAvailable()) {
                 myPref.setValue(new TethysDate());
             }

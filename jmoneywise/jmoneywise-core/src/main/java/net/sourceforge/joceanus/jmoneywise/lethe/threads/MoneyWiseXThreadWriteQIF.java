@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.threads;
+package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,10 +26,11 @@ import java.nio.charset.StandardCharsets;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.atlas.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;
-import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
+import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseXQIFPreferenceKey;
+import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseXQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFParser;
@@ -45,12 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * WorkerThread extension to create a QIF archive.
  */
-public class MoneyWiseThreadWriteQIF
+public class MoneyWiseXThreadWriteQIF
         implements TethysUIThread<Void> {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseThreadWriteQIF.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseXThreadWriteQIF.class);
 
     /**
      * Data View.
@@ -61,7 +62,7 @@ public class MoneyWiseThreadWriteQIF
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadWriteQIF(final MoneyWiseXView pView) {
+    public MoneyWiseXThreadWriteQIF(final MoneyWiseXView pView) {
         theView = pView;
     }
 
@@ -77,7 +78,7 @@ public class MoneyWiseThreadWriteQIF
 
         /* Load configuration */
         final MetisPreferenceManager myMgr = theView.getPreferenceManager();
-        final MoneyWiseQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseQIFPreferences.class);
+        final MoneyWiseXQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseXQIFPreferences.class);
 
         /* Obtain the analysis */
         final Analysis myAnalysis = theView.getAnalysisManager().getAnalysis();
@@ -89,8 +90,8 @@ public class MoneyWiseThreadWriteQIF
         pManager.initTask("Writing QIF file");
 
         /* Determine name of output file */
-        final String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
-        final QIFType myType = myPrefs.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+        final String myDirectory = myPrefs.getStringValue(MoneyWiseXQIFPreferenceKey.QIFDIR);
+        final QIFType myType = myPrefs.getEnumValue(MoneyWiseXQIFPreferenceKey.QIFTYPE, QIFType.class);
 
         /* Determine the output name */
         final File myOutFile = new File(myDirectory + File.separator + myType.getFileName());

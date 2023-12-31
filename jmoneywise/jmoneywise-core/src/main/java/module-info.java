@@ -38,10 +38,11 @@ module net.sourceforge.joceanus.jmoneywise.core {
     exports net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions;
     exports net.sourceforge.joceanus.jmoneywise.lethe.reports;
     exports net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
-    exports net.sourceforge.joceanus.jmoneywise.threads;
+    exports net.sourceforge.joceanus.jmoneywise.lethe.threads;
     exports net.sourceforge.joceanus.jmoneywise.ui;
     exports net.sourceforge.joceanus.jmoneywise.ui.controls;
     exports net.sourceforge.joceanus.jmoneywise.lethe.views;
     exports net.sourceforge.joceanus.jmoneywise.launch;
     exports net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
+    exports net.sourceforge.joceanus.jmoneywise.atlas.threads;
 }

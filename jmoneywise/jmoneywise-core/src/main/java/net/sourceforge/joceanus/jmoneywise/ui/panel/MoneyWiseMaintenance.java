@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
+import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseXQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
@@ -142,7 +142,7 @@ public class MoneyWiseMaintenance
         /* Add interesting preferences */
         myPrefs.getPreferenceSet(PrometheusDatabasePreferences.class);
         myPrefs.getPreferenceSet(PrometheusBackupPreferences.class);
-        myPrefs.getPreferenceSet(MoneyWiseQIFPreferences.class);
+        myPrefs.getPreferenceSet(MoneyWiseXQIFPreferences.class);
 
         /* Create a listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());

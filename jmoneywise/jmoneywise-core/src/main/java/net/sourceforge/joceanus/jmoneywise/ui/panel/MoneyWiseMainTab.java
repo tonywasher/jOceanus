@@ -20,10 +20,10 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseXThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadId;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
+import net.sourceforge.joceanus.jmoneywise.atlas.threads.MoneyWiseThreadId;
+import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseXThreadWriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
@@ -269,7 +269,7 @@ public class MoneyWiseMainTab
      */
     public void loadSpreadsheet() {
         /* Create the worker thread */
-        final MoneyWiseThreadLoadArchive myThread = new MoneyWiseThreadLoadArchive(theView);
+        final MoneyWiseXThreadLoadArchive myThread = new MoneyWiseXThreadLoadArchive(theView);
         startThread(myThread);
     }
 
@@ -278,7 +278,7 @@ public class MoneyWiseMainTab
      */
     public void createQIF() {
         /* Create the worker thread */
-        final MoneyWiseThreadWriteQIF myThread = new MoneyWiseThreadWriteQIF(theView);
+        final MoneyWiseXThreadWriteQIF myThread = new MoneyWiseXThreadWriteQIF(theView);
         startThread(myThread);
     }
 

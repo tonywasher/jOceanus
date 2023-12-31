@@ -14,8 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.threads;
+package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
+import net.sourceforge.joceanus.jmoneywise.atlas.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
@@ -30,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 /**
  * LoaderThread extension to load an archive spreadsheet.
  */
-public class MoneyWiseThreadLoadArchive
+public class MoneyWiseXThreadLoadArchive
         implements TethysUIThread<MoneyWiseData> {
     /**
      * Data Control.
@@ -41,7 +42,7 @@ public class MoneyWiseThreadLoadArchive
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadLoadArchive(final MoneyWiseXView pView) {
+    public MoneyWiseXThreadLoadArchive(final MoneyWiseXView pView) {
         theView = pView;
     }
 
