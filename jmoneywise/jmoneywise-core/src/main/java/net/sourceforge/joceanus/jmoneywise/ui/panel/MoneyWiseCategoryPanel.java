@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusXActionButtons;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
@@ -147,7 +147,7 @@ public class MoneyWiseCategoryPanel
     /**
      * The action buttons panel.
      */
-    private final PrometheusActionButtons theActionButtons;
+    private final PrometheusXActionButtons theActionButtons;
 
     /**
      * The error panel.
@@ -195,7 +195,7 @@ public class MoneyWiseCategoryPanel
         theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusXActionButtons(myFactory, theUpdateSet);
 
         /* Create the table panels */
         theDepositTable = new MoneyWiseDepositCategoryTable(pView, theUpdateSet, theError);

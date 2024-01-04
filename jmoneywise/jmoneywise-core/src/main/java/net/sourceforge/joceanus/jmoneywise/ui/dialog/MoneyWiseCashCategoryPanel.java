@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -57,7 +57,7 @@ public class MoneyWiseCashCategoryPanel
         super(pFactory, pUpdateSet, pError);
 
         /* Create a new panel */
-        final PrometheusFieldSet<CashCategory> myFieldSet = getFieldSet();
+        final PrometheusXFieldSet<CashCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -97,7 +97,7 @@ public class MoneyWiseCashCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusFieldSet<CashCategory> myFieldSet = getFieldSet();
+        final PrometheusXFieldSet<CashCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
         final CashCategory myCategory = getItem();
@@ -124,7 +124,7 @@ public class MoneyWiseCashCategoryPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final CashCategory myCategory = getItem();

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -54,7 +54,7 @@ public class PrometheusFieldSet<T>
     /**
      * The map of Fields to panels.
      */
-    private final Map<PrometheusDataFieldId, PrometheusFieldSetPanel<T>> theFieldMap;
+    private final Map<MetisDataFieldId, PrometheusFieldSetPanel<T>> theFieldMap;
 
     /**
      * The list of panels.
@@ -79,7 +79,7 @@ public class PrometheusFieldSet<T>
     /**
      * is field changed predicate.
      */
-    private BiPredicate<T, PrometheusDataFieldId> theChanged;
+    private BiPredicate<T, MetisDataFieldId> theChanged;
 
     /**
      * Is the data being refreshed?
@@ -156,7 +156,7 @@ public class PrometheusFieldSet<T>
      * @param pValueFactory the valueFactory
      */
     public void newTextArea(final String pName,
-                            final PrometheusDataFieldId pFieldId,
+                            final MetisDataFieldId pFieldId,
                             final TethysUICharArrayTextAreaField pField,
                             final Function<T, char[]> pValueFactory) {
         /* If we do not currently have any tabs */
@@ -180,7 +180,7 @@ public class PrometheusFieldSet<T>
      * Add a table tab.
      * @param pName the name of the tab.
      * @param pTable the table
-      */
+     */
     public void newTable(final String pName,
                          final PrometheusFieldSetTable<T> pTable) {
         /* If we do not currently have any tabs */
@@ -203,7 +203,7 @@ public class PrometheusFieldSet<T>
      * @param pField the edit field
      * @param pValueFactory the valueFactory
      */
-    public void addField(final PrometheusDataFieldId pFieldId,
+    public void addField(final MetisDataFieldId pFieldId,
                          final TethysUIDataEditField<?> pField,
                          final Function<T, Object> pValueFactory) {
         theCurrentPanel.addField(pFieldId, pField, pValueFactory);
@@ -213,7 +213,7 @@ public class PrometheusFieldSet<T>
      * Set the changed predicate.
      * @param pChanged the changed predicate
      */
-    public void setChanged(final BiPredicate<T, PrometheusDataFieldId> pChanged) {
+    public void setChanged(final BiPredicate<T, MetisDataFieldId> pChanged) {
         theChanged = pChanged;
     }
 
@@ -224,7 +224,7 @@ public class PrometheusFieldSet<T>
      * @return true/false
      */
     boolean isChanged(final T pItem,
-                      final PrometheusDataFieldId pField) {
+                      final MetisDataFieldId pField) {
         return theChanged != null
                 && theChanged.test(pItem, pField);
     }
@@ -276,7 +276,7 @@ public class PrometheusFieldSet<T>
      * @param pFieldId the field.
      * @param pPanel the panel.
      */
-    void registerField(final PrometheusDataFieldId pFieldId,
+    void registerField(final MetisDataFieldId pFieldId,
                        final PrometheusFieldSetPanel<T> pPanel) {
         theFieldMap.put(pFieldId, pPanel);
     }
@@ -286,7 +286,7 @@ public class PrometheusFieldSet<T>
      * @param pFieldId the field.
      * @param pVisible is visible true/false?
      */
-    public void setFieldVisible(final PrometheusDataFieldId pFieldId,
+    public void setFieldVisible(final MetisDataFieldId pFieldId,
                                 final boolean pVisible) {
         /* Adjust visibility of field */
         final PrometheusFieldSetPanel<T> myPanel = theFieldMap.get(pFieldId);
@@ -309,7 +309,7 @@ public class PrometheusFieldSet<T>
      * @param pFieldId the fieldId.
      * @param pEditable is editable true/false?
      */
-    public void setFieldEditable(final PrometheusDataFieldId pFieldId,
+    public void setFieldEditable(final MetisDataFieldId pFieldId,
                                  final boolean pEditable) {
         /* Adjust edit-ability of field */
         final PrometheusFieldSetPanel<T> myPanel = theFieldMap.get(pFieldId);
@@ -321,7 +321,7 @@ public class PrometheusFieldSet<T>
      * @param pFieldId the fieldId.
      * @param pNewValue the new value
      */
-    void newData(final PrometheusDataFieldId pFieldId,
+    void newData(final MetisDataFieldId pFieldId,
                  final Object pNewValue) {
         /* If we are not refreshing data */
         if (!isRefreshing) {

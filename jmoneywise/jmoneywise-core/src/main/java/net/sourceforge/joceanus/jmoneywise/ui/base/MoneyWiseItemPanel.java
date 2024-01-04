@@ -33,10 +33,10 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.panel.PrometheusDataItemPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.panel.PrometheusXDataItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * @param <T> the item type
  */
 public abstract class MoneyWiseItemPanel<T extends DataItem>
-        extends PrometheusDataItemPanel<T, MoneyWiseGoToId> {
+        extends PrometheusXDataItemPanel<T, MoneyWiseGoToId> {
     /**
      * Filter text.
      */

@@ -14,7 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+
 /**
- * Common UI classes.
+ * Prometheus FieldSet.
  */
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset;

@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotPricesTable.Mon
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
-import net.sourceforge.joceanus.jprometheus.ui.panel.PrometheusMainWindow;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.panel.PrometheusXMainWindow;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.Tethy
  * Main Window for MoneyWise.
  */
 public class MoneyWiseMainTab
-        extends PrometheusMainWindow
+        extends PrometheusXMainWindow
         implements TethysUIMainPanel {
     /**
      * Report tab title.

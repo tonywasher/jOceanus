@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -71,7 +71,7 @@ public class MoneyWiseSecurityPanel
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet<Security> theFieldSet;
+    private final PrometheusXFieldSet<Security> theFieldSet;
 
     /**
      * SecurityPrice Table.
@@ -286,7 +286,7 @@ public class MoneyWiseSecurityPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Security mySecurity = getItem();

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset;
 
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
@@ -25,13 +25,13 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
  * FieldSet Table.
  * @param <T> the item type
  */
-public class PrometheusFieldSetTableTab<T>
-        implements PrometheusFieldSetPanel<T> {
+public class PrometheusXFieldSetTableTab<T>
+        implements PrometheusXFieldSetPanel<T> {
     /**
      * Table interface.
      * @param <T> the item type
      */
-    public interface PrometheusFieldSetTable<T>
+    public interface PrometheusXFieldSetTable<T>
             extends TethysUIComponent {
         /**
          * Are there any visible elements?
@@ -60,15 +60,15 @@ public class PrometheusFieldSetTableTab<T>
     /**
      * The table.
      */
-    private final PrometheusFieldSetTable<T> theTable;
+    private final PrometheusXFieldSetTable<T> theTable;
 
     /**
      * Constructor.
      * @param pFactory the factory
      * @param pTable the table
      */
-    PrometheusFieldSetTableTab(final TethysUIFactory<?> pFactory,
-                               final PrometheusFieldSetTable<T> pTable) {
+    PrometheusXFieldSetTableTab(final TethysUIFactory<?> pFactory,
+                                final PrometheusXFieldSetTable<T> pTable) {
         /* Store the table */
         theTable = pTable;
 

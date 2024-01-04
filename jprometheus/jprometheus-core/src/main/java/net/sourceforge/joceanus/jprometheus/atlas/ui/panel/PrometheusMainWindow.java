@@ -14,27 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.panel;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.jprometheus.lethe.PrometheusXToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadCreateBackup;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadCreateDatabase;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadCreateXmlFile;
+import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadCreateBackup;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadCreateDatabase;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadCreateXMLFile;
 import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadId;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadLoadBackup;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadLoadDatabase;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadLoadXmlFile;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadPurgeDatabase;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadRenewSecurity;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadStoreDatabase;
-import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusXThreadUpdatePassword;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusMenuId;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadLoadBackup;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadLoadDatabase;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadLoadXMLFile;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadPurgeDatabase;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadRenewSecurity;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadStoreDatabase;
+import net.sourceforge.joceanus.jprometheus.atlas.threads.PrometheusThreadUpdatePassword;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusMenuId;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusUIResource;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -85,7 +85,7 @@ public abstract class PrometheusMainWindow
     /**
      * The data view.
      */
-    private DataControl theView;
+    private PrometheusDataControl theView;
 
     /**
      * The panel.
@@ -117,7 +117,7 @@ public abstract class PrometheusMainWindow
      *
      * @return the data view
      */
-    public DataControl getView() {
+    public PrometheusDataControl getView() {
         return theView;
     }
 
@@ -154,8 +154,8 @@ public abstract class PrometheusMainWindow
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public void buildMainWindow(final DataControl pView,
-                                final PrometheusXToolkit pToolkit) throws OceanusException {
+    public void buildMainWindow(final PrometheusDataControl pView,
+                                final PrometheusToolkit pToolkit) throws OceanusException {
         /* Store the view */
         theView = pView;
         theToolkit = pToolkit.getToolkit();
@@ -380,7 +380,7 @@ public abstract class PrometheusMainWindow
      */
     private void loadDatabase() {
         /* Create the worker thread */
-        final PrometheusXThreadLoadDatabase myThread = new PrometheusXThreadLoadDatabase(theView);
+        final PrometheusThreadLoadDatabase myThread = new PrometheusThreadLoadDatabase(theView);
         startThread(myThread);
     }
 
@@ -389,7 +389,7 @@ public abstract class PrometheusMainWindow
      */
     private void storeDatabase() {
         /* Create the worker thread */
-        final PrometheusXThreadStoreDatabase myThread = new PrometheusXThreadStoreDatabase(theView);
+        final PrometheusThreadStoreDatabase myThread = new PrometheusThreadStoreDatabase(theView);
         startThread(myThread);
     }
 
@@ -398,7 +398,7 @@ public abstract class PrometheusMainWindow
      */
     private void createDatabase() {
         /* Create the worker thread */
-        final PrometheusXThreadCreateDatabase myThread = new PrometheusXThreadCreateDatabase(theView);
+        final PrometheusThreadCreateDatabase myThread = new PrometheusThreadCreateDatabase(theView);
         startThread(myThread);
     }
 
@@ -407,7 +407,7 @@ public abstract class PrometheusMainWindow
      */
     private void purgeDatabase() {
         /* Create the worker thread */
-        final PrometheusXThreadPurgeDatabase myThread = new PrometheusXThreadPurgeDatabase(theView);
+        final PrometheusThreadPurgeDatabase myThread = new PrometheusThreadPurgeDatabase(theView);
         startThread(myThread);
     }
 
@@ -450,7 +450,7 @@ public abstract class PrometheusMainWindow
      */
     private void writeBackup() {
         /* Create the worker thread */
-        final PrometheusXThreadCreateBackup myThread = new PrometheusXThreadCreateBackup(theView);
+        final PrometheusThreadCreateBackup myThread = new PrometheusThreadCreateBackup(theView);
         startThread(myThread);
     }
 
@@ -459,7 +459,7 @@ public abstract class PrometheusMainWindow
      */
     private void restoreBackup() {
         /* Create the worker thread */
-        final PrometheusXThreadLoadBackup myThread = new PrometheusXThreadLoadBackup(theView);
+        final PrometheusThreadLoadBackup myThread = new PrometheusThreadLoadBackup(theView);
         startThread(myThread);
     }
 
@@ -468,7 +468,7 @@ public abstract class PrometheusMainWindow
      */
     private void createXmlBackup() {
         /* Create the worker thread */
-        final PrometheusXThreadCreateXmlFile myThread = new PrometheusXThreadCreateXmlFile(theView, true);
+        final PrometheusThreadCreateXMLFile myThread = new PrometheusThreadCreateXMLFile(theView, true);
         startThread(myThread);
     }
 
@@ -477,7 +477,7 @@ public abstract class PrometheusMainWindow
      */
     private void createXmlXtract() {
         /* Create the worker thread */
-        final PrometheusXThreadCreateXmlFile myThread = new PrometheusXThreadCreateXmlFile(theView, false);
+        final PrometheusThreadCreateXMLFile myThread = new PrometheusThreadCreateXMLFile(theView, false);
         startThread(myThread);
     }
 
@@ -486,7 +486,7 @@ public abstract class PrometheusMainWindow
      */
     private void loadXmlFile() {
         /* Create the worker thread */
-        final PrometheusXThreadLoadXmlFile myThread = new PrometheusXThreadLoadXmlFile(theView);
+        final PrometheusThreadLoadXMLFile myThread = new PrometheusThreadLoadXMLFile(theView);
         startThread(myThread);
     }
 
@@ -495,7 +495,7 @@ public abstract class PrometheusMainWindow
      */
     private void updatePassword() {
         /* Create the worker thread */
-        final PrometheusXThreadUpdatePassword myThread = new PrometheusXThreadUpdatePassword(theView);
+        final PrometheusThreadUpdatePassword myThread = new PrometheusThreadUpdatePassword(theView);
         startThread(myThread);
     }
 
@@ -504,7 +504,7 @@ public abstract class PrometheusMainWindow
      */
     private void reNewSecurity() {
         /* Create the worker thread */
-        final PrometheusXThreadRenewSecurity myThread = new PrometheusXThreadRenewSecurity(theView);
+        final PrometheusThreadRenewSecurity myThread = new PrometheusThreadRenewSecurity(theView);
         startThread(myThread);
     }
 

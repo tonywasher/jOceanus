@@ -15,9 +15,9 @@
  * the License.
  ******************************************************************************/
 
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
@@ -35,7 +35,7 @@ public class PrometheusFieldSetElement<V> {
     /**
      * The fieldId.
      */
-    private final PrometheusDataFieldId theFieldId;
+    private final MetisDataFieldId theFieldId;
 
     /**
      * The label.
@@ -65,7 +65,7 @@ public class PrometheusFieldSetElement<V> {
      * @param pField   the field
      */
     PrometheusFieldSetElement(final TethysUIFactory<?> pFactory,
-                              final PrometheusDataFieldId pFieldId,
+                              final MetisDataFieldId pFieldId,
                               final TethysUIDataEditField<V> pField) {
         /* Store field and id */
         theFieldId = pFieldId;
@@ -92,7 +92,7 @@ public class PrometheusFieldSetElement<V> {
      *
      * @return the fieldId
      */
-    PrometheusDataFieldId getFieldId() {
+    MetisDataFieldId getFieldId() {
         return theFieldId;
     }
 

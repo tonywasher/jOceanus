@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDeletableItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldUpdatableItem;
 
 /**
  * Table Item interface.
  */
 public interface PrometheusTableItem
-        extends MetisFieldTableItem {
+        extends MetisFieldTableItem, MetisDataDeletableItem, MetisFieldUpdatableItem {
     /**
      * Is this a header?
      * @return true/false

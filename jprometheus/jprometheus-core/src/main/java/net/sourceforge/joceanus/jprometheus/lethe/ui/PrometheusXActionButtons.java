@@ -14,9 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 /**
  * Action buttons.
  */
-public class PrometheusActionButtons
+public class PrometheusXActionButtons
         implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
      * Strut width.
@@ -79,8 +80,8 @@ public class PrometheusActionButtons
      * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      */
-    public PrometheusActionButtons(final TethysUIFactory<?> pFactory,
-                                   final UpdateSet pUpdateSet) {
+    public PrometheusXActionButtons(final TethysUIFactory<?> pFactory,
+                                    final UpdateSet pUpdateSet) {
         this(pFactory, pUpdateSet, true);
     }
 
@@ -90,9 +91,9 @@ public class PrometheusActionButtons
      * @param pUpdateSet the update set
      * @param pHorizontal is this horizontal panel?
      */
-    public PrometheusActionButtons(final TethysUIFactory<?> pFactory,
-                                   final UpdateSet pUpdateSet,
-                                   final boolean pHorizontal) {
+    public PrometheusXActionButtons(final TethysUIFactory<?> pFactory,
+                                    final UpdateSet pUpdateSet,
+                                    final boolean pHorizontal) {
         /* Record the update set */
         theUpdateSet = pUpdateSet;
 

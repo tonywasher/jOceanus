@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataClass;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

@@ -18,4 +18,4 @@
 /**
  * Prometheus FieldSet Panel.
  */
-package net.sourceforge.joceanus.jprometheus.ui.panel;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.panel;
