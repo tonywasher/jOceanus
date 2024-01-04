@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.Tethy
 /**
  * FieldSet Tab pane.
  */
-public class PrometheusFieldSetTabs {
+public class PrometheusXFieldSetTabs {
     /**
      * The tabPane.
      */
@@ -36,13 +36,13 @@ public class PrometheusFieldSetTabs {
     /**
      * The list of panels.
      */
-    private final Map<String, PrometheusFieldSetPanel<?>> thePanels;
+    private final Map<String, PrometheusXFieldSetPanel<?>> thePanels;
 
     /**
      * Constructor.
      * @param pFactory the gui factory.
      */
-    PrometheusFieldSetTabs(final TethysUIFactory<?> pFactory) {
+    PrometheusXFieldSetTabs(final TethysUIFactory<?> pFactory) {
         theTabs = pFactory.paneFactory().newTabPane();
         thePanels = new HashMap<>();
     }
@@ -53,7 +53,7 @@ public class PrometheusFieldSetTabs {
      * @param pPanel the panel
      */
     void addPanel(final String pName,
-                  final PrometheusFieldSetPanel<?> pPanel) {
+                  final PrometheusXFieldSetPanel<?> pPanel) {
         theTabs.addTabItem(pName, pPanel);
         thePanels.put(pName, pPanel);
     }
@@ -74,9 +74,9 @@ public class PrometheusFieldSetTabs {
         boolean anyVisible = false;
 
         /* Update visibility for all the panels */
-        for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
+        for (Map.Entry<String, PrometheusXFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
             final TethysUITabItem myItem = theTabs.findItemByName(myEntry.getKey());
-            final PrometheusFieldSetPanel<?> myPanel = myEntry.getValue();
+            final PrometheusXFieldSetPanel<?> myPanel = myEntry.getValue();
             final boolean isVisible = myPanel.isVisible();
             myItem.setVisible(isVisible);
             anyVisible |= isVisible;
@@ -91,7 +91,7 @@ public class PrometheusFieldSetTabs {
      */
     void setAllVisible() {
         /* Update visibility for all the panels */
-        for (Map.Entry<String, PrometheusFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
+        for (Map.Entry<String, PrometheusXFieldSetPanel<?>> myEntry : thePanels.entrySet()) {
             final TethysUITabItem myItem = theTabs.findItemByName(myEntry.getKey());
             myItem.setVisible(true);
         }

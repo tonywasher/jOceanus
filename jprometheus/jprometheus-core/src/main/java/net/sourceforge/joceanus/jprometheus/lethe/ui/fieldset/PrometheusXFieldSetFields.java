@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
  * FieldSet Panel.
  * @param <T> the item type
  */
-public class PrometheusFieldSetFields<T>
-        implements PrometheusFieldSetPanel<T> {
+public class PrometheusXFieldSetFields<T>
+        implements PrometheusXFieldSetPanel<T> {
     /**
      * The gui factory.
      */
@@ -49,7 +49,7 @@ public class PrometheusFieldSetFields<T>
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet<T> theFieldSet;
+    private final PrometheusXFieldSet<T> theFieldSet;
 
     /**
      * The holding panel.
@@ -64,7 +64,7 @@ public class PrometheusFieldSetFields<T>
     /**
      * The map of elements.
      */
-    private final Map<PrometheusDataFieldId, PrometheusFieldSetElement<?>> theElements;
+    private final Map<PrometheusDataFieldId, PrometheusXFieldSetElement<?>> theElements;
 
     /**
      * The map of Fields to value factory.
@@ -81,8 +81,8 @@ public class PrometheusFieldSetFields<T>
      * @param pFactory the factory
      * @param pFieldSet the fieldSet
      */
-    PrometheusFieldSetFields(final TethysUIFactory<?> pFactory,
-                             final PrometheusFieldSet<T> pFieldSet) {
+    PrometheusXFieldSetFields(final TethysUIFactory<?> pFactory,
+                              final PrometheusXFieldSet<T> pFieldSet) {
         /* Store the factory */
         theFactory = pFactory;
         theFieldSet = pFieldSet;
@@ -114,7 +114,7 @@ public class PrometheusFieldSetFields<T>
                          final TethysUIDataEditField<?> pField,
                          final Function<T, Object> pValueFactory) {
         /* create the element */
-        final PrometheusFieldSetElement<?> myElement = new PrometheusFieldSetElement<>(theFactory, pFieldId, pField);
+        final PrometheusXFieldSetElement<?> myElement = new PrometheusXFieldSetElement<>(theFactory, pFieldId, pField);
         theElements.put(pFieldId, myElement);
         theValues.put(pFieldId, pValueFactory);
 
@@ -138,13 +138,13 @@ public class PrometheusFieldSetFields<T>
         int myWidth = 0;
 
         /* Loop through the elements getting the max width */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusXFieldSetElement<?> myElement: theElements.values()) {
             final int myLabelWidth = myElement.getLabelWidth();
             myWidth = Math.max(myWidth, myLabelWidth);
         }
 
         /* Loop through the elements setting the width */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusXFieldSetElement<?> myElement: theElements.values()) {
             myElement.setLabelWidth(myWidth);
             myElement.setFieldHeight(FIELD_HEIGHT);
         }
@@ -153,7 +153,7 @@ public class PrometheusFieldSetFields<T>
     @Override
     public boolean isVisible() {
         /* Loop through the elements looking for a visible element */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusXFieldSetElement<?> myElement: theElements.values()) {
             if (myElement.isVisible()) {
                 return true;
             }
@@ -169,7 +169,7 @@ public class PrometheusFieldSetFields<T>
         theItem = pItem;
 
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusXFieldSetElement<?> myElement: theElements.values()) {
             /* Obtain the value factory */
             final Function<T, Object> myValueFactory = theValues.get(myElement.getFieldId());
             final Object myValue = myValueFactory.apply(pItem);
@@ -185,7 +185,7 @@ public class PrometheusFieldSetFields<T>
         }
 
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusXFieldSetElement<?> myElement: theElements.values()) {
             final boolean isChanged = theFieldSet.isChanged(theItem, myElement.getFieldId());
             myElement.adjustChanged(isChanged);
         }
@@ -194,7 +194,7 @@ public class PrometheusFieldSetFields<T>
     @Override
     public void setEditable(final boolean isEditable) {
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusXFieldSetElement<?> myElement: theElements.values()) {
             myElement.setEditable(isEditable);
         }
     }
@@ -203,7 +203,7 @@ public class PrometheusFieldSetFields<T>
     public void setEditable(final PrometheusDataFieldId pFieldId,
                             final boolean pEditable) {
         /* adjust the element */
-        final PrometheusFieldSetElement<?> myElement = theElements.get(pFieldId);
+        final PrometheusXFieldSetElement<?> myElement = theElements.get(pFieldId);
         myElement.setEditable(pEditable);
     }
 
@@ -211,7 +211,7 @@ public class PrometheusFieldSetFields<T>
     public void setVisible(final PrometheusDataFieldId pFieldId,
                            final boolean pVisible) {
         /* adjust the element */
-        final PrometheusFieldSetElement<?> myElement = theElements.get(pFieldId);
+        final PrometheusXFieldSetElement<?> myElement = theElements.get(pFieldId);
         myElement.setVisible(pVisible);
     }
 }

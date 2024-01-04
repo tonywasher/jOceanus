@@ -60,8 +60,8 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.TransactionFilters;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -116,7 +116,7 @@ public class MoneyWiseTransactionPanel
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet<Transaction> theFieldSet;
+    private final PrometheusXFieldSet<Transaction> theFieldSet;
 
     /**
      * Analysis selection panel.
@@ -533,7 +533,7 @@ public class MoneyWiseTransactionPanel
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Transaction myTrans = getItem();

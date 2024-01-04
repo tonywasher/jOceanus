@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusXActionButtons;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
@@ -107,7 +107,7 @@ public class MoneyWiseTransactionTable
     /**
      * The action buttons.
      */
-    private final PrometheusActionButtons theActionButtons;
+    private final PrometheusXActionButtons theActionButtons;
 
     /**
      * TransactionBuilder.
@@ -183,7 +183,7 @@ public class MoneyWiseTransactionTable
         theSelect = new MoneyWiseAnalysisSelect(myGuiFactory, pView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
-        theActionButtons = new PrometheusActionButtons(myGuiFactory, getUpdateSet());
+        theActionButtons = new PrometheusXActionButtons(myGuiFactory, getUpdateSet());
 
         /* Create the builder */
         theBuilder = new TransactionBuilder(getUpdateSet());
@@ -428,7 +428,7 @@ public class MoneyWiseTransactionTable
      * Obtain the action buttons.
      * @return the action buttons
      */
-    PrometheusActionButtons getActionButtons() {
+    PrometheusXActionButtons getActionButtons() {
         return theActionButtons;
     }
 

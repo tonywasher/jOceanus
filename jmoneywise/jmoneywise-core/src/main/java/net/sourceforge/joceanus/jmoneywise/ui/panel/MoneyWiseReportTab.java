@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.S
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;

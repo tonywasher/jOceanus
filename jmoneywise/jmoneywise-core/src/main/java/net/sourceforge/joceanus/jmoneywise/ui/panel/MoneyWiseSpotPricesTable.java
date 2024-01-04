@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice.SpotSec
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusXActionButtons;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
@@ -319,7 +319,7 @@ public class MoneyWiseSpotPricesTable
         /**
          * The action buttons.
          */
-        private final PrometheusActionButtons theActionButtons;
+        private final PrometheusXActionButtons theActionButtons;
 
         /**
          * The table.
@@ -362,7 +362,7 @@ public class MoneyWiseSpotPricesTable
 
             /* Create the action buttons */
             final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-            theActionButtons = new PrometheusActionButtons(myGuiFactory, theUpdateSet);
+            theActionButtons = new PrometheusXActionButtons(myGuiFactory, theUpdateSet);
             theActionButtons.setVisible(false);
 
             /* Create the header panel */

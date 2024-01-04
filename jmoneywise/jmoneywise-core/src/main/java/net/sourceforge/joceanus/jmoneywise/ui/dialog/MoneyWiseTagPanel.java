@@ -23,8 +23,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -49,7 +49,7 @@ public class MoneyWiseTagPanel
         super(pFactory, pUpdateSet, pError);
 
         /* Access the fieldSet */
-        final PrometheusFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final PrometheusXFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -77,7 +77,7 @@ public class MoneyWiseTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final PrometheusXFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
@@ -85,7 +85,7 @@ public class MoneyWiseTagPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final TransactionTag myTag = getItem();

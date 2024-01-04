@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -51,7 +51,7 @@ public class PrometheusFieldSetTextArea<T>
     /**
      * The fieldId.
      */
-    private PrometheusDataFieldId theFieldId;
+    private MetisDataFieldId theFieldId;
 
     /**
      * The text area.
@@ -100,7 +100,7 @@ public class PrometheusFieldSetTextArea<T>
      * @param pField the edit field
      * @param pValueFactory the valueFactory
      */
-    public void addField(final PrometheusDataFieldId pFieldId,
+    public void addField(final MetisDataFieldId pFieldId,
                          final TethysUICharArrayTextAreaField pField,
                          final Function<T, char[]> pValueFactory) {
         /* Store details */
@@ -156,13 +156,13 @@ public class PrometheusFieldSetTextArea<T>
     }
 
     @Override
-    public void setEditable(final PrometheusDataFieldId pFieldId,
+    public void setEditable(final MetisDataFieldId pFieldId,
                             final boolean pEditable) {
         theTextArea.setEditable(pEditable);
     }
 
     @Override
-    public void setVisible(final PrometheusDataFieldId pFieldId,
+    public void setVisible(final MetisDataFieldId pFieldId,
                            final boolean pVisible) {
         /* adjust the element */
         theTextArea.setVisible(pVisible);

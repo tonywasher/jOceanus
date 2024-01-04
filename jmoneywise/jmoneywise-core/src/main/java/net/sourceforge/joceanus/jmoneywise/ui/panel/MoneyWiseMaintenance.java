@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;

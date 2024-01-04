@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticDataItem.StaticList;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusXActionButtons;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusViewerEntryId;
@@ -102,7 +102,7 @@ public class MoneyWiseStaticPanel
     /**
      * The action buttons panel.
      */
-    private final PrometheusActionButtons theActionButtons;
+    private final PrometheusXActionButtons theActionButtons;
 
     /**
      * The disabled check box.
@@ -169,7 +169,7 @@ public class MoneyWiseStaticPanel
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusActionButtons(myGuiFactory, theUpdateSet);
+        theActionButtons = new PrometheusXActionButtons(myGuiFactory, theUpdateSet);
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
 
         /* Create the CheckBox */

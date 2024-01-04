@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -64,7 +64,7 @@ public class MoneyWiseCashPanel
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet<Cash> theFieldSet;
+    private final PrometheusXFieldSet<Cash> theFieldSet;
 
     /**
      * The Closed State.
@@ -224,7 +224,7 @@ public class MoneyWiseCashPanel
     }
 
     @Override
-    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
         final Cash myCash = getItem();

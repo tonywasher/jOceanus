@@ -14,22 +14,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.panel;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusListKeyX;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItemX;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemActions;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusUIResource;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusItemActions;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusItemEditActions;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusItemEditActions.PrometheusItemEditParent;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
  * @param <T> the item type
  * @param <G> the goto id type
  */
-public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & Comparable<? super T>, G extends Enum<G>>
+public abstract class PrometheusXDataItemPanel<T extends PrometheusTableItemX & Comparable<? super T>, G extends Enum<G>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent, PrometheusItemEditParent {
     /**
      * Details Tab Title.
@@ -99,7 +99,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
     /**
      * The Field Set.
      */
-    private final PrometheusFieldSet<T> theFieldSet;
+    private final PrometheusXFieldSet<T> theFieldSet;
 
     /**
      * The Update Set.
@@ -158,9 +158,9 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
      * @param pError the error panel
      */
     @SuppressWarnings("unchecked")
-    protected PrometheusDataItemPanel(final TethysUIFactory<?> pFactory,
-                                      final UpdateSet pUpdateSet,
-                                      final MetisErrorPanel pError) {
+    protected PrometheusXDataItemPanel(final TethysUIFactory<?> pFactory,
+                                       final UpdateSet pUpdateSet,
+                                       final MetisErrorPanel pError) {
         /* Store parameters */
         theFactory = pFactory;
         theUpdateSet = pUpdateSet;
@@ -173,7 +173,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
         theFormatter = pFactory.getDataFormatter();
 
         /* Create the New FieldSet */
-        theFieldSet = new PrometheusFieldSet<>(pFactory);
+        theFieldSet = new PrometheusXFieldSet<>(pFactory);
 
         /* Create the main panel */
         thePanel = pFactory.paneFactory().newBorderPane();
@@ -185,7 +185,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
-        theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(PrometheusFieldSetEvent.class)));
+        theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(PrometheusXFieldSetEvent.class)));
 
         /* Layout the panel */
         thePanel.setWest(theItemActions);
@@ -247,7 +247,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
      * Obtain the field Set.
      * @return the FieldSet
      */
-    protected PrometheusFieldSet<T> getFieldSet() {
+    protected PrometheusXFieldSet<T> getFieldSet() {
         return theFieldSet;
     }
 
@@ -419,7 +419,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
      * @param pUpdate the update
      * @throws OceanusException on error
      */
-    protected abstract void updateField(PrometheusFieldSetEvent pUpdate) throws OceanusException;
+    protected abstract void updateField(PrometheusXFieldSetEvent pUpdate) throws OceanusException;
 
     /**
      * Obtain the list for a class in base updateSet.
@@ -592,7 +592,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItemX & C
      * Update item.
      * @param pUpdate the update
      */
-    private void updateItem(final PrometheusFieldSetEvent pUpdate) {
+    private void updateItem(final PrometheusXFieldSetEvent pUpdate) {
         /* Push history */
         theItem.pushHistory();
 

@@ -14,10 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,7 +27,7 @@ public class PrometheusFieldSetEvent {
     /**
      * The field.
      */
-    private final PrometheusDataFieldId theFieldId;
+    private final MetisDataFieldId theFieldId;
 
     /**
      * The new value.
@@ -39,7 +39,7 @@ public class PrometheusFieldSetEvent {
      * @param pFieldId the source fieldId
      * @param pNewValue the new Value
      */
-    public PrometheusFieldSetEvent(final PrometheusDataFieldId pFieldId,
+    public PrometheusFieldSetEvent(final MetisDataFieldId pFieldId,
                                    final Object pNewValue) {
         theFieldId = pFieldId;
         theValue = pNewValue;
@@ -49,7 +49,7 @@ public class PrometheusFieldSetEvent {
      * Obtain the source field.
      * @return the field
      */
-    public PrometheusDataFieldId getFieldId() {
+    public MetisDataFieldId getFieldId() {
         return theFieldId;
     }
 

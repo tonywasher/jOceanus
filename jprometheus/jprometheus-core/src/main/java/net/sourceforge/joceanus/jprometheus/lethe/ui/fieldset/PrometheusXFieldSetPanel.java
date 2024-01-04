@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui.fieldset;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset;
 
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
  * FieldSet Panel.
  * @param <T> the item type
  */
-public interface PrometheusFieldSetPanel<T>
+public interface PrometheusXFieldSetPanel<T>
     extends TethysUIComponent {
     /**
      * Are there any visible elements?

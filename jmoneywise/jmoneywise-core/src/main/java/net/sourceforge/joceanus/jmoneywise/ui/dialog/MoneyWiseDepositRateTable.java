@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetTableTab.PrometheusXFieldSetTable;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  */
 public class MoneyWiseDepositRateTable
         extends MoneyWiseDialogTable<DepositRate>
-        implements PrometheusFieldSetTable<Deposit> {
+        implements PrometheusXFieldSetTable<Deposit> {
     /**
      * Deposit.
      */

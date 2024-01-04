@@ -14,9 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -26,51 +27,22 @@ import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
- * Item Edit Action buttons.
+ * Action buttons.
  */
-public class PrometheusItemEditActions
+public class PrometheusActionButtons
         implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
-     * ItemEditParent interface.
+     * Strut width.
      */
-    public interface PrometheusItemEditParent {
-        /**
-         * Is the item editable?
-         * @return true/false
-         */
-        boolean isEditable();
-
-        /**
-         * Is the item deletable?
-         * @return true/false
-         */
-        boolean isDeletable();
-
-        /**
-         * Does the parent have updates.
-         * @return true/false
-         */
-        boolean hasUpdates();
-
-        /**
-         * Does the parent have errors.
-         * @return true/false
-         */
-        boolean hasErrors();
-
-        /**
-         * Is the parent new.
-         * @return true/false
-         */
-        boolean isNew();
-    }
+    protected static final int STRUT_LENGTH = 5;
 
     /**
-     * The panel.
+     * Text for Box Title.
      */
-    private final TethysUIBoxPaneManager thePanel;
+    private static final String NLS_TITLE = PrometheusUIResource.ACTION_TITLE_SAVE.getValue();
 
     /**
      * The Event Manager.
@@ -78,9 +50,14 @@ public class PrometheusItemEditActions
     private final TethysEventManager<PrometheusUIEvent> theEventManager;
 
     /**
-     * The parent.
+     * The update set.
      */
-    private final PrometheusItemEditParent theParent;
+    private final PrometheusEditSet theUpdateSet;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
 
     /**
      * The Commit button.
@@ -98,19 +75,26 @@ public class PrometheusItemEditActions
     private final TethysUIButton theResetButton;
 
     /**
-     * The Cancel button.
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pUpdateSet the update set
      */
-    private final TethysUIButton theCancelButton;
+    public PrometheusActionButtons(final TethysUIFactory<?> pFactory,
+                                   final PrometheusEditSet pUpdateSet) {
+        this(pFactory, pUpdateSet, true);
+    }
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pParent the parent
+     * @param pUpdateSet the update set
+     * @param pHorizontal is this horizontal panel?
      */
-    public PrometheusItemEditActions(final TethysUIFactory<?> pFactory,
-                                     final PrometheusItemEditParent pParent) {
-        /* Record the parent */
-        theParent = pParent;
+    public PrometheusActionButtons(final TethysUIFactory<?> pFactory,
+                                   final PrometheusEditSet pUpdateSet,
+                                   final boolean pHorizontal) {
+        /* Record the update set */
+        theUpdateSet = pUpdateSet;
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -120,42 +104,48 @@ public class PrometheusItemEditActions
         theCommitButton = myButtons.newButton();
         theUndoButton = myButtons.newButton();
         theResetButton = myButtons.newButton();
-        theCancelButton = myButtons.newButton();
 
         /* Configure the buttons */
         MetisIcon.configureCommitIconButton(theCommitButton);
         MetisIcon.configureUndoIconButton(theUndoButton);
         MetisIcon.configureResetIconButton(theResetButton);
-        MetisIcon.configureCancelIconButton(theCancelButton);
-
-        /* Create the panel */
-        thePanel = pFactory.paneFactory().newVBoxPane();
-        thePanel.setBorderPadding(PrometheusItemActions.BORDER_PADDING);
-
-        /* Create the layout */
-        thePanel.addNode(theCommitButton);
-        thePanel.addNode(theUndoButton);
-        thePanel.addNode(theResetButton);
-        thePanel.addNode(theCancelButton);
 
         /* Add the listener for item changes */
         theCommitButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.OK));
         theUndoButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.UNDO));
         theResetButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.RESET));
-        theCancelButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.CANCEL));
+
+        /* Create the panel */
+        final TethysUIPaneFactory myPanes = pFactory.paneFactory();
+        thePanel = pHorizontal
+                ? myPanes.newHBoxPane()
+                : myPanes.newVBoxPane();
+
+        /* Define the layout */
+        if (!pHorizontal) {
+            thePanel.addNode(pFactory.controlFactory().newLabel(NLS_TITLE));
+        }
+        thePanel.addNode(theCommitButton);
+        thePanel.addNode(theUndoButton);
+        thePanel.addNode(theResetButton);
+
+        /* Set border if required */
+        if (pHorizontal) {
+            thePanel.setBorderTitle(NLS_TITLE);
+        }
 
         /* Buttons are initially disabled */
         setEnabled(false);
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
+    public TethysUIComponent getUnderlying() {
+        return thePanel;
     }
 
     @Override
-    public TethysUIComponent getUnderlying() {
-        return thePanel;
+    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -165,22 +155,30 @@ public class PrometheusItemEditActions
             theCommitButton.setEnabled(false);
             theUndoButton.setEnabled(false);
             theResetButton.setEnabled(false);
-            theCancelButton.setEnabled(false);
 
             /* Else look at the edit state */
         } else {
-            /* Determine whether we have changes */
-            boolean hasUpdates = theParent.hasUpdates();
-            theUndoButton.setEnabled(hasUpdates);
-            theResetButton.setEnabled(hasUpdates);
-
-            /* Check for no errors */
-            final boolean hasErrors = theParent.hasErrors();
-            hasUpdates |= theParent.isNew();
-            theCommitButton.setEnabled(hasUpdates && !hasErrors);
-
-            /* Enable the cancel button */
-            theCancelButton.setEnabled(true);
+            /* Switch on the edit state */
+            switch (theUpdateSet.getEditState()) {
+                case CLEAN:
+                    theCommitButton.setEnabled(false);
+                    theUndoButton.setEnabled(false);
+                    theResetButton.setEnabled(theUpdateSet.hasUpdates());
+                    break;
+                case DIRTY:
+                case ERROR:
+                    theCommitButton.setEnabled(false);
+                    theUndoButton.setEnabled(true);
+                    theResetButton.setEnabled(true);
+                    break;
+                case VALID:
+                    theCommitButton.setEnabled(true);
+                    theUndoButton.setEnabled(true);
+                    theResetButton.setEnabled(true);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

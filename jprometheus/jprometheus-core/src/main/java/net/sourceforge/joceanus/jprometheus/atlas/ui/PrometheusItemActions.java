@@ -14,10 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.ui;
+package net.sourceforge.joceanus.jprometheus.atlas.ui;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
