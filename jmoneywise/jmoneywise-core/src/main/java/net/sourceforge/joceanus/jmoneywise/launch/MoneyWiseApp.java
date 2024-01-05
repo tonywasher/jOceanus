@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.launch;
 
-import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseMainTab;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.panel.MoneyWiseMainTab;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -54,12 +54,12 @@ public class MoneyWiseApp
     @Override
     public TethysUIIconId[] getIcons() {
         return new TethysUIIconId[]
-        { MoneyWiseIcon.SMALL, MoneyWiseIcon.BIG };
+        { MoneyWiseXIcon.SMALL, MoneyWiseXIcon.BIG };
     }
 
     @Override
     public TethysUIIconId getSplash() {
-        return MoneyWiseIcon.SPLASH;
+        return MoneyWiseXIcon.SPLASH;
     }
 
     @Override
