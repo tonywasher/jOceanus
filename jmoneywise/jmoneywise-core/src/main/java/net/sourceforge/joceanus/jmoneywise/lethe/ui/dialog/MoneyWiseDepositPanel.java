@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.Asse
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
@@ -62,7 +62,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Deposit.
  */
 public class MoneyWiseDepositPanel
-        extends MoneyWiseItemPanel<Deposit> {
+        extends MoneyWiseXItemPanel<Deposit> {
     /**
      * Rates Tab Title.
      */

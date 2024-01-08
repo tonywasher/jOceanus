@@ -14,26 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.base;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseAssetDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
@@ -48,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Asset Table.
  * @param <T> the Asset Data type
  */
-public abstract class MoneyWiseAssetTable<T extends AssetBase>
+public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
         extends MoneyWiseBaseTable<T> {
     /**
      * ShowClosed prompt.
@@ -68,7 +69,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
     /**
      * The closed column.
      */
-    private TethysUITableColumn<Boolean, PrometheusDataFieldId, T> theClosedColumn;
+    private TethysUITableColumn<Boolean, MetisDataFieldId, T> theClosedColumn;
 
     /**
      * Are we showing closed accounts?
@@ -78,20 +79,20 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
     /**
      * Constructor.
      * @param pView      the view
-     * @param pUpdateSet the updateSet
+     * @param pEditSet   the editSet
      * @param pError     the error panel
      * @param pDataType  the dataType
      */
-    protected MoneyWiseAssetTable(final MoneyWiseXView pView,
-                                  final UpdateSet pUpdateSet,
+    protected MoneyWiseAssetTable(final MoneyWiseView pView,
+                                  final PrometheusEditSet pEditSet,
                                   final MetisErrorPanel pError,
-                                  final MoneyWiseDataType pDataType) {
+                                  final PrometheusListKey pDataType) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, pDataType);
+        super(pView, pEditSet, pError, pDataType);
 
         /* Access Gui factory and table */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUITableManager<MetisDataFieldId, T> myTable = getTable();
 
         /* Create new button */
         final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
@@ -108,33 +109,33 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
         theFilterPanel.addNode(myNewButton);
 
         /* Set table configuration */
-        myTable.setDisabled(AssetBase::isDisabled)
-               .setComparator(AssetBase::compareTo);
+        myTable.setDisabled(MoneyWiseAssetBase::isDisabled)
+                .setComparator(MoneyWiseAssetBase::compareTo);
 
         /* Create the name column */
-        myTable.declareStringColumn(MoneyWiseAssetDataId.NAME)
+        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_NAME)
                 .setValidator(this::isValidName)
-                .setCellValueFactory(AssetBase::getName)
+                .setCellValueFactory(MoneyWiseAssetBase::getName)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_NAME)
-                .setOnCommit((r, v) -> updateField(AssetBase::setName, r, v));
+                .setOnCommit((r, v) -> updateField(MoneyWiseAssetBase::setName, r, v));
 
         /* Create the Category column */
-        myTable.declareScrollColumn(MoneyWiseAssetDataId.CATEGORY, AssetCategory.class)
+        myTable.declareScrollColumn(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseAssetCategory.class)
                 .setMenuConfigurator(this::buildCategoryMenu)
-                .setCellValueFactory(AssetBase::getCategory)
+                .setCellValueFactory(MoneyWiseAssetBase::getCategory)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
                 .setColumnWidth(WIDTH_NAME)
-                .setOnCommit((r, v) -> updateField(AssetBase::setCategory, r, v));
+                .setOnCommit((r, v) -> updateField(MoneyWiseAssetBase::setCategory, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(MoneyWiseAssetDataId.DESC)
+        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_DESC)
                 .setValidator(this::isValidDesc)
-                .setCellValueFactory(AssetBase::getDesc)
+                .setCellValueFactory(MoneyWiseAssetBase::getDesc)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_DESC)
-                .setOnCommit((r, v) -> updateField(AssetBase::setDescription, r, v));
+                .setOnCommit((r, v) -> updateField(MoneyWiseAssetBase::setDescription, r, v));
 
         /* Add listeners */
         myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
@@ -151,46 +152,46 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
                                final boolean pCurrency,
                                final boolean pEvent) {
         /* Access Table */
-        final TethysUITableManager<PrometheusDataFieldId, T> myTable = getTable();
+        final TethysUITableManager<MetisDataFieldId, T> myTable = getTable();
 
         /* Create the parent column */
         if (pParent) {
-            myTable.declareScrollColumn(MoneyWiseAssetDataId.PARENT, Payee.class)
+            myTable.declareScrollColumn(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class)
                     .setMenuConfigurator(this::buildParentMenu)
-                    .setCellValueFactory(AssetBase::getParent)
+                    .setCellValueFactory(MoneyWiseAssetBase::getParent)
                     .setEditable(true)
                     .setCellEditable(r -> !r.isActive())
                     .setColumnWidth(WIDTH_NAME)
-                    .setOnCommit((r, v) -> updateField(AssetBase::setParent, r, v));
+                    .setOnCommit((r, v) -> updateField(MoneyWiseAssetBase::setParent, r, v));
         }
 
         /* Create the currency column */
         if (pCurrency) {
-            myTable.declareScrollColumn(MoneyWiseAssetDataId.CURRENCY, AssetCurrency.class)
+            myTable.declareScrollColumn(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrency.class)
                     .setMenuConfigurator(this::buildCurrencyMenu)
-                    .setCellValueFactory(AssetBase::getAssetCurrency)
+                    .setCellValueFactory(MoneyWiseAssetBase::getAssetCurrency)
                     .setEditable(true)
                     .setCellEditable(r -> !r.isActive())
                     .setColumnWidth(WIDTH_CURR)
-                    .setOnCommit((r, v) -> updateField(AssetBase::setAssetCurrency, r, v));
+                    .setOnCommit((r, v) -> updateField(MoneyWiseAssetBase::setAssetCurrency, r, v));
         }
 
         /* Create the Closed column */
-        final Map<Boolean, TethysUIIconMapSet<Boolean>> myClosedMapSets = MoneyWiseXIcon.configureLockedIconButton(getView().getGuiFactory());
-        final TethysUITableColumn<Boolean, PrometheusDataFieldId, T> myClosedColumn
-                = myTable.declareIconColumn(MoneyWiseAssetDataId.CLOSED, Boolean.class)
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton(getView().getGuiFactory());
+        final TethysUITableColumn<Boolean, MetisDataFieldId, T> myClosedColumn
+                = myTable.declareIconColumn(MoneyWiseBasicResource.ASSET_CLOSED, Boolean.class)
                 .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                .setCellValueFactory(AssetBase::isClosed)
+                .setCellValueFactory(MoneyWiseAssetBase::isClosed)
                 .setEditable(true)
                 .setCellEditable(this::determineClosedState)
                 .setColumnWidth(WIDTH_ICON)
-                .setOnCommit((r, v) -> updateField(AssetBase::setClosed, r, v));
+                .setOnCommit((r, v) -> updateField(MoneyWiseAssetBase::setClosed, r, v));
         declareClosedColumn(myClosedColumn);
         setShowAll(false);
 
         /* Create the Active column */
         final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(getView().getGuiFactory());
-        myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
+        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -201,7 +202,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
 
         /* Create the latest event column */
         if (pEvent) {
-            myTable.declareDateColumn(MoneyWiseAssetDataId.EVTLAST)
+            myTable.declareDateColumn(MoneyWiseBasicResource.ASSET_LASTEVENT)
                     .setCellValueFactory(this::getLatestTranDate)
                     .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
                     .setEditable(false);
@@ -220,7 +221,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
      * Declare the closed column.
      * @param pColumn the column
      */
-    protected void declareClosedColumn(final TethysUITableColumn<Boolean, PrometheusDataFieldId, T> pColumn) {
+    protected void declareClosedColumn(final TethysUITableColumn<Boolean, MetisDataFieldId, T> pColumn) {
         theClosedColumn = pColumn;
     }
 
@@ -239,7 +240,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
      * @return the date or null
      */
     protected TethysDate getLatestTranDate(final T pAsset) {
-        final Transaction myTran = pAsset.getLatest();
+        final MoneyWiseTransaction myTran = pAsset.getLatest();
         return myTran == null ? null : myTran.getDate();
     }
 
@@ -275,7 +276,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
      * @param pMenu the menu to build
      */
     protected abstract void buildCategoryMenu(T pAsset,
-                                              TethysUIScrollMenu<AssetCategory> pMenu);
+                                              TethysUIScrollMenu<MoneyWiseAssetCategory> pMenu);
 
     /**
      * Build the Parent list for the item.
@@ -283,7 +284,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
      * @param pMenu the menu to build
      */
     protected void buildParentMenu(final T pAsset,
-                                   final TethysUIScrollMenu<Payee> pMenu) {
+                                   final TethysUIScrollMenu<MoneyWisePayee> pMenu) {
         /* No-Op */
     }
 
@@ -293,7 +294,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase>
      * @param pMenu the menu to build
      */
     protected void buildCurrencyMenu(final T pAsset,
-                                     final TethysUIScrollMenu<AssetCurrency> pMenu) {
+                                     final TethysUIScrollMenu<MoneyWiseCurrency> pMenu) {
         /* No-Op */
     }
 

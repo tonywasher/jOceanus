@@ -21,10 +21,10 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -40,14 +40,14 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
- * Payee Analysis Selection.
+ * Portfolio Analysis Selection.
  */
-public class MoneyWisePayeeAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseXPortfolioAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
-     * Text for Payee Label.
+     * Text for Portfolio Label.
      */
-    private static final String NLS_PAYEE = MoneyWiseDataType.PAYEE.getItemName();
+    private static final String NLS_PORTFOLIO = MoneyWiseDataType.PORTFOLIO.getItemName();
 
     /**
      * The Event Manager.
@@ -60,61 +60,61 @@ public class MoneyWisePayeeAnalysisSelect
     private final TethysUIBoxPaneManager thePanel;
 
     /**
-     * The select button.
+     * The portfolio button.
      */
-    private final TethysUIScrollButtonManager<PayeeBucket> theButton;
+    private final TethysUIScrollButtonManager<PortfolioBucket> thePortButton;
 
     /**
-     * Payee menu.
+     * Portfolio menu.
      */
-    private final TethysUIScrollMenu<PayeeBucket> thePayeeMenu;
+    private final TethysUIScrollMenu<PortfolioBucket> thePortfolioMenu;
 
     /**
-     * The active payee bucket list.
+     * The active portfolio bucket list.
      */
-    private PayeeBucketList thePayees;
+    private PortfolioBucketList thePortfolios;
 
     /**
      * The state.
      */
-    private PayeeState theState;
+    private PortfolioState theState;
 
     /**
      * The savePoint.
      */
-    private PayeeState theSavePoint;
+    private PortfolioState theSavePoint;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWisePayeeAnalysisSelect(final TethysUIFactory<?> pFactory) {
-        /* Create the button */
-        theButton = pFactory.buttonFactory().newScrollButton(PayeeBucket.class);
+    protected MoneyWiseXPortfolioAnalysisSelect(final TethysUIFactory<?> pFactory) {
+        /* Create the portfolio button */
+        thePortButton = pFactory.buttonFactory().newScrollButton(PortfolioBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 
-        /* Create the label */
-        final TethysUILabel myLabel = pFactory.controlFactory().newLabel(NLS_PAYEE + TethysUIConstant.STR_COLON);
+        /* Create the labels */
+        final TethysUILabel myPortLabel = pFactory.controlFactory().newLabel(NLS_PORTFOLIO + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.paneFactory().newHBoxPane();
         thePanel.addSpacer();
-        thePanel.addNode(myLabel);
-        thePanel.addNode(theButton);
+        thePanel.addNode(myPortLabel);
+        thePanel.addNode(thePortButton);
 
         /* Create initial state */
-        theState = new PayeeState();
+        theState = new PortfolioState();
         theState.applyState();
 
         /* Access the menus */
-        thePayeeMenu = theButton.getMenu();
+        thePortfolioMenu = thePortButton.getMenu();
 
         /* Create the listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPayee());
-        theButton.setMenuConfigurator(e -> buildPayeeMenu());
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
+        thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
     }
 
     @Override
@@ -128,14 +128,14 @@ public class MoneyWisePayeeAnalysisSelect
     }
 
     @Override
-    public PayeeFilter getFilter() {
+    public PortfolioCashFilter getFilter() {
         return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return thePayees != null
-               && !thePayees.isEmpty();
+        return thePortfolios != null
+               && !thePortfolios.isEmpty();
     }
 
     /**
@@ -143,7 +143,7 @@ public class MoneyWisePayeeAnalysisSelect
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new PayeeState(theState);
+        theSavePoint = new PortfolioState(theState);
     }
 
     /**
@@ -151,7 +151,7 @@ public class MoneyWisePayeeAnalysisSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new PayeeState(theSavePoint);
+        theState = new PortfolioState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -159,8 +159,11 @@ public class MoneyWisePayeeAnalysisSelect
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        /* Pass call on to button */
-        theButton.setEnabled(bEnabled && isAvailable());
+        /* Determine whether there are any portfolios to select */
+        final boolean portAvailable = bEnabled && isAvailable();
+
+        /* Pass call on to buttons */
+        thePortButton.setEnabled(portAvailable);
     }
 
     @Override
@@ -174,69 +177,69 @@ public class MoneyWisePayeeAnalysisSelect
      */
     public void setAnalysis(final Analysis pAnalysis) {
         /* Access buckets */
-        thePayees = pAnalysis.getPayees();
+        thePortfolios = pAnalysis.getPortfolios();
 
-        /* Obtain the current payee */
-        PayeeBucket myPayee = theState.getPayee();
+        /* Obtain the current portfolio */
+        PortfolioBucket myPortfolio = theState.getPortfolio();
 
         /* Switch to versions from the analysis */
-        myPayee = myPayee != null
-                                  ? thePayees.getMatchingPayee(myPayee.getPayee())
-                                  : thePayees.getDefaultPayee();
+        myPortfolio = myPortfolio != null
+                                          ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
+                                          : thePortfolios.getDefaultPortfolio();
 
-        /* Set the payee */
-        theState.setThePayee(myPayee);
+        /* Set the portfolio */
+        theState.setThePortfolio(myPortfolio);
         theState.applyState();
     }
 
     @Override
     public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof PayeeFilter) {
+        if (pFilter instanceof PortfolioCashFilter) {
             /* Access filter */
-            final PayeeFilter myFilter = (PayeeFilter) pFilter;
+            final PortfolioCashFilter myFilter = (PortfolioCashFilter) pFilter;
 
             /* Obtain the filter bucket */
-            PayeeBucket myPayee = myFilter.getBucket();
+            PortfolioBucket myPortfolio = myFilter.getPortfolioBucket();
 
-            /* Obtain equivalent bucket */
-            myPayee = thePayees.getMatchingPayee(myPayee.getPayee());
+            /* Look for the equivalent bucket */
+            myPortfolio = thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio());
 
-            /* Set the payee */
-            theState.setThePayee(myPayee);
+            /* Set the portfolio */
+            theState.setThePortfolio(myPortfolio);
             theState.applyState();
         }
     }
 
     /**
-     * Handle new Payee.
+     * Handle new Portfolio.
      */
-    private void handleNewPayee() {
-        /* Select the new Payee */
-        if (theState.setPayee(theButton.getValue())) {
+    private void handleNewPortfolio() {
+        /* Select the new portfolio */
+        if (theState.setPortfolio(thePortButton.getValue())) {
             theState.applyState();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
 
     /**
-     * Build Payee menu.
+     * Build Portfolio menu.
      */
-    private void buildPayeeMenu() {
+    private void buildPortfolioMenu() {
         /* Reset the popUp menu */
-        thePayeeMenu.removeAllItems();
+        thePortfolioMenu.removeAllItems();
 
         /* Record active item */
-        TethysUIScrollItem<PayeeBucket> myActive = null;
-        final PayeeBucket myCurr = theState.getPayee();
+        TethysUIScrollItem<PortfolioBucket> myActive = null;
+        final PortfolioBucket myCurr = theState.getPortfolio();
 
-        /* Loop through the available payee values */
-        final Iterator<PayeeBucket> myIterator = thePayees.iterator();
+        /* Loop through the available portfolio values */
+        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            final PayeeBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<PayeeBucket> myItem = thePayeeMenu.addItem(myBucket);
+            final TethysUIScrollItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -254,73 +257,73 @@ public class MoneyWisePayeeAnalysisSelect
     /**
      * SavePoint values.
      */
-    private final class PayeeState {
+    private final class PortfolioState {
         /**
-         * The active PayeeBucket.
+         * The active Portfolio.
          */
-        private PayeeBucket thePayee;
+        private PortfolioBucket thePortfolio;
 
         /**
          * The active filter.
          */
-        private PayeeFilter theFilter;
+        private PortfolioCashFilter theFilter;
 
         /**
          * Constructor.
          */
-        private PayeeState() {
+        private PortfolioState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private PayeeState(final PayeeState pState) {
+        private PortfolioState(final PortfolioState pState) {
             /* Initialise state */
-            thePayee = pState.getPayee();
+            thePortfolio = pState.getPortfolio();
             theFilter = pState.getFilter();
         }
 
         /**
-         * Obtain the Payee Bucket.
-         * @return the Payee
+         * Obtain the Portfolio.
+         * @return the portfolio
          */
-        private PayeeBucket getPayee() {
-            return thePayee;
+        private PortfolioBucket getPortfolio() {
+            return thePortfolio;
         }
 
         /**
          * Obtain the Filter.
-         * @return the Filter
+         * @return the filter
          */
-        private PayeeFilter getFilter() {
+        private PortfolioCashFilter getFilter() {
             return theFilter;
         }
 
         /**
-         * Set new Payee.
-         * @param pPayee the Payee
+         * Set new Portfolio.
+         * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPayee(final PayeeBucket pPayee) {
-            /* Adjust the selected payee */
-            if (!MetisDataDifference.isEqual(pPayee, thePayee)) {
-                setThePayee(pPayee);
+        private boolean setPortfolio(final PortfolioBucket pPortfolio) {
+            /* Adjust the selected portfolio */
+            if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {
+                setThePortfolio(pPortfolio);
                 return true;
             }
             return false;
         }
 
         /**
-         * Set the Payee.
-         * @param pPayee the Payee
+         * Set the Portfolio.
+         * @param pPortfolio the Portfolio
          */
-        private void setThePayee(final PayeeBucket pPayee) {
-            /* Store the payee */
-            thePayee = pPayee;
-            theFilter = thePayee != null
-                                         ? new PayeeFilter(thePayee)
-                                         : null;
+        private void setThePortfolio(final PortfolioBucket pPortfolio) {
+            /* Set the selected portfolio */
+            thePortfolio = pPortfolio;
+            theFilter = thePortfolio != null
+                                             ? new PortfolioCashFilter(thePortfolio)
+                                             : null;
         }
 
         /**
@@ -329,7 +332,7 @@ public class MoneyWisePayeeAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theButton.setValue(thePayee);
+            thePortButton.setValue(thePortfolio);
         }
     }
 }

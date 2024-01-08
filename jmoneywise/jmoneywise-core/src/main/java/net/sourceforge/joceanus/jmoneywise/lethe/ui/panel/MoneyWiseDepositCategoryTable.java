@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCat
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseDepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise DepositCategory Table.
  */
 public class MoneyWiseDepositCategoryTable
-        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType> {
+        extends MoneyWiseXCategoryTable<DepositCategory, DepositCategoryType> {
     /**
      * The Category dialog.
      */

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * Panel to display/edit/create a CashCategory.
  */
 public class MoneyWiseCashCategoryPanel
-        extends MoneyWiseItemPanel<CashCategory> {
+        extends MoneyWiseXItemPanel<CashCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

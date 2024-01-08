@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Loan.
  */
 public class MoneyWiseLoanPanel
-        extends MoneyWiseItemPanel<Loan> {
+        extends MoneyWiseXItemPanel<Loan> {
     /**
      * The fieldSet.
      */

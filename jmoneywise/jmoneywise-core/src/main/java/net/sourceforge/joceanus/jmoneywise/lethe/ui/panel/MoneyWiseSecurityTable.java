@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXAssetTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseSecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Security Table.
  */
 public class MoneyWiseSecurityTable
-        extends MoneyWiseAssetTable<Security> {
+        extends MoneyWiseXAssetTable<Security> {
     /**
      * The Info UpdateEntry.
      */

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseGoToId;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.panel.PrometheusXDataItemPanel;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * MoneyWise Data Item Panel.
  * @param <T> the item type
  */
-public abstract class MoneyWiseItemPanel<T extends DataItem>
+public abstract class MoneyWiseXItemPanel<T extends DataItem>
         extends PrometheusXDataItemPanel<T, MoneyWiseGoToId> {
     /**
      * Filter text.
@@ -70,9 +70,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem>
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected MoneyWiseItemPanel(final TethysUIFactory<?> pFactory,
-                                 final UpdateSet pUpdateSet,
-                                 final MetisErrorPanel pError) {
+    protected MoneyWiseXItemPanel(final TethysUIFactory<?> pFactory,
+                                  final UpdateSet pUpdateSet,
+                                  final MetisErrorPanel pError) {
         super(pFactory, pUpdateSet, pError);
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();

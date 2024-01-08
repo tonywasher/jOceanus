@@ -45,8 +45,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 /**
  * Security Analysis Selection.
  */
-public class MoneyWiseSecurityAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseXSecurityAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Portfolio Label.
      */
@@ -106,7 +106,7 @@ public class MoneyWiseSecurityAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseSecurityAnalysisSelect(final TethysUIFactory<?> pFactory) {
+    protected MoneyWiseXSecurityAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the security button */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
         theSecButton = myButtons.newScrollButton(SecurityBucket.class);

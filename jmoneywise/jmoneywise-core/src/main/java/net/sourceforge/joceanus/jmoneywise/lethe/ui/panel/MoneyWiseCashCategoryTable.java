@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseCashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise CashCategory Table.
  */
 public class MoneyWiseCashCategoryTable
-        extends MoneyWiseCategoryTable<CashCategory, CashCategoryType> {
+        extends MoneyWiseXCategoryTable<CashCategory, CashCategoryType> {
     /**
      * The Category dialog.
      */

@@ -14,19 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.base;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
  * Table Selection control.
  * @param <T> the item type
  */
-public class MoneyWiseTableSelect<T extends DataItem> {
+public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
     /**
      * The table.
      */

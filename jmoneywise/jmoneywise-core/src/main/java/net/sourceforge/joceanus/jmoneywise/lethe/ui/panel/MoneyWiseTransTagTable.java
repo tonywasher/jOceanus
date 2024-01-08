@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseTagPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Tag Table.
  */
 public class MoneyWiseTransTagTable
-        extends MoneyWiseBaseTable<TransactionTag> {
+        extends MoneyWiseXBaseTable<TransactionTag> {
     /**
      * The filter panel.
      */

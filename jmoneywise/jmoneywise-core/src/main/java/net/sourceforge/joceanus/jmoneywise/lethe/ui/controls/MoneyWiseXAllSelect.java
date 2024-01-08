@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 /**
  * All transactions Selection.
  */
-public class MoneyWiseAllSelect
-        implements MoneyWiseAnalysisFilterSelection {
+public class MoneyWiseXAllSelect
+        implements MoneyWiseXAnalysisFilterSelection {
     /**
      * The panel.
      */
@@ -42,7 +42,7 @@ public class MoneyWiseAllSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseAllSelect(final TethysUIFactory<?> pFactory) {
+    protected MoneyWiseXAllSelect(final TethysUIFactory<?> pFactory) {
         /* Create the filter */
         thePanel = pFactory.paneFactory().newHBoxPane();
         theFilter = new AllFilter();

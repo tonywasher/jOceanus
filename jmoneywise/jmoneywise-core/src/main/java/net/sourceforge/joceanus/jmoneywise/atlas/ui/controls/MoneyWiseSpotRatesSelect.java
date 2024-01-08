@@ -14,14 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.controls;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -82,7 +82,7 @@ public class MoneyWiseSpotRatesSelect
     /**
      * The data view.
      */
-    private final MoneyWiseXView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The currency label.
@@ -112,12 +112,12 @@ public class MoneyWiseSpotRatesSelect
     /**
      * The current state.
      */
-    private SpotRatesState theState;
+    private MoneyWiseSpotRatesState theState;
 
     /**
      * The saved state.
      */
-    private SpotRatesState theSavePoint;
+    private MoneyWiseSpotRatesState theSavePoint;
 
     /**
      * Constructor.
@@ -125,7 +125,7 @@ public class MoneyWiseSpotRatesSelect
      * @param pView the data view
      */
     public MoneyWiseSpotRatesSelect(final TethysUIFactory<?> pFactory,
-                                    final MoneyWiseXView pView) {
+                                    final MoneyWiseView pView) {
         /* Store table and view details */
         theView = pView;
 
@@ -157,7 +157,7 @@ public class MoneyWiseSpotRatesSelect
         thePrev.setToolTip(NLS_PREVTIP);
 
         /* Create initial state */
-        theState = new SpotRatesState();
+        theState = new MoneyWiseSpotRatesState();
 
         /* Create the panel */
         thePanel = pFactory.paneFactory().newHBoxPane();
@@ -222,11 +222,11 @@ public class MoneyWiseSpotRatesSelect
         setRange(myRange);
 
         /* Set the currency name */
-        final MoneyWiseData myData = (MoneyWiseData) theView.getData();
-        final AssetCurrency myDefault = myData.getDefaultCurrency();
+        final MoneyWiseDataSet myData = (MoneyWiseDataSet) theView.getData();
+        final MoneyWiseCurrency myDefault = myData.getDefaultCurrency();
         theCurrLabel.setText(myDefault != null
-                                               ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
-                                               : null);
+                ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
+                : null);
     }
 
     /**
@@ -235,11 +235,11 @@ public class MoneyWiseSpotRatesSelect
      */
     private void setRange(final TethysDateRange pRange) {
         final TethysDate myStart = (pRange == null)
-                                                    ? null
-                                                    : pRange.getStart();
+                ? null
+                : pRange.getStart();
         final TethysDate myEnd = (pRange == null)
-                                                  ? null
-                                                  : pRange.getEnd();
+                ? null
+                : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDate(myStart);
@@ -264,7 +264,7 @@ public class MoneyWiseSpotRatesSelect
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new SpotRatesState(theState);
+        theSavePoint = new MoneyWiseSpotRatesState(theState);
     }
 
     /**
@@ -272,7 +272,7 @@ public class MoneyWiseSpotRatesSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new SpotRatesState(theSavePoint);
+        theState = new MoneyWiseSpotRatesState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -302,7 +302,7 @@ public class MoneyWiseSpotRatesSelect
     /**
      * SavePoint values.
      */
-    private final class SpotRatesState {
+    private final class MoneyWiseSpotRatesState {
         /**
          * Selected date.
          */
@@ -321,7 +321,7 @@ public class MoneyWiseSpotRatesSelect
         /**
          * Constructor.
          */
-        private SpotRatesState() {
+        private MoneyWiseSpotRatesState() {
             theDate = new TethysDate();
         }
 
@@ -329,7 +329,7 @@ public class MoneyWiseSpotRatesSelect
          * Constructor.
          * @param pState state to copy from
          */
-        private SpotRatesState(final SpotRatesState pState) {
+        private MoneyWiseSpotRatesState(final MoneyWiseSpotRatesState pState) {
             theDate = new TethysDate(pState.getDate());
             if (pState.getNextDate() != null) {
                 theNextDate = new TethysDate(pState.getNextDate());

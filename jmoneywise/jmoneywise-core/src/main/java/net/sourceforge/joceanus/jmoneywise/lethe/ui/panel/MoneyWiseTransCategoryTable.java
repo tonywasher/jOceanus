@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseTransactionCategoryPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise TransCategory Table.
  */
 public class MoneyWiseTransCategoryTable
-        extends MoneyWiseCategoryTable<TransactionCategory, TransactionCategoryType> {
+        extends MoneyWiseXCategoryTable<TransactionCategory, TransactionCategoryType> {
     /**
      * The Category dialog.
      */

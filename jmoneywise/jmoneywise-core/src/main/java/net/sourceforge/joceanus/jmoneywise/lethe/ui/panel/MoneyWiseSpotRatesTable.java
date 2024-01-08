@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseRateDataId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseBaseTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotRatesSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXBaseTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXSpotRatesSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate.SpotExchangeList;
@@ -57,11 +57,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise SpotRates Table.
  */
 public class MoneyWiseSpotRatesTable
-        extends MoneyWiseBaseTable<SpotExchangeRate> {
+        extends MoneyWiseXBaseTable<SpotExchangeRate> {
     /**
      * The SpotRates selection panel.
      */
-    private final MoneyWiseSpotRatesSelect theSelect;
+    private final MoneyWiseXSpotRatesSelect theSelect;
 
     /**
      * The exchangeRates list.
@@ -94,7 +94,7 @@ public class MoneyWiseSpotRatesTable
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a selection panel */
-        theSelect = new MoneyWiseSpotRatesSelect(myGuiFactory, pView);
+        theSelect = new MoneyWiseXSpotRatesSelect(myGuiFactory, pView);
 
         /* Set table configuration */
         myTable.setDisabled(SpotExchangeRate::isDisabled)
@@ -155,7 +155,7 @@ public class MoneyWiseSpotRatesTable
      * Obtain the selection panel.
      * @return the select panel
      */
-    MoneyWiseSpotRatesSelect getSelect() {
+    MoneyWiseXSpotRatesSelect getSelect() {
         return theSelect;
     }
 

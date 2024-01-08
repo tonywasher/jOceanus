@@ -23,14 +23,14 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanCategoryBucket.LoanCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.DepositFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -49,19 +49,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 
 /**
- * Deposit Analysis Selection.
+ * Loan Analysis Selection.
  */
-public class MoneyWiseDepositAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseXLoanAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
-    private static final String NLS_CATEGORY = MoneyWiseDataType.DEPOSITCATEGORY.getItemName();
+    private static final String NLS_CATEGORY = MoneyWiseDataType.LOANCATEGORY.getItemName();
 
     /**
-     * Text for Deposit Label.
+     * Text for Loan Label.
      */
-    private static final String NLS_DEPOSIT = MoneyWiseDataType.DEPOSIT.getItemName();
+    private static final String NLS_LOAN = MoneyWiseDataType.LOAN.getItemName();
 
     /**
      * The Event Manager.
@@ -74,56 +74,56 @@ public class MoneyWiseDepositAnalysisSelect
     private final TethysUIBoxPaneManager thePanel;
 
     /**
-     * The deposit button.
+     * The loan button.
      */
-    private final TethysUIScrollButtonManager<DepositBucket> theDepositButton;
+    private final TethysUIScrollButtonManager<LoanBucket> theLoanButton;
 
     /**
      * The category button.
      */
-    private final TethysUIScrollButtonManager<DepositCategory> theCatButton;
+    private final TethysUIScrollButtonManager<LoanCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysUIScrollMenu<DepositCategory> theCategoryMenu;
+    private final TethysUIScrollMenu<LoanCategory> theCategoryMenu;
 
     /**
-     * Deposit menu.
+     * Loan menu.
      */
-    private final TethysUIScrollMenu<DepositBucket> theDepositMenu;
+    private final TethysUIScrollMenu<LoanBucket> theLoanMenu;
 
     /**
      * The active category bucket list.
      */
-    private DepositCategoryBucketList theCategories;
+    private LoanCategoryBucketList theCategories;
 
     /**
-     * The active deposit bucket list.
+     * The active loan bucket list.
      */
-    private DepositBucketList theDeposits;
+    private LoanBucketList theLoans;
 
     /**
      * The state.
      */
-    private DepositState theState;
+    private LoanState theState;
 
     /**
      * The savePoint.
      */
-    private DepositState theSavePoint;
+    private LoanState theSavePoint;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseDepositAnalysisSelect(final TethysUIFactory<?> pFactory) {
-        /* Create the deposit button */
+    protected MoneyWiseXLoanAnalysisSelect(final TethysUIFactory<?> pFactory) {
+        /* Create the loan button */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        theDepositButton = myButtons.newScrollButton(DepositBucket.class);
+        theLoanButton = myButtons.newScrollButton(LoanBucket.class);
 
         /* Create the category button */
-        theCatButton = myButtons.newScrollButton(DepositCategory.class);
+        theCatButton = myButtons.newScrollButton(LoanCategory.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -131,7 +131,7 @@ public class MoneyWiseDepositAnalysisSelect
         /* Create the labels */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
         final TethysUILabel myCatLabel = myControls.newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);
-        final TethysUILabel myDepLabel = myControls.newLabel(NLS_DEPOSIT + TethysUIConstant.STR_COLON);
+        final TethysUILabel myLoanLabel = myControls.newLabel(NLS_LOAN + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.paneFactory().newHBoxPane();
@@ -139,24 +139,24 @@ public class MoneyWiseDepositAnalysisSelect
         thePanel.addNode(myCatLabel);
         thePanel.addNode(theCatButton);
         thePanel.addStrut();
-        thePanel.addNode(myDepLabel);
-        thePanel.addNode(theDepositButton);
+        thePanel.addNode(myLoanLabel);
+        thePanel.addNode(theLoanButton);
 
         /* Create initial state */
-        theState = new DepositState();
+        theState = new LoanState();
         theState.applyState();
 
         /* Access the menus */
         theCategoryMenu = theCatButton.getMenu();
-        theDepositMenu = theDepositButton.getMenu();
+        theLoanMenu = theLoanButton.getMenu();
 
-        /* Create the listeners */
+        /* Create the listener */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
-        myRegistrar = theDepositButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDeposit());
-        theDepositButton.setMenuConfigurator(e -> buildDepositMenu());
+        myRegistrar = theLoanButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
+        theLoanButton.setMenuConfigurator(e -> buildLoanMenu());
     }
 
     @Override
@@ -170,14 +170,14 @@ public class MoneyWiseDepositAnalysisSelect
     }
 
     @Override
-    public DepositFilter getFilter() {
+    public LoanFilter getFilter() {
         return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return theDeposits != null
-               && !theDeposits.isEmpty();
+        return theLoans != null
+               && !theLoans.isEmpty();
     }
 
     /**
@@ -185,7 +185,7 @@ public class MoneyWiseDepositAnalysisSelect
      */
     protected void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new DepositState(theState);
+        theSavePoint = new LoanState(theState);
     }
 
     /**
@@ -193,7 +193,7 @@ public class MoneyWiseDepositAnalysisSelect
      */
     protected void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new DepositState(theSavePoint);
+        theState = new LoanState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -201,12 +201,12 @@ public class MoneyWiseDepositAnalysisSelect
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        /* Determine whether there are any Deposits to select */
-        final boolean dpAvailable = bEnabled && isAvailable();
+        /* Determine whether there are any Loans to select */
+        final boolean lnAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
-        theDepositButton.setEnabled(dpAvailable);
-        theCatButton.setEnabled(dpAvailable);
+        theLoanButton.setEnabled(lnAvailable);
+        theCatButton.setEnabled(lnAvailable);
     }
 
     /**
@@ -215,48 +215,48 @@ public class MoneyWiseDepositAnalysisSelect
      */
     public void setAnalysis(final Analysis pAnalysis) {
         /* Access buckets */
-        theCategories = pAnalysis.getDepositCategories();
-        theDeposits = pAnalysis.getDeposits();
+        theCategories = pAnalysis.getLoanCategories();
+        theLoans = pAnalysis.getLoans();
 
-        /* Obtain the current deposit */
-        DepositBucket myDeposit = theState.getDeposit();
+        /* Obtain the current account */
+        LoanBucket myLoan = theState.getLoan();
 
         /* Switch to versions from the analysis */
-        myDeposit = myDeposit != null
-                                      ? theDeposits.getMatchingDeposit(myDeposit.getAccount())
-                                      : theDeposits.getDefaultDeposit();
+        myLoan = myLoan != null
+                                ? theLoans.getMatchingLoan(myLoan.getAccount())
+                                : theLoans.getDefaultLoan();
 
-        /* Set the deposit */
-        theState.setTheDeposit(myDeposit);
+        /* Set the loan */
+        theState.setTheLoan(myLoan);
         theState.applyState();
     }
 
     @Override
     public void setFilter(final AnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof DepositFilter) {
+        if (pFilter instanceof LoanFilter) {
             /* Access filter */
-            final DepositFilter myFilter = (DepositFilter) pFilter;
+            final LoanFilter myFilter = (LoanFilter) pFilter;
 
             /* Obtain the filter bucket */
-            DepositBucket myDeposit = myFilter.getBucket();
+            LoanBucket myLoan = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myDeposit = theDeposits.getMatchingDeposit(myDeposit.getAccount());
+            myLoan = theLoans.getMatchingLoan(myLoan.getAccount());
 
-            /* Set the deposit */
-            theState.setTheDeposit(myDeposit);
+            /* Set the loan */
+            theState.setTheLoan(myLoan);
             theState.applyState();
         }
     }
 
     /**
-     * Obtain the default Deposit for the category.
+     * Obtain the default Loan for the category.
      * @param pCategory the category
      * @return the bucket
      */
-    protected DepositBucket getDefaultDeposit(final DepositCategory pCategory) {
-        return theDeposits.getDefaultDeposit(pCategory);
+    protected LoanBucket getDefaultLoan(final LoanCategory pCategory) {
+        return theLoans.getDefaultLoan(pCategory);
     }
 
     /**
@@ -271,11 +271,11 @@ public class MoneyWiseDepositAnalysisSelect
     }
 
     /**
-     * Handle new Deposit.
+     * Handle new Loan.
      */
-    private void handleNewDeposit() {
-        /* Select the new deposit */
-        if (theState.setDeposit(theDepositButton.getValue())) {
+    private void handleNewLoan() {
+        /* Select the new loan */
+        if (theState.setLoan(theLoanButton.getValue())) {
             theState.applyState();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
@@ -289,30 +289,37 @@ public class MoneyWiseDepositAnalysisSelect
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
 
         /* Record active item */
-        final DepositCategory myCurrent = theState.getCategory();
-        TethysUIScrollItem<DepositCategory> myActive = null;
+        final LoanCategory myCurrent = theState.getCategory();
+        TethysUIScrollItem<LoanCategory> myActive = null;
 
         /* Re-Loop through the available category values */
-        final Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
+        final Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            final DepositCategoryBucket myBucket = myIterator.next();
+            final LoanCategoryBucket myBucket = myIterator.next();
 
             /* Only process low-level items */
-            if (myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
+            if (myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
                 continue;
             }
 
             /* Determine menu to add to */
-            final DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            final LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<DepositCategory> myMenu = myMap.computeIfAbsent(myParentName, theCategoryMenu::addSubMenu);
+            TethysUIScrollSubMenu<LoanCategory> myMenu = myMap.get(myParent.getName());
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theCategoryMenu.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
 
             /* Create a new JMenuItem and add it to the popUp */
-            final DepositCategory myCategory = myBucket.getAccountCategory();
-            final TethysUIScrollItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final LoanCategory myCategory = myBucket.getAccountCategory();
+            final TethysUIScrollItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -328,34 +335,34 @@ public class MoneyWiseDepositAnalysisSelect
     }
 
     /**
-     * Build Deposit menu.
+     * Build Loan menu.
      */
-    private void buildDepositMenu() {
+    private void buildLoanMenu() {
         /* Reset the popUp menu */
-        theDepositMenu.removeAllItems();
+        theLoanMenu.removeAllItems();
 
-        /* Access current category */
-        final DepositCategory myCategory = theState.getCategory();
-        final DepositBucket myDeposit = theState.getDeposit();
+        /* Access current category and Loan */
+        final LoanCategory myCategory = theState.getCategory();
+        final LoanBucket myLoan = theState.getLoan();
 
         /* Record active item */
-        TethysUIScrollItem<DepositBucket> myActive = null;
+        TethysUIScrollItem<LoanBucket> myActive = null;
 
         /* Loop through the available account values */
-        final Iterator<DepositBucket> myIterator = theDeposits.iterator();
+        final Iterator<LoanBucket> myIterator = theLoans.iterator();
         while (myIterator.hasNext()) {
-            final DepositBucket myBucket = myIterator.next();
+            final LoanBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
             if (!MetisDataDifference.isEqual(myCategory, myBucket.getCategory())) {
                 continue;
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            final TethysUIScrollItem<DepositBucket> myItem = theDepositMenu.addItem(myBucket);
+            /* Create a new MenuItem and add it to the popUp */
+            final TethysUIScrollItem<LoanBucket> myItem = theLoanMenu.addItem(myBucket);
 
-            /* If this is the active deposit */
-            if (myBucket.equals(myDeposit)) {
+            /* If this is the active loan */
+            if (myBucket.equals(myLoan)) {
                 /* Record it */
                 myActive = myItem;
             }
@@ -370,52 +377,52 @@ public class MoneyWiseDepositAnalysisSelect
     /**
      * SavePoint values.
      */
-    private final class DepositState {
+    private final class LoanState {
         /**
          * The active Category.
          */
-        private DepositCategory theCategory;
+        private LoanCategory theCategory;
 
         /**
-         * The active DepositBucket.
+         * The active LoanBucket.
          */
-        private DepositBucket theDeposit;
+        private LoanBucket theLoan;
 
         /**
          * The active Filter.
          */
-        private DepositFilter theFilter;
+        private LoanFilter theFilter;
 
         /**
          * Constructor.
          */
-        private DepositState() {
+        private LoanState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private DepositState(final DepositState pState) {
+        private LoanState(final LoanState pState) {
             /* Initialise state */
-            theDeposit = pState.getDeposit();
+            theLoan = pState.getLoan();
             theCategory = pState.getCategory();
             theFilter = pState.getFilter();
         }
 
         /**
-         * Obtain the Deposit Bucket.
-         * @return the Deposit
+         * Obtain the Loan Bucket.
+         * @return the Loan
          */
-        private DepositBucket getDeposit() {
-            return theDeposit;
+        private LoanBucket getLoan() {
+            return theLoan;
         }
 
         /**
          * Obtain the Category.
          * @return the category
          */
-        private DepositCategory getCategory() {
+        private LoanCategory getCategory() {
             return theCategory;
         }
 
@@ -423,52 +430,52 @@ public class MoneyWiseDepositAnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        private DepositFilter getFilter() {
+        private LoanFilter getFilter() {
             return theFilter;
         }
 
         /**
-         * Set new Deposit.
-         * @param pDeposit the Deposit
+         * Set new Loan Account.
+         * @param pLoan the Loan Account
          * @return true/false did a change occur
          */
-        private boolean setDeposit(final DepositBucket pDeposit) {
-            /* Adjust the selected deposit */
-            if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {
-                /* Store the deposit */
-                setTheDeposit(pDeposit);
+        private boolean setLoan(final LoanBucket pLoan) {
+            /* Adjust the selected loan */
+            if (!MetisDataDifference.isEqual(pLoan, theLoan)) {
+                /* Set the Loan */
+                setTheLoan(pLoan);
                 return true;
             }
             return false;
         }
 
         /**
-         * Set the Deposit.
-         * @param pDeposit the Deposit
+         * Set the Loan.
+         * @param pLoan the Loan
          */
-        private void setTheDeposit(final DepositBucket pDeposit) {
+        private void setTheLoan(final LoanBucket pLoan) {
             /* Access category for account */
-            final DepositCategory myCategory = pDeposit == null
-                                                                ? null
-                                                                : pDeposit.getCategory();
-            setTheDeposit(myCategory, pDeposit);
+            final LoanCategory myCategory = pLoan == null
+                                                          ? null
+                                                          : pLoan.getCategory();
+            setTheLoan(myCategory, pLoan);
         }
 
         /**
-         * Set the Deposit.
+         * Set the Loan.
          * @param pCategory the category
-         * @param pDeposit the Deposit
+         * @param pLoan the Loan
          */
-        private void setTheDeposit(final DepositCategory pCategory,
-                                   final DepositBucket pDeposit) {
-            /* Store the deposit */
-            theDeposit = pDeposit;
+        private void setTheLoan(final LoanCategory pCategory,
+                                final LoanBucket pLoan) {
+            /* Store the loan */
+            theLoan = pLoan;
             theCategory = pCategory;
 
             /* Access filter */
-            theFilter = theDeposit != null
-                                           ? new DepositFilter(theDeposit)
-                                           : null;
+            theFilter = theLoan != null
+                                        ? new LoanFilter(theLoan)
+                                        : null;
         }
 
         /**
@@ -476,10 +483,10 @@ public class MoneyWiseDepositAnalysisSelect
          * @param pCategory the Category
          * @return true/false did a change occur
          */
-        private boolean setCategory(final DepositCategory pCategory) {
+        private boolean setCategory(final LoanCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDataDifference.isEqual(pCategory, theCategory)) {
-                setTheDeposit(pCategory, getDefaultDeposit(pCategory));
+                setTheLoan(pCategory, getDefaultLoan(pCategory));
                 return true;
             }
             return false;
@@ -491,7 +498,7 @@ public class MoneyWiseDepositAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theDepositButton.setValue(theDeposit);
+            theLoanButton.setValue(theLoan);
             theCatButton.setValue(theCategory);
         }
     }

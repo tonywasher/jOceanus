@@ -14,9 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.controls;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 
 /**
@@ -34,11 +34,11 @@ public interface MoneyWiseAnalysisFilterSelection
      * Obtain analysis filter.
      * @return the filter
      */
-    AnalysisFilter<?, ?> getFilter();
+    MoneyWiseAnalysisFilter<?, ?> getFilter();
 
     /**
      * Set analysis filter.
      * @param pFilter the filter
      */
-    void setFilter(AnalysisFilter<?, ?> pFilter);
+    void setFilter(MoneyWiseAnalysisFilter<?, ?> pFilter);
 }

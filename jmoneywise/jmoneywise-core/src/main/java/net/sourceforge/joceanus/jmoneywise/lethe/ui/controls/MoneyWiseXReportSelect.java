@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 /**
  * Report selection panel.
  */
-public class MoneyWiseReportSelect
+public class MoneyWiseXReportSelect
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for Report Label.
@@ -115,7 +115,7 @@ public class MoneyWiseReportSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public MoneyWiseReportSelect(final TethysUIFactory<?> pFactory) {
+    public MoneyWiseXReportSelect(final TethysUIFactory<?> pFactory) {
         /* Create the buttons */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
         theReportButton = myButtons.newScrollButton(MoneyWiseXReportType.class);

@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 /**
  * Transaction Category Analysis Selection.
  */
-public class MoneyWiseTransCategoryAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseXTransCategoryAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransCategory Label.
      */
@@ -93,7 +93,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTransCategoryAnalysisSelect(final TethysUIFactory<?> pFactory) {
+    protected MoneyWiseXTransCategoryAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the button */
         theButton = pFactory.buttonFactory().newScrollButton(TransactionCategoryBucket.class);
 

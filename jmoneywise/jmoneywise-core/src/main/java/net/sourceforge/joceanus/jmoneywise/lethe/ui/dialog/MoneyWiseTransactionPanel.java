@@ -55,8 +55,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.TransactionFilters;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -92,7 +92,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Transaction.
  */
 public class MoneyWiseTransactionPanel
-        extends MoneyWiseItemPanel<Transaction> {
+        extends MoneyWiseXItemPanel<Transaction> {
     /**
      * Info Tab Title.
      */
@@ -121,7 +121,7 @@ public class MoneyWiseTransactionPanel
     /**
      * Analysis selection panel.
      */
-    private final MoneyWiseAnalysisSelect theAnalysisSelect;
+    private final MoneyWiseXAnalysisSelect theAnalysisSelect;
 
     /**
      * TransactionBuilder.
@@ -154,7 +154,7 @@ public class MoneyWiseTransactionPanel
     public MoneyWiseTransactionPanel(final TethysUIFactory<?> pFactory,
                                      final UpdateSet pUpdateSet,
                                      final TransactionBuilder pBuilder,
-                                     final MoneyWiseAnalysisSelect pAnalysisSelect,
+                                     final MoneyWiseXAnalysisSelect pAnalysisSelect,
                                      final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);

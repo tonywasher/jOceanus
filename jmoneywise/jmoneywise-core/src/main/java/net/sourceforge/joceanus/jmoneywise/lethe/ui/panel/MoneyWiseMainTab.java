@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseXThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.atlas.threads.MoneyWiseThreadId;

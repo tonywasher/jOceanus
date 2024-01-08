@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXAssetTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseCashPanel;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Cash Table.
  */
 public class MoneyWiseCashTable
-        extends MoneyWiseAssetTable<Cash> {
+        extends MoneyWiseXAssetTable<Cash> {
     /**
      * The Info UpdateEntry.
      */

@@ -54,12 +54,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Base Table.
  * @param <T> the data type
  */
-public abstract class MoneyWiseBaseTable<T extends DataItem>
+public abstract class MoneyWiseXBaseTable<T extends DataItem>
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseBaseTable.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseXBaseTable.class);
 
     /**
      * Date column standard width.
@@ -159,7 +159,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem>
     /**
      * The selection control.
      */
-    private final MoneyWiseTableSelect<T> theSelect;
+    private final MoneyWiseXTableSelect<T> theSelect;
 
     /**
      * is the table editing?
@@ -173,10 +173,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem>
      * @param pError the error panel
      * @param pDataType the dataType
      */
-    protected MoneyWiseBaseTable(final MoneyWiseXView pView,
-                                 final UpdateSet pUpdateSet,
-                                 final MetisErrorPanel pError,
-                                 final MoneyWiseDataType pDataType) {
+    protected MoneyWiseXBaseTable(final MoneyWiseXView pView,
+                                  final UpdateSet pUpdateSet,
+                                  final MetisErrorPanel pError,
+                                  final MoneyWiseDataType pDataType) {
         /* Store parameters */
         theView = pView;
         theError = pError;
@@ -212,14 +212,14 @@ public abstract class MoneyWiseBaseTable<T extends DataItem>
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
 
         /* Create the selection control */
-        theSelect = new MoneyWiseTableSelect<>(theTable, this::isFiltered);
+        theSelect = new MoneyWiseXTableSelect<>(theTable, this::isFiltered);
     }
 
     /**
      * Declare item panel.
      * @param pPanel the item panel
      */
-    protected void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
+    protected void declareItemPanel(final MoneyWiseXItemPanel<T> pPanel) {
         theSelect.declareItemPanel(pPanel);
         thePanel.setSouth(pPanel);
         pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);

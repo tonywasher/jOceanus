@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWisePriceDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseBaseTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotPricesSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXBaseTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXSpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice.SpotSecurityList;
@@ -59,11 +59,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise SpotPrices Table.
  */
 public class MoneyWiseSpotPricesTable
-        extends MoneyWiseBaseTable<SpotSecurityPrice> {
+        extends MoneyWiseXBaseTable<SpotSecurityPrice> {
     /**
      * The SpotPrices selection panel.
      */
-    private final MoneyWiseSpotPricesSelect theSelect;
+    private final MoneyWiseXSpotPricesSelect theSelect;
 
     /**
      * The account price list.
@@ -101,7 +101,7 @@ public class MoneyWiseSpotPricesTable
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a selection panel */
-        theSelect = new MoneyWiseSpotPricesSelect(myGuiFactory, pView);
+        theSelect = new MoneyWiseXSpotPricesSelect(myGuiFactory, pView);
 
         /* Set table configuration */
         myTable.setDisabled(SpotSecurityPrice::isDisabled)
@@ -155,7 +155,7 @@ public class MoneyWiseSpotPricesTable
      * Obtain the selection panel.
      * @return the select panel
      */
-    MoneyWiseSpotPricesSelect getSelect() {
+    MoneyWiseXSpotPricesSelect getSelect() {
         return theSelect;
     }
 

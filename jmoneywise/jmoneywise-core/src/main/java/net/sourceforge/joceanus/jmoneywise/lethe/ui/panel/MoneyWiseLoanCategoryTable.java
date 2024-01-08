@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseLoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise LoanCategory Table.
  */
 public class MoneyWiseLoanCategoryTable
-        extends MoneyWiseCategoryTable<LoanCategory, LoanCategoryType> {
+        extends MoneyWiseXCategoryTable<LoanCategory, LoanCategoryType> {
     /**
      * The Category dialog.
      */

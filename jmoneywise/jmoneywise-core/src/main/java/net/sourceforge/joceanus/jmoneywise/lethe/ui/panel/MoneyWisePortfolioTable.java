@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXAssetTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWisePortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Portfolio Table.
  */
 public class MoneyWisePortfolioTable
-        extends MoneyWiseAssetTable<Portfolio> {
+        extends MoneyWiseXAssetTable<Portfolio> {
     /**
      * The Info UpdateEntry.
      */

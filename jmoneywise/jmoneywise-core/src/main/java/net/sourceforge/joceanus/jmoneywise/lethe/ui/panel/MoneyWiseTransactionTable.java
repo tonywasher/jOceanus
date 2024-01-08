@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseBaseTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXBaseTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseTransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
@@ -73,7 +73,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * MoneyWise Transaction Table.
  */
 public class MoneyWiseTransactionTable
-        extends MoneyWiseBaseTable<Transaction> {
+        extends MoneyWiseXBaseTable<Transaction> {
     /**
      * The analysis data entry.
      */
@@ -102,7 +102,7 @@ public class MoneyWiseTransactionTable
     /**
      * Analysis Selection panel.
      */
-    private final MoneyWiseAnalysisSelect theSelect;
+    private final MoneyWiseXAnalysisSelect theSelect;
 
     /**
      * The action buttons.
@@ -180,7 +180,7 @@ public class MoneyWiseTransactionTable
         theAnalysisView = new AnalysisView(pView, getUpdateSet());
 
         /* Create the Analysis Selection */
-        theSelect = new MoneyWiseAnalysisSelect(myGuiFactory, pView, theAnalysisView, theNewButton);
+        theSelect = new MoneyWiseXAnalysisSelect(myGuiFactory, pView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
         theActionButtons = new PrometheusXActionButtons(myGuiFactory, getUpdateSet());
@@ -420,7 +420,7 @@ public class MoneyWiseTransactionTable
      * Obtain the selection panel.
      * @return the select panel
      */
-    MoneyWiseAnalysisSelect getSelect() {
+    MoneyWiseXAnalysisSelect getSelect() {
         return theSelect;
     }
 

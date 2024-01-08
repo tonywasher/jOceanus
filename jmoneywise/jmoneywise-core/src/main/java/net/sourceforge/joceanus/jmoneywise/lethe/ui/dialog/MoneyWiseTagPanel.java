@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseTagDataId;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
  * Panel to display/edit/create a TransactionTag.
  */
 public class MoneyWiseTagPanel
-        extends MoneyWiseItemPanel<TransactionTag> {
+        extends MoneyWiseXItemPanel<TransactionTag> {
     /**
      * Constructor.
      * @param pFactory the GUI factory

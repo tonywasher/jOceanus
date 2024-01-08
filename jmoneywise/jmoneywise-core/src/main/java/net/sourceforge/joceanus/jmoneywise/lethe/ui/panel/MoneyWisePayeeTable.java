@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXAssetTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWisePayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * MoneyWise Payee Table.
  */
 public class MoneyWisePayeeTable
-        extends MoneyWiseAssetTable<Payee> {
+        extends MoneyWiseXAssetTable<Payee> {
     /**
      * The Info UpdateEntry.
      */

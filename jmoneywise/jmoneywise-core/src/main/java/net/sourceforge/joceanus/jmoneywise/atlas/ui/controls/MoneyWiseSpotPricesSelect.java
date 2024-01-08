@@ -14,20 +14,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.controls;
 
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -63,7 +63,7 @@ public class MoneyWiseSpotPricesSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + TethysUIConstant.STR_COLON;
+    private static final String NLS_PORT = MoneyWiseBasicDataType.PORTFOLIO.getItemName() + TethysUIConstant.STR_COLON;
 
     /**
      * Text for Show Closed.
@@ -98,7 +98,7 @@ public class MoneyWiseSpotPricesSelect
     /**
      * The data view.
      */
-    private final MoneyWiseXView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The date button.
@@ -128,27 +128,27 @@ public class MoneyWiseSpotPricesSelect
     /**
      * The portfolio button.
      */
-    private final TethysUIScrollButtonManager<PortfolioBucket> thePortButton;
+    private final TethysUIScrollButtonManager<MoneyWiseAnalysisPortfolioBucket> thePortButton;
 
     /**
      * The portfolio menu.
      */
-    private final TethysUIScrollMenu<PortfolioBucket> thePortMenu;
+    private final TethysUIScrollMenu<MoneyWiseAnalysisPortfolioBucket> thePortMenu;
 
     /**
      * The Portfolio list.
      */
-    private PortfolioBucketList thePortfolios;
+    private MoneyWiseAnalysisPortfolioBucketList thePortfolios;
 
     /**
      * The current state.
      */
-    private SpotPricesState theState;
+    private MoneyWiseSpotPricesState theState;
 
     /**
      * The saved state.
      */
-    private SpotPricesState theSavePoint;
+    private MoneyWiseSpotPricesState theSavePoint;
 
     /**
      * Are we refreshing data?
@@ -161,7 +161,7 @@ public class MoneyWiseSpotPricesSelect
      * @param pView the data view
      */
     public MoneyWiseSpotPricesSelect(final TethysUIFactory<?> pFactory,
-                                     final MoneyWiseXView pView) {
+                                     final MoneyWiseView pView) {
         /* Store table and view details */
         theView = pView;
 
@@ -193,10 +193,10 @@ public class MoneyWiseSpotPricesSelect
         thePrev.setToolTip(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = myButtons.newScrollButton(PortfolioBucket.class);
+        thePortButton = myButtons.newScrollButton(MoneyWiseAnalysisPortfolioBucket.class);
 
         /* Create initial state */
-        theState = new SpotPricesState();
+        theState = new MoneyWiseSpotPricesState();
 
         /* Create the panel */
         thePanel = pFactory.paneFactory().newHBoxPane();
@@ -263,11 +263,11 @@ public class MoneyWiseSpotPricesSelect
      * Get the selected portfolio.
      * @return the portfolio
      */
-    public final Portfolio getPortfolio() {
-        final PortfolioBucket myBucket = theState.getPortfolio();
+    public final MoneyWisePortfolio getPortfolio() {
+        final MoneyWiseAnalysisPortfolioBucket myBucket = theState.getPortfolio();
         return myBucket == null
-                                ? null
-                                : myBucket.getPortfolio();
+                ? null
+                : myBucket.getPortfolio();
     }
 
     /**
@@ -289,20 +289,20 @@ public class MoneyWiseSpotPricesSelect
         setRange(myRange);
 
         /* Access portfolio list */
-        final AnalysisManager myManager = theView.getAnalysisManager();
-        final Analysis myAnalysis = myManager.getAnalysis();
+        final MoneyWiseAnalysisManager myManager = theView.getAnalysisManager();
+        final MoneyWiseAnalysis myAnalysis = myManager.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
         /* Obtain the current portfolio */
-        PortfolioBucket myPortfolio = theState.getPortfolio();
+        MoneyWiseAnalysisPortfolioBucket myPortfolio = theState.getPortfolio();
 
         /* Switch to portfolio in this analysis */
         myPortfolio = myPortfolio != null
-                                          ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
-                                          : thePortfolios.getDefaultPortfolio();
+                ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
+                : thePortfolios.getDefaultPortfolio();
 
         /* Set the portfolio */
         theState.setPortfolio(myPortfolio);
@@ -318,11 +318,11 @@ public class MoneyWiseSpotPricesSelect
      */
     public final void setRange(final TethysDateRange pRange) {
         final TethysDate myStart = (pRange == null)
-                                                    ? null
-                                                    : pRange.getStart();
+                ? null
+                : pRange.getStart();
         final TethysDate myEnd = (pRange == null)
-                                                  ? null
-                                                  : pRange.getEnd();
+                ? null
+                : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDate(myStart);
@@ -349,7 +349,7 @@ public class MoneyWiseSpotPricesSelect
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new SpotPricesState(theState);
+        theSavePoint = new MoneyWiseSpotPricesState(theState);
     }
 
     /**
@@ -357,7 +357,7 @@ public class MoneyWiseSpotPricesSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new SpotPricesState(theSavePoint);
+        theState = new MoneyWiseSpotPricesState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -382,22 +382,22 @@ public class MoneyWiseSpotPricesSelect
         thePortMenu.removeAllItems();
 
         /* Record active item */
-        TethysUIScrollItem<PortfolioBucket> myActive = null;
-        final PortfolioBucket myCurr = theState.getPortfolio();
+        TethysUIScrollItem<MoneyWiseAnalysisPortfolioBucket> myActive = null;
+        final MoneyWiseAnalysisPortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
-        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            final PortfolioBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();
 
             /* Skip if the portfolio is closed and we are not showing closed accounts */
             if (!myBucket.isActive()
-                && !theState.showClosed()) {
+                    && !theState.showClosed()) {
                 continue;
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<PortfolioBucket> myItem = thePortMenu.addItem(myBucket);
+            final TethysUIScrollItem<MoneyWiseAnalysisPortfolioBucket> myItem = thePortMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -446,11 +446,11 @@ public class MoneyWiseSpotPricesSelect
     /**
      * SavePoint values.
      */
-    private final class SpotPricesState {
+    private final class MoneyWiseSpotPricesState {
         /**
          * Portfolio.
          */
-        private PortfolioBucket thePortfolio;
+        private MoneyWiseAnalysisPortfolioBucket thePortfolio;
 
         /**
          * Selected date.
@@ -475,7 +475,7 @@ public class MoneyWiseSpotPricesSelect
         /**
          * Constructor.
          */
-        private SpotPricesState() {
+        private MoneyWiseSpotPricesState() {
             theDate = new TethysDate();
         }
 
@@ -483,7 +483,7 @@ public class MoneyWiseSpotPricesSelect
          * Constructor.
          * @param pState state to copy from
          */
-        private SpotPricesState(final SpotPricesState pState) {
+        private MoneyWiseSpotPricesState(final MoneyWiseSpotPricesState pState) {
             thePortfolio = pState.getPortfolio();
             theDate = new TethysDate(pState.getDate());
             if (pState.getNextDate() != null) {
@@ -499,7 +499,7 @@ public class MoneyWiseSpotPricesSelect
          * Get the portfolio.
          * @return the portfolio
          */
-        private PortfolioBucket getPortfolio() {
+        private MoneyWiseAnalysisPortfolioBucket getPortfolio() {
             return thePortfolio;
         }
 
@@ -540,7 +540,7 @@ public class MoneyWiseSpotPricesSelect
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPortfolio(final PortfolioBucket pPortfolio) {
+        private boolean setPortfolio(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {
                 thePortfolio = pPortfolio;

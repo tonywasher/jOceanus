@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseXReportStyleSh
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseXReportType;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseReportSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXReportSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
@@ -90,7 +90,7 @@ public class MoneyWiseReportTab
     /**
      * The Report selection Panel.
      */
-    private final MoneyWiseReportSelect theSelect;
+    private final MoneyWiseXReportSelect theSelect;
 
     /**
      * The Spot Analysis Entry.
@@ -148,7 +148,7 @@ public class MoneyWiseReportTab
         theBuilder = new MoneyWiseXReportBuilder(theManager);
 
         /* Create the Report Selection panel */
-        theSelect = new MoneyWiseReportSelect(myFactory);
+        theSelect = new MoneyWiseXReportSelect(myFactory);
 
         /* Create the error panel for this view */
         theError = theView.getToolkit().getToolkit().newErrorPanel(myReport);

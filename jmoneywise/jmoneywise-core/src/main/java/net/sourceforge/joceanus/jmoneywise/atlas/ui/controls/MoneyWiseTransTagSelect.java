@@ -14,17 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.controls;
 
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket.TransactionTagBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TagFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransTagBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -42,12 +42,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
 /**
  * TransactionTag Selection.
  */
-public class MoneyWiseTransactionTagSelect
+public class MoneyWiseTransTagSelect
         implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransactionTag Label.
      */
-    private static final String NLS_TAG = MoneyWiseDataType.TRANSTAG.getItemName();
+    private static final String NLS_TAG = MoneyWiseBasicDataType.TRANSTAG.getItemName();
 
     /**
      * The Event Manager.
@@ -62,35 +62,35 @@ public class MoneyWiseTransactionTagSelect
     /**
      * The tag button.
      */
-    private final TethysUIScrollButtonManager<TransactionTagBucket> theTagButton;
+    private final TethysUIScrollButtonManager<MoneyWiseAnalysisTransTagBucket> theTagButton;
 
     /**
      * Tag menu.
      */
-    private final TethysUIScrollMenu<TransactionTagBucket> theTagMenu;
+    private final TethysUIScrollMenu<MoneyWiseAnalysisTransTagBucket> theTagMenu;
 
     /**
      * The active transaction tag list.
      */
-    private TransactionTagBucketList theTags;
+    private MoneyWiseAnalysisTransTagBucketList theTags;
 
     /**
      * The state.
      */
-    private TagState theState;
+    private MoneyWiseTagState theState;
 
     /**
      * The savePoint.
      */
-    private TagState theSavePoint;
+    private MoneyWiseTagState theSavePoint;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTransactionTagSelect(final TethysUIFactory<?> pFactory) {
+    protected MoneyWiseTransTagSelect(final TethysUIFactory<?> pFactory) {
         /* Create the tags button */
-        theTagButton = pFactory.buttonFactory().newScrollButton(TransactionTagBucket.class);
+        theTagButton = pFactory.buttonFactory().newScrollButton(MoneyWiseAnalysisTransTagBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -105,7 +105,7 @@ public class MoneyWiseTransactionTagSelect
         thePanel.addNode(theTagButton);
 
         /* Create initial state */
-        theState = new TagState();
+        theState = new MoneyWiseTagState();
         theState.applyState();
 
         /* Create the listener */
@@ -126,14 +126,14 @@ public class MoneyWiseTransactionTagSelect
     }
 
     @Override
-    public TagFilter getFilter() {
+    public MoneyWiseAnalysisTagFilter getFilter() {
         return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
         return theTags != null
-               && !theTags.isEmpty();
+                && !theTags.isEmpty();
     }
 
     /**
@@ -141,7 +141,7 @@ public class MoneyWiseTransactionTagSelect
      */
     protected void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new TagState(theState);
+        theSavePoint = new MoneyWiseTagState(theState);
     }
 
     /**
@@ -149,7 +149,7 @@ public class MoneyWiseTransactionTagSelect
      */
     protected void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new TagState(theSavePoint);
+        theState = new MoneyWiseTagState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -173,17 +173,17 @@ public class MoneyWiseTransactionTagSelect
      * Set analysis.
      * @param pAnalysis the analysis.
      */
-    public void setAnalysis(final Analysis pAnalysis) {
+    public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
         /* Access buckets */
         theTags = pAnalysis.getTransactionTags();
 
         /* Obtain the current tag */
-        TransactionTagBucket myTag = theState.getTag();
+        MoneyWiseAnalysisTransTagBucket myTag = theState.getTag();
 
         /* Switch to versions from the analysis */
         myTag = myTag != null
-                              ? theTags.getMatchingTag(myTag.getTransTag())
-                              : theTags.getDefaultTag();
+                ? theTags.getMatchingTag(myTag.getTransTag())
+                : theTags.getDefaultTag();
 
         /* Set the tag */
         theState.setTheTag(myTag);
@@ -191,14 +191,14 @@ public class MoneyWiseTransactionTagSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
+    public void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof TagFilter) {
+        if (pFilter instanceof MoneyWiseAnalysisTagFilter) {
             /* Access filter */
-            final TagFilter myFilter = (TagFilter) pFilter;
+            final MoneyWiseAnalysisTagFilter myFilter = (MoneyWiseAnalysisTagFilter) pFilter;
 
             /* Obtain the tag */
-            TransactionTagBucket myTag = myFilter.getBucket();
+            MoneyWiseAnalysisTransTagBucket myTag = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
             myTag = theTags.getMatchingTag(myTag.getTransTag());
@@ -217,16 +217,16 @@ public class MoneyWiseTransactionTagSelect
         theTagMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionTagBucket myCurrent = theState.getTag();
-        TethysUIScrollItem<TransactionTagBucket> myActive = null;
+        final MoneyWiseAnalysisTransTagBucket myCurrent = theState.getTag();
+        TethysUIScrollItem<MoneyWiseAnalysisTransTagBucket> myActive = null;
 
         /* Loop through the available tag values */
-        final Iterator<TransactionTagBucket> myIterator = theTags.iterator();
+        final Iterator<MoneyWiseAnalysisTransTagBucket> myIterator = theTags.iterator();
         while (myIterator.hasNext()) {
-            final TransactionTagBucket myTag = myIterator.next();
+            final MoneyWiseAnalysisTransTagBucket myTag = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<TransactionTagBucket> myItem = theTagMenu.addItem(myTag);
+            final TethysUIScrollItem<MoneyWiseAnalysisTransTagBucket> myItem = theTagMenu.addItem(myTag);
 
             /* If this is the active category */
             if (myTag.equals(myCurrent)) {
@@ -255,28 +255,28 @@ public class MoneyWiseTransactionTagSelect
     /**
      * SavePoint values.
      */
-    private final class TagState {
+    private final class MoneyWiseTagState {
         /**
          * The active Tag.
          */
-        private TransactionTagBucket theTransTag;
+        private MoneyWiseAnalysisTransTagBucket theTransTag;
 
         /**
          * The active filter.
          */
-        private TagFilter theFilter;
+        private MoneyWiseAnalysisTagFilter theFilter;
 
         /**
          * Constructor.
          */
-        private TagState() {
+        private MoneyWiseTagState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private TagState(final TagState pState) {
+        private MoneyWiseTagState(final MoneyWiseTagState pState) {
             /* Initialise state */
             theTransTag = pState.getTag();
             theFilter = pState.getFilter();
@@ -286,7 +286,7 @@ public class MoneyWiseTransactionTagSelect
          * Obtain the TransactionTag.
          * @return the Tag
          */
-        private TransactionTagBucket getTag() {
+        private MoneyWiseAnalysisTransTagBucket getTag() {
             return theTransTag;
         }
 
@@ -294,7 +294,7 @@ public class MoneyWiseTransactionTagSelect
          * Obtain the Filter.
          * @return the Filter
          */
-        private TagFilter getFilter() {
+        private MoneyWiseAnalysisTagFilter getFilter() {
             return theFilter;
         }
 
@@ -303,7 +303,7 @@ public class MoneyWiseTransactionTagSelect
          * @param pTag the Transaction Tag
          * @return true/false did a change occur
          */
-        private boolean setTag(final TransactionTagBucket pTag) {
+        private boolean setTag(final MoneyWiseAnalysisTransTagBucket pTag) {
             /* Adjust the selected tag */
             if (!MetisDataDifference.isEqual(pTag, theTransTag)) {
                 /* Store the tag */
@@ -317,12 +317,12 @@ public class MoneyWiseTransactionTagSelect
          * Set the Tag.
          * @param pTag the Tag
          */
-        private void setTheTag(final TransactionTagBucket pTag) {
+        private void setTheTag(final MoneyWiseAnalysisTransTagBucket pTag) {
             /* Store the tag */
             theTransTag = pTag;
             theFilter = theTransTag != null
-                                            ? new TagFilter(theTransTag)
-                                            : null;
+                    ? new MoneyWiseAnalysisTagFilter(theTransTag)
+                    : null;
         }
 
         /**

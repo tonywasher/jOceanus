@@ -14,17 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.controls;
 
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PortfolioCashFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -47,7 +47,7 @@ public class MoneyWisePortfolioAnalysisSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORTFOLIO = MoneyWiseDataType.PORTFOLIO.getItemName();
+    private static final String NLS_PORTFOLIO = MoneyWiseBasicDataType.PORTFOLIO.getItemName();
 
     /**
      * The Event Manager.
@@ -62,27 +62,27 @@ public class MoneyWisePortfolioAnalysisSelect
     /**
      * The portfolio button.
      */
-    private final TethysUIScrollButtonManager<PortfolioBucket> thePortButton;
+    private final TethysUIScrollButtonManager<MoneyWiseAnalysisPortfolioBucket> thePortButton;
 
     /**
      * Portfolio menu.
      */
-    private final TethysUIScrollMenu<PortfolioBucket> thePortfolioMenu;
+    private final TethysUIScrollMenu<MoneyWiseAnalysisPortfolioBucket> thePortfolioMenu;
 
     /**
      * The active portfolio bucket list.
      */
-    private PortfolioBucketList thePortfolios;
+    private MoneyWiseAnalysisPortfolioBucketList thePortfolios;
 
     /**
      * The state.
      */
-    private PortfolioState theState;
+    private MoneyWisePortfolioState theState;
 
     /**
      * The savePoint.
      */
-    private PortfolioState theSavePoint;
+    private MoneyWisePortfolioState theSavePoint;
 
     /**
      * Constructor.
@@ -90,7 +90,7 @@ public class MoneyWisePortfolioAnalysisSelect
      */
     protected MoneyWisePortfolioAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the portfolio button */
-        thePortButton = pFactory.buttonFactory().newScrollButton(PortfolioBucket.class);
+        thePortButton = pFactory.buttonFactory().newScrollButton(MoneyWiseAnalysisPortfolioBucket.class);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -105,7 +105,7 @@ public class MoneyWisePortfolioAnalysisSelect
         thePanel.addNode(thePortButton);
 
         /* Create initial state */
-        theState = new PortfolioState();
+        theState = new MoneyWisePortfolioState();
         theState.applyState();
 
         /* Access the menus */
@@ -128,14 +128,14 @@ public class MoneyWisePortfolioAnalysisSelect
     }
 
     @Override
-    public PortfolioCashFilter getFilter() {
+    public MoneyWiseAnalysisPortfolioCashFilter getFilter() {
         return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
         return thePortfolios != null
-               && !thePortfolios.isEmpty();
+                && !thePortfolios.isEmpty();
     }
 
     /**
@@ -143,7 +143,7 @@ public class MoneyWisePortfolioAnalysisSelect
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new PortfolioState(theState);
+        theSavePoint = new MoneyWisePortfolioState(theState);
     }
 
     /**
@@ -151,7 +151,7 @@ public class MoneyWisePortfolioAnalysisSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new PortfolioState(theSavePoint);
+        theState = new MoneyWisePortfolioState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -175,17 +175,17 @@ public class MoneyWisePortfolioAnalysisSelect
      * Set analysis.
      * @param pAnalysis the analysis.
      */
-    public void setAnalysis(final Analysis pAnalysis) {
+    public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
         /* Access buckets */
         thePortfolios = pAnalysis.getPortfolios();
 
         /* Obtain the current portfolio */
-        PortfolioBucket myPortfolio = theState.getPortfolio();
+        MoneyWiseAnalysisPortfolioBucket myPortfolio = theState.getPortfolio();
 
         /* Switch to versions from the analysis */
         myPortfolio = myPortfolio != null
-                                          ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
-                                          : thePortfolios.getDefaultPortfolio();
+                ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
+                : thePortfolios.getDefaultPortfolio();
 
         /* Set the portfolio */
         theState.setThePortfolio(myPortfolio);
@@ -193,14 +193,14 @@ public class MoneyWisePortfolioAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?, ?> pFilter) {
+    public void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof PortfolioCashFilter) {
+        if (pFilter instanceof MoneyWiseAnalysisPortfolioCashFilter) {
             /* Access filter */
-            final PortfolioCashFilter myFilter = (PortfolioCashFilter) pFilter;
+            final MoneyWiseAnalysisPortfolioCashFilter myFilter = (MoneyWiseAnalysisPortfolioCashFilter) pFilter;
 
             /* Obtain the filter bucket */
-            PortfolioBucket myPortfolio = myFilter.getPortfolioBucket();
+            MoneyWiseAnalysisPortfolioBucket myPortfolio = myFilter.getPortfolioBucket();
 
             /* Look for the equivalent bucket */
             myPortfolio = thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio());
@@ -230,16 +230,16 @@ public class MoneyWisePortfolioAnalysisSelect
         thePortfolioMenu.removeAllItems();
 
         /* Record active item */
-        TethysUIScrollItem<PortfolioBucket> myActive = null;
-        final PortfolioBucket myCurr = theState.getPortfolio();
+        TethysUIScrollItem<MoneyWiseAnalysisPortfolioBucket> myActive = null;
+        final MoneyWiseAnalysisPortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
-        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            final PortfolioBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
+            final TethysUIScrollItem<MoneyWiseAnalysisPortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -257,28 +257,28 @@ public class MoneyWisePortfolioAnalysisSelect
     /**
      * SavePoint values.
      */
-    private final class PortfolioState {
+    private final class MoneyWisePortfolioState {
         /**
          * The active Portfolio.
          */
-        private PortfolioBucket thePortfolio;
+        private MoneyWiseAnalysisPortfolioBucket thePortfolio;
 
         /**
          * The active filter.
          */
-        private PortfolioCashFilter theFilter;
+        private MoneyWiseAnalysisPortfolioCashFilter theFilter;
 
         /**
          * Constructor.
          */
-        private PortfolioState() {
+        private MoneyWisePortfolioState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private PortfolioState(final PortfolioState pState) {
+        private MoneyWisePortfolioState(final MoneyWisePortfolioState pState) {
             /* Initialise state */
             thePortfolio = pState.getPortfolio();
             theFilter = pState.getFilter();
@@ -288,7 +288,7 @@ public class MoneyWisePortfolioAnalysisSelect
          * Obtain the Portfolio.
          * @return the portfolio
          */
-        private PortfolioBucket getPortfolio() {
+        private MoneyWiseAnalysisPortfolioBucket getPortfolio() {
             return thePortfolio;
         }
 
@@ -296,7 +296,7 @@ public class MoneyWisePortfolioAnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        private PortfolioCashFilter getFilter() {
+        private MoneyWiseAnalysisPortfolioCashFilter getFilter() {
             return theFilter;
         }
 
@@ -305,7 +305,7 @@ public class MoneyWisePortfolioAnalysisSelect
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPortfolio(final PortfolioBucket pPortfolio) {
+        private boolean setPortfolio(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {
                 setThePortfolio(pPortfolio);
@@ -318,12 +318,12 @@ public class MoneyWisePortfolioAnalysisSelect
          * Set the Portfolio.
          * @param pPortfolio the Portfolio
          */
-        private void setThePortfolio(final PortfolioBucket pPortfolio) {
+        private void setThePortfolio(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
             /* Set the selected portfolio */
             thePortfolio = pPortfolio;
             theFilter = thePortfolio != null
-                                             ? new PortfolioCashFilter(thePortfolio)
-                                             : null;
+                    ? new MoneyWiseAnalysisPortfolioCashFilter(thePortfolio)
+                    : null;
         }
 
         /**
