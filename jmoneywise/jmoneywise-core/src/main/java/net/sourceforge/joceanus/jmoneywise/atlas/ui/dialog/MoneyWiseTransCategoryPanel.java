@@ -14,23 +14,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseCategoryDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
@@ -42,22 +44,22 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 /**
  * Dialog to display/edit/create a TransactionCategory.
  */
-public class MoneyWiseTransactionCategoryPanel
-        extends MoneyWiseXItemPanel<TransactionCategory> {
+public class MoneyWiseTransCategoryPanel
+        extends MoneyWiseItemPanel<MoneyWiseTransCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pError the error panel
      */
-    public MoneyWiseTransactionCategoryPanel(final TethysUIFactory<?> pFactory,
-                                             final UpdateSet pUpdateSet,
-                                             final MetisErrorPanel pError) {
+    public MoneyWiseTransCategoryPanel(final TethysUIFactory<?> pFactory,
+                                       final PrometheusEditSet pEditSet,
+                                       final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pUpdateSet, pError);
+        super(pFactory, pEditSet, pError);
 
         /* Create a new panel */
-        final PrometheusXFieldSet<TransactionCategory> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<MoneyWiseTransCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -66,15 +68,15 @@ public class MoneyWiseTransactionCategoryPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<TransactionCategoryType> myTypeButton = myFields.newScrollField(TransactionCategoryType.class);
-        final TethysUIScrollButtonField<TransactionCategory> myParentButton = myFields.newScrollField(TransactionCategory.class);
+        final TethysUIScrollButtonField<MoneyWiseTransCategoryType> myTypeButton = myFields.newScrollField(MoneyWiseTransCategoryType.class);
+        final TethysUIScrollButtonField<MoneyWiseTransCategory> myParentButton = myFields.newScrollField(MoneyWiseTransCategory.class);
 
         /* Assign the fields to the panel */
-        myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, TransactionCategory::getName);
-        myFieldSet.addField(MoneyWiseCategoryDataId.SUBCAT, mySubName, TransactionCategory::getSubCategory);
-        myFieldSet.addField(MoneyWiseCategoryDataId.DESC, myDesc, TransactionCategory::getDesc);
-        myFieldSet.addField(MoneyWiseCategoryDataId.TRANSCATTYPE, myTypeButton, TransactionCategory::getCategoryType);
-        myFieldSet.addField(MoneyWiseCategoryDataId.PARENT, myParentButton, TransactionCategory::getParentCategory);
+        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseTransCategory::getName);
+        myFieldSet.addField(MoneyWiseBasicResource.CATEGORY_SUBCAT, mySubName, MoneyWiseTransCategory::getSubCategory);
+        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseTransCategory::getDesc);
+        myFieldSet.addField(MoneyWiseStaticDataType.TRANSTYPE, myTypeButton, MoneyWiseTransCategory::getCategoryType);
+        myFieldSet.addField(PrometheusDataResource.DATAGROUP_PARENT, myParentButton, MoneyWiseTransCategory::getParentCategory);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -84,10 +86,10 @@ public class MoneyWiseTransactionCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final TransactionCategory myItem = getItem();
+        final MoneyWiseTransCategory myItem = getItem();
         if (myItem != null) {
-            final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
-            setItem(myCategories.findItemById(myItem.getId()));
+            final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+            setItem(myCategories.findItemById(myItem.getIndexedId()));
         }
 
         /* Make sure that the item is not editable */
@@ -97,61 +99,61 @@ public class MoneyWiseTransactionCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusXFieldSet<TransactionCategory> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<MoneyWiseTransCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
-        final TransactionCategory myCategory = getItem();
-        final TransactionCategoryType myType = myCategory.getCategoryType();
+        final MoneyWiseTransCategory myCategory = getItem();
+        final MoneyWiseTransCategoryType myType = myCategory.getCategoryType();
         final CategoryType myCurrType = CategoryType.determineType(myType);
         final boolean showParent = myCurrType.hasSubCatName();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        myFieldSet.setFieldVisible(MoneyWiseCategoryDataId.DESC, bShowDesc);
+        myFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        myFieldSet.setFieldVisible(MoneyWiseCategoryDataId.PARENT, showParent);
-        myFieldSet.setFieldVisible(MoneyWiseCategoryDataId.SUBCAT, showParent);
+        myFieldSet.setFieldVisible(PrometheusDataResource.DATAGROUP_PARENT, showParent);
+        myFieldSet.setFieldVisible(MoneyWiseBasicResource.CATEGORY_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
         final boolean canEdit = isEditable && !myCategory.isActive() && myCurrType.isChangeable();
-        myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.TRANSCATTYPE, canEdit);
+        myFieldSet.setFieldEditable(MoneyWiseStaticDataType.TRANSTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.NAME, isEditable && !showParent);
+        myFieldSet.setFieldEditable(PrometheusDataResource.DATAITEM_FIELD_NAME, isEditable && !showParent);
     }
 
     @Override
-    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final TransactionCategory myCategory = getItem();
+        final MetisDataFieldId myField = pUpdate.getFieldId();
+        final MoneyWiseTransCategory myCategory = getItem();
 
         /* Process updates */
-        if (MoneyWiseCategoryDataId.NAME.equals(myField)) {
+        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {
             /* Update the SUBCATEGORY(!!) Name */
             myCategory.setSubCategoryName(pUpdate.getValue(String.class));
-        } else if (MoneyWiseCategoryDataId.SUBCAT.equals(myField)) {
+        } else if (MoneyWiseBasicResource.CATEGORY_SUBCAT.equals(myField)) {
             /* Update the SubCategory */
             myCategory.setSubCategoryName(pUpdate.getValue(String.class));
-        } else if (MoneyWiseCategoryDataId.PARENT.equals(myField)) {
+        } else if (PrometheusDataResource.DATAGROUP_PARENT.equals(myField)) {
             /* Update the Parent */
-            myCategory.setParentCategory(pUpdate.getValue(TransactionCategory.class));
-        } else if (MoneyWiseCategoryDataId.DESC.equals(myField)) {
+            myCategory.setParentCategory(pUpdate.getValue(MoneyWiseTransCategory.class));
+        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {
             /* Update the Description */
             myCategory.setDescription(pUpdate.getValue(String.class));
-        } else if (MoneyWiseCategoryDataId.DEPOSITCATTYPE.equals(myField)) {
+        } else if (MoneyWiseStaticDataType.TRANSTYPE.equals(myField)) {
             /* Update the Category Type */
-            myCategory.setCategoryType(pUpdate.getValue(TransactionCategoryType.class));
+            myCategory.setCategoryType(pUpdate.getValue(MoneyWiseTransCategoryType.class));
         }
     }
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final TransactionCategory myItem = getItem();
-        final TransactionCategory myParent = myItem.getParentCategory();
+        final MoneyWiseTransCategory myItem = getItem();
+        final MoneyWiseTransCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            final TransactionCategoryType myType = myItem.getCategoryType();
+            final MoneyWiseTransCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -162,23 +164,23 @@ public class MoneyWiseTransactionCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysUIScrollMenu<TransactionCategoryType> pMenu,
-                                      final TransactionCategory pCategory) {
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<MoneyWiseTransCategoryType> pMenu,
+                                      final MoneyWiseTransCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionCategoryType myCurr = pCategory.getCategoryType();
+        final MoneyWiseTransCategoryType myCurr = pCategory.getCategoryType();
         final CategoryType myCurrType = CategoryType.determineType(myCurr);
-        TethysUIScrollItem<TransactionCategoryType> myActive = null;
+        TethysUIScrollItem<MoneyWiseTransCategoryType> myActive = null;
 
         /* Access Transaction Category types */
-        final TransactionCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
+        final MoneyWiseTransCategoryTypeList myCategoryTypes = getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class);
 
         /* Loop through the TransCategoryTypes */
-        final Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
+        final Iterator<MoneyWiseTransCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            final TransactionCategoryType myType = myIterator.next();
+            final MoneyWiseTransCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
@@ -190,7 +192,7 @@ public class MoneyWiseTransactionCategoryPanel
             }
 
             /* Create a new action for the type */
-            final TethysUIScrollItem<TransactionCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<MoneyWiseTransCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -210,24 +212,24 @@ public class MoneyWiseTransactionCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final TethysUIScrollMenu<TransactionCategory> pMenu,
-                                 final TransactionCategory pCategory) {
+    private void buildParentMenu(final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu,
+                                 final MoneyWiseTransCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionCategory myCurr = pCategory.getParentCategory();
+        final MoneyWiseTransCategory myCurr = pCategory.getParentCategory();
         final CategoryType myCurrType = CategoryType.determineType(pCategory);
-        TethysUIScrollItem<TransactionCategory> myActive = null;
+        TethysUIScrollItem<MoneyWiseTransCategory> myActive = null;
 
         /* Loop through the TransactionCategories */
-        final TransactionCategoryList myCategories = getItem().getList();
-        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final MoneyWiseTransCategoryList myCategories = getItem().getList();
+        final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final TransactionCategory myCat = myIterator.next();
+            final MoneyWiseTransCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-subTotal items */
-            final TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
+            final MoneyWiseTransCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isSubTotal()) {
                 continue;
             }
@@ -235,7 +237,7 @@ public class MoneyWiseTransactionCategoryPanel
             /* If we are interested */
             if (myCurrType.isParentMatch(myClass)) {
                 /* Create a new action for the type */
-                final TethysUIScrollItem<TransactionCategory> myItem = pMenu.addItem(myCat);
+                final TethysUIScrollItem<MoneyWiseTransCategory> myItem = pMenu.addItem(myCat);
 
                 /* If this is the active parent */
                 if (myCat.equals(myCurr)) {
@@ -295,7 +297,7 @@ public class MoneyWiseTransactionCategoryPanel
          * @param pCategory the transaction category
          * @return the category type
          */
-        public static CategoryType determineType(final TransactionCategory pCategory) {
+        public static CategoryType determineType(final MoneyWiseTransCategory pCategory) {
             return determineType(pCategory.getCategoryType());
         }
 
@@ -304,9 +306,9 @@ public class MoneyWiseTransactionCategoryPanel
          * @param pType the transaction category type
          * @return the category type
          */
-        public static CategoryType determineType(final TransactionCategoryType pType) {
+        public static CategoryType determineType(final MoneyWiseTransCategoryType pType) {
             /* Access class */
-            final TransactionCategoryClass myClass = pType.getCategoryClass();
+            final MoneyWiseTransCategoryClass myClass = pType.getCategoryClass();
 
             /* Handle Totals */
             if (myClass.isTotals()) {
@@ -373,7 +375,7 @@ public class MoneyWiseTransactionCategoryPanel
          * @param pClass the parent class
          * @return true/false
          */
-        public boolean isParentMatch(final TransactionCategoryClass pClass) {
+        public boolean isParentMatch(final MoneyWiseTransCategoryClass pClass) {
             switch (this) {
                 case INCOME:
                     return pClass.isIncome();

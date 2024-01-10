@@ -61,6 +61,11 @@ public class MetisFieldSet<T extends MetisFieldItem>
     private static final AtomicInteger NEXT_ANCHORID = new AtomicInteger(1);
 
     /**
+     * Map of Enum to FieldId.
+     */
+    private static final Map<Object, MetisDataFieldId> ENUMFIELD_MAP = new HashMap<>();
+
+    /**
      * Id of this anchor.
      */
     private final Integer theAnchorId;
@@ -347,6 +352,16 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     /**
+     * Create simpleId for enum.
+     * @param <E> the enum class
+     * @param pValue the enum value
+     * @return th id
+     */
+    public static <E extends Enum<E>> MetisDataFieldId simpleIdForEnum(final E pValue) {
+        return ENUMFIELD_MAP.computeIfAbsent(pValue, v -> new MetisFieldSimpleId(v.toString()));
+    }
+
+    /**
      * Declare local non-equality fields one for each Enum.
      * @param <E> the Enum
      * @param pClazz the class of the Enum
@@ -359,7 +374,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         final Map<E, MetisFieldDef> myMap = new EnumMap<>(pClazz);
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
-            final MetisDataFieldId myId = new MetisFieldSimpleId(myValue.toString());
+            final MetisDataFieldId myId = simpleIdForEnum(myValue);
             final MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue));
 
             /* Store into the map */

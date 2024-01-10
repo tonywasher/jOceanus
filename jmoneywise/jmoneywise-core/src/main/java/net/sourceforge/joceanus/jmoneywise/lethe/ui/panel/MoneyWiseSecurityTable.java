@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPric
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXAssetTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseSecurityPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXSecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -62,7 +62,7 @@ public class MoneyWiseSecurityTable
     /**
      * The Security dialog.
      */
-    private final MoneyWiseSecurityPanel theActiveSecurity;
+    private final MoneyWiseXSecurityPanel theActiveSecurity;
 
     /**
      * The edit list.
@@ -90,7 +90,7 @@ public class MoneyWiseSecurityTable
         final TethysUITableManager<PrometheusDataFieldId, Security> myTable = getTable();
 
         /* Create a security panel */
-        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pUpdateSet, pError);
+        theActiveSecurity = new MoneyWiseXSecurityPanel(myGuiFactory, pView, pUpdateSet, pError);
         declareItemPanel(theActiveSecurity);
 
         /* Create the symbol column */

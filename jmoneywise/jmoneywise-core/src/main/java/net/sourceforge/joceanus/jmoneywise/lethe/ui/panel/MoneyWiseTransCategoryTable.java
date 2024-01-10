@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseTransactionCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXTransactionCategoryPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -49,7 +49,7 @@ public class MoneyWiseTransCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseTransactionCategoryPanel theActiveCategory;
+    private final MoneyWiseXTransactionCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -72,7 +72,7 @@ public class MoneyWiseTransCategoryTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseTransactionCategoryPanel(myGuiFactory, pUpdateSet, pError);
+        theActiveCategory = new MoneyWiseXTransactionCategoryPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Add listeners */

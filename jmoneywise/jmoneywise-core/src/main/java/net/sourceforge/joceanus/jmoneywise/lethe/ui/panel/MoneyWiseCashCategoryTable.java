@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseCashCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXCashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -49,7 +49,7 @@ public class MoneyWiseCashCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseCashCategoryPanel theActiveCategory;
+    private final MoneyWiseXCashCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -72,7 +72,7 @@ public class MoneyWiseCashCategoryTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseCashCategoryPanel(myGuiFactory, pUpdateSet, pError);
+        theActiveCategory = new MoneyWiseXCashCategoryPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Add listeners */

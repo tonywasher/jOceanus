@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,47 +22,48 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseTransDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase.AssetBaseList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding.SecurityHoldingMap;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionValidator;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetDirection;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransDefaults;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransInfoSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransValidator;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.TransactionFilters;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.controls.MoneyWiseAnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseTransactionFilters;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
@@ -92,7 +93,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Transaction.
  */
 public class MoneyWiseTransactionPanel
-        extends MoneyWiseXItemPanel<Transaction> {
+        extends MoneyWiseItemPanel<MoneyWiseTransaction> {
     /**
      * Info Tab Title.
      */
@@ -116,17 +117,17 @@ public class MoneyWiseTransactionPanel
     /**
      * The fieldSet.
      */
-    private final PrometheusXFieldSet<Transaction> theFieldSet;
+    private final PrometheusFieldSet<MoneyWiseTransaction> theFieldSet;
 
     /**
      * Analysis selection panel.
      */
-    private final MoneyWiseXAnalysisSelect theAnalysisSelect;
+    private final MoneyWiseAnalysisSelect theAnalysisSelect;
 
     /**
      * TransactionBuilder.
      */
-    private final TransactionBuilder theBuilder;
+    private final MoneyWiseTransDefaults theBuilder;
 
     /**
      * dateRange.
@@ -146,18 +147,18 @@ public class MoneyWiseTransactionPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pBuilder the transaction builder
      * @param pAnalysisSelect the analysis selection panel
      * @param pError the error panel
      */
     public MoneyWiseTransactionPanel(final TethysUIFactory<?> pFactory,
-                                     final UpdateSet pUpdateSet,
-                                     final TransactionBuilder pBuilder,
-                                     final MoneyWiseXAnalysisSelect pAnalysisSelect,
+                                     final PrometheusEditSet pEditSet,
+                                     final MoneyWiseTransDefaults pBuilder,
+                                     final MoneyWiseAnalysisSelect pAnalysisSelect,
                                      final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pUpdateSet, pError);
+        super(pFactory, pEditSet, pError);
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 
@@ -191,29 +192,29 @@ public class MoneyWiseTransactionPanel
 
         /* Create the buttons */
         final TethysUIDateButtonField myDateButton = myFields.newDateField();
-        final TethysUIScrollButtonField<TransactionAsset> myAccountButton = myFields.newScrollField(TransactionAsset.class);
-        final TethysUIScrollButtonField<TransactionAsset> myPartnerButton = myFields.newScrollField(TransactionAsset.class);
-        final TethysUIScrollButtonField<TransactionCategory> myCategoryButton = myFields.newScrollField(TransactionCategory.class);
+        final TethysUIScrollButtonField<MoneyWiseTransAsset> myAccountButton = myFields.newScrollField(MoneyWiseTransAsset.class);
+        final TethysUIScrollButtonField<MoneyWiseTransAsset> myPartnerButton = myFields.newScrollField(MoneyWiseTransAsset.class);
+        final TethysUIScrollButtonField<MoneyWiseTransCategory> myCategoryButton = myFields.newScrollField(MoneyWiseTransCategory.class);
         final TethysUIIconButtonField<Boolean> myReconciledButton = myFields.newIconField(Boolean.class);
-        final TethysUIIconButtonField<AssetDirection> myDirectionButton = myFields.newIconField(AssetDirection.class);
+        final TethysUIIconButtonField<MoneyWiseAssetDirection> myDirectionButton = myFields.newIconField(MoneyWiseAssetDirection.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseTransDataId.DATE, myDateButton, Transaction::getDate);
-        theFieldSet.addField(MoneyWiseTransDataId.ACCOUNT, myAccountButton, Transaction::getAccount);
-        theFieldSet.addField(MoneyWiseTransDataId.CATEGORY, myCategoryButton, Transaction::getCategory);
-        theFieldSet.addField(MoneyWiseTransDataId.DIRECTION, myDirectionButton, Transaction::getDirection);
-        theFieldSet.addField(MoneyWiseTransDataId.PARTNER, myPartnerButton, Transaction::getPartner);
-        theFieldSet.addField(MoneyWiseTransDataId.AMOUNT, myAmount, Transaction::getAmount);
-        theFieldSet.addField(MoneyWiseTransDataId.RECONCILED, myReconciledButton, Transaction::isReconciled);
+        theFieldSet.addField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, myDateButton, MoneyWiseTransaction::getDate);
+        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, myAccountButton, MoneyWiseTransaction::getAccount);
+        theFieldSet.addField(MoneyWiseBasicDataType.TRANSCATEGORY, myCategoryButton, MoneyWiseTransaction::getCategory);
+        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_DIRECTION, myDirectionButton, MoneyWiseTransaction::getDirection);
+        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_PARTNER, myPartnerButton, MoneyWiseTransaction::getPartner);
+        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_AMOUNT, myAmount, MoneyWiseTransaction::getAmount);
+        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_RECONCILED, myReconciledButton, MoneyWiseTransaction::isReconciled);
 
         /* Configure the menuBuilders */
         myDateButton.setDateConfigurator(this::handleDateConfig);
         myAccountButton.setMenuConfigurator(c -> buildAccountMenu(c, getItem()));
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myPartnerButton.setMenuConfigurator(c -> buildPartnerMenu(c, getItem()));
-        final Map<Boolean, TethysUIIconMapSet<Boolean>> myRecMapSets = MoneyWiseXIcon.configureReconciledIconButton(pFactory);
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton(pFactory);
         myReconciledButton.setIconMapSet(() -> myRecMapSets.get(theReconciledState));
-        final Map<Boolean, TethysUIIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseXIcon.configureDirectionIconButton(pFactory);
+        final Map<Boolean, TethysUIIconMapSet<MoneyWiseAssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(pFactory);
         myDirectionButton.setIconMapSet(() -> myDirMapSets.get(theDirectionState));
         myAmount.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
     }
@@ -234,14 +235,14 @@ public class MoneyWiseTransactionPanel
         final TethysUIRatioEditField myRate = myFields.newRatioField();
 
         /* Create the buttons */
-        final TethysUIListButtonField<TransactionTag> myTagButton = myFields.newListField();
+        final TethysUIListButtonField<MoneyWiseTransTag> myTagButton = myFields.newListField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseTransDataId.PARTNERAMOUNT, myAmount, Transaction::getPartnerAmount);
-        theFieldSet.addField(MoneyWiseTransDataId.COMMENTS, myComments, Transaction::getComments);
-        theFieldSet.addField(MoneyWiseTransDataId.REFERENCE, myReference, Transaction::getReference);
-        theFieldSet.addField(MoneyWiseTransDataId.TAG, myTagButton, Transaction::getTransactionTags);
-        theFieldSet.addField(MoneyWiseTransDataId.XCHANGERATE, myRate, Transaction::getExchangeRate);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT), myAmount, MoneyWiseTransaction::getPartnerAmount);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMENTS), myComments, MoneyWiseTransaction::getComments);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.REFERENCE), myReference, MoneyWiseTransaction::getReference);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TRANSTAG), myTagButton, MoneyWiseTransaction::getTransactionTags);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE), myRate, MoneyWiseTransaction::getExchangeRate);
 
         /* Configure the tag button */
         myTagButton.setSelectables(this::buildTransactionTags);
@@ -268,12 +269,12 @@ public class MoneyWiseTransactionPanel
         final TethysUIIntegerEditField myYears = myFields.newIntegerField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseTransDataId.TAXCREDIT, myTaxCredit, Transaction::getTaxCredit);
-        theFieldSet.addField(MoneyWiseTransDataId.EMPLOYEENATINS, myEeNatIns, Transaction::getEmployeeNatIns);
-        theFieldSet.addField(MoneyWiseTransDataId.EMPLOYERNATINS, myErNatIns, Transaction::getEmployerNatIns);
-        theFieldSet.addField(MoneyWiseTransDataId.DEEMEDBENEFIT, myBenefit, Transaction::getDeemedBenefit);
-        theFieldSet.addField(MoneyWiseTransDataId.WITHHELD, myWithheld, Transaction::getWithheld);
-        theFieldSet.addField(MoneyWiseTransDataId.QUALIFYYEARS, myYears, Transaction::getYears);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT), myTaxCredit, MoneyWiseTransaction::getTaxCredit);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS), myEeNatIns, MoneyWiseTransaction::getEmployeeNatIns);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS), myErNatIns, MoneyWiseTransaction::getEmployerNatIns);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT), myBenefit, MoneyWiseTransaction::getDeemedBenefit);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD), myWithheld, MoneyWiseTransaction::getWithheld);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS), myYears, MoneyWiseTransaction::getYears);
 
         /* Set currency */
         myTaxCredit.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
@@ -300,11 +301,11 @@ public class MoneyWiseTransactionPanel
         final TethysUIRatioEditField myDilution = myFields.newRatioField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseTransDataId.ACCOUNTDELTAUNITS, myAccountUnits, Transaction::getAccountDeltaUnits);
-        theFieldSet.addField(MoneyWiseTransDataId.PARTNERDELTAUNITS, myPartnerUnits, Transaction::getPartnerDeltaUnits);
-        theFieldSet.addField(MoneyWiseTransDataId.PRICE, myPrice, Transaction::getPrice);
-        theFieldSet.addField(MoneyWiseTransDataId.COMMISSION, myCommission, Transaction::getCommission);
-        theFieldSet.addField(MoneyWiseTransDataId.DILUTION, myDilution, Transaction::getDilution);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS), myAccountUnits, MoneyWiseTransaction::getAccountDeltaUnits);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS), myPartnerUnits, MoneyWiseTransaction::getPartnerDeltaUnits);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE), myPrice, MoneyWiseTransaction::getPrice);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION), myCommission, MoneyWiseTransaction::getCommission);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION), myDilution, MoneyWiseTransaction::getDilution);
 
         /* Set currency */
         myCommission.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
@@ -324,11 +325,11 @@ public class MoneyWiseTransactionPanel
         final TethysUIMoneyEditField myReturnedCash = myFields.newMoneyField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<TransactionAsset> myReturnedAccountButton = myFields.newScrollField(TransactionAsset.class);
+        final TethysUIScrollButtonField<MoneyWiseTransAsset> myReturnedAccountButton = myFields.newScrollField(MoneyWiseTransAsset.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseTransDataId.RETURNEDCASHACCOUNT, myReturnedAccountButton, Transaction::getReturnedCashAccount);
-        theFieldSet.addField(MoneyWiseTransDataId.RETURNEDCASH, myReturnedCash, Transaction::getReturnedCash);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT), myReturnedAccountButton, MoneyWiseTransaction::getReturnedCashAccount);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH), myReturnedCash, MoneyWiseTransaction::getReturnedCash);
 
         /* Configure the menuBuilders */
         myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem()));
@@ -340,10 +341,10 @@ public class MoneyWiseTransactionPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Transaction myItem = getItem();
+        final MoneyWiseTransaction myItem = getItem();
         if (myItem != null) {
-            final TransactionList myTrans = getDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
-            setItem(myTrans.findItemById(myItem.getId()));
+            final MoneyWiseTransactionList myTrans = getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
+            setItem(myTrans.findItemById(myItem.getIndexedId()));
         }
 
         /* Make sure that the item is not editable */
@@ -381,129 +382,129 @@ public class MoneyWiseTransactionPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        final Transaction myTrans = getItem();
+        final MoneyWiseTransaction myTrans = getItem();
         final boolean bIsReconciled = myTrans.isReconciled();
         final boolean bIsLocked = myTrans.isLocked();
 
         /* Determine whether the comments field should be visible */
         boolean bShowField = isEditable || myTrans.getComments() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.COMMENTS, bShowField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMENTS), bShowField);
 
         /* Determine whether the reference field should be visible */
         bShowField = isEditable || myTrans.getReference() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.REFERENCE, bShowField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.REFERENCE), bShowField);
 
         /* Determine whether the tags field should be visible */
         bShowField = isEditable || myTrans.getTransactionTags() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.TAG, bShowField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TRANSTAG), bShowField);
 
         /* Determine whether the partnerAmount field should be visible */
-        boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERAMOUNT);
+        boolean bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.PARTNERAMOUNT);
         bShowField = bEditField || myTrans.getPartnerAmount() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.PARTNERAMOUNT, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.PARTNERAMOUNT, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT), bEditField);
 
         /* Determine whether the exchangeRate field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.XCHANGERATE);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.XCHANGERATE);
         bShowField = bEditField || myTrans.getExchangeRate() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.XCHANGERATE, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.XCHANGERATE, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE), bEditField);
 
         /* Determine whether the taxCredit field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.TAXCREDIT);
         bShowField = bEditField || myTrans.getTaxCredit() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.TAXCREDIT, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.TAXCREDIT, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT), bEditField);
 
         /* Determine whether the EeNatIns field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.EMPLOYEENATINS);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.EMPLOYEENATINS);
         bShowField = bEditField || myTrans.getEmployeeNatIns() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.EMPLOYEENATINS, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.EMPLOYEENATINS, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS), bEditField);
 
         /* Determine whether the ErnatIns field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.EMPLOYERNATINS);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.EMPLOYERNATINS);
         bShowField = bEditField || myTrans.getEmployerNatIns() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.EMPLOYERNATINS, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.EMPLOYERNATINS, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS), bEditField);
 
         /* Determine whether the benefit field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DEEMEDBENEFIT);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.DEEMEDBENEFIT);
         bShowField = bEditField || myTrans.getDeemedBenefit() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.DEEMEDBENEFIT, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.DEEMEDBENEFIT, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT), bEditField);
 
         /* Determine whether the donation field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.WITHHELD);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.WITHHELD);
         bShowField = bEditField || myTrans.getWithheld() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.WITHHELD, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.WITHHELD, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD), bEditField);
 
         /* Determine whether the account units field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS);
         bShowField = bEditField || myTrans.getAccountDeltaUnits() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.ACCOUNTDELTAUNITS, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.ACCOUNTDELTAUNITS, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS), bEditField);
 
         /* Determine whether the partnerDeltaUnits field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERDELTAUNITS);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.PARTNERDELTAUNITS);
         bShowField = bEditField || myTrans.getPartnerDeltaUnits() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.PARTNERDELTAUNITS, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.PARTNERDELTAUNITS, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS), bEditField);
 
         /* Determine whether the price field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PRICE);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.PRICE);
         bShowField = bEditField || myTrans.getPrice() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.PRICE, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.PRICE, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE), bEditField);
 
         /* Determine whether the commission field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.COMMISSION);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.COMMISSION);
         bShowField = bEditField || myTrans.getCommission() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.COMMISSION, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.COMMISSION, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION), bEditField);
 
         /* Determine whether the dilution field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DILUTION);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.DILUTION);
         bShowField = bEditField || myTrans.getDilution() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.DILUTION, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.DILUTION, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION), bEditField);
 
         /* Determine whether the returnedAccount field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT);
         bShowField = bEditField || myTrans.getReturnedCashAccount() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.RETURNEDCASHACCOUNT, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.RETURNEDCASHACCOUNT, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT), bEditField);
 
         /* Determine whether the returnedCash field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.RETURNEDCASH);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.RETURNEDCASH);
         bShowField = bEditField || myTrans.getReturnedCash() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.RETURNEDCASH, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.RETURNEDCASH, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH), bEditField);
 
         /* Determine whether the years field should be visible */
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.QUALIFYYEARS);
+        bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.QUALIFYYEARS);
         bShowField = bEditField || myTrans.getYears() != null;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.QUALIFYYEARS, bShowField);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.QUALIFYYEARS, bEditField);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS), bShowField);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS), bEditField);
 
         /* Determine whether the reconciled field should be visible */
         final boolean bShowReconciled = isEditable || bIsReconciled;
         theReconciledState = bIsLocked;
         theDirectionState = bIsReconciled;
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.RECONCILED, bShowReconciled);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.RECONCILED, isEditable && !bIsLocked);
+        theFieldSet.setFieldVisible(MoneyWiseBasicResource.TRANSACTION_RECONCILED, bShowReconciled);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_RECONCILED, isEditable && !bIsLocked);
 
         /* Determine basic editing */
         final boolean canEdit = isEditable && !bIsReconciled;
         final boolean needsNullAmount = myTrans.needsNullAmount();
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.DIRECTION, canEdit && myTrans.canSwitchDirection());
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.ACCOUNT, canEdit);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.PARTNER, canEdit);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.CATEGORY, canEdit);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.DATE, canEdit);
-        theFieldSet.setFieldEditable(MoneyWiseTransDataId.AMOUNT, canEdit && !needsNullAmount);
-        theFieldSet.setFieldVisible(MoneyWiseTransDataId.AMOUNT, !needsNullAmount);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_DIRECTION, canEdit && myTrans.canSwitchDirection());
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_PARTNER, canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseBasicDataType.TRANSCATEGORY, canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_AMOUNT, canEdit && !needsNullAmount);
+        theFieldSet.setFieldVisible(MoneyWiseBasicResource.TRANSACTION_AMOUNT, !needsNullAmount);
 
         /* Set the range for the dateButton */
         theRange = theBuilder.getRange();
@@ -515,10 +516,10 @@ public class MoneyWiseTransactionPanel
      * @param pField the field class
      * @return true/false
      */
-    public static boolean isEditableField(final Transaction pTrans,
-                                          final TransactionInfoClass pField) {
+    public static boolean isEditableField(final MoneyWiseTransaction pTrans,
+                                          final MoneyWiseTransInfoClass pField) {
         /* Access the infoSet */
-        final TransactionInfoSet myInfoSet = pTrans.getInfoSet();
+        final MoneyWiseTransInfoSet myInfoSet = pTrans.getInfoSet();
 
         /* If the transaction is reconciled */
         if (Boolean.TRUE.equals(pTrans.isReconciled())) {
@@ -533,91 +534,91 @@ public class MoneyWiseTransactionPanel
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final Transaction myTrans = getItem();
+        final MetisDataFieldId myField = pUpdate.getFieldId();
+        final MoneyWiseTransaction myTrans = getItem();
 
         /* Process updates */
-        if (MoneyWiseTransDataId.DATE.equals(myField)) {
+        if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.equals(myField)) {
             /* Update the Date */
             myTrans.setDate(pUpdate.getValue(TethysDate.class));
-        } else if (MoneyWiseTransDataId.AMOUNT.equals(myField)) {
+        } else if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(myField)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getValue(TethysMoney.class));
             theBuilder.autoCorrect(myTrans);
-        } else if (MoneyWiseTransDataId.ACCOUNT.equals(myField)) {
+        } else if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(myField)) {
             /* Update the Account */
-            myTrans.setAccount(resolveAsset(pUpdate.getValue(TransactionAsset.class)));
+            myTrans.setAccount(resolveAsset(pUpdate.getValue(MoneyWiseTransAsset.class)));
             theBuilder.autoCorrect(myTrans);
-        } else if (MoneyWiseTransDataId.DIRECTION.equals(myField)) {
+        } else if (MoneyWiseBasicResource.TRANSACTION_DIRECTION.equals(myField)) {
             /* Update the Direction */
             myTrans.switchDirection();
             theBuilder.autoCorrect(myTrans);
-        } else if (MoneyWiseTransDataId.PARTNER.equals(myField)) {
+        } else if (MoneyWiseBasicResource.TRANSACTION_PARTNER.equals(myField)) {
             /* Update the Partner */
-            myTrans.setPartner(resolveAsset(pUpdate.getValue(TransactionAsset.class)));
+            myTrans.setPartner(resolveAsset(pUpdate.getValue(MoneyWiseTransAsset.class)));
             theBuilder.autoCorrect(myTrans);
-        } else if (MoneyWiseTransDataId.CATEGORY.equals(myField)) {
+        } else if (MoneyWiseBasicDataType.TRANSCATEGORY.equals(myField)) {
             /* Update the Category */
-            myTrans.setCategory(pUpdate.getValue(TransactionCategory.class));
+            myTrans.setCategory(pUpdate.getValue(MoneyWiseTransCategory.class));
             theBuilder.autoCorrect(myTrans);
-        } else if (MoneyWiseTransDataId.RECONCILED.equals(myField)) {
+        } else if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(myField)) {
             /* Update the Reconciled indication */
             myTrans.setReconciled(pUpdate.getValue(Boolean.class));
-        } else if (MoneyWiseTransDataId.COMMENTS.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMENTS).equals(myField)) {
             /* Update the Comments */
             myTrans.setComments(pUpdate.getValue(String.class));
-        } else if (MoneyWiseTransDataId.REFERENCE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.REFERENCE).equals(myField)) {
             /* Update the Reference */
             myTrans.setReference(pUpdate.getValue(String.class));
-        } else if (MoneyWiseTransDataId.TAG.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TRANSTAG).equals(myField)) {
             /* Update the Tag indication */
             myTrans.setTransactionTags(pUpdate.getValue(List.class));
-        } else if (MoneyWiseTransDataId.PARTNERAMOUNT.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT).equals(myField)) {
             /* Update the PartnerAmount */
             myTrans.setPartnerAmount(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.XCHANGERATE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE).equals(myField)) {
             /* Update the ExchangeRate */
             myTrans.setExchangeRate(pUpdate.getValue(TethysRatio.class));
-        } else if (MoneyWiseTransDataId.ACCOUNTDELTAUNITS.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS).equals(myField)) {
             /* Update the AccountDeltaUnits */
             myTrans.setAccountDeltaUnits(pUpdate.getValue(TethysUnits.class));
-        } else if (MoneyWiseTransDataId.PARTNERDELTAUNITS.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS).equals(myField)) {
             /* Update the PartnerDeltaUnits */
             myTrans.setPartnerDeltaUnits(pUpdate.getValue(TethysUnits.class));
-        } else if (MoneyWiseTransDataId.PRICE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE).equals(myField)) {
             /* Update the Price */
             myTrans.setPrice(pUpdate.getValue(TethysPrice.class));
-        } else if (MoneyWiseTransDataId.COMMISSION.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION).equals(myField)) {
             /* Update the Commission */
             myTrans.setCommission(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.DILUTION.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION).equals(myField)) {
             /* Update the Dilution */
             myTrans.setDilution(pUpdate.getValue(TethysRatio.class));
-        } else if (MoneyWiseTransDataId.QUALIFYYEARS.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS).equals(myField)) {
             /* Update the QualifyYears */
             myTrans.setYears(pUpdate.getValue(Integer.class));
-        } else if (MoneyWiseTransDataId.RETURNEDCASHACCOUNT.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT).equals(myField)) {
             /* Update the ReturnedCashAccount */
-            myTrans.setReturnedCashAccount(pUpdate.getValue(TransactionAsset.class));
+            myTrans.setReturnedCashAccount(pUpdate.getValue(MoneyWiseTransAsset.class));
             theBuilder.autoCorrect(myTrans);
-        } else if (MoneyWiseTransDataId.RETURNEDCASH.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH).equals(myField)) {
             /* Update the ReturnedCash */
             myTrans.setReturnedCash(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.TAXCREDIT.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT).equals(myField)) {
             /* Update the TaxCredit */
             myTrans.setTaxCredit(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.EMPLOYEENATINS.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS).equals(myField)) {
             /* Update the EmployeeNatIns */
             myTrans.setEmployeeNatIns(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.EMPLOYERNATINS.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS).equals(myField)) {
             /* Update the EmployerNayIns */
             myTrans.setEmployerNatIns(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.DEEMEDBENEFIT.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT).equals(myField)) {
             /* Update the Benefit */
             myTrans.setBenefit(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseTransDataId.WITHHELD.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD).equals(myField)) {
             /* Update the Withheld */
             myTrans.setWithheld(pUpdate.getValue(TethysMoney.class));
         }
@@ -626,20 +627,20 @@ public class MoneyWiseTransactionPanel
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         /* Access the item */
-        final Transaction myItem = getItem();
+        final MoneyWiseTransaction myItem = getItem();
 
         /* Access the analysis and the relevant filters */
-        final Analysis myAnalysis = theAnalysisSelect.getAnalysis();
-        final TransactionFilters myFilters = new TransactionFilters(myAnalysis, myItem);
+        final MoneyWiseAnalysis myAnalysis = theAnalysisSelect.getAnalysis();
+        final MoneyWiseTransactionFilters myFilters = new MoneyWiseTransactionFilters(myAnalysis, myItem);
 
         /* Remove the current filter */
-        final AnalysisFilter<?, ?> myCurrent = theAnalysisSelect.getFilter();
+        final MoneyWiseAnalysisFilter<?, ?> myCurrent = theAnalysisSelect.getFilter();
         myFilters.remove(myCurrent);
 
         /* Loop through the filters */
-        final Iterator<AnalysisFilter<?, ?>> myIterator = myFilters.iterator();
+        final Iterator<MoneyWiseAnalysisFilter<?, ?>> myIterator = myFilters.iterator();
         while (myIterator.hasNext()) {
-            final AnalysisFilter<?, ?> myFilter = myIterator.next();
+            final MoneyWiseAnalysisFilter<?, ?> myFilter = myIterator.next();
 
             /* declare it */
             declareGoToFilter(myFilter);
@@ -659,14 +660,14 @@ public class MoneyWiseTransactionPanel
      * Handle goto declarations for TransactionAssets.
      * @param pAsset the asset
      */
-    private void buildAssetGoTo(final TransactionAsset pAsset) {
-        if (pAsset instanceof SecurityHolding) {
+    private void buildAssetGoTo(final MoneyWiseTransAsset pAsset) {
+        if (pAsset instanceof MoneyWiseSecurityHolding) {
             /* Build menu Items for Portfolio and Security */
-            final SecurityHolding myHolding = (SecurityHolding) pAsset;
+            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAsset;
             declareGoToItem(myHolding.getPortfolio());
             declareGoToItem(myHolding.getSecurity());
-        } else if (pAsset instanceof AssetBase) {
-            declareGoToItem((AssetBase) pAsset);
+        } else if (pAsset instanceof MoneyWiseAssetBase) {
+            declareGoToItem((MoneyWiseAssetBase) pAsset);
         }
     }
 
@@ -675,15 +676,15 @@ public class MoneyWiseTransactionPanel
      * @param pAsset the asset to resolve
      * @return the resolved asset
      */
-    public static TransactionAsset resolveAsset(final TransactionAsset pAsset) {
+    public static MoneyWiseTransAsset resolveAsset(final MoneyWiseTransAsset pAsset) {
         /* If this is a security holding */
-        if (pAsset instanceof SecurityHolding) {
+        if (pAsset instanceof MoneyWiseSecurityHolding) {
             /* declare holding via map */
-            final SecurityHolding myHolding = (SecurityHolding) pAsset;
-            final Portfolio myPortfolio = myHolding.getPortfolio();
-            final Security mySecurity = myHolding.getSecurity();
-            final MoneyWiseData myData = myPortfolio.getDataSet();
-            final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAsset;
+            final MoneyWisePortfolio myPortfolio = myHolding.getPortfolio();
+            final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
+            final MoneyWiseDataSet myData = myPortfolio.getDataSet();
+            final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
             return myMap.declareHolding(myPortfolio, mySecurity);
         }
 
@@ -696,17 +697,17 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildAccountMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
-                                 final Transaction pTrans) {
+    public void buildAccountMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
+                                 final MoneyWiseTransaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), true, pTrans);
         buildHoldingMenu(pMenu, true, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), true, pTrans);
     }
 
     /**
@@ -714,18 +715,18 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildPartnerMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
-                                 final Transaction pTrans) {
+    public void buildPartnerMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
+                                 final MoneyWiseTransaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), false, pTrans);
         buildHoldingMenu(pMenu, false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class), false, pTrans);
     }
 
     /**
@@ -736,18 +737,18 @@ public class MoneyWiseTransactionPanel
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private static <T extends AssetBase> void buildAssetMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
-                                                             final AssetBaseList<T> pList,
-                                                             final boolean pIsAccount,
-                                                             final Transaction pTrans) {
+    private static <T extends MoneyWiseAssetBase> void buildAssetMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
+                                                                      final MoneyWiseAssetBaseList<T> pList,
+                                                                      final boolean pIsAccount,
+                                                                      final MoneyWiseTransaction pTrans) {
         /* Record active item */
-        final TransactionAsset myAccount = pTrans.getAccount();
-        final TransactionCategory myCategory = pTrans.getCategory();
-        final TransactionAsset myCurr = pIsAccount
+        final MoneyWiseTransAsset myAccount = pTrans.getAccount();
+        final MoneyWiseTransCategory myCategory = pTrans.getCategory();
+        final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
-        TethysUIScrollItem<TransactionAsset> myActive = null;
-        TethysUIScrollSubMenu<TransactionAsset> myMenu = null;
+        TethysUIScrollItem<MoneyWiseTransAsset> myActive = null;
+        TethysUIScrollSubMenu<MoneyWiseTransAsset> myMenu = null;
 
         /* Loop through the available values */
         final Iterator<T> myIterator = pList.iterator();
@@ -759,8 +760,8 @@ public class MoneyWiseTransactionPanel
 
             /* Check whether the asset is allowable for the owner */
             bIgnore |= !(pIsAccount
-                    ? TransactionValidator.isValidAccount(myAsset)
-                    : TransactionValidator.isValidPartner(myAccount, myCategory, myAsset));
+                    ? MoneyWiseTransValidator.isValidAccount(myAsset)
+                    : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myAsset));
             if (bIgnore) {
                 continue;
             }
@@ -772,7 +773,7 @@ public class MoneyWiseTransactionPanel
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<TransactionAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
+            final TethysUIScrollItem<MoneyWiseTransAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
 
             /* If this is the active category */
             if (myAsset.equals(myCurr)) {
@@ -793,28 +794,28 @@ public class MoneyWiseTransactionPanel
      * @param pIsAccount is this item the account rather than partner
      * @param pTrans the transaction to build for
      */
-    private static void buildHoldingMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
+    private static void buildHoldingMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
                                          final boolean pIsAccount,
-                                         final Transaction pTrans) {
+                                         final MoneyWiseTransaction pTrans) {
         /* Record active item */
-        final TransactionAsset myAccount = pTrans.getAccount();
-        final TransactionCategory myCategory = pTrans.getCategory();
-        final TransactionAsset myCurr = pIsAccount
+        final MoneyWiseTransAsset myAccount = pTrans.getAccount();
+        final MoneyWiseTransCategory myCategory = pTrans.getCategory();
+        final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
-        TethysUIScrollItem<TransactionAsset> myActive = null;
-        TethysUIScrollSubMenu<TransactionAsset> myMenu = null;
+        TethysUIScrollItem<MoneyWiseTransAsset> myActive = null;
+        TethysUIScrollSubMenu<MoneyWiseTransAsset> myMenu = null;
 
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseData myData = pTrans.getDataSet();
-        final PortfolioList myPortfolios = myData.getPortfolios();
-        final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseDataSet myData = pTrans.getDataSet();
+        final MoneyWisePortfolioList myPortfolios = myData.getPortfolios();
+        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
-        final Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
-            final Portfolio myPortfolio = myPortIterator.next();
-            TethysUIScrollSubMenu<TransactionAsset> myCoreMenu = null;
+            final MoneyWisePortfolio myPortfolio = myPortIterator.next();
+            TethysUIScrollSubMenu<MoneyWiseTransAsset> myCoreMenu = null;
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted()
@@ -823,20 +824,20 @@ public class MoneyWiseTransactionPanel
             }
 
             /* Look for existing and new holdings */
-            final Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
-            final Iterator<SecurityHolding> myNewIterator = myMap.newIterator(myPortfolio);
+            final Iterator<MoneyWiseSecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            final Iterator<MoneyWiseSecurityHolding> myNewIterator = myMap.newIterator(myPortfolio);
             if ((myExistIterator != null) || (myNewIterator != null)) {
                 /* If there are existing elements */
                 if (myExistIterator != null) {
                     /* Loop through them */
                     while (myExistIterator.hasNext()) {
-                        final SecurityHolding myHolding = myExistIterator.next();
-                        final Security mySecurity = myHolding.getSecurity();
+                        final MoneyWiseSecurityHolding myHolding = myExistIterator.next();
+                        final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
 
                         /* Check whether the asset is allowable for the owner */
                         final boolean bIgnore = !(pIsAccount
-                                ? TransactionValidator.isValidAccount(myHolding)
-                                : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                ? MoneyWiseTransValidator.isValidAccount(myHolding)
+                                : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -844,7 +845,7 @@ public class MoneyWiseTransactionPanel
                         /* Ensure that hierarchy is created */
                         if (myMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
-                            myMenu = pMenu.addSubMenu(AssetType.SECURITYHOLDING.toString());
+                            myMenu = pMenu.addSubMenu(MoneyWiseAssetType.SECURITYHOLDING.toString());
                         }
                         if (myCoreMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
@@ -852,7 +853,7 @@ public class MoneyWiseTransactionPanel
                         }
 
                         /* Add the item to the menu */
-                        final TethysUIScrollItem<TransactionAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
+                        final TethysUIScrollItem<MoneyWiseTransAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
 
                         /* If this is the active holding */
                         if (mySecurity.equals(myCurr)) {
@@ -865,15 +866,15 @@ public class MoneyWiseTransactionPanel
                 /* If there are new elements */
                 if (myNewIterator != null) {
                     /* Loop through them */
-                    TethysUIScrollSubMenu<TransactionAsset> mySubMenu = null;
+                    TethysUIScrollSubMenu<MoneyWiseTransAsset> mySubMenu = null;
                     while (myNewIterator.hasNext()) {
-                        final SecurityHolding myHolding = myNewIterator.next();
-                        final Security mySecurity = myHolding.getSecurity();
+                        final MoneyWiseSecurityHolding myHolding = myNewIterator.next();
+                        final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
 
                         /* Check whether the asset is allowable for the owner */
                         final boolean bIgnore = !(pIsAccount
-                                ? TransactionValidator.isValidAccount(myHolding)
-                                : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                ? MoneyWiseTransValidator.isValidAccount(myHolding)
+                                : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -881,7 +882,7 @@ public class MoneyWiseTransactionPanel
                         /* Ensure that hierarchy is created */
                         if (myMenu == null) {
                             /* Create a new subMenu and add it to the popUp */
-                            myMenu = pMenu.addSubMenu(AssetType.SECURITYHOLDING.toString());
+                            myMenu = pMenu.addSubMenu(MoneyWiseAssetType.SECURITYHOLDING.toString());
                         }
                         if (myCoreMenu == null) {
                             /* Create a new subMenu and add it to the popUp */
@@ -889,7 +890,7 @@ public class MoneyWiseTransactionPanel
                         }
                         if (mySubMenu == null) {
                             /* Create a new subMenu */
-                            mySubMenu = myCoreMenu.getSubMenu().addSubMenu(SecurityHolding.SECURITYHOLDING_NEW);
+                            mySubMenu = myCoreMenu.getSubMenu().addSubMenu(MoneyWiseSecurityHolding.SECURITYHOLDING_NEW);
                         }
 
                         /* Add the item to the menu */
@@ -910,45 +911,45 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildCategoryMenu(final TethysUIScrollMenu<TransactionCategory> pMenu,
-                                  final Transaction pTrans) {
+    public void buildCategoryMenu(final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu,
+                                  final MoneyWiseTransaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionAsset myAccount = pTrans.getAccount();
-        final TransactionCategory myCurr = pTrans.getCategory();
-        TethysUIScrollItem<TransactionCategory> myActive = null;
-        TethysUIScrollItem<TransactionCategory> myItem;
+        final MoneyWiseTransAsset myAccount = pTrans.getAccount();
+        final MoneyWiseTransCategory myCurr = pTrans.getCategory();
+        TethysUIScrollItem<MoneyWiseTransCategory> myActive = null;
+        TethysUIScrollItem<MoneyWiseTransCategory> myItem;
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<MoneyWiseTransCategory>> myMap = new HashMap<>();
 
         /* Access Categories */
-        final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
 
         /* Loop through the available category values */
-        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final TransactionCategory myCategory = myIterator.next();
+            final MoneyWiseTransCategory myCategory = myIterator.next();
 
             /* Only process non-deleted low-level items */
-            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();
             boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
 
             /* Check whether the category is allowable for the owner */
-            bIgnore |= !TransactionValidator.isValidCategory(myAccount, myCategory);
+            bIgnore |= !MoneyWiseTransValidator.isValidCategory(myAccount, myCategory);
             if (bIgnore) {
                 continue;
             }
 
             /* Determine parent */
-            final TransactionCategory myParent = myCategory.getParentCategory();
+            final MoneyWiseTransCategory myParent = myCategory.getParentCategory();
 
             /* If we have a parent */
             if (myParent != null) {
                 final String myParentName = myParent.getName();
-                final TethysUIScrollSubMenu<TransactionCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+                final TethysUIScrollSubMenu<MoneyWiseTransCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
                 /* Create a new MenuItem and add it to the subMenu */
                 myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
@@ -976,22 +977,22 @@ public class MoneyWiseTransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildReturnedAccountMenu(final TethysUIScrollMenu<TransactionAsset> pMenu,
-                                         final Transaction pTrans) {
+    public void buildReturnedAccountMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
+                                         final MoneyWiseTransaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionAsset myCurr = pTrans.getReturnedCashAccount();
-        TethysUIScrollItem<TransactionAsset> myActive = null;
+        final MoneyWiseTransAsset myCurr = pTrans.getReturnedCashAccount();
+        TethysUIScrollItem<MoneyWiseTransAsset> myActive = null;
 
         /* Access Deposits */
-        final DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        final MoneyWiseDepositList myDeposits = getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);
 
         /* Loop through the Portfolios */
-        final Iterator<Deposit> myIterator = myDeposits.iterator();
+        final Iterator<MoneyWiseDeposit> myIterator = myDeposits.iterator();
         while (myIterator.hasNext()) {
-            final Deposit myDeposit = myIterator.next();
+            final MoneyWiseDeposit myDeposit = myIterator.next();
 
             /* Ignore deleted or closed */
             final boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
@@ -1000,7 +1001,7 @@ public class MoneyWiseTransactionPanel
             }
 
             /* Create a new action for the account */
-            final TethysUIScrollItem<TransactionAsset> myItem = pMenu.addItem(myDeposit);
+            final TethysUIScrollItem<MoneyWiseTransAsset> myItem = pMenu.addItem(myDeposit);
 
             /* If this is the active returned account */
             if (myDeposit.equals(myCurr)) {
@@ -1019,14 +1020,14 @@ public class MoneyWiseTransactionPanel
      * Build the possible TransactionTag list.
      * @return the transaction tag iterator
      */
-    public Iterator<TransactionTag> buildTransactionTags() {
+    public Iterator<MoneyWiseTransTag> buildTransactionTags() {
         /* Create a list */
-        final List<TransactionTag> myList = new ArrayList<>();
+        final List<MoneyWiseTransTag> myList = new ArrayList<>();
 
         /* Loop through the TransactionTags */
-        final Iterator<TransactionTag> myIterator = getItem().getDataSet().getTransactionTags().iterator();
+        final Iterator<MoneyWiseTransTag> myIterator = getItem().getDataSet().getTransactionTags().iterator();
         while (myIterator.hasNext()) {
-            final TransactionTag myTag = myIterator.next();
+            final MoneyWiseTransTag myTag = myIterator.next();
 
             /* Add to list if available */
             if (!myTag.isDeleted()) {

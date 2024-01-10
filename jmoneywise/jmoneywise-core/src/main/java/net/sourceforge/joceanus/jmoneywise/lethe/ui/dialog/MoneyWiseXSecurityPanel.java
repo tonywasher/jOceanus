@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 /**
  * Panel to display/edit/create a Security.
  */
-public class MoneyWiseSecurityPanel
+public class MoneyWiseXSecurityPanel
         extends MoneyWiseXItemPanel<Security> {
     /**
      * Prices Tab Title.
@@ -76,7 +76,7 @@ public class MoneyWiseSecurityPanel
     /**
      * SecurityPrice Table.
      */
-    private final MoneyWiseSecurityPriceTable thePrices;
+    private final MoneyWiseXSecurityPriceTable thePrices;
 
     /**
      * The Closed State.
@@ -90,10 +90,10 @@ public class MoneyWiseSecurityPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseSecurityPanel(final TethysUIFactory<?> pFactory,
-                                  final MoneyWiseXView pView,
-                                  final UpdateSet pUpdateSet,
-                                  final MetisErrorPanel pError) {
+    public MoneyWiseXSecurityPanel(final TethysUIFactory<?> pFactory,
+                                   final MoneyWiseXView pView,
+                                   final UpdateSet pUpdateSet,
+                                   final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);
 
@@ -110,7 +110,7 @@ public class MoneyWiseSecurityPanel
         buildNotesPanel(pFactory);
 
         /* Create the SecurityPrices table */
-        thePrices = new MoneyWiseSecurityPriceTable(pView, getUpdateSet(), pError);
+        thePrices = new MoneyWiseXSecurityPriceTable(pView, getUpdateSet(), pError);
         theFieldSet.newTable(TAB_PRICES, thePrices);
 
         /* Create the listener */

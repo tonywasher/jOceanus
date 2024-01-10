@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 /**
  * Panel to display/edit/create a Region.
  */
-public class MoneyWiseRegionPanel
+public class MoneyWiseXRegionPanel
         extends MoneyWiseXItemPanel<Region> {
     /**
      * Constructor.
@@ -42,9 +42,9 @@ public class MoneyWiseRegionPanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseRegionPanel(final TethysUIFactory<?> pFactory,
-                                final UpdateSet pUpdateSet,
-                                final MetisErrorPanel pError) {
+    public MoneyWiseXRegionPanel(final TethysUIFactory<?> pFactory,
+                                 final UpdateSet pUpdateSet,
+                                 final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);
 

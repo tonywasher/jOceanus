@@ -14,31 +14,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseAssetDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseIcon;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -58,11 +62,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Loan.
  */
 public class MoneyWiseLoanPanel
-        extends MoneyWiseXItemPanel<Loan> {
+        extends MoneyWiseItemPanel<MoneyWiseLoan> {
     /**
      * The fieldSet.
      */
-    private final PrometheusXFieldSet<Loan> theFieldSet;
+    private final PrometheusFieldSet<MoneyWiseLoan> theFieldSet;
 
     /**
      * The Closed State.
@@ -72,14 +76,14 @@ public class MoneyWiseLoanPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pError the error panel
      */
     public MoneyWiseLoanPanel(final TethysUIFactory<?> pFactory,
-                              final UpdateSet pUpdateSet,
+                              final PrometheusEditSet pEditSet,
                               final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pUpdateSet, pError);
+        super(pFactory, pEditSet, pError);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
@@ -105,24 +109,24 @@ public class MoneyWiseLoanPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<AssetCategory> myCategoryButton = myFields.newScrollField(AssetCategory.class);
-        final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
-        final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
+        final TethysUIScrollButtonField<MoneyWiseAssetCategory> myCategoryButton = myFields.newScrollField(MoneyWiseAssetCategory.class);
+        final TethysUIScrollButtonField<MoneyWisePayee> myParentButton = myFields.newScrollField(MoneyWisePayee.class);
+        final TethysUIScrollButtonField<MoneyWiseCurrency> myCurrencyButton = myFields.newScrollField(MoneyWiseCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Loan::getName);
-        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Loan::getDesc);
-        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myCategoryButton, Loan::getCategory);
-        theFieldSet.addField(MoneyWiseAssetDataId.PARENT, myParentButton, Loan::getParent);
-        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Loan::getAssetCurrency);
-        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Loan::isClosed);
+        theFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseLoan::getName);
+        theFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseLoan::getDesc);
+        theFieldSet.addField(MoneyWiseBasicResource.CATEGORY_NAME, myCategoryButton, MoneyWiseLoan::getCategory);
+        theFieldSet.addField(MoneyWiseBasicResource.ASSET_PARENT, myParentButton, MoneyWiseLoan::getParent);
+        theFieldSet.addField(MoneyWiseStaticDataType.CURRENCY, myCurrencyButton, MoneyWiseLoan::getAssetCurrency);
+        theFieldSet.addField(MoneyWiseBasicResource.ASSET_CLOSED, myClosedButton, MoneyWiseLoan::isClosed);
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseXIcon.configureLockedIconButton(pFactory);
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
     }
 
@@ -142,10 +146,10 @@ public class MoneyWiseLoanPanel
         final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.LOANSORTCODE, mySortCode, Loan::getSortCode);
-        theFieldSet.addField(MoneyWiseAssetDataId.LOANACCOUNT, myAccount, Loan::getAccount);
-        theFieldSet.addField(MoneyWiseAssetDataId.LOANREFERENCE, myReference, Loan::getReference);
-        theFieldSet.addField(MoneyWiseAssetDataId.LOANOPENINGBALANCE, myOpening, Loan::getOpeningBalance);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), mySortCode, MoneyWiseLoan::getSortCode);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), myAccount, MoneyWiseLoan::getAccount);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), myReference, MoneyWiseLoan::getReference);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), myOpening, MoneyWiseLoan::getOpeningBalance);
 
         /* Configure the currency */
         myOpening.setDeemedCurrency(() -> getItem().getCurrency());
@@ -161,16 +165,16 @@ public class MoneyWiseLoanPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.LOANNOTES, myNotes, Loan::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWiseLoan::getNotes);
     }
 
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Loan myItem = getItem();
+        final MoneyWiseLoan myItem = getItem();
         if (myItem != null) {
-            final LoanList myLoans = getDataList(MoneyWiseDataType.LOAN, LoanList.class);
-            setItem(myLoans.findItemById(myItem.getId()));
+            final MoneyWiseLoanList myLoans = getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class);
+            setItem(myLoans.findItemById(myItem.getIndexedId()));
         }
 
         /* Make sure that the item is not editable */
@@ -180,7 +184,7 @@ public class MoneyWiseLoanPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        final Loan myLoan = getItem();
+        final MoneyWiseLoan myLoan = getItem();
         final boolean bIsClosed = myLoan.isClosed();
         final boolean bIsActive = myLoan.isActive();
         final boolean bIsRelevant = myLoan.isRelevant();
@@ -188,80 +192,80 @@ public class MoneyWiseLoanPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
+        theFieldSet.setFieldVisible(MoneyWiseBasicResource.ASSET_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed
                 ? !myLoan.getParent().isClosed()
                 : !bIsRelevant;
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myLoan.getDesc() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
+        theFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANSORTCODE, bShowSortCode);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), bShowSortCode);
         final boolean bShowAccount = isEditable || myLoan.getAccount() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANACCOUNT, bShowAccount);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), bShowAccount);
         final boolean bShowReference = isEditable || myLoan.getReference() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANREFERENCE, bShowReference);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), bShowReference);
         final boolean bHasOpening = myLoan.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANOPENINGBALANCE, bShowOpening);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), bShowOpening);
         final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.LOANNOTES, bShowNotes);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, bIsChangeable);
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, bIsChangeable && !bHasOpening);
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.LOANOPENINGBALANCE, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseStaticDataType.CURRENCY, bIsChangeable && !bHasOpening);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), bIsChangeable);
 
         /* Set editable value for parent */
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, isEditable && !bIsClosed);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_PARENT, isEditable && !bIsClosed);
     }
 
     @Override
-    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final Loan myLoan = getItem();
+        final MetisDataFieldId myField = pUpdate.getFieldId();
+        final MoneyWiseLoan myLoan = getItem();
 
         /* Process updates */
-        if (MoneyWiseAssetDataId.NAME.equals(myField)) {
+        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {
             /* Update the Name */
             myLoan.setName(pUpdate.getValue(String.class));
-        } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
+        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {
             /* Update the Description */
             myLoan.setDescription(pUpdate.getValue(String.class));
-        } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
+        } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {
             /* Update the Category */
-            myLoan.setCategory(pUpdate.getValue(LoanCategory.class));
-            myLoan.autoCorrect(getUpdateSet());
-        } else if (MoneyWiseAssetDataId.PARENT.equals(myField)) {
+            myLoan.setCategory(pUpdate.getValue(MoneyWiseLoanCategory.class));
+            myLoan.autoCorrect(getEditSet());
+        } else if (MoneyWiseBasicResource.ASSET_PARENT.equals(myField)) {
             /* Update the Parent */
-            myLoan.setParent(pUpdate.getValue(Payee.class));
-        } else if (MoneyWiseAssetDataId.CURRENCY.equals(myField)) {
+            myLoan.setParent(pUpdate.getValue(MoneyWisePayee.class));
+        } else if (MoneyWiseStaticDataType.CURRENCY.equals(myField)) {
             /* Update the Currency */
-            myLoan.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
-        } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
+            myLoan.setAssetCurrency(pUpdate.getValue(MoneyWiseCurrency.class));
+        } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myLoan.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MoneyWiseAssetDataId.LOANSORTCODE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE).equals(myField)) {
             /* Update the SortCode */
             myLoan.setSortCode(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.LOANACCOUNT.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT).equals(myField)) {
             /* Update the Account */
             myLoan.setAccount(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.LOANREFERENCE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE).equals(myField)) {
             /* Update the Reference */
             myLoan.setReference(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.LOANOPENINGBALANCE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE).equals(myField)) {
             /* Update the OpeningBalance */
             myLoan.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseAssetDataId.LOANNOTES.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
             /* Update the Notes */
             myLoan.setNotes(pUpdate.getValue(char[].class));
         }
@@ -269,11 +273,11 @@ public class MoneyWiseLoanPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final Loan myItem = getItem();
-        final Payee myParent = myItem.getParent();
+        final MoneyWiseLoan myItem = getItem();
+        final MoneyWisePayee myParent = myItem.getParent();
         if (!pUpdates) {
-            final LoanCategory myCategory = myItem.getCategory();
-            final AssetCurrency myCurrency = myItem.getAssetCurrency();
+            final MoneyWiseLoanCategory myCategory = myItem.getCategory();
+            final MoneyWiseCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
         }
@@ -285,39 +289,39 @@ public class MoneyWiseLoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCategoryMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
-                                  final Loan pLoan) {
+    public void buildCategoryMenu(final TethysUIScrollMenu<MoneyWiseAssetCategory> pMenu,
+                                  final MoneyWiseLoan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final LoanCategory myCurr = pLoan.getCategory();
-        TethysUIScrollItem<AssetCategory> myActive = null;
+        final MoneyWiseLoanCategory myCurr = pLoan.getCategory();
+        TethysUIScrollItem<MoneyWiseAssetCategory> myActive = null;
 
         /* Access Loan Categories */
-        final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+        final MoneyWiseLoanCategoryList myCategories = getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<AssetCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<MoneyWiseAssetCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
-        final Iterator<LoanCategory> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseLoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final LoanCategory myCategory = myIterator.next();
+            final MoneyWiseLoanCategory myCategory = myIterator.next();
 
             /* Ignore deleted or parent */
-            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(LoanCategoryClass.PARENT);
+            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT);
             if (bIgnore) {
                 continue;
             }
 
             /* Determine menu to add to */
-            final LoanCategory myParent = myCategory.getParentCategory();
+            final MoneyWiseLoanCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<AssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysUIScrollSubMenu<MoneyWiseAssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<AssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<MoneyWiseAssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -336,23 +340,23 @@ public class MoneyWiseLoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildParentMenu(final TethysUIScrollMenu<Payee> pMenu,
-                                final Loan pLoan) {
+    public void buildParentMenu(final TethysUIScrollMenu<MoneyWisePayee> pMenu,
+                                final MoneyWiseLoan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final LoanCategoryClass myType = pLoan.getCategoryClass();
-        final Payee myCurr = pLoan.getParent();
-        TethysUIScrollItem<Payee> myActive = null;
+        final MoneyWiseLoanCategoryClass myType = pLoan.getCategoryClass();
+        final MoneyWisePayee myCurr = pLoan.getParent();
+        TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */
-        final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final MoneyWisePayeeList myPayees = getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
 
         /* Loop through the Payees */
-        final Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            final Payee myPayee = myIterator.next();
+            final MoneyWisePayee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
             boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentLoan(myType);
@@ -362,7 +366,7 @@ public class MoneyWiseLoanPanel
             }
 
             /* Create a new action for the payee */
-            final TethysUIScrollItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysUIScrollItem<MoneyWisePayee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -382,22 +386,22 @@ public class MoneyWiseLoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCurrencyMenu(final TethysUIScrollMenu<AssetCurrency> pMenu,
-                                  final Loan pLoan) {
+    public void buildCurrencyMenu(final TethysUIScrollMenu<MoneyWiseCurrency> pMenu,
+                                  final MoneyWiseLoan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final AssetCurrency myCurr = pLoan.getAssetCurrency();
-        TethysUIScrollItem<AssetCurrency> myActive = null;
+        final MoneyWiseCurrency myCurr = pLoan.getAssetCurrency();
+        TethysUIScrollItem<MoneyWiseCurrency> myActive = null;
 
         /* Access Currencies */
-        final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
+        final MoneyWiseCurrencyList myCurrencies = getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        final Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
+        final Iterator<MoneyWiseCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            final AssetCurrency myCurrency = myIterator.next();
+            final MoneyWiseCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
             final boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
@@ -406,7 +410,7 @@ public class MoneyWiseLoanPanel
             }
 
             /* Create a new action for the currency */
-            final TethysUIScrollItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysUIScrollItem<MoneyWiseCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

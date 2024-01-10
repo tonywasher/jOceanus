@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseXAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseTransactionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXTransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
@@ -87,7 +87,7 @@ public class MoneyWiseTransactionTable
     /**
      * The transaction dialog.
      */
-    private final MoneyWiseTransactionPanel theActiveTran;
+    private final MoneyWiseXTransactionPanel theActiveTran;
 
     /**
      * The new button.
@@ -189,7 +189,7 @@ public class MoneyWiseTransactionTable
         theBuilder = new TransactionBuilder(getUpdateSet());
 
         /* Create a transaction panel */
-        theActiveTran = new MoneyWiseTransactionPanel(myGuiFactory, pUpdateSet, theBuilder, theSelect, pError);
+        theActiveTran = new MoneyWiseXTransactionPanel(myGuiFactory, pUpdateSet, theBuilder, theSelect, pError);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */

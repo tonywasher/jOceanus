@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 /**
  * Panel to display/edit/create a Payee.
  */
-public class MoneyWisePayeePanel
+public class MoneyWiseXPayeePanel
         extends MoneyWiseXItemPanel<Payee> {
     /**
      * The fieldSet.
@@ -67,9 +67,9 @@ public class MoneyWisePayeePanel
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWisePayeePanel(final TethysUIFactory<?> pFactory,
-                               final UpdateSet pUpdateSet,
-                               final MetisErrorPanel pError) {
+    public MoneyWiseXPayeePanel(final TethysUIFactory<?> pFactory,
+                                final UpdateSet pUpdateSet,
+                                final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);
 

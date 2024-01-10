@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseRegionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXRegionPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -54,7 +54,7 @@ public class MoneyWiseRegionTable
     /**
      * The Region dialog.
      */
-    private final MoneyWiseRegionPanel theActiveRegion;
+    private final MoneyWiseXRegionPanel theActiveRegion;
 
     /**
      * The edit list.
@@ -87,7 +87,7 @@ public class MoneyWiseRegionTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a region panel */
-        theActiveRegion = new MoneyWiseRegionPanel(myGuiFactory, pUpdateSet, pError);
+        theActiveRegion = new MoneyWiseXRegionPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveRegion);
 
         /* Set table configuration */

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXCategoryTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseDepositCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXDepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
@@ -49,7 +49,7 @@ public class MoneyWiseDepositCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseDepositCategoryPanel theActiveCategory;
+    private final MoneyWiseXDepositCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
@@ -72,7 +72,7 @@ public class MoneyWiseDepositCategoryTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseDepositCategoryPanel(myGuiFactory, pUpdateSet, pError);
+        theActiveCategory = new MoneyWiseXDepositCategoryPanel(myGuiFactory, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Add listeners */

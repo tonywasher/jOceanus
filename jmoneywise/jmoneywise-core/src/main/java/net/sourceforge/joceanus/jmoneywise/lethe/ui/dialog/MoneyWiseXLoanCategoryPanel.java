@@ -21,11 +21,11 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseCategoryDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
@@ -40,24 +40,24 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
- * Panel to display/edit/create a CashCategory.
+ * Panel to display/edit/create a LoanCategory.
  */
-public class MoneyWiseCashCategoryPanel
-        extends MoneyWiseXItemPanel<CashCategory> {
+public class MoneyWiseXLoanCategoryPanel
+        extends MoneyWiseXItemPanel<LoanCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWiseCashCategoryPanel(final TethysUIFactory<?> pFactory,
-                                      final UpdateSet pUpdateSet,
-                                      final MetisErrorPanel pError) {
+    public MoneyWiseXLoanCategoryPanel(final TethysUIFactory<?> pFactory,
+                                       final UpdateSet pUpdateSet,
+                                       final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);
 
         /* Create a new panel */
-        final PrometheusXFieldSet<CashCategory> myFieldSet = getFieldSet();
+        final PrometheusXFieldSet<LoanCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -66,15 +66,15 @@ public class MoneyWiseCashCategoryPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<CashCategoryType> myTypeButton = myFields.newScrollField(CashCategoryType.class);
-        final TethysUIScrollButtonField<CashCategory> myParentButton = myFields.newScrollField(CashCategory.class);
+        final TethysUIScrollButtonField<LoanCategoryType> myTypeButton = myFields.newScrollField(LoanCategoryType.class);
+        final TethysUIScrollButtonField<LoanCategory> myParentButton = myFields.newScrollField(LoanCategory.class);
 
         /* Assign the fields to the panel */
-        myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, CashCategory::getName);
-        myFieldSet.addField(MoneyWiseCategoryDataId.SUBCAT, mySubName, CashCategory::getSubCategory);
-        myFieldSet.addField(MoneyWiseCategoryDataId.DESC, myDesc, CashCategory::getDesc);
-        myFieldSet.addField(MoneyWiseCategoryDataId.CASHCATTYPE, myTypeButton, CashCategory::getCategoryType);
-        myFieldSet.addField(MoneyWiseCategoryDataId.PARENT, myParentButton, CashCategory::getParentCategory);
+        myFieldSet.addField(MoneyWiseCategoryDataId.NAME, myName, LoanCategory::getName);
+        myFieldSet.addField(MoneyWiseCategoryDataId.SUBCAT, mySubName, LoanCategory::getSubCategory);
+        myFieldSet.addField(MoneyWiseCategoryDataId.DESC, myDesc, LoanCategory::getDesc);
+        myFieldSet.addField(MoneyWiseCategoryDataId.LOANCATTYPE, myTypeButton, LoanCategory::getCategoryType);
+        myFieldSet.addField(MoneyWiseCategoryDataId.PARENT, myParentButton, LoanCategory::getParentCategory);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -84,9 +84,9 @@ public class MoneyWiseCashCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final CashCategory myItem = getItem();
+        final LoanCategory myItem = getItem();
         if (myItem != null) {
-            final CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+            final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -97,12 +97,12 @@ public class MoneyWiseCashCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusXFieldSet<CashCategory> myFieldSet = getFieldSet();
+        final PrometheusXFieldSet<LoanCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
-        final CashCategory myCategory = getItem();
-        final CashCategoryType myType = myCategory.getCategoryType();
-        final boolean isParent = myType.isCashCategory(CashCategoryClass.PARENT);
+        final LoanCategory myCategory = getItem();
+        final LoanCategoryType myType = myCategory.getCategoryType();
+        final boolean isParent = myType.isLoanCategory(LoanCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
@@ -117,7 +117,7 @@ public class MoneyWiseCashCategoryPanel
 
         /* We cannot change a parent category type */
         canEdit &= !isParent;
-        myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.CASHCATTYPE, canEdit);
+        myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.LOANCATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
         myFieldSet.setFieldEditable(MoneyWiseCategoryDataId.NAME, isEditable && isParent);
@@ -127,7 +127,7 @@ public class MoneyWiseCashCategoryPanel
     protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final CashCategory myCategory = getItem();
+        final LoanCategory myCategory = getItem();
 
         /* Process updates */
         if (MoneyWiseCategoryDataId.NAME.equals(myField)) {
@@ -138,22 +138,22 @@ public class MoneyWiseCashCategoryPanel
             myCategory.setSubCategoryName(pUpdate.getValue(String.class));
         } else if (MoneyWiseCategoryDataId.PARENT.equals(myField)) {
             /* Update the Parent */
-            myCategory.setParentCategory(pUpdate.getValue(CashCategory.class));
+            myCategory.setParentCategory(pUpdate.getValue(LoanCategory.class));
         } else if (MoneyWiseCategoryDataId.DESC.equals(myField)) {
             /* Update the Description */
             myCategory.setDescription(pUpdate.getValue(String.class));
-        } else if (MoneyWiseCategoryDataId.CASHCATTYPE.equals(myField)) {
+        } else if (MoneyWiseCategoryDataId.LOANCATTYPE.equals(myField)) {
             /* Update the Category Type */
-            myCategory.setCategoryType(pUpdate.getValue(CashCategoryType.class));
+            myCategory.setCategoryType(pUpdate.getValue(LoanCategoryType.class));
         }
     }
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final CashCategory myItem = getItem();
-        final CashCategory myParent = myItem.getParentCategory();
+        final LoanCategory myItem = getItem();
+        final LoanCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            final CashCategoryType myType = myItem.getCategoryType();
+            final LoanCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -164,34 +164,34 @@ public class MoneyWiseCashCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysUIScrollMenu<CashCategoryType> pMenu,
-                                      final CashCategory pCategory) {
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<LoanCategoryType> pMenu,
+                                      final LoanCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final CashCategoryType myCurr = pCategory.getCategoryType();
-        TethysUIScrollItem<CashCategoryType> myActive = null;
+        final LoanCategoryType myCurr = pCategory.getCategoryType();
+        TethysUIScrollItem<LoanCategoryType> myActive = null;
 
-        /* Access Cash Category types */
-        final CashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
+        /* Access Loan Category types */
+        final LoanCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
 
-        /* Loop through the CashCategoryTypes */
-        final Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();
+        /* Loop through the LoanCategoryTypes */
+        final Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            final CashCategoryType myType = myIterator.next();
+            final LoanCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
 
             /* Ignore category if it is a parent */
-            bIgnore |= myType.getCashClass().isParentCategory();
+            bIgnore |= myType.getLoanClass().isParentCategory();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the type */
-            final TethysUIScrollItem<CashCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<LoanCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -211,29 +211,29 @@ public class MoneyWiseCashCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private static void buildParentMenu(final TethysUIScrollMenu<CashCategory> pMenu,
-                                        final CashCategory pCategory) {
+    private static void buildParentMenu(final TethysUIScrollMenu<LoanCategory> pMenu,
+                                        final LoanCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final CashCategory myCurr = pCategory.getParentCategory();
-        TethysUIScrollItem<CashCategory> myActive = null;
+        final LoanCategory myCurr = pCategory.getParentCategory();
+        TethysUIScrollItem<LoanCategory> myActive = null;
 
-        /* Loop through the CashCategories */
-        final CashCategoryList myCategories = pCategory.getList();
-        final Iterator<CashCategory> myIterator = myCategories.iterator();
+        /* Loop through the LoanCategories */
+        final LoanCategoryList myCategories = pCategory.getList();
+        final Iterator<LoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final CashCategory myCat = myIterator.next();
+            final LoanCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-parent items */
-            final CashCategoryClass myClass = myCat.getCategoryTypeClass();
+            final LoanCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isParentCategory()) {
                 continue;
             }
 
-            /* Create a new action for the type */
-            final TethysUIScrollItem<CashCategory> myItem = pMenu.addItem(myCat);
+            /* Create a new action for the parent */
+            final TethysUIScrollItem<LoanCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

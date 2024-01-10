@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXAssetTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseDepositPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.MoneyWiseXDepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
@@ -59,7 +59,7 @@ public class MoneyWiseDepositTable
     /**
      * The Deposit dialog.
      */
-    private final MoneyWiseDepositPanel theActiveDeposit;
+    private final MoneyWiseXDepositPanel theActiveDeposit;
 
     /**
      * The edit list.
@@ -86,7 +86,7 @@ public class MoneyWiseDepositTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a Deposit panel */
-        theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, pUpdateSet, pError);
+        theActiveDeposit = new MoneyWiseXDepositPanel(myGuiFactory, pView, pUpdateSet, pError);
         declareItemPanel(theActiveDeposit);
 
         /* Finish the table */

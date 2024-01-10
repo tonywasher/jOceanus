@@ -172,6 +172,7 @@ public class PrometheusDBConfig {
     /**
      * Construct config from prefs.
      * @param pPreferences the preferences
+     * @return the config
      */
     public static PrometheusDBConfig fromPrefs(final PrometheusDatabasePreferences pPreferences) {
         final PrometheusDBConfig myConfig = new PrometheusDBConfig();

@@ -14,18 +14,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseTagDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
@@ -35,21 +35,21 @@ import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
  * Panel to display/edit/create a TransactionTag.
  */
 public class MoneyWiseTagPanel
-        extends MoneyWiseXItemPanel<TransactionTag> {
+        extends MoneyWiseItemPanel<MoneyWiseTransTag> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pError the error panel
      */
     public MoneyWiseTagPanel(final TethysUIFactory<?> pFactory,
-                             final UpdateSet pUpdateSet,
+                             final PrometheusEditSet pEditSet,
                              final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pUpdateSet, pError);
+        super(pFactory, pEditSet, pError);
 
         /* Access the fieldSet */
-        final PrometheusXFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<MoneyWiseTransTag> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -57,17 +57,17 @@ public class MoneyWiseTagPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Assign the fields to the panel */
-        myFieldSet.addField(MoneyWiseTagDataId.NAME, myName, TransactionTag::getName);
-        myFieldSet.addField(MoneyWiseTagDataId.DESC, myDesc, TransactionTag::getDesc);
+        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseTransTag::getName);
+        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseTransTag::getDesc);
     }
 
     @Override
     public void refreshData() {
         /* If we have an item */
-        final TransactionTag myItem = getItem();
+        final MoneyWiseTransTag myItem = getItem();
         if (myItem != null) {
-            final TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
-            setItem(myTags.findItemById(myItem.getId()));
+            final MoneyWiseTransTagList myTags = getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class);
+            setItem(myTags.findItemById(myItem.getIndexedId()));
         }
 
         /* Make sure that the item is not editable */
@@ -77,24 +77,24 @@ public class MoneyWiseTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusXFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<MoneyWiseTransTag> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
-        myFieldSet.setFieldVisible(MoneyWiseTagDataId.DESC, bShowDesc);
+        myFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);
     }
 
     @Override
-    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final TransactionTag myTag = getItem();
+        final MetisDataFieldId myField = pUpdate.getFieldId();
+        final MoneyWiseTransTag myTag = getItem();
 
         /* Process updates */
-        if (MoneyWiseTagDataId.NAME.equals(myField)) {
+        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {
             /* Update the Name */
             myTag.setName(pUpdate.getValue(String.class));
-       } else if (MoneyWiseTagDataId.DESC.equals(myField)) {
+        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {
             /* Update the Description */
             myTag.setDescription(pUpdate.getValue(String.class));
         }

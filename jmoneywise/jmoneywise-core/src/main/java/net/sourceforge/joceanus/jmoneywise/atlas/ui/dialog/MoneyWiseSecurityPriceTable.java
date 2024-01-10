@@ -14,27 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWisePriceDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXDialogTable;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetTableTab.PrometheusXFieldSetTable;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseDialogTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -46,77 +46,77 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  * Security Price Table.
  */
 public class MoneyWiseSecurityPriceTable
-        extends MoneyWiseXDialogTable<SecurityPrice>
-        implements PrometheusXFieldSetTable<Security> {
+        extends MoneyWiseDialogTable<MoneyWiseSecurityPrice>
+        implements PrometheusFieldSetTable<MoneyWiseSecurity> {
     /**
      * Security.
      */
-    private Security theSecurity;
+    private MoneyWiseSecurity theSecurity;
 
     /**
      * The edit list.
      */
-    private SecurityPriceList thePrices;
+    private MoneyWiseSecurityPriceList thePrices;
 
     /**
      * The active column.
      */
-    private final TethysUITableColumn<MetisAction, PrometheusDataFieldId, SecurityPrice> theActiveColumn;
+    private final TethysUITableColumn<MetisAction, MetisDataFieldId, MoneyWiseSecurityPrice> theActiveColumn;
 
     /**
      * Constructor.
      * @param pView the view
-     * @param pUpdateSet the updateSet
+     * @param pEditSet the editSet
      * @param pError the error panel
      */
-    public MoneyWiseSecurityPriceTable(final MoneyWiseXView pView,
-                                       final UpdateSet pUpdateSet,
+    public MoneyWiseSecurityPriceTable(final MoneyWiseView pView,
+                                       final PrometheusEditSet pEditSet,
                                        final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITYPRICE);
+        super(pView, pEditSet, pError, MoneyWiseBasicDataType.SECURITYPRICE);
 
         /* Access Gui factory */
-        final TethysUITableManager<PrometheusDataFieldId, SecurityPrice> myTable = getTable();
+        final TethysUITableManager<MetisDataFieldId, MoneyWiseSecurityPrice> myTable = getTable();
 
         /* Set table configuration */
-        myTable.setDisabled(SecurityPrice::isDisabled)
-               .setComparator(SecurityPrice::compareTo);
+        myTable.setDisabled(MoneyWiseSecurityPrice::isDisabled)
+                .setComparator(MoneyWiseSecurityPrice::compareTo);
 
         /* Create the date column */
-        myTable.declareDateColumn(MoneyWisePriceDataId.DATE)
-               .setCellValueFactory(SecurityPrice::getDate)
-               .setEditable(true)
-               .setColumnWidth(WIDTH_DATE)
-               .setOnCommit((r, v) -> updateField(SecurityPrice::setDate, r, v));
+        myTable.declareDateColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE)
+                .setCellValueFactory(MoneyWiseSecurityPrice::getDate)
+                .setEditable(true)
+                .setColumnWidth(WIDTH_DATE)
+                .setOnCommit((r, v) -> updateField(MoneyWiseSecurityPrice::setDate, r, v));
 
         /* Create the price column */
-        myTable.declarePriceColumn(MoneyWisePriceDataId.PRICE)
-               .setCellValueFactory(SecurityPrice::getPrice)
-               .setEditable(true)
-               .setColumnWidth(WIDTH_PRICE)
-               .setOnCommit((r, v) -> updateField(SecurityPrice::setPrice, r, v));
+        myTable.declarePriceColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE)
+                .setCellValueFactory(MoneyWiseSecurityPrice::getPrice)
+                .setEditable(true)
+                .setColumnWidth(WIDTH_PRICE)
+                .setOnCommit((r, v) -> updateField(MoneyWiseSecurityPrice::setPrice, r, v));
 
         /* Create the Active column */
         final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(pView.getGuiFactory());
-        theActiveColumn = myTable.declareIconColumn(PrometheusDataId.TOUCH, MetisAction.class)
-               .setIconMapSet(r -> myActionMapSet)
-               .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-               .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setColumnWidth(WIDTH_ICON)
-               .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
+        theActiveColumn = myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)
+                .setIconMapSet(r -> myActionMapSet)
+                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
+                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_ICON)
+                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
     }
 
     @Override
     public void refreshData() {
         /* Access the prices list */
-        thePrices = getUpdateSet().getDataList(MoneyWiseDataType.SECURITYPRICE, SecurityPriceList.class);
+        thePrices = getUpdateSet().getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);
         getTable().setItems(thePrices.getUnderlyingList());
     }
 
     @Override
-    public void setItem(final Security pSecurity) {
+    public void setItem(final MoneyWiseSecurity pSecurity) {
         /* Store the security */
         if (!MetisDataDifference.isEqual(pSecurity, theSecurity)) {
             theSecurity = pSecurity;
@@ -129,7 +129,7 @@ public class MoneyWiseSecurityPriceTable
         /* Protect against Exceptions */
         try {
             /* Add a new price */
-            final SecurityPrice myPrice = addNewPrice(theSecurity);
+            final MoneyWiseSecurityPrice myPrice = addNewPrice(theSecurity);
 
             /* Shift display to line */
             updateTableData();
@@ -153,22 +153,22 @@ public class MoneyWiseSecurityPriceTable
      * @throws OceanusException on error
      * @return the price
      */
-    public SecurityPrice addNewPrice(final Security pSecurity) throws OceanusException {
+    public MoneyWiseSecurityPrice addNewPrice(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Create the new price */
-        final SecurityPrice myPrice = new SecurityPrice(thePrices);
+        final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(thePrices);
 
         /* Set the item value */
         myPrice.setSecurity(pSecurity);
         myPrice.setPrice(TethysPrice.getWholeUnits(1, pSecurity.getCurrency()));
 
         /* Access iterator */
-        final Iterator<SecurityPrice> myIterator = getTable().viewIterator();
+        final Iterator<MoneyWiseSecurityPrice> myIterator = getTable().viewIterator();
 
         /* Assume that we can use todays date */
         TethysDate myDate = new TethysDate();
 
         /* Access the last price */
-        final SecurityPrice myLast = myIterator.hasNext()
+        final MoneyWiseSecurityPrice myLast = myIterator.hasNext()
                 ? myIterator.next()
                 : null;
 
@@ -209,7 +209,7 @@ public class MoneyWiseSecurityPriceTable
     }
 
     @Override
-    protected boolean isFiltered(final SecurityPrice pRow) {
+    protected boolean isFiltered(final MoneyWiseSecurityPrice pRow) {
         return super.isFiltered(pRow)
                 && theSecurity != null
                 && theSecurity.equals(pRow.getSecurity());

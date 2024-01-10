@@ -16,48 +16,67 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseAssetDataId;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseXView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
 
 /**
- * Panel to display/edit/create a Portfolio.
+ * Panel to display/edit/create a Deposit.
  */
-public class MoneyWisePortfolioPanel
-        extends MoneyWiseXItemPanel<Portfolio> {
+public class MoneyWiseXDepositPanel
+        extends MoneyWiseXItemPanel<Deposit> {
+    /**
+     * Rates Tab Title.
+     */
+    private static final String TAB_RATES = MoneyWiseUIResource.DEPOSITPANEL_TAB_RATES.getValue();
+
     /**
      * The fieldSet.
      */
-    private final PrometheusXFieldSet<Portfolio> theFieldSet;
+    private final PrometheusXFieldSet<Deposit> theFieldSet;
+
+    /**
+     * DepositRate Table.
+     */
+    private final MoneyWiseXDepositRateTable theRates;
 
     /**
      * The Closed State.
@@ -67,12 +86,14 @@ public class MoneyWisePortfolioPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pView the data view
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public MoneyWisePortfolioPanel(final TethysUIFactory<?> pFactory,
-                                   final UpdateSet pUpdateSet,
-                                   final MetisErrorPanel pError) {
+    public MoneyWiseXDepositPanel(final TethysUIFactory<?> pFactory,
+                                  final MoneyWiseXView pView,
+                                  final UpdateSet pUpdateSet,
+                                  final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pUpdateSet, pError);
 
@@ -85,11 +106,18 @@ public class MoneyWisePortfolioPanel
         /* Build the account panel */
         buildAccountPanel(pFactory);
 
-        /* Build the web panel */
-        buildWebPanel(pFactory);
-
         /* Build the notes panel */
         buildNotesPanel(pFactory);
+
+        /* Create the DepositRates table and add to fieldSet */
+        theRates = new MoneyWiseXDepositRateTable(pView, getUpdateSet(), pError);
+        theFieldSet.newTable(TAB_RATES, theRates);
+
+        /* Create the listeners */
+        theRates.getEventRegistrar().addEventListener(e -> {
+            updateActions();
+            fireStateChanged();
+        });
     }
 
     /**
@@ -103,21 +131,21 @@ public class MoneyWisePortfolioPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<AssetCategory> myTypeButton = myFields.newScrollField(AssetCategory.class);
+        final TethysUIScrollButtonField<AssetCategory> myCategoryButton = myFields.newScrollField(AssetCategory.class);
         final TethysUIScrollButtonField<Payee> myParentButton = myFields.newScrollField(Payee.class);
         final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Portfolio::getName);
-        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Portfolio::getDesc);
-        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myTypeButton, Portfolio::getCategory);
-        theFieldSet.addField(MoneyWiseAssetDataId.PARENT, myParentButton, Portfolio::getParent);
-        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Portfolio::getAssetCurrency);
-        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Portfolio::isClosed);
+        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Deposit::getName);
+        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Deposit::getDesc);
+        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myCategoryButton, Deposit::getCategory);
+        theFieldSet.addField(MoneyWiseAssetDataId.PARENT, myParentButton, Deposit::getParent);
+        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Deposit::getAssetCurrency);
+        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Deposit::isClosed);
 
         /* Configure the menuBuilders */
-        myTypeButton.setMenuConfigurator(c -> buildTypeMenu(c, getItem()));
+        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseXIcon.configureLockedIconButton(pFactory);
@@ -125,7 +153,7 @@ public class MoneyWisePortfolioPanel
     }
 
     /**
-     * Build extras subPanel.
+     * Build account subPanel.
      * @param pFactory the GUI factory
      */
     private void buildAccountPanel(final TethysUIFactory<?> pFactory) {
@@ -134,36 +162,21 @@ public class MoneyWisePortfolioPanel
 
         /* Allocate fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
+        final TethysUIDateButtonField myMaturity = myFields.newDateField();
         final TethysUICharArrayEditField mySortCode = myFields.newCharArrayField();
         final TethysUICharArrayEditField myAccount = myFields.newCharArrayField();
         final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
+        final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOSORTCODE, mySortCode, Portfolio::getSortCode);
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOACCOUNT, myAccount, Portfolio::getAccount);
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOREFERENCE, myReference, Portfolio::getReference);
-    }
+        theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITMATURITY, myMaturity, Deposit::getMaturity);
+        theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITSORTCODE, mySortCode, Deposit::getSortCode);
+        theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITACCOUNT, myAccount, Deposit::getAccount);
+        theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITREFERENCE, myReference, Deposit::getReference);
+        theFieldSet.addField(MoneyWiseAssetDataId.DEPOSITOPENINGBALANCE, myOpening, Deposit::getOpeningBalance);
 
-    /**
-     * Build extras subPanel.
-     * @param pFactory the GUI factory
-     */
-    private void buildWebPanel(final TethysUIFactory<?> pFactory) {
-        /* Create a new panel */
-        theFieldSet.newPanel(TAB_WEB);
-
-        /* Allocate fields */
-        final TethysUIFieldFactory myFields = pFactory.fieldFactory();
-        final TethysUICharArrayEditField myWebSite = myFields.newCharArrayField();
-        final TethysUICharArrayEditField myCustNo = myFields.newCharArrayField();
-        final TethysUICharArrayEditField myUserId = myFields.newCharArrayField();
-        final TethysUICharArrayEditField myPassWord = myFields.newCharArrayField();
-
-        /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOWEBSITE, myWebSite, Portfolio::getWebSite);
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOCUSTNO, myCustNo, Portfolio::getCustNo);
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOUSERID, myUserId, Portfolio::getUserId);
-        theFieldSet.addField(MoneyWiseAssetDataId.PORTFOLIOPASSWORD, myPassWord, Portfolio::getPassword);
+        /* Configure the currency */
+        myOpening.setDeemedCurrency(() -> getItem().getCurrency());
     }
 
     /**
@@ -176,17 +189,20 @@ public class MoneyWisePortfolioPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.PORTFOLIONOTES, myNotes, Portfolio::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.DEPOSITNOTES, myNotes, Deposit::getNotes);
     }
 
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Portfolio myItem = getItem();
+        final Deposit myItem = getItem();
         if (myItem != null) {
-            final PortfolioList myPortfolios = getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-            setItem(myPortfolios.findItemById(myItem.getId()));
+            final DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            setItem(myDeposits.findItemById(myItem.getId()));
         }
+
+        /* Refresh the rates */
+        theRates.refreshData();
 
         /* Make sure that the item is not editable */
         setEditable(false);
@@ -195,10 +211,10 @@ public class MoneyWisePortfolioPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        final Portfolio myPortfolio = getItem();
-        final boolean bIsClosed = myPortfolio.isClosed();
-        final boolean bIsActive = myPortfolio.isActive();
-        final boolean bIsRelevant = myPortfolio.isRelevant();
+        final Deposit myDeposit = getItem();
+        final boolean bIsClosed = myDeposit.isClosed();
+        final boolean bIsActive = myDeposit.isActive();
+        final boolean bIsRelevant = myDeposit.isRelevant();
         final boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
@@ -206,133 +222,162 @@ public class MoneyWisePortfolioPanel
         theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        final boolean bEditClosed = bIsClosed || !bIsRelevant;
+        final boolean bEditClosed = bIsClosed
+                ? !myDeposit.getParent().isClosed()
+                : !bIsRelevant;
         theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        final boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
+        final boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
         theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        final boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOSORTCODE, bShowSortCode);
-        final boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOACCOUNT, bShowAccount);
-        final boolean bShowReference = isEditable || myPortfolio.getReference() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOREFERENCE, bShowReference);
-        final boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOWEBSITE, bShowWebSite);
-        final boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOCUSTNO, bShowCustNo);
-        final boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOUSERID, bShowUserId);
-        final boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIOPASSWORD, bShowPasswd);
-        final boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.PORTFOLIONOTES, bShowNotes);
+        final boolean bShowSortCode = isEditable || myDeposit.getSortCode() != null;
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DEPOSITSORTCODE, bShowSortCode);
+        final boolean bShowAccount = isEditable || myDeposit.getAccount() != null;
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DEPOSITACCOUNT, bShowAccount);
+        final boolean bShowReference = isEditable || myDeposit.getReference() != null;
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DEPOSITREFERENCE, bShowReference);
+        final boolean bHasOpening = myDeposit.getOpeningBalance() != null;
+        final boolean bShowOpening = bIsChangeable || bHasOpening;
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DEPOSITOPENINGBALANCE, bShowOpening);
+        final boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DEPOSITNOTES, bShowNotes);
 
-        /* Type, Parent and Currency status cannot be changed if the item is active */
+        /* Maturity is only visible if the item is a bond */
+        final boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
+        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DEPOSITMATURITY, bShowMaturity);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.DEPOSITMATURITY, isEditable && !bIsClosed);
+
+        /* Category, Currency, and OpeningBalance cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, bIsChangeable);
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, bIsChangeable && !bHasOpening);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.DEPOSITOPENINGBALANCE, bIsChangeable);
 
         /* Set editable value for parent */
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, bIsChangeable && !bIsClosed);
+        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.PARENT, isEditable && !bIsClosed);
     }
 
     @Override
     protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final Portfolio myPortfolio = getItem();
+        final Deposit myDeposit = getItem();
 
         /* Process updates */
         if (MoneyWiseAssetDataId.NAME.equals(myField)) {
             /* Update the Name */
-            myPortfolio.setName(pUpdate.getValue(String.class));
+            myDeposit.setName(pUpdate.getValue(String.class));
         } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
             /* Update the Description */
-            myPortfolio.setDescription(pUpdate.getValue(String.class));
+            myDeposit.setDescription(pUpdate.getValue(String.class));
         } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
-            /* Update the portfolioType */
-            myPortfolio.setCategory(pUpdate.getValue(PortfolioType.class));
+            /* Update the Category */
+            myDeposit.setCategory(pUpdate.getValue(DepositCategory.class));
+            myDeposit.autoCorrect(getUpdateSet());
         } else if (MoneyWiseAssetDataId.PARENT.equals(myField)) {
             /* Update the Parent */
-            myPortfolio.setParent(pUpdate.getValue(Payee.class));
+            myDeposit.setParent(pUpdate.getValue(Payee.class));
         } else if (MoneyWiseAssetDataId.CURRENCY.equals(myField)) {
             /* Update the Currency */
-            myPortfolio.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
+            myDeposit.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
         } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
             /* Update the Closed indication */
-            myPortfolio.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOSORTCODE.equals(myField)) {
+            myDeposit.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (MoneyWiseAssetDataId.DEPOSITMATURITY.equals(myField)) {
+            /* Update the Maturity */
+            myDeposit.setMaturity(pUpdate.getValue(TethysDate.class));
+        } else if (MoneyWiseAssetDataId.DEPOSITSORTCODE.equals(myField)) {
             /* Update the SortCode */
-            myPortfolio.setSortCode(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOACCOUNT.equals(myField)) {
+            myDeposit.setSortCode(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.DEPOSITACCOUNT.equals(myField)) {
             /* Update the Account */
-            myPortfolio.setAccount(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOREFERENCE.equals(myField)) {
+            myDeposit.setAccount(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.DEPOSITREFERENCE.equals(myField)) {
             /* Update the Reference */
-            myPortfolio.setReference(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOWEBSITE.equals(myField)) {
-            /* Update the WebSite */
-            myPortfolio.setWebSite(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOCUSTNO.equals(myField)) {
-            /* Update the Customer# */
-            myPortfolio.setCustNo(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOUSERID.equals(myField)) {
-            /* Update the UserId */
-            myPortfolio.setUserId(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIOPASSWORD.equals(myField)) {
-            /* Update the Password */
-            myPortfolio.setPassword(pUpdate.getValue(char[].class));
-        } else if (MoneyWiseAssetDataId.PORTFOLIONOTES.equals(myField)) {
+            myDeposit.setReference(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAssetDataId.DEPOSITOPENINGBALANCE.equals(myField)) {
+            /* Update the OpeningBalance */
+            myDeposit.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
+        } else if (MoneyWiseAssetDataId.DEPOSITNOTES.equals(myField)) {
             /* Update the Notes */
-            myPortfolio.setNotes(pUpdate.getValue(char[].class));
+            myDeposit.setNotes(pUpdate.getValue(char[].class));
         }
     }
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final Portfolio myItem = getItem();
+        final Deposit myItem = getItem();
         final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            final PortfolioType myType = myItem.getCategory();
-            declareGoToItem(myType);
+            final DepositCategory myCategory = myItem.getCategory();
             final AssetCurrency myCurrency = myItem.getAssetCurrency();
+            declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
         }
         declareGoToItem(myParent);
     }
 
+    @Override
+    public void setEditable(final boolean isEditable) {
+        /* Update the rates */
+        theRates.setEditable(isEditable);
+
+        /* Pass call onwards */
+        super.setEditable(isEditable);
+    }
+
+    @Override
+    protected void refreshAfterUpdate() {
+        /* Pass call onwards */
+        super.refreshAfterUpdate();
+
+        /* Refresh the rates */
+        theRates.refreshAfterUpdate();
+    }
+
     /**
-     * Build the portfolioType menu for an item.
+     * Build the category type menu for an item.
      * @param pMenu the menu
-     * @param pPortfolio the portfolio to build for
+     * @param pDeposit the deposit to build for
      */
-    public void buildTypeMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
-                              final Portfolio pPortfolio) {
+    public void buildCategoryMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
+                                  final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final PortfolioType myCurr = pPortfolio.getCategory();
+        final DepositCategory myCurr = pDeposit.getCategory();
         TethysUIScrollItem<AssetCategory> myActive = null;
 
-        /* Access PortfolioTypes */
-        final PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
+        /* Access Deposit Categories */
+        final DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
 
-        /* Loop through the Types */
-        final Iterator<PortfolioType> myIterator = myTypes.iterator();
+        /* Create a simple map for top-level categories */
+        final Map<String, TethysUIScrollSubMenu<AssetCategory>> myMap = new HashMap<>();
+
+        /* Loop through the available category values */
+        final Iterator<DepositCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final PortfolioType myType = myIterator.next();
+            final DepositCategory myCategory = myIterator.next();
 
-            /* Create a new action for the type */
-            final TethysUIScrollItem<AssetCategory> myItem = pMenu.addItem(myType);
+            /* Ignore deleted or parent */
+            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(DepositCategoryClass.PARENT);
+            if (bIgnore) {
+                continue;
+            }
 
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
+            /* Determine menu to add to */
+            final DepositCategory myParent = myCategory.getParentCategory();
+            final String myParentName = myParent.getName();
+            final TethysUIScrollSubMenu<AssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+
+            /* Create a new MenuItem and add it to the popUp */
+            final TethysUIScrollItem<AssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+
+            /* Note active category */
+            if (myCategory.equals(myCurr)) {
                 myActive = myItem;
             }
         }
@@ -346,15 +391,16 @@ public class MoneyWisePortfolioPanel
     /**
      * Build the parent menu for an item.
      * @param pMenu the menu
-     * @param pPortfolio the portfolio to build for
+     * @param pDeposit the deposit to build for
      */
     public void buildParentMenu(final TethysUIScrollMenu<Payee> pMenu,
-                                final Portfolio pPortfolio) {
+                                final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final Payee myCurr = pPortfolio.getParent();
+        final DepositCategoryClass myType = pDeposit.getCategoryClass();
+        final Payee myCurr = pDeposit.getParent();
         TethysUIScrollItem<Payee> myActive = null;
 
         /* Access Payees */
@@ -365,9 +411,9 @@ public class MoneyWisePortfolioPanel
         while (myIterator.hasNext()) {
             final Payee myPayee = myIterator.next();
 
-            /* Ignore deleted/closed and ones that cannot own this portfolio */
-            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
-            bIgnore |= !myPayee.getCategoryClass().canParentPortfolio();
+            /* Ignore deleted or non-owner */
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentDeposit(myType);
+            bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;
             }
@@ -391,15 +437,15 @@ public class MoneyWisePortfolioPanel
     /**
      * Build the currency menu for an item.
      * @param pMenu the menu
-     * @param pPortfolio the portfolio to build for
+     * @param pDeposit the deposit to build for
      */
     public void buildCurrencyMenu(final TethysUIScrollMenu<AssetCurrency> pMenu,
-                                  final Portfolio pPortfolio) {
+                                  final Deposit pDeposit) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final AssetCurrency myCurr = pPortfolio.getAssetCurrency();
+        final AssetCurrency myCurr = pDeposit.getAssetCurrency();
         TethysUIScrollItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */

@@ -14,34 +14,38 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.ids.MoneyWiseAssetDataId;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseXIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.base.MoneyWiseXItemPanel;
-import net.sourceforge.joceanus.jprometheus.lethe.data.ids.PrometheusDataFieldId;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSet;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.fieldset.PrometheusXFieldSetEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseIcon;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -60,11 +64,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Cash.
  */
 public class MoneyWiseCashPanel
-        extends MoneyWiseXItemPanel<Cash> {
+        extends MoneyWiseItemPanel<MoneyWiseCash> {
     /**
      * The fieldSet.
      */
-    private final PrometheusXFieldSet<Cash> theFieldSet;
+    private final PrometheusFieldSet<MoneyWiseCash> theFieldSet;
 
     /**
      * The Closed State.
@@ -74,14 +78,14 @@ public class MoneyWiseCashPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pUpdateSet the update set
+     * @param pEditSet the edit set
      * @param pError the error panel
      */
     public MoneyWiseCashPanel(final TethysUIFactory<?> pFactory,
-                              final UpdateSet pUpdateSet,
+                              final PrometheusEditSet pEditSet,
                               final MetisErrorPanel pError) {
         /* Initialise the panel */
-        super(pFactory, pUpdateSet, pError);
+        super(pFactory, pEditSet, pError);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
@@ -107,21 +111,21 @@ public class MoneyWiseCashPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<AssetCategory> myCategoryButton = myFields.newScrollField(AssetCategory.class);
-        final TethysUIScrollButtonField<AssetCurrency> myCurrencyButton = myFields.newScrollField(AssetCurrency.class);
+        final TethysUIScrollButtonField<MoneyWiseAssetCategory> myCategoryButton = myFields.newScrollField(MoneyWiseAssetCategory.class);
+        final TethysUIScrollButtonField<MoneyWiseCurrency> myCurrencyButton = myFields.newScrollField(MoneyWiseCurrency.class);
         final TethysUIIconButtonField<Boolean> myClosedButton = myFields.newIconField(Boolean.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.NAME, myName, Cash::getName);
-        theFieldSet.addField(MoneyWiseAssetDataId.DESC, myDesc, Cash::getDesc);
-        theFieldSet.addField(MoneyWiseAssetDataId.CATEGORY, myCategoryButton, Cash::getCategory);
-        theFieldSet.addField(MoneyWiseAssetDataId.CURRENCY, myCurrencyButton, Cash::getAssetCurrency);
-        theFieldSet.addField(MoneyWiseAssetDataId.CLOSED, myClosedButton, Cash::isClosed);
+        theFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseCash::getName);
+        theFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseCash::getDesc);
+        theFieldSet.addField(MoneyWiseBasicResource.CATEGORY_NAME, myCategoryButton, MoneyWiseCash::getCategory);
+        theFieldSet.addField(MoneyWiseStaticDataType.CURRENCY, myCurrencyButton, MoneyWiseCash::getAssetCurrency);
+        theFieldSet.addField(MoneyWiseBasicResource.ASSET_CLOSED, myClosedButton, MoneyWiseCash::isClosed);
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseXIcon.configureLockedIconButton(pFactory);
+        final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
     }
 
@@ -138,13 +142,13 @@ public class MoneyWiseCashPanel
         final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<TransactionCategory> myAutoExpenseButton = myFields.newScrollField(TransactionCategory.class);
-        final TethysUIScrollButtonField<Payee> myAutoPayeeButton = myFields.newScrollField(Payee.class);
+        final TethysUIScrollButtonField<MoneyWiseTransCategory> myAutoExpenseButton = myFields.newScrollField(MoneyWiseTransCategory.class);
+        final TethysUIScrollButtonField<MoneyWisePayee> myAutoPayeeButton = myFields.newScrollField(MoneyWisePayee.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MoneyWiseAssetDataId.CASHAUTOEXPENSE, myAutoExpenseButton, Cash::getAutoExpense);
-        theFieldSet.addField(MoneyWiseAssetDataId.CASHAUTOPAYEE, myAutoPayeeButton, Cash::getAutoPayee);
-        theFieldSet.addField(MoneyWiseAssetDataId.CASHOPENINGBALANCE, myOpening, Cash::getOpeningBalance);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE), myAutoExpenseButton, MoneyWiseCash::getAutoExpense);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE), myAutoPayeeButton, MoneyWiseCash::getAutoPayee);
+        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), myOpening, MoneyWiseCash::getOpeningBalance);
 
         /* Configure the menuBuilders */
         myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
@@ -161,16 +165,16 @@ public class MoneyWiseCashPanel
         final TethysUICharArrayTextAreaField myNotes = pFactory.fieldFactory().newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAssetDataId.CASHNOTES, myNotes, Cash::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWiseCash::getNotes);
     }
 
     @Override
     public void refreshData() {
         /* If we have an item */
-        final Cash myItem = getItem();
+        final MoneyWiseCash myItem = getItem();
         if (myItem != null) {
-            final CashList myCash = getDataList(MoneyWiseDataType.CASH, CashList.class);
-            setItem(myCash.findItemById(myItem.getId()));
+            final MoneyWiseCashList myCash = getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class);
+            setItem(myCash.findItemById(myItem.getIndexedId()));
         }
 
         /* Make sure that the item is not editable */
@@ -180,7 +184,7 @@ public class MoneyWiseCashPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        final Cash myCash = getItem();
+        final MoneyWiseCash myCash = getItem();
         final boolean bIsClosed = myCash.isClosed();
         final boolean bIsActive = myCash.isActive();
         final boolean bIsRelevant = myCash.isRelevant();
@@ -189,73 +193,73 @@ public class MoneyWiseCashPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CLOSED, bShowClosed);
+        theFieldSet.setFieldVisible(MoneyWiseBasicResource.ASSET_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed || !bIsRelevant;
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CLOSED, isEditable && bEditClosed);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCash.getDesc() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.DESC, bShowDesc);
+        theFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);
 
         /* AutoExpense/Payee is hidden unless we are autoExpense */
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHAUTOEXPENSE, isAutoExpense);
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHAUTOPAYEE, isAutoExpense);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE), isAutoExpense);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE), isAutoExpense);
 
         /* OpeningBalance is hidden if we are autoExpense */
         final boolean bHasOpening = myCash.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHOPENINGBALANCE, !isAutoExpense && bShowOpening);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), !isAutoExpense && bShowOpening);
 
         /* Determine whether to show notes */
         final boolean bShowNotes = isEditable || myCash.getNotes() != null;
-        theFieldSet.setFieldVisible(MoneyWiseAssetDataId.CASHNOTES, bShowNotes);
+        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CATEGORY, bIsChangeable);
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CURRENCY, bIsChangeable && !bHasOpening);
+        theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseStaticDataType.CURRENCY, bIsChangeable && !bHasOpening);
 
         /* AutoExpense/Payee cannot be changed for closed item */
         final boolean canEdit = isEditable && !bIsClosed;
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CASHAUTOEXPENSE, canEdit);
-        theFieldSet.setFieldEditable(MoneyWiseAssetDataId.CASHAUTOPAYEE, canEdit);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE), canEdit);
+        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE), canEdit);
     }
 
     @Override
-    protected void updateField(final PrometheusXFieldSetEvent pUpdate) throws OceanusException {
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
-        final PrometheusDataFieldId myField = pUpdate.getFieldId();
-        final Cash myCash = getItem();
+        final MetisDataFieldId myField = pUpdate.getFieldId();
+        final MoneyWiseCash myCash = getItem();
 
         /* Process updates */
-        if (MoneyWiseAssetDataId.NAME.equals(myField)) {
+        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {
             /* Update the Name */
             myCash.setName(pUpdate.getValue(String.class));
-        } else if (MoneyWiseAssetDataId.DESC.equals(myField)) {
+        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {
             /* Update the Description */
             myCash.setDescription(pUpdate.getValue(String.class));
-        } else if (MoneyWiseAssetDataId.CATEGORY.equals(myField)) {
+        } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {
             /* Update the Category */
-            myCash.setCategory(pUpdate.getValue(CashCategory.class));
-            myCash.autoCorrect(getUpdateSet());
-        } else if (MoneyWiseAssetDataId.CURRENCY.equals(myField)) {
+            myCash.setCategory(pUpdate.getValue(MoneyWiseCashCategory.class));
+            myCash.autoCorrect(getEditSet());
+        } else if (MoneyWiseStaticDataType.CURRENCY.equals(myField)) {
             /* Update the Currency */
-            myCash.setAssetCurrency(pUpdate.getValue(AssetCurrency.class));
-        } else if (MoneyWiseAssetDataId.CLOSED.equals(myField)) {
+            myCash.setAssetCurrency(pUpdate.getValue(MoneyWiseCurrency.class));
+        } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myCash.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MoneyWiseAssetDataId.CASHAUTOEXPENSE.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE).equals(myField)) {
             /* Update the AutoExpense */
-            myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
-        } else if (MoneyWiseAssetDataId.CASHAUTOPAYEE.equals(myField)) {
+            myCash.setAutoExpense(pUpdate.getValue(MoneyWiseTransCategory.class));
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE).equals(myField)) {
             /* Update the AutoPayee */
-            myCash.setAutoPayee(pUpdate.getValue(Payee.class));
-        } else if (MoneyWiseAssetDataId.CASHOPENINGBALANCE.equals(myField)) {
+            myCash.setAutoPayee(pUpdate.getValue(MoneyWisePayee.class));
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE).equals(myField)) {
             /* Update the OpeningBalance */
             myCash.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
-        } else if (MoneyWiseAssetDataId.CASHNOTES.equals(myField)) {
+        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
             /* Update the OpeningBalance */
             myCash.setNotes(pUpdate.getValue(char[].class));
         }
@@ -263,12 +267,12 @@ public class MoneyWiseCashPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final Cash myItem = getItem();
-        final Payee myAutoPayee = myItem.getAutoPayee();
+        final MoneyWiseCash myItem = getItem();
+        final MoneyWisePayee myAutoPayee = myItem.getAutoPayee();
         if (!pUpdates) {
-            final CashCategory myCategory = myItem.getCategory();
-            final TransactionCategory myAutoExpense = myItem.getAutoExpense();
-            final AssetCurrency myCurrency = myItem.getAssetCurrency();
+            final MoneyWiseCashCategory myCategory = myItem.getCategory();
+            final MoneyWiseTransCategory myAutoExpense = myItem.getAutoExpense();
+            final MoneyWiseCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
             declareGoToItem(myAutoExpense);
@@ -281,39 +285,39 @@ public class MoneyWiseCashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    public void buildCategoryMenu(final TethysUIScrollMenu<AssetCategory> pMenu,
-                                  final Cash pCash) {
+    public void buildCategoryMenu(final TethysUIScrollMenu<MoneyWiseAssetCategory> pMenu,
+                                  final MoneyWiseCash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final CashCategory myCurr = pCash.getCategory();
-        TethysUIScrollItem<AssetCategory> myActive = null;
+        final MoneyWiseCashCategory myCurr = pCash.getCategory();
+        TethysUIScrollItem<MoneyWiseAssetCategory> myActive = null;
 
         /* Access Cash Categories */
-        final CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+        final MoneyWiseCashCategoryList myCategories = getDataList(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseCashCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<AssetCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<MoneyWiseAssetCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
-        final Iterator<CashCategory> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseCashCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final CashCategory myCategory = myIterator.next();
+            final MoneyWiseCashCategory myCategory = myIterator.next();
 
             /* Ignore deleted or parent */
-            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(CashCategoryClass.PARENT);
+            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(MoneyWiseCashCategoryClass.PARENT);
             if (bIgnore) {
                 continue;
             }
 
             /* Determine menu to add to */
-            final CashCategory myParent = myCategory.getParentCategory();
+            final MoneyWiseCashCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<AssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysUIScrollSubMenu<MoneyWiseAssetCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<AssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysUIScrollItem<MoneyWiseAssetCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -332,28 +336,28 @@ public class MoneyWiseCashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    private void buildAutoExpenseMenu(final TethysUIScrollMenu<TransactionCategory> pMenu,
-                                      final Cash pCash) {
+    private void buildAutoExpenseMenu(final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu,
+                                      final MoneyWiseCash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final TransactionCategory myCurr = pCash.getAutoExpense();
-        TethysUIScrollItem<TransactionCategory> myActive = null;
+        final MoneyWiseTransCategory myCurr = pCash.getAutoExpense();
+        TethysUIScrollItem<MoneyWiseTransCategory> myActive = null;
 
         /* Access Transaction Categories */
-        final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<MoneyWiseTransCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
-        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final TransactionCategory myCategory = myIterator.next();
+            final MoneyWiseTransCategory myCategory = myIterator.next();
 
             /* Ignore deleted or non-expense-subTotal items */
-            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();
             boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
             bIgnore |= !myClass.isExpense();
             if (bIgnore) {
@@ -361,12 +365,12 @@ public class MoneyWiseCashPanel
             }
 
             /* Determine menu to add to */
-            final TransactionCategory myParent = myCategory.getParentCategory();
+            final MoneyWiseTransCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<TransactionCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
+            final TethysUIScrollSubMenu<MoneyWiseTransCategory> myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<TransactionCategory> myItem = myMenu.getSubMenu().addItem(myCategory);
+            final TethysUIScrollItem<MoneyWiseTransCategory> myItem = myMenu.getSubMenu().addItem(myCategory);
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -385,22 +389,22 @@ public class MoneyWiseCashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    private void buildAutoPayeeMenu(final TethysUIScrollMenu<Payee> pMenu,
-                                    final Cash pCash) {
+    private void buildAutoPayeeMenu(final TethysUIScrollMenu<MoneyWisePayee> pMenu,
+                                    final MoneyWiseCash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final Payee myCurr = pCash.getAutoPayee();
-        TethysUIScrollItem<Payee> myActive = null;
+        final MoneyWisePayee myCurr = pCash.getAutoPayee();
+        TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */
-        final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final MoneyWisePayeeList myPayees = getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
 
         /* Loop through the Payees */
-        final Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            final Payee myPayee = myIterator.next();
+            final MoneyWisePayee myPayee = myIterator.next();
 
             /* Ignore deleted */
             if (myPayee.isDeleted()) {
@@ -408,7 +412,7 @@ public class MoneyWiseCashPanel
             }
 
             /* Create a new action for the payee */
-            final TethysUIScrollItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysUIScrollItem<MoneyWisePayee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -428,22 +432,22 @@ public class MoneyWiseCashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    public void buildCurrencyMenu(final TethysUIScrollMenu<AssetCurrency> pMenu,
-                                  final Cash pCash) {
+    public void buildCurrencyMenu(final TethysUIScrollMenu<MoneyWiseCurrency> pMenu,
+                                  final MoneyWiseCash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final AssetCurrency myCurr = pCash.getAssetCurrency();
-        TethysUIScrollItem<AssetCurrency> myActive = null;
+        final MoneyWiseCurrency myCurr = pCash.getAssetCurrency();
+        TethysUIScrollItem<MoneyWiseCurrency> myActive = null;
 
         /* Access Currencies */
-        final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
+        final MoneyWiseCurrencyList myCurrencies = getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        final Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
+        final Iterator<MoneyWiseCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            final AssetCurrency myCurrency = myIterator.next();
+            final MoneyWiseCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
             final boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
@@ -452,7 +456,7 @@ public class MoneyWiseCashPanel
             }
 
             /* Create a new action for the currency */
-            final TethysUIScrollItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysUIScrollItem<MoneyWiseCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {
