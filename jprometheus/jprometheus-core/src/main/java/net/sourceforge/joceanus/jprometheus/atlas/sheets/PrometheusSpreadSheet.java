@@ -115,7 +115,7 @@ public abstract class PrometheusSpreadSheet {
      * Create a Backup Workbook.
      * @param pReport the report
      * @param pData Data to write out
-     * @param pFile the backup file to write to
+     * @param pZipStream the stream to write to
      * @param pType the workBookType
      * @throws OceanusException on error
      */

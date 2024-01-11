@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet.MetisFieldMap;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Enumeration of TransactionInfo Classes..
  */
 public enum MoneyWiseTransInfoClass
-        implements PrometheusDataInfoClass, MetisFieldMap<MoneyWiseTransInfoClass> {
+        implements PrometheusDataInfoClass, MetisDataFieldId {
     /**
      * Tax Credit.
      */
@@ -226,7 +225,7 @@ public enum MoneyWiseTransInfoClass
     }
 
     @Override
-    public MetisDataFieldId getFieldIdForEnum(final MoneyWiseTransInfoClass pEnum) {
-        return MoneyWiseStaticResource.getKeyForTransInfo(this);
+    public String getId() {
+        return toString();
     }
 }

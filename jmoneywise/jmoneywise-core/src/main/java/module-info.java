@@ -29,20 +29,7 @@ module net.sourceforge.joceanus.jmoneywise.core {
     requires net.sourceforge.joceanus.jprometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jmoneywise;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.data.ids;
-    exports net.sourceforge.joceanus.jmoneywise.help;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.analysis;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.data;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
     exports net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.reports;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.threads;
-    exports net.sourceforge.joceanus.jmoneywise.ui;
-    exports net.sourceforge.joceanus.jmoneywise.ui.controls;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.views;
-    exports net.sourceforge.joceanus.jmoneywise.launch;
-    exports net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
-    exports net.sourceforge.joceanus.jmoneywise.atlas.threads;
+    exports net.sourceforge.joceanus.jmoneywise.lethe.launch;
+    exports net.sourceforge.joceanus.jmoneywise.atlas.launch;
 }

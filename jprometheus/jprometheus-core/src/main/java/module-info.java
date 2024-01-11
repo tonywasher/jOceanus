@@ -48,4 +48,6 @@ module net.sourceforge.joceanus.jprometheus.core {
     exports net.sourceforge.joceanus.jprometheus.atlas.views;
     exports net.sourceforge.joceanus.jprometheus.atlas.threads;
     exports net.sourceforge.joceanus.jprometheus.atlas.ui;
+    exports net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
+    exports net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
 }

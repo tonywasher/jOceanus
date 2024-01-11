@@ -47,7 +47,7 @@ allprojects {
         jtdsVersion = "1.3.1"
         h2Version = "2.2.224"
         apachePOIVersion = "5.2.5"
-        jsoupVersion = "1.17.1"
+        jsoupVersion = "1.17.2"
         jFreeChartVersion = "1.5.4"
 
         /* javaFX versions */
@@ -58,7 +58,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.12.6"
+        checkStyleVersion = "10.12.7"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

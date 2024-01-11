@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import net.sourceforge.joceanus.jmoneywise.launch.MoneyWiseApp;
+import net.sourceforge.joceanus.jmoneywise.lethe.launch.MoneyWiseXApp;
 import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
 
 /**
@@ -30,6 +30,6 @@ public final class MoneyWise4Swing
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
-        launch(new MoneyWiseApp());
+        launch(new MoneyWiseXApp());
     }
 }
