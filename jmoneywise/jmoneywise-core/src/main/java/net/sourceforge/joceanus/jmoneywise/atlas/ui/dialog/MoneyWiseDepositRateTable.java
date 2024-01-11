@@ -118,7 +118,7 @@ public class MoneyWiseDepositRateTable
     @Override
     public void refreshData() {
         /* Access the rates list */
-        theRates = getUpdateSet().getDataList(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseDepositRateList.class);
+        theRates = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseDepositRateList.class);
         getTable().setItems(theRates.getUnderlyingList());
     }
 
@@ -141,7 +141,7 @@ public class MoneyWiseDepositRateTable
             /* Shift display to line */
             updateTableData();
             selectItem(myRate);
-            getUpdateSet().incrementVersion();
+            getEditSet().incrementVersion();
             notifyChanges();
 
             /* Handle Exceptions */

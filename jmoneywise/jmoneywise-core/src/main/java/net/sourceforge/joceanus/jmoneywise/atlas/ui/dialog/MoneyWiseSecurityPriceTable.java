@@ -111,7 +111,7 @@ public class MoneyWiseSecurityPriceTable
     @Override
     public void refreshData() {
         /* Access the prices list */
-        thePrices = getUpdateSet().getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);
+        thePrices = getEditSet().getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);
         getTable().setItems(thePrices.getUnderlyingList());
     }
 
@@ -134,7 +134,7 @@ public class MoneyWiseSecurityPriceTable
             /* Shift display to line */
             updateTableData();
             selectItem(myPrice);
-            getUpdateSet().incrementVersion();
+            getEditSet().incrementVersion();
             notifyChanges();
 
             /* Handle Exceptions */

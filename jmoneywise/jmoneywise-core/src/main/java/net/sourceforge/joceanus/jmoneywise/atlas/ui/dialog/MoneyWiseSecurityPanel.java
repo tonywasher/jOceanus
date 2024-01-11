@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
@@ -173,10 +172,10 @@ public class MoneyWiseSecurityPanel
         final TethysUIScrollButtonField<MoneyWiseSecurity> myStockButton = myFields.newScrollField(MoneyWiseSecurity.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SYMBOL), mySymbol, MoneyWiseSecurity::getSymbol);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REGION), myRegionButton, MoneyWiseSecurity::getRegion);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK), myStockButton, MoneyWiseSecurity::getUnderlyingStock);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPTIONPRICE), myPrice, MoneyWiseSecurity::getOptionPrice);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.SYMBOL, mySymbol, MoneyWiseSecurity::getSymbol);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.REGION, myRegionButton, MoneyWiseSecurity::getRegion);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, myStockButton, MoneyWiseSecurity::getUnderlyingStock);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.OPTIONPRICE, myPrice, MoneyWiseSecurity::getOptionPrice);
 
         /* Configure the menuBuilders */
         myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));
@@ -194,7 +193,7 @@ public class MoneyWiseSecurityPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWiseSecurity::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseSecurity::getNotes);
     }
 
     @Override
@@ -238,31 +237,31 @@ public class MoneyWiseSecurityPanel
 
         /* Determine whether the account details should be visible */
         final boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);
 
         /* Determine whether the symbol field should be visible */
         boolean bEditField = isEditable && isEditableField(mySecurity, MoneyWiseAccountInfoClass.SYMBOL);
         boolean bShowField = bEditField || mySecurity.getSymbol() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SYMBOL), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SYMBOL), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.SYMBOL, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.SYMBOL, bEditField);
 
         /* Determine whether the region field should be visible */
         bEditField = isEditable && isEditableField(mySecurity, MoneyWiseAccountInfoClass.REGION);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REGION), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REGION), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REGION, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.REGION, bEditField);
 
         /* Determine whether the stock field should be visible */
         bEditField = isEditable && isEditableField(mySecurity, MoneyWiseAccountInfoClass.UNDERLYINGSTOCK);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, bEditField);
 
         /* Determine whether the price field should be visible */
         bEditField = isEditable && isEditableField(mySecurity, MoneyWiseAccountInfoClass.OPTIONPRICE);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPTIONPRICE), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPTIONPRICE), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.OPTIONPRICE, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.OPTIONPRICE, bEditField);
 
         /* Security type and currency cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, isEditable && !bIsActive);
@@ -314,19 +313,19 @@ public class MoneyWiseSecurityPanel
         } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             mySecurity.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SYMBOL).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.SYMBOL.equals(myField)) {
             /* Update the Symbol */
             mySecurity.setSymbol(pUpdate.getValue(String.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REGION).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.REGION.equals(myField)) {
             /* Update the Region */
             mySecurity.setRegion(pUpdate.getValue(MoneyWiseRegion.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.UNDERLYINGSTOCK.equals(myField)) {
             /* Update the Underlying Stock */
             mySecurity.setUnderlyingStock(pUpdate.getValue(MoneyWiseSecurity.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPTIONPRICE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.OPTIONPRICE.equals(myField)) {
             /* Update the OptionPrice */
             mySecurity.setOptionPrice(pUpdate.getValue(TethysPrice.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             mySecurity.setNotes(pUpdate.getValue(char[].class));
         }

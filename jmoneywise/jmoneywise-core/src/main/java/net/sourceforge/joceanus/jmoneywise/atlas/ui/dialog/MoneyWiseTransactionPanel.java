@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
@@ -238,11 +237,11 @@ public class MoneyWiseTransactionPanel
         final TethysUIListButtonField<MoneyWiseTransTag> myTagButton = myFields.newListField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT), myAmount, MoneyWiseTransaction::getPartnerAmount);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMENTS), myComments, MoneyWiseTransaction::getComments);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.REFERENCE), myReference, MoneyWiseTransaction::getReference);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TRANSTAG), myTagButton, MoneyWiseTransaction::getTransactionTags);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE), myRate, MoneyWiseTransaction::getExchangeRate);
+        theFieldSet.addField(MoneyWiseTransInfoClass.PARTNERAMOUNT, myAmount, MoneyWiseTransaction::getPartnerAmount);
+        theFieldSet.addField(MoneyWiseTransInfoClass.COMMENTS, myComments, MoneyWiseTransaction::getComments);
+        theFieldSet.addField(MoneyWiseTransInfoClass.REFERENCE, myReference, MoneyWiseTransaction::getReference);
+        theFieldSet.addField(MoneyWiseTransInfoClass.TRANSTAG, myTagButton, MoneyWiseTransaction::getTransactionTags);
+        theFieldSet.addField(MoneyWiseTransInfoClass.XCHANGERATE, myRate, MoneyWiseTransaction::getExchangeRate);
 
         /* Configure the tag button */
         myTagButton.setSelectables(this::buildTransactionTags);
@@ -269,12 +268,12 @@ public class MoneyWiseTransactionPanel
         final TethysUIIntegerEditField myYears = myFields.newIntegerField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT), myTaxCredit, MoneyWiseTransaction::getTaxCredit);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS), myEeNatIns, MoneyWiseTransaction::getEmployeeNatIns);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS), myErNatIns, MoneyWiseTransaction::getEmployerNatIns);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT), myBenefit, MoneyWiseTransaction::getDeemedBenefit);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD), myWithheld, MoneyWiseTransaction::getWithheld);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS), myYears, MoneyWiseTransaction::getYears);
+        theFieldSet.addField(MoneyWiseTransInfoClass.TAXCREDIT, myTaxCredit, MoneyWiseTransaction::getTaxCredit);
+        theFieldSet.addField(MoneyWiseTransInfoClass.EMPLOYEENATINS, myEeNatIns, MoneyWiseTransaction::getEmployeeNatIns);
+        theFieldSet.addField(MoneyWiseTransInfoClass.EMPLOYERNATINS, myErNatIns, MoneyWiseTransaction::getEmployerNatIns);
+        theFieldSet.addField(MoneyWiseTransInfoClass.DEEMEDBENEFIT, myBenefit, MoneyWiseTransaction::getDeemedBenefit);
+        theFieldSet.addField(MoneyWiseTransInfoClass.WITHHELD, myWithheld, MoneyWiseTransaction::getWithheld);
+        theFieldSet.addField(MoneyWiseTransInfoClass.QUALIFYYEARS, myYears, MoneyWiseTransaction::getYears);
 
         /* Set currency */
         myTaxCredit.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
@@ -301,11 +300,11 @@ public class MoneyWiseTransactionPanel
         final TethysUIRatioEditField myDilution = myFields.newRatioField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS), myAccountUnits, MoneyWiseTransaction::getAccountDeltaUnits);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS), myPartnerUnits, MoneyWiseTransaction::getPartnerDeltaUnits);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE), myPrice, MoneyWiseTransaction::getPrice);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION), myCommission, MoneyWiseTransaction::getCommission);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION), myDilution, MoneyWiseTransaction::getDilution);
+        theFieldSet.addField(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, myAccountUnits, MoneyWiseTransaction::getAccountDeltaUnits);
+        theFieldSet.addField(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, myPartnerUnits, MoneyWiseTransaction::getPartnerDeltaUnits);
+        theFieldSet.addField(MoneyWiseTransInfoClass.PRICE, myPrice, MoneyWiseTransaction::getPrice);
+        theFieldSet.addField(MoneyWiseTransInfoClass.COMMISSION, myCommission, MoneyWiseTransaction::getCommission);
+        theFieldSet.addField(MoneyWiseTransInfoClass.DILUTION, myDilution, MoneyWiseTransaction::getDilution);
 
         /* Set currency */
         myCommission.setDeemedCurrency(() -> getItem().getAccount().getCurrency());
@@ -328,8 +327,8 @@ public class MoneyWiseTransactionPanel
         final TethysUIScrollButtonField<MoneyWiseTransAsset> myReturnedAccountButton = myFields.newScrollField(MoneyWiseTransAsset.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT), myReturnedAccountButton, MoneyWiseTransaction::getReturnedCashAccount);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH), myReturnedCash, MoneyWiseTransaction::getReturnedCash);
+        theFieldSet.addField(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, myReturnedAccountButton, MoneyWiseTransaction::getReturnedCashAccount);
+        theFieldSet.addField(MoneyWiseTransInfoClass.RETURNEDCASH, myReturnedCash, MoneyWiseTransaction::getReturnedCash);
 
         /* Configure the menuBuilders */
         myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem()));
@@ -388,105 +387,105 @@ public class MoneyWiseTransactionPanel
 
         /* Determine whether the comments field should be visible */
         boolean bShowField = isEditable || myTrans.getComments() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMENTS), bShowField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.COMMENTS, bShowField);
 
         /* Determine whether the reference field should be visible */
         bShowField = isEditable || myTrans.getReference() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.REFERENCE), bShowField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.REFERENCE, bShowField);
 
         /* Determine whether the tags field should be visible */
         bShowField = isEditable || myTrans.getTransactionTags() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TRANSTAG), bShowField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.TRANSTAG, bShowField);
 
         /* Determine whether the partnerAmount field should be visible */
         boolean bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.PARTNERAMOUNT);
         bShowField = bEditField || myTrans.getPartnerAmount() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.PARTNERAMOUNT, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.PARTNERAMOUNT, bEditField);
 
         /* Determine whether the exchangeRate field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.XCHANGERATE);
         bShowField = bEditField || myTrans.getExchangeRate() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.XCHANGERATE, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.XCHANGERATE, bEditField);
 
         /* Determine whether the taxCredit field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.TAXCREDIT);
         bShowField = bEditField || myTrans.getTaxCredit() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.TAXCREDIT, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.TAXCREDIT, bEditField);
 
         /* Determine whether the EeNatIns field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.EMPLOYEENATINS);
         bShowField = bEditField || myTrans.getEmployeeNatIns() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.EMPLOYEENATINS, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.EMPLOYEENATINS, bEditField);
 
         /* Determine whether the ErnatIns field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.EMPLOYERNATINS);
         bShowField = bEditField || myTrans.getEmployerNatIns() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.EMPLOYERNATINS, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.EMPLOYERNATINS, bEditField);
 
         /* Determine whether the benefit field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.DEEMEDBENEFIT);
         bShowField = bEditField || myTrans.getDeemedBenefit() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.DEEMEDBENEFIT, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.DEEMEDBENEFIT, bEditField);
 
         /* Determine whether the donation field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.WITHHELD);
         bShowField = bEditField || myTrans.getWithheld() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.WITHHELD, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.WITHHELD, bEditField);
 
         /* Determine whether the account units field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS);
         bShowField = bEditField || myTrans.getAccountDeltaUnits() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, bEditField);
 
         /* Determine whether the partnerDeltaUnits field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.PARTNERDELTAUNITS);
         bShowField = bEditField || myTrans.getPartnerDeltaUnits() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, bEditField);
 
         /* Determine whether the price field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.PRICE);
         bShowField = bEditField || myTrans.getPrice() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.PRICE, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.PRICE, bEditField);
 
         /* Determine whether the commission field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.COMMISSION);
         bShowField = bEditField || myTrans.getCommission() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.COMMISSION, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.COMMISSION, bEditField);
 
         /* Determine whether the dilution field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.DILUTION);
         bShowField = bEditField || myTrans.getDilution() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.DILUTION, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.DILUTION, bEditField);
 
         /* Determine whether the returnedAccount field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT);
         bShowField = bEditField || myTrans.getReturnedCashAccount() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, bEditField);
 
         /* Determine whether the returnedCash field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.RETURNEDCASH);
         bShowField = bEditField || myTrans.getReturnedCash() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.RETURNEDCASH, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.RETURNEDCASH, bEditField);
 
         /* Determine whether the years field should be visible */
         bEditField = isEditable && isEditableField(myTrans, MoneyWiseTransInfoClass.QUALIFYYEARS);
         bShowField = bEditField || myTrans.getYears() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS), bShowField);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS), bEditField);
+        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.QUALIFYYEARS, bShowField);
+        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.QUALIFYYEARS, bEditField);
 
         /* Determine whether the reconciled field should be visible */
         final boolean bShowReconciled = isEditable || bIsReconciled;
@@ -566,59 +565,59 @@ public class MoneyWiseTransactionPanel
         } else if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(myField)) {
             /* Update the Reconciled indication */
             myTrans.setReconciled(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMENTS).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.COMMENTS.equals(myField)) {
             /* Update the Comments */
             myTrans.setComments(pUpdate.getValue(String.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.REFERENCE).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.REFERENCE.equals(myField)) {
             /* Update the Reference */
             myTrans.setReference(pUpdate.getValue(String.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TRANSTAG).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.TRANSTAG.equals(myField)) {
             /* Update the Tag indication */
             myTrans.setTransactionTags(pUpdate.getValue(List.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERAMOUNT).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.PARTNERAMOUNT.equals(myField)) {
             /* Update the PartnerAmount */
             myTrans.setPartnerAmount(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.XCHANGERATE).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.XCHANGERATE.equals(myField)) {
             /* Update the ExchangeRate */
             myTrans.setExchangeRate(pUpdate.getValue(TethysRatio.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS.equals(myField)) {
             /* Update the AccountDeltaUnits */
             myTrans.setAccountDeltaUnits(pUpdate.getValue(TethysUnits.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PARTNERDELTAUNITS).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.PARTNERDELTAUNITS.equals(myField)) {
             /* Update the PartnerDeltaUnits */
             myTrans.setPartnerDeltaUnits(pUpdate.getValue(TethysUnits.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.PRICE).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.PRICE.equals(myField)) {
             /* Update the Price */
             myTrans.setPrice(pUpdate.getValue(TethysPrice.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.COMMISSION).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.COMMISSION.equals(myField)) {
             /* Update the Commission */
             myTrans.setCommission(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DILUTION).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.DILUTION.equals(myField)) {
             /* Update the Dilution */
             myTrans.setDilution(pUpdate.getValue(TethysRatio.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.QUALIFYYEARS).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.QUALIFYYEARS.equals(myField)) {
             /* Update the QualifyYears */
             myTrans.setYears(pUpdate.getValue(Integer.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT.equals(myField)) {
             /* Update the ReturnedCashAccount */
             myTrans.setReturnedCashAccount(pUpdate.getValue(MoneyWiseTransAsset.class));
             theBuilder.autoCorrect(myTrans);
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.RETURNEDCASH).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.RETURNEDCASH.equals(myField)) {
             /* Update the ReturnedCash */
             myTrans.setReturnedCash(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.TAXCREDIT).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.TAXCREDIT.equals(myField)) {
             /* Update the TaxCredit */
             myTrans.setTaxCredit(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYEENATINS).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.EMPLOYEENATINS.equals(myField)) {
             /* Update the EmployeeNatIns */
             myTrans.setEmployeeNatIns(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.EMPLOYERNATINS).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.EMPLOYERNATINS.equals(myField)) {
             /* Update the EmployerNayIns */
             myTrans.setEmployerNatIns(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.DEEMEDBENEFIT).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.DEEMEDBENEFIT.equals(myField)) {
             /* Update the Benefit */
             myTrans.setBenefit(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseTransInfoClass.WITHHELD).equals(myField)) {
+        } else if (MoneyWiseTransInfoClass.WITHHELD.equals(myField)) {
             /* Update the Withheld */
             myTrans.setWithheld(pUpdate.getValue(TethysMoney.class));
         }

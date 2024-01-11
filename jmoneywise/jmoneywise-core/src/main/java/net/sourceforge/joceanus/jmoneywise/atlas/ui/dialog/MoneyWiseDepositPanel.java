@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
@@ -177,11 +175,11 @@ public class MoneyWiseDepositPanel
         final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.MATURITY), myMaturity, MoneyWiseDeposit::getMaturity);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), mySortCode, MoneyWiseDeposit::getSortCode);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), myAccount, MoneyWiseDeposit::getAccount);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), myReference, MoneyWiseDeposit::getReference);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), myOpening, MoneyWiseDeposit::getOpeningBalance);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.MATURITY, myMaturity, MoneyWiseDeposit::getMaturity);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWiseDeposit::getSortCode);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWiseDeposit::getAccount);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWiseDeposit::getReference);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.OPENINGBALANCE, myOpening, MoneyWiseDeposit::getOpeningBalance);
 
         /* Configure the currency */
         myOpening.setDeemedCurrency(() -> getItem().getCurrency());
@@ -197,7 +195,7 @@ public class MoneyWiseDepositPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWiseDeposit::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseDeposit::getNotes);
     }
 
     @Override
@@ -242,26 +240,26 @@ public class MoneyWiseDepositPanel
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myDeposit.getSortCode() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), bShowSortCode);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.SORTCODE, bShowSortCode);
         final boolean bShowAccount = isEditable || myDeposit.getAccount() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), bShowAccount);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.ACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myDeposit.getReference() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), bShowReference);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REFERENCE, bShowReference);
         final boolean bHasOpening = myDeposit.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), bShowOpening);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.OPENINGBALANCE, bShowOpening);
         final boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);
 
         /* Maturity is only visible if the item is a bond */
         final boolean bShowMaturity = MoneyWiseDepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.MATURITY), bShowMaturity);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.MATURITY), isEditable && !bIsClosed);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.MATURITY, bShowMaturity);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.MATURITY, isEditable && !bIsClosed);
 
         /* Category, Currency, and OpeningBalance cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
         theFieldSet.setFieldEditable(MoneyWiseStaticDataType.CURRENCY, bIsChangeable && !bHasOpening);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.OPENINGBALANCE, bIsChangeable);
 
         /* Set editable value for parent */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_PARENT, isEditable && !bIsClosed);
@@ -293,22 +291,22 @@ public class MoneyWiseDepositPanel
         } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myDeposit.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.MATURITY).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.MATURITY.equals(myField)) {
             /* Update the Maturity */
             myDeposit.setMaturity(pUpdate.getValue(TethysDate.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.SORTCODE.equals(myField)) {
             /* Update the SortCode */
             myDeposit.setSortCode(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.ACCOUNT.equals(myField)) {
             /* Update the Account */
             myDeposit.setAccount(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.REFERENCE.equals(myField)) {
             /* Update the Reference */
             myDeposit.setReference(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(myField)) {
             /* Update the OpeningBalance */
             myDeposit.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             myDeposit.setNotes(pUpdate.getValue(char[].class));
         }

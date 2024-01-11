@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
@@ -134,9 +133,9 @@ public class MoneyWisePayeePanel
         final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), mySortCode, MoneyWisePayee::getSortCode);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), myAccount, MoneyWisePayee::getAccount);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), myReference, MoneyWisePayee::getReference);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePayee::getSortCode);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePayee::getAccount);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePayee::getReference);
     }
 
     /**
@@ -155,10 +154,10 @@ public class MoneyWisePayeePanel
         final TethysUICharArrayEditField myPassWord = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.WEBSITE), myWebSite, MoneyWisePayee::getWebSite);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.CUSTOMERNO), myCustNo, MoneyWisePayee::getCustNo);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.USERID), myUserId, MoneyWisePayee::getUserId);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.PASSWORD), myPassWord, MoneyWisePayee::getPassword);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.WEBSITE, myWebSite, MoneyWisePayee::getWebSite);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.CUSTOMERNO, myCustNo, MoneyWisePayee::getCustNo);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.USERID, myUserId, MoneyWisePayee::getUserId);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.PASSWORD, myPassWord, MoneyWisePayee::getPassword);
     }
 
     /**
@@ -171,7 +170,7 @@ public class MoneyWisePayeePanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWisePayee::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWisePayee::getNotes);
     }
 
     @Override
@@ -210,21 +209,21 @@ public class MoneyWisePayeePanel
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myPayee.getSortCode() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), bShowSortCode);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.SORTCODE, bShowSortCode);
         final boolean bShowAccount = isEditable || myPayee.getAccount() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), bShowAccount);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.ACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myPayee.getReference() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), bShowReference);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REFERENCE, bShowReference);
         final boolean bShowWebSite = isEditable || myPayee.getWebSite() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.WEBSITE), bShowWebSite);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.WEBSITE, bShowWebSite);
         final boolean bShowCustNo = isEditable || myPayee.getCustNo() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.CUSTOMERNO), bShowCustNo);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.CUSTOMERNO, bShowCustNo);
         final boolean bShowUserId = isEditable || myPayee.getUserId() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.USERID), bShowUserId);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.USERID, bShowUserId);
         final boolean bShowPasswd = isEditable || myPayee.getPassword() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.PASSWORD), bShowPasswd);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.PASSWORD, bShowPasswd);
         final boolean bShowNotes = isEditable || myPayee.getNotes() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);
 
         /* Payee type cannot be changed if the item is singular, or if its relevant */
         final MoneyWisePayeeClass myClass = myPayee.getCategoryClass();
@@ -251,28 +250,28 @@ public class MoneyWisePayeePanel
         } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myPayee.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.SORTCODE.equals(myField)) {
             /* Update the SortCode */
             myPayee.setSortCode(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.ACCOUNT.equals(myField)) {
             /* Update the Account */
             myPayee.setAccount(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.REFERENCE.equals(myField)) {
             /* Update the Reference */
             myPayee.setReference(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.WEBSITE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.WEBSITE.equals(myField)) {
             /* Update the WebSite */
             myPayee.setWebSite(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.CUSTOMERNO).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.CUSTOMERNO.equals(myField)) {
             /* Update the Customer# */
             myPayee.setCustNo(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.USERID).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.USERID.equals(myField)) {
             /* Update the UserId */
             myPayee.setUserId(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.PASSWORD).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.PASSWORD.equals(myField)) {
             /* Update the Password */
             myPayee.setPassword(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             myPayee.setNotes(pUpdate.getValue(char[].class));
         }

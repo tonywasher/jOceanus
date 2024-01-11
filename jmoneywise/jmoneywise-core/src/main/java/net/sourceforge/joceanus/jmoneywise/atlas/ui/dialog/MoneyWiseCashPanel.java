@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
@@ -146,9 +145,9 @@ public class MoneyWiseCashPanel
         final TethysUIScrollButtonField<MoneyWisePayee> myAutoPayeeButton = myFields.newScrollField(MoneyWisePayee.class);
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE), myAutoExpenseButton, MoneyWiseCash::getAutoExpense);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE), myAutoPayeeButton, MoneyWiseCash::getAutoPayee);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), myOpening, MoneyWiseCash::getOpeningBalance);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.AUTOEXPENSE, myAutoExpenseButton, MoneyWiseCash::getAutoExpense);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.AUTOPAYEE, myAutoPayeeButton, MoneyWiseCash::getAutoPayee);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.OPENINGBALANCE, myOpening, MoneyWiseCash::getOpeningBalance);
 
         /* Configure the menuBuilders */
         myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
@@ -165,7 +164,7 @@ public class MoneyWiseCashPanel
         final TethysUICharArrayTextAreaField myNotes = pFactory.fieldFactory().newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWiseCash::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseCash::getNotes);
     }
 
     @Override
@@ -205,17 +204,17 @@ public class MoneyWiseCashPanel
         theFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);
 
         /* AutoExpense/Payee is hidden unless we are autoExpense */
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE), isAutoExpense);
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE), isAutoExpense);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.AUTOEXPENSE, isAutoExpense);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.AUTOPAYEE, isAutoExpense);
 
         /* OpeningBalance is hidden if we are autoExpense */
         final boolean bHasOpening = myCash.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), !isAutoExpense && bShowOpening);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.OPENINGBALANCE, !isAutoExpense && bShowOpening);
 
         /* Determine whether to show notes */
         final boolean bShowNotes = isEditable || myCash.getNotes() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
@@ -223,8 +222,8 @@ public class MoneyWiseCashPanel
 
         /* AutoExpense/Payee cannot be changed for closed item */
         final boolean canEdit = isEditable && !bIsClosed;
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE), canEdit);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE), canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.AUTOEXPENSE, canEdit);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.AUTOPAYEE, canEdit);
     }
 
     @Override
@@ -250,16 +249,16 @@ public class MoneyWiseCashPanel
         } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myCash.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOEXPENSE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.AUTOEXPENSE.equals(myField)) {
             /* Update the AutoExpense */
             myCash.setAutoExpense(pUpdate.getValue(MoneyWiseTransCategory.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.AUTOPAYEE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.AUTOPAYEE.equals(myField)) {
             /* Update the AutoPayee */
             myCash.setAutoPayee(pUpdate.getValue(MoneyWisePayee.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(myField)) {
             /* Update the OpeningBalance */
             myCash.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the OpeningBalance */
             myCash.setNotes(pUpdate.getValue(char[].class));
         }

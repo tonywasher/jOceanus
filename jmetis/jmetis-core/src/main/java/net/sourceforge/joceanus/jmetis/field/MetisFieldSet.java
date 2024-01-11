@@ -61,11 +61,6 @@ public class MetisFieldSet<T extends MetisFieldItem>
     private static final AtomicInteger NEXT_ANCHORID = new AtomicInteger(1);
 
     /**
-     * Map of Enum to FieldId.
-     */
-    private static final Map<Object, MetisDataFieldId> ENUMFIELD_MAP = new HashMap<>();
-
-    /**
      * Id of this anchor.
      */
     private final Integer theAnchorId;
@@ -352,16 +347,6 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     /**
-     * Create simpleId for enum.
-     * @param <E> the enum class
-     * @param pValue the enum value
-     * @return th id
-     */
-    public static <E extends Enum<E>> MetisDataFieldId simpleIdForEnum(final E pValue) {
-        return ENUMFIELD_MAP.computeIfAbsent(pValue, v -> new MetisFieldSimpleId(v.toString()));
-    }
-
-    /**
      * Declare local non-equality fields one for each Enum.
      * @param <E> the Enum
      * @param pClazz the class of the Enum
@@ -374,7 +359,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         final Map<E, MetisFieldDef> myMap = new EnumMap<>(pClazz);
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
-            final MetisDataFieldId myId = simpleIdForEnum(myValue);
+            final MetisDataFieldId myId = myValue instanceof MetisDataFieldId ? (MetisDataFieldId) myValue : new MetisFieldSimpleId(myValue.toString());
             final MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue));
 
             /* Store into the map */
@@ -541,41 +526,24 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     /**
-     * FieldMap interface.
-     * @param <E> the enum for the field
-     */
-    @FunctionalInterface
-    public interface MetisFieldMap<E extends Enum<E>> {
-        /**
-         * get fieldId for enum.
-         * @param pEnum the Enum
-         * @return the fieldId
-         */
-        MetisDataFieldId getFieldIdForEnum(E pEnum);
-    }
-
-    /**
      * Build field set for enum class.
      * @param <E> the enum type
      * @param pClass the enum class
      * @param pValueLookup the Lookup Function
      * @return the map from field to enum.
      */
-    public <E extends Enum<E> & MetisFieldMap<E>> Map<MetisDataFieldId, E> buildFieldMap(final Class<E> pClass,
+    public <E extends Enum<E> & MetisDataFieldId> Map<MetisDataFieldId, E> buildFieldMap(final Class<E> pClass,
                                                                                          final BiFunction<T, MetisDataFieldId, Object> pValueLookup) {
         /* Create the map */
         final Map<MetisDataFieldId, E> myMap = new HashMap<>();
 
         /* Loop through the enum values */
         for (E myValue : pClass.getEnumConstants()) {
-            /* Determine name */
-            final MetisDataFieldId myId = myValue.getFieldIdForEnum(myValue);
-
             /* Declare a field for the value */
-            declareLocalField(myId, pValueLookup);
+            declareLocalField(myValue, pValueLookup);
 
             /* Add to the map */
-            myMap.put(myId, myValue);
+            myMap.put(myValue, myValue);
         }
 
         /* Return the map */

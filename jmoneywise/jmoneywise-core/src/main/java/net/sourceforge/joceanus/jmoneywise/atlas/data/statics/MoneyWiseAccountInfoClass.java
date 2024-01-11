@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.statics;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet.MetisFieldMap;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -27,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Enumeration of Account Info Classes.
  */
 public enum MoneyWiseAccountInfoClass
-        implements PrometheusDataInfoClass, MetisFieldMap<MoneyWiseAccountInfoClass> {
+        implements PrometheusDataInfoClass, MetisDataFieldId {
     /**
      * Maturity Date.
      */
@@ -219,7 +218,7 @@ public enum MoneyWiseAccountInfoClass
     }
 
     @Override
-    public MetisDataFieldId getFieldIdForEnum(final MoneyWiseAccountInfoClass pEnum) {
-        return MoneyWiseStaticResource.getKeyForAccountInfo(this);
+    public String getId() {
+        return toString();
     }
 }

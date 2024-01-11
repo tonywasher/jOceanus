@@ -272,7 +272,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * Obtain the editSet.
      * @return the set
      */
-    protected PrometheusEditSet getUpdateSet() {
+    protected PrometheusEditSet getEditSet() {
         return theEditSet;
     }
 

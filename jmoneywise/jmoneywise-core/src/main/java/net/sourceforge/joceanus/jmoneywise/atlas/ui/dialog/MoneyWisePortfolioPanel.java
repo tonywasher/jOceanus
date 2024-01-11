@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
@@ -143,9 +142,9 @@ public class MoneyWisePortfolioPanel
         final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), mySortCode, MoneyWisePortfolio::getSortCode);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), myAccount, MoneyWisePortfolio::getAccount);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), myReference, MoneyWisePortfolio::getReference);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePortfolio::getSortCode);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePortfolio::getAccount);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePortfolio::getReference);
     }
 
     /**
@@ -164,10 +163,10 @@ public class MoneyWisePortfolioPanel
         final TethysUICharArrayEditField myPassWord = myFields.newCharArrayField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.WEBSITE), myWebSite, MoneyWisePortfolio::getWebSite);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.CUSTOMERNO), myCustNo, MoneyWisePortfolio::getCustNo);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.USERID), myUserId, MoneyWisePortfolio::getUserId);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.PASSWORD), myPassWord, MoneyWisePortfolio::getPassword);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.WEBSITE, myWebSite, MoneyWisePortfolio::getWebSite);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.CUSTOMERNO, myCustNo, MoneyWisePortfolio::getCustNo);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.USERID, myUserId, MoneyWisePortfolio::getUserId);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.PASSWORD, myPassWord, MoneyWisePortfolio::getPassword);
     }
 
     /**
@@ -180,7 +179,7 @@ public class MoneyWisePortfolioPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWisePortfolio::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWisePortfolio::getNotes);
     }
 
     @Override
@@ -220,21 +219,21 @@ public class MoneyWisePortfolioPanel
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), bShowSortCode);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.SORTCODE, bShowSortCode);
         final boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), bShowAccount);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.ACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myPortfolio.getReference() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), bShowReference);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REFERENCE, bShowReference);
         final boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.WEBSITE), bShowWebSite);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.WEBSITE, bShowWebSite);
         final boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.CUSTOMERNO), bShowCustNo);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.CUSTOMERNO, bShowCustNo);
         final boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.USERID), bShowUserId);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.USERID, bShowUserId);
         final boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.PASSWORD), bShowPasswd);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.PASSWORD, bShowPasswd);
         final boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);
 
         /* Type, Parent and Currency status cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
@@ -269,28 +268,28 @@ public class MoneyWisePortfolioPanel
         } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myPortfolio.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.SORTCODE.equals(myField)) {
             /* Update the SortCode */
             myPortfolio.setSortCode(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.ACCOUNT.equals(myField)) {
             /* Update the Account */
             myPortfolio.setAccount(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.REFERENCE.equals(myField)) {
             /* Update the Reference */
             myPortfolio.setReference(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.WEBSITE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.WEBSITE.equals(myField)) {
             /* Update the WebSite */
             myPortfolio.setWebSite(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.CUSTOMERNO).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.CUSTOMERNO.equals(myField)) {
             /* Update the Customer# */
             myPortfolio.setCustNo(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.USERID).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.USERID.equals(myField)) {
             /* Update the UserId */
             myPortfolio.setUserId(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.PASSWORD).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.PASSWORD.equals(myField)) {
             /* Update the Password */
             myPortfolio.setPassword(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             myPortfolio.setNotes(pUpdate.getValue(char[].class));
         }

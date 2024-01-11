@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * MoneyWise: Finance Application
  * Copyright 2012,2023 Tony Washer
  *
@@ -15,21 +15,6 @@
  * the License.
  ******************************************************************************/
 /**
- * MoneyWise Core.
+ * Launch details.
  */
-module net.sourceforge.joceanus.jmoneywise.core {
-    /* Java libraries */
-    requires java.xml;
-
-    /* jOceanus */
-    requires net.sourceforge.joceanus.jprometheus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jgordianknot.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jprometheus.sheet.api;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.launch;
-    exports net.sourceforge.joceanus.jmoneywise.atlas.launch;
-}
+package net.sourceforge.joceanus.jmoneywise.lethe.launch;

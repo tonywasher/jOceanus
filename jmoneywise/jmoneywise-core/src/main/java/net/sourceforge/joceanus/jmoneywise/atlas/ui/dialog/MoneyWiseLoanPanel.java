@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
@@ -146,10 +145,10 @@ public class MoneyWiseLoanPanel
         final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Assign the fields to the panel */
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), mySortCode, MoneyWiseLoan::getSortCode);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), myAccount, MoneyWiseLoan::getAccount);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), myReference, MoneyWiseLoan::getReference);
-        theFieldSet.addField(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), myOpening, MoneyWiseLoan::getOpeningBalance);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWiseLoan::getSortCode);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWiseLoan::getAccount);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWiseLoan::getReference);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.OPENINGBALANCE, myOpening, MoneyWiseLoan::getOpeningBalance);
 
         /* Configure the currency */
         myOpening.setDeemedCurrency(() -> getItem().getCurrency());
@@ -165,7 +164,7 @@ public class MoneyWiseLoanPanel
         final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();
 
         /* Assign the fields to the panel */
-        theFieldSet.newTextArea(TAB_NOTES, MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), myNotes, MoneyWiseLoan::getNotes);
+        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseLoan::getNotes);
     }
 
     @Override
@@ -207,21 +206,21 @@ public class MoneyWiseLoanPanel
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE), bShowSortCode);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.SORTCODE, bShowSortCode);
         final boolean bShowAccount = isEditable || myLoan.getAccount() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT), bShowAccount);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.ACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myLoan.getReference() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE), bShowReference);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REFERENCE, bShowReference);
         final boolean bHasOpening = myLoan.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), bShowOpening);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.OPENINGBALANCE, bShowOpening);
         final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
-        theFieldSet.setFieldVisible(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES), bShowNotes);
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
         theFieldSet.setFieldEditable(MoneyWiseStaticDataType.CURRENCY, bIsChangeable && !bHasOpening);
-        theFieldSet.setFieldEditable(MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE), bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.OPENINGBALANCE, bIsChangeable);
 
         /* Set editable value for parent */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_PARENT, isEditable && !bIsClosed);
@@ -253,19 +252,19 @@ public class MoneyWiseLoanPanel
         } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {
             /* Update the Closed indication */
             myLoan.setClosed(pUpdate.getValue(Boolean.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.SORTCODE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.SORTCODE.equals(myField)) {
             /* Update the SortCode */
             myLoan.setSortCode(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.ACCOUNT).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.ACCOUNT.equals(myField)) {
             /* Update the Account */
             myLoan.setAccount(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.REFERENCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.REFERENCE.equals(myField)) {
             /* Update the Reference */
             myLoan.setReference(pUpdate.getValue(char[].class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.OPENINGBALANCE).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(myField)) {
             /* Update the OpeningBalance */
             myLoan.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
-        } else if (MetisFieldSet.simpleIdForEnum(MoneyWiseAccountInfoClass.NOTES).equals(myField)) {
+        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             myLoan.setNotes(pUpdate.getValue(char[].class));
         }
