@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -461,7 +460,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws OceanusException {
         /* Protect the operation */
-        byte[] myBuffer = new byte[GordianCoreFactoryLock.DATA_LEN];
+        byte[] myBuffer = new byte[GordianParameters.SEED_LEN << 1];
         try {
             /* Access the parameters */
             final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
@@ -490,7 +489,7 @@ public final class GordianCoreKeySet
         final byte[] myBytes = decryptBytes(pSecuredFactory);
 
         /* Check that the buffer is the correct length */
-        if (myBytes.length != GordianCoreFactoryLock.DATA_LEN) {
+        if (myBytes.length != GordianParameters.SEED_LEN << 1) {
             throw new IllegalArgumentException("Invalid secured factory");
         }
 

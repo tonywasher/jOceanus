@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -30,7 +29,6 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogControlle
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
@@ -188,42 +186,6 @@ public class GordianBasePasswordManager
         /* Access hash and create similar zipLock */
         final GordianKeySetHash myHash = ((GordianCoreLock) pReference).getKeySetHash();
         return similarZipLock(pKeyPair, pKeySetHashSpec, myHash);
-    }
-
-    @Override
-    public GordianFactoryLock newFactoryLock(final GordianFactory pFactory,
-                                             final String pSource) throws OceanusException {
-        return (GordianFactoryLock) requestPassword(pSource, true, p -> createFactoryLock(pFactory, p));
-    }
-
-    @Override
-    public GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
-                                                 final String pSource) throws OceanusException {
-        /* Look up resolved lock */
-        GordianFactoryLock myLock = theCache.lookUpResolvedLock(pLockBytes);
-
-        /* If we have not seen the lock then attempt known passwords */
-        if (myLock == null) {
-            myLock = theCache.attemptKnownPasswordsForFactoryLock(pLockBytes);
-        }
-
-        /* If we have not resolved the lock */
-        if (myLock == null) {
-            myLock = (GordianFactoryLock) requestPassword(pSource, false, p -> resolveFactoryLock(pLockBytes, p));
-        }
-
-        /* Return the resolved lock */
-        return myLock;
-    }
-
-    @Override
-    public GordianFactoryLock similarFactoryLock(final GordianFactory pFactory,
-                                                 final Object pReference) throws OceanusException {
-        /* LookUp the password */
-        final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
-
-        /* Create a similar hash */
-        return theCache.createSimilarFactoryLock(pFactory, myPassword);
     }
 
     /**
@@ -387,33 +349,5 @@ public class GordianBasePasswordManager
         pLock.unlock(pKeyPair, pPassword);
         theCache.addResolvedPassword(pPassword);
         return null;
-    }
-
-    /**
-     * Create new factoryLock.
-     * @param pFactory the factory
-     * @param pPassword the password
-     * @return the new lock
-     * @throws OceanusException on error
-     */
-    private GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
-                                                 final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, pPassword);
-        theCache.addResolvedLock((GordianCoreFactoryLock) myLock, pPassword);
-        return myLock;
-    }
-
-    /**
-     * Resolve password for factoryLock.
-     * @param pLockBytes the lock bytes
-     * @param pPassword the password
-     * @return the resolved lock
-     * @throws OceanusException on error
-     */
-    private GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
-                                                  final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myLock = GordianBuilder.resolveFactoryLock(theFactory, pLockBytes, pPassword);
-        theCache.addResolvedLock((GordianCoreFactoryLock) myLock, pPassword);
-        return myLock;
     }
 }

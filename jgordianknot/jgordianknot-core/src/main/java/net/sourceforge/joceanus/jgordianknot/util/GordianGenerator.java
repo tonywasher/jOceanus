@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.util;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
@@ -69,34 +68,6 @@ public final class GordianGenerator {
     public static GordianFactory createRandomFactory() throws OceanusException {
         /* Create the random factory */
         return GordianBuilder.createRandomFactory();
-    }
-
-    /**
-     * Create a new factoryLock.
-     * @param pFactory the factory
-     * @param pPassword the password
-     * @return the factory lock
-     * @throws OceanusException on error
-     */
-    public static GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
-                                                       final char[] pPassword) throws OceanusException {
-        /* Create the factoryLock */
-        return GordianBuilder.createFactoryLock(pFactory, pPassword);
-    }
-
-    /**
-     * Resolve a factoryLock.
-     * @param pFactory a factory
-     * @param pLock the lock
-     * @param pPassword the password
-     * @return the resolved factoryLock
-     * @throws OceanusException on error
-     */
-    public static GordianFactoryLock resolveFactoryLock(final GordianFactory pFactory,
-                                                        final byte[] pLock,
-                                                        final char[] pPassword) throws OceanusException {
-        /* Resolve the factoryLock */
-        return GordianBuilder.resolveFactoryLock(pFactory, pLock, pPassword);
     }
 
     /**
