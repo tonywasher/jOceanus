@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -30,14 +29,11 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetAADCipher;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
@@ -52,8 +48,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Security Test suite - Test KeySet functionality.
@@ -366,6 +360,7 @@ class KeySetTest {
                 DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
                 DynamicTest.dynamicTest("encryptAAD", () -> checkEncryptAAD(myKeySet)),
                 DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
+                DynamicTest.dynamicTest("factory", () -> checkFactory(myKeySet)),
                 DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
         )));
     }
@@ -810,6 +805,20 @@ class KeySetTest {
     }
 
     /**
+     * Check wrapping.
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    private void checkFactory(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Access the keys */
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final byte[] myWrapped = myKeySet.secureFactory(myFactory);
+        final GordianFactory myUnWrapped = myKeySet.deriveFactory(myWrapped);
+        Assertions.assertEquals(myFactory, myUnWrapped, "Failed to secure/derive factory");
+    }
+
+    /**
      * Profile encrypt.
      * @param pKeySet the keySet
      * @throws OceanusException on error
@@ -843,9 +852,9 @@ class KeySetTest {
     private void testRandomFactory() throws OceanusException {
         /* Create the random factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory();
-        final GordianFactoryLock myLock = GordianGenerator.createFactoryLock(myFactory, DEF_PASSWORD);
-        final GordianFactoryLock myUnlocked = GordianGenerator.resolveFactoryLock(myFactory, myLock.getExternalBuffer(), DEF_PASSWORD);
-        final GordianFactory myResolved = myUnlocked.getFactory();
+        final GordianKeySet myKeySet = myFactory.getKeySetFactory().generateKeySet(new GordianKeySetSpec());
+        final byte[] mySecured = myKeySet.secureFactory(myFactory);
+        final GordianFactory myResolved = myKeySet.deriveFactory(mySecured);
         Assertions.assertEquals(myFactory, myResolved, "Failed to lock/resolve factory");
     }
 }

@@ -48,7 +48,7 @@ public class GordianPersonalisation {
     /**
      * Internal iterations.
      */
-    public static final Integer INTERNAL_ITERATIONS = 32;
+    public static final Integer INTERNAL_ITERATIONS = 128;
 
     /**
      * The hash length.
@@ -165,7 +165,9 @@ public class GordianPersonalisation {
 
             /* Finally build the initVector mask */
             final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
-            iterateHashes(myDigests, myHashes, myInitVec);
+            for (int i = 0; i < myIterations; i++) {
+                iterateHashes(myDigests, myHashes, myInitVec);
+            }
 
             /* Return the array */
             return new byte[][]

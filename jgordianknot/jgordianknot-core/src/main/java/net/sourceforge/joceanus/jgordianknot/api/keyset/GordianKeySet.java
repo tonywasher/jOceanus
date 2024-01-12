@@ -20,6 +20,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -154,6 +155,22 @@ public interface GordianKeySet {
      * @throws OceanusException on error
      */
     GordianKeySet deriveKeySet(byte[] pSecuredKeySet) throws OceanusException;
+
+    /**
+     * secure Factory.
+     * @param pFactoryToSecure the keySet to secure
+     * @return the securedFactory
+     * @throws OceanusException on error
+     */
+    byte[] secureFactory(GordianFactory pFactoryToSecure) throws OceanusException;
+
+    /**
+     * derive Factory.
+     * @param pSecuredFactory the secured factory
+     * @return the derived factory
+     * @throws OceanusException on error
+     */
+    GordianFactory deriveFactory(byte[] pSecuredFactory) throws OceanusException;
 
     /**
      * secure privateKey.

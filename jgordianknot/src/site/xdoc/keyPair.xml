@@ -69,8 +69,8 @@
                     <tr><td>CMCE</td><td>(BASE, PIVOT) * (3488, 4608, 6688, 6960, 8192)</td></tr>
                     <tr><td>FRODO</td><td>(AES, SHAKE) * (19888, 31296, 43088)</td></tr>
                     <tr><td>SABER</td><td>(LIGHT, BASE, FIRE) * (128, 192, 256)</td></tr>
-                    <tr><td>KYBER</td><td>(512, 768, 1024) * (NONE, AES)</td></tr>
-                    <tr><td>DILITHIUM</td><td>(2, 3, 5) * (NONE, AES)</td></tr>
+                    <tr><td>KYBER</td><td>512, 768, 1024</td></tr>
+                    <tr><td>DILITHIUM</td><td>2, 3, 5</td></tr>
                     <tr><td>NTRU</td><td>HPS509, HPS677, HPS821, HRSS701</td></tr>
                     <tr><td>NTRUPRIME</td><td>(NTRUL, SNTRU) * (653, 761, 857, 953, 1013, 1277)</td></tr>
                     <tr><td>BIKE</td><td>128, 192, 256</td></tr>

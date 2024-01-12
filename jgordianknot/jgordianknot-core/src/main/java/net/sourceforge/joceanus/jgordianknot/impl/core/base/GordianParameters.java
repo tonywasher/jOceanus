@@ -155,7 +155,7 @@ public class GordianParameters {
     public void setSecuritySeeds(final SecureRandom pRandom) {
         theSecuritySeed = new byte[SEED_LEN];
         pRandom.nextBytes(theSecuritySeed);
-        theKeySetSeed = new byte[SEED_LEN - GordianCoreFactoryLock.MASK_LEN];
+        theKeySetSeed = new byte[SEED_LEN];
         pRandom.nextBytes(theKeySetSeed);
     }
 
@@ -181,8 +181,8 @@ public class GordianParameters {
     public boolean validate() {
         /* If there is a keySetSeed */
         if (theKeySetSeed != null) {
-            /* it must be of length SEED_LEN - MASK_LEN */
-            if (theKeySetSeed.length != SEED_LEN - GordianCoreFactoryLock.MASK_LEN) {
+            /* it must be of length SEED_LEN */
+            if (theKeySetSeed.length != SEED_LEN) {
                 return false;
             }
 
