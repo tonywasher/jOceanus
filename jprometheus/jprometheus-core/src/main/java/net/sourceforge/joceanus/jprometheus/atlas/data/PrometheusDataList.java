@@ -43,7 +43,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     /**
      * DataList interface.
      */
-    @FunctionalInterface
     public interface PrometheusDataListSet {
         /**
          * Obtain the list for a class.
@@ -54,6 +53,13 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
          */
         <L extends PrometheusDataList<?>> L getDataList(PrometheusListKey pDataType,
                                                         Class<L> pClass);
+
+        /**
+         * Does this list have the dataType?
+         * @param pDataType the dataType
+         * @return true/false
+         */
+        boolean hasDataType(final PrometheusListKey pDataType);
     }
 
     /**
@@ -430,7 +436,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
             final MetisDataState myState = myCurr.getState();
 
             /* If this is an UPDATE list, ignore clean elements */
-            if ((isUpdate) && (myState == MetisDataState.CLEAN)) {
+            if (isUpdate && myState == MetisDataState.CLEAN) {
                 continue;
             }
 

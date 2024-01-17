@@ -256,6 +256,11 @@ public abstract class PrometheusDataSet
         return theListMap;
     }
 
+    @Override
+    public boolean hasDataType(final PrometheusListKey pDataType) {
+        return theListMap.containsKey(pDataType);
+    }
+
     /**
      * Construct a Clone for a DataSet.
      * @return the extract

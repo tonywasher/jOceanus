@@ -23,14 +23,19 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -105,7 +110,7 @@ public class MoneyWiseCashInfo
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
 
             /* Resolve any link value */
-            resolveLink();
+            resolveLink(null);
 
             /* Access the CashInfoSet and register this data */
             final MoneyWiseCashInfoSet mySet = getOwner().getInfoSet();
@@ -198,7 +203,7 @@ public class MoneyWiseCashInfo
         resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getCash());
 
         /* Resolve any link value */
-        resolveLink();
+        resolveLink(null);
 
         /* Access the CashInfoSet and register this data */
         final MoneyWiseCashInfoSet mySet = getOwner().getInfoSet();
@@ -206,10 +211,25 @@ public class MoneyWiseCashInfo
     }
 
     /**
-     * Resolve link reference.
+     * resolve editSet links.
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    private void resolveLink() throws OceanusException {
+    public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Resolve data links */
+        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class));
+
+        /* Resolve any link value */
+        resolveLink(pEditSet);
+    }
+
+    /**
+     * Resolve link reference.
+     * @param pEditSet the edit set
+     * @throws OceanusException on error
+     */
+    private void resolveLink(final PrometheusEditSet pEditSet) throws OceanusException {
         /* If we have a link */
         final MoneyWiseAccountInfoType myType = getInfoType();
         if (myType.isLink()) {
@@ -220,13 +240,17 @@ public class MoneyWiseCashInfo
             /* Switch on link type */
             switch (myType.getInfoClass()) {
                 case AUTOPAYEE:
-                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getPayees());
+                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
+                            ? myData.getPayees()
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
                     if (myLinkId == null) {
                         setValueValue(getPayee().getIndexedId());
                     }
                     break;
                 case AUTOEXPENSE:
-                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getTransCategories());
+                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
+                            ? myData.getTransCategories()
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class));
                     if (myLinkId == null) {
                         setValueValue(getEventCategory().getIndexedId());
                     }
@@ -458,7 +482,7 @@ public class MoneyWiseCashInfo
                 /* If this is an infoItem */
                 if (myCurr.getInfoType().isLink()) {
                     /* Resolve the link */
-                    myCurr.resolveLink();
+                    myCurr.resolveLink(null);
                 }
             }
         }

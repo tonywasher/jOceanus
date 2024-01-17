@@ -100,11 +100,8 @@ public class MoneyWisePayeeTable
         /* Access list */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
         final MoneyWisePayeeList myBase = myData.getPayees();
-        thePayees = myBase.deriveEditList();
+        thePayees = myBase.deriveEditList(getEditSet());
         getTable().setItems(thePayees.getUnderlyingList());
-        getEditEntry().setDataList(thePayees);
-        final MoneyWisePayeeInfoList myInfo = thePayees.getPayeeInfo();
-        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActivePayee.refreshData();

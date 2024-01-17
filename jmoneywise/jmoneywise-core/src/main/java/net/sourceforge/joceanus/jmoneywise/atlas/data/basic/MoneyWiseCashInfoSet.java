@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -193,6 +194,20 @@ public class MoneyWiseCashInfoSet
     protected void cloneDataInfoSet(final MoneyWiseCashInfoSet pSource) {
         /* Clone the dataInfoSet */
         cloneTheDataInfoSet(pSource);
+    }
+
+    /**
+     * Resolve editSetLinks
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Loop through the items */
+        final Iterator<MoneyWiseCashInfo> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseCashInfo myInfo = myIterator.next();
+            myInfo.resolveEditSetLinks(pEditSet);
+        }
     }
 
     /**

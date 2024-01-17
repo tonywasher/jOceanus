@@ -147,9 +147,8 @@ public class MoneyWiseTransTagTable
         /* Access list */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
         final MoneyWiseTransTagList myBase = myData.getTransactionTags();
-        theTags = myBase.deriveEditList();
+        theTags = myBase.deriveEditList(getEditSet());
         getTable().setItems(theTags.getUnderlyingList());
-        getEditEntry().setDataList(theTags);
 
         /* Notify panel of refresh */
         theActiveTag.refreshData();

@@ -103,9 +103,6 @@ public class MoneyWiseCashTable
         final MoneyWiseCashList myBase = myData.getCash();
         theCash = myBase.deriveEditList(getEditSet());
         getTable().setItems(theCash.getUnderlyingList());
-        getEditEntry().setDataList(theCash);
-        final MoneyWiseCashInfoList myInfo = theCash.getCashInfo();
-        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActiveCash.refreshData();

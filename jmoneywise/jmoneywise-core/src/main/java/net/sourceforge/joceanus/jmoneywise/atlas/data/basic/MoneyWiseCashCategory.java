@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -204,6 +205,12 @@ public final class MoneyWiseCashCategory
     protected void resolveEditSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());
+
+        /* Resolve StaticType if required */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.CASHTYPE)) {
+            resolveDataLink(MoneyWiseStaticDataType.CASHTYPE, myEditSet.getDataList(MoneyWiseStaticDataType.CASHTYPE, MoneyWiseCashCategoryTypeList.class));
+        }
     }
 
     @Override
@@ -308,6 +315,11 @@ public final class MoneyWiseCashCategory
         private static final MetisFieldSet<MoneyWiseCashCategoryList> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCashCategoryList.class);
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
          */
@@ -338,6 +350,14 @@ public final class MoneyWiseCashCategory
             return MoneyWiseCashCategory.FIELD_DEFS;
         }
 
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
+        }
+
         @Override
         protected MoneyWiseCashCategoryList getEmptyList(final PrometheusListStyle pStyle) {
             final MoneyWiseCashCategoryList myList = new MoneyWiseCashCategoryList(this);
@@ -347,12 +367,18 @@ public final class MoneyWiseCashCategory
 
         /**
          * Derive Edit list.
+         * @param pEditSet the editSet
          * @return the edit list
+         * @throws OceanusException on error
          */
-        public MoneyWiseCashCategoryList deriveEditList() {
+        public MoneyWiseCashCategoryList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseCashCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.CASHCATEGORY, myList);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
 
             /* Loop through the categories */
             final Iterator<MoneyWiseCashCategory> myIterator = iterator();
@@ -367,6 +393,7 @@ public final class MoneyWiseCashCategory
                 /* Build the new linked cash category and add it to the list */
                 final MoneyWiseCashCategory myCategory = new MoneyWiseCashCategory(myList, myCurr);
                 myList.add(myCategory);
+                myCategory.resolveEditSetLinks();
 
                 /* Adjust the map */
                 myCategory.adjustMapForItem();

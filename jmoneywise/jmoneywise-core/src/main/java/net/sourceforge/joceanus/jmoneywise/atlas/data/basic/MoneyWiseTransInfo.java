@@ -141,8 +141,8 @@ public class MoneyWiseTransInfo
      * Obtain Deposit.
      * @return the Deposit
      */
-    public MoneyWiseDeposit getDeposit() {
-        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, MoneyWiseDeposit.class);
+    public MoneyWiseTransAsset getTransAsset() {
+        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, MoneyWiseTransAsset.class);
     }
 
     /**
@@ -258,7 +258,7 @@ public class MoneyWiseTransInfo
                 case RETURNEDCASHACCOUNT:
                     resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getDeposits());
                     if (myLinkId == null) {
-                        setValueValue(getDeposit().getIndexedId());
+                        setValueValue(getTransAsset().getExternalId());
                     }
                     break;
                 case TRANSTAG:
@@ -311,7 +311,7 @@ public class MoneyWiseTransInfo
         /* Switch on info class */
         switch (getInfoClass()) {
             case RETURNEDCASHACCOUNT:
-                getDeposit().touchItem(getOwner());
+                getTransAsset().touchItem(getOwner());
                 break;
             case TRANSTAG:
                 getTransactionTag().touchItem(getOwner());

@@ -383,7 +383,7 @@ public class MoneyWiseTransaction
      */
     public final MoneyWiseTransAsset getReturnedCashAccount() {
         return hasInfoSet
-                ? theInfoSet.getDeposit(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT)
+                ? theInfoSet.getTransAsset(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT)
                 : null;
     }
 

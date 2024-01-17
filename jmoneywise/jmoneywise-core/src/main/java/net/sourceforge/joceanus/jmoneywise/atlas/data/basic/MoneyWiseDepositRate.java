@@ -679,6 +679,7 @@ public class MoneyWiseDepositRate
             /* Build an empty List */
             final MoneyWiseDepositRateList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.DEPOSITRATE, myList);
 
             /* Loop through the list */
             final Iterator<MoneyWiseDepositRate> myIterator = iterator();

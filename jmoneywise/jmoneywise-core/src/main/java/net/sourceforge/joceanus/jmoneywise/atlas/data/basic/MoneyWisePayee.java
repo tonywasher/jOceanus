@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -498,6 +499,20 @@ public class MoneyWisePayee
         resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getPayeeTypes());
     }
 
+    @Override
+    protected void resolveEditSetLinks() throws OceanusException {
+        /* Access the editSet */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+
+        /* Resolve Parent/Category/Currency if required */
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.PAYEETYPE)) {
+            resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myEditSet.getDataList(MoneyWiseStaticDataType.PAYEETYPE, MoneyWisePayeeTypeList.class));
+        }
+
+        /* Resolve links in infoSet */
+        theInfoSet.resolveEditSetLinks(myEditSet);
+    }
+
     /**
      * Set a new WebSite.
      * @param pWebSite the new webSite
@@ -711,6 +726,11 @@ public class MoneyWisePayee
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE Payee list.
          * @param pData the DataSet for the list
          */
@@ -763,9 +783,19 @@ public class MoneyWisePayee
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = getDataSet().getActInfoTypes();
+                theInfoTypeList = theEditSet == null
+                        ? getDataSet().getActInfoTypes()
+                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
+        }
+
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
         }
 
         @Override
@@ -777,19 +807,26 @@ public class MoneyWisePayee
 
         /**
          * Derive Edit list.
+         * @param pEditSet the editSet
          * @return the edit list
+         * @throws OceanusException on error
          */
-        public MoneyWisePayeeList deriveEditList() {
+        public MoneyWisePayeeList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWisePayeeList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PAYEE, myList);
 
             /* Store InfoType list */
-            myList.theInfoTypeList = getActInfoTypes();
+            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
 
             /* Create info List */
             final MoneyWisePayeeInfoList myPayeeInfo = getPayeeInfo();
             myList.theInfoList = myPayeeInfo.getEmptyList(PrometheusListStyle.EDIT);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PAYEEINFO, myList.theInfoList);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
 
             /* Loop through the payees */
             final Iterator<MoneyWisePayee> myIterator = iterator();
@@ -804,6 +841,7 @@ public class MoneyWisePayee
                 /* Build the new linked payee and add it to the list */
                 final MoneyWisePayee myPayee = new MoneyWisePayee(myList, myCurr);
                 myList.add(myPayee);
+                myPayee.resolveEditSetLinks();
 
                 /* Adjust the map */
                 myPayee.adjustMapForItem();

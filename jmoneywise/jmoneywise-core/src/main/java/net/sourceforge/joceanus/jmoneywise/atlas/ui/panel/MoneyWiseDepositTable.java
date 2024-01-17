@@ -112,9 +112,6 @@ public class MoneyWiseDepositTable
         final MoneyWiseDepositList myBase = myData.getDeposits();
         theDeposits = myBase.deriveEditList(getEditSet());
         getTable().setItems(theDeposits.getUnderlyingList());
-        getEditEntry().setDataList(theDeposits);
-        final MoneyWiseDepositInfoList myInfo = theDeposits.getDepositInfo();
-        theInfoEntry.setDataList(myInfo);
 
         /* Get the Deposit rates list */
         MoneyWiseDepositRateList myRates = myData.getDepositRates();

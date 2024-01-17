@@ -756,7 +756,7 @@ public abstract class MoneyWiseTransBase
     protected void resolveTransactionAsset(final MoneyWiseDataSet pData,
                                            final MoneyWiseTransBase pOwner,
                                            final MetisDataFieldId pField) throws OceanusException {
-        /* If we are being passed a TransactionAsset, convert to Id */
+        /* Obtain baseValue, and then resolve */
         final Object myBaseValue = pOwner.getValues().getValue(pField);
         final Object myValue = resolveTransactionAsset(pData, myBaseValue);
         if (myValue == null) {

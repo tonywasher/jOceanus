@@ -20,15 +20,19 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -103,7 +107,7 @@ public class MoneyWiseSecurityInfo
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
 
             /* Resolve any link value */
-            resolveLink();
+            resolveLink(null);
 
             /* Access the SecurityInfoSet and register this data */
             final MoneyWiseSecurityInfoSet mySet = getOwner().getInfoSet();
@@ -196,7 +200,7 @@ public class MoneyWiseSecurityInfo
         resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getSecurities());
 
         /* Resolve any link value */
-        resolveLink();
+        resolveLink(null);
 
         /* Access the SecurityInfoSet and register this data */
         final MoneyWiseSecurityInfoSet mySet = getOwner().getInfoSet();
@@ -204,10 +208,28 @@ public class MoneyWiseSecurityInfo
     }
 
     /**
-     * Resolve link reference.
+     * resolve editSet links.
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    private void resolveLink() throws OceanusException {
+    public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Update the Encryption details */
+        super.resolveDataSetLinks();
+
+        /* Resolve data links */
+        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class));
+
+        /* Resolve any link value */
+        resolveLink(pEditSet);
+    }
+
+    /**
+     * Resolve link reference.
+     * @param pEditSet the edit set
+     * @throws OceanusException on error
+     */
+    private void resolveLink(final PrometheusEditSet pEditSet) throws OceanusException {
         /* If we have a link */
         final MoneyWiseAccountInfoType myType = getInfoType();
         if (myType.isLink()) {
@@ -218,13 +240,17 @@ public class MoneyWiseSecurityInfo
             /* Switch on link type */
             switch (myType.getInfoClass()) {
                 case REGION:
-                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getRegions());
+                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
+                            ? myData.getRegions()
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.REGION, MoneyWiseRegionList.class));
                     if (myLinkId == null) {
                         setValueValue(getRegion().getIndexedId());
                     }
                     break;
                 case UNDERLYINGSTOCK:
-                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getSecurities());
+                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
+                            ? myData.getSecurities()
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class));
                     if (myLinkId == null) {
                         setValueValue(getSecurity().getIndexedId());
                     }

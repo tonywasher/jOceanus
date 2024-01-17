@@ -124,9 +124,6 @@ public class MoneyWiseSecurityTable
         final MoneyWiseSecurityList myBase = myData.getSecurities();
         theSecurities = myBase.deriveEditList(getEditSet());
         getTable().setItems(theSecurities.getUnderlyingList());
-        getEditEntry().setDataList(theSecurities);
-        final MoneyWiseSecurityInfoList myInfo = theSecurities.getSecurityInfo();
-        theInfoEntry.setDataList(myInfo);
 
         /* Get the Security prices list */
         MoneyWiseSecurityPriceList myPrices = myData.getSecurityPrices();

@@ -111,7 +111,7 @@ public class MoneyWiseTransInfoSet
         switch (pInfoClass) {
             case RETURNEDCASHACCOUNT:
                 /* Access deposit of object */
-                myValue = getDeposit(pInfoClass);
+                myValue = getTransAsset(pInfoClass);
                 break;
             case TRANSTAG:
                 /* Access InfoSetList */
@@ -163,7 +163,7 @@ public class MoneyWiseTransInfoSet
      * @param pInfoClass the Info Class
      * @return the deposit
      */
-    public MoneyWiseDeposit getDeposit(final MoneyWiseTransInfoClass pInfoClass) {
+    public MoneyWiseTransAsset getTransAsset(final MoneyWiseTransInfoClass pInfoClass) {
         /* Access existing entry */
         final MoneyWiseTransInfo myValue = getInfo(pInfoClass);
 
@@ -172,8 +172,8 @@ public class MoneyWiseTransInfoSet
             return null;
         }
 
-        /* Return the deposit */
-        return myValue.getDeposit();
+        /* Return the asset */
+        return myValue.getTransAsset();
     }
 
     /**
@@ -677,7 +677,7 @@ public class MoneyWiseTransInfoSet
                 }
                 break;
             case RETURNEDCASHACCOUNT:
-                MoneyWiseTransAsset myThirdParty = myInfo.getDeposit();
+                MoneyWiseTransAsset myThirdParty = myInfo.getTransAsset();
                 if (!myCurrency.equals(myThirdParty.getCurrency())) {
                     myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
                 }
