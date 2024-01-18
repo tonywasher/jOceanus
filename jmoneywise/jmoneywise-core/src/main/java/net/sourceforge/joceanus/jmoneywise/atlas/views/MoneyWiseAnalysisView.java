@@ -31,6 +31,8 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransInfo;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
@@ -58,7 +60,7 @@ public class MoneyWiseAnalysisView
      */
     static {
         FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE, MoneyWiseAnalysisView::getBaseAnalysis);
-        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, MoneyWiseAnalysisView::getUpdateSet);
+        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, MoneyWiseAnalysisView::getEditSet);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisView::getAnalysis);
     }
 
@@ -168,10 +170,10 @@ public class MoneyWiseAnalysisView
     }
 
     /**
-     * Obtain the updateSet.
-     * @return the updateSet
+     * Obtain the editSet.
+     * @return the editSet
      */
-    private PrometheusEditSet getUpdateSet() {
+    private PrometheusEditSet getEditSet() {
         return theEditSet;
     }
 
@@ -278,13 +280,15 @@ public class MoneyWiseAnalysisView
             super(pSource);
             setStyle(PrometheusListStyle.EDIT);
             setRange(pRange);
+            theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, this);
 
             /* Store InfoType list */
-            setTransInfoTypes(pSource.getTransInfoTypes());
+            setTransInfoTypes(theEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class));
 
             /* Create and store info List */
-            final MoneyWiseTransInfoList myTransInfo = pSource.getTransactionInfo();
-            setTransactionInfo(myTransInfo.getEmptyList(PrometheusListStyle.EDIT));
+            final MoneyWiseTransInfoList myTransInfo = pSource.getTransactionInfo().getEmptyList(PrometheusListStyle.EDIT);
+            theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTIONINFO, myTransInfo);
+            setTransactionInfo(myTransInfo);
 
             /* Loop through the Transactions extracting relevant elements */
             final Iterator<MoneyWiseTransaction> myIterator = pSource.iterator();
@@ -309,6 +313,7 @@ public class MoneyWiseAnalysisView
                 /* Build the new linked transaction and add it to the list */
                 final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, myCurr);
                 add(myTrans);
+                // myTrans.resolveEditSetLinks(); TODO
             }
         }
 

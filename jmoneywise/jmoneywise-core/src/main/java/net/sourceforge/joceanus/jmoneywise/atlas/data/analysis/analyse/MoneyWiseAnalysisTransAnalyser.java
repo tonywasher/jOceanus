@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAna
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDilutionEvent.MoneyWiseAnalysisDilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
@@ -188,11 +187,6 @@ public class MoneyWiseAnalysisTransAnalyser
     private final MoneyWiseAnalysisSecurityBucket theStatePension;
 
     /**
-     * The dilutions.
-     */
-    private final MoneyWiseAnalysisDilutionEventMap theDilutions;
-
-    /**
      * The profile.
      */
     private final TethysProfile theProfile;
@@ -236,7 +230,6 @@ public class MoneyWiseAnalysisTransAnalyser
         theCategoryBuckets = theAnalysis.getTransCategories();
         theTagBuckets = theAnalysis.getTransactionTags();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
-        theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);
 
         /* Access the StatePension security holding */
@@ -255,12 +248,6 @@ public class MoneyWiseAnalysisTransAnalyser
 
             /* Touch underlying items */
             myCurr.touchUnderlyingItems();
-
-            /* If the event has a dilution factor */
-            if (myCurr.getDilution() != null) {
-                /* Add to the dilution event list */
-                theDilutions.addDilution(myCurr);
-            }
 
             /* Process the transaction in the report set */
             processTransaction(myCurr);
@@ -305,7 +292,6 @@ public class MoneyWiseAnalysisTransAnalyser
         theCategoryBuckets = theAnalysis.getTransCategories();
         theTagBuckets = theAnalysis.getTransactionTags();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
-        theDilutions = theAnalysis.getDilutions();
         theSecurities = theAnalysis.getSecurities();
         theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);
 
@@ -321,12 +307,6 @@ public class MoneyWiseAnalysisTransAnalyser
             /* Ignore deleted/header transactions */
             if (myCurr.isDeleted() || myCurr.isHeader()) {
                 continue;
-            }
-
-            /* If the event has a dilution factor */
-            if (myCurr.getDilution() != null) {
-                /* Add to the dilution event list */
-                theDilutions.addDilution(myCurr);
             }
 
             /* Process the transaction in the report set */
@@ -382,14 +362,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     public MoneyWiseAnalysis getAnalysis() {
         return theAnalysis;
-    }
-
-    /**
-     * Obtain the dilutions.
-     * @return the dilutions
-     */
-    public MoneyWiseAnalysisDilutionEventMap getDilutions() {
-        return theDilutions;
     }
 
     /**

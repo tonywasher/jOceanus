@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.views;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDilutionEvent.MoneyWiseAnalysisDilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
@@ -58,11 +57,6 @@ public class MoneyWiseView
      * The analysis manager.
      */
     private MoneyWiseAnalysisManager theAnalysisMgr;
-
-    /**
-     * The dilution event map.
-     */
-    private MoneyWiseAnalysisDilutionEventMap theDilutions;
 
     /**
      * Do we have security buckets?.
@@ -105,14 +99,6 @@ public class MoneyWiseView
      */
     public MoneyWiseAnalysisManager getAnalysisManager() {
         return theAnalysisMgr;
-    }
-
-    /**
-     * Obtain the dilution map.
-     * @return the dilution map.
-     */
-    public MoneyWiseAnalysisDilutionEventMap getDilutions() {
-        return theDilutions;
     }
 
     /**
@@ -222,9 +208,6 @@ public class MoneyWiseView
             /* Update the Data entry */
             final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.ANALYSIS);
             myData.setTreeObject(theAnalysisMgr);
-
-            /* Access the dilutions */
-            theDilutions = myAnalyser.getDilutions();
 
             /* Derive the update Set */
             myTask.startTask("deriveUpdates");

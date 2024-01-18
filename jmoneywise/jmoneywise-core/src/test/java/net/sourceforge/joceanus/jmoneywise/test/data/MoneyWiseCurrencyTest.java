@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.test.lethe.data.statics;
+package net.sourceforge.joceanus.jmoneywise.test.data;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -33,7 +33,7 @@ import org.junit.jupiter.api.TestFactory;
 /**
  * CurrencyCode checker.
  */
-final class CurrencyTest {
+final class MoneyWiseCurrencyTest {
     /**
      * List of irrelevant currency codes.
      */
@@ -52,7 +52,7 @@ final class CurrencyTest {
     @TestFactory
     Stream<DynamicNode> checkCurrencies() throws OceanusException {
         return Stream.of(
-                DynamicTest.dynamicTest("checkCurrency", CurrencyTest::checkCurrency)
+                DynamicTest.dynamicTest("checkCurrency", MoneyWiseCurrencyTest::checkCurrency)
         );
     }
 

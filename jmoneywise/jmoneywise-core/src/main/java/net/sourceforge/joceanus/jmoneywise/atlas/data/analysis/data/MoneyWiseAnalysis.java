@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAna
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDilutionEvent.MoneyWiseAnalysisDilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
@@ -83,7 +82,6 @@ public class MoneyWiseAnalysis
         FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.TRANSTAG.getListId(), MoneyWiseAnalysis::getTransactionTags);
         FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.TAXBASIS.getListId(), MoneyWiseAnalysis::getTaxBasis);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.TAX_CALCULATION, MoneyWiseAnalysis::getTaxAnalysis);
-        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_DILUTIONS, MoneyWiseAnalysis::getDilutions);
     }
 
     /**
@@ -172,11 +170,6 @@ public class MoneyWiseAnalysis
     private final MoneyWiseTaxAnalysis theTaxAnalysis;
 
     /**
-     * The dilutions.
-     */
-    private final MoneyWiseAnalysisDilutionEventMap theDilutions;
-
-    /**
      * The security transactions.
      */
     private final List<MoneyWiseTransaction> theSecurities;
@@ -213,8 +206,7 @@ public class MoneyWiseAnalysis
         theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);
         theTaxAnalysis = null;
 
-        /* Create the Dilution Event List */
-        theDilutions = new MoneyWiseAnalysisDilutionEventMap();
+        /* Create the Securities List */
         theSecurities = new ArrayList<>();
     }
 
@@ -234,9 +226,6 @@ public class MoneyWiseAnalysis
 
         /* Access the underlying maps/lists */
         final TethysDate myStart = theDateRange.getStart();
-        theDilutions = myStart == null
-                ? new MoneyWiseAnalysisDilutionEventMap()
-                : new MoneyWiseAnalysisDilutionEventMap(pSource.getDilutions(), myStart);
         theSecurities = pSource.getSecurities();
 
         /* Create a new set of buckets */
@@ -274,7 +263,6 @@ public class MoneyWiseAnalysis
         theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
 
         /* Access the underlying maps/lists */
-        theDilutions = myBase.getDilutions();
         theSecurities = myBase.getSecurities();
 
         /* Create a new set of buckets */
@@ -312,7 +300,6 @@ public class MoneyWiseAnalysis
         theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
 
         /* Access the underlying maps/lists */
-        theDilutions = myBase.getDilutions();
         theSecurities = myBase.getSecurities();
 
         /* Create a new set of buckets */
@@ -497,14 +484,6 @@ public class MoneyWiseAnalysis
      */
     public MoneyWiseTaxAnalysis getTaxAnalysis() {
         return theTaxAnalysis;
-    }
-
-    /**
-     * Obtain the dilutions.
-     * @return the dilutions
-     */
-    public MoneyWiseAnalysisDilutionEventMap getDilutions() {
-        return theDilutions;
     }
 
     /**
