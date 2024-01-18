@@ -147,9 +147,8 @@ public class MoneyWiseRegionTable
         /* Access list */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
         final MoneyWiseRegionList myBase = myData.getRegions();
-        theRegions = myBase.deriveEditList();
+        theRegions = myBase.deriveEditList(getEditSet());
         getTable().setItems(theRegions.getUnderlyingList());
-        getEditEntry().setDataList(theRegions);
 
         /* Notify panel of refresh */
         theActiveRegion.refreshData();

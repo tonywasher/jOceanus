@@ -104,9 +104,6 @@ public class MoneyWiseLoanTable
         final MoneyWiseLoanList myBase = myData.getLoans();
         theLoans = myBase.deriveEditList(getEditSet());
         getTable().setItems(theLoans.getUnderlyingList());
-        getEditEntry().setDataList(theLoans);
-        final MoneyWiseLoanInfoList myInfo = theLoans.getLoanInfo();
-        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActiveLoan.refreshData();

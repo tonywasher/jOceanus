@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -236,6 +237,12 @@ public final class MoneyWiseTransCategory
     protected void resolveEditSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());
+
+        /* Resolve StaticType if required */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.TRANSTYPE)) {
+            resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, myEditSet.getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class));
+        }
     }
 
     @Override
@@ -378,6 +385,11 @@ public final class MoneyWiseTransCategory
         private static final MetisFieldSet<MoneyWiseTransCategoryList> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryList.class);
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
          */
@@ -408,6 +420,14 @@ public final class MoneyWiseTransCategory
             return MoneyWiseTransCategory.FIELD_DEFS;
         }
 
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
+        }
+
         @Override
         protected MoneyWiseTransCategoryDataMap getDataMap() {
             return (MoneyWiseTransCategoryDataMap) super.getDataMap();
@@ -422,12 +442,18 @@ public final class MoneyWiseTransCategory
 
         /**
          * Derive Edit list.
+         * @param pEditSet the editSet
          * @return the edit list
+         * @throws OceanusException on error
          */
-        public MoneyWiseTransCategoryList deriveEditList() {
+        public MoneyWiseTransCategoryList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseTransCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSCATEGORY, myList);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
 
             /* Loop through the categories */
             final Iterator<MoneyWiseTransCategory> myIterator = iterator();
@@ -442,6 +468,7 @@ public final class MoneyWiseTransCategory
                 /* Build the new linked category and add it to the list */
                 final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(myList, myCurr);
                 myList.add(myCategory);
+                myCategory.resolveEditSetLinks();
 
                 /* Adjust the map */
                 myCategory.adjustMapForItem();

@@ -115,9 +115,8 @@ public class MoneyWiseDepositCategoryTable
         /* Access list */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
         final MoneyWiseDepositCategoryList myBase = myData.getDepositCategories();
-        theCategories = myBase.deriveEditList();
+        theCategories = myBase.deriveEditList(getEditSet());
         getTable().setItems(theCategories.getUnderlyingList());
-        getEditEntry().setDataList(theCategories);
 
         /* If we have a parent */
         MoneyWiseDepositCategory myParent = getParent();

@@ -115,9 +115,8 @@ public class MoneyWiseTransCategoryTable
         /* Access list */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
         final MoneyWiseTransCategoryList myBase = myData.getTransCategories();
-        theCategories = myBase.deriveEditList();
+        theCategories = myBase.deriveEditList(getEditSet());
         getTable().setItems(theCategories.getUnderlyingList());
-        getEditEntry().setDataList(theCategories);
 
         /* If we have a parent */
         MoneyWiseTransCategory myParent = getParent();

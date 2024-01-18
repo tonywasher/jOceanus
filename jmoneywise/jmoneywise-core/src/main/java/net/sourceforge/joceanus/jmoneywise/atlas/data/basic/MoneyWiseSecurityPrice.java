@@ -635,6 +635,7 @@ public class MoneyWiseSecurityPrice
             /* Build an empty List */
             final MoneyWiseSecurityPriceList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.SECURITYPRICE, myList);
 
             /* Loop through the list */
             final Iterator<MoneyWiseSecurityPrice> myIterator = iterator();

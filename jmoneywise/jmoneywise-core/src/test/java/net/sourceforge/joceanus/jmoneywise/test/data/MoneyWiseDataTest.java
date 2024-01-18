@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.helper.TethysUIHelperFactory;
 /**
  * Test security.
  */
-public class MoneyWiseTestControl {
+public class MoneyWiseDataTest {
     /**
      * Create the keySet test suite.
      * @return the test stream
@@ -87,9 +87,22 @@ public class MoneyWiseTestControl {
         new MoneyWiseTestSecurity(pData).initSecurity(pToolkit);
     }
 
+    /**
+     * Populate local data.
+     * @param pData the dataSet to populate
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    public void checkEditSet(final MoneyWiseDataSet pData,
+                             final PrometheusToolkit pToolkit) throws OceanusException {
+        /* Initialise the data */
+        new MoneyWiseTestEditSet(pData).checkSeparateEditSets(pToolkit);
+        new MoneyWiseTestEditSet(pData).checkCombinedEditSet(pToolkit);
+    }
 
     /**
      * Analyse the data.
+     * @param pData the dataSet to analyse
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
@@ -169,6 +182,7 @@ public class MoneyWiseTestControl {
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pToolkit)));
         myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pToolkit))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pToolkit))));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer("localData", myStream));
@@ -186,6 +200,7 @@ public class MoneyWiseTestControl {
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> new MoneyWiseTestArchiveFile(myThreadMgr).performTest(myData, pToolkit)));
         myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pToolkit))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pToolkit))));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer("archiveData", myStream));

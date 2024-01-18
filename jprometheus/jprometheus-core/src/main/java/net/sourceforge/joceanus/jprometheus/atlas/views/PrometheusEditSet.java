@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -109,7 +110,7 @@ public class PrometheusEditSet
         theLocalFields = MetisFieldSet.newFieldSet(this);
 
         /* Create the map */
-        theMap = new HashMap<>();
+        theMap = new LinkedHashMap<>();
     }
 
     @SuppressWarnings("rawtypes")
@@ -194,6 +195,39 @@ public class PrometheusEditSet
         return myEntry != null
                 ? pClass.cast(myEntry.getDataList())
                 : theControl.getData().getDataList(pDataType, pClass);
+    }
+
+    @Override
+    public boolean hasDataType(final PrometheusListKey pDataType) {
+        return theMap.containsKey(pDataType);
+    }
+
+    /**
+     * Obtain the editEntry for a type.
+     * @param pDataType the data type
+
+     */
+    public <T extends PrometheusDataItem> void setEditEntryList(final PrometheusListKey pDataType,
+                                                                final PrometheusDataList<T> pList) {
+        @SuppressWarnings("unchecked")
+        final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.get(pDataType);
+        myEntry.setDataList(pList);
+    }
+
+    /**
+     * Obtain an iterator over the listKeys
+     * @return the iterator
+     */
+    public Iterator<PrometheusListKey> keyIterator() {
+        return theMap.keySet().iterator();
+    }
+
+    /**
+     * Obtain an iterator over the listKeys
+     * @return the iterator
+     */
+    public Iterator<PrometheusEditEntry<?>> listIterator() {
+        return theMap.values().iterator();
     }
 
     /**

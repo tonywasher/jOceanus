@@ -115,9 +115,8 @@ public class MoneyWiseLoanCategoryTable
         /* Access list */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
         final MoneyWiseLoanCategoryList myBase = myData.getLoanCategories();
-        theCategories = myBase.deriveEditList();
+        theCategories = myBase.deriveEditList(getEditSet());
         getTable().setItems(theCategories.getUnderlyingList());
-        getEditEntry().setDataList(theCategories);
 
         /* If we have a parent */
         MoneyWiseLoanCategory myParent = getParent();

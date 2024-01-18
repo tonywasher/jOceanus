@@ -180,6 +180,7 @@ public enum MetisDataType {
             case RATIO:
                 return TethysRatio.class;
             case LINK:
+            case LINKPAIR:
                 return MetisDataIndexedItem.class;
             case LINKSET:
                 return List.class;

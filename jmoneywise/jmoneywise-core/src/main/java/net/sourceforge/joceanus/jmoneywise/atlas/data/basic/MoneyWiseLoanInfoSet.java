@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
@@ -28,6 +29,8 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountIn
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -130,6 +133,20 @@ public class MoneyWiseLoanInfoSet
     protected void cloneDataInfoSet(final MoneyWiseLoanInfoSet pSource) {
         /* Clone the dataInfoSet */
         cloneTheDataInfoSet(pSource);
+    }
+
+    /**
+     * Resolve editSetLinks
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Loop through the items */
+        final Iterator<MoneyWiseLoanInfo> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseLoanInfo myInfo = myIterator.next();
+            myInfo.resolveEditSetLinks(pEditSet);
+        }
     }
 
     /**

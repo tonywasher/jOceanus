@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -439,12 +440,14 @@ public class MoneyWiseTransTag
 
         /**
          * Derive Edit list.
+         * @param pEditSet the editSet
          * @return the edit list
          */
-        public MoneyWiseTransTagList deriveEditList() {
+        public MoneyWiseTransTagList deriveEditList(final PrometheusEditSet pEditSet) {
             /* Build an empty List */
             final MoneyWiseTransTagList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSTAG, myList);
 
             /* Loop through the tags */
             final Iterator<MoneyWiseTransTag> myIterator = iterator();

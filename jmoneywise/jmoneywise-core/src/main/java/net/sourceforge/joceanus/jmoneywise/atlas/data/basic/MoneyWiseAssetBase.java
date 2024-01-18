@@ -695,10 +695,9 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Resolve edit Set links.
-     * @param pEditSet the updateSet
      * @throws OceanusException on error
      */
-    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+    protected void resolveEditSetLinks() throws OceanusException {
         /* No action by default */
     }
 

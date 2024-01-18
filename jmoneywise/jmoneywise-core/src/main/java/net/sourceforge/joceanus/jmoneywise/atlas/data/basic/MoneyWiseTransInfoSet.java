@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
 import java.util.Currency;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -35,6 +36,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -111,7 +113,7 @@ public class MoneyWiseTransInfoSet
         switch (pInfoClass) {
             case RETURNEDCASHACCOUNT:
                 /* Access deposit of object */
-                myValue = getDeposit(pInfoClass);
+                myValue = getTransAsset(pInfoClass);
                 break;
             case TRANSTAG:
                 /* Access InfoSetList */
@@ -159,11 +161,26 @@ public class MoneyWiseTransInfoSet
     }
 
     /**
+     * Resolve editSetLinks
+     *
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Loop through the items */
+        final Iterator<MoneyWiseTransInfo> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseTransInfo myInfo = myIterator.next();
+            myInfo.resolveEditSetLinks(pEditSet);
+        }
+    }
+
+    /**
      * Obtain the deposit for the infoClass.
      * @param pInfoClass the Info Class
      * @return the deposit
      */
-    public MoneyWiseDeposit getDeposit(final MoneyWiseTransInfoClass pInfoClass) {
+    public MoneyWiseTransAsset getTransAsset(final MoneyWiseTransInfoClass pInfoClass) {
         /* Access existing entry */
         final MoneyWiseTransInfo myValue = getInfo(pInfoClass);
 
@@ -172,8 +189,8 @@ public class MoneyWiseTransInfoSet
             return null;
         }
 
-        /* Return the deposit */
-        return myValue.getDeposit();
+        /* Return the asset */
+        return myValue.getTransAsset();
     }
 
     /**
@@ -677,7 +694,7 @@ public class MoneyWiseTransInfoSet
                 }
                 break;
             case RETURNEDCASHACCOUNT:
-                MoneyWiseTransAsset myThirdParty = myInfo.getDeposit();
+                MoneyWiseTransAsset myThirdParty = myInfo.getTransAsset();
                 if (!myCurrency.equals(myThirdParty.getCurrency())) {
                     myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
                 }

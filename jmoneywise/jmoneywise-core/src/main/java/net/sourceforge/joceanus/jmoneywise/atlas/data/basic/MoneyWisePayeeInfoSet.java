@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
@@ -26,8 +27,11 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayeeInfo.M
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * PayeeInfoSet class.
@@ -129,6 +133,21 @@ public class MoneyWisePayeeInfoSet
     protected void cloneDataInfoSet(final MoneyWisePayeeInfoSet pSource) {
         /* Clone the dataInfoSet */
         cloneTheDataInfoSet(pSource);
+    }
+
+    /**
+     * Resolve editSetLinks
+     *
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Loop through the items */
+        final Iterator<MoneyWisePayeeInfo> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePayeeInfo myInfo = myIterator.next();
+            myInfo.resolveEditSetLinks(pEditSet);
+        }
     }
 
     /**

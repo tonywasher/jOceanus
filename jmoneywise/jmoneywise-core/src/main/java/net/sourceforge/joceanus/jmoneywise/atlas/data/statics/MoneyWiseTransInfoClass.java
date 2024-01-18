@@ -90,7 +90,7 @@ public enum MoneyWiseTransInfoClass
     /**
      * ReturnedCashAccount.
      */
-    RETURNEDCASHACCOUNT(13, 12, MetisDataType.LINK),
+    RETURNEDCASHACCOUNT(13, 12, MetisDataType.LINKPAIR),
 
     /**
      * Comments.
@@ -170,6 +170,7 @@ public enum MoneyWiseTransInfoClass
     public boolean isLink() {
         switch (theDataType) {
             case LINK:
+            case LINKPAIR:
             case LINKSET:
                 return true;
             default:

@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCatego
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioType;
@@ -553,12 +554,21 @@ public class MoneyWisePortfolio
     }
 
     @Override
-    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Resolve parent/holding within list */
-        final MoneyWiseDataSet myData = getDataSet();
-        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getPortfolioTypes());
-        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
+    protected void resolveEditSetLinks() throws OceanusException {
+        /* Access the editSet */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+
+        /* Resolve Parent/Category/Currency if required */
+        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.PORTFOLIOTYPE)) {
+            resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myEditSet.getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class));
+        }
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.CURRENCY)) {
+            resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myEditSet.getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class));
+        }
+
+        /* Resolve links in infoSet */
+        theInfoSet.resolveEditSetLinks(myEditSet);
     }
 
     /**
@@ -895,7 +905,9 @@ public class MoneyWisePortfolio
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = getDataSet().getActInfoTypes();
+                theInfoTypeList = theEditSet == null
+                        ? getDataSet().getActInfoTypes()
+                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
         }
@@ -939,13 +951,15 @@ public class MoneyWisePortfolio
             final MoneyWisePortfolioList myList = getEmptyList(PrometheusListStyle.EDIT);
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIO, myList);
 
             /* Store InfoType list */
-            myList.theInfoTypeList = getActInfoTypes();
+            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
 
             /* Create info List */
             final MoneyWisePortfolioInfoList myPortInfo = getPortfolioInfo();
             myList.theInfoList = myPortInfo.getEmptyList(PrometheusListStyle.EDIT);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIOINFO, myList.theInfoList);
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;
@@ -962,8 +976,8 @@ public class MoneyWisePortfolio
 
                 /* Build the new linked portfolio and add it to the list */
                 final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(myList, myCurr);
-                myPortfolio.resolveEditSetLinks(pEditSet);
                 myList.add(myPortfolio);
+                myPortfolio.resolveEditSetLinks();
 
                 /* Adjust the map */
                 myPortfolio.adjustMapForItem();

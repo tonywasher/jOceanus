@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.Money
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
@@ -524,12 +525,21 @@ public class MoneyWiseLoan
     }
 
     @Override
-    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Resolve parent within list */
-        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        final MoneyWiseLoanCategoryList myCategories = pEditSet.getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class);
-        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myPayees);
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myCategories);
+    protected void resolveEditSetLinks() throws OceanusException {
+        /* Access the editSet */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+
+        /* Resolve Parent/Category/Currency if required */
+        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
+        if (myEditSet.hasDataType(MoneyWiseBasicDataType.LOANCATEGORY)) {
+            resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myEditSet.getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class));
+        }
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.CURRENCY)) {
+            resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myEditSet.getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class));
+        }
+
+        /* Resolve links in infoSet */
+        theInfoSet.resolveEditSetLinks(myEditSet);
     }
 
     /**
@@ -719,6 +729,11 @@ public class MoneyWiseLoan
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
@@ -771,9 +786,19 @@ public class MoneyWiseLoan
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = getDataSet().getActInfoTypes();
+                theInfoTypeList = theEditSet == null
+                        ? getDataSet().getActInfoTypes()
+                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
+        }
+
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
         }
 
         @Override
@@ -794,13 +819,18 @@ public class MoneyWiseLoan
             final MoneyWiseLoanList myList = getEmptyList(PrometheusListStyle.EDIT);
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOAN, myList);
 
             /* Store InfoType list */
-            myList.theInfoTypeList = getActInfoTypes();
+            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
 
             /* Create info List */
             final MoneyWiseLoanInfoList myLoanInfo = getLoanInfo();
             myList.theInfoList = myLoanInfo.getEmptyList(PrometheusListStyle.EDIT);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOANINFO, myList.theInfoList);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
 
             /* Loop through the loans */
             final Iterator<MoneyWiseLoan> myIterator = iterator();
@@ -814,8 +844,8 @@ public class MoneyWiseLoan
 
                 /* Build the new linked loan and add it to the list */
                 final MoneyWiseLoan myLoan = new MoneyWiseLoan(myList, myCurr);
-                myLoan.resolveEditSetLinks(pEditSet);
                 myList.add(myLoan);
+                myLoan.resolveEditSetLinks();
 
                 /* Adjust the map */
                 myLoan.adjustMapForItem();

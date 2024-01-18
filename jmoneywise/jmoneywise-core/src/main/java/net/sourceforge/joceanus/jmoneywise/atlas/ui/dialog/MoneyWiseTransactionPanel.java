@@ -981,38 +981,9 @@ public class MoneyWiseTransactionPanel
         /* Clear the menu */
         pMenu.removeAllItems();
 
-        /* Record active item */
-        final MoneyWiseTransAsset myCurr = pTrans.getReturnedCashAccount();
-        TethysUIScrollItem<MoneyWiseTransAsset> myActive = null;
-
-        /* Access Deposits */
-        final MoneyWiseDepositList myDeposits = getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);
-
-        /* Loop through the Portfolios */
-        final Iterator<MoneyWiseDeposit> myIterator = myDeposits.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseDeposit myDeposit = myIterator.next();
-
-            /* Ignore deleted or closed */
-            final boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the account */
-            final TethysUIScrollItem<MoneyWiseTransAsset> myItem = pMenu.addItem(myDeposit);
-
-            /* If this is the active returned account */
-            if (myDeposit.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        if (myActive != null) {
-            myActive.scrollToItem();
-        }
+        /* Add possible items */
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, pTrans);
     }
 
     /**

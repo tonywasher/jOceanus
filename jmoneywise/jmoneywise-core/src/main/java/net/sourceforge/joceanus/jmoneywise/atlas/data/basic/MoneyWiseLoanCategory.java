@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -205,6 +206,12 @@ public final class MoneyWiseLoanCategory
     protected void resolveEditSetLinks() throws OceanusException {
         /* Resolve parent within list */
         resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());
+
+        /* Resolve StaticType if required */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+        if (myEditSet.hasDataType(MoneyWiseStaticDataType.LOANTYPE)) {
+            resolveDataLink(MoneyWiseStaticDataType.LOANTYPE, myEditSet.getDataList(MoneyWiseStaticDataType.LOANTYPE, MoneyWiseLoanCategoryTypeList.class));
+        }
     }
 
     @Override
@@ -309,6 +316,11 @@ public final class MoneyWiseLoanCategory
         private static final MetisFieldSet<MoneyWiseLoanCategoryList> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanCategoryList.class);
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
          */
@@ -339,6 +351,14 @@ public final class MoneyWiseLoanCategory
             return MoneyWiseLoanCategory.FIELD_DEFS;
         }
 
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
+        }
+
         @Override
         protected MoneyWiseLoanCategoryList getEmptyList(final PrometheusListStyle pStyle) {
             final MoneyWiseLoanCategoryList myList = new MoneyWiseLoanCategoryList(this);
@@ -348,12 +368,18 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Derive Edit list.
+         * @param pEditSet the editSet
          * @return the edit list
+         * @throws OceanusException on error
          */
-        public MoneyWiseLoanCategoryList deriveEditList() {
+        public MoneyWiseLoanCategoryList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
             final MoneyWiseLoanCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOANCATEGORY, myList);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
 
             /* Loop through the categories */
             final Iterator<MoneyWiseLoanCategory> myIterator = iterator();
@@ -368,6 +394,7 @@ public final class MoneyWiseLoanCategory
                 /* Build the new linked category and add it to the list */
                 final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(myList, myCurr);
                 myList.add(myCategory);
+                myCategory.resolveEditSetLinks();
 
                 /* Adjust the map */
                 myCategory.adjustMapForItem();

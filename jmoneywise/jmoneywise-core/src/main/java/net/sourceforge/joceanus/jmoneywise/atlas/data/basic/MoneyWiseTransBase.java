@@ -22,10 +22,16 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataItem;
@@ -749,14 +755,14 @@ public abstract class MoneyWiseTransBase
     /**
      * Resolve transAsset.
      * @param pData the dataSet
-     * @param pOwner the owning transaction
+     * @param pOwner the owning object
      * @param pField the fieldId
      * @throws OceanusException on error
      */
-    protected void resolveTransactionAsset(final MoneyWiseDataSet pData,
-                                           final MoneyWiseTransBase pOwner,
-                                           final MetisDataFieldId pField) throws OceanusException {
-        /* If we are being passed a TransactionAsset, convert to Id */
+    public void resolveTransactionAsset(final PrometheusDataListSet pData,
+                                        final PrometheusDataItem pOwner,
+                                        final MetisDataFieldId pField) throws OceanusException {
+        /* Obtain baseValue, and then resolve */
         final Object myBaseValue = pOwner.getValues().getValue(pField);
         final Object myValue = resolveTransactionAsset(pData, myBaseValue);
         if (myValue == null) {
@@ -773,7 +779,7 @@ public abstract class MoneyWiseTransBase
      * @return the asset
      * @throws OceanusException on error
      */
-    private MoneyWiseTransAsset resolveTransactionAsset(final MoneyWiseDataSet pData,
+    private MoneyWiseTransAsset resolveTransactionAsset(final PrometheusDataListSet pData,
                                                         final Object pValue) throws OceanusException {
         /* If we are being passed a TransactionAsset, convert to Id */
         Object myValue = pValue;
@@ -797,25 +803,25 @@ public abstract class MoneyWiseTransBase
      * @return the asset
      * @throws OceanusException on error
      */
-    private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
+    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
                                                          final Long pId) throws OceanusException {
          /* Access the assetType */
         final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);
 
         /* If the name is a security holding */
         if (myAssetType.isSecurityHolding()) {
-            final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
             return myMap.findHoldingById(pId);
         } else if (myAssetType.isPayee()) {
-            return pData.getPayees().findItemById(MoneyWiseAssetType.getBaseId(pId));
+            return pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else if (myAssetType.isDeposit()) {
-            return pData.getDeposits().findItemById(MoneyWiseAssetType.getBaseId(pId));
+            return pData.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else if (myAssetType.isCash() || myAssetType.isAutoExpense()) {
-            return pData.getCash().findItemById(MoneyWiseAssetType.getBaseId(pId));
+            return pData.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else if (myAssetType.isLoan()) {
-            return pData.getLoans().findItemById(MoneyWiseAssetType.getBaseId(pId));
+            return pData.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else if (myAssetType.isPortfolio()) {
-            return pData.getPortfolios().findItemById(MoneyWiseAssetType.getBaseId(pId));
+            return pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));
         } else {
             return null;
         }
@@ -827,25 +833,25 @@ public abstract class MoneyWiseTransBase
      * @param pName the item name
      * @return the asset
      */
-    private static MoneyWiseTransAsset resolveTransAsset(final MoneyWiseDataSet pData,
+    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
                                                          final String pName) {
         /* If the name is a security holding */
         if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
             return myMap.findHoldingByName(pName);
         } else {
-            MoneyWiseTransAsset myAsset = pData.getPayees().findItemByName(pName);
+            MoneyWiseTransAsset myAsset = pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemByName(pName);
             if (myAsset == null) {
-                myAsset = pData.getDeposits().findItemByName(pName);
+                myAsset = pData.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).findItemByName(pName);
             }
             if (myAsset == null) {
-                myAsset = pData.getCash().findItemByName(pName);
+                myAsset = pData.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).findItemByName(pName);
             }
             if (myAsset == null) {
-                myAsset = pData.getLoans().findItemByName(pName);
+                myAsset = pData.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).findItemByName(pName);
             }
             if (myAsset == null) {
-                myAsset = pData.getPortfolios().findItemByName(pName);
+                myAsset = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemByName(pName);
             }
             return myAsset;
         }

@@ -104,9 +104,6 @@ public class MoneyWisePortfolioTable
         final MoneyWisePortfolioList myBase = myData.getPortfolios();
         thePortfolios = myBase.deriveEditList(getEditSet());
         getTable().setItems(thePortfolios.getUnderlyingList());
-        getEditEntry().setDataList(thePortfolios);
-        final MoneyWisePortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
-        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActivePortfolio.refreshData();
