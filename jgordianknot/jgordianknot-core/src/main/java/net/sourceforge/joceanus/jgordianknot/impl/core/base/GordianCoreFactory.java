@@ -50,12 +50,10 @@ public abstract class GordianCoreFactory
         /**
          * create and build a keySet from seed.
          * @param pSeed the base seed
-         * @param pIV the IV
          * @return the keySet
          * @throws OceanusException on error
          */
-        GordianKeySet generateKeySet(byte[] pSeed,
-                                     byte[] pIV) throws OceanusException;
+        GordianKeySet generateKeySet(byte[] pSeed) throws OceanusException;
     }
 
     /**
@@ -268,14 +266,9 @@ public abstract class GordianCoreFactory
             return null;
         }
 
-        /* Split into secret and IV */
-        final int myLen = GordianParameters.SEED_LEN >> 1;
-        final byte[] mySecret = Arrays.copyOf(mySeed, myLen);
-        final byte[] myIV = Arrays.copyOfRange(mySeed, myLen, mySeed.length);
-
         /* Derive the keySet */
         final GordianKeySetGenerate myKeySets = (GordianKeySetGenerate) getKeySetFactory();
-        return myKeySets.generateKeySet(mySecret, myIV);
+        return myKeySets.generateKeySet(mySeed);
     }
 
     /**

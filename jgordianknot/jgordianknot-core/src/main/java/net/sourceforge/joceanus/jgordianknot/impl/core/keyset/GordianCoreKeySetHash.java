@@ -230,16 +230,15 @@ public final class GordianCoreKeySetHash
             int iIndex = 0;
             theHash = myResults[iIndex++];
 
+
             /* Create the Key Set */
             theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
-            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex]);
+            theKeySet.buildFromSecret(myResults[iIndex]);
 
         } finally {
             /* Clear out results */
             if (myResults != null) {
-                int iIndex = 1;
-                Arrays.fill(myResults[iIndex++], (byte) 0);
-                Arrays.fill(myResults[iIndex], (byte) 0);
+                Arrays.fill(myResults[1], (byte) 0);
             }
         }
     }
@@ -266,13 +265,12 @@ public final class GordianCoreKeySetHash
 
             /* Create the Key Set */
             theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
-            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex]);
+            theKeySet.buildFromSecret(myResults[iIndex]);
 
         } finally {
             /* Clear out results */
             if (myResults != null) {
                 int iIndex = 1;
-                Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex], (byte) 0);
             }
         }
@@ -305,21 +303,28 @@ public final class GordianCoreKeySetHash
         myPrimeMac.initKeyBytes(pPassword);
 
         /* Create the alternateMac */
-        myMacSpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
-        final GordianMac myAlternateMac = myMacs.createMac(myMacSpec);
-        myAlternateMac.initKeyBytes(pPassword);
+        myMacSpec = GordianMacSpec.hMac(theRecipe.getSecondaryDigest());
+        final GordianMac mySecondaryMac = myMacs.createMac(myMacSpec);
+        mySecondaryMac.initKeyBytes(pPassword);
+
+        /* Create the alternateMac */
+        myMacSpec = GordianMacSpec.hMac(theRecipe.getTertiaryDigest());
+        final GordianMac myTertiaryMac = myMacs.createMac(myMacSpec);
+        myTertiaryMac.initKeyBytes(pPassword);
 
         /* Create the secretMac */
-        myMacSpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
+        myMacSpec = GordianMacSpec.hMac(new GordianDigestSpec(theRecipe.getSecretDigest(), GordianLength.LEN_512));
         final GordianMac mySecretMac = myMacs.createMac(myMacSpec);
         mySecretMac.initKeyBytes(pPassword);
 
         /* Initialise hash bytes and counter */
         final byte[] myPrimeBytes = new byte[myPrimeMac.getMacSize()];
-        final byte[] myAlternateBytes = new byte[myAlternateMac.getMacSize()];
+        final byte[] mySecondaryBytes = new byte[mySecondaryMac.getMacSize()];
+        final byte[] myTertiaryBytes = new byte[myTertiaryMac.getMacSize()];
         final byte[] mySecretBytes = new byte[mySecretMac.getMacSize()];
         final byte[] myPrimeHash = new byte[myPrimeMac.getMacSize()];
-        final byte[] myAlternateHash = new byte[myAlternateMac.getMacSize()];
+        final byte[] mySecondaryHash = new byte[mySecondaryMac.getMacSize()];
+        final byte[] myTertiaryHash = new byte[myTertiaryMac.getMacSize()];
         final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
 
         /* Access final digest */
@@ -329,56 +334,65 @@ public final class GordianCoreKeySetHash
         /* Initialise the hash input values as the salt bytes */
         final byte[] mySaltBytes = theRecipe.getInitVector();
         byte[] myPrimeInput = mySaltBytes;
-        byte[] myAlternateInput = mySaltBytes;
+        byte[] mySecondaryInput = mySaltBytes;
+        byte[] myTertiaryInput = mySaltBytes;
         byte[] mySecretInput = mySaltBytes;
 
         /* Protect from exceptions */
         try {
             /* Update each Hash with the personalisation */
             myPersonal.updateMac(myPrimeMac);
-            myPersonal.updateMac(myAlternateMac);
+            myPersonal.updateMac(mySecondaryMac);
+            myPersonal.updateMac(myTertiaryMac);
             myPersonal.updateMac(mySecretMac);
 
             /* Update each Hash with the loops */
             myPrimeMac.update(myLoops);
-            myAlternateMac.update(myLoops);
+            mySecondaryMac.update(myLoops);
+            myTertiaryMac.update(myLoops);
             mySecretMac.update(myLoops);
 
             /* Loop through the iterations */
             for (int iPass = 0; iPass < iFinal; iPass++) {
                 /* Update the prime Mac */
-                myPrimeMac.update(myPrimeInput);
+                myPrimeMac.update(mySecondaryInput);
+                myPrimeMac.update(myTertiaryInput);
 
-                /* Update the alternate Mac */
-                myAlternateMac.update(myAlternateInput);
+                /* Update the secondary Mac */
+                mySecondaryMac.update(myPrimeInput);
+                mySecondaryMac.update(myTertiaryInput);
+
+                /* Update the tertiary Mac */
+                myTertiaryMac.update(myPrimeInput);
+                myTertiaryMac.update(mySecondaryInput);
 
                 /* Update the secret Mac */
                 mySecretMac.update(mySecretInput);
                 mySecretMac.update(myPrimeInput);
-                mySecretMac.update(myAlternateInput);
+                mySecretMac.update(mySecondaryInput);
+                mySecretMac.update(myTertiaryInput);
 
                 /* Update inputs */
                 myPrimeInput = myPrimeHash;
-                myAlternateInput = myAlternateHash;
+                mySecondaryInput = mySecondaryHash;
+                myTertiaryInput = myTertiaryHash;
                 mySecretInput = mySecretHash;
 
                 /* Recalculate hashes and combine them */
                 myPrimeMac.finish(myPrimeHash, 0);
                 GordianPersonalisation.buildHashResult(myPrimeBytes, myPrimeHash);
-                myAlternateMac.finish(myAlternateHash, 0);
-                GordianPersonalisation.buildHashResult(myAlternateBytes, myAlternateHash);
+                mySecondaryMac.finish(mySecondaryHash, 0);
+                GordianPersonalisation.buildHashResult(mySecondaryBytes, mySecondaryHash);
+                myTertiaryMac.finish(myTertiaryHash, 0);
+                GordianPersonalisation.buildHashResult(myTertiaryBytes, myTertiaryHash);
                 mySecretMac.finish(mySecretHash, 0);
                 GordianPersonalisation.buildHashResult(mySecretBytes, mySecretHash);
             }
 
-            /* Combine the Primary and Alternate hashes to form the initVector */
-            myDigest.update(myPrimeHash);
-            myDigest.update(myAlternateHash);
-            final byte[] myInitVector = myDigest.finish();
-
-            /* Combine the Primary and Alternate bytes to form the external hash */
+            /* Combine the Primary, Secondary and Tertiary bytes to form the external hash */
             myDigest.update(myPrimeBytes);
-            myDigest.update(myAlternateBytes);
+            myDigest.update(mySecondaryBytes);
+            myDigest.update(myTertiaryBytes);
             final byte[] myExternalHash = myDigest.finish();
 
             /* Create the external hash */
@@ -386,14 +400,16 @@ public final class GordianCoreKeySetHash
 
             /* Return to caller */
             return new byte[][]
-                    {myHashBytes, mySecretBytes, myInitVector};
+                    {myHashBytes, mySecretBytes};
 
             /* Clear intermediate arrays */
         } finally {
             Arrays.fill(myPrimeHash, (byte) 0);
             Arrays.fill(myPrimeBytes, (byte) 0);
-            Arrays.fill(myAlternateHash, (byte) 0);
-            Arrays.fill(myAlternateBytes, (byte) 0);
+            Arrays.fill(mySecondaryHash, (byte) 0);
+            Arrays.fill(mySecondaryBytes, (byte) 0);
+            Arrays.fill(myTertiaryHash, (byte) 0);
+            Arrays.fill(myTertiaryBytes, (byte) 0);
             Arrays.fill(mySecretHash, (byte) 0);
         }
     }

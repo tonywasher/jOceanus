@@ -179,7 +179,7 @@ public class GordianCRMEncryptor {
      */
     private GordianKeySet deriveKeySetFromKey(final byte[] pKey) throws OceanusException {
         /* Create a new Factory using the key */
-        final byte[] myPhrase = Arrays.copyOf(pKey, GordianLength.LEN_256.getByteLength());
+        final byte[] myPhrase = Arrays.copyOf(pKey, GordianLength.LEN_512.getByteLength());
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         myParams.setSecuritySeed(myPhrase);
         myParams.setInternal();
@@ -188,12 +188,10 @@ public class GordianCRMEncryptor {
 
         /* Create keySet from key */
         final byte[] mySecret = Arrays.copyOfRange(pKey, GordianLength.LEN_512.getByteLength(), GordianLength.LEN_1024.getByteLength());
-        final byte[] myIV = Arrays.copyOfRange(pKey, GordianLength.LEN_256.getByteLength(), GordianLength.LEN_512.getByteLength());
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
         final GordianCoreKeySet myKeySet = myKeySets.createKeySet(new GordianKeySetSpec());
-        myKeySet.buildFromSecret(mySecret, myIV);
+        myKeySet.buildFromSecret(mySecret);
         Arrays.fill(mySecret, (byte) 0);
-        Arrays.fill(myIV, (byte) 0);
         return myKeySet;
     }
 

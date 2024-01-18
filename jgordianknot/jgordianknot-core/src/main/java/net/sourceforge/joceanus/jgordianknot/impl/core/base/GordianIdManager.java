@@ -207,6 +207,25 @@ public class GordianIdManager {
     }
 
     /**
+     * Derive secret keyHashDigestType from seed.
+     * @param pRandom the seeded random
+     * @return the selected keyHashDigestTypes
+     */
+    public GordianDigestType deriveKeyHashSecretTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+                .filter(theFactory.supportedKeySetDigestTypes())
+                .filter(GordianDigestType::isExternalHashDigest)
+                .collect(Collectors.toList());
+
+        /* Select from the list and remove the selected item */
+        final int myIndex = pRandom.nextInt(myTypes.size());
+        return myTypes.get(myIndex);
+    }
+
+
+    /**
      * Derive set of keyHashDigestTypes from seed.
      * @param pRandom the seeded random
      * @param pCount the number of distinct digestTypes to select

@@ -162,32 +162,21 @@ public class GordianAgreementResult {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
-        /* Allocate the buffers */
-        final int myLen = GordianLength.LEN_256.getByteLength();
-        final byte[] myBase = new byte[GordianLength.LEN_512.getByteLength()];
-        final byte[] mySecret = new byte[myLen];
-        final byte[] myIV = new byte[myLen];
-
-        /* Ensure that we clear out the phrase */
+        /* Ensure that we clear out the secret */
+        final byte[] mySecret = new byte[GordianParameters.SECRET_LEN.getByteLength()];
         try {
             /* Calculate the secret */
-            calculateDerivedSecret(GordianDigestType.SHA3, pSecret, myBase);
-
-            /* Split into secret and IV */
-            System.arraycopy(myBase, 0, mySecret, 0, myLen);
-            System.arraycopy(myBase, myLen, myIV, 0, myLen);
+            calculateDerivedSecret(GordianDigestType.SHA3, pSecret, mySecret);
 
             /* Derive the keySet */
             final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
             final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);
-            myKeySet.buildFromSecret(mySecret, myIV);
+            myKeySet.buildFromSecret(mySecret);
             return myKeySet;
 
             /* Clear buffers */
         } finally {
-            Arrays.fill(myBase, (byte) 0);
             Arrays.fill(mySecret, (byte) 0);
-            Arrays.fill(myIV, (byte) 0);
         }
     }
 

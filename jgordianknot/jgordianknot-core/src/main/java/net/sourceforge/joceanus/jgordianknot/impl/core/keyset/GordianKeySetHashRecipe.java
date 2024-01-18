@@ -180,11 +180,19 @@ public final class GordianKeySetHashRecipe {
     }
 
     /**
-     * Obtain the Alternate Digest type.
+     * Obtain the Secondary Digest type.
      * @return the digest type
      */
-    GordianDigestType getAlternateDigest() {
-        return theParams.getAlternateDigest();
+    GordianDigestType getSecondaryDigest() {
+        return theParams.getSecondaryDigest();
+    }
+
+    /**
+     * Obtain the Tertiary Digest type.
+     * @return the digest type
+     */
+    GordianDigestType getTertiaryDigest() {
+        return theParams.getTertiaryDigest();
     }
 
     /**
@@ -277,6 +285,11 @@ public final class GordianKeySetHashRecipe {
         private final byte[] theRecipe;
 
         /**
+         * The secret hMac type.
+         */
+        private final GordianDigestType theSecretDigest;
+
+        /**
          * The hMac types.
          */
         private final GordianDigestType[] theDigests;
@@ -305,6 +318,7 @@ public final class GordianKeySetHashRecipe {
             final int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
+            theSecretDigest = myManager.deriveKeyHashSecretTypeFromSeed(mySeededRandom);
             theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
@@ -326,6 +340,7 @@ public final class GordianKeySetHashRecipe {
             /* Store recipe and derive digestTypes */
             theRecipe = pRecipe;
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
+            theSecretDigest = myManager.deriveKeyHashSecretTypeFromSeed(mySeededRandom);
             theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
@@ -350,11 +365,19 @@ public final class GordianKeySetHashRecipe {
         }
 
         /**
-         * Obtain the Alternate Digest type.
+         * Obtain the Secondary Digest type.
          * @return the digest type
          */
-        GordianDigestType getAlternateDigest() {
+        GordianDigestType getSecondaryDigest() {
             return theDigests[1];
+        }
+
+        /**
+         * Obtain the Tertiary Digest type.
+         * @return the digest type
+         */
+        GordianDigestType getTertiaryDigest() {
+            return theDigests[2];
         }
 
         /**
@@ -362,7 +385,7 @@ public final class GordianKeySetHashRecipe {
          * @return the digest type
          */
         GordianDigestType getSecretDigest() {
-            return theDigests[2];
+            return theSecretDigest;
         }
 
         /**

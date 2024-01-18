@@ -31,7 +31,7 @@ public class GordianParameters {
     /**
      * Seed length.
      */
-    public static final int SEED_LEN = GordianLength.LEN_256.getByteLength();
+    public static final GordianLength SECRET_LEN = GordianLength.LEN_512;
 
     /**
      * Default Factory.
@@ -153,9 +153,9 @@ public class GordianParameters {
      * @param pRandom the secureRandom
      */
     public void setSecuritySeeds(final SecureRandom pRandom) {
-        theSecuritySeed = new byte[SEED_LEN];
+        theSecuritySeed = new byte[SECRET_LEN.getByteLength()];
         pRandom.nextBytes(theSecuritySeed);
-        theKeySetSeed = new byte[SEED_LEN];
+        theKeySetSeed = new byte[SECRET_LEN.getByteLength()];
         pRandom.nextBytes(theKeySetSeed);
     }
 
@@ -182,12 +182,12 @@ public class GordianParameters {
         /* If there is a keySetSeed */
         if (theKeySetSeed != null) {
             /* it must be of length SEED_LEN */
-            if (theKeySetSeed.length != SEED_LEN) {
+            if (theKeySetSeed.length != SECRET_LEN.getByteLength()) {
                 return false;
             }
 
             /* It must be of equal length to SecuritySeed */
-            if (theSecuritySeed == null || theSecuritySeed.length != SEED_LEN) {
+            if (theSecuritySeed == null || theSecuritySeed.length != SECRET_LEN.getByteLength()) {
                 return false;
             }
 
