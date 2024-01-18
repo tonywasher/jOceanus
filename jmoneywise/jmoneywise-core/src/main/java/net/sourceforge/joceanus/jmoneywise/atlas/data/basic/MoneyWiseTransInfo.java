@@ -22,15 +22,22 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -101,11 +108,14 @@ public class MoneyWiseTransInfo
             resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getTransInfoTypes());
             resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getTransactions());
 
+            if (MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT.equals(getInfoClass())) {
+                int i = 0;
+            }
             /* Set the value */
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
 
             /* Resolve any link value */
-            resolveLink();
+            resolveLink(null);
 
             /* Access the TransactionInfoSet and register this data */
             final MoneyWiseTransInfoSet mySet = getOwner().getInfoSet();
@@ -234,7 +244,7 @@ public class MoneyWiseTransInfo
         resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getTransactions());
 
         /* Resolve any link value */
-        resolveLink();
+        resolveLink(null);
 
         /* Access the TransactionInfoSet and register this data */
         final MoneyWiseTransInfoSet mySet = getOwner().getInfoSet();
@@ -242,10 +252,28 @@ public class MoneyWiseTransInfo
     }
 
     /**
-     * Resolve link reference.
+     * resolve editSet links.
+     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    private void resolveLink() throws OceanusException {
+    public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Update the Encryption details */
+        super.resolveDataSetLinks();
+
+        /* Resolve data links */
+        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class));
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class));
+
+        /* Resolve any link value */
+        resolveLink(pEditSet);
+    }
+
+    /**
+     * Resolve link reference.
+     * @param pEditSet the edit set
+     * @throws OceanusException on error
+     */
+    private void resolveLink(final PrometheusEditSet pEditSet) throws OceanusException {
         /* If we have a link */
         final MoneyWiseTransInfoType myType = getInfoType();
         if (myType.isLink()) {
@@ -256,13 +284,15 @@ public class MoneyWiseTransInfo
             /* Switch on link type */
             switch (myType.getInfoClass()) {
                 case RETURNEDCASHACCOUNT:
-                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getDeposits());
+                    getOwner().resolveTransactionAsset(pEditSet == null ? getDataSet() : pEditSet, this, PrometheusDataResource.DATAINFO_LINK);
                     if (myLinkId == null) {
                         setValueValue(getTransAsset().getExternalId());
                     }
                     break;
                 case TRANSTAG:
-                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, myData.getTransactionTags());
+                    resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
+                            ? myData.getTransactionTags()
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class));
                     if (myLinkId == null) {
                         setValueValue(getTransactionTag().getIndexedId());
                     }
@@ -482,7 +512,7 @@ public class MoneyWiseTransInfo
                 /* If this is an infoItem */
                 if (myCurr.getInfoType().isLink()) {
                     /* Resolve the link */
-                    myCurr.resolveLink();
+                    myCurr.resolveLink(null);
                 }
             }
         }

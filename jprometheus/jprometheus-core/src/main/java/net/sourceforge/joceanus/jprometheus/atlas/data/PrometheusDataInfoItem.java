@@ -204,6 +204,7 @@ public abstract class PrometheusDataInfoItem
         /* Switch on type of Data */
         switch (myInfoClass.getDataType()) {
             case LINK:
+            case LINKPAIR:
             case LINKSET:
                 return myFormatter.formatObject(getLink());
             default:
@@ -423,6 +424,15 @@ public abstract class PrometheusDataInfoItem
     }
 
     /**
+     * Set link id.
+     * @param pId the linkId
+     */
+    private void setValueLink(final Long pId) {
+        final PrometheusEncryptedValues myValues = getValues();
+        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pId);
+    }
+
+    /**
      * Set link name.
      * @param pName the linkName
      */
@@ -475,6 +485,9 @@ public abstract class PrometheusDataInfoItem
             case LINK:
             case LINKSET:
                 bValueOK = setLinkValue(pValue);
+                break;
+            case LINKPAIR:
+                bValueOK = setLinkPairValue(pValue);
                 break;
             case STRING:
                 bValueOK = setStringValue(pValue);
@@ -580,6 +593,38 @@ public abstract class PrometheusDataInfoItem
             } else if (pValue instanceof byte[]) {
                 setValueBytes((byte[]) pValue, Integer.class);
                 setValueLink(getValue(Integer.class));
+                return true;
+            } else if (pValue instanceof String) {
+                setValueLink((String) pValue);
+                return true;
+            } else if (pValue instanceof PrometheusDataItem) {
+                final PrometheusDataItem myItem = (PrometheusDataItem) pValue;
+                setValueValue(myItem.getIndexedId());
+                setValueLink(myItem);
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);
+        }
+        return false;
+    }
+
+    /**
+     * Set Link Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setLinkPairValue(final Object pValue) throws OceanusException {
+        try {
+            /* Handle various forms */
+            if (pValue instanceof Long) {
+                setValueValue(pValue);
+                setValueLink((Long) pValue);
+                return true;
+            } else if (pValue instanceof byte[]) {
+                setValueBytes((byte[]) pValue, Long.class);
+                setValueLink(getValue(Long.class));
                 return true;
             } else if (pValue instanceof String) {
                 setValueLink((String) pValue);

@@ -454,6 +454,12 @@ public class MetisFieldVersionValues {
             return;
         }
 
+        /* Long is allowed for LinkPair type */
+        if (MetisDataType.LINKPAIR.equals(myDataType)
+                && pValue instanceof Long) {
+            return;
+        }
+
         /* Check expected dataType */
         final Class<?> myClass = myDataType.getDataTypeClass();
         final boolean bAllowed = myClass == null || myClass.isInstance(pValue);

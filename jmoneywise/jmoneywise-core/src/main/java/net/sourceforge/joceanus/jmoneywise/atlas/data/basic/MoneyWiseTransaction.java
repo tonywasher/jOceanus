@@ -29,8 +29,16 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
@@ -41,6 +49,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -600,6 +609,23 @@ public class MoneyWiseTransaction
     }
 
     /**
+     * resolve editSet links
+     * @throws OceanusException on error
+     */
+    protected void resolveEditSetLinks() throws OceanusException {
+        /* Access the editSet */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+
+        /* Resolve data links */
+        resolveTransactionAsset(myEditSet, this, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
+        resolveTransactionAsset(myEditSet, this, MoneyWiseBasicResource.TRANSACTION_PARTNER);
+        resolveDataLink(MoneyWiseBasicDataType.TRANSCATEGORY, myEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class));
+
+        /* Resolve links in infoSet */
+        theInfoSet.resolveEditSetLinks(myEditSet);
+    }
+
+    /**
      * Determine if an infoSet class is required.
      * @param pClass the infoSet class
      * @return the status
@@ -984,6 +1010,11 @@ public class MoneyWiseTransaction
         private MoneyWiseTransInfoTypeList theInfoTypeList;
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
@@ -1052,10 +1083,63 @@ public class MoneyWiseTransaction
             theInfoTypeList = pInfoTypeList;
         }
 
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
+        }
+
         @Override
         protected MoneyWiseTransactionList getEmptyList(final PrometheusListStyle pStyle) {
             final MoneyWiseTransactionList myList = new MoneyWiseTransactionList(this);
             myList.setStyle(pStyle);
+            return myList;
+        }
+
+        /**
+         * Derive Edit list.
+         * @param pEditSet the editSet
+         * @return the edit list
+         * @throws OceanusException on error
+         */
+        public MoneyWiseTransactionList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
+            /* Build an empty List */
+            final MoneyWiseTransactionList myList = getEmptyList(PrometheusListStyle.EDIT);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, myList);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);
+
+            /* Create info List */
+            final MoneyWiseTransInfoList myTransInfo = getTransactionInfo();
+            myList.theInfoList = myTransInfo.getEmptyList(PrometheusListStyle.EDIT);
+            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTIONINFO, myList.theInfoList);
+
+            /* Store the editSet */
+            myList.theEditSet = pEditSet;
+
+            /* Loop through the portfolios */
+            final Iterator<MoneyWiseTransaction> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                final MoneyWiseTransaction myCurr = myIterator.next();
+
+                /* Ignore deleted transactions */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Build the new linked transaction and add it to the list */
+                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(myList, myCurr);
+                myList.add(myTrans);
+                myTrans.resolveEditSetLinks();
+
+                /* Adjust the map */
+                myTrans.adjustMapForItem();
+            }
+
+            /* Return the list */
             return myList;
         }
 

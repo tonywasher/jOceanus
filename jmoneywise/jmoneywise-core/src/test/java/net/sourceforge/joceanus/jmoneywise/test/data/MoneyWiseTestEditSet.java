@@ -21,34 +21,12 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashInfo;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCategory;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositRate;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee.MoneyWisePayeeList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayeeInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolioInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseRegion;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
@@ -110,6 +88,11 @@ public class MoneyWiseTestEditSet {
         myEditSet = new PrometheusEditSet(myView);
         populateAccountEditSet(myEditSet);
         validateEditSet(myEditSet);
+
+        /* Build and validate transactions */
+        myEditSet = new PrometheusEditSet(myView);
+        populateTransEditSet(myEditSet);
+        validateEditSet(myEditSet);
     }
 
     /**
@@ -126,6 +109,7 @@ public class MoneyWiseTestEditSet {
         populateStaticsEditSet(myEditSet);
         populateCategoryEditSet(myEditSet);
         populateAccountEditSet(myEditSet);
+        populateTransEditSet(myEditSet);
         validateEditSet(myEditSet);
     }
 
@@ -222,6 +206,18 @@ public class MoneyWiseTestEditSet {
         pEditSet.registerType(MoneyWiseBasicDataType.PORTFOLIO);
         pEditSet.registerType(MoneyWiseBasicDataType.PORTFOLIOINFO);
         theDataSet.getPortfolios().deriveEditList(pEditSet);
+    }
+
+    /**
+     * Populate editSet for transactions.
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void populateTransEditSet(final PrometheusEditSet pEditSet) throws OceanusException  {
+        /* Register and derive transactions */
+        pEditSet.registerType(MoneyWiseBasicDataType.TRANSACTION);
+        pEditSet.registerType(MoneyWiseBasicDataType.TRANSACTIONINFO);
+        theDataSet.getTransactions().deriveEditList(pEditSet);
     }
 
     /**
