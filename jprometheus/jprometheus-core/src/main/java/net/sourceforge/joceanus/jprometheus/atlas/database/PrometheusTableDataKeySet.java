@@ -43,9 +43,8 @@ public class PrometheusTableDataKeySet
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addReferenceColumn(PrometheusCryptographyDataType.CONTROLKEY, PrometheusTableControlKeys.TABLE_NAME);
-        myTableDef.addDateColumn(PrometheusDataResource.DATAKEYSET_CREATION);
-        myTableDef.addBinaryColumn(PrometheusDataResource.DATAKEYSET_KEYSETDEF, PrometheusDataKeySet.WRAPLEN);
+        myTableDef.addReferenceColumn(PrometheusCryptographyDataType.CONTROLKEYSET, PrometheusTableControlKeySet.TABLE_NAME);
+        myTableDef.addBinaryColumn(PrometheusDataResource.KEYSET_KEYSETDEF, PrometheusDataKeySet.WRAPLEN);
     }
 
     @Override
@@ -60,9 +59,8 @@ public class PrometheusTableDataKeySet
 
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(PrometheusDataKeySet.OBJECT_NAME);
-        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, myTableDef.getIntegerValue(PrometheusCryptographyDataType.CONTROLKEY));
-        myValues.addValue(PrometheusDataResource.DATAKEYSET_CREATION, myTableDef.getDateValue(PrometheusDataResource.DATAKEYSET_CREATION));
-        myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, myTableDef.getBinaryValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF));
+        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEYSET, myTableDef.getIntegerValue(PrometheusCryptographyDataType.CONTROLKEYSET));
+        myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, myTableDef.getBinaryValue(PrometheusDataResource.KEYSET_KEYSETDEF));
 
         /* Return the values */
         return myValues;
@@ -73,11 +71,9 @@ public class PrometheusTableDataKeySet
                                  final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (PrometheusCryptographyDataType.CONTROLKEY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
-        } else if (PrometheusDataResource.DATAKEYSET_CREATION.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getCreationDate());
-        } else if (PrometheusDataResource.DATAKEYSET_KEYSETDEF.equals(iField)) {
+        if (PrometheusCryptographyDataType.CONTROLKEYSET.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getControlKeySetId());
+        } else if (PrometheusDataResource.KEYSET_KEYSETDEF.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getSecuredKeySetDef());
         } else {
             super.setFieldValue(pItem, iField);

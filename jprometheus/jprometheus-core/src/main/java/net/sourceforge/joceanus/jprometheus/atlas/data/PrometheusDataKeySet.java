@@ -63,10 +63,9 @@ public class PrometheusDataKeySet
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);
-        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.DATAKEYSET_KEYSETDEF, WRAPLEN);
-        FIELD_DEFS.declareDateField(PrometheusDataResource.DATAKEYSET_CREATION);
-        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.DATAKEYSET_KEYSET);
+        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEYSET);
+        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.KEYSET_KEYSETDEF, WRAPLEN);
+        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.KEYSET_KEYSET);
     }
 
     /**
@@ -122,64 +121,57 @@ public class PrometheusDataKeySet
         theSecurityFactory = mySecure.getSecurityFactory();
 
         /* Store the ControlKey */
-        Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
+        Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEYSET);
         if (myValue instanceof Integer) {
             /* Store the integer */
             final Integer myInt = (Integer) myValue;
-            setValueControlKey(myInt);
+            setValueControlKeySet(myInt);
 
             /* Resolve the ControlKey */
-            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
-        } else if (myValue instanceof PrometheusControlKey) {
+            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEYSET, myData.getControlKeySets());
+        } else if (myValue instanceof PrometheusControlKeySet) {
             /* Store the controlKey */
-            setValueControlKey((PrometheusControlKey) myValue);
+            setValueControlKeySet((PrometheusControlKeySet) myValue);
         }
 
         /* Access the controlKey */
-        final PrometheusControlKey myControl = getControlKey();
+        final PrometheusControlKeySet myControlKeySet = getControlKeySet();
 
         /* Store the WrappedKeySetDef */
-        myValue = pValues.getValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF);
+        myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
         if (myValue instanceof byte[]) {
             setValueSecuredKeySetDef((byte[]) myValue);
         }
 
         /* Store/Resolve the keySet */
-        myValue = pValues.getValue(PrometheusDataResource.DATAKEYSET_KEYSET);
+        myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSET);
         if (myValue instanceof GordianKeySet) {
             setValueKeySet((GordianKeySet) myValue);
         } else if (getSecuredKeySetDef() != null) {
-            final GordianKeySet myKeySet = myControl.getKeySetHash().getKeySet().deriveKeySet(getSecuredKeySetDef());
+            final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         }
 
-        /* Store the CreationDate */
-        myValue = pValues.getValue(PrometheusDataResource.DATAKEYSET_CREATION);
-        if (!(myValue instanceof TethysDate)) {
-            myValue = new TethysDate();
-        }
-        setValueCreationDate((TethysDate) myValue);
-
         /* Register the DataKeySet */
-        myControl.registerDataKeySet(this);
+        myControlKeySet.registerDataKeySet(this);
     }
 
     /**
      * Constructor for a new DataKeySet.
      * @param pList the list to which to add the keySet to
-     * @param pControlKey the control key
+     * @param pControlKeySet the control keySet
      * @throws OceanusException on error
      */
     protected PrometheusDataKeySet(final PrometheusDataKeySetList pList,
-                                   final PrometheusControlKey pControlKey) throws OceanusException {
+                                   final PrometheusControlKeySet pControlKeySet) throws OceanusException {
         /* Initialise the item */
         super(pList, 0);
 
         /* Protect against exceptions */
         try {
             /* Store the Details */
-            setValueControlKey(pControlKey);
+            setValueControlKeySet(pControlKeySet);
 
             /* Access the Security manager */
             final PrometheusDataSet myData = getDataSet();
@@ -196,10 +188,7 @@ public class PrometheusDataKeySet
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueSecuredKeySetDef(pControlKey.getKeySetHash().getKeySet().secureKeySet(myKeySet));
-
-            /* Set the creationDate */
-            setValueCreationDate(new TethysDate());
+            setValueSecuredKeySetDef(pControlKeySet.getKeySet().secureKeySet(myKeySet));
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -234,18 +223,26 @@ public class PrometheusDataKeySet
      * @return the controlKey
      */
     public final PrometheusControlKey getControlKey() {
-        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);
+        return getControlKeySet().getControlKey();
+    }
+
+    /**
+     * Get the ControlKeySet.
+     * @return the controlKeySet
+     */
+    public final PrometheusControlKeySet getControlKeySet() {
+        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEYSET, PrometheusControlKeySet.class);
     }
 
     /**
      * Get the ControlKeyId for this item.
      * @return the ControlKeyId
      */
-    public Integer getControlKeyId() {
-        final PrometheusControlKey myKey = getControlKey();
-        return myKey == null
+    public Integer getControlKeySetId() {
+        final PrometheusControlKeySet myKeySet = getControlKeySet();
+        return myKeySet == null
                 ? null
-                : myKey.getIndexedId();
+                : myKeySet.getIndexedId();
     }
 
     /**
@@ -253,7 +250,7 @@ public class PrometheusDataKeySet
      * @return the securedKeySetDef
      */
     public final byte[] getSecuredKeySetDef() {
-        return getValues().getValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, byte[].class);
+        return getValues().getValue(PrometheusDataResource.KEYSET_KEYSETDEF, byte[].class);
     }
 
     /**
@@ -261,33 +258,25 @@ public class PrometheusDataKeySet
      * @return the keySet
      */
     public GordianKeySet getKeySet() {
-        return getValues().getValue(PrometheusDataResource.DATAKEYSET_KEYSET, GordianKeySet.class);
+        return getValues().getValue(PrometheusDataResource.KEYSET_KEYSET, GordianKeySet.class);
     }
 
     /**
-     * Get the CreationDate.
-     * @return the creationDate
-     */
-    public final TethysDate getCreationDate() {
-        return getValues().getValue(PrometheusDataResource.DATAKEYSET_CREATION, TethysDate.class);
-    }
-
-    /**
-     * Set the ControlKey Id.
-     * @param pId the controlKey id
+     * Set the ControlKeySet Id.
+     * @param pId the controlKeySet id
      * @throws OceanusException on error
      */
-    private void setValueControlKey(final Integer pId) throws OceanusException {
-        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);
+    private void setValueControlKeySet(final Integer pId) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEYSET, pId);
     }
 
     /**
-     * Set the ControlKey.
-     * @param pKey the controlKey
+     * Set the ControlKeySet.
+     * @param pKeySet the controlKeySet
      * @throws OceanusException on error
      */
-    private void setValueControlKey(final PrometheusControlKey pKey) throws OceanusException {
-        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pKey);
+    private void setValueControlKeySet(final PrometheusControlKeySet pKeySet) throws OceanusException {
+        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEYSET, pKeySet);
     }
 
     /**
@@ -295,7 +284,7 @@ public class PrometheusDataKeySet
      * @param pValue the securedKeySetDef
      */
     private void setValueSecuredKeySetDef(final byte[] pValue) {
-        getValues().setUncheckedValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSETDEF, pValue);
     }
 
     /**
@@ -303,16 +292,7 @@ public class PrometheusDataKeySet
      * @param pValue the keySet
      */
     private void setValueKeySet(final GordianKeySet pValue) {
-        getValues().setUncheckedValue(PrometheusDataResource.DATAKEYSET_KEYSET, pValue);
-    }
-
-    /**
-     * Set the CreationDate.
-     * @param pValue the creationDate
-     * @throws OceanusException on error
-     */
-    private void setValueCreationDate(final TethysDate pValue) throws OceanusException {
-        getValues().setValue(PrometheusDataResource.DATAKEYSET_CREATION, pValue);
+        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSET, pValue);
     }
 
     @Override
@@ -335,11 +315,11 @@ public class PrometheusDataKeySet
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
-        final PrometheusControlKey myControlKey = getControlKey();
+        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEYSET, myData.getControlKeySets());
+        final PrometheusControlKeySet myControlKeySet = getControlKeySet();
 
         /* Register the KeySet */
-        myControlKey.registerDataKeySet(this);
+        myControlKeySet.registerDataKeySet(this);
     }
 
     /**
@@ -480,20 +460,19 @@ public class PrometheusDataKeySet
 
         /**
          * Clone KeySet from a DataBase.
-         * @param pControlKey the ControlKey to clone
+         * @param pControlKeySet the ControlKeySet to clone
          * @param pKeySet the DataKeySet to clone
          * @return the new DataKeySet
          * @throws OceanusException on error
          */
-        protected PrometheusDataKeySet cloneDataKeySet(final PrometheusControlKey pControlKey,
+        protected PrometheusDataKeySet cloneDataKeySet(final PrometheusControlKeySet pControlKeySet,
                                                        final PrometheusDataKeySet pKeySet) throws OceanusException {
             /* Build data values */
             final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusDataKeySet.OBJECT_NAME);
             myValues.addValue(MetisDataResource.DATA_ID, pKeySet.getIndexedId());
-            myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, pControlKey);
-            myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, pKeySet.getSecuredKeySetDef());
-            myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSET, pKeySet.getKeySet());
-            myValues.addValue(PrometheusDataResource.DATAKEYSET_CREATION, pKeySet.getCreationDate());
+            myValues.addValue(PrometheusCryptographyDataType.CONTROLKEYSET, pControlKeySet);
+            myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, pKeySet.getSecuredKeySetDef());
+            myValues.addValue(PrometheusDataResource.KEYSET_KEYSET, pKeySet.getKeySet());
 
             /* Clone the dataKeySet */
             return addValuesItem(myValues);

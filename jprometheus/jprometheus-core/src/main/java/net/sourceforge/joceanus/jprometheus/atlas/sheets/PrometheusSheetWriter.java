@@ -222,6 +222,8 @@ public abstract class PrometheusSheetWriter {
                 return new PrometheusSheetControlData(this);
             case CONTROLKEY:
                 return new PrometheusSheetControlKey(this);
+            case CONTROLKEYSET:
+                return new PrometheusSheetControlKeySet(this);
             case DATAKEYSET:
                 return new PrometheusSheetDataKeySet(this);
             default:

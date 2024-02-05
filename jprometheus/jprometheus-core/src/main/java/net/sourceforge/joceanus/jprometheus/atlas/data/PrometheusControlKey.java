@@ -30,9 +30,10 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataKeySet.PrometheusDataKeySetList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -67,8 +68,9 @@ public final class PrometheusControlKey
      */
     static {
         FIELD_DEFS.declareByteArrayField(PrometheusDataResource.CONTROLKEY_BYTES, HASHLEN);
+        FIELD_DEFS.declareDateField(PrometheusDataResource.CONTROLKEY_CREATION);
         FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.CONTROLKEY_HASH);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_DATAKEYS, PrometheusControlKey::getDataKeySets);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEYSET_LIST, PrometheusControlKey::getControlKeySets);
     }
 
     /**
@@ -77,9 +79,9 @@ public final class PrometheusControlKey
     public static final String NAME_DATABASE = PrometheusDataResource.CONTROLKEY_DATABASE.getValue();
 
     /**
-     * The DataKeySet.
+     * The DataKeySetCache.
      */
-    private DataKeySetResource theDataKeySet = new DataKeySetResource();
+    private ControlKeySetCache theKeySetCache = new ControlKeySetCache();
 
     /**
      * Copy constructor.
@@ -127,6 +129,13 @@ public final class PrometheusControlKey
                 setValueKeySetHash(myHash);
             }
 
+            /* Store the CreationDate */
+            myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_CREATION);
+            if (!(myValue instanceof TethysDate)) {
+                myValue = new TethysDate();
+            }
+            setValueCreationDate((TethysDate) myValue);
+
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Pass on exception */
@@ -159,7 +168,10 @@ public final class PrometheusControlKey
             setValueKeySetHash(myHash);
 
             /* Allocate the DataKeySets */
-            allocateDataKeySets(myData);
+            allocateControlKeySets(myData);
+
+            /* Set the creationDate */
+            setValueCreationDate(new TethysDate());
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -196,8 +208,8 @@ public final class PrometheusControlKey
             setValueHashBytes(myHash.getHash());
             setValueKeySetHash(myHash);
 
-            /* Allocate the DataKeySets */
-            allocateDataKeySets(myData);
+            /* Allocate the ControlKeySets */
+            allocateControlKeySets(myData);
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -212,11 +224,11 @@ public final class PrometheusControlKey
     }
 
    /**
-     * Obtain the dataKeySetResource.
+     * Obtain the dataKeySetCache.
      * @return the dataKeySets
      */
-    private DataKeySetResource getDataKeySets() {
-        return theDataKeySet;
+    private ControlKeySetCache getControlKeySets() {
+        return theKeySetCache;
     }
 
     /**
@@ -233,6 +245,14 @@ public final class PrometheusControlKey
      */
     public GordianKeySetHash getKeySetHash() {
         return getValues().getValue(PrometheusDataResource.CONTROLKEY_HASH, GordianKeySetHash.class);
+    }
+
+    /**
+     * Get the CreationDate.
+     * @return the creationDate
+     */
+    public TethysDate getCreationDate() {
+        return getValues().getValue(PrometheusDataResource.CONTROLKEY_CREATION, TethysDate.class);
     }
 
     /**
@@ -253,6 +273,15 @@ public final class PrometheusControlKey
         getValues().setValue(PrometheusDataResource.CONTROLKEY_HASH, pValue);
     }
 
+    /**
+     * Set the CreationDate.
+     * @param pValue the creationDate
+     * @throws OceanusException on error
+     */
+    private void setValueCreationDate(final TethysDate pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.CONTROLKEY_CREATION, pValue);
+    }
+
     @Override
     public PrometheusControlKey getBase() {
         return (PrometheusControlKey) super.getBase();
@@ -268,7 +297,7 @@ public final class PrometheusControlKey
      * @return the next dataKeySet
      */
     PrometheusDataKeySet getNextDataKeySet() {
-        return theDataKeySet.getNextDataKeySet();
+        return theKeySetCache.getNextDataKeySet();
     }
 
     @Override
@@ -278,25 +307,25 @@ public final class PrometheusControlKey
     }
 
     /**
-     * Allocate a new DataKeySet.
+     * Allocate a new ControlKeySet.
      * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private void allocateDataKeySets(final PrometheusDataSet pData) throws OceanusException {
-        /* Access the DataKeySet List */
-        final PrometheusDataKeySetList mySets = pData.getDataKeySets();
+    private void allocateControlKeySets(final PrometheusDataSet pData) throws OceanusException {
+        /* Access the ControlKeySet List */
+        final PrometheusControlKeySetList mySets = pData.getControlKeySets();
         setNewVersion();
 
-        /* Loop to create sufficient DataKeySets */
+        /* Loop to create sufficient ControlKeySets */
         final int myNumKeySets = pData.getNumActiveKeySets();
         for (int i = 0; i < myNumKeySets; i++) {
-            /* Allocate the DataKeySet */
-            final PrometheusDataKeySet mySet = new PrometheusDataKeySet(mySets, this);
+            /* Allocate the ControlKeySet */
+            final PrometheusControlKeySet mySet = new PrometheusControlKeySet(mySets, this);
             mySet.setNewVersion();
             mySets.add(mySet);
 
             /* Register the DataKeySet */
-            theDataKeySet.registerKeySet(mySet);
+            theKeySetCache.registerControlKeySet(mySet);
         }
     }
 
@@ -304,8 +333,8 @@ public final class PrometheusControlKey
      * Delete the old set of ControlKey and DataKeys.
      */
     void deleteControlSet() {
-        /* Delete the DataKeySet */
-        theDataKeySet.deleteDataKeySets();
+        /* Delete the ControlKeySet */
+        theKeySetCache.deleteControlKeySets();
 
         /* Mark this control key as deleted */
         setDeleted(true);
@@ -339,19 +368,19 @@ public final class PrometheusControlKey
         final GordianKeySetHash myHash = getKeySetHash();
 
         /* Update the hash for the KeySet */
-        if (theDataKeySet.updateKeySetHash(myHash)) {
+        if (theKeySetCache.updateKeySetHash(myHash)) {
             final PrometheusDataSet myData = getDataSet();
             myData.setVersion(myData.getVersion() + 1);
         }
     }
 
     /**
-     * Register DataKeySet.
-     * @param pKeySet the DataKeySet to register
+     * Register ControlKeySet.
+     * @param pKeySet the ControlKeySet to register
      */
-    void registerDataKeySet(final PrometheusDataKeySet pKeySet) {
+    void registerControlKeySet(final PrometheusControlKeySet pKeySet) {
         /* Store the DataKey into the map */
-        theDataKeySet.registerKeySet(pKeySet);
+        theKeySetCache.registerControlKeySet(pKeySet);
     }
 
     /**
@@ -550,18 +579,19 @@ public final class PrometheusControlKey
             final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusControlKey.OBJECT_NAME);
             myValues.addValue(MetisDataResource.DATA_ID, pControlKey.getIndexedId());
             myValues.addValue(PrometheusDataResource.CONTROLKEY_BYTES, pControlKey.getHashBytes());
+            myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, pControlKey.getCreationDate());
             myValues.addValue(PrometheusDataResource.CONTROLKEY_HASH, pControlKey.getKeySetHash());
 
             /* Clone the control key */
             final PrometheusControlKey myControl = addValuesItem(myValues);
 
-            /* Access the DataKey List */
+            /* Access the ControlKeySet List */
             final PrometheusDataSet myData = getDataSet();
-            final PrometheusDataKeySetList myKeySets = myData.getDataKeySets();
+            final PrometheusControlKeySetList myKeySets = myData.getControlKeySets();
 
-            /* Create a new DataKeySet for this ControlKey */
-            final DataKeySetResource mySource = pControlKey.theDataKeySet;
-            myControl.theDataKeySet = mySource.cloneDataKeySetResource(myControl, myKeySets);
+            /* Create a new ControlKeySetCache for this ControlKey */
+            final ControlKeySetCache mySource = pControlKey.getControlKeySets();
+            myControl.theKeySetCache = mySource.cloneControlKeySetCache(myControl, myKeySets);
 
             /* return the cloned key */
             return myControl;
@@ -581,46 +611,46 @@ public final class PrometheusControlKey
     }
 
     /**
-     * DataKeySetResource.
+     * ControlKeySetCache.
      */
-    private static final class DataKeySetResource
-            implements MetisFieldItem, MetisDataList<PrometheusDataKeySet> {
+    private static final class ControlKeySetCache
+            implements MetisFieldItem, MetisDataList<PrometheusControlKeySet> {
         /**
          * Report fields.
          */
-        private static final MetisFieldSet<DataKeySetResource> FIELD_DEFS = MetisFieldSet.newFieldSet(DataKeySetResource.class);
+        private static final MetisFieldSet<ControlKeySetCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ControlKeySetCache.class);
 
         /*
          * Size Field Id.
          */
         static {
-            FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataKeySetResource::size);
+            FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, ControlKeySetCache::size);
         }
 
         /**
          * The list.
          */
-        private final List<PrometheusDataKeySet> theList;
+        private final List<PrometheusControlKeySet> theList;
 
         /**
          * Iterator.
          */
-        private Iterator<PrometheusDataKeySet> theIterator;
+        private Iterator<PrometheusControlKeySet> theIterator;
 
         /**
          * Constructor.
          */
-        DataKeySetResource() {
+        ControlKeySetCache() {
             theList = new ArrayList<>();
         }
 
         @Override
-        public MetisFieldSet<DataKeySetResource> getDataFieldSet() {
+        public MetisFieldSet<ControlKeySetCache> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public List<PrometheusDataKeySet> getUnderlyingList() {
+        public List<PrometheusControlKeySet> getUnderlyingList() {
             return theList;
         }
 
@@ -633,7 +663,7 @@ public final class PrometheusControlKey
          * Register the KeySet.
          * @param pKeySet the KeySet to register
          */
-        private void registerKeySet(final PrometheusDataKeySet pKeySet) {
+        private void registerControlKeySet(final PrometheusControlKeySet pKeySet) {
             /* If this is first registration */
             if (!theList.contains(pKeySet)) {
                 /* Add the KeySet */
@@ -657,26 +687,26 @@ public final class PrometheusControlKey
             }
 
             /* Handle initialisation and wrapping */
-            if ((theIterator == null)
-                    || (!theIterator.hasNext())) {
+            if (theIterator == null
+                    || !theIterator.hasNext()) {
                 theIterator = iterator();
             }
 
             /* Return the next KeySet */
-            return theIterator.next();
+            return theIterator.next().getNextDataKeySet();
         }
 
         /**
-         * Delete the KeySets.
+         * Delete the ControlKeySets.
          */
-        private void deleteDataKeySets() {
+        private void deleteControlKeySets() {
             /* Loop through the KeySets */
-            final Iterator<PrometheusDataKeySet> myIterator = iterator();
+            final Iterator<PrometheusControlKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final PrometheusDataKeySet mySet = myIterator.next();
+                final PrometheusControlKeySet mySet = myIterator.next();
 
                 /* Delete the KeySet */
-                mySet.deleteDataKeySet();
+                mySet.deleteControlKeySet();
             }
         }
 
@@ -689,9 +719,9 @@ public final class PrometheusControlKey
         private boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
             /* Loop through the KeySets */
             boolean bChanges = false;
-            final Iterator<PrometheusDataKeySet> myIterator = iterator();
+            final Iterator<PrometheusControlKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final PrometheusDataKeySet mySet = myIterator.next();
+                final PrometheusControlKeySet mySet = myIterator.next();
 
                 /* Update the KeySet */
                 bChanges |= mySet.updateKeySetHash(pHash);
@@ -702,29 +732,29 @@ public final class PrometheusControlKey
         }
 
         /**
-         * Clone KeySet from a DataBase.
+         * Clone controlKeySet Cache from a DataBase.
          * @param pControlKey the ControlKey to clone
-         * @param pKeySets the DataKeySetList
-         * @return the new DataKeySet
+         * @param pKeySets the ControlKeySetList
+         * @return the new ControlKeySetCache
          * @throws OceanusException on error
          */
-        private DataKeySetResource cloneDataKeySetResource(final PrometheusControlKey pControlKey,
-                                                           final PrometheusDataKeySetList pKeySets) throws OceanusException {
+        private ControlKeySetCache cloneControlKeySetCache(final PrometheusControlKey pControlKey,
+                                                           final PrometheusControlKeySetList pKeySets) throws OceanusException {
             /* Create a new resource */
-            final DataKeySetResource myResource = new DataKeySetResource();
+            final ControlKeySetCache myCache = new ControlKeySetCache();
 
             /* Loop through the KeySets */
-            final Iterator<PrometheusDataKeySet> myIterator = iterator();
+            final Iterator<PrometheusControlKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final PrometheusDataKeySet mySet = myIterator.next();
+                final PrometheusControlKeySet mySet = myIterator.next();
 
-                /* Create a new DataKeySet for this ControlKey */
-                final PrometheusDataKeySet myNewSet = pKeySets.cloneDataKeySet(pControlKey, mySet);
-                myResource.registerKeySet(myNewSet);
+                /* Create a new ControlKeySet for this ControlKey */
+                final PrometheusControlKeySet myNewSet = pKeySets.cloneControlKeySet(pControlKey, mySet);
+                myCache.registerControlKeySet(myNewSet);
             }
 
-            /* Return the resource */
-            return myResource;
+            /* Return the cache */
+            return myCache;
         }
     }
 }

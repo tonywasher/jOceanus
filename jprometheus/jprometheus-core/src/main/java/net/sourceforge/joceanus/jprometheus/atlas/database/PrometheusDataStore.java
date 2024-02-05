@@ -151,6 +151,8 @@ public abstract class PrometheusDataStore {
                 return new PrometheusTableControlData(this);
             case CONTROLKEY:
                 return new PrometheusTableControlKeys(this);
+            case CONTROLKEYSET:
+                return new PrometheusTableControlKeySet(this);
             case DATAKEYSET:
                 return new PrometheusTableDataKeySet(this);
             default:

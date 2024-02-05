@@ -40,14 +40,9 @@ public class PrometheusSheetDataKeySet
     private static final int COL_CONTROL = COL_ID + 1;
 
     /**
-     * CreationDate column.
-     */
-    private static final int COL_CREATEDATE = COL_CONTROL + 1;
-
-    /**
      * KeySetDef column.
      */
-    private static final int COL_KEYSETDEF = COL_CREATEDATE + 1;
+    private static final int COL_KEYSETDEF = COL_CONTROL + 1;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -79,9 +74,8 @@ public class PrometheusSheetDataKeySet
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(PrometheusDataKeySet.OBJECT_NAME);
-        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, loadInteger(COL_CONTROL));
-        myValues.addValue(PrometheusDataResource.DATAKEYSET_CREATION, loadDate(COL_CREATEDATE));
-        myValues.addValue(PrometheusDataResource.DATAKEYSET_KEYSETDEF, loadBytes(COL_KEYSETDEF));
+        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEYSET, loadInteger(COL_CONTROL));
+        myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, loadBytes(COL_KEYSETDEF));
 
         /* Return the values */
         return myValues;
@@ -91,8 +85,7 @@ public class PrometheusSheetDataKeySet
     protected void insertSecureItem(final PrometheusDataKeySet pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_CONTROL, pItem.getControlKeyId());
-        writeDate(COL_CREATEDATE, pItem.getCreationDate());
+        writeInteger(COL_CONTROL, pItem.getControlKeySetId());
         writeBytes(COL_KEYSETDEF, pItem.getSecuredKeySetDef());
     }
 
