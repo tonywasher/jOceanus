@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataTy
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;

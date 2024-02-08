@@ -18,8 +18,10 @@ package net.sourceforge.joceanus.jgordianknot.util;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBaseDialogControl;
 import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBasePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBuilder;
@@ -69,6 +71,31 @@ public final class GordianGenerator {
         /* Create the random factory */
         return GordianBuilder.createRandomFactory();
     }
+
+    /**
+     * secure Factory.
+     * @param pKeySet the keySet to use
+     * @param pFactoryToSecure the keySet to secure
+     * @return the securedFactory
+     * @throws OceanusException on error
+     */
+    public static byte[] secureFactory(final GordianKeySet pKeySet,
+                                       final GordianFactory pFactoryToSecure) throws OceanusException {
+        return ((GordianCoreKeySet) pKeySet).secureFactory(pFactoryToSecure);
+    }
+
+    /**
+     * derive Factory.
+     * @param pKeySet the keySet to use
+     * @param pSecuredFactory the secured factory
+     * @return the derived factory
+     * @throws OceanusException on error
+     */
+    public static GordianFactory deriveFactory(final GordianKeySet pKeySet,
+                                               final byte[] pSecuredFactory) throws OceanusException {
+        return ((GordianCoreKeySet) pKeySet).deriveFactory(pSecuredFactory);
+    }
+
 
     /**
      * Create a password Manager.

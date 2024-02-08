@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -203,9 +202,10 @@ public class PrometheusEditSet
     }
 
     /**
-     * Obtain the editEntry for a type.
+     * Set the editEntry for a type.
+     * @param <T> the dataType
      * @param pDataType the data type
-
+     * @param pList the list
      */
     public <T extends PrometheusDataItem> void setEditEntryList(final PrometheusListKey pDataType,
                                                                 final PrometheusDataList<T> pList) {
@@ -215,7 +215,7 @@ public class PrometheusEditSet
     }
 
     /**
-     * Obtain an iterator over the listKeys
+     * Obtain an iterator over the listKeys.
      * @return the iterator
      */
     public Iterator<PrometheusListKey> keyIterator() {
@@ -223,7 +223,7 @@ public class PrometheusEditSet
     }
 
     /**
-     * Obtain an iterator over the listKeys
+     * Obtain an iterator over the listKeys.
      * @return the iterator
      */
     public Iterator<PrometheusEditEntry<?>> listIterator() {

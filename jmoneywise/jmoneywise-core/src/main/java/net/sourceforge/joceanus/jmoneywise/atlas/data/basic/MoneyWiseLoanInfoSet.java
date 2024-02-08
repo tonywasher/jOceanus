@@ -136,7 +136,7 @@ public class MoneyWiseLoanInfoSet
     }
 
     /**
-     * Resolve editSetLinks
+     * Resolve editSetLinks.
      * @param pEditSet the editSet
      * @throws OceanusException on error
      */

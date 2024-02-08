@@ -853,8 +853,8 @@ class KeySetTest {
         /* Create the random factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory();
         final GordianKeySet myKeySet = myFactory.getKeySetFactory().generateKeySet(new GordianKeySetSpec());
-        final byte[] mySecured = myKeySet.secureFactory(myFactory);
-        final GordianFactory myResolved = myKeySet.deriveFactory(mySecured);
+        final byte[] mySecured = GordianGenerator.secureFactory(myKeySet, myFactory);
+        final GordianFactory myResolved = GordianGenerator.deriveFactory(myKeySet, mySecured);
         Assertions.assertEquals(myFactory, myResolved, "Failed to lock/resolve factory");
     }
 }

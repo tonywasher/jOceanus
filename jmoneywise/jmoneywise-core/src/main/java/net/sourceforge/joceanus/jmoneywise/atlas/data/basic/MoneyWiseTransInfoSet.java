@@ -161,7 +161,7 @@ public class MoneyWiseTransInfoSet
     }
 
     /**
-     * Resolve editSetLinks
+     * Resolve editSetLinks.
      *
      * @param pEditSet the editSet
      * @throws OceanusException on error

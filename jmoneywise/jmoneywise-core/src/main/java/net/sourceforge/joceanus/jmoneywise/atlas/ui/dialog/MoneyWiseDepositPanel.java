@@ -156,9 +156,6 @@ public class MoneyWiseDepositPanel
     }
 
     /**
-     * Create simpleId
-     */
-    /**
      * Build account subPanel.
      * @param pFactory the GUI factory
      */

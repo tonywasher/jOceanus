@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayeeInfo.M
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
@@ -136,7 +135,7 @@ public class MoneyWisePayeeInfoSet
     }
 
     /**
-     * Resolve editSetLinks
+     * Resolve editSetLinks.
      *
      * @param pEditSet the editSet
      * @throws OceanusException on error
