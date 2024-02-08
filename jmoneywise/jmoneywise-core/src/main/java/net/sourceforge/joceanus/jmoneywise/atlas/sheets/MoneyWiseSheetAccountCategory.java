@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;

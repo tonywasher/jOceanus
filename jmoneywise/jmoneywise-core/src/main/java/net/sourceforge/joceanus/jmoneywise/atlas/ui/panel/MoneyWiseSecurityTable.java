@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoClass;

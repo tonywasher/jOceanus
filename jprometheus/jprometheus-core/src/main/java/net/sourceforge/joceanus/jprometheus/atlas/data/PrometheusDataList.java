@@ -59,7 +59,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
          * @param pDataType the dataType
          * @return true/false
          */
-        boolean hasDataType(final PrometheusListKey pDataType);
+        boolean hasDataType(PrometheusListKey pDataType);
     }
 
     /**

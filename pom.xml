@@ -72,8 +72,8 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.77</BouncyCastleVersion>
-    <JUnitVersion>5.10.1</JUnitVersion>
-    <JSONVersion>20231013</JSONVersion>
+    <JUnitVersion>5.10.2</JUnitVersion>
+    <JSONVersion>20240205</JSONVersion>
     <ApacheMavenVersion>3.9.5</ApacheMavenVersion>
     <MySQLVersion>8.0.33</MySQLVersion>
     <PostGreSQLVersion>42.7.1</PostGreSQLVersion>
@@ -84,9 +84,9 @@
     <JFreeChartVersion>1.5.4</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>11</JavaVersion>
-    <JavaFXVersion>17.0.9</JavaFXVersion>
+    <JavaFXVersion>17.0.10</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.12.7</CheckStyleVersion>
+    <CheckStyleVersion>10.13.0</CheckStyleVersion>
     <PMDVersion>6.55.0</PMDVersion>
     <CleanPluginVersion>3.3.2</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
@@ -97,7 +97,7 @@
     <CompilerPluginVersion>3.12.1</CompilerPluginVersion>
     <ShadePluginVersion>3.5.1</ShadePluginVersion>
     <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
-    <SurefirePluginVersion>3.2.3</SurefirePluginVersion>
+    <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.1.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.4.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.3.0</JarPluginVersion>

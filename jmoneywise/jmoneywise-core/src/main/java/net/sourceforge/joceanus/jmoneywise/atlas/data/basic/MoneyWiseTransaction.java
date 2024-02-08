@@ -603,7 +603,7 @@ public class MoneyWiseTransaction
     }
 
     /**
-     * resolve editSet links
+     * resolve editSet links.
      * @throws OceanusException on error
      */
     public void resolveEditSetLinks() throws OceanusException {

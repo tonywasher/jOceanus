@@ -26,10 +26,7 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 
 /**
  * Report Classes.

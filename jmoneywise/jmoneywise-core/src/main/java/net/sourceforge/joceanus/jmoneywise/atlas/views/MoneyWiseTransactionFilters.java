@@ -51,36 +51,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.M
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket.LoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioCashBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket.TransactionTagBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PortfolioCashFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TagFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TaxBasisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TransactionCategoryFilter;
 
 /**
  * List of filters for a transaction within an analysis.

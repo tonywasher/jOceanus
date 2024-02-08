@@ -457,10 +457,15 @@ public final class GordianCoreKeySet
         return myEncoded.buildKeySet((GordianCoreKeySetFactory) theFactory.getKeySetFactory(), this);
     }
 
-    @Override
+    /**
+     * Secure the factory.
+     * @param pFactoryToSecure the factory to secure
+     * @return the secure factory
+     * @throws OceanusException on error
+     */
     public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws OceanusException {
         /* Protect the operation */
-        byte[] myBuffer = new byte[GordianParameters.SEED_LEN << 1];
+        final byte[] myBuffer = new byte[GordianParameters.SEED_LEN << 1];
         try {
             /* Access the parameters */
             final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
@@ -483,7 +488,12 @@ public final class GordianCoreKeySet
         }
     }
 
-    @Override
+    /**
+     * derive the secured factory.
+     * @param pSecuredFactory the secured factory
+     * @return the factory
+     * @throws OceanusException on error
+     */
     public GordianFactory deriveFactory(final byte[] pSecuredFactory) throws OceanusException {
         /* Decrypt the bytes */
         final byte[] myBytes = decryptBytes(pSecuredFactory);
@@ -495,7 +505,7 @@ public final class GordianCoreKeySet
 
         /* Access the separate parts */
         final int mySeedLen = GordianParameters.SEED_LEN;
-        final byte[] mySecSeed = Arrays.copyOfRange(myBytes,0,  mySeedLen);
+        final byte[] mySecSeed = Arrays.copyOfRange(myBytes, 0, mySeedLen);
         final byte[] myKeySetSeed = Arrays.copyOfRange(myBytes, mySeedLen, myBytes.length);
         Arrays.fill(myBytes, (byte) 0);
 
@@ -602,6 +612,7 @@ public final class GordianCoreKeySet
      * @param pKeyType the keyType
      * @param pSecret the derived Secret
      * @param pInitVector the initialisation vector.
+     * @param pSeededRandom the seededRandom.
      * @return the generated key
      * @throws OceanusException on error
      */
