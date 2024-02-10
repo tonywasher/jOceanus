@@ -505,7 +505,7 @@ public final class GordianCoreKeySet
         }
 
         /* Access the separate parts */
-        final byte[] mySecSeed = Arrays.copyOfRange(myBytes,0,  mySeedLen);
+        final byte[] mySecSeed = Arrays.copyOfRange(myBytes, 0, mySeedLen);
         final byte[] myKeySetSeed = Arrays.copyOfRange(myBytes, mySeedLen, myBytes.length);
         Arrays.fill(myBytes, (byte) 0);
 

@@ -270,7 +270,7 @@ public final class GordianCoreKeySetHash
         } finally {
             /* Clear out results */
             if (myResults != null) {
-                int iIndex = 1;
+                final int iIndex = 1;
                 Arrays.fill(myResults[iIndex], (byte) 0);
             }
         }

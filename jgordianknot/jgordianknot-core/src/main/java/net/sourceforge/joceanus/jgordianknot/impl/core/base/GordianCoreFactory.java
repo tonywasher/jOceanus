@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
