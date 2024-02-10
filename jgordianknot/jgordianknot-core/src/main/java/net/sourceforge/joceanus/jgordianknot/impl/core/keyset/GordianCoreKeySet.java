@@ -465,7 +465,7 @@ public final class GordianCoreKeySet
      */
     public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws OceanusException {
         /* Protect the operation */
-        final byte[] myBuffer = new byte[GordianParameters.SEED_LEN << 1];
+        final byte[] myBuffer = new byte[GordianParameters.SECRET_LEN.getByteLength() << 1];
         try {
             /* Access the parameters */
             final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
@@ -499,12 +499,12 @@ public final class GordianCoreKeySet
         final byte[] myBytes = decryptBytes(pSecuredFactory);
 
         /* Check that the buffer is the correct length */
-        if (myBytes.length != GordianParameters.SEED_LEN << 1) {
+        final int mySeedLen = GordianParameters.SECRET_LEN.getByteLength();
+        if (myBytes.length != mySeedLen << 1) {
             throw new IllegalArgumentException("Invalid secured factory");
         }
 
         /* Access the separate parts */
-        final int mySeedLen = GordianParameters.SEED_LEN;
         final byte[] mySecSeed = Arrays.copyOfRange(myBytes, 0, mySeedLen);
         final byte[] myKeySetSeed = Arrays.copyOfRange(myBytes, mySeedLen, myBytes.length);
         Arrays.fill(myBytes, (byte) 0);
@@ -585,24 +585,40 @@ public final class GordianCoreKeySet
     /**
      * Build key set from secret.
      * @param pSecret the secret.
-     * @param pInitVector the initialisation vector.
      * @throws OceanusException on error
      */
-    public void buildFromSecret(final byte[] pSecret,
-                                final byte[] pInitVector) throws OceanusException {
-        /* Loop through the symmetricKeys values */
-        final GordianLength myKeyLen = theSpec.getKeyLength();
-        final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
-        final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, pInitVector);
-        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-            /* If this is supported for a keySet */
-            if (mySymPredicate.test(myType)) {
-                /* Generate the key and add to map */
-                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);
-                final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, pSecret, pInitVector, mySeededRandom);
-                theSymKeyMap.put(mySpec, myKey);
-                theCipher.declareSymKey(myKey);
+    public void buildFromSecret(final byte[] pSecret) throws OceanusException {
+        /* Check Secret length */
+        if (GordianParameters.SECRET_LEN.getByteLength() != pSecret.length) {
+            throw new GordianLogicException("Invalid secret length");
+        }
+
+        /* Protect internal buffers */
+        final int myPartLen = pSecret.length >> 1;
+        final byte[] mySecret = new byte[myPartLen];
+        final byte[] myIV = new byte[myPartLen];
+        try {
+            /* Split into two parts */
+            System.arraycopy(pSecret, 0, mySecret, 0, myPartLen);
+            System.arraycopy(pSecret, myPartLen, myIV, 0, myPartLen);
+
+            /* Loop through the symmetricKeys values */
+            final GordianLength myKeyLen = theSpec.getKeyLength();
+            final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
+            final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, myIV);
+            for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+                /* If this is supported for a keySet */
+                if (mySymPredicate.test(myType)) {
+                    /* Generate the key and add to map */
+                    final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);
+                    final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, mySecret, myIV, mySeededRandom);
+                    theSymKeyMap.put(mySpec, myKey);
+                    theCipher.declareSymKey(myKey);
+                }
             }
+        } finally {
+            Arrays.fill(mySecret, (byte) 0);
+            Arrays.fill(myIV, (byte) 0);
         }
     }
 

@@ -105,10 +105,9 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianKeySet generateKeySet(final byte[] pSeed,
-                                        final byte[] pIV) throws OceanusException {
+    public GordianKeySet generateKeySet(final byte[] pSeed) throws OceanusException {
         final GordianCoreKeySet myKeySet = generateKeySet(new GordianKeySetSpec());
-        myKeySet.buildFromSecret(pSeed, pIV);
+        myKeySet.buildFromSecret(pSeed);
         return myKeySet;
     }
 
