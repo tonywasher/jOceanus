@@ -17,11 +17,13 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.data.basic;
 
 import java.util.Currency;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseStaticDataType;
@@ -35,6 +37,7 @@ import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedDataIt
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -693,11 +696,27 @@ public abstract class MoneyWiseAssetBase
     }
 
     /**
-     * Resolve edit Set links.
+     * resolve EditSet links
      * @throws OceanusException on error
      */
-    protected void resolveEditSetLinks() throws OceanusException {
-        /* No action by default */
+    protected abstract void resolveEditSetLinks() throws OceanusException;
+
+    /**
+     * Resolve late edit Set links.
+     * @throws OceanusException on error
+     */
+    public void resolveLateEditSetLinks() throws OceanusException {
+        /* Access the editSet */
+        final PrometheusEditSet myEditSet = getList().getEditSet();
+
+        /* Resolve First/LastEvent if required */
+        final MoneyWiseTransactionList myTransList = myEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
+        if (theEarliest != null) {
+            theEarliest = myTransList.findItemById(theEarliest.getIndexedId());
+        }
+        if (theLatest != null) {
+            theLatest = myTransList.findItemById(theLatest.getIndexedId());
+        }
     }
 
     /**
@@ -845,6 +864,11 @@ public abstract class MoneyWiseAssetBase
         }
 
         /**
+         * The EditSet.
+         */
+        private PrometheusEditSet theEditSet;
+
+        /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
@@ -867,6 +891,22 @@ public abstract class MoneyWiseAssetBase
         @Override
         public MoneyWiseDataSet getDataSet() {
             return (MoneyWiseDataSet) super.getDataSet();
+        }
+
+        /**
+         * Obtain editSet.
+         * @return the editSet
+         */
+        public PrometheusEditSet getEditSet() {
+            return theEditSet;
+        }
+
+        /**
+         * Set editSet.
+         * @param pEditSet the editSet
+         */
+        protected void setEditSet(final PrometheusEditSet pEditSet) {
+            theEditSet = pEditSet;
         }
 
         @Override
@@ -916,6 +956,18 @@ public abstract class MoneyWiseAssetBase
 
             /* Map the data */
             mapData();
+        }
+
+        /**
+         * Resolve late edit Set links.
+         * @throws OceanusException on error
+         */
+        public void resolveLateEditSetLinks() throws OceanusException {
+            final Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                final T myItem = myIterator.next();
+                myItem.resolveLateEditSetLinks();
+            }
         }
     }
 

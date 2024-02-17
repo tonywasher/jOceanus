@@ -652,11 +652,6 @@ public class MoneyWiseCash
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
 
         /**
-         * The EditSet.
-         */
-        private PrometheusEditSet theEditSet;
-
-        /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
@@ -709,19 +704,11 @@ public class MoneyWiseCash
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = theEditSet == null
+                theInfoTypeList = getEditSet() == null
                         ? getDataSet().getActInfoTypes()
-                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
+                        : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
-        }
-
-        /**
-         * Obtain editSet.
-         * @return the editSet
-         */
-        public PrometheusEditSet getEditSet() {
-            return theEditSet;
         }
 
         @Override
@@ -753,7 +740,7 @@ public class MoneyWiseCash
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.CASHINFO, myList.theInfoList);
 
             /* Store the editSet */
-            myList.theEditSet = pEditSet;
+            myList.setEditSet(pEditSet);
 
             /* Loop through the cash */
             final Iterator<MoneyWiseCash> myIterator = iterator();
