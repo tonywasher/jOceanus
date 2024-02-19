@@ -411,6 +411,21 @@ public enum PrometheusDataResource
     CONTROLKEY_DATABASE("ControlKey.DataBase"),
 
     /**
+     * KeySet CreationDate.
+     */
+    CONTROLKEY_CREATION("ControlKey.CreationDate"),
+
+    /**
+     * DataKeySet Name.
+     */
+    CONTROLKEYSET_NAME("ControlKeySet.Name"),
+
+    /**
+     * DataKeySet List.
+     */
+    CONTROLKEYSET_LIST("ControlKeySet.List"),
+
+    /**
      * DataKeySet Name.
      */
     DATAKEYSET_NAME("DataKeySet.Name"),
@@ -421,19 +436,14 @@ public enum PrometheusDataResource
     DATAKEYSET_LIST("DataKeySet.List"),
 
     /**
-     * DataKeySet CreationDate.
+     * KeySet KeySet.
      */
-    DATAKEYSET_CREATION("DataKeySet.CreationDate"),
+    KEYSET_KEYSET("KeySet.KeySet"),
 
     /**
-     * DataKeySet KeySet.
+     * KeySet KeySetDefinition.
      */
-    DATAKEYSET_KEYSET("DataKeySet.KeySet"),
-
-    /**
-     * DataKeySet KeySetDefinition.
-     */
-    DATAKEYSET_KEYSETDEF("DataKeySet.KeySetDef"),
+    KEYSET_KEYSETDEF("KeySet.KeySetDef"),
 
     /**
      * ControlData Name.
@@ -559,6 +569,7 @@ public enum PrometheusDataResource
         /* Create the map and return it */
         final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
+        myMap.put(PrometheusCryptographyDataType.CONTROLKEYSET, CONTROLKEYSET_NAME);
         myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
         myMap.put(PrometheusCryptographyDataType.CONTROLDATA, CONTROLDATA_NAME);
         return myMap;
@@ -581,6 +592,7 @@ public enum PrometheusDataResource
         /* Create the map and return it */
         final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
+        myMap.put(PrometheusCryptographyDataType.CONTROLKEYSET, CONTROLKEYSET_LIST);
         myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
         myMap.put(PrometheusCryptographyDataType.CONTROLDATA, CONTROLDATA_LIST);
         return myMap;

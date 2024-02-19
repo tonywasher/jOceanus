@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlData.PrometheusControlDataList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlKey.PrometheusControlKeyList;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusListStyle;
@@ -209,6 +210,14 @@ public abstract class PrometheusDataSet
     }
 
     /**
+     * Get ControlKeySets.
+     * @return the controlKeySets
+     */
+    public PrometheusControlKeySetList getControlKeySets() {
+        return getDataList(PrometheusCryptographyDataType.CONTROLKEYSET, PrometheusControlKeySetList.class);
+    }
+
+    /**
      * Get DataKeySets.
      * @return the dataKeySets
      */
@@ -280,6 +289,8 @@ public abstract class PrometheusDataSet
                 return new PrometheusControlDataList(this);
             case CONTROLKEY:
                 return new PrometheusControlKeyList(this);
+            case CONTROLKEYSET:
+                return new PrometheusControlKeySetList(this);
             case DATAKEYSET:
                 return new PrometheusDataKeySetList(this);
             default:
@@ -682,15 +693,9 @@ public abstract class PrometheusDataSet
     public PrometheusControlKey getControlKey() {
         /* Access the control element from the database */
         final PrometheusControlData myControl = getControl();
-        PrometheusControlKey myKey = null;
-
-        /* Access control key from control data */
-        if (myControl != null) {
-            myKey = myControl.getControlKey();
-        }
 
         /* Return the key */
-        return myKey;
+        return myControl == null ? null : myControl.getControlKey();
     }
 
     /**
@@ -777,12 +782,6 @@ public abstract class PrometheusDataSet
         if (getControlKeys().size() > 1) {
             /* Update to the selected controlKey */
             updateSecurity(pReport);
-        } else {
-            /* Make sure that password changes are OK */
-            final PrometheusControlKey myKey = getControlKey();
-            if (myKey != null) {
-                myKey.ensureKeySetHash();
-            }
         }
 
         /* Complete task */
@@ -830,7 +829,7 @@ public abstract class PrometheusDataSet
         final PrometheusControlKey myKey = getControlKey();
 
         /* Set the control */
-        return (myKey == null)
+        return myKey == null
                 ? null
                 : myKey.getKeySetHash();
     }
@@ -909,19 +908,24 @@ public abstract class PrometheusDataSet
         CONTROLKEY(1),
 
         /**
-         * DataKey.
+         * ControlKeySet.
          */
-        DATAKEYSET(2),
+        CONTROLKEYSET(2),
+
+        /**
+         * DataKeySet.
+         */
+        DATAKEYSET(3),
 
         /**
          * ControlData.
          */
-        CONTROLDATA(3);
+        CONTROLDATA(4);
 
         /**
          * Maximum keyId.
          */
-        public static final Integer MAXKEYID = DATAKEYSET.getItemKey();
+        public static final Integer MAXKEYID = CONTROLDATA.getItemKey();
 
         /**
          * The list key.

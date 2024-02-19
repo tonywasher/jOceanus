@@ -106,6 +106,10 @@ public class PrometheusThreadLoadXMLFile
 
         /* Check security on the database */
         myStore.checkSecurity(pManager);
+        if (myStore.hasUpdates()) {
+            /* Store any updates */
+            myDatabase.updateDatabase(pManager, myStore);
+        }
 
         /* Initialise the security, either from database or with a new security control */
         myNewData.initialiseSecurity(pManager, myStore);
