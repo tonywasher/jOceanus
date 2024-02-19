@@ -331,24 +331,6 @@ public class PrometheusDataKeySet
     }
 
     /**
-     * Update password hash.
-     * @param pHash the new keySetHash
-     * @return were there changes? true/false
-     * @throws OceanusException on error
-     */
-    boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
-        /* Store the current detail into history */
-        pushHistory();
-
-        /* Update the Security Control Key and obtain the new secured KeySetDef */
-        final GordianKeySet myKeySet = pHash.getKeySet();
-        setValueSecuredKeySetDef(myKeySet.secureKeySet(myKeySet));
-
-        /* Check for changes */
-        return checkForHistory();
-    }
-
-    /**
      * DataKeySet List.
      */
     public static class PrometheusDataKeySetList

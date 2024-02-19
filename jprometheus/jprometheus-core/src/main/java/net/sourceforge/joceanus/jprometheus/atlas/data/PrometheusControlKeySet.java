@@ -641,27 +641,6 @@ public class PrometheusControlKeySet
         }
 
         /**
-         * Update the Password Hash.
-         * @param pHash the new keySetHash
-         * @return were there changes? true/false
-         * @throws OceanusException on error
-         */
-        private boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
-            /* Loop through the KeySets */
-            boolean bChanges = false;
-            final Iterator<PrometheusDataKeySet> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                final PrometheusDataKeySet mySet = myIterator.next();
-
-                /* Update the KeySet */
-                bChanges |= mySet.updateKeySetHash(pHash);
-            }
-
-            /* return the flag */
-            return bChanges;
-        }
-
-        /**
          * Clone dataKeySet Cache from a DataBase.
          * @param pControlKeySet the ControlKeySet to clone
          * @param pKeySets the DataKeySetList

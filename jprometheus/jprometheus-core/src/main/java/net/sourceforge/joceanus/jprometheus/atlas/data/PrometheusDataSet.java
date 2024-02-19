@@ -782,12 +782,6 @@ public abstract class PrometheusDataSet
         if (getControlKeys().size() > 1) {
             /* Update to the selected controlKey */
             updateSecurity(pReport);
-        } else {
-            /* Make sure that password changes are OK */
-            final PrometheusControlKey myKey = getControlKey();
-            if (myKey != null) {
-                myKey.ensureKeySetHash();
-            }
         }
 
         /* Complete task */
@@ -835,7 +829,7 @@ public abstract class PrometheusDataSet
         final PrometheusControlKey myKey = getControlKey();
 
         /* Set the control */
-        return (myKey == null)
+        return myKey == null
                 ? null
                 : myKey.getKeySetHash();
     }
