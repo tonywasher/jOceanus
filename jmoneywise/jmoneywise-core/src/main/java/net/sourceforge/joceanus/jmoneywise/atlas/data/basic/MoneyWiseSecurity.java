@@ -822,11 +822,6 @@ public class MoneyWiseSecurity
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
 
         /**
-         * The EditSet.
-         */
-        private PrometheusEditSet theEditSet;
-
-        /**
          * Construct an empty CORE Security list.
          * @param pData the DataSet for the list
          */
@@ -840,14 +835,6 @@ public class MoneyWiseSecurity
          */
         protected MoneyWiseSecurityList(final MoneyWiseSecurityList pSource) {
             super(pSource);
-        }
-
-        /**
-         * Obtain editSet.
-         * @return the editSet
-         */
-        public PrometheusEditSet getEditSet() {
-            return theEditSet;
         }
 
         @Override
@@ -887,9 +874,9 @@ public class MoneyWiseSecurity
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = theEditSet == null
+                theInfoTypeList = getEditSet() == null
                         ? getDataSet().getActInfoTypes()
-                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
+                        : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
         }
@@ -922,7 +909,7 @@ public class MoneyWiseSecurity
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.SECURITYINFO, myList.theInfoList);
 
             /* Store the editSet */
-            myList.theEditSet = pEditSet;
+            myList.setEditSet(pEditSet);
 
             /* Loop through the securities */
             final Iterator<MoneyWiseSecurity> myIterator = iterator();

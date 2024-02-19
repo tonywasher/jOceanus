@@ -726,11 +726,6 @@ public class MoneyWisePayee
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
 
         /**
-         * The EditSet.
-         */
-        private PrometheusEditSet theEditSet;
-
-        /**
          * Construct an empty CORE Payee list.
          * @param pData the DataSet for the list
          */
@@ -783,19 +778,11 @@ public class MoneyWisePayee
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = theEditSet == null
+                theInfoTypeList = getEditSet() == null
                         ? getDataSet().getActInfoTypes()
-                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
+                        : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
-        }
-
-        /**
-         * Obtain editSet.
-         * @return the editSet
-         */
-        public PrometheusEditSet getEditSet() {
-            return theEditSet;
         }
 
         @Override
@@ -826,7 +813,7 @@ public class MoneyWisePayee
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.PAYEEINFO, myList.theInfoList);
 
             /* Store the editSet */
-            myList.theEditSet = pEditSet;
+            myList.setEditSet(pEditSet);
 
             /* Loop through the payees */
             final Iterator<MoneyWisePayee> myIterator = iterator();

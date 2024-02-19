@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jmoneywise.test.data;
 
 import java.util.Iterator;
 
+import org.junit.jupiter.api.Assertions;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseBasicDataType;
@@ -27,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDepositCate
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
@@ -217,7 +220,9 @@ public class MoneyWiseTestEditSet {
         /* Register and derive transactions */
         pEditSet.registerType(MoneyWiseBasicDataType.TRANSACTION);
         pEditSet.registerType(MoneyWiseBasicDataType.TRANSACTIONINFO);
-        theDataSet.getTransactions().deriveEditList(pEditSet);
+        final MoneyWiseTransactionList myTrans = theDataSet.getTransactions();
+        final MoneyWiseTransactionList myNewTrans = myTrans.deriveEditList(pEditSet);
+        myNewTrans.relinkEditAssetEvents();
     }
 
     /**
@@ -267,7 +272,8 @@ public class MoneyWiseTestEditSet {
                 final PrometheusDataItem myReferenced = (PrometheusDataItem) myValue;
                 if (PrometheusDataResource.DATAITEM_BASE.equals(myField.getFieldId())) {
                     if (myReferenced.getList().getStyle() != PrometheusListStyle.CORE) {
-                        int i = 0;
+                        Assertions.assertEquals(PrometheusListStyle.CORE, myReferenced.getList().getStyle(), "Base item not CORE");
+
                     }
                 } else {
                     validateReferencedItemInEditSet(myReferenced, pEditSet);
@@ -290,8 +296,6 @@ public class MoneyWiseTestEditSet {
                                          final PrometheusEditSet pEditSet) {
         final PrometheusListKey myKey = pItem.getItemType();
         final PrometheusListStyle myStyle = pEditSet.hasDataType(myKey) ? PrometheusListStyle.EDIT : PrometheusListStyle.CORE;
-        if (pItem.getList().getStyle() != myStyle) {
-            int i = 0;
-        }
+        Assertions.assertEquals(myStyle, pItem.getList().getStyle(), "Referenced item is incorrect style");
     }
 }

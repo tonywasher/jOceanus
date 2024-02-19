@@ -843,11 +843,6 @@ public class MoneyWisePortfolio
         private MoneyWiseAccountInfoTypeList theInfoTypeList;
 
         /**
-         * The EditSet.
-         */
-        private PrometheusEditSet theEditSet;
-
-        /**
          * SecurityHoldings Map.
          */
         private MoneyWiseSecurityHoldingMap theSecurityHoldings;
@@ -905,9 +900,9 @@ public class MoneyWisePortfolio
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = theEditSet == null
+                theInfoTypeList = getEditSet() == null
                         ? getDataSet().getActInfoTypes()
-                        : theEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
+                        : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
         }
@@ -923,14 +918,6 @@ public class MoneyWisePortfolio
                         : new MoneyWiseSecurityHoldingMap(getEditSet());
             }
             return theSecurityHoldings;
-        }
-
-        /**
-         * Obtain editSet.
-         * @return the editSet
-         */
-        public PrometheusEditSet getEditSet() {
-            return theEditSet;
         }
 
         @Override
@@ -962,7 +949,7 @@ public class MoneyWisePortfolio
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIOINFO, myList.theInfoList);
 
             /* Store the editSet */
-            myList.theEditSet = pEditSet;
+            myList.setEditSet(pEditSet);
 
             /* Loop through the portfolios */
             final Iterator<MoneyWisePortfolio> myIterator = iterator();

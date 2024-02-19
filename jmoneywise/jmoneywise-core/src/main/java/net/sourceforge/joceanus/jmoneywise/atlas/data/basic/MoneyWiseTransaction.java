@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
@@ -38,11 +39,13 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransInfo
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataMapItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues.PrometheusInfoSetItem;
+import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -1135,6 +1138,23 @@ public class MoneyWiseTransaction
 
             /* Return the list */
             return myList;
+        }
+
+        /**
+         * Relink LastEvent etc. for assets.
+         * @throws OceanusException on error
+         */
+        public void relinkEditAssetEvents() throws OceanusException {
+            final PrometheusEditSet myEditSet = getEditSet();
+            Iterator<PrometheusEditEntry<?>> myIterator = myEditSet.listIterator();
+            while (myIterator.hasNext()) {
+                final PrometheusEditEntry<?> myEntry = myIterator.next();
+                final PrometheusDataList<?> myList = myEntry.getDataList();
+                if (myList instanceof MoneyWiseAssetBaseList) {
+                    final MoneyWiseAssetBaseList<?> myAssetList = (MoneyWiseAssetBaseList<?>) myList;
+                    myAssetList.resolveLateEditSetLinks();
+                }
+            }
         }
 
         /**
