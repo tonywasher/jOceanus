@@ -59,6 +59,10 @@ public class PrometheusThreadLoadDatabase
 
             /* Check security on the database */
             myData.checkSecurity(pManager);
+            if (myData.hasUpdates()) {
+                /* Store any updates */
+                myDatabase.updateDatabase(pManager, myData);
+            }
 
             /* State that we have completed */
             pManager.setCompletion();

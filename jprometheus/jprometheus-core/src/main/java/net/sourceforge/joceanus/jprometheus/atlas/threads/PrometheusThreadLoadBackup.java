@@ -110,6 +110,10 @@ public class PrometheusThreadLoadBackup
 
         /* Check security on the database */
         myStore.checkSecurity(pManager);
+        if (myData.hasUpdates()) {
+            /* Store any updates */
+            myDatabase.updateDatabase(pManager, myData);
+        }
 
         /* Re-base the loaded backup onto the database image */
         myData.reBase(pManager, myStore);
