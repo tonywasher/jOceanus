@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.javafx;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.launch.MoneyWiseXApp;
+import net.sourceforge.joceanus.jmoneywise.atlas.launch.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXLaunch;
 
@@ -27,6 +27,6 @@ public class MoneyWise4FX
         extends TethysUIFXLaunch {
     @Override
     protected TethysUILaunchProgram getProgramInfo() {
-        return new MoneyWiseXApp();
+        return new MoneyWiseApp();
     }
 }

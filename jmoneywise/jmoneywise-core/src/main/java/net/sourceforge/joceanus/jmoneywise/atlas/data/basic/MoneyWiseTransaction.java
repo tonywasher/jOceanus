@@ -1146,7 +1146,7 @@ public class MoneyWiseTransaction
          */
         public void relinkEditAssetEvents() throws OceanusException {
             final PrometheusEditSet myEditSet = getEditSet();
-            Iterator<PrometheusEditEntry<?>> myIterator = myEditSet.listIterator();
+            final Iterator<PrometheusEditEntry<?>> myIterator = myEditSet.listIterator();
             while (myIterator.hasNext()) {
                 final PrometheusEditEntry<?> myEntry = myIterator.next();
                 final PrometheusDataList<?> myList = myEntry.getDataList();
