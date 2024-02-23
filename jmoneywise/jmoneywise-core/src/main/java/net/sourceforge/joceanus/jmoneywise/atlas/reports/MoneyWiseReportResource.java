@@ -20,7 +20,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
@@ -146,7 +146,7 @@ public enum MoneyWiseReportResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysis.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

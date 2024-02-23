@@ -223,7 +223,7 @@ public class MetisSafeFileManager {
      * @return the backup name
      */
     private File getBackupFile(final int pIndex) {
-        return new File(thePathName, theBaseName + CHAR_DOT + pIndex + theExtension );
+        return new File(thePathName, theBaseName + CHAR_DOT + pIndex + theExtension);
     }
 
     /**

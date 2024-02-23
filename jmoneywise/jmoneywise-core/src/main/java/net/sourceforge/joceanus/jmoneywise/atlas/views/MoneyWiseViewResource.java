@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.views;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
@@ -111,7 +111,7 @@ public enum MoneyWiseViewResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysis.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

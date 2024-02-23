@@ -696,7 +696,7 @@ public abstract class MoneyWiseAssetBase
     }
 
     /**
-     * resolve EditSet links
+     * resolve EditSet links.
      * @throws OceanusException on error
      */
     protected abstract void resolveEditSetLinks() throws OceanusException;
