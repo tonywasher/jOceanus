@@ -65,6 +65,11 @@ public enum PrometheusJDBCDriver {
     static final int PORT_POSTGRESQL = 5432;
 
     /**
+     * DefaultPort for SQLExpress.
+     */
+    static final int PORT_SQLEXPRESS = 50843;
+
+    /**
      * DefaultInstance for SQLExpress.
      */
     static final String INSTANCE_SQLEXPRESS = "SQLEXPRESS";
@@ -129,8 +134,8 @@ public enum PrometheusJDBCDriver {
             case MYSQL:
             case MARIADB:
             case POSTGRESQL:
-                return true;
             case SQLSERVER:
+                return true;
             case H2:
             default:
                 return false;
@@ -149,6 +154,7 @@ public enum PrometheusJDBCDriver {
             case POSTGRESQL:
                 return PORT_POSTGRESQL;
             case SQLSERVER:
+                return PORT_SQLEXPRESS;
             case H2:
             default:
                 return null;
@@ -162,7 +168,7 @@ public enum PrometheusJDBCDriver {
     public String getPrefix() {
         switch (this) {
             case SQLSERVER:
-                return "jdbc:jtds:sqlserver://";
+                return "jdbc:sqlserver://";
             case MYSQL:
                 return "jdbc:mysql://";
             case MARIADB:
@@ -207,9 +213,7 @@ public enum PrometheusJDBCDriver {
                 myBuilder.append(":");
                 myBuilder.append(pPort);
             }
-            myBuilder.append("/");
         }
-        myBuilder.append(pDatabase);
         if (this == H2) {
             myBuilder.append(";DB_CLOSE_DELAY=-1");
         }

@@ -1122,25 +1122,10 @@ public class PrometheusTableDefinition {
      */
     protected String getDropTableString() {
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        switch (theDriver) {
-            case SQLSERVER:
-                myBuilder.append("if exists (select * from sys.tables where name = '");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(theTableName);
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append("') drop table ");
-                myBuilder.append(theTableName);
-                break;
-            case MARIADB:
-            case MYSQL:
-            case POSTGRESQL:
-            default:
-                myBuilder.append("drop table if exists ");
-                addQuoteIfAllowed(myBuilder);
-               myBuilder.append(theTableName);
-                addQuoteIfAllowed(myBuilder);
-                break;
-        }
+        myBuilder.append("drop table if exists ");
+        addQuoteIfAllowed(myBuilder);
+        myBuilder.append(theTableName);
+        addQuoteIfAllowed(myBuilder);
 
         /* Return the command */
         return myBuilder.toString();
@@ -1158,30 +1143,15 @@ public class PrometheusTableDefinition {
 
         /* Build the drop command */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        switch (theDriver) {
-            case SQLSERVER:
-                myBuilder.append("if exists (select * from sys.indexes where name = '");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(PREFIX_INDEX);
-                myBuilder.append(theTableName);
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append("') drop index ");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(PREFIX_INDEX);
-                myBuilder.append(theTableName);
-                myBuilder.append(QUOTE_STRING);
-                break;
-            case MARIADB:
-            case MYSQL:
-            case POSTGRESQL:
-            default:
-                myBuilder.append("drop index if exists ");
-                addQuoteIfAllowed(myBuilder);
-                myBuilder.append(PREFIX_INDEX);
-                myBuilder.append(theTableName);
-                addQuoteIfAllowed(myBuilder);
-                break;
-        }
+        myBuilder.append("drop index if exists ");
+        addQuoteIfAllowed(myBuilder);
+        myBuilder.append(PREFIX_INDEX);
+        myBuilder.append(theTableName);
+        addQuoteIfAllowed(myBuilder);
+        myBuilder.append(" on ");
+        addQuoteIfAllowed(myBuilder);
+        myBuilder.append(theTableName);
+        addQuoteIfAllowed(myBuilder);
 
         /* Return the command */
         return myBuilder.toString();

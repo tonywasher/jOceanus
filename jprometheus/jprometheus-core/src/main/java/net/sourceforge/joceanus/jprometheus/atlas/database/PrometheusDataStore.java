@@ -59,6 +59,11 @@ public abstract class PrometheusDataStore {
     private static final String PROPERTY_INSTANCE = "instance";
 
     /**
+     * Encrypt property name.
+     */
+    private static final String PROPERTY_ENCRYPT = "encrypt";
+
+    /**
      * Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusDataStore.class);
@@ -113,6 +118,7 @@ public abstract class PrometheusDataStore {
             if (theDriver.useInstance()) {
                 final String myInstance = pConfig.getInstance();
                 myProperties.setProperty(PROPERTY_INSTANCE, myInstance);
+                myProperties.setProperty(PROPERTY_ENCRYPT, "false");
             }
 
             /* Connect using properties */
