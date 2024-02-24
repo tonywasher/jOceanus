@@ -1044,9 +1044,9 @@ public class PrometheusTableDefinition {
 
         /* Build the initial create */
         myBuilder.append("create table ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1082,14 +1082,14 @@ public class PrometheusTableDefinition {
 
         /* Build the initial create */
         myBuilder.append("create index ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(PREFIX_INDEX);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(" on ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1102,9 +1102,9 @@ public class PrometheusTableDefinition {
             if (!myFirst) {
                 myBuilder.append(", ");
             }
-            myBuilder.append(QUOTE_STRING);
+            addQuoteIfAllowed(myBuilder);
             myBuilder.append(myDef.getColumnName());
-            myBuilder.append(QUOTE_STRING);
+            addQuoteIfAllowed(myBuilder);
             if (myDef.getSortOrder() == PrometheusSortOrder.DESCENDING) {
                 myBuilder.append(STR_DESC);
             }
@@ -1131,13 +1131,14 @@ public class PrometheusTableDefinition {
                 myBuilder.append("') drop table ");
                 myBuilder.append(theTableName);
                 break;
+            case MARIADB:
             case MYSQL:
             case POSTGRESQL:
             default:
                 myBuilder.append("drop table if exists ");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(theTableName);
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
+               myBuilder.append(theTableName);
+                addQuoteIfAllowed(myBuilder);
                 break;
         }
 
@@ -1170,14 +1171,15 @@ public class PrometheusTableDefinition {
                 myBuilder.append(theTableName);
                 myBuilder.append(QUOTE_STRING);
                 break;
+            case MARIADB:
             case MYSQL:
             case POSTGRESQL:
             default:
                 myBuilder.append("drop index if exists ");
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
                 myBuilder.append(PREFIX_INDEX);
                 myBuilder.append(theTableName);
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
                 break;
         }
 
@@ -1208,17 +1210,17 @@ public class PrometheusTableDefinition {
             if (sortOnReference) {
                 myBuilder.append("a.");
             }
-            myBuilder.append(QUOTE_STRING);
+            addQuoteIfAllowed(myBuilder);
             myBuilder.append(myDef.getColumnName());
-            myBuilder.append(QUOTE_STRING);
+            addQuoteIfAllowed(myBuilder);
             myFirst = false;
         }
 
         /* Close the statement */
         myBuilder.append(" from ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         if (sortOnReference) {
             myBuilder.append(" a");
         }
@@ -1292,7 +1294,7 @@ public class PrometheusTableDefinition {
             }
 
             /* If we are using prefixes */
-            if ((sortOnReference) || (pChar > 'a')) {
+            if (sortOnReference || pChar > 'a') {
                 /* If this is a reference column */
                 if (myDef instanceof PrometheusReferenceColumn) {
                     /* Handle Reference column */
@@ -1302,18 +1304,18 @@ public class PrometheusTableDefinition {
                     /* Handle standard column with prefix */
                     myBuilder.append(pChar);
                     myBuilder.append(".");
-                    myBuilder.append(QUOTE_STRING);
+                    addQuoteIfAllowed(myBuilder);
                     myBuilder.append(myDef.getColumnName());
-                    myBuilder.append(QUOTE_STRING);
+                    addQuoteIfAllowed(myBuilder);
                     if (myDef.getSortOrder() == PrometheusSortOrder.DESCENDING) {
                         myBuilder.append(STR_DESC);
                     }
                 }
             } else {
                 /* Handle standard column */
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
                 myBuilder.append(myDef.getColumnName());
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
                 if (myDef.getSortOrder() == PrometheusSortOrder.DESCENDING) {
                     myBuilder.append(STR_DESC);
                 }
@@ -1336,9 +1338,9 @@ public class PrometheusTableDefinition {
 
         /* Build the initial insert */
         myBuilder.append("insert into ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1352,9 +1354,9 @@ public class PrometheusTableDefinition {
                 myBuilder.append(", ");
                 myValues.append(", ");
             }
-            myBuilder.append(QUOTE_STRING);
+            addQuoteIfAllowed(myBuilder);
             myBuilder.append(myDef.getColumnName());
-            myBuilder.append(QUOTE_STRING);
+            addQuoteIfAllowed(myBuilder);
             myValues.append('?');
             myFirst = false;
         }
@@ -1376,9 +1378,9 @@ public class PrometheusTableDefinition {
 
         /* Build the initial update */
         myBuilder.append("update ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(" set ");
 
         /* Create the iterator */
@@ -1406,9 +1408,9 @@ public class PrometheusTableDefinition {
                 if (!myFirst) {
                     myBuilder.append(", ");
                 }
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
                 myBuilder.append(myDef.getColumnName());
-                myBuilder.append(QUOTE_STRING);
+                addQuoteIfAllowed(myBuilder);
                 myBuilder.append("=?");
                 myFirst = false;
             }
@@ -1421,9 +1423,9 @@ public class PrometheusTableDefinition {
 
         /* Close the statement and return it */
         myBuilder.append(" where ");
-        myBuilder.append(QUOTE_STRING);
-        myBuilder.append(myId.getColumnName());
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
+       myBuilder.append(myId.getColumnName());
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append("=?");
         return myBuilder.toString();
     }
@@ -1437,18 +1439,18 @@ public class PrometheusTableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(" where ");
 
         /* Access the id definition */
         final PrometheusColumnDefinition myId = theList.get(0);
 
         /* Build the rest of the command */
-        myBuilder.append(QUOTE_STRING);
-        myBuilder.append(myId.getColumnName());
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
+       myBuilder.append(myId.getColumnName());
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append("=?");
         return myBuilder.toString();
     }
@@ -1462,9 +1464,9 @@ public class PrometheusTableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         return myBuilder.toString();
     }
 
@@ -1477,10 +1479,20 @@ public class PrometheusTableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("select count(*) from ");
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         myBuilder.append(theTableName);
-        myBuilder.append(QUOTE_STRING);
+        addQuoteIfAllowed(myBuilder);
         return myBuilder.toString();
+    }
+
+    /**
+     * Add quote if necessary.
+     * @param pBuilder the builder
+     */
+    void addQuoteIfAllowed(final StringBuilder pBuilder) {
+        if (theDriver.useQuotes()) {
+            pBuilder.append(QUOTE_STRING);
+        }
     }
 
     /**

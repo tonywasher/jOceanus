@@ -5,6 +5,7 @@ dependencies {
     implementation project(':jgordianknot-core')
     implementation project(':jtethys-core')
     runtimeOnly "mysql:mysql-connector-java:$mySQLVersion"
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$MariaDBVersion"
     runtimeOnly "org.postgresql:postgresql:$postGreSQLVersion"
     runtimeOnly "net.sourceforge.jtds:jtds:$jtdsVersion"
     runtimeOnly "com.h2database:h2:$h2Version"

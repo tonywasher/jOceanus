@@ -35,9 +35,14 @@ public enum PrometheusJDBCDriver {
     POSTGRESQL,
 
     /**
-     * PostgreSQL.
+     * MySQL.
      */
     MYSQL,
+
+    /**
+     * MariaDB.
+     */
+    MARIADB,
 
     /**
      * H2.
@@ -48,6 +53,21 @@ public enum PrometheusJDBCDriver {
      * Buffer length.
      */
     private static final int BUFFER_LEN = 100;
+
+    /**
+     * DefaultPort for MariaDB/MySQL.
+     */
+    static final int PORT_MARIADB = 3306;
+
+    /**
+     * DefaultPort for PostgreSQL.
+     */
+    static final int PORT_POSTGRESQL = 5432;
+
+    /**
+     * DefaultInstance for SQLExpress.
+     */
+    static final String INSTANCE_SQLEXPRESS = "SQLEXPRESS";
 
     /**
      * The String name.
@@ -67,24 +87,6 @@ public enum PrometheusJDBCDriver {
     }
 
     /**
-     * Obtain driver class.
-     * @return the driver class
-     */
-    public String getDriver() {
-        switch (this) {
-            case SQLSERVER:
-                return "net.sourceforge.jtds.jdbc.Driver";
-            case MYSQL:
-                return "com.mysql.jdbc.Driver";
-            case H2:
-                return "org.h2.Driver";
-            case POSTGRESQL:
-            default:
-                return "org.postgresql.Driver";
-        }
-    }
-
-    /**
      * Determine whether we use instance.
      * @return true/false
      */
@@ -93,10 +95,63 @@ public enum PrometheusJDBCDriver {
             case SQLSERVER:
                 return true;
             case MYSQL:
+            case MARIADB:
             case H2:
             case POSTGRESQL:
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Determine whether we use quotes.
+     * @return true/false
+     */
+    public boolean useQuotes() {
+        switch (this) {
+            case MYSQL:
+            case MARIADB:
+                return false;
+            case SQLSERVER:
+            case H2:
+            case POSTGRESQL:
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Determine whether we use port.
+     * @return true/false
+     */
+    public boolean usePort() {
+        switch (this) {
+            case MYSQL:
+            case MARIADB:
+            case POSTGRESQL:
+                return true;
+            case SQLSERVER:
+            case H2:
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Obtain default port.
+     * @return the default port
+     */
+    public Integer getDefaultPort() {
+        switch (this) {
+            case MYSQL:
+            case MARIADB:
+                return PORT_MARIADB;
+            case POSTGRESQL:
+                return PORT_POSTGRESQL;
+            case SQLSERVER:
+            case H2:
+            default:
+                return null;
         }
     }
 
@@ -110,6 +165,8 @@ public enum PrometheusJDBCDriver {
                 return "jdbc:jtds:sqlserver://";
             case MYSQL:
                 return "jdbc:mysql://";
+            case MARIADB:
+                return "jdbc:mariadb://";
             case H2:
                 return "jdbc:h2:mem:";
             case POSTGRESQL:
@@ -127,22 +184,29 @@ public enum PrometheusJDBCDriver {
         /* Create the buffer */
         final String myDB = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME);
         final String myServer = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER);
-        return getConnectionString(myDB, myServer);
+        final Integer myPort = pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBPORT);
+        return getConnectionString(myDB, myServer, myPort);
     }
 
     /**
      * Get connection string.
      * @param pDatabase the database
      * @param pServer the server
+     * @param pPort the port
      * @return the connection string
      */
     public String getConnectionString(final String pDatabase,
-                                      final String pServer) {
+                                      final String pServer,
+                                      final Integer pPort) {
         /* Create the buffer */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         myBuilder.append(getPrefix());
         if (this != H2) {
             myBuilder.append(pServer);
+            if (pPort != null) {
+                myBuilder.append(":");
+                myBuilder.append(pPort);
+            }
             myBuilder.append("/");
         }
         myBuilder.append(pDatabase);
@@ -208,6 +272,7 @@ public enum PrometheusJDBCDriver {
     public boolean defineBinaryLength() {
         switch (this) {
             case MYSQL:
+            case MARIADB:
             case SQLSERVER:
             case H2:
                 return true;
@@ -228,6 +293,7 @@ public enum PrometheusJDBCDriver {
             case H2:
                 return true;
             case MYSQL:
+            case MARIADB:
             default:
                 return false;
         }

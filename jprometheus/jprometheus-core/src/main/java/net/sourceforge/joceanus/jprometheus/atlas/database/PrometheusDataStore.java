@@ -100,7 +100,7 @@ public abstract class PrometheusDataStore {
             theDriver = pConfig.getDriver();
 
             /* Obtain the connection */
-            final String myConnString = theDriver.getConnectionString(pDatabase, pConfig.getServer());
+            final String myConnString = theDriver.getConnectionString(pDatabase, pConfig.getServer(), pConfig.getPort());
 
             /* Create the properties and record user */
             final Properties myProperties = new Properties();

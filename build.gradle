@@ -43,6 +43,7 @@ allprojects {
         jUnitVersion = "5.10.2"
         jsonVersion = "20240205"
         mySQLVersion = "8.0.33"
+        MariaDBVersion = "3.3.3"
         postGreSQLVersion = "42.7.1"
         jtdsVersion = "1.3.1"
         h2Version = "2.2.224"

@@ -69,6 +69,11 @@ public class PrometheusDBConfig {
     private String theInstance;
 
     /**
+     * Port.
+     */
+    private Integer thePort;
+
+    /**
      * BatchSize.
      */
     private int theBatch;
@@ -154,6 +159,22 @@ public class PrometheusDBConfig {
     }
 
     /**
+     * Set the port.
+     * @param pPort the port
+     */
+    public void setPort(final Integer pPort) {
+        thePort = pPort;
+    }
+
+    /**
+     * Get port.
+     * @return the port
+     */
+    public Integer getPort() {
+        return thePort;
+    }
+
+    /**
      * Set the batchSize.
      * @param pSize the batchSize
      */
@@ -181,6 +202,9 @@ public class PrometheusDBConfig {
         myConfig.setPassword(pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS));
         myConfig.setServer(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));
         myConfig.setBatchSize(pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBBATCH));
+        if (myConfig.getDriver().usePort()) {
+            myConfig.setPort(pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBPORT));
+        }
         if (myConfig.getDriver().useInstance()) {
             myConfig.setInstance(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBINSTANCE));
         }
@@ -197,6 +221,7 @@ public class PrometheusDBConfig {
         myConfig.setUser(DEFAULT_USER);
         myConfig.setPassword(DEFAULT_PASS);
         myConfig.setServer(DEFAULT_SERVER);
+        myConfig.setPort(PrometheusJDBCDriver.PORT_POSTGRESQL);
         myConfig.setBatchSize(DEFAULT_BATCH);
         return myConfig;
     }
@@ -211,6 +236,22 @@ public class PrometheusDBConfig {
         myConfig.setUser(DEFAULT_USER);
         myConfig.setPassword(DEFAULT_PASS);
         myConfig.setServer(DEFAULT_SERVER);
+        myConfig.setPort(PrometheusJDBCDriver.PORT_MARIADB);
+        myConfig.setBatchSize(DEFAULT_BATCH);
+        return myConfig;
+    }
+
+    /**
+     * Construct a simple mariaDB config.
+     * @return the config
+     */
+    public static PrometheusDBConfig mariaDB() {
+        final PrometheusDBConfig myConfig = new PrometheusDBConfig();
+        myConfig.setDriver(PrometheusJDBCDriver.MARIADB);
+        myConfig.setUser(DEFAULT_USER);
+        myConfig.setPassword(DEFAULT_PASS);
+        myConfig.setServer(DEFAULT_SERVER);
+        myConfig.setPort(PrometheusJDBCDriver.PORT_MARIADB);
         myConfig.setBatchSize(DEFAULT_BATCH);
         return myConfig;
     }
@@ -225,7 +266,7 @@ public class PrometheusDBConfig {
         myConfig.setUser(DEFAULT_USER);
         myConfig.setPassword(DEFAULT_PASS);
         myConfig.setServer(DEFAULT_SERVER);
-        myConfig.setInstance("SQLEXPRESS");
+        myConfig.setInstance(PrometheusJDBCDriver.INSTANCE_SQLEXPRESS);
         myConfig.setBatchSize(DEFAULT_BATCH);
         return myConfig;
     }

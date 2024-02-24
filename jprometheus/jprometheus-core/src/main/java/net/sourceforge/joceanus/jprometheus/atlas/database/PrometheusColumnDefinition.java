@@ -153,6 +153,14 @@ public abstract class PrometheusColumnDefinition {
     }
 
     /**
+     * Obtain the table.
+     * @return the table
+     */
+    protected PrometheusTableDefinition getTable() {
+        return theTable;
+    }
+
+    /**
      * Obtain the value.
      * @return the value
      */
@@ -191,9 +199,9 @@ public abstract class PrometheusColumnDefinition {
      */
     protected void buildCreateString(final StringBuilder pBuilder) {
         /* Add the name of the column */
-        pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+        theTable.addQuoteIfAllowed(pBuilder);
         pBuilder.append(getColumnName());
-        pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+        theTable.addQuoteIfAllowed(pBuilder);
         pBuilder.append(' ');
 
         /* Add the type of the column */
@@ -391,13 +399,13 @@ public abstract class PrometheusColumnDefinition {
         protected void buildKeyReference(final StringBuilder pBuilder) {
             /* Add the reference */
             pBuilder.append(" REFERENCES ");
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(theReference);
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(STR_OPNBRK);
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(MetisDataResource.DATA_ID.getValue());
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(STR_CLSBRK);
         }
 
@@ -437,9 +445,9 @@ public abstract class PrometheusColumnDefinition {
 
             /* Build Initial part of string */
             pBuilder.append(" join ");
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(theReference);
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(" ");
             pBuilder.append(myChar);
 
@@ -447,15 +455,15 @@ public abstract class PrometheusColumnDefinition {
             pBuilder.append(" on ");
             pBuilder.append(pChar);
             pBuilder.append(".");
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(getColumnName());
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(" = ");
             pBuilder.append(myChar);
             pBuilder.append(".");
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
             pBuilder.append(MetisDataResource.DATA_ID.getValue());
-            pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+            getTable().addQuoteIfAllowed(pBuilder);
 
             /* Increment offset */
             myOffset++;
@@ -509,9 +517,9 @@ public abstract class PrometheusColumnDefinition {
                     /* Build the column name */
                     pBuilder.append(myChar);
                     pBuilder.append(".");
-                    pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+                    getTable().addQuoteIfAllowed(pBuilder);
                     pBuilder.append(myDef.getColumnName());
-                    pBuilder.append(PrometheusTableDefinition.QUOTE_STRING);
+                    getTable().addQuoteIfAllowed(pBuilder);
                     if (myDef.getSortOrder() == PrometheusSortOrder.DESCENDING) {
                         pBuilder.append(" DESC");
                     }
