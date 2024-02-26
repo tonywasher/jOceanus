@@ -45,7 +45,7 @@ public class MoneyWiseTableCurrency
     protected MoneyWiseTableCurrency(final PrometheusDataStore pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
-        myTableDef.addBooleanColumn(MoneyWiseStaticResource.CURRENCY_DEFAULT);
+        myTableDef.addBooleanColumn(MoneyWiseStaticResource.CURRENCY_REPORTING);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class MoneyWiseTableCurrency
 
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(MoneyWiseCurrency.OBJECT_NAME);
-        myValues.addValue(MoneyWiseStaticResource.CURRENCY_DEFAULT, myTableDef.getBooleanValue(MoneyWiseStaticResource.CURRENCY_DEFAULT));
+        myValues.addValue(MoneyWiseStaticResource.CURRENCY_REPORTING, myTableDef.getBooleanValue(MoneyWiseStaticResource.CURRENCY_REPORTING));
 
         /* Return the values */
         return myValues;
@@ -72,8 +72,8 @@ public class MoneyWiseTableCurrency
                                  final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (MoneyWiseStaticResource.CURRENCY_DEFAULT.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isDefault());
+        if (MoneyWiseStaticResource.CURRENCY_REPORTING.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isReporting());
         } else {
             super.setFieldValue(pItem, iField);
         }

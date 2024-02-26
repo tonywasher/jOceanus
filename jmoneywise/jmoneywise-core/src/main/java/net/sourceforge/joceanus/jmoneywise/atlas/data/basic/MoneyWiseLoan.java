@@ -280,7 +280,7 @@ public class MoneyWiseLoan
 
     @Override
     public Boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getDefaultCurrency();
+        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -423,7 +423,7 @@ public class MoneyWiseLoan
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultCategory());
-        setAssetCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getReportingCurrency());
         setClosed(Boolean.FALSE);
         autoCorrect(pEditSet);
     }

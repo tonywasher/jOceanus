@@ -67,7 +67,7 @@ public class MoneyWiseDepositBuilder {
     public MoneyWiseDepositBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getDeposits().ensureMap();
-        defaultCurrency();
+        reportingCurrency();
     }
 
     /**
@@ -140,16 +140,16 @@ public class MoneyWiseDepositBuilder {
     /**
      * Set the default currency.
      */
-    private void defaultCurrency() {
-        currency(lookupDefaultCurrency());
+    private void reportingCurrency() {
+        currency(lookupReportingCurrency());
     }
 
     /**
-     * Obtain the default currency.
+     * Obtain the reporting currency.
      * @return the currency
      */
-    private MoneyWiseCurrency lookupDefaultCurrency() {
-        return theDataSet.getDefaultCurrency();
+    private MoneyWiseCurrency lookupReportingCurrency() {
+        return theDataSet.getReportingCurrency();
     }
 
     /**
@@ -199,7 +199,7 @@ public class MoneyWiseDepositBuilder {
         theCategory = null;
         theParent = null;
         theOpeningBalance = null;
-        defaultCurrency();
+        reportingCurrency();
 
         /* Return the deposit */
         return myDeposit;

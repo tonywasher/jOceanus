@@ -850,9 +850,9 @@ public enum MoneyWiseStaticResource
     FREQUENCY_LASTWEEK("Frequency.Week.Last"),
 
     /**
-     * Currency Default.
+     * Currency Reporting.
      */
-    CURRENCY_DEFAULT("Currency.Default"),
+    CURRENCY_REPORTING("Currency.Reporting"),
 
     /**
      * AccountInfo Maturity.

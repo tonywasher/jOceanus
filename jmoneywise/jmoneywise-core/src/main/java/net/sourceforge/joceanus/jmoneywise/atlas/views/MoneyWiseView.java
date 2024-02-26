@@ -228,15 +228,15 @@ public class MoneyWiseView
     }
 
     /**
-     * Set the default currency.
-     * @param pCurrency the new default currency
+     * Set the reporting currency.
+     * @param pCurrency the new reporting currency
      */
-    public void setDefaultCurrency(final MoneyWiseCurrency pCurrency) {
+    public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
         /* Set default currency in AccountCurrencies */
-        theData.getAccountCurrencies().setDefaultCurrency(pCurrency);
+        theData.getAccountCurrencies().setReportingCurrency(pCurrency);
 
         /* Set default currency in ExchangeRates */
-        theData.getExchangeRates().setDefaultCurrency(pCurrency);
+        theData.getExchangeRates().setReportingCurrency(pCurrency);
 
         /* Register the changes */
         incrementVersion();

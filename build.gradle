@@ -44,7 +44,7 @@ allprojects {
         jsonVersion = "20240205"
         mySQLVersion = "8.0.33"
         MariaDBVersion = "3.3.3"
-        postGreSQLVersion = "42.7.1"
+        postGreSQLVersion = "42.7.2"
         mssqlVersion = "12.6.1.jre11"
         h2Version = "2.2.224"
         apachePOIVersion = "5.2.5"

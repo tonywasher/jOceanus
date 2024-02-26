@@ -216,7 +216,7 @@ public final class MoneyWiseSecurityHolding
 
     @Override
     public Boolean isForeign() {
-        final MoneyWiseCurrency myDefault = thePortfolio.getDataSet().getDefaultCurrency();
+        final MoneyWiseCurrency myDefault = thePortfolio.getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 

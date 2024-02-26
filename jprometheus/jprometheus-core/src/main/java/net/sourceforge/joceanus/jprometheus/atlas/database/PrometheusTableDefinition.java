@@ -1148,10 +1148,12 @@ public class PrometheusTableDefinition {
         myBuilder.append(PREFIX_INDEX);
         myBuilder.append(theTableName);
         addQuoteIfAllowed(myBuilder);
-        myBuilder.append(" on ");
-        addQuoteIfAllowed(myBuilder);
-        myBuilder.append(theTableName);
-        addQuoteIfAllowed(myBuilder);
+        if (!PrometheusJDBCDriver.POSTGRESQL.equals(theDriver)) {
+            myBuilder.append(" on ");
+            addQuoteIfAllowed(myBuilder);
+            myBuilder.append(theTableName);
+            addQuoteIfAllowed(myBuilder);
+        }
 
         /* Return the command */
         return myBuilder.toString();
@@ -1220,15 +1222,10 @@ public class PrometheusTableDefinition {
      */
     protected String getJoinString(final char pChar,
                                    final Integer pOffset) {
-        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
-        /* Create the iterator */
-        final Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
-
         /* Loop through the columns */
-        while (myIterator.hasNext()) {
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        for (PrometheusColumnDefinition myDef : theSortList) {
             /* Access next column and skip if not reference column */
-            final PrometheusColumnDefinition myDef = myIterator.next();
             if (!(myDef instanceof PrometheusReferenceColumn)) {
                 continue;
             }
@@ -1394,7 +1391,7 @@ public class PrometheusTableDefinition {
         /* Close the statement and return it */
         myBuilder.append(" where ");
         addQuoteIfAllowed(myBuilder);
-       myBuilder.append(myId.getColumnName());
+        myBuilder.append(myId.getColumnName());
         addQuoteIfAllowed(myBuilder);
         myBuilder.append("=?");
         return myBuilder.toString();

@@ -77,7 +77,7 @@ public class MoneyWiseSheetCurrency
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(MoneyWiseCurrency.OBJECT_NAME);
-        myValues.addValue(MoneyWiseStaticResource.CURRENCY_DEFAULT, loadBoolean(COL_DEFAULT));
+        myValues.addValue(MoneyWiseStaticResource.CURRENCY_REPORTING, loadBoolean(COL_DEFAULT));
 
         /* Return the values */
         return myValues;
@@ -89,7 +89,7 @@ public class MoneyWiseSheetCurrency
         super.insertSecureItem(pItem);
 
         /* Set default indication */
-        writeBoolean(COL_DEFAULT, pItem.isDefault());
+        writeBoolean(COL_DEFAULT, pItem.isReporting());
     }
 
     @Override
@@ -138,8 +138,8 @@ public class MoneyWiseSheetCurrency
                 pReport.setNextStep();
             }
 
-            /* Initialise the default currency */
-            myList.initialiseDefault();
+            /* Initialise the reporting currency */
+            myList.initialiseReporting();
 
             /* PostProcess the list */
             myList.postProcessOnLoad();

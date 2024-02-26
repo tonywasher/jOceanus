@@ -288,7 +288,7 @@ public class MoneyWiseSecurity
 
     @Override
     public Boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getDefaultCurrency();
+        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -459,7 +459,7 @@ public class MoneyWiseSecurity
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultSecurityType());
-        setAssetCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getReportingCurrency());
         setSymbol(getName());
         setClosed(Boolean.FALSE);
         autoCorrect(pEditSet);

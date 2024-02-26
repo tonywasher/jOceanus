@@ -183,7 +183,7 @@ public class MoneyWiseAnalysis
                              final MetisPreferenceManager pPreferenceMgr) {
         /* Store the data */
         theData = pData;
-        theCurrency = pData.getDefaultCurrency();
+        theCurrency = pData.getReportingCurrency();
         thePreferences = pPreferenceMgr;
         theDateRange = theData.getDateRange();
 

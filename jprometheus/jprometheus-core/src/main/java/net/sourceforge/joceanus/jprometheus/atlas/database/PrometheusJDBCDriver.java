@@ -213,6 +213,12 @@ public enum PrometheusJDBCDriver {
                 myBuilder.append(":");
                 myBuilder.append(pPort);
             }
+            if (this != SQLSERVER) {
+                myBuilder.append("/");
+            }
+        }
+        if (this != SQLSERVER) {
+            myBuilder.append(pDatabase);
         }
         if (this == H2) {
             myBuilder.append(";DB_CLOSE_DELAY=-1");

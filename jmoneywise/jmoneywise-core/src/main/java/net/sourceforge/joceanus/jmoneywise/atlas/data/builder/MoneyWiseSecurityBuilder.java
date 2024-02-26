@@ -84,7 +84,7 @@ public class MoneyWiseSecurityBuilder {
     public MoneyWiseSecurityBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getSecurities().ensureMap();
-        defaultCurrency();
+        reportingCurrency();
     }
 
     /**
@@ -155,18 +155,18 @@ public class MoneyWiseSecurityBuilder {
     }
 
     /**
-     * Set the default currency.
+     * Set the reporting currency.
      */
-    private void defaultCurrency() {
-        currency(lookupDefaultCurrency());
+    private void reportingCurrency() {
+        currency(lookupReportingCurrency());
     }
 
     /**
-     * Obtain the default currency.
+     * Obtain the reporting currency.
      * @return the currency
      */
-    private MoneyWiseCurrency lookupDefaultCurrency() {
-        return theDataSet.getDefaultCurrency();
+    private MoneyWiseCurrency lookupReportingCurrency() {
+        return theDataSet.getReportingCurrency();
     }
 
     /**
@@ -252,7 +252,7 @@ public class MoneyWiseSecurityBuilder {
         theRegion = null;
         theUnderlying = null;
         theOptionPrice = null;
-        defaultCurrency();
+        reportingCurrency();
 
         /* Return the security */
         return mySecurity;

@@ -51,7 +51,7 @@ public final class MoneyWiseYQLDownloader {
     public static boolean downloadPrices(final MoneyWiseSpotSecurityList pPrices) throws OceanusException {
         /* Determine currency for the prices */
         final MoneyWiseDataSet myData = pPrices.getDataSet();
-        final MoneyWiseCurrency myCurrency = myData.getDefaultCurrency();
+        final MoneyWiseCurrency myCurrency = myData.getReportingCurrency();
         boolean hasChanges = false;
 
         /* If we have a default currency */
@@ -113,7 +113,7 @@ public final class MoneyWiseYQLDownloader {
     public static boolean downloadRates(final MoneyWiseSpotExchangeList pRates) throws OceanusException {
         /* Determine currency for the prices */
         final MoneyWiseDataSet myData = pRates.getDataSet();
-        final MoneyWiseCurrency myCurrency = myData.getDefaultCurrency();
+        final MoneyWiseCurrency myCurrency = myData.getReportingCurrency();
         boolean hasChanges = false;
 
         /* If we have a default currency */

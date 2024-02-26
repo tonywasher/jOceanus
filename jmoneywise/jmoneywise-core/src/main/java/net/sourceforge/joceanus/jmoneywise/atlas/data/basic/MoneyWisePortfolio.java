@@ -331,7 +331,7 @@ public class MoneyWisePortfolio
 
     @Override
     public Boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getDefaultCurrency();
+        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -481,7 +481,7 @@ public class MoneyWisePortfolio
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setCategory(getDefaultPortfolioType());
         setParent(getDefaultParent(pEditSet));
-        setAssetCurrency(getDataSet().getDefaultCurrency());
+        setAssetCurrency(getDataSet().getReportingCurrency());
         setClosed(Boolean.FALSE);
     }
 

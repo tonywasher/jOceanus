@@ -516,8 +516,8 @@ public class MoneyWiseExchangeRate
                 addError(ERROR_CIRCLE, MoneyWiseBasicResource.XCHGRATE_TO);
             }
 
-            /* From currency must be the default currency */
-            final MoneyWiseCurrency myDefault = getDataSet().getDefaultCurrency();
+            /* From currency must be the reporting currency */
+            final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
             if (!myFrom.equals(myDefault)) {
                 addError(ERROR_DEF, MoneyWiseBasicResource.XCHGRATE_FROM);
             }
@@ -645,13 +645,13 @@ public class MoneyWiseExchangeRate
          * Declare Fields.
          */
         static {
-            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_DEFAULT, MoneyWiseExchangeRateList::getDefaultCurrency);
+            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseExchangeRateList::getReportingCurrency);
         }
 
         /**
-         * The default currency.
+         * The reporting currency.
          */
-        private MoneyWiseCurrency theDefault;
+        private MoneyWiseCurrency theReporting;
 
         /**
          * Construct an empty CORE ExchangeRate list.
@@ -675,11 +675,11 @@ public class MoneyWiseExchangeRate
         }
 
         /**
-         * Obtain default currency.
-         * @return the default currency
+         * Obtain reporting currency.
+         * @return the reporting currency
          */
-        public MoneyWiseCurrency getDefaultCurrency() {
-            return theDefault;
+        public MoneyWiseCurrency getReportingCurrency() {
+            return theReporting;
         }
 
         @Override
@@ -765,7 +765,7 @@ public class MoneyWiseExchangeRate
             TethysMoney myValue = pValue;
             final MoneyWiseCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
             final Currency myCurrent = pValue.getCurrency();
-            final Currency myDefault = theDefault.getCurrency();
+            final Currency myReporting = theReporting.getCurrency();
             final Currency myTarget = pCurrency.getCurrency();
 
             /* Handle no conversion required */
@@ -773,17 +773,17 @@ public class MoneyWiseExchangeRate
                 return pValue;
             }
 
-            /* If the value is not already the default currency */
-            if (!myCurrent.equals(myDefault)) {
+            /* If the value is not already the reporting currency */
+            if (!myCurrent.equals(myReporting)) {
                 /* Find the required exchange rate */
                 final TethysRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
 
                 /* Convert the currency */
-                myValue = myValue.convertCurrency(myDefault, myRate);
+                myValue = myValue.convertCurrency(myReporting, myRate);
             }
 
             /* If we need to convert to a non-default currency */
-            if (!myDefault.equals(myTarget)) {
+            if (!myReporting.equals(myTarget)) {
                 /* Find the required exchange rate */
                 final TethysRatio myRate = findRate(pCurrency, pDate);
 
@@ -811,7 +811,7 @@ public class MoneyWiseExchangeRate
          * Set the default currency.
          * @param pCurrency the new default currency
          */
-        public void setDefaultCurrency(final MoneyWiseCurrency pCurrency) {
+        public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
             /* Access the iterator */
             final Iterator<MoneyWiseExchangeRate> myIterator = iterator();
             TethysRatio myCurrRate = null;
@@ -858,8 +858,8 @@ public class MoneyWiseExchangeRate
                 myCurr.setFromCurrency(pCurrency);
             }
 
-            /* Set the new default currency */
-            theDefault = pCurrency;
+            /* Set the new reporting currency */
+            theReporting = pCurrency;
         }
     }
 

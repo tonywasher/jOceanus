@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -82,7 +83,7 @@ public abstract class PrometheusDataStore {
      * Database Driver.
      */
     private final PrometheusJDBCDriver theDriver;
-
+    
     /**
      * List of Database tables.
      */
@@ -146,6 +147,23 @@ public abstract class PrometheusDataStore {
     }
 
     /**
+     * Execute the statement outside a transaction.
+     * @param pStatement the statement
+     * @throws OceanusException on error
+     */
+    void executeStatement(final String pStatement) throws OceanusException {
+        /* Protect the statement and execute without commit */
+        try (PreparedStatement myStmt = theConn.prepareStatement(pStatement)) {
+            theConn.setAutoCommit(true);
+            myStmt.execute();
+            theConn.setAutoCommit(false);
+
+        } catch (SQLException e) {
+            throw new PrometheusIOException("Failed to execute statement", e);
+        }
+    }
+
+    /**
      * Create new sheet of required type.
      * @param pListType the list type
      * @return the new sheet
@@ -203,7 +221,9 @@ public abstract class PrometheusDataStore {
         /* Protect against exceptions */
         try {
             /* Roll-back any outstanding transaction */
-            theConn.rollback();
+            if (!theConn.getAutoCommit()) {
+                theConn.rollback();
+            }
 
             /* Loop through the tables */
             for (PrometheusTableDataItem<?> myTable : theTables) {
@@ -259,9 +279,8 @@ public abstract class PrometheusDataStore {
      */
     public void updateDatabase(final TethysUIThreadStatusReport pReport,
                                final PrometheusDataSet pData) throws OceanusException {
-        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
-
         /* Set the number of stages */
+        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
         pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());
 
         /* Obtain the active profile */

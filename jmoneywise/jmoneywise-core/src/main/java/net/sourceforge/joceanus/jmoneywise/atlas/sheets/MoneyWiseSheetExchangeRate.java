@@ -150,7 +150,7 @@ public class MoneyWiseSheetExchangeRate
             pReport.setNumSteps(myTotal);
 
             /* Obtain the default currency */
-            final String myDefCurrency = pData.getDefaultCurrency().getName();
+            final String myDefCurrency = pData.getReportingCurrency().getName();
 
             /* Loop through the rows of the table */
             final PrometheusSheetRow myActRow = myView.getRowByIndex(0);

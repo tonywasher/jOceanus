@@ -59,7 +59,7 @@ public class MoneyWiseCurrency
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareBooleanField(MoneyWiseStaticResource.CURRENCY_DEFAULT);
+        FIELD_DEFS.declareBooleanField(MoneyWiseStaticResource.CURRENCY_REPORTING);
     }
 
     /**
@@ -81,7 +81,7 @@ public class MoneyWiseCurrency
     private MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
                               final String pName) throws OceanusException {
         super(pList, pName);
-        setValueDefault(Boolean.FALSE);
+        setValueReporting(Boolean.FALSE);
         setValueEnabled(Boolean.TRUE);
         setValueDesc(getCurrencyClass().getCurrency().getDisplayName());
     }
@@ -95,7 +95,7 @@ public class MoneyWiseCurrency
     private MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
                               final MoneyWiseCurrencyClass pClass) throws OceanusException {
         super(pList, pClass);
-        setValueDefault(Boolean.FALSE);
+        setValueReporting(Boolean.FALSE);
         setValueEnabled(Boolean.TRUE);
         setValueDesc(pClass.getCurrency().getDisplayName());
     }
@@ -111,14 +111,14 @@ public class MoneyWiseCurrency
         super(pList, pValues);
 
         /* Store the Default */
-        final Object myValue = pValues.getValue(MoneyWiseStaticResource.CURRENCY_DEFAULT);
+        final Object myValue = pValues.getValue(MoneyWiseStaticResource.CURRENCY_REPORTING);
         if (myValue instanceof Boolean) {
-            setValueDefault((Boolean) myValue);
+            setValueReporting((Boolean) myValue);
         } else if (myValue instanceof String) {
             final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
-            setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
+            setValueReporting(myFormatter.parseValue((String) myValue, Boolean.class));
         } else {
-            setValueDefault(Boolean.FALSE);
+            setValueReporting(Boolean.FALSE);
         }
     }
 
@@ -130,7 +130,7 @@ public class MoneyWiseCurrency
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-        if (MoneyWiseStaticResource.CURRENCY_DEFAULT.equals(pField)) {
+        if (MoneyWiseStaticResource.CURRENCY_REPORTING.equals(pField)) {
             return true;
         }
 
@@ -139,19 +139,19 @@ public class MoneyWiseCurrency
     }
 
     /**
-     * Is this the default currency.
+     * Is this the reporting currency.
      * @return true/false
      */
-    public Boolean isDefault() {
-        return getValues().getValue(MoneyWiseStaticResource.CURRENCY_DEFAULT, Boolean.class);
+    public Boolean isReporting() {
+        return getValues().getValue(MoneyWiseStaticResource.CURRENCY_REPORTING, Boolean.class);
    }
 
     /**
-     * Set default indication.
+     * Set reporting indication.
      * @param pValue the value
      */
-    private void setValueDefault(final Boolean pValue) {
-        getValues().setUncheckedValue(MoneyWiseStaticResource.CURRENCY_DEFAULT, pValue);
+    private void setValueReporting(final Boolean pValue) {
+        getValues().setUncheckedValue(MoneyWiseStaticResource.CURRENCY_REPORTING, pValue);
     }
 
     /**
@@ -184,8 +184,8 @@ public class MoneyWiseCurrency
     public int compareValues(final PrometheusDataItem pThat) {
         /* Handle differences in default value */
         final MoneyWiseCurrency myThat = (MoneyWiseCurrency) pThat;
-        if (!isDefault().equals(myThat.isDefault())) {
-            return Boolean.TRUE.equals(isDefault())
+        if (!isReporting().equals(myThat.isReporting())) {
+            return Boolean.TRUE.equals(isReporting())
                     ? -1
                     : 1;
         }
@@ -203,18 +203,18 @@ public class MoneyWiseCurrency
         final MetisFieldVersionValues myValues = getValues();
 
         /* Adjust Default */
-        final Object myDefault = myValues.getValue(MoneyWiseStaticResource.CURRENCY_DEFAULT);
-        if (myDefault == null) {
-            setValueDefault(Boolean.FALSE);
+        final Object myReporting = myValues.getValue(MoneyWiseStaticResource.CURRENCY_REPORTING);
+        if (myReporting == null) {
+            setValueReporting(Boolean.FALSE);
         }
     }
 
     /**
-     * Set default indication.
-     * @param pDefault the new indication
+     * Set reporting indication.
+     * @param pReporting the new indication
      */
-    public void setDefault(final Boolean pDefault) {
-        setValueDefault(pDefault);
+    public void setReporting(final Boolean pReporting) {
+        setValueReporting(pReporting);
     }
 
     @Override
@@ -222,20 +222,20 @@ public class MoneyWiseCurrency
         final MoneyWiseCurrencyList myList = getList();
         final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
 
-        /* Check that default is non-null */
-        if (isDefault() == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_DEFAULT);
+        /* Check that reporting is non-null */
+        if (isReporting() == null) {
+            addError(ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);
 
-            /* else check various things for a default currency */
-        } else if (Boolean.TRUE.equals(isDefault())) {
+            /* else check various things for a reporting currency */
+        } else if (Boolean.TRUE.equals(isReporting())) {
             /* Check that default is enabled */
             if (!getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_DEFAULT);
+                addError(ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);
             }
 
-            /* Check for multiple defaults */
-            if (!myMap.validDefaultCount()) {
-                addError("Multiple default currencies", MoneyWiseStaticResource.CURRENCY_DEFAULT);
+            /* Check for multiple reports */
+            if (!myMap.validReportCount()) {
+                addError("Multiple reporting currencies", MoneyWiseStaticResource.CURRENCY_REPORTING);
             }
         }
 
@@ -259,9 +259,9 @@ public class MoneyWiseCurrency
         /* Apply basic changes */
         applyBasicChanges(myData);
 
-        /* Update the default indication if required */
-        if (!isDefault().equals(myData.isDefault())) {
-            setDefault(myData.isDefault());
+        /* Update the reporting indication if required */
+        if (!isReporting().equals(myData.isReporting())) {
+            setReporting(myData.isReporting());
         }
 
         /* Check for changes */
@@ -392,17 +392,17 @@ public class MoneyWiseCurrency
 
         @Override
         public void populateDefaults() throws OceanusException {
-            /* Initialise the default currency */
-            initialiseDefault();
+            /* Initialise the reporting currency */
+            initialiseReporting();
 
             /* Ensure that the list is sorted */
             reSort();
         }
 
         /**
-         * Initialise the default currency.
+         * Initialise the reporting currency.
          */
-        public void initialiseDefault() {
+        public void initialiseReporting() {
             /* Determine the locale currency */
             final Locale myLocale = Locale.getDefault();
             final DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(myLocale);
@@ -417,8 +417,8 @@ public class MoneyWiseCurrency
 
             /* If we have a currency */
             if (myCurr != null) {
-                /* Set it as the default */
-                myCurr.setDefault(Boolean.TRUE);
+                /* Set it as the reporting */
+                myCurr.setReporting(Boolean.TRUE);
                 myCurr.setValueEnabled(Boolean.TRUE);
             }
         }
@@ -435,15 +435,15 @@ public class MoneyWiseCurrency
         }
 
         /**
-         * Find the default currency.
-         * @return The default currency
+         * Find the reporting currency.
+         * @return The reporting currency
          */
-        public MoneyWiseCurrency findDefault() {
-            /* look up the default in the map */
+        public MoneyWiseCurrency findReporting() {
+            /* look up the reporting in the map */
             final MoneyWiseCurrencyDataMap myMap = getDataMap();
             return myMap == null
                     ? null
-                    : myMap.getDefault();
+                    : myMap.getReporting();
         }
 
         @Override
@@ -465,12 +465,12 @@ public class MoneyWiseCurrency
         }
 
         /**
-         * Set default currency.
-         * @param pCurrency the new default currency.
+         * Set reporting currency.
+         * @param pCurrency the new reporting currency.
          */
-        public void setDefaultCurrency(final MoneyWiseCurrency pCurrency) {
-            /* Find the default currency */
-            final MoneyWiseCurrency myCurr = findDefault();
+        public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
+            /* Find the reportingdefault currency */
+            final MoneyWiseCurrency myCurr = findReporting();
 
             /* If we are changing the currency */
             if (!pCurrency.equals(myCurr)) {
@@ -478,12 +478,12 @@ public class MoneyWiseCurrency
                 if (myCurr != null) {
                     /* Clear default value */
                     myCurr.pushHistory();
-                    myCurr.setDefault(Boolean.FALSE);
+                    myCurr.setReporting(Boolean.FALSE);
                 }
 
                 /* Set new currency */
                 pCurrency.pushHistory();
-                pCurrency.setDefault(Boolean.TRUE);
+                pCurrency.setReporting(Boolean.TRUE);
             }
         }
 
@@ -507,18 +507,18 @@ public class MoneyWiseCurrency
          * Declare Fields.
          */
         static {
-            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_DEFAULT, MoneyWiseCurrencyDataMap::getDefault);
+            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseCurrencyDataMap::getReporting);
         }
 
         /**
-         * Default value.
+         * Reporting value.
          */
-        private MoneyWiseCurrency theDefault;
+        private MoneyWiseCurrency theReporting;
 
         /**
-         * Default count.
+         * Reporting count.
          */
-        private Integer theDefaultCount;
+        private Integer theReportingCount;
 
         /**
          * Constructor.
@@ -539,19 +539,19 @@ public class MoneyWiseCurrency
         @Override
         public void resetMap() {
             super.resetMap();
-            theDefault = null;
-            theDefaultCount = null;
+            theReporting = null;
+            theReportingCount = null;
         }
 
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Adjust order count */
             final MoneyWiseCurrency myItem = (MoneyWiseCurrency) pItem;
-            if (Boolean.TRUE.equals(myItem.isDefault())) {
-                theDefault = myItem;
-                theDefaultCount = theDefaultCount == null
+            if (Boolean.TRUE.equals(myItem.isReporting())) {
+                theReporting = myItem;
+                theReportingCount = theReportingCount == null
                         ? ONE
-                        : theDefaultCount + 1;
+                        : theReportingCount + 1;
             }
 
             /* Adjust name/order count */
@@ -559,19 +559,19 @@ public class MoneyWiseCurrency
         }
 
         /**
-         * find default currency.
-         * @return the default currency
+         * find reporting currency.
+         * @return the reporting currency
          */
-        public MoneyWiseCurrency getDefault() {
-            return theDefault;
+        public MoneyWiseCurrency getReporting() {
+            return theReporting;
         }
 
         /**
-         * Check validity of default count.
+         * Check validity of report count.
          * @return true/false
          */
-        public boolean validDefaultCount() {
-            return ONE.equals(theDefaultCount);
+        public boolean validReportCount() {
+            return ONE.equals(theReportingCount);
         }
     }
 }

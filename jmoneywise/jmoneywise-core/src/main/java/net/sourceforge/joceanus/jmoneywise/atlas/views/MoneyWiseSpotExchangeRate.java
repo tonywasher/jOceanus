@@ -236,7 +236,7 @@ public final class MoneyWiseSpotExchangeRate
 
             /* Obtain the portfolio bucket */
             final MoneyWiseDataSet myData = (MoneyWiseDataSet) theView.getData();
-            theCurrency = myData.getDefaultCurrency();
+            theCurrency = myData.getReportingCurrency();
             final MoneyWiseCurrencyList myCurrencies = myData.getAccountCurrencies();
 
             /* Loop through the Currencies */
