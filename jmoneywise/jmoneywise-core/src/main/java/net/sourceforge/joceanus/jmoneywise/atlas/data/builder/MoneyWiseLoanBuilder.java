@@ -67,7 +67,7 @@ public class MoneyWiseLoanBuilder {
     public MoneyWiseLoanBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getLoans().ensureMap();
-        defaultCurrency();
+        reportingCurrency();
     }
 
     /**
@@ -138,18 +138,18 @@ public class MoneyWiseLoanBuilder {
     }
 
     /**
-     * Set the default currency.
+     * Set the reporting currency.
      */
-    private void defaultCurrency() {
-        currency(lookupDefaultCurrency());
+    private void reportingCurrency() {
+        currency(lookupReportingCurrency());
     }
 
     /**
-     * Obtain the default currency.
+     * Obtain the reporting currency.
      * @return the currency
      */
-    private MoneyWiseCurrency lookupDefaultCurrency() {
-        return theDataSet.getDefaultCurrency();
+    private MoneyWiseCurrency lookupReportingCurrency() {
+        return theDataSet.getReportingCurrency();
     }
 
     /**
@@ -202,7 +202,7 @@ public class MoneyWiseLoanBuilder {
         theCategory = null;
         theParent = null;
         theOpeningBalance = null;
-        defaultCurrency();
+        reportingCurrency();
 
         /* Return the loan */
         return myLoan;

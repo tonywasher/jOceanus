@@ -305,7 +305,7 @@ public abstract class MoneyWiseAssetBase
     public Currency getCurrency() {
         MoneyWiseCurrency myCurrency = getAssetCurrency();
         myCurrency = myCurrency == null
-                ? getDataSet().getDefaultCurrency()
+                ? getDataSet().getReportingCurrency()
                 : myCurrency;
         return myCurrency == null ? null : myCurrency.getCurrency();
     }

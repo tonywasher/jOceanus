@@ -86,7 +86,7 @@ public class MoneyWiseDataSet
     static {
         FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseStaticDataType.class, MoneyWiseDataSet::getFieldListValue);
         FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseBasicDataType.class, MoneyWiseDataSet::getFieldListValue);
-        FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_DEFAULT, MoneyWiseDataSet::getDefaultCurrency);
+        FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseDataSet::getReportingCurrency);
     }
 
     /**
@@ -95,9 +95,9 @@ public class MoneyWiseDataSet
     private final MoneyWiseTaxFactory theTaxFactory;
 
     /**
-     * Default Currency.
+     * Reporting Currency.
      */
-    private MoneyWiseCurrency theDefaultCurrency;
+    private MoneyWiseCurrency theReportingCurrency;
 
     /**
      * Check Closed Accounts.
@@ -441,13 +441,13 @@ public class MoneyWiseDataSet
      * Obtain default currency.
      * @return the default currency
      */
-    public MoneyWiseCurrency getDefaultCurrency() {
-        /* If we have note yet determined the default currency */
-        if (theDefaultCurrency == null) {
+    public MoneyWiseCurrency getReportingCurrency() {
+        /* If we have note yet determined the reporting currency */
+        if (theReportingCurrency == null) {
             /* Determine the default currency */
-            theDefaultCurrency = getAccountCurrencies().findDefault();
+            theReportingCurrency = getAccountCurrencies().findReporting();
         }
-        return theDefaultCurrency;
+        return theReportingCurrency;
     }
 
     /**

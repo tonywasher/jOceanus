@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,6 +60,11 @@ public abstract class PrometheusDataStore {
     private static final String PROPERTY_INSTANCE = "instance";
 
     /**
+     * Encrypt property name.
+     */
+    private static final String PROPERTY_ENCRYPT = "encrypt";
+
+    /**
      * Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusDataStore.class);
@@ -77,7 +83,7 @@ public abstract class PrometheusDataStore {
      * Database Driver.
      */
     private final PrometheusJDBCDriver theDriver;
-
+    
     /**
      * List of Database tables.
      */
@@ -100,7 +106,7 @@ public abstract class PrometheusDataStore {
             theDriver = pConfig.getDriver();
 
             /* Obtain the connection */
-            final String myConnString = theDriver.getConnectionString(pDatabase, pConfig.getServer());
+            final String myConnString = theDriver.getConnectionString(pDatabase, pConfig.getServer(), pConfig.getPort());
 
             /* Create the properties and record user */
             final Properties myProperties = new Properties();
@@ -113,6 +119,7 @@ public abstract class PrometheusDataStore {
             if (theDriver.useInstance()) {
                 final String myInstance = pConfig.getInstance();
                 myProperties.setProperty(PROPERTY_INSTANCE, myInstance);
+                myProperties.setProperty(PROPERTY_ENCRYPT, "false");
             }
 
             /* Connect using properties */
@@ -136,6 +143,23 @@ public abstract class PrometheusDataStore {
         for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {
             /* Create the sheet */
             theTables.add(newTable(myType));
+        }
+    }
+
+    /**
+     * Execute the statement outside a transaction.
+     * @param pStatement the statement
+     * @throws OceanusException on error
+     */
+    void executeStatement(final String pStatement) throws OceanusException {
+        /* Protect the statement and execute without commit */
+        try (PreparedStatement myStmt = theConn.prepareStatement(pStatement)) {
+            theConn.setAutoCommit(true);
+            myStmt.execute();
+            theConn.setAutoCommit(false);
+
+        } catch (SQLException e) {
+            throw new PrometheusIOException("Failed to execute statement", e);
         }
     }
 
@@ -197,7 +221,9 @@ public abstract class PrometheusDataStore {
         /* Protect against exceptions */
         try {
             /* Roll-back any outstanding transaction */
-            theConn.rollback();
+            if (!theConn.getAutoCommit()) {
+                theConn.rollback();
+            }
 
             /* Loop through the tables */
             for (PrometheusTableDataItem<?> myTable : theTables) {
@@ -253,9 +279,8 @@ public abstract class PrometheusDataStore {
      */
     public void updateDatabase(final TethysUIThreadStatusReport pReport,
                                final PrometheusDataSet pData) throws OceanusException {
-        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
-
         /* Set the number of stages */
+        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
         pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());
 
         /* Obtain the active profile */

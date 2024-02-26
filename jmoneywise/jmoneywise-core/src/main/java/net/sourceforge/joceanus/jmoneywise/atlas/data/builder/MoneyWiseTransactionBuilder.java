@@ -258,7 +258,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder taxCredit(final String pTaxCredit) {
-        return taxCredit(new TethysMoney(pTaxCredit, theDataSet.getDefaultCurrency().getCurrency()));
+        return taxCredit(new TethysMoney(pTaxCredit, theDataSet.getReportingCurrency().getCurrency()));
     }
 
     /**
@@ -277,7 +277,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder employersNI(final String pNI) {
-        return employersNI(new TethysMoney(pNI, theDataSet.getDefaultCurrency().getCurrency()));
+        return employersNI(new TethysMoney(pNI, theDataSet.getReportingCurrency().getCurrency()));
     }
 
     /**
@@ -296,7 +296,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder employeesNI(final String pNI) {
-        return employeesNI(new TethysMoney(pNI, theDataSet.getDefaultCurrency().getCurrency()));
+        return employeesNI(new TethysMoney(pNI, theDataSet.getReportingCurrency().getCurrency()));
     }
 
     /**
@@ -315,7 +315,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder benefit(final String pBenefit) {
-        return benefit(new TethysMoney(pBenefit, theDataSet.getDefaultCurrency().getCurrency()));
+        return benefit(new TethysMoney(pBenefit, theDataSet.getReportingCurrency().getCurrency()));
     }
 
     /**
@@ -334,7 +334,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder withheld(final String pWithheld) {
-        return withheld(new TethysMoney(pWithheld, theDataSet.getDefaultCurrency().getCurrency()));
+        return withheld(new TethysMoney(pWithheld, theDataSet.getReportingCurrency().getCurrency()));
     }
 
     /**

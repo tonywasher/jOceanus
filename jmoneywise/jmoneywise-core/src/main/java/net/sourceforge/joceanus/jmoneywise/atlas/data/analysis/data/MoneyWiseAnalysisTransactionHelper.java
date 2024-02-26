@@ -83,7 +83,7 @@ public class MoneyWiseAnalysisTransactionHelper {
         thePriceCursor = new MoneyWiseAnalysisSecurityPriceCursor(pData);
 
         /* Note the reporting currency */
-        theCurrency = pData.getDefaultCurrency();
+        theCurrency = pData.getReportingCurrency();
     }
 
     /**

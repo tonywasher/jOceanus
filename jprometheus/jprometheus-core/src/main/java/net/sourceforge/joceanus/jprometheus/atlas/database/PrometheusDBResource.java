@@ -44,6 +44,11 @@ public enum PrometheusDBResource implements TethysBundleId {
     DRIVER_MYSQL("DBDriver.MYSQL"),
 
     /**
+     * DBDriver MAriaDB.
+     */
+    DRIVER_MARIADB("DBDriver.MariaDB"),
+
+    /**
      * DBDriver H2.
      */
     DRIVER_H2("DBDriver.H2"),
@@ -67,6 +72,11 @@ public enum PrometheusDBResource implements TethysBundleId {
      * DatabasePreference Instance.
      */
     DBPREF_INSTANCE("dbpref.instance"),
+
+    /**
+     * DatabasePreference Port.
+     */
+    DBPREF_PORT("dbpref.port"),
 
     /**
      * DatabasePreference Name.
@@ -149,6 +159,7 @@ public enum PrometheusDBResource implements TethysBundleId {
         myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
         myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
         myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
+        myMap.put(PrometheusJDBCDriver.MARIADB, DRIVER_MARIADB);
         myMap.put(PrometheusJDBCDriver.H2, DRIVER_H2);
         return myMap;
     }

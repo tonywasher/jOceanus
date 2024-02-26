@@ -281,7 +281,7 @@ public class MoneyWiseTransInfoSet
                 return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
 
             case XCHANGERATE:
-                return isXchangeRateClassRequired(myClass, myAccount, myData.getDefaultCurrency());
+                return isXchangeRateClassRequired(myClass, myAccount, myData.getReportingCurrency());
 
             case PRICE:
                 return isPriceClassRequired(myClass, myAccount, myPartner);

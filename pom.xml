@@ -76,8 +76,9 @@
     <JSONVersion>20240205</JSONVersion>
     <ApacheMavenVersion>3.9.5</ApacheMavenVersion>
     <MySQLVersion>8.0.33</MySQLVersion>
-    <PostGreSQLVersion>42.7.1</PostGreSQLVersion>
-    <JTDSVersion>1.3.1</JTDSVersion>
+    <MariaDBVersion>3.3.3</MariaDBVersion>
+    <PostGreSQLVersion>42.7.2</PostGreSQLVersion>
+    <MSSQLVersion>12.6.1.jre11</MSSQLVersion>
     <H2Version>2.2.224</H2Version>
     <ApachePOIVersion>5.2.5</ApachePOIVersion>
     <JSoupVersion>1.17.2</JSoupVersion>

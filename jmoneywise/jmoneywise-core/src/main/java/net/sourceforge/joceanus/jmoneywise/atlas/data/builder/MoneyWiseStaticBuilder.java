@@ -88,8 +88,8 @@ public class MoneyWiseStaticBuilder {
      * @return the builder
      */
     public MoneyWiseStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
-        /* Create default currency */
-        buildDefaultCurrency(pDefault);
+        /* Create reporting currency */
+        buildReportingCurrency(pDefault);
 
         /* Build account types */
         buildPayeeTypes();
@@ -346,11 +346,11 @@ public class MoneyWiseStaticBuilder {
      * @return the new currency
      * @throws OceanusException on error
      */
-    public MoneyWiseCurrency buildDefaultCurrency(final Currency pCurrency) throws OceanusException {
+    public MoneyWiseCurrency buildReportingCurrency(final Currency pCurrency) throws OceanusException {
         final MoneyWiseCurrencyList myList = theDataSet.getAccountCurrencies();
         myList.ensureMap();
         final MoneyWiseCurrency myCurr = myList.addBasicItem(pCurrency.getCurrencyCode());
-        myCurr.setDefault(Boolean.TRUE);
+        myCurr.setReporting(Boolean.TRUE);
         myCurr.adjustMapForItem();
         return myCurr;
     }

@@ -46,6 +46,11 @@ public interface PrometheusDatabase {
         DBINSTANCE("DBInstance", PrometheusDBResource.DBPREF_INSTANCE),
 
         /**
+         * Database Port.
+         */
+        DBPORT("DBPort", PrometheusDBResource.DBPREF_PORT),
+
+        /**
          * Database Name.
          */
         DBNAME("DBName", PrometheusDBResource.DBPREF_NAME),
@@ -121,6 +126,7 @@ public interface PrometheusDatabase {
             defineEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
             defineStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);
             defineStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);
+            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBPORT);
             defineStringPreference(PrometheusDatabasePreferenceKey.DBNAME);
             defineIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
             defineStringPreference(PrometheusDatabasePreferenceKey.DBUSER);
@@ -134,6 +140,7 @@ public interface PrometheusDatabase {
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);
             }
+            final PrometheusJDBCDriver myDriver = myTypePref.getValue();
 
             /* Make sure that the hostName is specified */
             MetisStringPreference myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);
@@ -141,13 +148,22 @@ public interface PrometheusDatabase {
                 myPref.setValue("localhost");
             }
 
-            /* Make sure that the instance is specified (for SQLSSERVER) */
+            /* Make sure that the instance is specified (for SQLSERVER) */
             myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);
-            myPref.setHidden(!PrometheusJDBCDriver.SQLSERVER.equals(myTypePref.getValue()));
+            myPref.setHidden(!PrometheusJDBCDriver.SQLSERVER.equals(myDriver));
             if (myPref.isHidden()) {
                 myPref.setValue(null);
             } else if (!myPref.isAvailable()) {
-                myPref.setValue("SQLEXPRESS");
+                myPref.setValue(PrometheusJDBCDriver.INSTANCE_SQLEXPRESS);
+            }
+
+            /* Make sure that the port is specified (for MARIADB/MYSQL/POSTGRESQL) */
+            final MetisIntegerPreference myIntPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBPORT);
+            myIntPref.setHidden(!myDriver.usePort());
+            if (myIntPref.isHidden()) {
+                myIntPref.setValue(null);
+            } else if (!myIntPref.isAvailable()) {
+                myIntPref.setValue(myDriver.getDefaultPort());
             }
 
             /* Make sure that the database is specified */

@@ -187,7 +187,7 @@ public class MoneyWiseSheetDeposit
 
         /* Handle currency which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        MoneyWiseCurrency myCurrency = pData.getDefaultCurrency();
+        MoneyWiseCurrency myCurrency = pData.getReportingCurrency();
         if (myCell != null) {
             final String myCurrName = myCell.getString();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);

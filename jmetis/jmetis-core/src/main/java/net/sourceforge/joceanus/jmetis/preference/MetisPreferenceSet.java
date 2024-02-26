@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmetis.preference;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.prefs.BackingStoreException;
@@ -144,8 +145,8 @@ public abstract class MetisPreferenceSet
         theEventManager = new TethysEventManager<>();
 
         /* Allocate the preference maps */
-        theNameMap = new HashMap<>();
-        theKeyMap = new HashMap<>();
+        theNameMap = new LinkedHashMap<>();
+        theKeyMap = new LinkedHashMap<>();
 
         /* Access the active key names */
         try {

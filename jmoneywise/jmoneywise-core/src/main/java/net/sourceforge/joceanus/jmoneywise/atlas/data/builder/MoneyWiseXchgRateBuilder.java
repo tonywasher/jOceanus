@@ -134,7 +134,7 @@ public class MoneyWiseXchgRateBuilder {
         /* Create the rate */
         final MoneyWiseExchangeRate myRate = theDataSet.getExchangeRates().addNewItem();
         myRate.setToCurrency(theCurrency);
-        myRate.setFromCurrency(theDataSet.getDefaultCurrency());
+        myRate.setFromCurrency(theDataSet.getReportingCurrency());
         myRate.setExchangeRate(theRate);
         myRate.setDate(theDate);
 

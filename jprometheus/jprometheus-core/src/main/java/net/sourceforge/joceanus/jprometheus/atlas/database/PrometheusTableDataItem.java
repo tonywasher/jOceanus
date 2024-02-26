@@ -652,6 +652,30 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
     }
 
     /**
+     * Create the database.
+     * @throws OceanusException on error
+     */
+    void createDatabase(final String pDatabase) throws OceanusException {
+        /* Protect the statements */
+        try {
+            /* Execute the drop and create database statements */
+            theConn.setAutoCommit(true);
+            final String myDrop = "DROP DATABASE IF EXISTS " + pDatabase;
+            prepareStatement(myDrop);
+            theStmt.execute();
+            theStmt.close();
+            final String myCreate = "CREATE DATABASE " + pDatabase;
+            prepareStatement(myCreate);
+            theStmt.execute();
+            theStmt.close();
+            theConn.setAutoCommit(false);
+
+        } catch (SQLException e) {
+            throw new PrometheusIOException("Failed to create database", e);
+        }
+    }
+
+    /**
      * Drop the table.
      * @throws OceanusException on error
      */
