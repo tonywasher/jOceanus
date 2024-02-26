@@ -554,7 +554,7 @@ public abstract class PrometheusDataItem
 
     @Override
     public void addError(final String pError,
-                         final MetisFieldDef pField) {
+                         final MetisDataFieldId pField) {
         /* Set edit state and add the error */
         super.addError(pError, pField);
 
@@ -585,23 +585,11 @@ public abstract class PrometheusDataItem
      */
     protected void resolveDataLink(final MetisDataFieldId pFieldId,
                                    final PrometheusDataList<?> pList) throws OceanusException {
-        final MetisFieldDef myField = getDataFieldSet().getField(pFieldId);
-        resolveDataLink(myField, pList);
-    }
-
-    /**
-     * Resolve a data link into a list.
-     * @param pField the field to resolve
-     * @param pList the list to resolve against
-     * @throws OceanusException on error
-     */
-    protected void resolveDataLink(final MetisFieldDef pField,
-                                   final PrometheusDataList<?> pList) throws OceanusException {
         /* Access the values */
         final MetisFieldVersionValues myValues = getValues();
 
         /* Access value for field */
-        Object myValue = myValues.getValue(pField);
+        Object myValue = myValues.getValue(pFieldId);
 
         /* Convert dataItem reference to Id */
         if (myValue instanceof PrometheusDataItem) {
@@ -612,19 +600,19 @@ public abstract class PrometheusDataItem
         if (myValue instanceof Integer) {
             final PrometheusDataItem myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
-                addError(ERROR_UNKNOWN, pField);
+                addError(ERROR_UNKNOWN, pFieldId);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
             }
-            myValues.setValue(pField, myItem);
+            myValues.setValue(pFieldId, myItem);
 
             /* Lookup Name reference */
         } else if (myValue instanceof String) {
             final PrometheusDataItem myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
-                addError(ERROR_UNKNOWN, pField);
+                addError(ERROR_UNKNOWN, pFieldId);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
             }
-            myValues.setValue(pField, myItem);
+            myValues.setValue(pFieldId, myItem);
         }
     }
 

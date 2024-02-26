@@ -253,9 +253,8 @@ public abstract class MetisFieldVersionedItem
 
     @Override
     public boolean hasErrors(final MetisDataFieldId pFieldId) {
-        final MetisFieldDef myField = getDataFieldSet().getField(pFieldId);
         return pFieldId != null
-                && theValidation.hasErrors(myField);
+                && theValidation.hasErrors(pFieldId);
     }
 
     /**
@@ -265,20 +264,9 @@ public abstract class MetisFieldVersionedItem
      */
     public void addError(final String pError,
                          final MetisDataFieldId pFieldId) {
-        final MetisFieldDef myField = getDataFieldSet().getField(pFieldId);
-        addError(pError, myField);
-    }
-
-    /**
-     * Add an error for this item.
-     * @param pError the error text
-     * @param pField the associated field
-     */
-    public void addError(final String pError,
-                         final MetisFieldDef pField) {
         /* Set edit state and add the error */
         theEditState = MetisDataEditState.ERROR;
-        theValidation.addError(pError, pField);
+        theValidation.addError(pError, pFieldId);
     }
 
     /**
@@ -301,9 +289,8 @@ public abstract class MetisFieldVersionedItem
 
     @Override
     public String getFieldErrors(final MetisDataFieldId pField) {
-        final MetisFieldDef myField = getDataFieldSet().getField(pField);
         return pField != null
-                ? theValidation.getFieldErrors(myField)
+                ? theValidation.getFieldErrors(pField)
                 : null;
     }
 
