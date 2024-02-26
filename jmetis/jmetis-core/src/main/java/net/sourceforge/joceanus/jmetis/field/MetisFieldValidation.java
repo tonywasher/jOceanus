@@ -17,9 +17,9 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -100,13 +100,13 @@ public class MetisFieldValidation
      * @param pField the field for the error
      */
     public void addError(final String pText,
-                         final MetisFieldDef pField) {
+                         final MetisDataFieldId pField) {
         /* Create a new error element */
         final MetisFieldError myError = new MetisFieldError(pText, pField);
 
         /* Declare error field */
         final int myCount = countFieldErrors(pField);
-        final String myName = pField.getFieldId().getId() + "-" + myCount;
+        final String myName = pField.getId() + "-" + myCount;
         theLocalFields.declareLocalField(myName, f -> myError);
 
         /* Add to the end of the list */
@@ -118,12 +118,10 @@ public class MetisFieldValidation
      * @param pField - the field
      * @return <code>true</code> if there are any errors <code>false</code> otherwise
      */
-    public boolean hasErrors(final MetisFieldDef pField) {
+    public boolean hasErrors(final MetisDataFieldId pField) {
         /* Loop through the elements */
-        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
-        while (myIterator.hasNext()) {
+        for (MetisFieldError myCurr : theErrors) {
             /* Access the element and return if related to required field */
-            final MetisFieldError myCurr = myIterator.next();
             if (myCurr.getField().equals(pField)) {
                 return true;
             }
@@ -136,15 +134,12 @@ public class MetisFieldValidation
      * @param pField - the field
      * @return the error text
      */
-    public String getFieldErrors(final MetisFieldDef pField) {
+    public String getFieldErrors(final MetisDataFieldId pField) {
         final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
-        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
-        while (myIterator.hasNext()) {
+        for (MetisFieldError myCurr : theErrors) {
             /* Access the element */
-            final MetisFieldError myCurr = myIterator.next();
-
             /* If the field matches */
             if (myCurr.getField().equals(pField)) {
                 /* Add the error */
@@ -168,15 +163,12 @@ public class MetisFieldValidation
      * @param pField - the field number to check
      * @return the error count
      */
-    private int countFieldErrors(final MetisFieldDef pField) {
+    private int countFieldErrors(final MetisDataFieldId pField) {
         int myCount = 0;
 
         /* Loop through the elements */
-        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
-        while (myIterator.hasNext()) {
+        for (MetisFieldError myCurr : theErrors) {
             /* Access the element */
-            final MetisFieldError myCurr = myIterator.next();
-
             /* If the field matches */
             if (myCurr.getField().equals(pField)) {
                 /* Increment the count */
@@ -197,17 +189,15 @@ public class MetisFieldValidation
         final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
-        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
-        while (myIterator.hasNext()) {
+        for (MetisFieldError myCurr : theErrors) {
             /* Access the element and field */
-            final MetisFieldError myCurr = myIterator.next();
-            final MetisFieldDef myField = myCurr.getField();
+            final MetisDataFieldId myField = myCurr.getField();
 
             /* Search the field set */
             boolean bFound = false;
             for (MetisFieldDef field : aFields) {
                 /* If we have found the field note it and break loop */
-                if ((field != null) && field.equals(myField)) {
+                if (field != null && field.equals(myField)) {
                     bFound = true;
                     break;
                 }
@@ -278,7 +268,7 @@ public class MetisFieldValidation
         /**
          * The field for the error.
          */
-        private final MetisFieldDef theField;
+        private final MetisDataFieldId theField;
 
         /**
          * Constructor for the error.
@@ -286,7 +276,7 @@ public class MetisFieldValidation
          * @param pField the field
          */
         private MetisFieldError(final String pError,
-                                final MetisFieldDef pField) {
+                                final MetisDataFieldId pField) {
             theError = pError;
             theField = pField;
         }
@@ -303,7 +293,7 @@ public class MetisFieldValidation
          * Get the field for the error.
          * @return the field
          */
-        public MetisFieldDef getField() {
+        public MetisDataFieldId getField() {
             return theField;
         }
 
@@ -312,7 +302,7 @@ public class MetisFieldValidation
          * @return the formatted error
          */
         private String formatError() {
-            return theField.getFieldId().getId()
+            return theField.getId()
                    + ": "
                    + theError;
         }
