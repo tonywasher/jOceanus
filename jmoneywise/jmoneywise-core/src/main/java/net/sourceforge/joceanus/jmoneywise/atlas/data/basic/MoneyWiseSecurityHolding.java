@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrency;
@@ -284,7 +283,7 @@ public final class MoneyWiseSecurityHolding
 
     @Override
     public int hashCode() {
-        final int myHash = MetisFields.HASH_PRIME * getPortfolio().hashCode();
+        final int myHash = MetisFieldSet.HASH_PRIME * getPortfolio().hashCode();
         return myHash + getSecurity().hashCode();
     }
 

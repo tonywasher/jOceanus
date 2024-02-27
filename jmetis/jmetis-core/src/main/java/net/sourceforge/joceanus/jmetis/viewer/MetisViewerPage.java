@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 
 /**
@@ -453,11 +452,6 @@ public class MetisViewerPage {
         final Object myObject = pObject instanceof MetisDataDelta
                                                                   ? ((MetisDataDelta) pObject).getObject()
                                                                   : pObject;
-
-        /* Handle structured object */
-        if (myObject instanceof MetisDataContents) {
-            return true;
-        }
 
         /* Handle structured object */
         if (myObject instanceof MetisFieldItem) {
