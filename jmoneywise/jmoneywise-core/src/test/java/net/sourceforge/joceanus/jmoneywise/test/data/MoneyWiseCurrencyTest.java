@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import java.util.ArrayList;
@@ -64,8 +64,8 @@ final class MoneyWiseCurrencyTest {
         final List<String> myIrrelevantCurrencies = new ArrayList<>(Arrays.asList(IRRELEVANT));
 
         /* Create collections */
-        final List<AssetCurrencyClass> mySupportedCurrencies = new ArrayList<>();
-        final List<AssetCurrencyClass> myInvalidCurrencies = new ArrayList<>();
+        final List<MoneyWiseCurrencyClass> mySupportedCurrencies = new ArrayList<>();
+        final List<MoneyWiseCurrencyClass> myInvalidCurrencies = new ArrayList<>();
         final List<Currency> myMissingCurrencies = new ArrayList<>();
 
         /* Check Available Currencies */
@@ -73,7 +73,7 @@ final class MoneyWiseCurrencyTest {
             /* Determine whether the currency is supported */
             final String myCode = myCurr.getCurrencyCode();
             try {
-                final AssetCurrencyClass myClass = AssetCurrencyClass.valueOf(myCode);
+                final MoneyWiseCurrencyClass myClass = MoneyWiseCurrencyClass.valueOf(myCode);
                 mySupportedCurrencies.add(myClass);
             } catch (IllegalArgumentException e) {
                 if (!myIrrelevantCurrencies.contains(myCode)) {
@@ -83,7 +83,7 @@ final class MoneyWiseCurrencyTest {
         }
 
         /* Loop through all the declared currencies */
-        for (final AssetCurrencyClass myClass : AssetCurrencyClass.values()) {
+        for (final MoneyWiseCurrencyClass myClass : MoneyWiseCurrencyClass.values()) {
             /* Check for invalid currencies */
             if (!mySupportedCurrencies.contains(myClass)) {
                 myInvalidCurrencies.add(myClass);

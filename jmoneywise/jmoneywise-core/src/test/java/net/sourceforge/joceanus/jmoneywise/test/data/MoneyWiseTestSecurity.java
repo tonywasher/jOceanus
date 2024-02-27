@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.test.data;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseXUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.atlas.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
@@ -52,7 +52,7 @@ public class MoneyWiseTestSecurity {
         myManager.setDialogController(new NullPasswordDialog());
 
         /* Create the cloneSet and initialise security */
-        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseXUKTaxYearCache());
+        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Create the control data */
         final TethysUIThreadStatusReport myReport = new NullThreadStatusReport();

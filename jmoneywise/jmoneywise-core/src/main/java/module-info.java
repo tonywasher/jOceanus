@@ -30,7 +30,5 @@ module net.sourceforge.joceanus.jmoneywise.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions;
-    exports net.sourceforge.joceanus.jmoneywise.lethe.launch;
     exports net.sourceforge.joceanus.jmoneywise.atlas.launch;
 }

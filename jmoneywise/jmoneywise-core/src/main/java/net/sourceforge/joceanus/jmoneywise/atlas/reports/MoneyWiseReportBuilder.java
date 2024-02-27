@@ -24,9 +24,9 @@ import org.w3c.dom.Document;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
 
 /**
  * Report Classes.
@@ -36,22 +36,22 @@ public class MoneyWiseReportBuilder {
     /**
      * The Total text.
      */
-    protected static final String TEXT_TOTAL = AnalysisResource.ANALYSIS_TOTALS.getValue();
+    protected static final String TEXT_TOTAL = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS.getValue();
 
     /**
      * The Profit text.
      */
-    protected static final String TEXT_PROFIT = AnalysisResource.SECURITYATTR_PROFIT.getValue();
+    protected static final String TEXT_PROFIT = MoneyWiseAnalysisDataResource.SECURITYATTR_PROFIT.getValue();
 
     /**
      * The Income text.
      */
-    protected static final String TEXT_INCOME = AnalysisResource.PAYEEATTR_INCOME.getValue();
+    protected static final String TEXT_INCOME = MoneyWiseAnalysisDataResource.PAYEEATTR_INCOME.getValue();
 
     /**
      * The Expense text.
      */
-    protected static final String TEXT_EXPENSE = AnalysisResource.PAYEEATTR_EXPENSE.getValue();
+    protected static final String TEXT_EXPENSE = MoneyWiseAnalysisDataResource.PAYEEATTR_EXPENSE.getValue();
 
     /**
      * The Report Manager.
