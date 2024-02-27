@@ -10,7 +10,7 @@
   <description>Java Core Application Framework</description>
   <dependencies>
     <dependency>
-      <groupId>mysql</groupId>
+      <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>${MySQLVersion}</version>
       <scope>runtime</scope>

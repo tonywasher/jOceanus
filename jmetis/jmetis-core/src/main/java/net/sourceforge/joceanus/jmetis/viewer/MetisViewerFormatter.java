@@ -32,13 +32,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedD
 import net.sourceforge.joceanus.jmetis.field.MetisFieldValidation;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldStorage;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
@@ -142,10 +135,6 @@ public class MetisViewerFormatter {
         /* If we are FieldItem */
         if (myObject instanceof MetisFieldItem) {
             formatHTMLEosFieldItem((MetisFieldItem) myObject);
-
-            /* If we are DataContents */
-        } else if (myObject instanceof MetisDataContents) {
-            formatHTMLContents((MetisDataContents) myObject);
 
             /* If we are Stack Trace */
         } else if (myObject instanceof StackTraceElement[]) {
@@ -313,66 +302,6 @@ public class MetisViewerFormatter {
         /* Skip value if required */
         return myValue == null
                || MetisDataFieldValue.SKIP.equals(myValue);
-    }
-
-    /**
-     * Build HTML table describing DataContents.
-     * @param pContents the contents
-     */
-    @Deprecated
-    private void formatHTMLContents(final MetisDataContents pContents) {
-        /* Access details */
-        final MetisFields myFields = pContents.getDataFields();
-        MetisValueSet myValues = null;
-        MetisDataValues myValueCtl = null;
-        MetisFieldSetItem myItem = null;
-        if (pContents instanceof MetisDataValues) {
-            myValueCtl = (MetisDataValues) pContents;
-            myValues = myValueCtl.getValueSet();
-        }
-        if (pContents instanceof MetisFieldSetItem) {
-            myItem = (MetisFieldSetItem) pContents;
-        }
-
-        /* Initialise the document */
-        theBuilder.newTitle(myFields.getName());
-        theBuilder.newTable();
-        theBuilder.newTitleCell(COLUMN_FIELD);
-        theBuilder.newTitleCell(COLUMN_VALUE);
-
-        /* Loop through the fields */
-        final Iterator<MetisLetheField> myIterator = myFields.fieldIterator();
-        while (myIterator.hasNext()) {
-            /* Access Field */
-            final MetisLetheField myField = myIterator.next();
-            final MetisLetheFieldStorage myStorage = myField.getStorage();
-            Object myValue = MetisDataFieldValue.SKIP;
-
-            /* Access the value */
-            if (myStorage.isValueSet()
-                && myValues != null) {
-                myValue = myValueCtl.skipField(myField)
-                                                        ? MetisDataFieldValue.SKIP
-                                                        : myValues.getValue(myField);
-            } else if (!myStorage.isCalculated()) {
-                myValue = pContents.getFieldValue(myField);
-            }
-
-            /* Skip value if required */
-            if (MetisDataFieldValue.SKIP.equals(myValue)) {
-                continue;
-            }
-
-            /* Start the field */
-            theBuilder.newTableRow();
-            theBuilder.newDataCell(myField.getName());
-            if ((myItem != null)
-                && (myItem.getFieldState(myField).isChanged())) {
-                theBuilder.newDataCell(myValue, true);
-            } else {
-                theBuilder.newDataCell(myValue);
-            }
-        }
     }
 
     /**
