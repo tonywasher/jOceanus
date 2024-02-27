@@ -16,21 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseCashCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseDepositCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseLoanCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseRegionBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseStaticBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseTagBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseTransCategoryBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseXchgRateBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseDepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseLoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseCashCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseDepositCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseLoanCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseRegionBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseStaticBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseTagBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseTransCategoryBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseXchgRateBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
