@@ -44,14 +44,14 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryTy
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoType;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusListStyle;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusListKey;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditEntry;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList.PrometheusListStyle;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 public class MoneyWiseTestEditSet {

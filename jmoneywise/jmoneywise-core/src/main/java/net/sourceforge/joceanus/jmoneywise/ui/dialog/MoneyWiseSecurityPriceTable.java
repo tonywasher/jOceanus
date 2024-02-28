@@ -32,9 +32,9 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice.Mon
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;

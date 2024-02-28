@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryCl
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataList.PrometheusDataListSet;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList.PrometheusDataListSet;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;

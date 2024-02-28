@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositCategory.M
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;

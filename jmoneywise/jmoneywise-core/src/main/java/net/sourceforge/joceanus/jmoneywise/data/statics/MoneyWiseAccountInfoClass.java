@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

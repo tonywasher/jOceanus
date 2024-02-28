@@ -20,11 +20,11 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusTableStaticData;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableStaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusStaticDataClass;
 
 /**
  * Interface for Category statics.

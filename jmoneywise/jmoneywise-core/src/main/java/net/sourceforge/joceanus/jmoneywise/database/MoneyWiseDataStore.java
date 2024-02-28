@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDBConfig;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusTableDataItem;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDBConfig;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanInfo;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.atlas.database.PrometheusTableDataInfo;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.jprometheus.database.PrometheusTableDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

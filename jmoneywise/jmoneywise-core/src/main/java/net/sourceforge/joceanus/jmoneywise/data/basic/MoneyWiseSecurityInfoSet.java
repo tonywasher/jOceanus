@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityInfo.Mone
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoClass;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoSet;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 

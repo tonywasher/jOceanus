@@ -24,9 +24,9 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositInfo.Money
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;

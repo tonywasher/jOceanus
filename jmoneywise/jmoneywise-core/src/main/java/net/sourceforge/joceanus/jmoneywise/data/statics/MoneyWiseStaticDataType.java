@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusListKey;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
 
 /**
  * MoneyWise Item Types.

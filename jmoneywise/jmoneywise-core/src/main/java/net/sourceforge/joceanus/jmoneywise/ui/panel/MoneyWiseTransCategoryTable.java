@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryTy
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseTransCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.atlas.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;

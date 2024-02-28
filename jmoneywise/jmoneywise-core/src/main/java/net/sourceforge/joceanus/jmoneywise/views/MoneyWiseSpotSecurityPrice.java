@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusEncryptedValues;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.base;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**

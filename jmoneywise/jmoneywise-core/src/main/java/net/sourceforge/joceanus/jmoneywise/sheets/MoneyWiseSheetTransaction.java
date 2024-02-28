@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction.Money
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseArchiveLoader.MoneyWiseArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseArchiveLoader.MoneyWiseParentCache;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;

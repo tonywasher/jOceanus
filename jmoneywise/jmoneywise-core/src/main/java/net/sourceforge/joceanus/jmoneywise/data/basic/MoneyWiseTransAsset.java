@@ -20,7 +20,7 @@ import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 
 /**
  * Interface for objects (Deposits, SecurityHoldings etc.) used in a transaction.

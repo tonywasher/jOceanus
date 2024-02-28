@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetDataItem;
-import net.sourceforge.joceanus.jprometheus.atlas.sheets.PrometheusSheetReader;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 
