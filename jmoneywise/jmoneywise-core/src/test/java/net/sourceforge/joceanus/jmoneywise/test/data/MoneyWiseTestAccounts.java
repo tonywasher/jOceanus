@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseCashBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseDepositBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseLoanBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePayeeBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWisePortfolioBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseSecurityPriceBuilder;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePayeeClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWisePortfolioClass;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseCashBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseDepositBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseLoanBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWisePayeeBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWisePortfolioBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseSecurityBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseSecurityPriceBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

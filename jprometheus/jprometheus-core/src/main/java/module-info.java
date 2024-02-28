@@ -30,14 +30,14 @@ module net.sourceforge.joceanus.jprometheus.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jprometheus;
-    exports net.sourceforge.joceanus.jprometheus.atlas;
-    exports net.sourceforge.joceanus.jprometheus.atlas.data;
-    exports net.sourceforge.joceanus.jprometheus.atlas.database;
-    exports net.sourceforge.joceanus.jprometheus.atlas.preference;
-    exports net.sourceforge.joceanus.jprometheus.atlas.sheets;
-    exports net.sourceforge.joceanus.jprometheus.atlas.views;
-    exports net.sourceforge.joceanus.jprometheus.atlas.threads;
-    exports net.sourceforge.joceanus.jprometheus.atlas.ui;
-    exports net.sourceforge.joceanus.jprometheus.atlas.ui.fieldset;
-    exports net.sourceforge.joceanus.jprometheus.atlas.ui.panel;
+    exports net.sourceforge.joceanus.jprometheus.toolkit;
+    exports net.sourceforge.joceanus.jprometheus.data;
+    exports net.sourceforge.joceanus.jprometheus.database;
+    exports net.sourceforge.joceanus.jprometheus.preference;
+    exports net.sourceforge.joceanus.jprometheus.sheets;
+    exports net.sourceforge.joceanus.jprometheus.views;
+    exports net.sourceforge.joceanus.jprometheus.threads;
+    exports net.sourceforge.joceanus.jprometheus.ui;
+    exports net.sourceforge.joceanus.jprometheus.ui.fieldset;
+    exports net.sourceforge.joceanus.jprometheus.ui.panel;
 }

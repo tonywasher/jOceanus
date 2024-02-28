@@ -22,11 +22,11 @@ import java.io.ByteArrayOutputStream;
 import org.junit.jupiter.api.Assertions;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
-import net.sourceforge.joceanus.jprometheus.atlas.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.atlas.data.PrometheusDataValuesFormatter;
+import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 

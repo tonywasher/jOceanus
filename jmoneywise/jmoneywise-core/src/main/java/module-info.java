@@ -29,6 +29,6 @@ module net.sourceforge.joceanus.jmoneywise.core {
     requires net.sourceforge.joceanus.jprometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jmoneywise.atlas.quicken.definitions;
-    exports net.sourceforge.joceanus.jmoneywise.atlas.launch;
+    exports net.sourceforge.joceanus.jmoneywise.quicken.definitions;
+    exports net.sourceforge.joceanus.jmoneywise.launch;
 }

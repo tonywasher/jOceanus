@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.builder.MoneyWiseTransactionBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseTransactionBuilder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
