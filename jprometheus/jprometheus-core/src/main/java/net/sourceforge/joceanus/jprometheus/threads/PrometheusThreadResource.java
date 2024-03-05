@@ -42,6 +42,11 @@ public enum PrometheusThreadResource
     THREAD_CREATEDB("CreateDB"),
 
     /**
+     * CreateDBTables.
+     */
+    THREAD_CREATEDBTABLES("CreateDBTables"),
+
+    /**
      * PurgeDB.
      */
     THREAD_PURGEDB("PurgeDB"),

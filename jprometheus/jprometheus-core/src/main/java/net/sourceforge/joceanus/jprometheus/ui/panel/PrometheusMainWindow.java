@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateTables;
 import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateDatabase;
@@ -233,6 +234,7 @@ public abstract class PrometheusMainWindow
         pMenu.newMenuItem(PrometheusThreadId.LOADDB, e -> loadDatabase());
         pMenu.newMenuItem(PrometheusThreadId.STOREDB, e -> storeDatabase());
         pMenu.newMenuItem(PrometheusThreadId.CREATEDB, e -> createDatabase());
+        pMenu.newMenuItem(PrometheusThreadId.CREATEDBTABLES, e -> createDatabaseTables());
         pMenu.newMenuItem(PrometheusThreadId.PURGEDB, e -> purgeDatabase());
     }
 
@@ -399,6 +401,15 @@ public abstract class PrometheusMainWindow
     private void createDatabase() {
         /* Create the worker thread */
         final PrometheusThreadCreateDatabase myThread = new PrometheusThreadCreateDatabase(theView);
+        startThread(myThread);
+    }
+
+    /**
+     * Create Database Tables.
+     */
+    private void createDatabaseTables() {
+        /* Create the worker thread */
+        final PrometheusThreadCreateTables myThread = new PrometheusThreadCreateTables(theView);
         startThread(myThread);
     }
 

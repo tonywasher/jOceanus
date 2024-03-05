@@ -75,6 +75,11 @@ public abstract class PrometheusDataStore {
     private Connection theConn;
 
     /**
+     * Database name.
+     */
+    private String theDatabase;
+
+    /**
      * Batch Size.
      */
     private final Integer theBatchSize;
@@ -104,6 +109,9 @@ public abstract class PrometheusDataStore {
 
             /* Access the JDBC Driver */
             theDriver = pConfig.getDriver();
+
+            /* Store the name */
+            theDatabase = pDatabase;
 
             /* Obtain the connection */
             final String myConnString = theDriver.getConnectionString(pDatabase, pConfig.getServer(), pConfig.getPort());
@@ -144,6 +152,66 @@ public abstract class PrometheusDataStore {
             /* Create the sheet */
             theTables.add(newTable(myType));
         }
+    }
+
+    /**
+     * Construct a new Database class.
+     * @param pConfig the config
+     * @throws OceanusException on error
+     */
+    protected PrometheusDataStore(final PrometheusDBConfig pConfig) throws OceanusException {
+        /* Create the connection */
+        try {
+            /* Access the batch size */
+            theBatchSize = pConfig.getBatchSize();
+
+            /* Access the JDBC Driver */
+            theDriver = pConfig.getDriver();
+
+            /* Obtain the connection */
+            final String myConnString = theDriver.getConnectionString(pConfig.getServer(), pConfig.getPort());
+
+            /* Create the properties and record user */
+            final Properties myProperties = new Properties();
+            final String myUser = pConfig.getUser();
+            final char[] myPass = pConfig.getPassword();
+            myProperties.setProperty(PROPERTY_USER, myUser);
+            myProperties.setProperty(PROPERTY_PASS, new String(myPass));
+
+            /* If we are using instance */
+            if (theDriver.useInstance()) {
+                final String myInstance = pConfig.getInstance();
+                myProperties.setProperty(PROPERTY_INSTANCE, myInstance);
+                myProperties.setProperty(PROPERTY_ENCRYPT, "false");
+            }
+
+            /* Connect using properties */
+            theConn = DriverManager.getConnection(myConnString, myProperties);
+
+            /* Switch off autoCommit */
+            theConn.setAutoCommit(false);
+
+            /* handle exceptions */
+        } catch (SQLException e) {
+            throw new PrometheusIOException("Failed to load driver", e);
+        }
+
+        /* Create table list and add the tables to the list */
+        theTables = new ArrayList<>();
+
+        /* Loop through the tables */
+        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {
+            /* Create the sheet */
+            theTables.add(newTable(myType));
+        }
+    }
+
+    /**
+     * Obtain the database name.
+     * @return the name
+     */
+    public String getName() {
+        return theDatabase;
     }
 
     /**
@@ -338,6 +406,30 @@ public abstract class PrometheusDataStore {
             /* Commit the batch */
             myBatch.commitItems();
         }
+
+        /* Complete the task */
+        myTask.end();
+    }
+
+    /**
+     * Create database.
+     * @param pReport the report
+     * @param pDatabase the database to create
+     * @throws OceanusException on error
+     */
+    public void createDatabase(final TethysUIThreadStatusReport pReport,
+                               final String pDatabase) throws OceanusException {
+        /* Set the number of stages */
+        pReport.setNumStages(2);
+
+        /* Obtain the active profile */
+        TethysProfile myTask = pReport.getActiveTask();
+        myTask = myTask.startTask("dropDatabase");
+        executeStatement("DROP DATABASE IF EXISTS " + pDatabase);
+
+        /* Create database */
+        myTask = myTask.startTask("createDatabase");
+        executeStatement("CREATE DATABASE " + pDatabase);
 
         /* Complete the task */
         myTask.end();

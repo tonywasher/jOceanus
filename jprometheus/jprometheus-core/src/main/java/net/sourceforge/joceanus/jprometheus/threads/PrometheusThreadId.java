@@ -29,6 +29,11 @@ public enum PrometheusThreadId
     CREATEDB(PrometheusThreadResource.THREAD_CREATEDB),
 
     /**
+     * Create Database Tabkes.
+     */
+    CREATEDBTABLES(PrometheusThreadResource.THREAD_CREATEDBTABLES),
+
+    /**
      * Load Database.
      */
     LOADDB(PrometheusThreadResource.THREAD_LOADDB),

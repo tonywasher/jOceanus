@@ -127,10 +127,23 @@ public class MoneyWiseView
     }
 
     @Override
+    public String getDatabaseName() {
+        final PrometheusDatabasePreferences myPrefs = getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class);
+        return myPrefs.getStringValue(PrometheusDatabasePreferenceKey.DBNAME);
+    }
+
+    @Override
     public PrometheusDataStore getDatabase() throws OceanusException {
         final PrometheusDatabasePreferences myPrefs = getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class);
         final PrometheusDBConfig myConfig = PrometheusDBConfig.fromPrefs(myPrefs);
         return new MoneyWiseDataStore(myPrefs.getStringValue(PrometheusDatabasePreferenceKey.DBNAME), myConfig);
+    }
+
+    @Override
+    public PrometheusDataStore getNullDatabase() throws OceanusException {
+        final PrometheusDatabasePreferences myPrefs = getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class);
+        final PrometheusDBConfig myConfig = PrometheusDBConfig.fromPrefs(myPrefs);
+        return new MoneyWiseDataStore(myConfig);
     }
 
     /**

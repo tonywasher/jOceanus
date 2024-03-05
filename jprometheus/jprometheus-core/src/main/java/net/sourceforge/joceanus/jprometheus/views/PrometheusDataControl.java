@@ -285,11 +285,24 @@ public abstract class PrometheusDataControl
     public abstract PrometheusSpreadSheet getSpreadSheet();
 
     /**
+     * Obtain the database name.
+     * @return the name
+     */
+    public abstract String getDatabaseName();
+
+    /**
      * Obtain Database object.
      * @return database object
      * @throws OceanusException on error
      */
     public abstract PrometheusDataStore getDatabase() throws OceanusException;
+
+    /**
+     * Obtain Null Database object.
+     * @return database object
+     * @throws OceanusException on error
+     */
+    public abstract PrometheusDataStore getNullDatabase() throws OceanusException;
 
     /**
      * Obtain DataSet object.
