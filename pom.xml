@@ -75,7 +75,7 @@
     <JUnitVersion>5.10.2</JUnitVersion>
     <JSONVersion>20240205</JSONVersion>
     <ApacheMavenVersion>3.9.5</ApacheMavenVersion>
-    <MySQLVersion>8.0.33</MySQLVersion>
+    <MySQLVersion>8.3.0 </MySQLVersion>
     <MariaDBVersion>3.3.3</MariaDBVersion>
     <PostGreSQLVersion>42.7.2</PostGreSQLVersion>
     <MSSQLVersion>12.6.1.jre11</MSSQLVersion>
@@ -87,7 +87,7 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.10</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.13.0</CheckStyleVersion>
+    <CheckStyleVersion>10.14 .0</CheckStyleVersion>
     <PMDVersion>6.55.0</PMDVersion>
     <CleanPluginVersion>3.3.2</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>

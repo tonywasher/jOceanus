@@ -54,6 +54,28 @@ public class MoneyWiseDataStore
     }
 
     /**
+     * Construct a new Database class for create database.
+     * @param pConfig the config
+     * @throws OceanusException on error
+     */
+    public MoneyWiseDataStore(final PrometheusDBConfig pConfig) throws OceanusException {
+        /* Call super-constructor */
+        super(pConfig);
+
+        /* Loop through the static types */
+        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {
+            /* Create the table */
+            addTable(newTable(myType));
+        }
+
+        /* Loop through the basic types */
+        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {
+            /* Create the table */
+            addTable(newTbble(myType));
+        }
+    }
+
+    /**
      * Create new table of required type.
      * @param pDataType the data type
      * @return the new table

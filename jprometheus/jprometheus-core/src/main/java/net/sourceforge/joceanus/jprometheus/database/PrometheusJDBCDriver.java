@@ -183,19 +183,6 @@ public enum PrometheusJDBCDriver {
 
     /**
      * Get connection string.
-     * @param pPreferences the preferences
-     * @return the connection string
-     */
-    public String getConnectionString(final PrometheusDatabasePreferences pPreferences) {
-        /* Create the buffer */
-        final String myDB = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME);
-        final String myServer = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER);
-        final Integer myPort = pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBPORT);
-        return getConnectionString(myDB, myServer, myPort);
-    }
-
-    /**
-     * Get connection string.
      * @param pDatabase the database
      * @param pServer the server
      * @param pPort the port
@@ -222,6 +209,33 @@ public enum PrometheusJDBCDriver {
         }
         if (this == H2) {
             myBuilder.append(";DB_CLOSE_DELAY=-1");
+        }
+
+        /* Return the string */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Get connection string for database create.
+     * @param pServer the server
+     * @param pPort the port
+     * @return the connection string
+     */
+    public String getConnectionString(final String pServer,
+                                      final Integer pPort) {
+        /* Create the buffer */
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        myBuilder.append(getPrefix());
+        myBuilder.append(pServer);
+        if (pPort != null) {
+            myBuilder.append(":");
+            myBuilder.append(pPort);
+        }
+        if (this != SQLSERVER) {
+            myBuilder.append("/");
+        }
+        if (this == POSTGRESQL) {
+            myBuilder.append("postgres");
         }
 
         /* Return the string */

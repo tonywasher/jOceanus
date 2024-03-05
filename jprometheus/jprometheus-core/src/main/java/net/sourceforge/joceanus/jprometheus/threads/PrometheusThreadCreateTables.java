@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
  * and redefined. Existing loaded data will be marked as new so that it will be written to the
  * database via the store command.
  */
-public class PrometheusThreadCreateDatabase
+public class PrometheusThreadCreateTables
         implements TethysUIThread<Void> {
     /**
      * Data Control.
@@ -39,13 +39,13 @@ public class PrometheusThreadCreateDatabase
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateDatabase(final PrometheusDataControl pControl) {
+    public PrometheusThreadCreateTables(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
     @Override
     public String getTaskName() {
-        return PrometheusThreadId.CREATEDB.toString();
+        return PrometheusThreadId.CREATEDBTABLES.toString();
     }
 
     @Override
@@ -54,12 +54,20 @@ public class PrometheusThreadCreateDatabase
         pManager.initTask(getTaskName());
 
         /* Access Database */
-        final PrometheusDataStore myNullDatabase = theControl.getNullDatabase();
+        final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
-            /* Create database */
-            myNullDatabase.createDatabase(pManager, theControl.getDatabaseName());
+            /* Create database tables */
+            myDatabase.createTables(pManager);
+
+            /* Re-base this set on a null set */
+            final PrometheusDataSet myNull = theControl.getNewData();
+            final PrometheusDataSet myData = theControl.getData();
+            myData.reBase(pManager, myNull);
+
+            /* Derive the new set of updates */
+            theControl.deriveUpdates();
 
             /* State that we have completed */
             pManager.setCompletion();
@@ -70,7 +78,7 @@ public class PrometheusThreadCreateDatabase
             /* Make sure that the database is closed */
         } finally {
             /* Close the database */
-            myNullDatabase.close();
+            myDatabase.close();
         }
     }
 }
