@@ -463,8 +463,8 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * @param pItem  the item
      * @return true/false
      */
-    private boolean isFieldChanged(final MetisDataFieldId pField,
-                                   final T pItem) {
+    public boolean isFieldChanged(final MetisDataFieldId pField,
+                                  final T pItem) {
         return pField != null && !pItem.isHeader() && pItem.fieldChanged(pField).isDifferent();
     }
 

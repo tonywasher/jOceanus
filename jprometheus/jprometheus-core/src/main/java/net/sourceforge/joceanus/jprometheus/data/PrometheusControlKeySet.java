@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
@@ -34,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -95,14 +97,10 @@ public class PrometheusControlKeySet
         super(pList, pSource);
 
         /* Switch on the LinkStyle */
-        switch (getStyle()) {
-            case CLONE:
-                theSecurityFactory = pSource.theSecurityFactory;
-                final GordianKeySet myKeySet = pSource.getKeySet();
-                setValueKeySet(myKeySet);
-                break;
-            default:
-                break;
+        if (Objects.requireNonNull(getStyle()) == PrometheusListStyle.CLONE) {
+            theSecurityFactory = pSource.theSecurityFactory;
+            final GordianKeySet myKeySet = pSource.getKeySet();
+            setValueKeySet(myKeySet);
         }
     }
 
