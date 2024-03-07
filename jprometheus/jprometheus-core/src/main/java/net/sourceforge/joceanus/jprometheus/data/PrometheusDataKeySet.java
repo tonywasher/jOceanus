@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -88,15 +90,11 @@ public class PrometheusDataKeySet
         super(pList, pSource);
 
         /* Switch on the LinkStyle */
-        switch (getStyle()) {
-            case CLONE:
-                theSecurityFactory = pSource.theSecurityFactory;
-                final GordianKeySet myKeySet = pSource.getKeySet();
-                theEncryptor = new PrometheusEncryptor(getDataSet().getDataFormatter(), myKeySet);
-                setValueKeySet(myKeySet);
-                break;
-            default:
-                break;
+        if (Objects.requireNonNull(getStyle()) == PrometheusListStyle.CLONE) {
+            theSecurityFactory = pSource.theSecurityFactory;
+            final GordianKeySet myKeySet = pSource.getKeySet();
+            theEncryptor = new PrometheusEncryptor(getDataSet().getDataFormatter(), myKeySet);
+            setValueKeySet(myKeySet);
         }
     }
 
@@ -145,7 +143,9 @@ public class PrometheusDataKeySet
         /* Store/Resolve the keySet */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSET);
         if (myValue instanceof GordianKeySet) {
-            setValueKeySet((GordianKeySet) myValue);
+            final GordianKeySet myKeySet = (GordianKeySet) myValue;
+            theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
+            setValueKeySet(myKeySet);
         } else if (getSecuredKeySetDef() != null) {
             final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);

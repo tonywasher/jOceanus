@@ -462,6 +462,17 @@ public class MoneyWiseTransactionTable
                 : theRange.getEnd());
     }
 
+    @Override
+    public boolean isFieldChanged(final MetisDataFieldId pField,
+                                  final MoneyWiseTransaction pItem) {
+        if (pField.equals(MoneyWiseTransDataId.DEBIT)
+                || pField.equals(MoneyWiseTransDataId.CREDIT)
+                || pField.equals(MoneyWiseTransDataId.BALANCE)) {
+            return false;
+        }
+        return super.isFieldChanged(pField, pItem);
+     }
+
     /**
      * Determine reconciled state.
      * @param pTrans the transaction

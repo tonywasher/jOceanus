@@ -240,7 +240,7 @@ public class PrometheusEncryptedValues
             if (!(myField instanceof PrometheusEncryptedField)) {
                 continue;
             }
-            final Object myValue = getEncryptedPair(myField);
+            final PrometheusEncryptedPair myValue = getEncryptedPair(myField);
             if (myValue == null) {
                 continue;
             }
@@ -254,7 +254,7 @@ public class PrometheusEncryptedValues
             }
 
             /* Adopt encryption */
-            theEncryptor.adoptEncryption((PrometheusEncryptedPair) myValue, (PrometheusEncryptedPair) myBaseObj);
+            theEncryptor.adoptEncryption(myValue, (PrometheusEncryptedPair) myBaseObj);
         }
     }
 }
