@@ -236,34 +236,27 @@ public abstract class GordianCoreFactory
         return theParameters.isInternal();
     }
 
+    /**
+     * Is this a random factory?
+     * @return true/false
+     */
+    public boolean isRandom() {
+        return getKeySetSeed() == null;
+    }
+
     @Override
     public GordianKeySet getEmbeddedKeySet() {
         return theKeySet;
     }
 
-    @Override
-    public void renewEmbeddedKeySet() throws OceanusException {
-        /* Reject if we have no embedded keySet */
-        if (theKeySet == null) {
-            throw new GordianLogicException("No embedded keySet");
-        }
-
-        /* Renew the keySet */
-        theParameters.renewKeySet(theRandom.getRandom());
-        theKeySet = createEmbeddedKeySet();
-    }
-
     /**
-     * Create embedded keySet (if available).
-     * @return the embedded keySet (or null).
+     * Create embedded keySet.
+     * @return the embedded keySet
      * @throws OceanusException on error
      */
     private GordianKeySet createEmbeddedKeySet() throws OceanusException {
         /* Obtain the keySet seed */
-        final byte[] mySeed = theParameters.getKeySetSeed();
-        if (mySeed == null) {
-            return null;
-        }
+        final byte[] mySeed = thePersonalisation.getKeySetVector();
 
         /* Derive the keySet */
         final GordianKeySetGenerate myKeySets = (GordianKeySetGenerate) getKeySetFactory();

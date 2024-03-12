@@ -88,7 +88,7 @@ public abstract class PrometheusDataStore {
      * Database Driver.
      */
     private final PrometheusJDBCDriver theDriver;
-    
+
     /**
      * List of Database tables.
      */

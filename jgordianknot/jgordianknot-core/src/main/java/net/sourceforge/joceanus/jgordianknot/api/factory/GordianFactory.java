@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Factory API.
@@ -93,10 +92,4 @@ public interface GordianFactory {
      * @return the keySet (or null)
      */
     GordianKeySet getEmbeddedKeySet();
-
-    /**
-     * Renew embedded keySet.
-     * @throws OceanusException on error
-     */
-    void renewEmbeddedKeySet() throws OceanusException;
 }

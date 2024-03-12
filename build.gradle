@@ -41,7 +41,7 @@ allprojects {
         /* Dependency versions */
         bouncyCastleVersion = "1.77"
         jUnitVersion = "5.10.2"
-        jsonVersion = "20240205"
+        jsonVersion = "20240303"
         mySQLVersion = "8.0.33"
         MariaDBVersion = "3.3.3"
         postGreSQLVersion = "42.7.2"
@@ -53,13 +53,13 @@ allprojects {
 
         /* javaFX versions */
         javaFXVersion = "17"
-        javaFXPluginVersion = "0.0.13"
+        javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */
         jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.13.0"
+        checkStyleVersion = "10.14.1"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

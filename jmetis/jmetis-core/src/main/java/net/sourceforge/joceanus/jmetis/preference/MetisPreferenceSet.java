@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.preference;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;

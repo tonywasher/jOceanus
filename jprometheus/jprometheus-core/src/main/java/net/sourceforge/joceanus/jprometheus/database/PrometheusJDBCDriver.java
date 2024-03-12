@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.database;
 
-import net.sourceforge.joceanus.jprometheus.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
-import net.sourceforge.joceanus.jprometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusColumnType;
 
 /**
