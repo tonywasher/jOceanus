@@ -19,7 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.password;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
@@ -62,6 +64,38 @@ public final class GordianBuilder {
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         myParams.setSecuritySeeds(GordianRandomSource.getStrongRandom());
         myParams.setInternal();
+        return myGenerator.newFactory(myParams);
+    }
+
+    /**
+     * Create a new factoryLock.
+     * @param pFactory the factory
+     * @param pPassword the password
+     * @return the factory lock
+     * @throws OceanusException on error
+     */
+    public static byte[] createFactoryLock(final GordianFactory pFactory,
+                                           final char[] pPassword) throws OceanusException {
+        /* Create the factoryLock */
+        final GordianFactoryLock myLock = new GordianFactoryLock((GordianCoreFactory) pFactory, pPassword);
+        return myLock.getLock();
+    }
+
+    /**
+     * Resolve a factoryLock.
+     * @param pFactory a factory
+     * @param pLock the lock
+     * @param pPassword the password
+     * @return the resolved factory
+     * @throws OceanusException on error
+     */
+    public static GordianFactory resolveFactoryLock(final GordianFactory pFactory,
+                                                    final byte[] pLock,
+                                                    final char[] pPassword) throws OceanusException {
+        /* Create the factoryLock */
+        final GordianFactoryLock myLock = new GordianFactoryLock((GordianCoreFactory) pFactory, pLock, pPassword);
+        final GordianParameters myParams = myLock.getParameters();
+        final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
         return myGenerator.newFactory(myParams);
     }
 
