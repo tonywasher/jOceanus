@@ -16,22 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-
 /**
- * KeySetHash Manager.
+ * PasswordLock
+ * @param <T> the locked object type
  */
-public interface GordianPasswordManager
-    extends GordianKeySetHashManager, GordianZipLockManager, GordianFactoryLockManager {
+public interface GordianPasswordLock<T> {
     /**
-     * Obtain the security factory.
-     * @return the security factory
+     * Obtain the locked object.
+     * @return the locked object
      */
-    GordianFactory getSecurityFactory();
+    T getLockedObject();
 
     /**
-     * Set the dialog controller.
-     * @param pDialog the dialog controller
+     * Obtain the lockBytes.
+     * @return the lockBytes
      */
-    void setDialogController(GordianDialogController pDialog);
+    byte[] getLockBytes();
 }

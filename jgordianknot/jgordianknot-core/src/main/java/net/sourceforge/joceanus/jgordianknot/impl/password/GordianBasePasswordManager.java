@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -116,6 +117,44 @@ public class GordianBasePasswordManager
 
         /* Create a similar hash */
         return theCache.createSimilarHash(pKeySetHashSpec, myPassword);
+    }
+
+    @Override
+    public GordianFactoryLock newFactoryLock(final GordianFactory pFactory,
+                                             final String pSource) throws OceanusException {
+        return (GordianFactoryLock) requestPassword(pSource, true, p -> createFactoryLock(pFactory, p));
+    }
+
+    @Override
+    public GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
+                                                 final String pSource) throws OceanusException {
+        /* Look up resolved factory */
+        GordianFactoryLock myFactory = theCache.lookUpResolvedFactoryLock(pLockBytes);
+
+        /* If we have not seen the lock then attempt known passwords */
+        if (myFactory == null) {
+            myFactory = theCache.attemptKnownPasswordsForFactoryLock(pLockBytes);
+        }
+
+        /* If we have not resolved the lock */
+        if (myFactory == null) {
+            myFactory = (GordianFactoryLock) requestPassword(pSource, false, p -> resolveFactoryLock(pLockBytes, p));
+        }
+
+        /* Return the resolved factoryLock */
+        return myFactory;
+    }
+
+    @Override
+    public GordianFactoryLock similarFactoryLock(final Object pReference) throws OceanusException {
+        /* Create a new random factory */
+        final GordianFactory myFactory = GordianBuilder.createRandomFactory();
+
+        /* LookUp the password */
+        final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
+
+        /* Create a similar factoryLock */
+        return theCache.createSimilarFactoryLock(myFactory, myPassword);
     }
 
     @Override
@@ -287,6 +326,34 @@ public class GordianBasePasswordManager
         final GordianCoreKeySetHash myKeySetHash = (GordianCoreKeySetHash) myFactory.deriveKeySetHash(pHashBytes, pPassword);
         theCache.addResolvedHash(myKeySetHash, pPassword);
         return myKeySetHash;
+    }
+
+    /**
+     * Create new factoryLock.
+     * @param pFactory the factory
+     * @param pPassword the password
+     * @return the new lock
+     * @throws OceanusException on error
+     */
+    private GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
+                                                 final char[] pPassword) throws OceanusException {
+        final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, pPassword);
+        theCache.addResolvedFactory(myLock, pPassword);
+        return myLock;
+    }
+
+    /**
+     * Resolve password for factoryLock.
+     * @param pLockBytes the lock bytes
+     * @param pPassword the password
+     * @return the resolved hash
+     * @throws OceanusException on error
+     */
+    private GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
+                                                  final char[] pPassword) throws OceanusException {
+        final GordianFactoryLock myFactory = GordianBuilder.resolveFactoryLock(theFactory, pLockBytes, pPassword);
+        theCache.addResolvedFactory(myFactory, pPassword);
+        return myFactory;
     }
 
     /**

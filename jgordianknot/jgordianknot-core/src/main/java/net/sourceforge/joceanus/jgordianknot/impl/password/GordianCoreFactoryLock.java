@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.base;
+package net.sourceforge.joceanus.jgordianknot.impl.password;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -24,18 +24,28 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBuilder.GordianUtilGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Factory Lock implementation.
  */
-public class GordianFactoryLock {
+public class GordianCoreFactoryLock
+    implements GordianFactoryLock {
     /**
      * The number of iterations.
      */
@@ -57,9 +67,9 @@ public class GordianFactoryLock {
     private static final int EXTERNAL_LEN = INITVECTOR_LEN.getByteLength() + 3 * SEED_LEN.getByteLength();
 
     /**
-     * The parameters.
+     * The factory.
      */
-    private final GordianParameters theParameters;
+    private final GordianCoreFactory theFactory;
 
     /**
      * The initVector.
@@ -77,13 +87,13 @@ public class GordianFactoryLock {
      * @param pPassword the password
      * @throws OceanusException on error
      */
-    public GordianFactoryLock(final GordianCoreFactory pFactory,
-                              final char[] pPassword) throws OceanusException {
+    public GordianCoreFactoryLock(final GordianCoreFactory pFactory,
+                                  final char[] pPassword) throws OceanusException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
-            /* Store the Parameters */
-            theParameters = pFactory.getParameters();
+            /* Store the Factory */
+            theFactory = pFactory;
 
             /* Reject the operation if not a random factory */
             if (!pFactory.isRandom()) {
@@ -114,9 +124,9 @@ public class GordianFactoryLock {
      * @param pPassword the password
      * @throws OceanusException on error
      */
-    public GordianFactoryLock(final GordianCoreFactory pFactory,
-                              final byte[] pLock,
-                              final char[] pPassword) throws OceanusException {
+    public GordianCoreFactoryLock(final GordianCoreFactory pFactory,
+                                  final byte[] pLock,
+                                  final char[] pPassword) throws OceanusException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
@@ -134,7 +144,9 @@ public class GordianFactoryLock {
             /* Generate the hash and create parameters */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
             final byte[][] myResults = processPassword(pFactory, myPassword);
-            theParameters = buildParameters(myResults);
+            final GordianParameters myParameters = buildParameters(myResults);
+            final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
+            theFactory = (GordianCoreFactory) myGenerator.newFactory(myParameters);
 
         } finally {
             if (myPassword != null) {
@@ -143,19 +155,13 @@ public class GordianFactoryLock {
         }
     }
 
-    /**
-     * Obtain the parameters.
-     * @return the parameters
-     */
-    public GordianParameters getParameters() {
-        return theParameters;
+    @Override
+    public GordianFactory getLockedObject() {
+        return theFactory;
     }
 
-    /**
-     * Obtain the lock.
-     * @return the lock
-     */
-    public byte[] getLock() {
+    @Override
+    public byte[] getLockBytes() {
         return theLock;
     }
 
@@ -172,9 +178,10 @@ public class GordianFactoryLock {
             final int mySeedLen = SEED_LEN.getByteLength();
 
             /* Access buffers */
+            final GordianParameters myParams = theFactory.getParameters();
             final byte[] myBuffer = new byte[EXTERNAL_LEN];
-            final byte[] mySecSeed = Arrays.copyOf(theParameters.getSecuritySeed(), mySeedLen);
-            final byte[] myKeySetSeed = Arrays.copyOf(theParameters.getKeySetSeed(), mySeedLen);
+            final byte[] mySecSeed = Arrays.copyOf(myParams.getSecuritySeed(), mySeedLen);
+            final byte[] myKeySetSeed = Arrays.copyOf(myParams.getKeySetSeed(), mySeedLen);
 
             /* Encode the seeds */
             GordianPersonalisation.buildHashResult(mySecSeed, pResults[1]);
@@ -347,5 +354,34 @@ public class GordianFactoryLock {
             Arrays.fill(myTertiaryBytes, (byte) 0);
             Arrays.fill(mySecretHash, (byte) 0);
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (pThat == this) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (!(pThat instanceof GordianCoreFactoryLock)) {
+            return false;
+        }
+
+        /* Access the target field */
+        final GordianCoreFactoryLock myThat = (GordianCoreFactoryLock) pThat;
+
+        /* Check differences */
+        return theFactory.equals(myThat.getLockedObject())
+                && Arrays.equals(theLock, myThat.getLockBytes());
+    }
+
+    @Override
+    public int hashCode() {
+        return GordianCoreFactory.HASH_PRIME * theFactory.hashCode()
+                + Arrays.hashCode(theLock);
     }
 }

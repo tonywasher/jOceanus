@@ -241,7 +241,7 @@ public abstract class GordianCoreFactory
      * @return true/false
      */
     public boolean isRandom() {
-        return getKeySetSeed() == null;
+        return getKeySetSeed() != null;
     }
 
     @Override

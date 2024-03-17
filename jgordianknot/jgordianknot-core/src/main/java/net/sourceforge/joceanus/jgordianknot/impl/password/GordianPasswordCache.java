@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -29,6 +30,8 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -57,6 +60,11 @@ public class GordianPasswordCache {
      * List of resolved password hashes.
      */
     private final List<GordianKeySetHashCache> theHashes;
+
+    /**
+     * List of resolved Locks.
+     */
+    private final List<GordianLockCache<?>> theLocks;
 
     /**
      * List of successful passwords.
@@ -89,6 +97,7 @@ public class GordianPasswordCache {
 
         /* Create the lists */
         theHashes = new ArrayList<>();
+        theLocks = new ArrayList<>();
         thePasswords = new ArrayList<>();
     }
 
@@ -109,6 +118,33 @@ public class GordianPasswordCache {
             /* Add the entry to the lists */
             final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
             theHashes.add(new GordianKeySetHashCache(pHash, myBuffer));
+            thePasswords.add(myBuffer);
+
+        } finally {
+            /* Clear out password */
+            if (myPasswordBytes != null) {
+                Arrays.fill(myPasswordBytes, (byte) 0);
+            }
+        }
+    }
+
+    /**
+     * Add resolved factoryLock to cache.
+     * @param pFactory the resolved FactoryLock
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    void addResolvedFactory(final GordianFactoryLock pFactory,
+                            final char[] pPassword) throws OceanusException {
+        byte[] myPasswordBytes = null;
+        try {
+            /* Encrypt the password */
+            myPasswordBytes = TethysDataConverter.charsToByteArray(pPassword);
+            final byte[] myEncrypted = theKeySet.encryptBytes(myPasswordBytes);
+
+            /* Add the entry to the lists */
+            final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
+            theLocks.add(new GordianLockCache<>(pFactory, myBuffer));
             thePasswords.add(myBuffer);
 
         } finally {
@@ -162,6 +198,25 @@ public class GordianPasswordCache {
     }
 
     /**
+     * LookUp previously resolved Factory.
+     * @param pLockBytes the LockBytes to search for
+     * @return the previous PasswordHash if found, otherwise null
+     */
+    GordianFactoryLock lookUpResolvedFactoryLock(final byte[] pLockBytes) {
+        /* Look for the hash in the list */
+        for (GordianLockCache<?> myCurr : theLocks) {
+            /* If this is the factoryLock we are looking for, return it */
+            if (myCurr.getLock() instanceof GordianFactoryLock
+                    && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())) {
+                return (GordianFactoryLock) myCurr.getLock();
+            }
+        }
+
+        /* Return not found */
+        return null;
+    }
+
+    /**
      * LookUp previously resolved Password.
      * @param pReference the Reference to search for
      * @return the encrypted password
@@ -181,12 +236,24 @@ public class GordianPasswordCache {
             }
         }
 
+        /* If the reference is a factory */
+        if (pReference instanceof GordianFactoryLock) {
+            /* Look for the factory in the list */
+            final GordianFactoryLock myReference = (GordianFactoryLock) pReference;
+            for (GordianLockCache<?> myCurr : theLocks) {
+                /* If this is the factory we are looking for, return it */
+                if (Objects.equals(myReference, myCurr.getLock())) {
+                    return myCurr.getPassword();
+                }
+            }
+        }
+
         /* Throw error */
         throw new GordianDataException("Referenced Object not known");
     }
 
     /**
-     * Attempt known passwords.
+     * Attempt known passwords for hash.
      * @param pHashBytes the HashBytes to attempt passwords for
      * @return the new PasswordHash if successful, otherwise null
      */
@@ -227,6 +294,67 @@ public class GordianPasswordCache {
             /* Try to resolve the hash and return it */
             final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
             return myKeySets.deriveKeySetHash(pHashBytes, myPasswordChars);
+
+            /* Catch Exceptions */
+        } catch (OceanusException e) {
+            LOGGER.error(PASSWORD_FAIL, e);
+            return null;
+
+        } catch (GordianBadCredentialsException e) {
+            return null;
+
+        } finally {
+            /* Clear out password */
+            if (myPasswordBytes != null) {
+                Arrays.fill(myPasswordBytes, (byte) 0);
+            }
+            if (myPasswordChars != null) {
+                Arrays.fill(myPasswordChars, (char) 0);
+            }
+        }
+    }
+
+    /**
+     * Attempt known passwords for factory lock.
+     * @param pLockBytes the HashBytes to attempt passwords for
+     * @return the new Factory if successful, otherwise null
+     */
+    GordianFactoryLock attemptKnownPasswordsForFactoryLock(final byte[] pLockBytes) {
+        /* Loop through the passwords */
+        for (ByteBuffer myCurr : thePasswords) {
+            /* Attempt the password */
+            final GordianFactoryLock myFactory = attemptPasswordForFactoryLock(pLockBytes, myCurr.array());
+
+            /* If we succeeded */
+            if (myFactory != null) {
+                /* Add the factory to the list and return it */
+                theLocks.add(new GordianLockCache<>(myFactory, myCurr));
+                return myFactory;
+            }
+        }
+
+        /* Return null */
+        return null;
+    }
+
+    /**
+     * Attempt the cached password against the passed lock.
+     * @param pLockBytes the Lock to test against
+     * @param pPassword the encrypted password
+     * @return the new Factory if successful, otherwise null
+     */
+    private GordianFactoryLock attemptPasswordForFactoryLock(final byte[] pLockBytes,
+                                                             final byte[] pPassword) {
+        /* Protect against exceptions */
+        byte[] myPasswordBytes = null;
+        char[] myPasswordChars = null;
+        try {
+            /* Access the original password */
+            myPasswordBytes = theKeySet.decryptBytes(pPassword);
+            myPasswordChars = TethysDataConverter.bytesToCharArray(myPasswordBytes);
+
+            /* Try to resolve the lock and return it */
+            return GordianBuilder.resolveFactoryLock(theFactory, pLockBytes, myPasswordChars);
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -403,6 +531,41 @@ public class GordianPasswordCache {
     }
 
     /**
+     * Create a factoryLock with a previously used password.
+     * @param pFactory the new factory
+     * @param pPassword the encrypted password
+     * @return the new factoryLock
+     * @throws OceanusException on error
+     */
+    GordianFactoryLock createSimilarFactoryLock(final GordianFactory pFactory,
+                                                final ByteBuffer pPassword) throws OceanusException {
+        /* Protect against exceptions */
+        byte[] myPasswordBytes = null;
+        char[] myPasswordChars = null;
+        try {
+            /* Access the original password */
+            myPasswordBytes = theKeySet.decryptBytes(pPassword.array());
+            myPasswordChars = TethysDataConverter.bytesToCharArray(myPasswordBytes);
+
+            /* Create the new lock */
+            final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, myPasswordChars);
+
+            /* Add the entry to the list and return the hash */
+            theLocks.add(new GordianLockCache<>(myLock, pPassword));
+            return myLock;
+
+        } finally {
+            /* Clear out password */
+            if (myPasswordBytes != null) {
+                Arrays.fill(myPasswordBytes, (byte) 0);
+            }
+            if (myPasswordChars != null) {
+                Arrays.fill(myPasswordChars, (char) 0);
+            }
+        }
+    }
+
+    /**
      * Create a zipLock with a previously used password.
      * @param pKeySetHashSpec the new hashSpec
      * @param pPassword the encrypted password
@@ -499,6 +662,50 @@ public class GordianPasswordCache {
          */
         GordianCoreKeySetHash getHash() {
             return theHash;
+        }
+
+        /**
+         * Obtain the encrypted password.
+         * @return the password
+         */
+        ByteBuffer getPassword() {
+            return thePassword;
+        }
+    }
+
+    /**
+     * The lockCache.
+     * @param <T> the locked object
+     *
+     */
+    static class GordianLockCache<T> {
+        /**
+         * The FactoryLock.
+         */
+        private final GordianPasswordLock<T> theLock;
+
+        /**
+         * The Encrypted password.
+         */
+        private final ByteBuffer thePassword;
+
+        /**
+         * Constructor.
+         * @param pLock the Lock
+         * @param pPassword the encrypted password
+         */
+        GordianLockCache(final GordianPasswordLock<T> pLock,
+                         final ByteBuffer pPassword) {
+            theLock = pLock;
+            thePassword = pPassword;
+        }
+
+        /**
+         * Obtain the lock.
+         * @return the Lock
+         */
+        GordianPasswordLock<T> getLock() {
+            return theLock;
         }
 
         /**
