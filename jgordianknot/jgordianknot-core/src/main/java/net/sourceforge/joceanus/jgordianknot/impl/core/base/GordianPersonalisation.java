@@ -66,6 +66,11 @@ public class GordianPersonalisation {
     private final byte[] theInitVector;
 
     /**
+     * InitVector bytes.
+     */
+    private final byte[] theKeySetVector;
+
+    /**
      * Constructor.
      * @param pFactory the factory
      * @throws OceanusException on error
@@ -75,6 +80,7 @@ public class GordianPersonalisation {
         final byte[][] myArrays = personalise(pFactory);
         thePersonalisation = myArrays[0];
         theInitVector = myArrays[1];
+        theKeySetVector = myArrays[2];
     }
 
     /**
@@ -102,6 +108,14 @@ public class GordianPersonalisation {
 
         /* Return the array */
         return Arrays.copyOf(myDigests, myLen);
+    }
+
+    /**
+     * Obtain the keySetVector.
+     * @return the keySetVector
+     */
+    byte[] getKeySetVector() {
+        return theKeySetVector;
     }
 
     /**
@@ -163,15 +177,24 @@ public class GordianPersonalisation {
                 iterateHashes(myDigests, myHashes, myConfig);
             }
 
-            /* Finally build the initVector mask */
+            /* build the initVector mask */
             final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
             for (int i = 0; i < myIterations; i++) {
                 iterateHashes(myDigests, myHashes, myInitVec);
             }
 
+            /* build the keySetVector if required */
+            byte[] myKeySetVec = pFactory.getParameters().getKeySetSeed();
+            if (myKeySetVec == null) {
+                myKeySetVec = new byte[HASH_LEN.getByteLength()];
+                for (int i = 0; i < INTERNAL_ITERATIONS; i++) {
+                    iterateHashes(myDigests, myHashes, myKeySetVec);
+                }
+            }
+
             /* Return the array */
             return new byte[][]
-                    {myConfig, myInitVec};
+                    { myConfig, myInitVec, myKeySetVec };
 
             /* Clear intermediate arrays */
         } finally {

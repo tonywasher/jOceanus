@@ -264,17 +264,17 @@ public class PrometheusPreferenceSecurity {
         /**
          * Minimum Number of Active KeySets.
          */
-        private static final int MINIMUM_ACTIVE_KEYSETS = 2;
+        private static final int MINIMUM_ACTIVE_KEYSETS = 4;
 
         /**
          * Maximum Number of Active KeySets.
          */
-        private static final int MAXIMUM_ACTIVE_KEYSETS = 8;
+        private static final int MAXIMUM_ACTIVE_KEYSETS = 64;
 
         /**
          * Default Number of Active KeySets.
          */
-        private static final int DEFAULT_ACTIVE_KEYSETS = 4;
+        private static final int DEFAULT_ACTIVE_KEYSETS = 8;
 
         /**
          * Constructor.

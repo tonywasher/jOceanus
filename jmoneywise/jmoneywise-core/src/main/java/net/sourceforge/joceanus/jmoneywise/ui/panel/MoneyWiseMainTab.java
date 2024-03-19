@@ -129,6 +129,9 @@ public class MoneyWiseMainTab
 
         /* Build the main window */
         buildMainWindow(theView, myToolkit);
+
+        /* Initialise visibility */
+        setVisibility();
     }
 
     @Override

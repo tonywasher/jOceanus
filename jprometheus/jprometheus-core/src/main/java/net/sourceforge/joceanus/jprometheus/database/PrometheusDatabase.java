@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.database;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceManager;
@@ -113,6 +116,12 @@ public interface PrometheusDatabase {
         private static final Integer DEFAULT_DBBATCH = 50;
 
         /**
+         * Valid lengths.
+         */
+        private static final Set<PrometheusJDBCDriver> VALID_DBS = EnumSet.of(PrometheusJDBCDriver.SQLSERVER, PrometheusJDBCDriver.POSTGRESQL,
+                PrometheusJDBCDriver.MYSQL, PrometheusJDBCDriver.MARIADB);
+
+        /**
          * Constructor.
          * @param pManager the preference manager
          * @throws OceanusException on error
@@ -140,6 +149,7 @@ public interface PrometheusDatabase {
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);
             }
+            myTypePref.setFilter(VALID_DBS::contains);
             final PrometheusJDBCDriver myDriver = myTypePref.getValue();
 
             /* Make sure that the hostName is specified */

@@ -18,7 +18,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.password;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
@@ -66,9 +68,37 @@ public final class GordianBuilder {
     }
 
     /**
+     * Create a new factoryLock.
+     * @param pFactory the factory
+     * @param pPassword the password
+     * @return the factory lock
+     * @throws OceanusException on error
+     */
+    public static GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
+                                                       final char[] pPassword) throws OceanusException {
+        /* Create the factoryLock */
+        return new GordianCoreFactoryLock((GordianCoreFactory) pFactory, pPassword);
+    }
+
+    /**
+     * Resolve a factoryLock.
+     * @param pFactory a factory
+     * @param pLock the lock
+     * @param pPassword the password
+     * @return the resolved factoryLock
+     * @throws OceanusException on error
+     */
+    public static GordianFactoryLock resolveFactoryLock(final GordianFactory pFactory,
+                                                        final byte[] pLock,
+                                                        final char[] pPassword) throws OceanusException {
+        /* Create the factoryLock */
+        return new GordianCoreFactoryLock((GordianCoreFactory) pFactory, pLock, pPassword);
+    }
+
+    /**
      * True Factory generator.
      */
-    private static class GordianUtilGenerator
+    static class GordianUtilGenerator
             implements GordianFactoryGenerator {
         /**
          * Constructor.

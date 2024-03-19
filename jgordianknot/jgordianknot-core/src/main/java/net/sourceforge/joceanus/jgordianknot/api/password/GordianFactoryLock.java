@@ -19,19 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.api.password;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 
 /**
- * KeySetHash Manager.
+ * Factory Lock.
  */
-public interface GordianPasswordManager
-    extends GordianKeySetHashManager, GordianZipLockManager, GordianFactoryLockManager {
-    /**
-     * Obtain the security factory.
-     * @return the security factory
-     */
-    GordianFactory getSecurityFactory();
-
-    /**
-     * Set the dialog controller.
-     * @param pDialog the dialog controller
-     */
-    void setDialogController(GordianDialogController pDialog);
+public interface GordianFactoryLock
+        extends GordianPasswordLock<GordianFactory> {
 }

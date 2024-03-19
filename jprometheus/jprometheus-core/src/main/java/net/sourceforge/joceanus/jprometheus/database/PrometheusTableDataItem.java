@@ -653,6 +653,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Create the database.
+     * @param pDatabase the database name
      * @throws OceanusException on error
      */
     void createDatabase(final String pDatabase) throws OceanusException {
