@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 
 /**
  * Factory Lock.
  */
-public interface GordianFactoryLock
-        extends GordianPasswordLock<GordianFactory> {
+public interface GordianKeySetLock
+        extends GordianPasswordLock<GordianKeySet> {
     /**
      * Obtain the factory.
      * @return the factory
      */
-    default GordianFactory getFactory() {
+    default GordianKeySet getKeySet() {
         return getLockedObject();
     }
 }

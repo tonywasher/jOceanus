@@ -44,7 +44,7 @@ allprojects {
         jsonVersion = "20240303"
         mySQLVersion = "8.0.33"
         MariaDBVersion = "3.3.3"
-        postGreSQLVersion = "42.7.2"
+        postGreSQLVersion = "42.7.3"
         mssqlVersion = "12.6.1.jre11"
         h2Version = "2.2.224"
         apachePOIVersion = "5.2.5"
@@ -59,7 +59,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.14.1"
+        checkStyleVersion = "10.14.2"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

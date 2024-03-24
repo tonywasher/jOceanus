@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -48,6 +49,11 @@ public class GordianBasePasswordManager
     private final GordianFactory theFactory;
 
     /**
+     * PasswordLockSpec.
+     */
+    private final GordianPasswordLockSpec theLockSpec;
+
+    /**
      * The Cache.
      */
     private final GordianPasswordCache theCache;
@@ -65,12 +71,26 @@ public class GordianBasePasswordManager
      */
     public GordianBasePasswordManager(final GordianFactory pFactory,
                                       final GordianDialogController pDialog) throws OceanusException {
+        this(pFactory, new GordianPasswordLockSpec(), pDialog);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     * @param pLockSpec the lockSpec
+     * @param pDialog the dialog controller
+     * @throws OceanusException on error
+     */
+    public GordianBasePasswordManager(final GordianFactory pFactory,
+                                      final GordianPasswordLockSpec pLockSpec,
+                                      final GordianDialogController pDialog) throws OceanusException {
         /* Allocate the factory */
         theFactory = pFactory;
         theDialog = pDialog;
+        theLockSpec = pLockSpec;
 
         /* Allocate a new cache */
-        theCache = new GordianPasswordCache(this);
+        theCache = new GordianPasswordCache(this, theLockSpec);
     }
 
     @Override
@@ -337,7 +357,7 @@ public class GordianBasePasswordManager
      */
     private GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
                                                  final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, pPassword);
+        final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, theLockSpec, pPassword);
         theCache.addResolvedFactory(myLock, pPassword);
         return myLock;
     }
@@ -351,7 +371,7 @@ public class GordianBasePasswordManager
      */
     private GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                   final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myFactory = GordianBuilder.resolveFactoryLock(theFactory, pLockBytes, pPassword);
+        final GordianFactoryLock myFactory = GordianBuilder.resolveFactoryLock(pLockBytes, pPassword);
         theCache.addResolvedFactory(myFactory, pPassword);
         return myFactory;
     }

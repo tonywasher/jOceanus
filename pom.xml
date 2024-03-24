@@ -77,7 +77,7 @@
     <ApacheMavenVersion>3.9.5</ApacheMavenVersion>
     <MySQLVersion>8.3.0 </MySQLVersion>
     <MariaDBVersion>3.3.3</MariaDBVersion>
-    <PostGreSQLVersion>42.7.2</PostGreSQLVersion>
+    <PostGreSQLVersion>42.7.3</PostGreSQLVersion>
     <MSSQLVersion>12.6.1.jre11</MSSQLVersion>
     <H2Version>2.2.224</H2Version>
     <ApachePOIVersion>5.2.5</ApachePOIVersion>
@@ -87,7 +87,7 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.10</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.14.1</CheckStyleVersion>
+    <CheckStyleVersion>10.14.2</CheckStyleVersion>
     <PMDVersion>6.55.0</PMDVersion>
     <CleanPluginVersion>3.3.2</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
@@ -95,8 +95,8 @@
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.1.1</DeployPluginVersion>
     <EnforcerPluginVersion>3.4.1</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.12.1</CompilerPluginVersion>
-    <ShadePluginVersion>3.5.1</ShadePluginVersion>
+    <CompilerPluginVersion>3.13.0</CompilerPluginVersion>
+    <ShadePluginVersion>3.5.2</ShadePluginVersion>
     <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
     <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.1.0</BuildNumberPluginVersion>
@@ -111,7 +111,7 @@
     <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.21.2</PMDPluginVersion>
     <JacocoPluginVersion>0.8.11</JacocoPluginVersion>
-    <GPGPluginVersion>3.1.0</GPGPluginVersion>
+    <GPGPluginVersion>3.2.1</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.16.1</VersionsPluginVersion>
   </properties>
