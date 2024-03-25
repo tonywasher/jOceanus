@@ -17,14 +17,20 @@
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * FactoryLock Manager.
  */
 public interface GordianFactoryLockManager {
+    /**
+     * Create a new factoryLock.
+     * @param pSource the description of the secured resource
+     * @return the factoryLock
+     * @throws OceanusException on error
+     */
+    GordianFactoryLock newFactoryLock(String pSource) throws OceanusException;
+
     /**
      * Create a new factoryLock.
      * @param pFactory the factory to lock

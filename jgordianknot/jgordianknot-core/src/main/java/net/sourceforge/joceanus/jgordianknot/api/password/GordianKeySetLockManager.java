@@ -25,13 +25,21 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianKeySetLockManager {
     /**
      * Create a new keySetLock.
+     * @param pSource the description of the secured resource
+     * @return the keySetLock
+     * @throws OceanusException on error
+     */
+    GordianKeySetLock newKeySetLock(String pSource) throws OceanusException;
+
+    /**
+     * Create a new keySetLock.
      * @param pKeySet the keySet to lock
      * @param pSource the description of the secured resource
      * @return the keySetLock
      * @throws OceanusException on error
      */
-    GordianFactoryLock newKeySetLock(GordianKeySet pKeySet,
-                                     String pSource) throws OceanusException;
+    GordianKeySetLock newKeySetLock(GordianKeySet pKeySet,
+                                    String pSource) throws OceanusException;
 
     /**
      * Resolve the keySetLock bytes.

@@ -48,7 +48,7 @@ public final class GordianBuilder {
     /**
      * Locking factory.
      */
-    private static GordianCoreFactory LOCKFACTORY;
+    private static GordianCoreFactory lockFactory;
 
     /**
      * Private class.
@@ -153,14 +153,14 @@ public final class GordianBuilder {
      * @throws OceanusException on error
      */
     private static GordianCoreFactory getLockingFactory() throws OceanusException {
-        if (LOCKFACTORY != null) {
-            return LOCKFACTORY;
+        if (lockFactory != null) {
+            return lockFactory;
         }
         synchronized (GordianBuilder.class) {
-            if (LOCKFACTORY == null) {
-                LOCKFACTORY = (GordianCoreFactory) createFactory(GordianFactoryType.BC, getHostName());
+            if (lockFactory == null) {
+                lockFactory = (GordianCoreFactory) createFactory(GordianFactoryType.BC, getHostName());
             }
-            return LOCKFACTORY;
+            return lockFactory;
         }
     }
 
