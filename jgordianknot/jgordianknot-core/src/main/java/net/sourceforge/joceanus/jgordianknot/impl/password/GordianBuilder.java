@@ -16,21 +16,40 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.password;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Builder methods.
  */
 public final class GordianBuilder {
+    /**
+     * Logger.
+     */
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianBuilder.class);
+
+    /**
+     * Locking factory.
+     */
+    private static GordianCoreFactory lockFactory;
+
     /**
      * Private class.
      */
@@ -69,30 +88,97 @@ public final class GordianBuilder {
 
     /**
      * Create a new factoryLock.
-     * @param pFactory the factory
+     * @param pFactoryToLock the factory to lock
+     * @param pLockSpec the locking spec
      * @param pPassword the password
      * @return the factory lock
      * @throws OceanusException on error
      */
-    public static GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
+    public static GordianFactoryLock createFactoryLock(final GordianFactory pFactoryToLock,
+                                                       final GordianPasswordLockSpec pLockSpec,
                                                        final char[] pPassword) throws OceanusException {
         /* Create the factoryLock */
-        return new GordianCoreFactoryLock((GordianCoreFactory) pFactory, pPassword);
+        return new GordianFactoryLockImpl(getLockingFactory(), (GordianCoreFactory) pFactoryToLock, pLockSpec, pPassword);
     }
 
     /**
      * Resolve a factoryLock.
-     * @param pFactory a factory
-     * @param pLock the lock
+     * @param pLockBytes the lockBytes
      * @param pPassword the password
      * @return the resolved factoryLock
      * @throws OceanusException on error
      */
-    public static GordianFactoryLock resolveFactoryLock(final GordianFactory pFactory,
-                                                        final byte[] pLock,
+    public static GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                         final char[] pPassword) throws OceanusException {
         /* Create the factoryLock */
-        return new GordianCoreFactoryLock((GordianCoreFactory) pFactory, pLock, pPassword);
+        return new GordianFactoryLockImpl(getLockingFactory(), pLockBytes, pPassword);
+    }
+
+    /**
+     * Create a new keySetLock.
+     * @param pLockingFactory the locking factory
+     * @param pKeySetToLock the keySet to lock
+     * @param pLockSpec the locking spec
+     * @param pPassword the password
+     * @return the keySet lock
+     * @throws OceanusException on error
+     */
+    public static GordianKeySetLock createKeySetLock(final GordianFactory pLockingFactory,
+                                                     final GordianKeySet pKeySetToLock,
+                                                     final GordianPasswordLockSpec pLockSpec,
+                                                     final char[] pPassword) throws OceanusException {
+        /* Create the keySetLock */
+        return new GordianKeySetLockImpl((GordianCoreFactory) pLockingFactory, (GordianCoreKeySet) pKeySetToLock, pLockSpec, pPassword);
+    }
+
+    /**
+     * Resolve a keySetLock.
+     * @param pLockingFactory the locking factory
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @return the resolved keySetLock
+     * @throws OceanusException on error
+     */
+    public static GordianKeySetLock resolveKeySetLock(final GordianFactory pLockingFactory,
+                                                      final byte[] pLockBytes,
+                                                      final char[] pPassword) throws OceanusException {
+        /* Create the keySetLock */
+        return new GordianKeySetLockImpl((GordianCoreFactory) pLockingFactory, pLockBytes, pPassword);
+    }
+
+    /**
+     * obtain the locking factory.
+     *
+     * @return the locking factory
+     * @throws OceanusException on error
+     */
+    private static GordianCoreFactory getLockingFactory() throws OceanusException {
+        if (lockFactory != null) {
+            return lockFactory;
+        }
+        synchronized (GordianBuilder.class) {
+            if (lockFactory == null) {
+                lockFactory = (GordianCoreFactory) createFactory(GordianFactoryType.BC, getHostName());
+            }
+            return lockFactory;
+        }
+    }
+
+    /**
+     * determine hostName.
+     *
+     * @return the hostName
+     */
+    private static char[] getHostName() {
+        /* Protect against exceptions */
+        try {
+            final InetAddress myAddr = InetAddress.getLocalHost();
+            return myAddr.getHostName().toCharArray();
+
+        } catch (UnknownHostException e) {
+            LOGGER.error("Hostname can not be resolved", e);
+            return "localhost".toCharArray();
+        }
     }
 
     /**

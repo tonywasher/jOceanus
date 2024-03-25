@@ -16,46 +16,46 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * FactoryLock Manager.
+ * KeySetLock Manager.
  */
-public interface GordianFactoryLockManager {
+public interface GordianKeySetLockManager {
     /**
-     * Create a new factoryLock.
+     * Create a new keySetLock.
      * @param pSource the description of the secured resource
-     * @return the factoryLock
+     * @return the keySetLock
      * @throws OceanusException on error
      */
-    GordianFactoryLock newFactoryLock(String pSource) throws OceanusException;
+    GordianKeySetLock newKeySetLock(String pSource) throws OceanusException;
 
     /**
-     * Create a new factoryLock.
-     * @param pFactory the factory to lock
+     * Create a new keySetLock.
+     * @param pKeySet the keySet to lock
      * @param pSource the description of the secured resource
-     * @return the factoryLock
+     * @return the keySetLock
      * @throws OceanusException on error
      */
-    GordianFactoryLock newFactoryLock(GordianFactory pFactory,
-                                      String pSource) throws OceanusException;
+    GordianKeySetLock newKeySetLock(GordianKeySet pKeySet,
+                                    String pSource) throws OceanusException;
 
     /**
-     * Resolve the factoryLock bytes.
+     * Resolve the keySetLock bytes.
      * @param pLockBytes the lock bytes to resolve
      * @param pSource the description of the secured resource
-     * @return the factoryLock
+     * @return the keySetLock
      * @throws OceanusException on error
      */
-    GordianFactoryLock resolveFactoryLock(byte[] pLockBytes,
-                                          String pSource) throws OceanusException;
+    GordianKeySetLock resolveKeySetLock(byte[] pLockBytes,
+                                        String pSource) throws OceanusException;
 
     /**
-     * obtain new locked factory (same password).
+     * obtain new locked keySet (same password).
      * @param pReference the reference to clone password from
-     * @return the similar factoryLock
+     * @return the similar keySetLock
      * @throws OceanusException on error
      */
-    GordianFactoryLock similarFactoryLock(Object pReference) throws OceanusException;
+    GordianKeySetLock similarKeySetLock(Object pReference) throws OceanusException;
 }

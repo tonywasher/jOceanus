@@ -29,9 +29,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -77,6 +78,11 @@ public class GordianPasswordCache {
     private final GordianFactory theFactory;
 
     /**
+     * PasswordLockSpec.
+     */
+    private final GordianPasswordLockSpec theLockSpec;
+
+    /**
      * Local keySet.
      */
     private final GordianKeySet theKeySet;
@@ -84,16 +90,18 @@ public class GordianPasswordCache {
     /**
      * Constructor.
      * @param pManager the password manager
+     * @param pLockSpec the passwordLockSpec
      * @throws OceanusException on error
      */
-    GordianPasswordCache(final GordianPasswordManager pManager) throws OceanusException {
-        /* Store factory */
+    GordianPasswordCache(final GordianPasswordManager pManager,
+                         final GordianPasswordLockSpec pLockSpec) throws OceanusException {
+        /* Store factory and lockSpec*/
         theFactory = pManager.getSecurityFactory();
+        theLockSpec = pLockSpec;
 
         /* Create a keySet */
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        final GordianKeySetSpec mySpec = new GordianKeySetSpec();
-        theKeySet = myFactory.generateKeySet(mySpec);
+        theKeySet = myFactory.generateKeySet(pLockSpec.getKeySetSpec());
 
         /* Create the lists */
         theHashes = new ArrayList<>();
@@ -156,6 +164,33 @@ public class GordianPasswordCache {
     }
 
     /**
+     * Add resolved keySetLock to cache.
+     * @param pKeySet the resolved keySetLock
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    void addResolvedKeySet(final GordianKeySetLock pKeySet,
+                           final char[] pPassword) throws OceanusException {
+        byte[] myPasswordBytes = null;
+        try {
+            /* Encrypt the password */
+            myPasswordBytes = TethysDataConverter.charsToByteArray(pPassword);
+            final byte[] myEncrypted = theKeySet.encryptBytes(myPasswordBytes);
+
+            /* Add the entry to the lists */
+            final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
+            theLocks.add(new GordianLockCache<>(pKeySet, myBuffer));
+            thePasswords.add(myBuffer);
+
+        } finally {
+            /* Clear out password */
+            if (myPasswordBytes != null) {
+                Arrays.fill(myPasswordBytes, (byte) 0);
+            }
+        }
+    }
+
+    /**
      * Add resolved Password to cache.
      * @param pPassword the password
      * @throws OceanusException on error
@@ -200,7 +235,7 @@ public class GordianPasswordCache {
     /**
      * LookUp previously resolved Factory.
      * @param pLockBytes the LockBytes to search for
-     * @return the previous PasswordHash if found, otherwise null
+     * @return the previous factoryLock if found, otherwise null
      */
     GordianFactoryLock lookUpResolvedFactoryLock(final byte[] pLockBytes) {
         /* Look for the hash in the list */
@@ -209,6 +244,25 @@ public class GordianPasswordCache {
             if (myCurr.getLock() instanceof GordianFactoryLock
                     && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())) {
                 return (GordianFactoryLock) myCurr.getLock();
+            }
+        }
+
+        /* Return not found */
+        return null;
+    }
+
+    /**
+     * LookUp previously resolved keySet.
+     * @param pLockBytes the LockBytes to search for
+     * @return the previous keySetLock if found, otherwise null
+     */
+    GordianKeySetLock lookUpResolvedKeySetLock(final byte[] pLockBytes) {
+        /* Look for the hash in the list */
+        for (GordianLockCache<?> myCurr : theLocks) {
+            /* If this is the keySetLock we are looking for, return it */
+            if (myCurr.getLock() instanceof GordianKeySetLock
+                    && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())) {
+                return (GordianKeySetLock) myCurr.getLock();
             }
         }
 
@@ -236,12 +290,12 @@ public class GordianPasswordCache {
             }
         }
 
-        /* If the reference is a factory */
-        if (pReference instanceof GordianFactoryLock) {
-            /* Look for the factory in the list */
-            final GordianFactoryLock myReference = (GordianFactoryLock) pReference;
+        /* If the reference is a lock */
+        if (pReference instanceof GordianPasswordLock) {
+            /* Look for the lock in the list */
+            final GordianPasswordLock<?> myReference = (GordianPasswordLock<?>) pReference;
             for (GordianLockCache<?> myCurr : theLocks) {
-                /* If this is the factory we are looking for, return it */
+                /* If this is the lock are looking for, return it */
                 if (Objects.equals(myReference, myCurr.getLock())) {
                     return myCurr.getPassword();
                 }
@@ -354,7 +408,68 @@ public class GordianPasswordCache {
             myPasswordChars = TethysDataConverter.bytesToCharArray(myPasswordBytes);
 
             /* Try to resolve the lock and return it */
-            return GordianBuilder.resolveFactoryLock(theFactory, pLockBytes, myPasswordChars);
+            return GordianBuilder.resolveFactoryLock(pLockBytes, myPasswordChars);
+
+            /* Catch Exceptions */
+        } catch (OceanusException e) {
+            LOGGER.error(PASSWORD_FAIL, e);
+            return null;
+
+        } catch (GordianBadCredentialsException e) {
+            return null;
+
+        } finally {
+            /* Clear out password */
+            if (myPasswordBytes != null) {
+                Arrays.fill(myPasswordBytes, (byte) 0);
+            }
+            if (myPasswordChars != null) {
+                Arrays.fill(myPasswordChars, (char) 0);
+            }
+        }
+    }
+
+    /**
+     * Attempt known passwords for keySet lock.
+     * @param pLockBytes the HashBytes to attempt passwords for
+     * @return the new keySet if successful, otherwise null
+     */
+    GordianKeySetLock attemptKnownPasswordsForKeySetLock(final byte[] pLockBytes) {
+        /* Loop through the passwords */
+        for (ByteBuffer myCurr : thePasswords) {
+            /* Attempt the password */
+            final GordianKeySetLock myKeySet = attemptPasswordForKeySetLock(pLockBytes, myCurr.array());
+
+            /* If we succeeded */
+            if (myKeySet != null) {
+                /* Add the factory to the list and return it */
+                theLocks.add(new GordianLockCache<>(myKeySet, myCurr));
+                return myKeySet;
+            }
+        }
+
+        /* Return null */
+        return null;
+    }
+
+    /**
+     * Attempt the cached password against the passed lock.
+     * @param pLockBytes the Lock to test against
+     * @param pPassword the encrypted password
+     * @return the new keySet if successful, otherwise null
+     */
+    private GordianKeySetLock attemptPasswordForKeySetLock(final byte[] pLockBytes,
+                                                           final byte[] pPassword) {
+        /* Protect against exceptions */
+        byte[] myPasswordBytes = null;
+        char[] myPasswordChars = null;
+        try {
+            /* Access the original password */
+            myPasswordBytes = theKeySet.decryptBytes(pPassword);
+            myPasswordChars = TethysDataConverter.bytesToCharArray(myPasswordBytes);
+
+            /* Try to resolve the lock and return it */
+            return GordianBuilder.resolveKeySetLock(theFactory, pLockBytes, myPasswordChars);
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -548,7 +663,42 @@ public class GordianPasswordCache {
             myPasswordChars = TethysDataConverter.bytesToCharArray(myPasswordBytes);
 
             /* Create the new lock */
-            final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, myPasswordChars);
+            final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, theLockSpec, myPasswordChars);
+
+            /* Add the entry to the list and return the hash */
+            theLocks.add(new GordianLockCache<>(myLock, pPassword));
+            return myLock;
+
+        } finally {
+            /* Clear out password */
+            if (myPasswordBytes != null) {
+                Arrays.fill(myPasswordBytes, (byte) 0);
+            }
+            if (myPasswordChars != null) {
+                Arrays.fill(myPasswordChars, (char) 0);
+            }
+        }
+    }
+
+    /**
+     * Create a keySetLock with a previously used password.
+     * @param pKeySet the new keySet
+     * @param pPassword the encrypted password
+     * @return the new factoryLock
+     * @throws OceanusException on error
+     */
+    GordianKeySetLock createSimilarKeySetLock(final GordianKeySet pKeySet,
+                                              final ByteBuffer pPassword) throws OceanusException {
+        /* Protect against exceptions */
+        byte[] myPasswordBytes = null;
+        char[] myPasswordChars = null;
+        try {
+            /* Access the original password */
+            myPasswordBytes = theKeySet.decryptBytes(pPassword.array());
+            myPasswordChars = TethysDataConverter.bytesToCharArray(myPasswordBytes);
+
+            /* Create the new lock */
+            final GordianKeySetLock myLock = GordianBuilder.createKeySetLock(theFactory, pKeySet, theLockSpec, myPasswordChars);
 
             /* Add the entry to the list and return the hash */
             theLocks.add(new GordianLockCache<>(myLock, pPassword));

@@ -16,20 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
-/**
- * PasswordLock.
- * @param <T> the locked object type
- */
-public interface GordianPasswordLock<T> {
-    /**
-     * Obtain the locked object.
-     * @return the locked object
-     */
-    T getLockedObject();
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 
+/**
+ * Factory Lock.
+ */
+public interface GordianKeySetLock
+        extends GordianPasswordLock<GordianKeySet> {
     /**
-     * Obtain the lockBytes.
-     * @return the lockBytes
+     * Obtain the factory.
+     * @return the factory
      */
-    byte[] getLockBytes();
+    default GordianKeySet getKeySet() {
+        return getLockedObject();
+    }
 }
