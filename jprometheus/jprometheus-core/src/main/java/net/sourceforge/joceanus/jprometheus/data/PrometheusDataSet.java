@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
@@ -824,14 +824,14 @@ public abstract class PrometheusDataSet
      * @return the password hash
      * @throws OceanusException on error
      */
-    public GordianKeySetHash getKeySetHash() throws OceanusException {
+    public GordianFactoryLock getFactoryLock() throws OceanusException {
         /* Access the active control key */
         final PrometheusControlKey myKey = getControlKey();
 
         /* Set the control */
         return myKey == null
                 ? null
-                : myKey.getKeySetHash();
+                : myKey.getFactoryLock();
     }
 
     /**
@@ -840,13 +840,10 @@ public abstract class PrometheusDataSet
      * @param pSource the source of the data
      * @throws OceanusException on error
      */
-    public void updatePasswordHash(final TethysUIThreadStatusReport pReport,
-                                   final String pSource) throws OceanusException {
-        /* Obtain a new keySet hash */
-        final GordianKeySetHash myHash = thePasswordMgr.newKeySetHash(pSource);
-
+    public void updateFactoryLock(final TethysUIThreadStatusReport pReport,
+                                  final String pSource) throws OceanusException {
         /* Update the control details */
-        getControlKey().updatePasswordHash(myHash);
+        getControlKey().updateFactoryLock(pSource);
     }
 
     /**

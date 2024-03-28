@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -120,6 +121,14 @@ public class GordianFactoryLockImpl
     @Override
     public byte[] getLockBytes() {
         return theLockBytes;
+    }
+
+    /**
+     * Obtain the byte length of the encoded sequence.
+     * @return the byte length
+     */
+    public static int getEncodedLength() {
+        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SECRET_LEN.getByteLength() << 1));
     }
 
     @Override

@@ -115,12 +115,8 @@ public class PrometheusControlKeySet
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Access the Password manager */
+        /* Access the DataSet */
         final PrometheusDataSet myData = getDataSet();
-        final GordianPasswordManager mySecure = myData.getPasswordMgr();
-
-        /* Record the security factory */
-        theSecurityFactory = mySecure.getSecurityFactory();
 
         /* Store the ControlKey */
         Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
@@ -138,6 +134,7 @@ public class PrometheusControlKeySet
 
         /* Access the controlKey */
         final PrometheusControlKey myControl = getControlKey();
+        theSecurityFactory = myControl.getFactoryLock().getFactory();
 
         /* Store the WrappedKeySetDef */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
@@ -150,7 +147,7 @@ public class PrometheusControlKeySet
         if (myValue instanceof GordianKeySet) {
             setValueKeySet((GordianKeySet) myValue);
         } else if (getSecuredKeySetDef() != null) {
-            final GordianKeySet myKeySet = myControl.getKeySetHash().getKeySet().deriveKeySet(getSecuredKeySetDef());
+            final GordianKeySet myKeySet = theSecurityFactory.getEmbeddedKeySet().deriveKeySet(getSecuredKeySetDef());
             setValueKeySet(myKeySet);
         }
 
@@ -176,10 +173,9 @@ public class PrometheusControlKeySet
 
             /* Access the Security manager */
             final PrometheusDataSet myData = getDataSet();
-            final GordianPasswordManager mySecure = myData.getPasswordMgr();
 
             /* Record the security factory */
-            theSecurityFactory = mySecure.getSecurityFactory();
+            theSecurityFactory = pControlKey.getFactoryLock().getFactory();
 
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
@@ -187,7 +183,7 @@ public class PrometheusControlKeySet
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueSecuredKeySetDef(pControlKey.getKeySetHash().getKeySet().secureKeySet(myKeySet));
+            setValueSecuredKeySetDef(theSecurityFactory.getEmbeddedKeySet().secureKeySet(myKeySet));
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);
@@ -356,24 +352,6 @@ public class PrometheusControlKeySet
 
         /* Delete the dataKeySets */
         theKeySetCache.deleteDataKeySets();
-    }
-
-    /**
-     * Update password hash.
-     * @param pHash the new keySetHash
-     * @return were there changes? true/false
-     * @throws OceanusException on error
-     */
-    boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
-        /* Store the current detail into history */
-        pushHistory();
-
-        /* Update the Security Control Key and obtain the new secured KeySetDef */
-        final GordianKeySet myKeySet = pHash.getKeySet();
-        setValueSecuredKeySetDef(myKeySet.secureKeySet(myKeySet));
-
-        /* Check for changes */
-        return checkForHistory();
     }
 
     /**

@@ -22,6 +22,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
@@ -56,7 +58,7 @@ public final class PrometheusControlKey
     /**
      * KeySetHash Length.
      */
-    public static final int HASHLEN = GordianUtilities.getKeySetHashLen();
+    public static final int LOCKLEN = GordianUtilities.getFactoryLockLen();
 
     /**
      * Report fields.
@@ -67,9 +69,9 @@ public final class PrometheusControlKey
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.CONTROLKEY_BYTES, HASHLEN);
+        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.CONTROLKEY_LOCKBYTES, LOCKLEN);
         FIELD_DEFS.declareDateField(PrometheusDataResource.CONTROLKEY_CREATION);
-        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.CONTROLKEY_HASH);
+        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.CONTROLKEY_LOCK);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEYSET_LIST, PrometheusControlKey::getControlKeySets);
     }
 
@@ -107,26 +109,26 @@ public final class PrometheusControlKey
 
         /* Protect against exceptions */
         try {
-            /* Store HashBytes */
-            Object myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_BYTES);
+            /* Store FactoryLock */
+            Object myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES);
             if (myValue instanceof byte[]) {
-                setValueHashBytes((byte[]) myValue);
+                setValueFactoryLockBytes((byte[]) myValue);
             }
 
             /* Store/Resolve Hash */
-            myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_HASH);
-            if (myValue instanceof GordianKeySetHash) {
-                setValueKeySetHash((GordianKeySetHash) myValue);
-            } else if (getHashBytes() != null) {
+            myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_LOCK);
+            if (myValue instanceof GordianFactoryLock) {
+                setValueFactoryLock((GordianFactoryLock) myValue);
+            } else if (getLockBytes() != null) {
                 /* Access the Security manager */
                 final PrometheusDataSet myData = getDataSet();
                 final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
-                /* Resolve the keySetHash */
-                final GordianKeySetHash myHash = myPasswordMgr.resolveKeySetHash(getHashBytes(), NAME_DATABASE);
+                /* Resolve the factoryLock */
+                final GordianFactoryLock myLock = myPasswordMgr.resolveFactoryLock(getLockBytes(), NAME_DATABASE);
 
-                /* Store the keySetHash */
-                setValueKeySetHash(myHash);
+                /* Store the factoryLock */
+                setValueFactoryLock(myLock);
             }
 
             /* Store the CreationDate */
@@ -160,12 +162,12 @@ public final class PrometheusControlKey
             final PrometheusDataSet myData = getDataSet();
             final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
-            /* Create a new keySetHash with new password */
-            final GordianKeySetHash myHash = myPasswordMgr.newKeySetHash(NAME_DATABASE);
+            /* Create a new factoryLock with new password */
+            final GordianFactoryLock myLock = myPasswordMgr.newFactoryLock(NAME_DATABASE);
 
-            /* Store the password hash */
-            setValueHashBytes(myHash.getHash());
-            setValueKeySetHash(myHash);
+            /* Store the factoryLock */
+            setValueFactoryLockBytes(myLock.getLockBytes());
+            setValueFactoryLock(myLock);
 
             /* Allocate the DataKeySets */
             allocateControlKeySets(myData);
@@ -201,12 +203,12 @@ public final class PrometheusControlKey
             final GordianFactory myFactory = myPasswordMgr.getSecurityFactory();
             myFactory.reSeedRandom();
 
-            /* Create a similar keySetHash */
-            final GordianKeySetHash myHash = myPasswordMgr.similarKeySetHash(myData.getKeySetHash());
+            /* Create a similar factoryLock */
+            final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(pKey.getFactoryLock());
 
-            /* Store the password Hash */
-            setValueHashBytes(myHash.getHash());
-            setValueKeySetHash(myHash);
+            /* Store the factoryLock */
+            setValueFactoryLockBytes(myLock.getLockBytes());
+            setValueFactoryLock(myLock);
 
             /* Allocate the ControlKeySets */
             allocateControlKeySets(myData);
@@ -232,19 +234,19 @@ public final class PrometheusControlKey
     }
 
     /**
-     * Get the HashBytes.
+     * Get the LockBytes.
      * @return the hash bytes
      */
-    public byte[] getHashBytes() {
-        return getValues().getValue(PrometheusDataResource.CONTROLKEY_BYTES, byte[].class);
+    public byte[] getLockBytes() {
+        return getValues().getValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, byte[].class);
     }
 
     /**
-     * Get the keySetHash.
-     * @return the prime keySetHash
+     * Get the factoryLock.
+     * @return the factoryLock
      */
-    public GordianKeySetHash getKeySetHash() {
-        return getValues().getValue(PrometheusDataResource.CONTROLKEY_HASH, GordianKeySetHash.class);
+    public GordianFactoryLock getFactoryLock() {
+        return getValues().getValue(PrometheusDataResource.CONTROLKEY_LOCK, GordianFactoryLock.class);
     }
 
     /**
@@ -256,21 +258,21 @@ public final class PrometheusControlKey
     }
 
     /**
-     * Set the Prime Hash Bytes.
-     * @param pValue the Hash bytes
+     * Set the FactoryLock Bytes.
+     * @param pValue the factoryLock bytes
      * @throws OceanusException on error
      */
-    private void setValueHashBytes(final byte[] pValue) throws OceanusException {
-        getValues().setValue(PrometheusDataResource.CONTROLKEY_BYTES, pValue);
+    private void setValueFactoryLockBytes(final byte[] pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, pValue);
     }
 
     /**
-     * Set the PrimeKeySetHash.
-     * @param pValue the keySetHash
+     * Set the FactoryLock.
+     * @param pValue the factoryLock
      * @throws OceanusException on error
      */
-    private void setValueKeySetHash(final GordianKeySetHash pValue) throws OceanusException {
-        getValues().setValue(PrometheusDataResource.CONTROLKEY_HASH, pValue);
+    private void setValueFactoryLock(final GordianFactoryLock pValue) throws OceanusException {
+        getValues().setValue(PrometheusDataResource.CONTROLKEY_LOCK, pValue);
     }
 
     /**
@@ -341,37 +343,28 @@ public final class PrometheusControlKey
     }
 
     /**
-     * Update password hash.
-     * @param pHash the new keySetHash
+     * Update factoryLock.
+     * @param pSource the source of the data
      * @throws OceanusException on error
      */
-    void updatePasswordHash(final GordianKeySetHash pHash) throws OceanusException {
+    void updateFactoryLock(final String pSource) throws OceanusException {
+        /* Access the Security manager */
+        final PrometheusDataSet myData = getDataSet();
+        final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
+
+        /* Obtain a new factoryLock */
+        final GordianFactoryLock myLock = myPasswordMgr.newFactoryLock(getFactoryLock().getFactory(), pSource);
+
         /* Store the current detail into history */
         pushHistory();
 
-        /* Update the keySetHash */
-        setValueKeySetHash(pHash);
-
-        /* Update the hash for the KeySet */
-        ensureKeySetHash();
+        /* Update the factoryLock */
+        setValueFactoryLock(myLock);
+        setValueFactoryLockBytes(myLock.getLockBytes());
+        myData.setVersion(myData.getVersion() + 1);
 
         /* Check for changes */
         checkForHistory();
-    }
-
-    /**
-     * Ensure keySetHash is updated.
-     * @throws OceanusException on error
-     */
-    void ensureKeySetHash() throws OceanusException {
-        /* Access current mode */
-        final GordianKeySetHash myHash = getKeySetHash();
-
-        /* Update the hash for the KeySet */
-        if (theKeySetCache.updateKeySetHash(myHash)) {
-            final PrometheusDataSet myData = getDataSet();
-            myData.setVersion(myData.getVersion() + 1);
-        }
     }
 
     /**
@@ -578,9 +571,9 @@ public final class PrometheusControlKey
             /* Build data values */
             final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusControlKey.OBJECT_NAME);
             myValues.addValue(MetisDataResource.DATA_ID, pControlKey.getIndexedId());
-            myValues.addValue(PrometheusDataResource.CONTROLKEY_BYTES, pControlKey.getHashBytes());
+            myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, pControlKey.getLockBytes());
             myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, pControlKey.getCreationDate());
-            myValues.addValue(PrometheusDataResource.CONTROLKEY_HASH, pControlKey.getKeySetHash());
+            myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCK, pControlKey.getFactoryLock());
 
             /* Clone the control key */
             final PrometheusControlKey myControl = addValuesItem(myValues);
@@ -708,27 +701,6 @@ public final class PrometheusControlKey
                 /* Delete the KeySet */
                 mySet.deleteControlKeySet();
             }
-        }
-
-        /**
-         * Update the Password Hash.
-         * @param pHash the new keySetHash
-         * @return were there changes? true/false
-         * @throws OceanusException on error
-         */
-        private boolean updateKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
-            /* Loop through the KeySets */
-            boolean bChanges = false;
-            final Iterator<PrometheusControlKeySet> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                final PrometheusControlKeySet mySet = myIterator.next();
-
-                /* Update the KeySet */
-                bChanges |= mySet.updateKeySetHash(pHash);
-            }
-
-            /* return the flag */
-            return bChanges;
         }
 
         /**
