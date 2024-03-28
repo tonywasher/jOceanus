@@ -396,14 +396,14 @@ public enum PrometheusDataResource
     CONTROLKEY_DATAKEYS("ControlKey.DataKeys"),
 
     /**
-     * ControlKey Prime Hash.
+     * ControlKey FactoryLock.
      */
-    CONTROLKEY_HASH("ControlKey.Hash"),
+    CONTROLKEY_LOCK("ControlKey.Lock"),
 
     /**
-     * ControlKey Prime Hash.
+     * ControlKey Factory.
      */
-    CONTROLKEY_BYTES("ControlKey.Bytes"),
+    CONTROLKEY_LOCKBYTES("ControlKey.LockBytes"),
 
     /**
      * ControlKey Database.

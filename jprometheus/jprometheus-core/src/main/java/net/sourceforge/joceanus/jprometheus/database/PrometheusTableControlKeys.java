@@ -43,7 +43,7 @@ public class PrometheusTableControlKeys
 
         /* Define the columns */
         myTableDef.addDateColumn(PrometheusDataResource.CONTROLKEY_CREATION);
-        myTableDef.addBinaryColumn(PrometheusDataResource.CONTROLKEY_BYTES, PrometheusControlKey.HASHLEN);
+        myTableDef.addBinaryColumn(PrometheusDataResource.CONTROLKEY_LOCKBYTES, PrometheusControlKey.LOCKLEN);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PrometheusTableControlKeys
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(PrometheusControlKey.OBJECT_NAME);
         myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, myTableDef.getDateValue(PrometheusDataResource.CONTROLKEY_CREATION));
-        myValues.addValue(PrometheusDataResource.CONTROLKEY_BYTES, myTableDef.getBinaryValue(PrometheusDataResource.CONTROLKEY_BYTES));
+        myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, myTableDef.getBinaryValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES));
 
         /* Return the values */
         return myValues;
@@ -72,8 +72,8 @@ public class PrometheusTableControlKeys
         final PrometheusTableDefinition myTableDef = getTableDef();
         if (PrometheusDataResource.CONTROLKEY_CREATION.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getCreationDate());
-        } else if (PrometheusDataResource.CONTROLKEY_BYTES.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getHashBytes());
+        } else if (PrometheusDataResource.CONTROLKEY_LOCKBYTES.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getLockBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

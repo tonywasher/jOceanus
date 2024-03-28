@@ -59,7 +59,7 @@ public class PrometheusThreadUpdatePassword
         myData = myData.deriveCloneSet();
 
         /* Update password */
-        myData.updatePasswordHash(pManager, "Database");
+        myData.updateFactoryLock(pManager, "Database");
 
         /* State that we have completed */
         pManager.setCompletion();

@@ -114,9 +114,6 @@ public class PrometheusDataKeySet
         final GordianPasswordManager mySecure = myData.getPasswordMgr();
         final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
-        /* Record the security factory */
-        theSecurityFactory = mySecure.getSecurityFactory();
-
         /* Store the ControlKey */
         Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEYSET);
         if (myValue instanceof Integer) {
@@ -133,6 +130,7 @@ public class PrometheusDataKeySet
 
         /* Access the controlKey */
         final PrometheusControlKeySet myControlKeySet = getControlKeySet();
+        theSecurityFactory = myControlKeySet.getControlKey().getFactoryLock().getFactory();
 
         /* Store the WrappedKeySetDef */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
@@ -178,7 +176,7 @@ public class PrometheusDataKeySet
             final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
-            theSecurityFactory = mySecure.getSecurityFactory();
+            theSecurityFactory = pControlKeySet.getControlKey().getFactoryLock().getFactory();
 
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();

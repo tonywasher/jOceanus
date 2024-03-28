@@ -74,7 +74,7 @@ public class PrometheusSheetControlKey
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(PrometheusControlKey.OBJECT_NAME);
         myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, loadDate(COL_CREATION));
-        myValues.addValue(PrometheusDataResource.CONTROLKEY_BYTES, loadBytes(COL_KEYDATA));
+        myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, loadBytes(COL_KEYDATA));
 
         /* Return the values */
         return myValues;
@@ -85,7 +85,7 @@ public class PrometheusSheetControlKey
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeDate(COL_CREATION, pItem.getCreationDate());
-        writeBytes(COL_KEYDATA, pItem.getHashBytes());
+        writeBytes(COL_KEYDATA, pItem.getLockBytes());
     }
 
     @Override
