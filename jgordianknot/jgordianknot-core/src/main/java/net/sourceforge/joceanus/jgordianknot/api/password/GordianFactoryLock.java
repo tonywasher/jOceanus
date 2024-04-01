@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
  * Factory Lock.
  */
 public interface GordianFactoryLock
-        extends GordianPasswordLock<GordianFactory> {
+        extends GordianLock<GordianFactory> {
     /**
      * Obtain the factory.
      * @return the factory

@@ -59,7 +59,7 @@ public class GordianCoreZipWriteFile
     /**
      * Security Lock for this zip file.
      */
-    private final GordianCoreLock theLock;
+    private final GordianCoreZipLock theLock;
 
     /**
      * securedKeySet for this zip file.
@@ -117,7 +117,7 @@ public class GordianCoreZipWriteFile
      * @param pOutputStream the output stream to write to
      * @throws OceanusException on error
      */
-    GordianCoreZipWriteFile(final GordianCoreLock pLock,
+    GordianCoreZipWriteFile(final GordianCoreZipLock pLock,
                             final OutputStream pOutputStream) throws OceanusException {
         /* Check that the lock is usable */
         if (pLock == null || !pLock.isFresh()) {

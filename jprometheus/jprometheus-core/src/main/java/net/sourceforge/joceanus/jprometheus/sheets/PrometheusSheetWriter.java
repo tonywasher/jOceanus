@@ -25,7 +25,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
@@ -155,7 +155,7 @@ public abstract class PrometheusSheetWriter {
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianFactoryLock myBase = pData.getFactoryLock();
-        final GordianLock myLock = myPasswordMgr.similarZipLock(myBase);
+        final GordianZipLock myLock = myPasswordMgr.similarZipLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Assume failure */

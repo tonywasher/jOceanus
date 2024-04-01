@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
@@ -57,25 +57,25 @@ public class GordianCoreZipFactory
     private static final String ERROR_CREATE = "Failed to create ZipFile";
 
     @Override
-    public GordianLock createPasswordLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                          final char[] pPassword) throws OceanusException {
-        return new GordianCoreLock(theFactory, pKeySetHashSpec, pPassword);
+    public GordianZipLock createPasswordLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                             final char[] pPassword) throws OceanusException {
+        return new GordianCoreZipLock(theFactory, pKeySetHashSpec, pPassword);
     }
 
     @Override
-    public GordianLock createKeyLock(final char[] pPassword) throws OceanusException {
-        return new GordianCoreLock(theFactory, pPassword);
+    public GordianZipLock createKeyLock(final char[] pPassword) throws OceanusException {
+        return new GordianCoreZipLock(theFactory, pPassword);
     }
 
     @Override
-    public GordianLock createKeyPairLock(final GordianKeyPair pKeyPair,
-                                         final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final char[] pPassword) throws OceanusException {
-        return new GordianCoreLock(theFactory, pKeyPair, pKeySetHashSpec, pPassword);
+    public GordianZipLock createKeyPairLock(final GordianKeyPair pKeyPair,
+                                            final GordianKeySetHashSpec pKeySetHashSpec,
+                                            final char[] pPassword) throws OceanusException {
+        return new GordianCoreZipLock(theFactory, pKeyPair, pKeySetHashSpec, pPassword);
     }
 
     @Override
-    public GordianZipWriteFile createZipFile(final GordianLock pLock,
+    public GordianZipWriteFile createZipFile(final GordianZipLock pLock,
                                              final File pFile) throws OceanusException {
         try {
             return createZipFile(pLock, new FileOutputStream(pFile));
@@ -85,9 +85,9 @@ public class GordianCoreZipFactory
     }
 
     @Override
-    public GordianZipWriteFile createZipFile(final GordianLock pLock,
+    public GordianZipWriteFile createZipFile(final GordianZipLock pLock,
                                              final OutputStream pOutputStream) throws OceanusException {
-        return new GordianCoreZipWriteFile((GordianCoreLock) pLock, pOutputStream);
+        return new GordianCoreZipWriteFile((GordianCoreZipLock) pLock, pOutputStream);
     }
 
     @Override

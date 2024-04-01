@@ -32,7 +32,7 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLockType;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * }
  * </pre>
  */
-public class GordianLockASN1
+public class GordianZipLockASN1
         extends GordianASN1Object {
     /**
      * LockOID branch.
@@ -80,7 +80,7 @@ public class GordianLockASN1
     /**
      * The zipLockType.
      */
-    private final GordianLockType theLockType;
+    private final GordianZipLockType theLockType;
 
     /**
      * The keySetHashASN1.
@@ -101,9 +101,9 @@ public class GordianLockASN1
      * Create the ASN1 sequence.
      * @param pKeySetHash the keySetHash
      */
-    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash) {
+    public GordianZipLockASN1(final GordianKeySetHashASN1 pKeySetHash) {
         /* Store the Details */
-        theLockType = GordianLockType.PASSWORD;
+        theLockType = GordianZipLockType.PASSWORD;
         theKeySetHash = pKeySetHash;
         theKey = null;
         theKeyPairHello = null;
@@ -114,10 +114,10 @@ public class GordianLockASN1
      * @param pKeySetHash the keySetHash
      * @param pKey the key
      */
-    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
-                           final byte[] pKey) {
+    public GordianZipLockASN1(final GordianKeySetHashASN1 pKeySetHash,
+                              final byte[] pKey) {
         /* Store the Details */
-        theLockType = GordianLockType.PASSWORD;
+        theLockType = GordianZipLockType.PASSWORD;
         theKeySetHash = pKeySetHash;
         theKey = pKey;
         theKeyPairHello = null;
@@ -128,10 +128,10 @@ public class GordianLockASN1
      * @param pKeySetHash the keySetHash
      * @param pClientHello the clientHello
      */
-    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
-                           final GordianAgreementMessageASN1 pClientHello) {
+    public GordianZipLockASN1(final GordianKeySetHashASN1 pKeySetHash,
+                              final GordianAgreementMessageASN1 pClientHello) {
         /* Store the Details */
-        theLockType = GordianLockType.KEYPAIR_PASSWORD;
+        theLockType = GordianZipLockType.KEYPAIR_PASSWORD;
         theKeySetHash = pKeySetHash;
         theKey = null;
         theKeyPairHello = pClientHello;
@@ -142,7 +142,7 @@ public class GordianLockASN1
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianLockASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianZipLockASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the sequence */
@@ -154,19 +154,19 @@ public class GordianLockASN1
             final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
             switch (myTagged.getTagNo()) {
                 case TAG_KEY:
-                    theLockType = GordianLockType.KEY_PASSWORD;
+                    theLockType = GordianZipLockType.KEY_PASSWORD;
                     theKey = ASN1OctetString.getInstance(myTagged, false).getOctets();
                     theKeyPairHello = null;
                     break;
                 case TAG_KEYPAIR:
-                    theLockType = GordianLockType.KEYPAIR_PASSWORD;
+                    theLockType = GordianZipLockType.KEYPAIR_PASSWORD;
                     theKey = null;
                     theKeyPairHello = GordianAgreementMessageASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
                     theKeyPairHello.checkMessageType(GordianMessageType.CLIENTHELLO);
                     break;
                 case TAG_PASSWORD:
                 default:
-                    theLockType = GordianLockType.PASSWORD;
+                    theLockType = GordianZipLockType.PASSWORD;
                     theKey = null;
                     theKeyPairHello = null;
             }
@@ -188,11 +188,11 @@ public class GordianLockASN1
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianLockASN1 getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianLockASN1) {
-            return (GordianLockASN1) pObject;
+    public static GordianZipLockASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianZipLockASN1) {
+            return (GordianZipLockASN1) pObject;
         } else if (pObject != null) {
-            return new GordianLockASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianZipLockASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
@@ -201,7 +201,7 @@ public class GordianLockASN1
      * Obtain the lockType.
      * @return the lockType
      */
-    public GordianLockType getLockType() {
+    public GordianZipLockType getLockType() {
         return theLockType;
     }
 
@@ -263,10 +263,10 @@ public class GordianLockASN1
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianLockASN1)) {
+        if (!(pThat instanceof GordianZipLockASN1)) {
             return false;
         }
-        final GordianLockASN1 myThat = (GordianLockASN1) pThat;
+        final GordianZipLockASN1 myThat = (GordianZipLockASN1) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theKeySetHash, myThat.getKeySetHash())

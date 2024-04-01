@@ -16,44 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.zip;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-
 /**
- * Lock interface.
+ * Lock Type.
  */
-public interface GordianLock {
+public enum GordianZipLockType {
     /**
-     * Is this still locked?
-     * @return true/false
+     * Password.
      */
-    boolean isLocked();
+    PASSWORD,
 
     /**
-     * Is this available to lock a zipFile?
-     * @return true/false
+     * Key and Password.
      */
-    boolean isFresh();
+    KEY_PASSWORD,
 
     /**
-     * Obtain lockType.
-     * @return the lockType
+     * KeyPair and Password.
      */
-    GordianLockType getLockType();
-
-    /**
-     * Unlock with password.
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void unlock(char[] pPassword) throws OceanusException;
-
-    /**
-     * Unlock with keyPair and password.
-     * @param pKeyPair the keyPair
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void unlock(GordianKeyPair pKeyPair,
-                char[] pPassword) throws OceanusException;
+    KEYPAIR_PASSWORD;
 }

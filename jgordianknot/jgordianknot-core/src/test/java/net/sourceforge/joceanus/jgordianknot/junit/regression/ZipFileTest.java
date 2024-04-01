@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -210,7 +210,7 @@ class ZipFileTest {
         /* If we are creating a secure zip file */
         if (pKeyLen != null) {
             /* Create new zipLock */
-            final GordianLock myLock = createZipLock(myZipFactory, pKeyPair, pKeyLen);
+            final GordianZipLock myLock = createZipLock(myZipFactory, pKeyPair, pKeyLen);
 
             /* Initialise the Zip file */
             return myZipFactory.createZipFile(myLock, pZipStream);
@@ -230,9 +230,9 @@ class ZipFileTest {
      * @return the new zip file
      * @throws OceanusException on error
      */
-    private GordianLock createZipLock(final GordianZipFactory pFactory,
-                                      final Object pKeyPair,
-                                      final GordianLength pKeyLen) throws OceanusException {
+    private GordianZipLock createZipLock(final GordianZipFactory pFactory,
+                                         final Object pKeyPair,
+                                         final GordianLength pKeyLen) throws OceanusException {
         /* Create appropriate zipLock */
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
         if (pKeyPair instanceof GordianKeyPair) {
@@ -263,7 +263,7 @@ class ZipFileTest {
         final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
         /* Check for security */
-        final GordianLock myLock = myZipFile.getLock();
+        final GordianZipLock myLock = myZipFile.getLock();
         if (myLock != null) {
             /* switch on lockType */
             switch (myLock.getLockType()) {

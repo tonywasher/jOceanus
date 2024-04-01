@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -168,7 +168,7 @@ public class PrometheusDataValuesFormatter {
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianFactoryLock myBase = pData.getFactoryLock();
-        final GordianLock myLock = myPasswordMgr.similarZipLock(myBase);
+        final GordianZipLock myLock = myPasswordMgr.similarZipLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Access the data version */
@@ -394,7 +394,7 @@ public class PrometheusDataValuesFormatter {
         final GordianZipReadFile myZipFile = myZips.openZipFile(pInStream);
 
         /* Obtain the hash bytes from the file */
-        final GordianLock myLock = myZipFile.getLock();
+        final GordianZipLock myLock = myZipFile.getLock();
 
         /* If this is a secure ZipFile */
         if (myLock != null) {

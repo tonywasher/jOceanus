@@ -32,11 +32,12 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLockType;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -48,8 +49,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Lock implementation.
  */
-public class GordianCoreLock
-    implements GordianLock {
+public class GordianCoreZipLock
+    implements GordianZipLock {
     /**
      * UnLock notification.
      */
@@ -69,7 +70,7 @@ public class GordianCoreLock
     /**
      * The Lock.
      */
-    private final GordianLockASN1 theZipLock;
+    private final GordianZipLockASN1 theZipLock;
 
     /**
      * The Unlock notification.
@@ -92,8 +93,8 @@ public class GordianCoreLock
      * @param pZipLock the zipLock message.
      * @throws OceanusException on error
      */
-    public GordianCoreLock(final GordianFactory pFactory,
-                           final Object pZipLock) throws OceanusException {
+    public GordianCoreZipLock(final GordianFactory pFactory,
+                              final Object pZipLock) throws OceanusException {
         this(pFactory, null, pZipLock);
     }
 
@@ -104,13 +105,13 @@ public class GordianCoreLock
      * @param pZipLock the zipLock message.
      * @throws OceanusException on error
      */
-    GordianCoreLock(final GordianFactory pFactory,
-                    final GordianUnlockNotify pNotify,
-                    final Object pZipLock) throws OceanusException {
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final GordianUnlockNotify pNotify,
+                       final Object pZipLock) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
         theNotify = pNotify;
-        theZipLock = GordianLockASN1.getInstance(pZipLock);
+        theZipLock = GordianZipLockASN1.getInstance(pZipLock);
     }
 
     /**
@@ -120,9 +121,9 @@ public class GordianCoreLock
      * @param pPassword the password.
      * @throws OceanusException on error
      */
-    GordianCoreLock(final GordianFactory pFactory,
-                    final GordianKeySetHashSpec pKeySetHashSpec,
-                    final char[] pPassword) throws OceanusException {
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final GordianKeySetHashSpec pKeySetHashSpec,
+                       final char[] pPassword) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
         theNotify = null;
@@ -131,7 +132,7 @@ public class GordianCoreLock
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
         theKeySetHash = myFactory.generateKeySetHash(pKeySetHashSpec, pPassword);
         final GordianKeySetHashASN1 myHashASN = GordianKeySetHashASN1.getInstance(theKeySetHash.getHash());
-        theZipLock = new GordianLockASN1(myHashASN);
+        theZipLock = new GordianZipLockASN1(myHashASN);
 
         /* Available for locking */
         isFresh = true;
@@ -143,8 +144,8 @@ public class GordianCoreLock
      * @param pPassword the password.
      * @throws OceanusException on error
      */
-    GordianCoreLock(final GordianFactory pFactory,
-                    final char[] pPassword) throws OceanusException {
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final char[] pPassword) throws OceanusException {
         /* No Notification */
         theNotify = null;
 
@@ -161,7 +162,7 @@ public class GordianCoreLock
         final GordianKeySetFactory myKSFactory = theFactory.getKeySetFactory();
         theKeySetHash = myKSFactory.generateKeySetHash(new GordianKeySetHashSpec(), pPassword);
         final GordianKeySetHashASN1 myHashASN = GordianKeySetHashASN1.getInstance(theKeySetHash.getHash());
-        theZipLock = new GordianLockASN1(myHashASN, myKey);
+        theZipLock = new GordianZipLockASN1(myHashASN, myKey);
 
         /* Available for locking */
         isFresh = true;
@@ -175,10 +176,10 @@ public class GordianCoreLock
      * @param pPassword the password.
      * @throws OceanusException on error
      */
-    GordianCoreLock(final GordianFactory pFactory,
-                    final GordianKeyPair pKeyPair,
-                    final GordianKeySetHashSpec pKeySetHashSpec,
-                    final char[] pPassword) throws OceanusException {
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final GordianKeyPair pKeyPair,
+                       final GordianKeySetHashSpec pKeySetHashSpec,
+                       final char[] pPassword) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
         theNotify = null;
@@ -198,7 +199,7 @@ public class GordianCoreLock
         final GordianKeySetFactory myKeySetFactory = myFactory.getKeySetFactory();
         theKeySetHash = myKeySetFactory.generateKeySetHash(pKeySetHashSpec, pPassword);
         final GordianKeySetHashASN1 myHashASN = GordianKeySetHashASN1.getInstance(theKeySetHash.getHash());
-        theZipLock = new GordianLockASN1(myHashASN, myHelloASN);
+        theZipLock = new GordianZipLockASN1(myHashASN, myHelloASN);
 
         /* Available for locking */
         isFresh = true;
@@ -215,20 +216,20 @@ public class GordianCoreLock
     }
 
     @Override
-    public GordianLockType getLockType() {
+    public GordianZipLockType getLockType() {
         return theZipLock.getLockType();
     }
 
     @Override
     public void unlock(final char[] pPassword) throws OceanusException {
         /* Split out keyLock */
-        if (getLockType().equals(GordianLockType.KEY_PASSWORD)) {
-            unlockKeyed(pPassword);
+        if (getLockType().equals(GordianZipLockType.KEY_PASSWORD)) {
+            unlockFactory(pPassword);
             return;
         }
 
         /* Check that the state is correct */
-        checkState(GordianLockType.PASSWORD);
+        checkState(GordianZipLockType.PASSWORD);
 
         /* derive the keySetHash */
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
@@ -242,13 +243,13 @@ public class GordianCoreLock
     }
 
     /**
-     * unlock a keyed lock.
+     * unlock a factory lock.
      * @param pPassword the password
      * @throws OceanusException on error
      */
-    private void unlockKeyed(final char[] pPassword) throws OceanusException {
+    private void unlockFactory(final char[] pPassword) throws OceanusException {
         /* Check that the state is correct */
-        checkState(GordianLockType.KEY_PASSWORD);
+        checkState(GordianZipLockType.KEY_PASSWORD);
 
         /* Access the shared factory */
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
@@ -271,7 +272,7 @@ public class GordianCoreLock
     public void unlock(final GordianKeyPair pKeyPair,
                        final char[] pPassword) throws OceanusException {
         /* Check that the state is correct */
-        checkState(GordianLockType.KEYPAIR_PASSWORD);
+        checkState(GordianZipLockType.KEYPAIR_PASSWORD);
 
         /* Resolve the agreement */
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
@@ -329,7 +330,7 @@ public class GordianCoreLock
      * @param pLockType the expected lockType
      * @throws OceanusException on error
      */
-    private void checkState(final GordianLockType pLockType) throws OceanusException {
+    private void checkState(final GordianZipLockType pLockType) throws OceanusException {
         /* Must be locked */
         if (!isLocked()) {
             throw new GordianLogicException("Already unlocked");
@@ -374,10 +375,10 @@ public class GordianCoreLock
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianCoreLock)) {
+        if (!(pThat instanceof GordianCoreZipLock)) {
             return false;
         }
-        final GordianCoreLock myThat = (GordianCoreLock) pThat;
+        final GordianCoreZipLock myThat = (GordianCoreZipLock) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theZipLock, myThat.theZipLock);

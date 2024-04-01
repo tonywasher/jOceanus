@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
@@ -291,9 +291,9 @@ public class GordianPasswordCache {
         }
 
         /* If the reference is a lock */
-        if (pReference instanceof GordianPasswordLock) {
+        if (pReference instanceof GordianLock) {
             /* Look for the lock in the list */
-            final GordianPasswordLock<?> myReference = (GordianPasswordLock<?>) pReference;
+            final GordianLock<?> myReference = (GordianLock<?>) pReference;
             for (GordianLockCache<?> myCurr : theLocks) {
                 /* If this is the lock are looking for, return it */
                 if (Objects.equals(myReference, myCurr.getLock())) {
@@ -495,7 +495,7 @@ public class GordianPasswordCache {
      * @param pLock the zipLock to attempt passwords for
      * @return successful true/false
      */
-    boolean attemptKnownPasswordsForZipLock(final GordianLock pLock) {
+    boolean attemptKnownPasswordsForZipLock(final GordianZipLock pLock) {
         /* Loop through the passwords */
         for (ByteBuffer myCurr : thePasswords) {
             /* Attempt the password */
@@ -514,7 +514,7 @@ public class GordianPasswordCache {
      * @param pPassword the encrypted password
      * @return successful true/false
      */
-    private boolean attemptPasswordForLock(final GordianLock pLock,
+    private boolean attemptPasswordForLock(final GordianZipLock pLock,
                                            final byte[] pPassword) {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
@@ -554,7 +554,7 @@ public class GordianPasswordCache {
      * @return successful true/false
      */
     boolean attemptKnownPasswordsForZipLock(final GordianKeyPair pKeyPair,
-                                            final GordianLock pLock) {
+                                            final GordianZipLock pLock) {
         /* Loop through the passwords */
         for (ByteBuffer myCurr : thePasswords) {
             /* Attempt the password */
@@ -575,7 +575,7 @@ public class GordianPasswordCache {
      * @return successful true/false
      */
     private boolean attemptPasswordForLock(final GordianKeyPair pKeyPair,
-                                           final GordianLock pLock,
+                                           final GordianZipLock pLock,
                                            final byte[] pPassword) {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
@@ -722,8 +722,8 @@ public class GordianPasswordCache {
      * @return the new PasswordHash
      * @throws OceanusException on error
      */
-    GordianLock createSimilarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                     final ByteBuffer pPassword) throws OceanusException {
+    GordianZipLock createSimilarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                        final ByteBuffer pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
         char[] myPasswordChars = null;
@@ -755,9 +755,9 @@ public class GordianPasswordCache {
      * @return the new PasswordHash
      * @throws OceanusException on error
      */
-    GordianLock createSimilarZipLock(final GordianKeyPair pKeyPair,
-                                     final GordianKeySetHashSpec pKeySetHashSpec,
-                                     final ByteBuffer pPassword) throws OceanusException {
+    GordianZipLock createSimilarZipLock(final GordianKeyPair pKeyPair,
+                                        final GordianKeySetHashSpec pKeySetHashSpec,
+                                        final ByteBuffer pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
         char[] myPasswordChars = null;
@@ -832,7 +832,7 @@ public class GordianPasswordCache {
         /**
          * The FactoryLock.
          */
-        private final GordianPasswordLock<T> theLock;
+        private final GordianLock<T> theLock;
 
         /**
          * The Encrypted password.
@@ -844,7 +844,7 @@ public class GordianPasswordCache {
          * @param pLock the Lock
          * @param pPassword the encrypted password
          */
-        GordianLockCache(final GordianPasswordLock<T> pLock,
+        GordianLockCache(final GordianLock<T> pLock,
                          final ByteBuffer pPassword) {
             theLock = pLock;
             thePassword = pPassword;
@@ -854,7 +854,7 @@ public class GordianPasswordCache {
          * Obtain the lock.
          * @return the Lock
          */
-        GordianPasswordLock<T> getLock() {
+        GordianLock<T> getLock() {
             return theLock;
         }
 

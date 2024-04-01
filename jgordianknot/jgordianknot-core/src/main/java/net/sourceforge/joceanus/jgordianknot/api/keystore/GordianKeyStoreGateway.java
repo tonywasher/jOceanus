@@ -23,7 +23,7 @@ import java.util.function.Function;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -39,7 +39,7 @@ public interface GordianKeyStoreGateway {
          * @param pLock the lock to resolve
          * @throws OceanusException on error
          */
-        void resolveLock(GordianLock pLock) throws OceanusException;
+        void resolveLock(GordianZipLock pLock) throws OceanusException;
     }
 
     /**
@@ -63,7 +63,7 @@ public interface GordianKeyStoreGateway {
      */
     void exportEntry(String pAlias,
                      OutputStream pStream,
-                     GordianLock pLock) throws OceanusException;
+                     GordianZipLock pLock) throws OceanusException;
 
     /**
      * set the certificateRequest encryption entry.

@@ -20,7 +20,7 @@ package net.sourceforge.joceanus.jgordianknot.api.password;
  * PasswordLock.
  * @param <T> the locked object type
  */
-public interface GordianPasswordLock<T> {
+public interface GordianLock<T> {
     /**
      * Obtain the locked object.
      * @return the locked object
