@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.password;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 
 /**
- * Factory Lock.
+ * KeySet Lock.
  */
 public interface GordianKeySetLock
         extends GordianLock<GordianKeySet> {

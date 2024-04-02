@@ -155,7 +155,7 @@ public abstract class PrometheusSheetWriter {
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianFactoryLock myBase = pData.getFactoryLock();
-        final GordianZipLock myLock = myPasswordMgr.similarZipLock(myBase);
+        final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Assume failure */

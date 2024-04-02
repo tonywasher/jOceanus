@@ -21,8 +21,10 @@ import java.net.UnknownHostException;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeyPairLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
@@ -144,6 +146,40 @@ public final class GordianBuilder {
                                                       final char[] pPassword) throws OceanusException {
         /* Create the keySetLock */
         return new GordianKeySetLockImpl((GordianCoreFactory) pLockingFactory, pLockBytes, pPassword);
+    }
+
+    /**
+     * Create a new keyPairLock.
+     * @param pLockingFactory the locking factory
+     * @param pLockSpec the locking spec
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
+     * @return the keySet lock
+     * @throws OceanusException on error
+     */
+    public static GordianKeyPairLock createKeyPairLock(final GordianFactory pLockingFactory,
+                                                       final GordianPasswordLockSpec pLockSpec,
+                                                       final GordianKeyPair pKeyPair,
+                                                       final char[] pPassword) throws OceanusException {
+        /* Create the keyPairLock */
+        return new GordianKeyPairLockImpl((GordianCoreFactory) pLockingFactory, pLockSpec, pKeyPair, pPassword);
+    }
+
+    /**
+     * Resolve a keySetLock.
+     * @param pLockingFactory the locking factory
+     * @param pLockBytes the lockBytes
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
+     * @return the resolved keySetLock
+     * @throws OceanusException on error
+     */
+    public static GordianKeyPairLock resolveKeyPairLock(final GordianFactory pLockingFactory,
+                                                        final byte[] pLockBytes,
+                                                        final GordianKeyPair pKeyPair,
+                                                        final char[] pPassword) throws OceanusException {
+        /* Create the keySetLock */
+        return new GordianKeyPairLockImpl((GordianCoreFactory) pLockingFactory, pLockBytes, pKeyPair, pPassword);
     }
 
     /**

@@ -38,13 +38,13 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecA
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of KeySetHashSpec.
+ * ASN1 Encoding of passwordLock.
  * <pre>
  * GordianPasswordLockASN1 ::= SEQUENCE {
  *      keySetSpec GordianKeySetSpecASN1
  *      iterations INTEGER
  *      hashBytes OCTET STRING
- *      payload OCTET STRING
+ *      payload OCTET STRING OPTIONAL
  * }
  * </pre>
  */
@@ -93,7 +93,9 @@ public class GordianPasswordLockASN1
             final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
             final int myIterations = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
             theHashBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            thePayload = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            thePayload = en.hasMoreElements()
+                    ? ASN1OctetString.getInstance(en.nextElement()).getOctets()
+                    : null;
 
             /* Make sure that we have completed the sequence */
             if (en.hasMoreElements()) {
@@ -154,7 +156,9 @@ public class GordianPasswordLockASN1
         v.add(new GordianKeySetSpecASN1(theLockSpec.getKeySetSpec()).toASN1Primitive());
         v.add(new ASN1Integer(theLockSpec.getKIterations()));
         v.add(new DEROctetString(theHashBytes));
-        v.add(new DEROctetString(thePayload));
+        if (thePayload != null) {
+            v.add(new DEROctetString(thePayload));
+        }
         return new DERSequence(v);
     }
 
