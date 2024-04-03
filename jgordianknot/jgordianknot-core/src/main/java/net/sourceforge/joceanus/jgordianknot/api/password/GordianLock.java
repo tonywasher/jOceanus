@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
+import org.bouncycastle.asn1.ASN1Object;
+
 /**
  * PasswordLock.
  * @param <T> the locked object type
@@ -26,6 +28,12 @@ public interface GordianLock<T> {
      * @return the locked object
      */
     T getLockedObject();
+
+    /**
+     * Obtain the lockASN1.
+     * @return the lockASN1
+     */
+    ASN1Object getLockASN1();
 
     /**
      * Obtain the lockBytes.

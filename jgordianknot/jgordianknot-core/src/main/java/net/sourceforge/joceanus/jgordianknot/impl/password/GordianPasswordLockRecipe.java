@@ -138,17 +138,17 @@ public final class GordianPasswordLockRecipe {
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pPassLength the password length
-     * @param pLockBytes the external form
+     * @param pLock the lockASN1
      * @throws OceanusException on error
      */
     GordianPasswordLockRecipe(final GordianCoreFactory pFactory,
                               final int pPassLength,
-                              final byte[] pLockBytes) throws OceanusException  {
+                              final GordianPasswordLockASN1 pLockASN1) throws OceanusException  {
         /* Parse the ASN1 external form */
-        final GordianPasswordLockASN1 myASN1 = GordianPasswordLockASN1.getInstance(pLockBytes);
-        final byte[] myHashBytes = myASN1.getHashBytes();
-        theLockSpec = myASN1.getLockSpec();
-        thePayload = myASN1.getPayload();
+        //final GordianPasswordLockASN1 myASN1 = GordianPasswordLockASN1.getInstance(pLockBytes);
+        final byte[] myHashBytes = pLockASN1.getHashBytes();
+        theLockSpec = pLockASN1.getLockSpec();
+        thePayload = pLockASN1.getPayload();
 
         /* Create the byte arrays */
         theRecipe = new byte[RECIPELEN];
@@ -193,8 +193,8 @@ public final class GordianPasswordLockRecipe {
      * @return the lockBytes
      * @throws OceanusException on error
      */
-    byte[] buildLockBytes(final int pPassLength,
-                          final byte[] pPayload) throws OceanusException {
+    GordianPasswordLockASN1 buildLockASN1(final int pPassLength,
+                                          final byte[] pPayload) throws OceanusException {
         /* Allocate the new buffer */
         final int myHashLen = theHashBytes.length;
         final int myLen = RECIPELEN
@@ -218,8 +218,7 @@ public final class GordianPasswordLockRecipe {
                 - myOffSet);
 
         /* Build the ASN1 form */
-        final GordianPasswordLockASN1 myASN1 = new GordianPasswordLockASN1(theLockSpec, myBuffer, pPayload);
-        return myASN1.getEncodedBytes();
+        return new GordianPasswordLockASN1(theLockSpec, myBuffer, pPayload);
     }
 
     /**

@@ -38,32 +38,32 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianKeyPairLockASN1 ::= SEQUENCE {
  *      agreement GordianAgreementMessageASN1
- *      lockBytes OCTET STRING
+ *      lock GordianPasswordLockASN1
  * }
  * </pre>
  */
 public class GordianKeyPairLockASN1
         extends GordianASN1Object {
     /**
-     * The PasswordLockSpec.
+     * The AgreementMessageASN1.
      */
     private final GordianAgreementMessageASN1 theAgreement;
 
     /**
-     * The lockBytes.
+     * The PasswordLockASN1.
      */
-    private final byte[] theLockBytes;
+    private final GordianPasswordLockASN1 theLock;
 
     /**
      * Create the ASN1 sequence.
      * @param pAgreement the agreement
-     * @param pLockBytes the hash bytes
+     * @param pLock the passwordLock
      */
     public GordianKeyPairLockASN1(final GordianAgreementMessageASN1 pAgreement,
-                                  final byte[] pLockBytes) {
+                                  final GordianPasswordLockASN1 pLock) {
         /* Store the Spec */
         theAgreement = pAgreement;
-        theLockBytes = pLockBytes;
+        theLock = pLock;
     }
 
     /**
@@ -77,7 +77,7 @@ public class GordianKeyPairLockASN1
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
             theAgreement = GordianAgreementMessageASN1.getInstance(en.nextElement());
-            theLockBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            theLock = GordianPasswordLockASN1.getInstance(en.nextElement());
 
             /* Make sure that we have completed the sequence */
             if (en.hasMoreElements()) {
@@ -106,26 +106,26 @@ public class GordianKeyPairLockASN1
     }
 
     /**
-     * Obtain the agreement.
-     * @return the agreement
+     * Obtain the agreementASN1.
+     * @return the agreementASN1
      */
     public GordianAgreementMessageASN1 getAgreement() {
         return theAgreement;
     }
 
     /**
-     * Obtain the lockBytes.
-     * @return the lockBytes
+     * Obtain the passwordLockASN1.
+     * @return the passwordLockASN1
      */
-    public byte[] getLockBytes() {
-        return theLockBytes;
+    public GordianPasswordLockASN1 getPasswordLock() {
+        return theLock;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(theAgreement);
-        v.add(new DEROctetString(theLockBytes));
+        v.add(theLock);
         return new DERSequence(v);
     }
 
@@ -147,12 +147,11 @@ public class GordianKeyPairLockASN1
 
         /* Check that the fields are equal */
         return Objects.equals(theAgreement, myThat.getAgreement())
-                && Arrays.equals(getLockBytes(), myThat.getLockBytes());
+                && Objects.equals(getPasswordLock(), myThat.getPasswordLock());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAgreement())
-                + Arrays.hashCode(getLockBytes());
+        return Objects.hash(getAgreement(), getPasswordLock());
     }
 }

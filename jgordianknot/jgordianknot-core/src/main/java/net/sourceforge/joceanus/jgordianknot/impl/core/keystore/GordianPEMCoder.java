@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
@@ -307,8 +306,8 @@ public class GordianPEMCoder {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKey = myHash.getKeySet().securePrivateKey(pKeyPair.getKeyPair());
+            final GordianKeySet myKeySet = pLock.getKeySet();
+            final byte[] mySecuredKey = myKeySet.securePrivateKey(pKeyPair.getKeyPair());
             final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKey);
             return new GordianPEMObject(GordianPEMObjectType.PRIVATEKEY, myInfo.getEncoded());
 
@@ -330,8 +329,8 @@ public class GordianPEMCoder {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKeySet = myHash.getKeySet().secureKeySet(pKeySet.getKeySet());
+            final GordianKeySet myKeySet = pLock.getKeySet();
+            final byte[] mySecuredKeySet = myKeySet.secureKeySet(pKeySet.getKeySet());
             final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKeySet);
             return new GordianPEMObject(GordianPEMObjectType.KEYSET, myInfo.getEncoded());
 
@@ -359,8 +358,8 @@ public class GordianPEMCoder {
             final byte[] myTypeDef = TethysDataConverter.integerToByteArray(myId);
 
             /* Secure the key */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKey = myHash.getKeySet().secureKey(myKey);
+            final GordianKeySet myKeySet = pLock.getKeySet();
+            final byte[] mySecuredKey = myKeySet.secureKey(myKey);
 
             /* Build key definition */
             final byte[] myKeyDef = new byte[mySecuredKey.length + Integer.BYTES];
@@ -603,8 +602,7 @@ public class GordianPEMCoder {
         }
 
         /* Derive the securing hash */
-        final GordianKeySetHash myHash = myLock.getKeySetHash();
-        return myHash.getKeySet();
+        return myLock.getKeySet();
     }
 
     /**

@@ -37,6 +37,11 @@ public class GordianKeySetLockImpl
     private final GordianCoreKeySet theKeySet;
 
     /**
+     * The lockASN1.
+     */
+    private final GordianPasswordLockASN1 theLockASN1;
+
+    /**
      * The lockBytes.
      */
     private final byte[] theLockBytes;
@@ -66,7 +71,8 @@ public class GordianKeySetLockImpl
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
             final byte[] myPayload = myKeySet.secureKeySet(pKeySetToLock);
-            theLockBytes = myRecipe.buildLockBytes(myPassword.length, myPayload);
+            theLockASN1 = myRecipe.buildLockASN1(myPassword.length, myPayload);
+            theLockBytes = theLockASN1.getEncodedBytes();
 
         } finally {
             if (myPassword != null) {
@@ -90,10 +96,11 @@ public class GordianKeySetLockImpl
         try {
             /* Store the LockBytes */
             theLockBytes = pLockBytes;
+            theLockASN1 = GordianPasswordLockASN1.getInstance(pLockBytes);
 
             /* Resolve the recipe */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
-            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, pLockBytes);
+            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1);
 
             /* Process the password, create parameters and factory */
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
@@ -109,6 +116,11 @@ public class GordianKeySetLockImpl
     @Override
     public GordianKeySet getLockedObject() {
         return theKeySet;
+    }
+
+    @Override
+    public GordianPasswordLockASN1 getLockASN1() {
+        return theLockASN1;
     }
 
     @Override

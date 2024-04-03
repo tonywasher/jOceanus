@@ -52,9 +52,19 @@ public class GordianKeyPairLockImpl
     private final GordianCoreKeySet theKeySet;
 
     /**
+     * The lockASN1.
+     */
+    private final GordianKeyPairLockASN1 theLockASN1;
+
+    /**
      * The lockBytes.
      */
     private final byte[] theLockBytes;
+
+    /**
+     * The keyPair.
+     */
+    private final GordianKeyPair theKeyPair;
 
     /**
      * Locking constructor.
@@ -90,8 +100,10 @@ public class GordianKeyPairLockImpl
             theKeySet = myRecipe.processPassword(myFactory, myPassword);
 
             /* Create lockBytes */
-            final byte[] myLockBytes = myRecipe.buildLockBytes(myPassword.length, null);
-            theLockBytes = new GordianKeyPairLockASN1(myHelloASN, myLockBytes).getLockBytes();
+            final GordianPasswordLockASN1 myLock = myRecipe.buildLockASN1(myPassword.length, null);
+            theLockASN1 = new GordianKeyPairLockASN1(myHelloASN, myLock);
+            theLockBytes = theLockASN1.getEncodedBytes();
+            theKeyPair = pKeyPair;
 
         } finally {
             if (myPassword != null) {
@@ -117,18 +129,20 @@ public class GordianKeyPairLockImpl
         try {
             /* Store the Lock */
             theLockBytes = pLockBytes;
+            theLockASN1 = GordianKeyPairLockASN1.getInstance(pLockBytes);
+            theKeyPair = pKeyPair;
 
             /* Resolve the agreement */
             final GordianKeyPairFactory myKeyPairFactory = pLockingFactory.getKeyPairFactory();
             final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
-            final byte[] myClientHello = GordianKeyPairLockASN1.getInstance(pLockBytes).getAgreement().getEncodedBytes();
+            final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();
             final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myClientHello);
             myAgreement.acceptClientHello(pKeyPair, myClientHello);
             final GordianCoreFactory myFactory = (GordianCoreFactory) myAgreement.getResult();
 
             /* Resolve the recipe */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
-            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, pLockBytes);
+            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1.getPasswordLock());
 
             /* Process the password, creating keySet */
             theKeySet = myRecipe.processPassword(myFactory, myPassword);
@@ -146,8 +160,21 @@ public class GordianKeyPairLockImpl
     }
 
     @Override
+    public GordianKeyPairLockASN1 getLockASN1() {
+        return theLockASN1;
+    }
+
+    @Override
     public byte[] getLockBytes() {
         return theLockBytes;
+    }
+
+    /**
+     * Obtain the keyPair,
+     * @return the keyPair
+     */
+    public GordianKeyPair getKeyPair() {
+        return theKeyPair;
     }
 
     /**

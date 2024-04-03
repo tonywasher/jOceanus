@@ -217,30 +217,6 @@ public class GordianPasswordCache {
     }
 
     /**
-     * Add resolved Password to cache.
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void addResolvedPassword(final char[] pPassword) throws OceanusException {
-        byte[] myPasswordBytes = null;
-        try {
-            /* Encrypt the password */
-            myPasswordBytes = TethysDataConverter.charsToByteArray(pPassword);
-            final byte[] myEncrypted = theKeySet.encryptBytes(myPasswordBytes);
-
-            /* Add the entry to the lists */
-            final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
-            thePasswords.add(myBuffer);
-
-        } finally {
-            /* Clear out password */
-            if (myPasswordBytes != null) {
-                Arrays.fill(myPasswordBytes, (byte) 0);
-            }
-        }
-    }
-
-    /**
      * LookUp previously resolved KeySetHash.
      * @param pHashBytes the HashBytes to search for
      * @return the previous PasswordHash if found, otherwise null
@@ -264,7 +240,7 @@ public class GordianPasswordCache {
      * @return the previous factoryLock if found, otherwise null
      */
     GordianFactoryLock lookUpResolvedFactoryLock(final byte[] pLockBytes) {
-        /* Look for the hash in the list */
+        /* Look for the factory in the list */
         for (GordianLockCache<?> myCurr : theLocks) {
             /* If this is the factoryLock we are looking for, return it */
             if (myCurr.getLock() instanceof GordianFactoryLock
@@ -283,7 +259,7 @@ public class GordianPasswordCache {
      * @return the previous keySetLock if found, otherwise null
      */
     GordianKeySetLock lookUpResolvedKeySetLock(final byte[] pLockBytes) {
-        /* Look for the hash in the list */
+        /* Look for the keySet in the list */
         for (GordianLockCache<?> myCurr : theLocks) {
             /* If this is the keySetLock we are looking for, return it */
             if (myCurr.getLock() instanceof GordianKeySetLock
@@ -297,18 +273,19 @@ public class GordianPasswordCache {
     }
 
     /**
-     * LookUp previously resolved keySet.
+     * LookUp previously resolved keyPair.
      * @param pLockBytes the LockBytes to search for
      * @param pKeyPair the keyPair
      * @return the previous keySetLock if found, otherwise null
      */
     GordianKeyPairLock lookUpResolvedKeyPairLock(final byte[] pLockBytes,
                                                  final GordianKeyPair pKeyPair) {
-        /* Look for the hash in the list */
+        /* Look for the keyPair in the list */
         for (GordianLockCache<?> myCurr : theLocks) {
             /* If this is the keyPairLock we are looking for, return it */
-            if (myCurr.getLock() instanceof GordianKeyPairLock
-                    && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())) {
+            if (myCurr.getLock() instanceof GordianKeyPairLockImpl
+                    && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())
+                    && pKeyPair.equals(((GordianKeyPairLockImpl) myCurr.getLock()).getKeyPair())) {
                 return (GordianKeyPairLock) myCurr.getLock();
             }
         }
