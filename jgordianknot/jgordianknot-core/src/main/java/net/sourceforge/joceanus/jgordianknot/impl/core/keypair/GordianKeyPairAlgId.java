@@ -1523,9 +1523,8 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from public key.
          * @param pPublic the publicKeyParams
          * @return the LMSKeySpec
-         * @throws OceanusException on error
          */
-        static GordianLMSKeySpec determineKeyPairSpec(final LMSPublicKeyParameters pPublic) throws OceanusException {
+        static GordianLMSKeySpec determineKeyPairSpec(final LMSPublicKeyParameters pPublic) {
             return GordianLMSKeySpec.determineKeySpec(pPublic.getSigParameters(), pPublic.getOtsParameters());
         }
     }

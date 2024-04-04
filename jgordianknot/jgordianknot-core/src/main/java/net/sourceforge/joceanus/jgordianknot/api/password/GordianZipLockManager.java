@@ -16,22 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * KeySetHash Manager.
+ * ZipLock Manager.
  */
-public interface GordianPasswordManager
-    extends GordianKeySetHashManager, GordianKeyPairLockManager, GordianFactoryLockManager, GordianKeySetLockManager, GordianZipLockManager {
+public interface GordianZipLockManager {
     /**
-     * Obtain the security factory.
-     * @return the security factory
+     * Resolve the zipLock.
+     * @param pZipLock the hash bytes to resolve
+     * @param pSource the description of the secured resource
+     * @throws OceanusException on error
      */
-    GordianFactory getSecurityFactory();
-
-    /**
-     * Set the dialog controller.
-     * @param pDialog the dialog controller
-     */
-    void setDialogController(GordianDialogController pDialog);
+    void resolveZipLock(GordianZipLock pZipLock,
+                        String pSource) throws OceanusException;
 }

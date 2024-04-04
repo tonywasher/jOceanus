@@ -26,14 +26,22 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeyPairLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeyPairLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLockType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.impl.core.lock.GordianPasswordLockASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -46,7 +54,12 @@ public class GordianBasePasswordManager
     /**
      * Security factory.
      */
-    private final GordianFactory theFactory;
+    private final GordianCoreFactory theFactory;
+
+    /**
+     * Lock factory.
+     */
+    private final GordianLockFactory theLockFactory;
 
     /**
      * PasswordLockSpec.
@@ -85,7 +98,8 @@ public class GordianBasePasswordManager
                                       final GordianPasswordLockSpec pLockSpec,
                                       final GordianDialogController pDialog) throws OceanusException {
         /* Allocate the factory */
-        theFactory = pFactory;
+        theFactory = (GordianCoreFactory) pFactory;
+        theLockFactory = theFactory.getLockFactory();
         theDialog = pDialog;
         theLockSpec = pLockSpec;
 
@@ -141,7 +155,8 @@ public class GordianBasePasswordManager
 
     @Override
     public GordianFactoryLock newFactoryLock(final String pSource) throws OceanusException {
-        final GordianFactory myFactory = GordianBuilder.createRandomFactory();
+        final GordianParameters myParams = GordianParameters.randomParams();
+        final GordianFactory myFactory = theFactory.newFactory(myParams);
         return (GordianFactoryLock) requestPassword(pSource, true, p -> createFactoryLock(myFactory, p));
     }
 
@@ -174,7 +189,8 @@ public class GordianBasePasswordManager
     @Override
     public GordianFactoryLock similarFactoryLock(final Object pReference) throws OceanusException {
         /* Create a new random factory */
-        final GordianFactory myFactory = GordianBuilder.createRandomFactory();
+        final GordianParameters myParams = GordianParameters.randomParams();
+        final GordianFactory myFactory = theFactory.newFactory(myParams);
 
         /* LookUp the password */
         final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
@@ -262,6 +278,66 @@ public class GordianBasePasswordManager
 
         /* Create a similar keyPairLock */
         return theCache.createSimilarKeyPairLock(pKeyPair, myPassword);
+    }
+
+    @Override
+    public void resolveZipLock(final GordianZipLock pZipLock,
+                               final String pSource) throws OceanusException {
+        switch (pZipLock.getLockType()) {
+            case KEYSET_PASSWORD:
+                resolveKeySetZipLock((GordianCoreZipLock) pZipLock, pSource);
+                break;
+            case FACTORY_PASSWORD:
+                resolveFactoryZipLock((GordianCoreZipLock) pZipLock, pSource);
+                break;
+            case KEYPAIR_PASSWORD:
+            default:
+                throw new GordianLogicException("KeyPair zipLock not supported yet");
+        }
+    }
+
+    /**
+     * Resolve a keySet ZipLock
+     * @param pZipLock the zipLock
+     * @param pSource the description of the secured resource
+     * @throws OceanusException on error
+     */
+    public void resolveKeySetZipLock(final GordianCoreZipLock pZipLock,
+                                     final String pSource) throws OceanusException {
+        /* Check that the state is correct */
+        pZipLock.checkState(GordianZipLockType.FACTORY_PASSWORD);
+
+        /* Access lockBytes */
+        final byte[] myLockBytes = pZipLock.getZipLockASN1().getPasswordLockASN1().getEncodedBytes();
+
+        /* Look up resolved keySet */
+        final GordianKeySetLock myLock = resolveKeySetLock(myLockBytes, pSource);
+
+        /* If we resolved the lock */
+        if (myLock != null) {
+            pZipLock.unlock(myLock.getKeySet());
+        }
+    }
+
+
+    /**
+     * Resolve a keySet ZipLock
+     * @param pZipLock the zipLock
+     * @param pSource the description of the secured resource
+     * @throws OceanusException on error
+     */
+    public void resolveFactoryZipLock(final GordianCoreZipLock pZipLock,
+                                      final String pSource) throws OceanusException {
+        /* Access lockBytes */
+        final byte[] myLockBytes = pZipLock.getZipLockASN1().getPasswordLockASN1().getEncodedBytes();
+
+        /* Look up resolved keySet */
+        final GordianFactoryLock myLock = resolveFactoryLock(myLockBytes, pSource);
+
+        /* If we resolved the lock */
+        if (myLock != null) {
+            pZipLock.unlock(myLock.getFactory().getEmbeddedKeySet());
+        }
     }
 
     /**
@@ -374,7 +450,7 @@ public class GordianBasePasswordManager
      */
     private GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
                                                  final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myLock = GordianBuilder.createFactoryLock(pFactory, theLockSpec, pPassword);
+        final GordianFactoryLock myLock = theLockFactory.newFactoryLock(pFactory, theLockSpec, pPassword);
         theCache.addResolvedFactory(myLock, pPassword);
         return myLock;
     }
@@ -388,7 +464,7 @@ public class GordianBasePasswordManager
      */
     private GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                   final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myFactory = GordianBuilder.resolveFactoryLock(pLockBytes, pPassword);
+        final GordianFactoryLock myFactory = theLockFactory.resolveFactoryLock(pLockBytes, pPassword);
         theCache.addResolvedFactory(myFactory, pPassword);
         return myFactory;
     }
@@ -402,7 +478,7 @@ public class GordianBasePasswordManager
      */
     private GordianKeySetLock createKeySetLock(final GordianKeySet pKeySet,
                                                final char[] pPassword) throws OceanusException {
-        final GordianKeySetLock myLock = GordianBuilder.createKeySetLock(theFactory, pKeySet, theLockSpec, pPassword);
+        final GordianKeySetLock myLock = theLockFactory.newKeySetLock(pKeySet, theLockSpec, pPassword);
         theCache.addResolvedKeySet(myLock, pPassword);
         return myLock;
     }
@@ -416,7 +492,7 @@ public class GordianBasePasswordManager
      */
     private GordianKeySetLock resolveKeySetLock(final byte[] pLockBytes,
                                                 final char[] pPassword) throws OceanusException {
-        final GordianKeySetLock myKeySet = GordianBuilder.resolveKeySetLock(theFactory, pLockBytes, pPassword);
+        final GordianKeySetLock myKeySet = theLockFactory.resolveKeySetLock(pLockBytes, pPassword);
         theCache.addResolvedKeySet(myKeySet, pPassword);
         return myKeySet;
     }
@@ -430,7 +506,7 @@ public class GordianBasePasswordManager
      */
     private GordianKeyPairLock createKeyPairLock(final GordianKeyPair pKeyPair,
                                                  final char[] pPassword) throws OceanusException {
-        final GordianKeyPairLock myLock = GordianBuilder.createKeyPairLock(theFactory, theLockSpec, pKeyPair, pPassword);
+        final GordianKeyPairLock myLock = theLockFactory.newKeyPairLock(theLockSpec, pKeyPair, pPassword);
         theCache.addResolvedKeyPair(myLock, pPassword);
         return myLock;
     }
@@ -446,9 +522,8 @@ public class GordianBasePasswordManager
     private GordianKeyPairLock resolveKeyPairLock(final byte[] pLockBytes,
                                                   final GordianKeyPair pKeyPair,
                                                   final char[] pPassword) throws OceanusException {
-        final GordianKeyPairLock myKeyPair = GordianBuilder.resolveKeyPairLock(theFactory, pLockBytes, pKeyPair, pPassword);
+        final GordianKeyPairLock myKeyPair = theLockFactory.resolveKeyPairLock(pLockBytes, pKeyPair, pPassword);
         theCache.addResolvedKeyPair(myKeyPair, pPassword);
         return myKeyPair;
     }
-
 }

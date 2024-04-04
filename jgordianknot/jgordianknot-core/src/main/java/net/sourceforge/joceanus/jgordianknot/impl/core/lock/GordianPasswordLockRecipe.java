@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.password;
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsExc
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
@@ -138,14 +138,12 @@ public final class GordianPasswordLockRecipe {
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pPassLength the password length
-     * @param pLock the lockASN1
-     * @throws OceanusException on error
+     * @param pLockASN1 the lockASN1
      */
     GordianPasswordLockRecipe(final GordianCoreFactory pFactory,
                               final int pPassLength,
-                              final GordianPasswordLockASN1 pLockASN1) throws OceanusException  {
+                              final GordianPasswordLockASN1 pLockASN1)  {
         /* Parse the ASN1 external form */
-        //final GordianPasswordLockASN1 myASN1 = GordianPasswordLockASN1.getInstance(pLockBytes);
         final byte[] myHashBytes = pLockASN1.getHashBytes();
         theLockSpec = pLockASN1.getLockSpec();
         thePayload = pLockASN1.getPayload();
@@ -191,10 +189,9 @@ public final class GordianPasswordLockRecipe {
      * @param pPassLength the password length
      * @param pPayload the payload
      * @return the lockBytes
-     * @throws OceanusException on error
      */
     GordianPasswordLockASN1 buildLockASN1(final int pPassLength,
-                                          final byte[] pPayload) throws OceanusException {
+                                          final byte[] pPayload) {
         /* Allocate the new buffer */
         final int myHashLen = theHashBytes.length;
         final int myLen = RECIPELEN

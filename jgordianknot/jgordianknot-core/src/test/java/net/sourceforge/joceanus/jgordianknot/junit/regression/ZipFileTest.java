@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
@@ -116,8 +117,8 @@ class ZipFileTest {
                                                    final GordianKeyPair pKeyPair2,
                                                    final GordianLength pKeyLen) throws OceanusException {
         return Stream.of(
-                DynamicTest.dynamicTest("password", () -> testZipFile(pFactory,null, pKeyLen)),
-                DynamicTest.dynamicTest("key/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),
+                DynamicTest.dynamicTest("keySet/password", () -> testZipFile(pFactory,null, pKeyLen)),
+                DynamicTest.dynamicTest("factory/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),
                 DynamicTest.dynamicTest("keyPair1/password", () -> testZipFile(pFactory, pKeyPair1, pKeyLen)),
                 DynamicTest.dynamicTest("keyPair2/password", () -> testZipFile(pFactory, pKeyPair2, pKeyLen))
         );
@@ -234,14 +235,14 @@ class ZipFileTest {
                                          final Object pKeyPair,
                                          final GordianLength pKeyLen) throws OceanusException {
         /* Create appropriate zipLock */
-        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
+        final GordianPasswordLockSpec mySpec = new GordianPasswordLockSpec(new GordianKeySetSpec(pKeyLen));
         if (pKeyPair instanceof GordianKeyPair) {
-            return pFactory.createKeyPairLock((GordianKeyPair) pKeyPair, mySpec, DEF_PASSWORD.clone());
+            return pFactory.keyPairZipLock(mySpec, (GordianKeyPair) pKeyPair, DEF_PASSWORD.clone());
         }
         if (pKeyPair instanceof Boolean) {
-            return pFactory.createKeyLock(DEF_PASSWORD.clone());
+            return pFactory.factoryZipLock(mySpec, DEF_PASSWORD.clone());
         }
-        return pFactory.createPasswordLock(mySpec, DEF_PASSWORD.clone());
+        return pFactory.keySetZipLock(mySpec, DEF_PASSWORD.clone());
     }
 
     /**
@@ -267,8 +268,8 @@ class ZipFileTest {
         if (myLock != null) {
             /* switch on lockType */
             switch (myLock.getLockType()) {
-                case PASSWORD:
-                case KEY_PASSWORD:
+                case KEYSET_PASSWORD:
+                case FACTORY_PASSWORD:
                     myLock.unlock(DEF_PASSWORD.clone());
                     break;
                 case KEYPAIR_PASSWORD:

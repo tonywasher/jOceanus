@@ -601,7 +601,7 @@ public class GordianPEMCoder {
             throw new GordianDataException("Lock was not resolved");
         }
 
-        /* Derive the securing hash */
+        /* Derive the securing keySet */
         return myLock.getKeySet();
     }
 

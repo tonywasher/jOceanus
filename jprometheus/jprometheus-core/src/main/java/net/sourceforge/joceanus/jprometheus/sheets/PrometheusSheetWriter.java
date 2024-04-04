@@ -23,10 +23,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -157,12 +157,13 @@ public abstract class PrometheusSheetWriter {
         final GordianFactoryLock myBase = pData.getFactoryLock();
         final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
+        final GordianZipLock myZipLock = myZips.zipLock(myLock);
 
         /* Assume failure */
         final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pZipStream);
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream);
              OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
             /* Record the DataSet */
             theData = pData;

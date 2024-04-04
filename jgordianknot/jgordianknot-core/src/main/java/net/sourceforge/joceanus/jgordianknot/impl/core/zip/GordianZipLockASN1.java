@@ -28,16 +28,16 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeyPairLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeyPairLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.password.GordianKeyPairLockASN1;
-import net.sourceforge.joceanus.jgordianknot.impl.password.GordianPasswordLockASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.lock.GordianKeyPairLockASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.lock.GordianPasswordLockASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

@@ -14,20 +14,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
+package net.sourceforge.joceanus.jgordianknot.api.lock;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import org.bouncycastle.asn1.ASN1Object;
 
 /**
- * KeySet Lock.
+ * PasswordLock.
+ * @param <T> the locked object type
  */
-public interface GordianKeySetLock
-        extends GordianLock<GordianKeySet> {
+public interface GordianLock<T> {
     /**
-     * Obtain the factory.
-     * @return the factory
+     * Obtain the locked object.
+     * @return the locked object
      */
-    default GordianKeySet getKeySet() {
-        return getLockedObject();
-    }
+    T getLockedObject();
+
+    /**
+     * Obtain the lockASN1.
+     * @return the lockASN1
+     */
+    ASN1Object getLockASN1();
+
+    /**
+     * Obtain the lockBytes.
+     * @return the lockBytes
+     */
+    byte[] getLockBytes();
 }

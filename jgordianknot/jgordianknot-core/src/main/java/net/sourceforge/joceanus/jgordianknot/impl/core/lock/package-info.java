@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2024 Tony Washer
  *
@@ -14,30 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
-
-import org.bouncycastle.asn1.ASN1Object;
 
 /**
- * PasswordLock.
- * @param <T> the locked object type
+ * GordianKnot Lock implementation.
  */
-public interface GordianLock<T> {
-    /**
-     * Obtain the locked object.
-     * @return the locked object
-     */
-    T getLockedObject();
-
-    /**
-     * Obtain the lockASN1.
-     * @return the lockASN1
-     */
-    ASN1Object getLockASN1();
-
-    /**
-     * Obtain the lockBytes.
-     * @return the lockBytes
-     */
-    byte[] getLockBytes();
-}
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;

@@ -39,7 +39,7 @@ public class GordianRandomSource {
     /**
      * The Initial strongRandom.
      */
-    private static volatile SecureRandom theStrongEntropy;
+    private static SecureRandom theStrongEntropy;
 
     /**
      * The random source.

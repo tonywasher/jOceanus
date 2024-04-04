@@ -706,7 +706,7 @@ public class GordianCoreKeyStore
         final GordianZipFactory myZipFactory = theFactory.getZipFactory();
 
         /* Create the lock */
-        final GordianZipLock myLock = myZipFactory.createPasswordLock(theKeySetSpec, pPassword);
+        final GordianZipLock myLock = myZipFactory.factoryZipLock(pPassword);
 
         /* Create the Zip file */
         try (GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myLock, pOutputStream)) {

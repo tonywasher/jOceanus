@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.password;
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeyPairLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeyPairLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -124,12 +124,44 @@ public class GordianKeyPairLockImpl
                                   final byte[] pLockBytes,
                                   final GordianKeyPair pKeyPair,
                                   final char[] pPassword) throws OceanusException {
-         /* Protect from exceptions */
+        this(pLockingFactory, GordianKeyPairLockASN1.getInstance(pLockBytes), pLockBytes, pKeyPair, pPassword);
+    }
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianKeyPairLockASN1 pLockASN1,
+                                  final GordianKeyPair pKeyPair,
+                                  final char[] pPassword) throws OceanusException {
+        this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pKeyPair, pPassword);
+    }
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
+     * @param pLockBytes the lockBytes
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianKeyPairLockASN1 pLockASN1,
+                                  final byte[] pLockBytes,
+                                  final GordianKeyPair pKeyPair,
+                                  final char[] pPassword) throws OceanusException {
+        /* Protect from exceptions */
         byte[] myPassword = null;
         try {
             /* Store the Lock */
             theLockBytes = pLockBytes;
-            theLockASN1 = GordianKeyPairLockASN1.getInstance(pLockBytes);
+            theLockASN1 = pLockASN1;
             theKeyPair = pKeyPair;
 
             /* Resolve the agreement */

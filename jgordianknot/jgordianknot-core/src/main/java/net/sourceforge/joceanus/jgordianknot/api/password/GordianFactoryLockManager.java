@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

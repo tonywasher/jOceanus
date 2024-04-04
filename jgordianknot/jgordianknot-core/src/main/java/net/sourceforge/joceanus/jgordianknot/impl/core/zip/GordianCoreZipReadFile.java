@@ -157,7 +157,7 @@ public class GordianCoreZipReadFile
     @Override
     public void notifyUnlock() throws OceanusException {
         /* Access the keySet */
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySetHash().getKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySet();
 
         /* Parse the decrypted header */
         final byte[] myBytes = myKeySet.decryptBytes(theHeader);

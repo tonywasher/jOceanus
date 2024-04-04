@@ -21,7 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,56 +30,76 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public interface GordianZipFactory {
     /**
-     * Create a passwordLock.
-     * @param pPassword the password
-     * @return the Lock
-     * @throws OceanusException on error
-     */
-    default GordianZipLock createPasswordLock(final char[] pPassword) throws OceanusException {
-        return createPasswordLock(new GordianKeySetHashSpec(), pPassword);
-    }
-
-    /**
-     * Create a passwordLock.
-     * @param pKeySetHashSpec the KeySetHashSpec
+     * Create a keySetLock.
      * @param pPassword the password
      * @return the zipLock
      * @throws OceanusException on error
      */
-    GordianZipLock createPasswordLock(GordianKeySetHashSpec pKeySetHashSpec,
-                                      char[] pPassword) throws OceanusException;
-
-    /**
-     * Create a keyLock.
-     * @param pPassword the password
-     * @return the Lock
-     * @throws OceanusException on error
-     */
-    GordianZipLock createKeyLock(char[] pPassword) throws OceanusException;
-
-    /**
-     * Create a keyPairLock.
-     * @param pKeyPair the keyPair
-     * @param pPassword the password
-     * @return the Lock
-     * @throws OceanusException on error
-     */
-    default GordianZipLock createKeyPairLock(final GordianKeyPair pKeyPair,
-                                             final char[] pPassword) throws OceanusException {
-        return createKeyPairLock(pKeyPair, new GordianKeySetHashSpec(), pPassword);
+    default GordianZipLock keySetZipLock(final char[] pPassword) throws OceanusException {
+        return keySetZipLock(new GordianPasswordLockSpec(), pPassword);
     }
 
     /**
-     * Create a keyPairLock.
-     * @param pKeyPair the keyPair
-     * @param pKeySetHashSpec the KeySetHashSpec
+     * Create a keySetLock.
+     * @param pLockSpec the lockSpec
      * @param pPassword the password
      * @return the zipLock
      * @throws OceanusException on error
      */
-    GordianZipLock createKeyPairLock(GordianKeyPair pKeyPair,
-                                     GordianKeySetHashSpec pKeySetHashSpec,
-                                     char[] pPassword) throws OceanusException;
+    GordianZipLock keySetZipLock(GordianPasswordLockSpec pLockSpec,
+                                 char[] pPassword) throws OceanusException;
+
+    /**
+     * Create a factoryLock.
+     * @param pPassword the password
+     * @return the zipLock
+     * @throws OceanusException on error
+     */
+    default GordianZipLock factoryZipLock(char[] pPassword) throws OceanusException {
+        return factoryZipLock(new GordianPasswordLockSpec(), pPassword);
+    }
+
+    /**
+     * Create a factoryLock.
+     * @param pLockSpec the lockSpec
+     * @param pPassword the password
+     * @return the zipLock
+     * @throws OceanusException on error
+     */
+    GordianZipLock factoryZipLock(GordianPasswordLockSpec pLockSpec,
+                                  char[] pPassword) throws OceanusException;
+
+    /**
+     * Create a keyPairZipLock.
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
+     * @return the zipLock
+     * @throws OceanusException on error
+     */
+    default GordianZipLock keyPairZipLock(GordianKeyPair pKeyPair,
+                                          char[] pPassword) throws OceanusException {
+        return keyPairZipLock(new GordianPasswordLockSpec(), pKeyPair, pPassword);
+    }
+
+    /**
+     * Create a keyPairZipLock.
+     * @param pLockSpec the lockSpec
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
+     * @return the zipLock
+     * @throws OceanusException on error
+     */
+    GordianZipLock keyPairZipLock(GordianPasswordLockSpec pLockSpec,
+                                  GordianKeyPair pKeyPair,
+                                  char[] pPassword) throws OceanusException;
+
+    /**
+     * Create a zipLock.
+     * @param pLock the keyPairLock
+     * @return the zipLock
+     * @throws OceanusException on error
+     */
+    GordianZipLock zipLock(GordianLock<?> pLock) throws OceanusException;
 
     /**
      * Create a secure zipFile.

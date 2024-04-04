@@ -65,6 +65,12 @@ public interface GordianFactory {
     GordianRandomFactory getRandomFactory();
 
     /**
+     * Obtain the Lock Factory.
+     * @return the lock factory
+     */
+    GordianLockFactory getLockFactory();
+
+    /**
      * Obtain the Zip Factory.
      * @return the zip factory
      */

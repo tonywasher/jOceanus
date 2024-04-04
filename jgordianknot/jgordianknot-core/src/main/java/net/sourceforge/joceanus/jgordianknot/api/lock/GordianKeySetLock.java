@@ -14,20 +14,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
+package net.sourceforge.joceanus.jgordianknot.api.lock;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 
 /**
- * Factory Lock.
+ * KeySet Lock.
  */
-public interface GordianFactoryLock
-        extends GordianLock<GordianFactory> {
+public interface GordianKeySetLock
+        extends GordianLock<GordianKeySet> {
     /**
      * Obtain the factory.
      * @return the factory
      */
-    default GordianFactory getFactory() {
+    default GordianKeySet getKeySet() {
         return getLockedObject();
     }
 }

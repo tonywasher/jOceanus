@@ -14,14 +14,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.password;
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;
 
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianKeySetLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -29,12 +31,12 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Factory Lock implementation.
  */
-public class GordianKeySetLockImpl
-        implements GordianKeySetLock {
+public class GordianFactoryLockImpl
+    implements GordianFactoryLock {
     /**
-     * The keySet.
+     * The factory.
      */
-    private final GordianCoreKeySet theKeySet;
+    private final GordianCoreFactory theFactory;
 
     /**
      * The lockASN1.
@@ -49,28 +51,33 @@ public class GordianKeySetLockImpl
     /**
      * Locking constructor.
      * @param pLockingFactory the locking factory
-     * @param pKeySetToLock the keySet to lock
+     * @param pFactoryToLock the factory to lock
      * @param pLockSpec the passwordLockSpec
      * @param pPassword the password
      * @throws OceanusException on error
      */
-    public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
-                                 final GordianCoreKeySet pKeySetToLock,
-                                 final GordianPasswordLockSpec pLockSpec,
-                                 final char[] pPassword) throws OceanusException {
+    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianCoreFactory pFactoryToLock,
+                                  final GordianPasswordLockSpec pLockSpec,
+                                  final char[] pPassword) throws OceanusException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
-            /* Store the KeySet */
-            theKeySet = pKeySetToLock;
+            /* Store the Factory */
+            theFactory = pFactoryToLock;
+
+            /* Reject the operation if not a random factory */
+            if (!pFactoryToLock.isRandom()) {
+                throw new GordianDataException("attempt to lock non-Random factory");
+            }
 
             /* Create a recipe */
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);
 
-            /* Generate the hash */
+            /* Generate the lockBytes */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
-            final byte[] myPayload = myKeySet.secureKeySet(pKeySetToLock);
+            final byte[] myPayload = myKeySet.secureFactory(pFactoryToLock);
             theLockASN1 = myRecipe.buildLockASN1(myPassword.length, myPayload);
             theLockBytes = theLockASN1.getEncodedBytes();
 
@@ -88,15 +95,42 @@ public class GordianKeySetLockImpl
      * @param pPassword the password
      * @throws OceanusException on error
      */
-    public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
-                                 final byte[] pLockBytes,
-                                 final char[] pPassword) throws OceanusException {
+    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final byte[] pLockBytes,
+                                  final char[] pPassword) throws OceanusException {
+        this(pLockingFactory, GordianPasswordLockASN1.getInstance(pLockBytes), pPassword);
+    }
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianPasswordLockASN1 pLockASN1,
+                                  final char[] pPassword) throws OceanusException {
+        this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pPassword);
+    }
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianPasswordLockASN1 pLockASN1,
+                                  final byte[] pLockBytes,
+                                  final char[] pPassword) throws OceanusException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
-            /* Store the LockBytes */
+            /* Store the Lock */
             theLockBytes = pLockBytes;
-            theLockASN1 = GordianPasswordLockASN1.getInstance(pLockBytes);
+            theLockASN1 = pLockASN1;
 
             /* Resolve the recipe */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
@@ -104,7 +138,7 @@ public class GordianKeySetLockImpl
 
             /* Process the password, create parameters and factory */
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
-            theKeySet = myKeySet.deriveKeySet(myRecipe.getPayload());
+            theFactory = (GordianCoreFactory) myKeySet.deriveFactory(myRecipe.getPayload());
 
         } finally {
             if (myPassword != null) {
@@ -114,8 +148,8 @@ public class GordianKeySetLockImpl
     }
 
     @Override
-    public GordianKeySet getLockedObject() {
-        return theKeySet;
+    public GordianFactory getLockedObject() {
+        return theFactory;
     }
 
     @Override
@@ -126,6 +160,14 @@ public class GordianKeySetLockImpl
     @Override
     public byte[] getLockBytes() {
         return theLockBytes;
+    }
+
+    /**
+     * Obtain the byte length of the encoded sequence.
+     * @return the byte length
+     */
+    public static int getEncodedLength() {
+        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SECRET_LEN.getByteLength() << 1));
     }
 
     @Override
@@ -139,21 +181,21 @@ public class GordianKeySetLockImpl
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianKeySetLockImpl)) {
+        if (!(pThat instanceof GordianFactoryLockImpl)) {
             return false;
         }
 
         /* Access the target field */
-        final GordianKeySetLockImpl myThat = (GordianKeySetLockImpl) pThat;
+        final GordianFactoryLockImpl myThat = (GordianFactoryLockImpl) pThat;
 
         /* Check differences */
-        return theKeySet.equals(myThat.getLockedObject())
+        return theFactory.equals(myThat.getLockedObject())
                 && Arrays.equals(theLockBytes, myThat.getLockBytes());
     }
 
     @Override
     public int hashCode() {
-        return GordianCoreFactory.HASH_PRIME * theKeySet.hashCode()
+        return GordianCoreFactory.HASH_PRIME * theFactory.hashCode()
                 + Arrays.hashCode(theLockBytes);
     }
 }

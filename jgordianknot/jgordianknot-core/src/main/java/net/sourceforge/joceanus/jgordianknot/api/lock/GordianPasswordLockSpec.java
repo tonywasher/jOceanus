@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
+package net.sourceforge.joceanus.jgordianknot.api.lock;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 
