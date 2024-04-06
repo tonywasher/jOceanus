@@ -29,7 +29,9 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -798,8 +800,8 @@ class KeySetTest {
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myMacSafe.length, "Incorrect wrapped macLength: " + myMacKey.getKeyType());
 
         /* Check wrap of keySet */
-        final byte[] myKeySetSafe = myKeySet.secureKeySet(myKeySet);
-        final GordianKeySet myKeySetResult = myKeySet.deriveKeySet(myKeySetSafe);
+        final byte[] myKeySetSafe = myKeySet.encryptKeySet(myKeySet);
+        final GordianKeySet myKeySetResult = myKeySet.decryptKeySet(myKeySetSafe);
         Assertions.assertEquals(myKeySet, myKeySetResult, "Failed to wrap/unwrap keySet");
         Assertions.assertEquals(myKeySet.getKeySetWrapLength(), myKeySetSafe.length, "Incorrect wrapped keySetLength");
     }
@@ -839,7 +841,7 @@ class KeySetTest {
             Assertions.assertArrayEquals(myData, myResult, "Failed to decrypt data");
         }
         long myElapsed = System.nanoTime() - myStart;
-        myElapsed /= SymmetricTest.MILLINANOS * profileRepeat;
+        myElapsed /= (long) SymmetricTest.MILLINANOS * profileRepeat;
         if (fullProfiles) {
             System.out.println("Elapsed: " + myElapsed);
         }
@@ -852,9 +854,10 @@ class KeySetTest {
     private void testRandomFactory() throws OceanusException {
         /* Create the random factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory();
-        final GordianKeySet myKeySet = myFactory.getKeySetFactory().generateKeySet(new GordianKeySetSpec());
-        final byte[] mySecured = GordianGenerator.secureFactory(myKeySet, myFactory);
-        final GordianFactory myResolved = GordianGenerator.deriveFactory(myKeySet, mySecured);
-        Assertions.assertEquals(myFactory, myResolved, "Failed to lock/resolve factory");
+        final GordianLockFactory myLockFactory = myFactory.getLockFactory();
+        final GordianFactoryLock mySecured = myLockFactory.newFactoryLock(myFactory, DEF_PASSWORD.clone());
+        final GordianFactoryLock myResolved = myLockFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());
+        Assertions.assertEquals(myFactory, myResolved.getFactory(), "Failed to lock/resolve factory");
+        Assertions.assertEquals(GordianUtilities.getFactoryLockLen(), mySecured.getLockBytes().length, "Incorrect factoryLockLength");
     }
 }

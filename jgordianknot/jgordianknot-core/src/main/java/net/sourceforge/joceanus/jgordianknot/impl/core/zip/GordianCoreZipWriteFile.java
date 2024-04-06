@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamDefinition;
 import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -59,7 +58,7 @@ public class GordianCoreZipWriteFile
     /**
      * Security Lock for this zip file.
      */
-    private final GordianCoreLock theLock;
+    private final GordianCoreZipLock theLock;
 
     /**
      * securedKeySet for this zip file.
@@ -117,7 +116,7 @@ public class GordianCoreZipWriteFile
      * @param pOutputStream the output stream to write to
      * @throws OceanusException on error
      */
-    GordianCoreZipWriteFile(final GordianCoreLock pLock,
+    GordianCoreZipWriteFile(final GordianCoreZipLock pLock,
                             final OutputStream pOutputStream) throws OceanusException {
         /* Check that the lock is usable */
         if (pLock == null || !pLock.isFresh()) {
@@ -129,10 +128,10 @@ public class GordianCoreZipWriteFile
         pLock.markAsUsed();
 
         /* Create a child hash and record details */
-        final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) theLock.getKeySetHash();
-        final GordianFactory myFactory = myHash.getFactory();
-        theKeySet = (GordianCoreKeySet) myFactory.getKeySetFactory().generateKeySet(myHash.getKeySet().getKeySetSpec());
-        theSecuredKeySet = myHash.getKeySet().secureKeySet(theKeySet);
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySet();
+        final GordianFactory myFactory = myKeySet.getFactory();
+        theKeySet = (GordianCoreKeySet) myFactory.getKeySetFactory().generateKeySet(myKeySet.getKeySetSpec());
+        theSecuredKeySet = myKeySet.encryptKeySet(theKeySet);
 
         /* Create the Stream Manager */
         theStreamFactory = new GordianStreamManager(theKeySet);
@@ -335,7 +334,7 @@ public class GordianCoreZipWriteFile
 
                     /* Write the bytes to the Zip file and close the entry */
                     final byte[] myBytes = TethysDataConverter.stringToByteArray(myHeader);
-                    final GordianKeySet myKeySet = theLock.getKeySetHash().getKeySet();
+                    final GordianKeySet myKeySet = theLock.getKeySet();
                     theStream.write(myKeySet.encryptBytes(myBytes));
                     theStream.closeEntry();
                 }

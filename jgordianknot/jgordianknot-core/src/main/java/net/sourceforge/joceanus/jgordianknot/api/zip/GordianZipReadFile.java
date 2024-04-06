@@ -42,7 +42,7 @@ public interface GordianZipReadFile {
      * Obtain the lock for the file.
      * @return the lock
      */
-    GordianLock getLock();
+    GordianZipLock getLock();
 
     /**
      * Obtain an input stream for an entry in the zip file.

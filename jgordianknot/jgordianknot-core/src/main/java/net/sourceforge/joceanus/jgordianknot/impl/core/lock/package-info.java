@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2024 Tony Washer
  *
@@ -14,20 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
-
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 
 /**
- * Factory Lock.
+ * GordianKnot Lock implementation.
  */
-public interface GordianFactoryLock
-        extends GordianPasswordLock<GordianFactory> {
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    default GordianFactory getFactory() {
-        return getLockedObject();
-    }
-}
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;

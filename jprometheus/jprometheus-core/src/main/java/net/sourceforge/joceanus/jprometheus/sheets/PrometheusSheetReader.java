@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -157,7 +157,7 @@ public abstract class PrometheusSheetReader {
         final GordianZipReadFile myFile = myZips.openZipFile(pInStream);
 
         /* Obtain the lock from the file */
-        final GordianLock myLock = myFile.getLock();
+        final GordianZipLock myLock = myFile.getLock();
 
         /* Resolve the lock */
         thePasswordMgr.resolveZipLock(myLock, pName);

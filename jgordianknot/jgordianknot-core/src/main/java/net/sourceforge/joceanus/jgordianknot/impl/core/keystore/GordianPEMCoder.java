@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
@@ -49,8 +48,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeySt
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
-import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianLockASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianZipLockASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -106,7 +105,7 @@ public class GordianPEMCoder {
      */
     public void exportKeyStoreEntry(final GordianKeyStoreEntry pEntry,
                                     final OutputStream pStream,
-                                    final GordianCoreLock pLock) throws OceanusException {
+                                    final GordianCoreZipLock pLock) throws OceanusException {
         /* Check that the lock is usable */
         if (pLock == null || !pLock.isFresh()) {
             throw new GordianDataException("Invalid lock");
@@ -148,7 +147,7 @@ public class GordianPEMCoder {
      * @throws OceanusException on error
      */
     private List<GordianPEMObject> encodeKeyStoreEntry(final GordianKeyStoreEntry pEntry,
-                                                       final GordianCoreLock pLock) throws OceanusException {
+                                                       final GordianCoreZipLock pLock) throws OceanusException {
         /* Handle certificates */
         if (pEntry instanceof GordianKeyStoreCertificate) {
              final GordianCertificate myCert = ((GordianKeyStoreCertificate) pEntry).getCertificate();
@@ -278,7 +277,7 @@ public class GordianPEMCoder {
      * @throws OceanusException on error
      */
     private List<GordianPEMObject> encodePrivateKeyPair(final GordianKeyStorePair pKeyPair,
-                                                        final GordianCoreLock pLock) throws OceanusException {
+                                                        final GordianCoreZipLock pLock) throws OceanusException {
         /* Create the list */
         final List<GordianPEMObject> myList = new ArrayList<>();
 
@@ -303,12 +302,12 @@ public class GordianPEMCoder {
      * @throws OceanusException on error
      */
     private GordianPEMObject encodePrivateKey(final GordianKeyStorePair pKeyPair,
-                                              final GordianCoreLock pLock) throws OceanusException {
+                                              final GordianCoreZipLock pLock) throws OceanusException {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKey = myHash.getKeySet().securePrivateKey(pKeyPair.getKeyPair());
+            final GordianKeySet myKeySet = pLock.getKeySet();
+            final byte[] mySecuredKey = myKeySet.securePrivateKey(pKeyPair.getKeyPair());
             final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKey);
             return new GordianPEMObject(GordianPEMObjectType.PRIVATEKEY, myInfo.getEncoded());
 
@@ -326,12 +325,12 @@ public class GordianPEMCoder {
      * @throws OceanusException on error
      */
     private GordianPEMObject encodeKeySet(final GordianKeyStoreSet pKeySet,
-                                          final GordianCoreLock pLock) throws OceanusException {
+                                          final GordianCoreZipLock pLock) throws OceanusException {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKeySet = myHash.getKeySet().secureKeySet(pKeySet.getKeySet());
+            final GordianKeySet myKeySet = pLock.getKeySet();
+            final byte[] mySecuredKeySet = myKeySet.encryptKeySet(pKeySet.getKeySet());
             final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKeySet);
             return new GordianPEMObject(GordianPEMObjectType.KEYSET, myInfo.getEncoded());
 
@@ -349,7 +348,7 @@ public class GordianPEMCoder {
      * @throws OceanusException on error
      */
     private GordianPEMObject encodeKey(final GordianKeyStoreKey<?> pKey,
-                                       final GordianCoreLock pLock) throws OceanusException {
+                                       final GordianCoreZipLock pLock) throws OceanusException {
         /* Protect against exception */
         try {
             /* Access keyType */
@@ -359,8 +358,8 @@ public class GordianPEMCoder {
             final byte[] myTypeDef = TethysDataConverter.integerToByteArray(myId);
 
             /* Secure the key */
-            final GordianKeySetHash myHash = pLock.getKeySetHash();
-            final byte[] mySecuredKey = myHash.getKeySet().secureKey(myKey);
+            final GordianKeySet myKeySet = pLock.getKeySet();
+            final byte[] mySecuredKey = myKeySet.secureKey(myKey);
 
             /* Build key definition */
             final byte[] myKeyDef = new byte[mySecuredKey.length + Integer.BYTES];
@@ -522,7 +521,7 @@ public class GordianPEMCoder {
         final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);
 
         /* Derive the keySet */
-        final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
+        final GordianKeySet myKeySet = mySecuringKeySet.decryptKeySet(myInfo.getEncryptedData());
         return new GordianCoreKeyStoreSet(myKeySet, new TethysDate());
     }
 
@@ -574,7 +573,7 @@ public class GordianPEMCoder {
      * @param pInfo the encryptedInfo
      * @return the algorithmId.
      */
-    private static EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreLock pLock,
+    private static EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreZipLock pLock,
                                                                final byte[] pInfo) {
         return new EncryptedPrivateKeyInfo(pLock.getAlgorithmId(), pInfo);
     }
@@ -588,7 +587,7 @@ public class GordianPEMCoder {
     private GordianKeySet deriveSecuringKeySet(final EncryptedPrivateKeyInfo pInfo) throws OceanusException {
         /* Validate the algorithmId */
         final AlgorithmIdentifier myId = pInfo.getEncryptionAlgorithm();
-        if (!myId.getAlgorithm().equals(GordianLockASN1.LOCKOID)) {
+        if (!myId.getAlgorithm().equals(GordianZipLockASN1.LOCKOID)) {
             throw new GordianDataException("Unsupported algorithm");
         }
         if (theLockResolver == null) {
@@ -596,15 +595,14 @@ public class GordianPEMCoder {
         }
 
         /* Resolve the lock */
-        final GordianCoreLock myLock = new GordianCoreLock(theFactory, myId.getParameters());
+        final GordianCoreZipLock myLock = new GordianCoreZipLock(theFactory, myId.getParameters());
         theLockResolver.resolveLock(myLock);
         if (myLock.isLocked()) {
             throw new GordianDataException("Lock was not resolved");
         }
 
-        /* Derive the securing hash */
-        final GordianKeySetHash myHash = myLock.getKeySetHash();
-        return myHash.getKeySet();
+        /* Derive the securing keySet */
+        return myLock.getKeySet();
     }
 
     /**

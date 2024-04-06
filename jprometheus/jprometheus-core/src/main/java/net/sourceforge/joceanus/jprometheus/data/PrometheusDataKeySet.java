@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -111,7 +110,6 @@ public class PrometheusDataKeySet
 
         /* Access the Password manager */
         final PrometheusDataSet myData = getDataSet();
-        final GordianPasswordManager mySecure = myData.getPasswordMgr();
         final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Store the ControlKey */
@@ -145,7 +143,7 @@ public class PrometheusDataKeySet
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         } else if (getSecuredKeySetDef() != null) {
-            final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
+            final GordianKeySet myKeySet = myControlKeySet.getKeySet().decryptKeySet(getSecuredKeySetDef());
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         }
@@ -170,9 +168,8 @@ public class PrometheusDataKeySet
             /* Store the Details */
             setValueControlKeySet(pControlKeySet);
 
-            /* Access the Security manager */
+            /* Access the Formatter */
             final PrometheusDataSet myData = getDataSet();
-            final GordianPasswordManager mySecure = myData.getPasswordMgr();
             final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
@@ -185,7 +182,7 @@ public class PrometheusDataKeySet
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueSecuredKeySetDef(pControlKeySet.getKeySet().secureKeySet(myKeySet));
+            setValueSecuredKeySetDef(pControlKeySet.getKeySet().encryptKeySet(myKeySet));
 
             /* Catch Exceptions */
         } catch (OceanusException e) {

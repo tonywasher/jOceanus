@@ -661,7 +661,7 @@ public interface GordianKeyStoreElement {
             theSecuringHash = new GordianKeyStoreHashElement(myHash);
 
             /* Secure the keySet */
-            theSecuredKeySet = myKeySet.secureKeySet(pKeySet);
+            theSecuredKeySet = myKeySet.encryptKeySet(pKeySet);
        }
 
         /**
@@ -717,7 +717,7 @@ public interface GordianKeyStoreElement {
             final GordianKeySet mySecuringKeySet = myHash.getKeySet();
 
             /* Derive the keySet */
-            final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(theSecuredKeySet);
+            final GordianKeySet myKeySet = mySecuringKeySet.decryptKeySet(theSecuredKeySet);
 
             /* build the new entry */
             return new GordianCoreKeyStoreSet(myKeySet, getCreationDate());

@@ -50,7 +50,7 @@ public final class GordianStreamDefinition {
     /**
      * Stream Type.
      */
-    private final StreamType theType;
+    private final GordianStreamType theType;
 
     /**
      * TypeId.
@@ -90,7 +90,7 @@ public final class GordianStreamDefinition {
                                    final byte[] pInitVector,
                                    final byte[] pValue) throws OceanusException {
         final int myStreamId = (int) (pExternalId & TethysDataConverter.NYBBLE_MASK);
-        theType = StreamType.fromId(myStreamId);
+        theType = GordianStreamType.fromId(myStreamId);
         theTypeId = (int) (pExternalId >> TethysDataConverter.NYBBLE_SHIFT);
         theTypeDefinition = pTypeDef == null
                             ? null
@@ -117,7 +117,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
         /* Access DigestType */
-        theType = StreamType.DIGEST;
+        theType = GordianStreamType.DIGEST;
         final GordianDigest myDigest = pStream.getDigest();
         theTypeId = myKnuth.deriveExternalIdFromType(myDigest.getDigestSpec());
 
@@ -141,7 +141,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
         /* Access MacType */
-        theType = StreamType.MAC;
+        theType = GordianStreamType.MAC;
         final GordianMac myMac = pStream.getMac();
         theTypeId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
 
@@ -167,8 +167,8 @@ public final class GordianStreamDefinition {
         /* Access CipherType */
         final GordianCoreCipher<?> myCipher = pStream.getCipher();
         theType = pStream.isSymKeyStream()
-                  ? StreamType.SYMMETRIC
-                  : StreamType.STREAM;
+                  ? GordianStreamType.SYMMETRIC
+                  : GordianStreamType.STREAM;
         theTypeId = myKnuth.deriveExternalIdFromType(myCipher.getCipherSpec());
 
         /* Build details */
@@ -180,10 +180,10 @@ public final class GordianStreamDefinition {
 
     /**
      * Constructor.
-     * @param pStream the LZMAOutputStream
+     * @param pStreamType the StreamType
      */
-    GordianStreamDefinition(final GordianLZMAOutputStream pStream) {
-        theType = StreamType.LZMA;
+    GordianStreamDefinition(final GordianStreamType pStreamType) {
+        theType = GordianStreamType.LZMA;
         theTypeId = 0;
         theTypeDefinition = null;
         theInitVector = null;
@@ -204,7 +204,7 @@ public final class GordianStreamDefinition {
      * Obtain Type.
      * @return the type
      */
-    public StreamType getType() {
+    public GordianStreamType getType() {
         return theType;
     }
 
@@ -399,7 +399,7 @@ public final class GordianStreamDefinition {
     /**
      * Stream Type.
      */
-    public enum StreamType {
+    public enum GordianStreamType {
         /**
          * Symmetric.
          */
@@ -434,7 +434,7 @@ public final class GordianStreamDefinition {
          * Constructor.
          * @param id the id
          */
-        StreamType(final int id) {
+        GordianStreamType(final int id) {
             theId = id;
         }
 
@@ -452,8 +452,8 @@ public final class GordianStreamDefinition {
          * @return the corresponding enumeration object
          * @throws OceanusException on error
          */
-        public static StreamType fromId(final int id) throws OceanusException {
-            for (final StreamType myType : values()) {
+        public static GordianStreamType fromId(final int id) throws OceanusException {
+            for (final GordianStreamType myType : values()) {
                 if (myType.getId() == id) {
                     return myType;
                 }

@@ -248,4 +248,16 @@ public class GordianParameters {
         /* Calculate hash from seeds */
         return myCode + Arrays.hashCode(theSecuritySeed) + Arrays.hashCode(theKeySetSeed);
     }
+
+    /**
+     * Create random parameters.
+     * @return the parameters
+     * @throws OceanusException on error
+     */
+    public static GordianParameters randomParams() throws OceanusException {
+        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
+        myParams.setSecuritySeeds(GordianRandomSource.getStrongRandom());
+        myParams.setInternal();
+        return myParams;
+    }
 }

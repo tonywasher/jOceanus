@@ -203,11 +203,9 @@ public final class GordianCoreKeySet
     /**
      * Obtain the keySet wrap length.
      * @param pKeyLen the keyLength.
-     * @param pNumSteps the numbert of cipher steps
      * @return the wrapped length
      */
-    public static int getKeySetWrapLength(final GordianLength pKeyLen,
-                                          final int pNumSteps) {
+    public static int getKeySetWrapLength(final GordianLength pKeyLen) {
         /* Count the number of KeySetSymTypes for 256 bit keys */
         int myCount = 0;
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
@@ -217,11 +215,8 @@ public final class GordianCoreKeySet
         }
 
         /* Determine the length of the encoded keySet prior to wrapping */
-        final int myWrapLength = getDataWrapLength(pKeyLen.getByteLength(), pNumSteps);
-        final int myEncodedLength = GordianKeySetASN1.getEncodedLength(myWrapLength, myCount);
-
-        /* Determine the wrapped length of the data */
-        return getDataWrapLength(myEncodedLength, pNumSteps);
+        final int mySize = GordianKeySetASN1.getEncodedLength(pKeyLen.getByteLength(), myCount);
+        return getEncryptionLength(mySize);
     }
 
     @Override
@@ -240,8 +235,8 @@ public final class GordianCoreKeySet
         final int myCount = (int) Arrays.stream(GordianSymKeyType.values()).filter(myPredicate).count();
 
         /* Determine the size of the encoded ASN1 keySet */
-        final int mySize = GordianKeySetASN1.getEncodedLength(getKeyWrapLength(theSpec.getKeyLength()), myCount);
-        return getDataWrapLength(mySize);
+        final int mySize = GordianKeySetASN1.getEncodedLength(theSpec.getKeyLength().getByteLength(), myCount);
+        return getEncryptionLength(mySize);
     }
 
     @Override
@@ -420,22 +415,15 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public byte[] secureKeySet(final GordianKeySet pKeySetToSecure) throws OceanusException {
+    public byte[] encryptKeySet(final GordianKeySet pKeySetToSecure) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Generate set of keys */
-            final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);
-            final GordianKeySetParameters myParams = myRecipe.getParameters();
-
             /* Encode the keySet */
-            final GordianKeySetASN1 myEncoded = new GordianKeySetASN1((GordianCoreKeySet) pKeySetToSecure, this);
+            final GordianKeySetASN1 myEncoded = new GordianKeySetASN1((GordianCoreKeySet) pKeySetToSecure);
             final byte[] myBytesToSecure = myEncoded.toASN1Primitive().getEncoded();
 
-            /* secure the key */
-            final byte[] myBytes = theCipher.secureBytes(myParams, myBytesToSecure);
-
-            /* Package and return the encrypted bytes */
-            return buildExternal(myRecipe, myBytes);
+            /* encrypt the keySet */
+            return encryptBytes(myBytesToSecure);
 
             /* Handle exceptions */
         } catch (IOException e) {
@@ -444,17 +432,13 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public GordianCoreKeySet deriveKeySet(final byte[] pSecuredKeySet) throws OceanusException {
-        /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, pSecuredKeySet, false);
-        final GordianKeySetParameters myParams = myRecipe.getParameters();
-
+    public GordianCoreKeySet decryptKeySet(final byte[] pSecuredKeySet) throws OceanusException {
         /* Unwrap the bytes resolve them */
-        final byte[] mySecuredBytes = theCipher.deriveBytes(myParams, pSecuredKeySet, GordianKeySetRecipe.HDRLEN);
+        final byte[] mySecuredBytes = decryptBytes(pSecuredKeySet);
         final GordianKeySetASN1 myEncoded = GordianKeySetASN1.getInstance(mySecuredBytes);
 
         /* Build the keySet and return it */
-        return myEncoded.buildKeySet((GordianCoreKeySetFactory) theFactory.getKeySetFactory(), this);
+        return myEncoded.buildKeySet(theFactory);
     }
 
     /**

@@ -33,7 +33,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamManager;
-import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock.GordianUnlockNotify;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock.GordianUnlockNotify;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -58,7 +58,7 @@ public class GordianCoreZipReadFile
     /**
      * Lock for this zip file.
      */
-    private final GordianCoreLock theLock;
+    private final GordianCoreZipLock theLock;
 
     /**
      * The contents of this zip file.
@@ -68,7 +68,7 @@ public class GordianCoreZipReadFile
     /**
      * The zip file contents.
      */
-    private byte[] theZipFile;
+    private final byte[] theZipFile;
 
     /**
      * KeySet for this zip file.
@@ -125,7 +125,7 @@ public class GordianCoreZipReadFile
             /* If we have a header */
             if (myEntry != null) {
                 /* Pick up security lock */
-                theLock = new GordianCoreLock(pFactory, this, myEntry.getExtra());
+                theLock = new GordianCoreZipLock(pFactory, this, myEntry.getExtra());
                 theHeader = readHeader(myHdrStream);
             } else {
                 /* Record no security */
@@ -150,14 +150,14 @@ public class GordianCoreZipReadFile
     }
 
     @Override
-    public GordianLock getLock() {
+    public GordianZipLock getLock() {
         return theLock;
     }
 
     @Override
     public void notifyUnlock() throws OceanusException {
         /* Access the keySet */
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySetHash().getKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySet();
 
         /* Parse the decrypted header */
         final byte[] myBytes = myKeySet.decryptBytes(theHeader);
@@ -173,7 +173,7 @@ public class GordianCoreZipReadFile
 
         /* Obtain encoded keySet */
         final byte[] mySecuredKeySet = myHeader.getHash();
-        theKeySet = myKeySet.deriveKeySet(mySecuredKeySet);
+        theKeySet = myKeySet.decryptKeySet(mySecuredKeySet);
    }
 
     /**

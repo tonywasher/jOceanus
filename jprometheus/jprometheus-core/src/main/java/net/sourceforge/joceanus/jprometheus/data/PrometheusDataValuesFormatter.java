@@ -39,9 +39,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -168,8 +168,9 @@ public class PrometheusDataValuesFormatter {
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianFactoryLock myBase = pData.getFactoryLock();
-        final GordianLock myLock = myPasswordMgr.similarZipLock(myBase);
+        final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
+        final GordianZipLock myZipLock = myZips.zipLock(myLock);
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -178,7 +179,7 @@ public class PrometheusDataValuesFormatter {
         theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pZipStream)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream)) {
             /* Loop through the data lists */
             final Iterator<PrometheusDataList<?>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
@@ -394,7 +395,7 @@ public class PrometheusDataValuesFormatter {
         final GordianZipReadFile myZipFile = myZips.openZipFile(pInStream);
 
         /* Obtain the hash bytes from the file */
-        final GordianLock myLock = myZipFile.getLock();
+        final GordianZipLock myLock = myZipFile.getLock();
 
         /* If this is a secure ZipFile */
         if (myLock != null) {

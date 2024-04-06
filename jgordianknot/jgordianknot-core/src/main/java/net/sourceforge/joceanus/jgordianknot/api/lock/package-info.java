@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2024 Tony Washer
  *
@@ -14,24 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
-
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 
 /**
- * KeySetHash Manager.
+ * Lock API.
  */
-public interface GordianPasswordManager
-    extends GordianKeySetHashManager, GordianKeyPairLockManager, GordianFactoryLockManager, GordianKeySetLockManager, GordianZipLockManager {
-    /**
-     * Obtain the security factory.
-     * @return the security factory
-     */
-    GordianFactory getSecurityFactory();
-
-    /**
-     * Set the dialog controller.
-     * @param pDialog the dialog controller
-     */
-    void setDialogController(GordianDialogController pDialog);
-}
+package net.sourceforge.joceanus.jgordianknot.api.lock;

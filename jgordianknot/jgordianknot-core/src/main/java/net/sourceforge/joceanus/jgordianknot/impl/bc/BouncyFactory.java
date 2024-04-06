@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -60,6 +61,7 @@ public class BouncyFactory
         setMacFactory(new BouncyMacFactory(this));
         setRandomFactory(new GordianCoreRandomFactory(this));
         setKeySetFactory(new GordianCoreKeySetFactory(this));
+        setLockFactory(new GordianCoreLockFactory(this));
     }
 
     @Override

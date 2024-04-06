@@ -16,47 +16,43 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.password;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * KeySetLock Manager.
+ * KeyPair Lock Manager.
  */
-public interface GordianKeySetLockManager {
+public interface GordianKeyPairLockManager {
     /**
-     * Create a new keySetLock.
+     * Create a new keyPairLock.
+     * @param pKeyPair the keyPair
      * @param pSource the description of the secured resource
-     * @return the keySetLock
+     * @return the keyPairLock
      * @throws OceanusException on error
      */
-    GordianKeySetLock newKeySetLock(String pSource) throws OceanusException;
+    GordianKeyPairLock newKeyPairLock(GordianKeyPair pKeyPair,
+                                      String pSource) throws OceanusException;
 
     /**
-     * Create a new keySetLock.
-     * @param pKeySet the keySet to lock
+     * Resolve the keyPairLock.
+     * @param pLockBytes the LockBytes to resolve
+     * @param pKeyPair the keyPair
      * @param pSource the description of the secured resource
-     * @return the keySetLock
+     * @return the keyPairLock
      * @throws OceanusException on error
      */
-    GordianKeySetLock newKeySetLock(GordianKeySet pKeySet,
-                                    String pSource) throws OceanusException;
+    GordianKeyPairLock resolveKeyPairLock(byte[] pLockBytes,
+                                          GordianKeyPair pKeyPair,
+                                          String pSource) throws OceanusException;
 
     /**
-     * Resolve the keySetLock bytes.
-     * @param pLockBytes the lock bytes to resolve
-     * @param pSource the description of the secured resource
-     * @return the keySetLock
-     * @throws OceanusException on error
-     */
-    GordianKeySetLock resolveKeySetLock(byte[] pLockBytes,
-                                        String pSource) throws OceanusException;
-
-    /**
-     * obtain new locked keySet (same password).
+     * obtain similar (same password) zipLock.
+     * @param pKeyPair the keyPair
      * @param pReference the reference to clone password from
-     * @return the similar keySetLock
+     * @return the similar keyPairLock
      * @throws OceanusException on error
      */
-    GordianKeySetLock similarKeySetLock(Object pReference) throws OceanusException;
+    GordianKeyPairLock similarKeyPairLock(GordianKeyPair pKeyPair,
+                                          Object pReference) throws OceanusException;
 }

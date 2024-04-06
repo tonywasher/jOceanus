@@ -58,7 +58,7 @@ public class GordianCoreKeySetCipher
     /**
      * Are we in AEAD mode?
      */
-    private boolean aead;
+    private final boolean aead;
 
     /**
      * Are we initialised?

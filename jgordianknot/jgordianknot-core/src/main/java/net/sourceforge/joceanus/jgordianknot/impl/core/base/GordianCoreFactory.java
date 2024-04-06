@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -139,6 +140,11 @@ public abstract class GordianCoreFactory
      * KeySet Factory.
      */
     private GordianKeySetFactory theKeySetFactory;
+
+    /**
+     * Lock Factory.
+     */
+    private GordianLockFactory theLockFactory;
 
     /**
      * The Key AlgIds.
@@ -362,6 +368,19 @@ public abstract class GordianCoreFactory
      */
     protected void setKeySetFactory(final GordianKeySetFactory pFactory) {
         theKeySetFactory = pFactory;
+    }
+
+    @Override
+    public GordianLockFactory getLockFactory() {
+        return theLockFactory;
+    }
+
+    /**
+     * Set the lock factory.
+     * @param pFactory the lock factory.
+     */
+    protected void setLockFactory(final GordianLockFactory pFactory) {
+        theLockFactory = pFactory;
     }
 
     Predicate<GordianDigestType> supportedKeySetDigestTypes() {

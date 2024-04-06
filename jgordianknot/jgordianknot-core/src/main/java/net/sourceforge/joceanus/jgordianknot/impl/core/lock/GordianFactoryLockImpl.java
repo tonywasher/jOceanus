@@ -14,13 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.password;
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;
 
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianFactoryLock;
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
@@ -37,6 +37,11 @@ public class GordianFactoryLockImpl
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The lockASN1.
+     */
+    private final GordianPasswordLockASN1 theLockASN1;
 
     /**
      * The lockBytes.
@@ -73,7 +78,8 @@ public class GordianFactoryLockImpl
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
             final byte[] myPayload = myKeySet.secureFactory(pFactoryToLock);
-            theLockBytes = myRecipe.buildLockBytes(myPassword.length, myPayload);
+            theLockASN1 = myRecipe.buildLockASN1(myPassword.length, myPayload);
+            theLockBytes = theLockASN1.getEncodedBytes();
 
         } finally {
             if (myPassword != null) {
@@ -92,15 +98,43 @@ public class GordianFactoryLockImpl
     public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
                                   final byte[] pLockBytes,
                                   final char[] pPassword) throws OceanusException {
+        this(pLockingFactory, GordianPasswordLockASN1.getInstance(pLockBytes), pPassword);
+    }
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianPasswordLockASN1 pLockASN1,
+                                  final char[] pPassword) throws OceanusException {
+        this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pPassword);
+    }
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+                                  final GordianPasswordLockASN1 pLockASN1,
+                                  final byte[] pLockBytes,
+                                  final char[] pPassword) throws OceanusException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
             /* Store the Lock */
             theLockBytes = pLockBytes;
+            theLockASN1 = pLockASN1;
 
             /* Resolve the recipe */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
-            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, pLockBytes);
+            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1);
 
             /* Process the password, create parameters and factory */
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
@@ -116,6 +150,11 @@ public class GordianFactoryLockImpl
     @Override
     public GordianFactory getLockedObject() {
         return theFactory;
+    }
+
+    @Override
+    public GordianPasswordLockASN1 getLockASN1() {
+        return theLockASN1;
     }
 
     @Override

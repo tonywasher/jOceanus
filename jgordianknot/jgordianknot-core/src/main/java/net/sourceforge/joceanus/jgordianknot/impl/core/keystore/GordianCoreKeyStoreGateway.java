@@ -36,11 +36,11 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -203,11 +203,11 @@ public class GordianCoreKeyStoreGateway
     @Override
     public void exportEntry(final String pAlias,
                             final OutputStream pStream,
-                            final GordianLock pLock) throws OceanusException {
+                            final GordianZipLock pLock) throws OceanusException {
         final char[] myPassword = thePasswordResolver.apply(pAlias);
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
-        myCoder.exportKeyStoreEntry(myEntry, pStream, (GordianCoreLock) pLock);
+        myCoder.exportKeyStoreEntry(myEntry, pStream, (GordianCoreZipLock) pLock);
     }
 
     @Override

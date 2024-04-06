@@ -154,7 +154,7 @@ public final class GordianKeySetRecipe {
     /**
      * The parameters class.
      */
-    static final class GordianKeySetParameters {
+    public static final class GordianKeySetParameters {
         /**
          * The Recipe.
          */

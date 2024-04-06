@@ -14,24 +14,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.password;
+package net.sourceforge.joceanus.jgordianknot.api.lock;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import org.bouncycastle.asn1.ASN1Object;
 
 /**
- * KeySetHash Manager.
+ * PasswordLock.
+ * @param <T> the locked object type
  */
-public interface GordianPasswordManager
-    extends GordianKeySetHashManager, GordianKeyPairLockManager, GordianFactoryLockManager, GordianKeySetLockManager, GordianZipLockManager {
+public interface GordianLock<T> {
     /**
-     * Obtain the security factory.
-     * @return the security factory
+     * Obtain the locked object.
+     * @return the locked object
      */
-    GordianFactory getSecurityFactory();
+    T getLockedObject();
 
     /**
-     * Set the dialog controller.
-     * @param pDialog the dialog controller
+     * Obtain the lockASN1.
+     * @return the lockASN1
      */
-    void setDialogController(GordianDialogController pDialog);
+    ASN1Object getLockASN1();
+
+    /**
+     * Obtain the lockBytes.
+     * @return the lockBytes
+     */
+    byte[] getLockBytes();
 }

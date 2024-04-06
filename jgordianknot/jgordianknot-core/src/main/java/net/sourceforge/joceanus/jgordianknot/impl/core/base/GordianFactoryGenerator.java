@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * FactoryGenerator.
  */
-@FunctionalInterface
 public interface GordianFactoryGenerator {
     /**
      * Create a new factory for the given parameters.
