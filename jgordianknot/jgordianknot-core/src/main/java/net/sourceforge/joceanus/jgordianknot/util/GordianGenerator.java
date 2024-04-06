@@ -18,14 +18,12 @@ package net.sourceforge.joceanus.jgordianknot.util;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBaseDialogControl;
 import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBasePasswordManager;
@@ -79,30 +77,6 @@ public final class GordianGenerator {
         final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
         final GordianParameters myParams = GordianParameters.randomParams();
         return myGenerator.newFactory(myParams);
-    }
-
-    /**
-     * secure Factory.
-     * @param pKeySet the keySet to use
-     * @param pFactoryToSecure the keySet to secure
-     * @return the securedFactory
-     * @throws OceanusException on error
-     */
-    public static byte[] secureFactory(final GordianKeySet pKeySet,
-                                       final GordianFactory pFactoryToSecure) throws OceanusException {
-        return ((GordianCoreKeySet) pKeySet).secureFactory(pFactoryToSecure);
-    }
-
-    /**
-     * derive Factory.
-     * @param pKeySet the keySet to use
-     * @param pSecuredFactory the secured factory
-     * @return the derived factory
-     * @throws OceanusException on error
-     */
-    public static GordianFactory deriveFactory(final GordianKeySet pKeySet,
-                                               final byte[] pSecuredFactory) throws OceanusException {
-        return ((GordianCoreKeySet) pKeySet).deriveFactory(pSecuredFactory);
     }
 
     /**

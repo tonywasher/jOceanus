@@ -68,7 +68,7 @@ public class GordianCoreZipReadFile
     /**
      * The zip file contents.
      */
-    private byte[] theZipFile;
+    private final byte[] theZipFile;
 
     /**
      * KeySet for this zip file.
@@ -173,7 +173,7 @@ public class GordianCoreZipReadFile
 
         /* Obtain encoded keySet */
         final byte[] mySecuredKeySet = myHeader.getHash();
-        theKeySet = myKeySet.deriveKeySet(mySecuredKeySet);
+        theKeySet = myKeySet.decryptKeySet(mySecuredKeySet);
    }
 
     /**

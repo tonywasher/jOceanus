@@ -105,6 +105,22 @@ public interface GordianKeySet {
                            byte[] pAAD) throws OceanusException;
 
     /**
+     * encrypt KeySet.
+     * @param pKeySetToSecure the keySet to secure
+     * @return the encryptedKeySet
+     * @throws OceanusException on error
+     */
+    byte[] encryptKeySet(GordianKeySet pKeySetToSecure) throws OceanusException;
+
+    /**
+     * decrypt KeySet.
+     * @param pSecuredKeySet the secured keySet
+     * @return the decrypted keySet
+     * @throws OceanusException on error
+     */
+    GordianKeySet decryptKeySet(byte[] pSecuredKeySet) throws OceanusException;
+
+    /**
      * secure bytes.
      * @param pBytesToSecure the bytes to secure
      * @return the securedBytes
@@ -138,22 +154,6 @@ public interface GordianKeySet {
      */
     <T extends GordianKeySpec> GordianKey<T> deriveKey(byte[] pSecuredKey,
                                                        T pKeyType) throws OceanusException;
-
-    /**
-     * secure KeySet.
-     * @param pKeySetToSecure the keySet to secure
-     * @return the securedKeySet
-     * @throws OceanusException on error
-     */
-    byte[] secureKeySet(GordianKeySet pKeySetToSecure) throws OceanusException;
-
-    /**
-     * derive KeySet.
-     * @param pSecuredKeySet the secured keySet
-     * @return the derived keySet
-     * @throws OceanusException on error
-     */
-    GordianKeySet deriveKeySet(byte[] pSecuredKeySet) throws OceanusException;
 
     /**
      * secure privateKey.

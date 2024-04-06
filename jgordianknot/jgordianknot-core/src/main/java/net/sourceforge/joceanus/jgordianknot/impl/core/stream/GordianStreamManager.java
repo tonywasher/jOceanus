@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestF
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamDefinition.GordianStreamType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -107,7 +108,7 @@ public final class GordianStreamManager {
             } else if (myStream instanceof GordianLZMAOutputStream) {
                 /* Process stream */
                 final GordianLZMAOutputStream myLZMA = (GordianLZMAOutputStream) myStream;
-                myStreams.add(0, new GordianStreamDefinition(myLZMA));
+                myStreams.add(0, new GordianStreamDefinition(GordianStreamType.LZMA));
                 myStream = myLZMA.getNextStream();
 
                 /* If this is a Encryption Output Stream */
@@ -139,10 +140,7 @@ public final class GordianStreamManager {
         /* Loop through the stream definitions */
         InputStream myCurrent = pBaseStream;
         GordianMacInputStream myMacStream = null;
-        final Iterator<GordianStreamDefinition> myIterator = pStreamDefs.iterator();
-        while (myIterator.hasNext()) {
-            final GordianStreamDefinition myDef = myIterator.next();
-
+        for (GordianStreamDefinition myDef : pStreamDefs) {
             /* Build the stream */
             myCurrent = myDef.buildInputStream(theKeySet, myCurrent, myMacStream);
             if (myCurrent instanceof GordianMacInputStream) {

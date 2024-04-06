@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * MultiKey Cipher.
  */
-final class GordianMultiCipher
+public final class GordianMultiCipher
     implements GordianCipher {
     /**
      * The default buffer size.

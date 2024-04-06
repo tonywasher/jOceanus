@@ -31,15 +31,18 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -47,48 +50,45 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianKeySetASN1 ::= SEQUENCE {
  *      keySetSpec GordianKeySetSpecASN1
- *      securedKeys securedKeySet
+ *      keySet keySetDefinition
  * } securedKey
  *
- * securedKeySet ::= SEQUENCE OF securedKey
+ * keySetDefinition ::= SEQUENCE OF keyDefinition
  *
- * securedKey ::= SEQUENCE {
- *      wrappedKeyId INTEGER
- *      wrappedKey OCTET STRING
+ * keyDefinition ::= SEQUENCE {
+ *      keyId INTEGER
+ *      key OCTET STRING
  * }
  * </pre>
  */
 public class GordianKeySetASN1
         extends GordianASN1Object {
     /**
-     * The keySetSpec.
+     * The keySet.
      */
     private final GordianKeySetSpec theSpec;
 
     /**
-     * The map of keyTypes to secured key.
+     * The map of keyTypes to key.
      */
     private final Map<Integer, byte[]> theMap;
 
     /**
      * Create the ASN1 sequence.
      * @param pKeySet the keySet
-     * @param pWrapper the wrapping keySet
-     * @throws OceanusException on error
      */
-    GordianKeySetASN1(final GordianCoreKeySet pKeySet,
-                      final GordianKeySet pWrapper) throws OceanusException {
-        /* Store the Spec */
+    GordianKeySetASN1(final GordianCoreKeySet pKeySet) {
+        /* Store the KeySetSpec */
         theSpec = pKeySet.getKeySetSpec();
 
         /* Create the map */
         theMap = new LinkedHashMap<>();
 
-        /* Loop through the keys placing wrapped keys into the map */
+        /* Loop through the keys placing keyBytes into the map */
         final Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myMap = pKeySet.getSymKeyMap();
         for (Entry<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myEntry : myMap.entrySet()) {
             theMap.put(myEntry.getKey().getSymKeyType().ordinal() + 1,
-                    pWrapper.secureKey(myEntry.getValue()));
+                    ((GordianCoreKey<GordianSymKeySpec>) myEntry.getValue()).getKeyBytes());
         }
     }
 
@@ -164,20 +164,24 @@ public class GordianKeySetASN1
     /**
      * Build a keySet from the details.
      * @param pFactory the keySet factory
-     * @param pWrapper the wrapping keySet
      * @return the new keySet
      * @throws OceanusException on error
      */
-    GordianCoreKeySet buildKeySet(final GordianCoreKeySetFactory pFactory,
-                                  final GordianKeySet pWrapper) throws OceanusException {
+    GordianCoreKeySet buildKeySet(final GordianCoreFactory pFactory) throws OceanusException {
         /* Create the new keySet */
-        final GordianCoreKeySet myKeySet = pFactory.createKeySet(theSpec);
+        final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
+        final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();
+        final GordianCoreKeySet myKeySet = myKeySetFactory.createKeySet(theSpec);
 
         /* Declare the keys */
         for (Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
             final GordianSymKeyType myKeyType = GordianSymKeyType.values()[myEntry.getKey() - 1];
             final GordianSymKeySpec mySpec = new GordianSymKeySpec(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
-            final GordianKey<GordianSymKeySpec> myKey = pWrapper.deriveKey(myEntry.getValue(), mySpec);
+            final GordianCoreKeyGenerator<GordianSymKeySpec> myGenerator =
+                    (GordianCoreKeyGenerator<GordianSymKeySpec>) myCipherFactory.getKeyGenerator(mySpec);
+
+            /* Generate and declare the key */
+            final GordianKey<GordianSymKeySpec> myKey = myGenerator.buildKeyFromBytes(myEntry.getValue());
             myKeySet.declareSymKey(myKey);
         }
 
@@ -187,14 +191,14 @@ public class GordianKeySetASN1
 
     /**
      * Obtain the byte length for a given wrapped keyLength and # of keys.
-     * @param pWrappedKeyLen the wrapped key length
+     * @param pKeyLen the wrapped key length
      * @param pNumKeys the number of keys
      * @return the byte length
      */
-    static int getEncodedLength(final int pWrappedKeyLen,
+    static int getEncodedLength(final int pKeyLen,
                                 final int pNumKeys) {
         /* Key length is type + length + value */
-        int myLength = GordianASN1Util.getLengthByteArrayField(pWrappedKeyLen);
+        int myLength = GordianASN1Util.getLengthByteArrayField(pKeyLen);
 
         /* KeyType is guaranteed single byte value */
         myLength += GordianASN1Util.getLengthIntegerField(1);
