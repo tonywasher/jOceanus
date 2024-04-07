@@ -1053,7 +1053,9 @@ public class GordianKeyPairAlgId {
             pIdManager.registerParser(BCObjectIdentifiers.ntruhps2048509, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS509)));
             pIdManager.registerParser(BCObjectIdentifiers.ntruhps2048677, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS677)));
             pIdManager.registerParser(BCObjectIdentifiers.ntruhps4096821, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS821)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntruhps40961229, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HPS1229)));
             pIdManager.registerParser(BCObjectIdentifiers.ntruhrss701, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HRSS701)));
+            pIdManager.registerParser(BCObjectIdentifiers.ntruhrss1373, new GordianNTRUEncodedParser(GordianKeyPairSpec.ntru(GordianNTRUSpec.HRSS1373)));
         }
 
         @Override
