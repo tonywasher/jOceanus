@@ -39,7 +39,7 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.77"
+        bouncyCastleVersion = "1.78"
         jUnitVersion = "5.10.2"
         jsonVersion = "20240303"
         mySQLVersion = "8.0.33"

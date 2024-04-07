@@ -39,9 +39,19 @@ public enum GordianNTRUSpec {
     HPS821,
 
     /**
+     * HPS 1229 4096.
+     */
+    HPS1229,
+
+    /**
      * HRSS 701.
      */
-    HRSS701;
+    HRSS701,
+
+    /**
+     * HRSS 1373.
+     */
+    HRSS1373;
 
     /**
      * Obtain NTRU Parameters.
@@ -52,7 +62,9 @@ public enum GordianNTRUSpec {
             case HPS509:  return NTRUParameters.ntruhps2048509;
             case HPS677:  return NTRUParameters.ntruhps2048677;
             case HPS821:  return NTRUParameters.ntruhps4096821;
+            case HPS1229:  return NTRUParameters.ntruhps40961229;
             case HRSS701: return NTRUParameters.ntruhrss701;
+            case HRSS1373: return NTRUParameters.ntruhrss1373;
             default: throw new IllegalArgumentException();
         }
     }
@@ -66,7 +78,9 @@ public enum GordianNTRUSpec {
             case HPS509:  return NTRUParameterSpec.ntruhps2048509;
             case HPS677:  return NTRUParameterSpec.ntruhps2048677;
             case HPS821:  return NTRUParameterSpec.ntruhps4096821;
+            case HPS1229:  return NTRUParameterSpec.ntruhps40961229;
             case HRSS701: return NTRUParameterSpec.ntruhrss701;
+            case HRSS1373: return NTRUParameterSpec.ntruhrss1373;
             default: throw new IllegalArgumentException();
         }
     }
