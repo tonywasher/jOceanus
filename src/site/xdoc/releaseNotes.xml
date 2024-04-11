@@ -52,6 +52,7 @@
         <dt>1.6.2-b1</dt> <dd>First pass at migration to new Tethys GUI support</dd>
         <dt>1.6.2-b2</dt> <dd>Fully migrate to new Tethys GUI support</dd>
         <dt>1.6.3-b1</dt> <dd>Fully migrate to new Metis Data Support</dd>
+        <dt>1.6.3-b2</dt> <dd>Remove old lethe code and promote atlas code</dd>
       </dl>
     </section>
   </body>

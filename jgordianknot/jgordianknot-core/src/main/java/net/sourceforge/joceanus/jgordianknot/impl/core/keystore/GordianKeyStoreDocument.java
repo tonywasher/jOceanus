@@ -41,13 +41,13 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetHashSpecASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreHashElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreLockElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.lock.GordianPasswordLockSpecASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -107,9 +107,9 @@ public final class GordianKeyStoreDocument {
     private static final String ELEMENT_SECUREDKEY = "SecuredKey";
 
     /**
-     * The hash element.
+     * The lock element.
      */
-    private static final String ELEMENT_HASH = "HashBytes";
+    private static final String ELEMENT_LOCK = "LockBytes";
 
     /**
      * The CertificateKey element.
@@ -169,7 +169,7 @@ public final class GordianKeyStoreDocument {
             theDocument.appendChild(myMain);
 
             /* Record the keySetSpec */
-            final GordianKeySetHashSpecASN1 mySpecASN1 = new GordianKeySetHashSpecASN1(pKeyStore.getKeySetSpec());
+            final GordianPasswordLockSpecASN1 mySpecASN1 = new GordianPasswordLockSpecASN1(pKeyStore.getPasswordLockSpec());
             final String myAttrSpec = TethysDataConverter.byteArrayToBase64(mySpecASN1.getEncodedBytes());
             myMain.setAttribute(ATTR_KEYSETSPEC, myAttrSpec);
 
@@ -207,10 +207,10 @@ public final class GordianKeyStoreDocument {
         /* Access the keySetSpec */
         final String myAttrSpec = myDocElement.getAttribute(ATTR_KEYSETSPEC);
         final byte[] myAttrArray = TethysDataConverter.base64ToByteArray(myAttrSpec);
-        final GordianKeySetHashSpecASN1 mySpecASN1 = GordianKeySetHashSpecASN1.getInstance(myAttrArray);
+        final GordianPasswordLockSpecASN1 mySpecASN1 = GordianPasswordLockSpecASN1.getInstance(myAttrArray);
 
         /* Create the empty keyStore */
-        theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory, mySpecASN1.getSpec());
+        theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory, mySpecASN1.getLockSpec());
         theDocument = pDocument;
 
         /* Loop through the nodes */
@@ -278,8 +278,8 @@ public final class GordianKeyStoreDocument {
                 case KEYSET:
                     buildKeySetElement(myAliasEl, (GordianKeyStoreSetElement) myElement);
                     break;
-                case KEYSETHASH:
-                    buildKeySetHashElement(myAliasEl, (GordianKeyStoreHashElement) myElement);
+                case KEYSETLOCK:
+                    buildKeySetLockElement(myAliasEl, (GordianKeyStoreLockElement) myElement);
                     break;
                 case PRIVATEKEYPAIR:
                     buildPrivateKeyElement(myAliasEl, (GordianKeyStorePairElement) myElement);
@@ -297,12 +297,12 @@ public final class GordianKeyStoreDocument {
      * @param pNode the keySetHash node to build
      * @param pEntry the keySetHash entry
      */
-    private void buildKeySetHashElement(final Element pNode,
-                                        final GordianKeyStoreHashElement pEntry) {
-        /* Build hash entry */
-        final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
-        pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getHash()));
+    private void buildKeySetLockElement(final Element pNode,
+                                        final GordianKeyStoreLockElement pEntry) {
+        /* Build lock entry */
+        final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
+        pNode.appendChild(myLockEl);
+        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getLock()));
     }
 
     /**
@@ -317,10 +317,10 @@ public final class GordianKeyStoreDocument {
         pNode.appendChild(myKeyEl);
         myKeyEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuredKeySet()));
 
-        /* Build hash entry */
-        final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
-        pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
+        /* Build lock entry */
+        final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
+        pNode.appendChild(myLockEl);
+        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
     }
 
     /**
@@ -341,10 +341,10 @@ public final class GordianKeyStoreDocument {
         final int myId = myObfuscater.deriveExternalIdFromType(pEntry.getKeyType());
         myKeyEl.setAttribute(ATTR_KEYSPEC, Integer.toString(myId));
 
-        /* Build hash entry */
-        final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
-        pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
+        /* Build lock entry */
+        final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
+        pNode.appendChild(myLockEl);
+        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
     }
 
     /**
@@ -360,10 +360,10 @@ public final class GordianKeyStoreDocument {
         pNode.appendChild(myKeyEl);
         myKeyEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuredKey()));
 
-        /* Build hash entry */
-        final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
-        pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
+        /* Build lock entry */
+        final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
+        pNode.appendChild(myLockEl);
+        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
 
         /* Build certificates entry */
         final Element myChainEl = theDocument.createElement(ELEMENT_CERTIFICATES);
@@ -479,8 +479,8 @@ public final class GordianKeyStoreDocument {
                 case KEYSET:
                     parseKeySetElement(myNode, myAlias, myDate);
                     break;
-                case KEYSETHASH:
-                    parseKeySetHashElement(myNode, myAlias, myDate);
+                case KEYSETLOCK:
+                    parseKeySetLockElement(myNode, myAlias, myDate);
                     break;
                 case PRIVATEKEYPAIR:
                     parsePrivateKeyElement(myNode, myAlias, myDate);
@@ -497,12 +497,12 @@ public final class GordianKeyStoreDocument {
     }
 
     /**
-     * parse the keySetHash alias.
+     * parse the keySetLock alias.
      * @param pNode the node to parse
      * @param pAlias the alias
      * @param pDate the creation date
      */
-    private void parseKeySetHashElement(final Node pNode,
+    private void parseKeySetLockElement(final Node pNode,
                                         final String pAlias,
                                         final TethysDate pDate) {
         /* Loop through the nodes */
@@ -511,11 +511,11 @@ public final class GordianKeyStoreDocument {
             /* Access the Node name */
             final String myNodeName = myNode.getNodeName();
 
-            /* If this is a hash node */
-            if (ELEMENT_HASH.equals(myNodeName)) {
+            /* If this is a lock node */
+            if (ELEMENT_LOCK.equals(myNodeName)) {
                 /* Obtain the hash and build the entry */
-                final byte[] myHash = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
-                final GordianKeyStoreHashElement myEntry = new GordianKeyStoreHashElement(myHash, pDate);
+                final byte[] myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final GordianKeyStoreLockElement myEntry = new GordianKeyStoreLockElement(myLock, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
             }
@@ -548,16 +548,16 @@ public final class GordianKeyStoreDocument {
                 mySecuredKey = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
             }
 
-            /* If this is a hash node */
-            if (ELEMENT_HASH.equals(myNodeName)) {
+            /* If this is a lock node */
+            if (ELEMENT_LOCK.equals(myNodeName)) {
                 /* Check for valid xml */
                 if (mySecuredKey == null) {
                     throw new GordianDataException(ERROR_BADXML);
                 }
 
-                /* Obtain the hash and build the entry */
-                final byte[] myHash = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
-                final GordianKeyStoreSetElement myEntry = new GordianKeyStoreSetElement(mySecuredKey, myHash, pDate);
+                /* Obtain the lock and build the entry */
+                final byte[] myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final GordianKeyStoreSetElement myEntry = new GordianKeyStoreSetElement(mySecuredKey, myLock, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
             }
@@ -596,16 +596,16 @@ public final class GordianKeyStoreDocument {
                 mySpec = (GordianKeySpec) myObfuscater.deriveTypeFromExternalId(Integer.parseInt(mySpecId));
             }
 
-            /* If this is a hash node */
-            if (ELEMENT_HASH.equals(myNodeName)) {
+            /* If this is a lock node */
+            if (ELEMENT_LOCK.equals(myNodeName)) {
                 /* Check for valid xml */
                 if (mySecuredKey == null) {
                     throw new GordianDataException(ERROR_BADXML);
                 }
 
-                /* Obtain the hash and build the entry */
-                final byte[] myHash = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
-                final GordianKeyStoreKeyElement<GordianKeySpec> myEntry = new GordianKeyStoreKeyElement<>(mySpec, mySecuredKey, myHash, pDate);
+                /* Obtain the lock and build the entry */
+                final byte[] myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final GordianKeyStoreKeyElement<GordianKeySpec> myEntry = new GordianKeyStoreKeyElement<>(mySpec, mySecuredKey, myLock, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
             }
@@ -628,7 +628,7 @@ public final class GordianKeyStoreDocument {
                                         final TethysDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
-        byte[] myHash = null;
+        byte[] myLock = null;
         final List<GordianKeyStoreCertificateKey> myChain = new ArrayList<>();
         Node myNode = pNode.getFirstChild();
         while (myNode != null) {
@@ -641,16 +641,16 @@ public final class GordianKeyStoreDocument {
                 mySecuredKey = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
             }
 
-            /* If this is a hash node */
-            if (ELEMENT_HASH.equals(myNodeName)) {
-                /* Obtain the hash */
-                myHash = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+            /* If this is a lock node */
+            if (ELEMENT_LOCK.equals(myNodeName)) {
+                /* Obtain the lock */
+                myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
             }
 
             /* If this is a hash node */
             if (ELEMENT_CERTIFICATES.equals(myNodeName)) {
                 /* Check for valid xml */
-                if (mySecuredKey == null || myHash == null) {
+                if (mySecuredKey == null || myLock == null) {
                     throw new GordianDataException(ERROR_BADXML);
                 }
 
@@ -671,7 +671,7 @@ public final class GordianKeyStoreDocument {
                 }
 
                 /* build the entry */
-                final GordianKeyStorePairElement myEntry = new GordianKeyStorePairElement(mySecuredKey, myHash, myChain, pDate);
+                final GordianKeyStorePairElement myEntry = new GordianKeyStorePairElement(mySecuredKey, myLock, myChain, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
             }
@@ -843,9 +843,9 @@ public final class GordianKeyStoreDocument {
         KEYSET("KeySet"),
 
         /**
-         * KeySetHash.
+         * KeySetLock.
          */
-        KEYSETHASH("KeySetHash");
+        KEYSETLOCK("KeySetLock");
 
         /**
          * The Element Name.
@@ -877,8 +877,8 @@ public final class GordianKeyStoreDocument {
             if (pEntry instanceof GordianKeyStoreSetElement) {
                 return KEYSET;
             }
-            if (pEntry instanceof GordianKeyStoreHashElement) {
-                return KEYSETHASH;
+            if (pEntry instanceof GordianKeyStoreLockElement) {
+                return KEYSETLOCK;
             }
             if (pEntry instanceof GordianKeyStoreKeyElement) {
                 return KEY;

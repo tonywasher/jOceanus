@@ -202,7 +202,7 @@ public class GordianKeyPairLockImpl
     }
 
     /**
-     * Obtain the keyPair,
+     * Obtain the keyPair.
      * @return the keyPair
      */
     public GordianKeyPair getKeyPair() {

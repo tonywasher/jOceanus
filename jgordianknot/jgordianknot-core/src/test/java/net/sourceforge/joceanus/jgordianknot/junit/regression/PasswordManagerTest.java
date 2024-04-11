@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.jgordianknot.impl.password.GordianBasePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -130,22 +129,6 @@ class PasswordManagerTest {
         }
 
         /**
-         * Resolve a hash.
-         * @param pManager the security manager
-         * @param pHash the hashIndex
-         * @throws OceanusException on error
-         */
-        GordianKeySetHash resolveHash(final GordianBasePasswordManager pManager,
-                                      final HashIndex pHash) throws OceanusException {
-            final int myIndex = pHash.theIndex;
-            final boolean isKnown = myIndex != UNKNOWN;
-            final boolean isNew = isKnown && !theSeen[myIndex];
-            final String myPrompt = isNew ? NAMES[myIndex] : "";
-            theSeen[myIndex] = true;
-            return pManager.resolveKeySetHash(pHash.theHash.getHash(), myPrompt);
-        }
-
-        /**
          * Resolve a factory.
          * @param pManager the security manager
          * @param pFactory the factoryIndex
@@ -175,123 +158,6 @@ class PasswordManagerTest {
             final String myPrompt = isNew ? NAMES[myIndex] : "";
             theSeen[myIndex] = true;
             return pManager.resolveKeySetLock(pKeySet.theLock.getLockBytes(), myPrompt);
-        }
-    }
-
-    /**
-     * Hash and index record.
-     */
-    static class HashIndex {
-        /**
-         * Hash.
-         */
-        final GordianKeySetHash theHash;
-
-        /**
-         * Index.
-         */
-        final int theIndex;
-
-        /**
-         * Constructor.
-         * @param pHash the hash
-         * @param pIndex the index
-         */
-        HashIndex(final GordianKeySetHash pHash,
-                  final int pIndex) {
-            theHash = pHash;
-            theIndex = pIndex;
-        }
-
-        /**
-         * Should this hash be resolved?
-         * @return true/false
-         */
-        boolean resolved() {
-            return theIndex != UNKNOWN;
-        }
-    }
-
-    /**
-     * The list of hashes.
-     */
-    static final List<HashIndex> HASHES = new ArrayList<>();
-
-    /**
-     * Create a new hash for an indexed password.
-     * @param pManager the security manager
-     * @param pIndex the index of the password
-     * @return the new Hash
-     * @throws OceanusException on error
-     */
-    static HashIndex createNewHash(final GordianBasePasswordManager pManager,
-                                   final int pIndex) throws OceanusException {
-        final HashIndex myHash = new HashIndex(pManager.newKeySetHash(NAMES[pIndex]), pIndex);
-        HASHES.add(myHash);
-        return myHash;
-    }
-
-    /**
-     * Create a new hash for an indexed password.
-     * @param pManager the security manager
-     * @param pHash the hashIndex
-     * @return the new Hash
-     * @throws OceanusException on error
-     */
-    static HashIndex createSimilarHash(final GordianBasePasswordManager pManager,
-                                       final HashIndex pHash) throws OceanusException {
-        final HashIndex myHash = new HashIndex(pManager.similarKeySetHash(pHash.theHash), pHash.theIndex);
-        HASHES.add(myHash);
-        return myHash;
-    }
-
-    /**
-     * Set up the hashes.
-     * @throws OceanusException on error
-     */
-    @BeforeAll
-    public static void setUpHashes() throws OceanusException {
-        /* Create the security manager */
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final GordianBasePasswordManager myManager = new GordianBasePasswordManager(myFactory, new DialogController());
-
-        /* For each NAME */
-        for (int i = 0; i < NAMES.length; i++) {
-            /* Create some hashes */
-            createNewHash(myManager, i);
-            createNewHash(myManager, i);
-            createNewHash(myManager, i);
-            final HashIndex myHash = createNewHash(myManager, i);
-
-            /* Create a couple of similar hashes */
-            createSimilarHash(myManager, myHash);
-        }
-
-        /* Shuffle the hashes */
-        Collections.shuffle(HASHES);
-    }
-
-    /**
-     * Resolve the hashes.
-     * @throws OceanusException on error
-     */
-    @Test
-    void HashPasswordTests() throws OceanusException {
-        /* Create the security manager */
-        final DialogController myController = new DialogController();
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final GordianBasePasswordManager myManager = new GordianBasePasswordManager(myFactory, myController);
-
-        /* Loop through the hashes in the list */
-        for (HashIndex myHash : HASHES) {
-            /* Resolve the hash */
-            if (myHash.resolved()) {
-                final GordianKeySetHash myResolved = myController.resolveHash(myManager, myHash);
-                Assertions.assertEquals(myHash.theHash, myResolved, "Incorrect hash");
-            } else {
-                Assertions.assertThrows(GordianDataException.class,
-                        () -> myController.resolveHash(myManager, myHash), "Resolution failure");
-            }
         }
     }
 

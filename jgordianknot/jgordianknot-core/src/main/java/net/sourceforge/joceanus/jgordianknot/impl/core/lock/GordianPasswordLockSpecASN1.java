@@ -14,64 +14,49 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.lock;
 
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of KeySetHash.
+ * ASN1 Encoding of passwordLockSpec.
  * <pre>
- * GordianKeySetHashASN1 ::= SEQUENCE {
- *      spec GordianKeySetHashSpecASN1
- *      hashBytes OCTET STRING
+ * GordianPasswordLockSpecASN1 ::= SEQUENCE {
+ *      keySetSpec GordianKeySetSpecASN1
+ *      iterations INTEGER
  * }
  * </pre>
  */
-public class GordianKeySetHashASN1
+public class GordianPasswordLockSpecASN1
         extends GordianASN1Object {
     /**
-     * Base our algorithmId off bouncyCastle.
+     * The PasswordLockSpec.
      */
-    private static final ASN1ObjectIdentifier KEYSETHASHALGID = GordianCoreKeySetFactory.KEYSETOID.branch("2");
-
-    /**
-     * The KeySetSpec.
-     */
-    private final GordianKeySetHashSpec theSpec;
-
-    /**
-     * The HashBytes.
-     */
-    private final byte[] theHashBytes;
+    private final GordianPasswordLockSpec theLockSpec;
 
     /**
      * Create the ASN1 sequence.
-     * @param pKeySetHashSpec the keySetHashSpec
-     * @param pHashBytes the hashBytes
+     * @param pLockSpec the passwordLockSpec
      */
-    public GordianKeySetHashASN1(final GordianKeySetHashSpec pKeySetHashSpec,
-                                 final byte[] pHashBytes) {
-        /* Store the parameters */
-        theSpec = pKeySetHashSpec;
-        theHashBytes = pHashBytes;
+    public GordianPasswordLockSpecASN1(final GordianPasswordLockSpec pLockSpec) {
+        /* Store the Spec */
+        theLockSpec = pLockSpec;
     }
 
     /**
@@ -79,18 +64,21 @@ public class GordianKeySetHashASN1
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianKeySetHashASN1(final ASN1Sequence pSequence) throws OceanusException {
+    public GordianPasswordLockSpecASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
-            theSpec = GordianKeySetHashSpecASN1.getInstance(en.nextElement()).getSpec();
-            theHashBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
+            final int myIterations = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
 
             /* Make sure that we have completed the sequence */
             if (en.hasMoreElements()) {
                 throw new GordianDataException("Unexpected additional values in ASN1 sequence");
             }
+
+            /* Create the lockSpec */
+            theLockSpec = new GordianPasswordLockSpec(myIterations, mySpec);
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -104,59 +92,42 @@ public class GordianKeySetHashASN1
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianKeySetHashASN1 getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianKeySetHashASN1) {
-            return (GordianKeySetHashASN1) pObject;
+    public static GordianPasswordLockSpecASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianPasswordLockSpecASN1) {
+            return (GordianPasswordLockSpecASN1) pObject;
         } else if (pObject != null) {
-            return new GordianKeySetHashASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianPasswordLockSpecASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
 
     /**
-     * Obtain the spec.
-     * @return the Spec
+     * Obtain the lockSpec.
+     * @return the lockSpec
      */
-    GordianKeySetHashSpec getSpec() {
-        return theSpec;
-    }
-
-    /**
-     * Obtain the hashBytes.
-     * @return the hashBytes
-     */
-    public byte[] getHashBytes() {
-        return theHashBytes;
+    public GordianPasswordLockSpec getLockSpec() {
+        return theLockSpec;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new GordianKeySetHashSpecASN1(theSpec).toASN1Primitive());
-        v.add(new DEROctetString(theHashBytes));
-
+        v.add(new GordianKeySetSpecASN1(theLockSpec.getKeySetSpec()).toASN1Primitive());
+        v.add(new ASN1Integer(theLockSpec.getKIterations()));
         return new DERSequence(v);
     }
 
     /**
-     * Obtain the byte length of the encoded object.
+     * Obtain the byte length of the encoded sequence.
      * @return the byte length
      */
-    public static int getEncodedLength() {
+    static int getEncodedLength() {
         /* KeyType has type + length + value (all single byte) */
-        int myLength  =  GordianKeySetHashSpecASN1.getEncodedLength();
-        myLength += GordianASN1Util.getLengthByteArrayField(GordianKeySetHashRecipe.HASHLEN);
+        int myLength  =  GordianASN1Util.getLengthIntegerField(1);
+        myLength += GordianKeySetSpecASN1.getEncodedLength();
 
         /* Calculate the length of the sequence */
         return GordianASN1Util.getLengthSequence(myLength);
-    }
-
-    /**
-     * Obtain the algorithmId.
-     * @return  the algorithmId
-     */
-    public AlgorithmIdentifier getAlgorithmId() {
-        return new AlgorithmIdentifier(KEYSETHASHALGID, toASN1Primitive());
     }
 
     @Override
@@ -170,19 +141,17 @@ public class GordianKeySetHashASN1
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianKeySetHashASN1)) {
+        if (!(pThat instanceof GordianPasswordLockSpecASN1)) {
             return false;
         }
-        final GordianKeySetHashASN1 myThat = (GordianKeySetHashASN1) pThat;
+        final GordianPasswordLockSpecASN1 myThat = (GordianPasswordLockSpecASN1) pThat;
 
         /* Check that the fields are equal */
-        return Objects.equals(theSpec, myThat.getSpec())
-                && Arrays.equals(getHashBytes(), myThat.getHashBytes());
+        return Objects.equals(theLockSpec, myThat.getLockSpec());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSpec())
-                + Arrays.hashCode(getHashBytes());
+        return Objects.hash(getLockSpec());
     }
 }

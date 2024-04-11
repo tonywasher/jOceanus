@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
  * KeySetHash Manager.
  */
 public interface GordianPasswordManager
-    extends GordianKeySetHashManager, GordianKeyPairLockManager, GordianFactoryLockManager, GordianKeySetLockManager, GordianZipLockManager {
+    extends GordianKeyPairLockManager, GordianFactoryLockManager, GordianKeySetLockManager, GordianZipLockManager {
     /**
      * Obtain the security factory.
      * @return the security factory

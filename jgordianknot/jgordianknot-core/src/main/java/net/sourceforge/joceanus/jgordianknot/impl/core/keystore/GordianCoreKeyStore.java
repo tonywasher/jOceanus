@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
@@ -86,9 +86,9 @@ public class GordianCoreKeyStore
     private final GordianCoreFactory theFactory;
 
     /**
-     * The keySetSpec.
+     * The passwordLockSpec.
      */
-    private final GordianKeySetHashSpec theKeySetSpec;
+    private final GordianPasswordLockSpec thePasswordLockSpec;
 
     /**
      * The map of certificates by Subject.
@@ -108,13 +108,13 @@ public class GordianCoreKeyStore
     /**
      * Constructor.
      * @param pFactory the factory
-     * @param pSpec the keySetSpec
+     * @param pSpec the passwordLockSpec
      */
     GordianCoreKeyStore(final GordianCoreFactory pFactory,
-                        final GordianKeySetHashSpec pSpec) {
+                        final GordianPasswordLockSpec pSpec) {
         /* Store parameters */
         theFactory = pFactory;
-        theKeySetSpec = pSpec;
+        thePasswordLockSpec = pSpec;
 
         /* Create the maps */
         theSubjectCerts = new LinkedHashMap<>();
@@ -131,11 +131,11 @@ public class GordianCoreKeyStore
     }
 
     /**
-     * Obtain the keySetHashSpec.
-     * @return the keySetHashSpec
+     * Obtain the passwordLockSpec.
+     * @return the passwordLockSpec
      */
-    public GordianKeySetHashSpec getKeySetSpec() {
-        return theKeySetSpec;
+    public GordianPasswordLockSpec getPasswordLockSpec() {
+        return thePasswordLockSpec;
     }
 
     /**
@@ -329,7 +329,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStorePairElement myPair = new GordianKeyStorePairElement(theFactory, theKeySetSpec, pKeyPair, pPassword, pCertificateChain);
+        final GordianKeyStorePairElement myPair = new GordianKeyStorePairElement(theFactory, thePasswordLockSpec, pKeyPair, pPassword, pCertificateChain);
         theAliases.put(pAlias, myPair);
 
         /* Store all the certificates in the chain */
@@ -384,7 +384,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStoreKeyElement<T> myKey = new GordianKeyStoreKeyElement<>(theFactory, theKeySetSpec, pKey, pPassword);
+        final GordianKeyStoreKeyElement<T> myKey = new GordianKeyStoreKeyElement<>(theFactory, thePasswordLockSpec, pKey, pPassword);
         theAliases.put(pAlias, myKey);
     }
 
@@ -399,7 +399,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStoreSetElement mySet = new GordianKeyStoreSetElement(theFactory, theKeySetSpec, pKeySet, pPassword);
+        final GordianKeyStoreSetElement mySet = new GordianKeyStoreSetElement(theFactory, thePasswordLockSpec, pKeySet, pPassword);
         theAliases.put(pAlias, mySet);
     }
 

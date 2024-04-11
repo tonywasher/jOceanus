@@ -22,8 +22,6 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -89,22 +87,6 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianKeySetHash generateKeySetHash(final GordianKeySetHashSpec pSpec,
-                                                final char[] pPassword) throws OceanusException {
-        /* Check Spec */
-        checkKeySetHashSpec(pSpec);
-
-        /* Create the new hash */
-        return GordianCoreKeySetHash.newKeySetHash(getFactory(), pSpec, pPassword);
-    }
-
-    @Override
-    public GordianKeySetHash deriveKeySetHash(final byte[] pHashBytes,
-                                              final char[] pPassword) throws OceanusException {
-        return GordianCoreKeySetHash.resolveKeySetHash(getFactory(), pHashBytes, pPassword);
-    }
-
-    @Override
     public GordianKeySet generateKeySet(final byte[] pSeed) throws OceanusException {
         final GordianCoreKeySet myKeySet = generateKeySet(new GordianKeySetSpec());
         myKeySet.buildFromSecret(pSeed);
@@ -129,23 +111,11 @@ public class GordianCoreKeySetFactory
     }
 
     /**
-     * Check the keySetHashSpec.
-     * @param pSpec the keySetSpec
-     * @throws OceanusException on error
-     */
-    public void checkKeySetHashSpec(final GordianKeySetHashSpec pSpec) throws OceanusException {
-        /* Check validity of KeySet */
-        if (!validKeySetHashSpec(pSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
-        }
-    }
-
-    /**
      * check valid keySetSpec.
      * @param pSpec the keySetSpec
      * @return true/false
      */
-    private static boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
+    public static boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
         /* Check for invalid spec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;
@@ -160,20 +130,5 @@ public class GordianCoreKeySetFactory
             default:
                 return false;
         }
-    }
-
-    /**
-     * check valid keySetHashSpec.
-     * @param pSpec the keySetHashSpec
-     * @return true/false
-     */
-    private static boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
-        /* Check for invalid spec */
-        if (pSpec == null || !pSpec.isValid()) {
-            return false;
-        }
-
-        /* Check on length */
-        return validKeySetSpec(pSpec.getKeySetSpec());
     }
 }

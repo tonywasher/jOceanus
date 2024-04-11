@@ -23,9 +23,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryLock;
@@ -39,8 +36,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.impl.core.lock.GordianPasswordLockASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -115,42 +110,6 @@ public class GordianBasePasswordManager
     @Override
     public void setDialogController(final GordianDialogController pDialog) {
         theDialog = pDialog;
-    }
-
-    @Override
-    public GordianKeySetHash newKeySetHash(final GordianKeySetHashSpec pKeySetHashSpec,
-                                           final String pSource) throws OceanusException {
-        return (GordianKeySetHash) requestPassword(pSource, true, p -> createKeySetHash(pKeySetHashSpec, p));
-    }
-
-    @Override
-    public GordianKeySetHash resolveKeySetHash(final byte[] pHashBytes,
-                                               final String pSource) throws OceanusException {
-        /* Look up resolved hash */
-        GordianKeySetHash myHash = theCache.lookUpResolvedHash(pHashBytes);
-
-        /* If we have not seen the hash then attempt known passwords */
-        if (myHash == null) {
-            myHash = theCache.attemptKnownPasswordsForHash(pHashBytes);
-        }
-
-        /* If we have not resolved the hash */
-        if (myHash == null) {
-            myHash = (GordianKeySetHash) requestPassword(pSource, false, p -> resolveKeySetHash(pHashBytes, p));
-        }
-
-        /* Return the resolved hash */
-        return myHash;
-    }
-
-    @Override
-    public GordianKeySetHash similarKeySetHash(final GordianKeySetHashSpec pKeySetHashSpec,
-                                               final Object pReference) throws OceanusException {
-        /* LookUp the password */
-        final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
-
-        /* Create a similar hash */
-        return theCache.createSimilarHash(pKeySetHashSpec, myPassword);
     }
 
     @Override
@@ -297,7 +256,7 @@ public class GordianBasePasswordManager
     }
 
     /**
-     * Resolve a keySet ZipLock
+     * Resolve a keySet ZipLock.
      * @param pZipLock the zipLock
      * @param pSource the description of the secured resource
      * @throws OceanusException on error
@@ -321,7 +280,7 @@ public class GordianBasePasswordManager
 
 
     /**
-     * Resolve a keySet ZipLock
+     * Resolve a factory ZipLock.
      * @param pZipLock the zipLock
      * @param pSource the description of the secured resource
      * @throws OceanusException on error
@@ -409,36 +368,6 @@ public class GordianBasePasswordManager
          * @throws GordianBadCredentialsException if password does not match
          */
         Object processPassword(char[] pPassword) throws OceanusException;
-    }
-
-    /**
-     * Create new keySetHash.
-     * @param pKeySetHashSpec the keySetHashSpec
-     * @param pPassword the password
-     * @return the new hash
-     * @throws OceanusException on error
-     */
-    private GordianKeySetHash createKeySetHash(final GordianKeySetHashSpec pKeySetHashSpec,
-                                               final char[] pPassword) throws OceanusException {
-        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        final GordianCoreKeySetHash myKeySetHash = (GordianCoreKeySetHash) myFactory.generateKeySetHash(pKeySetHashSpec, pPassword);
-        theCache.addResolvedHash(myKeySetHash, pPassword);
-        return myKeySetHash;
-    }
-
-    /**
-     * Resolve password for keySetHash.
-     * @param pHashBytes the hash bytes
-     * @param pPassword the password
-     * @return the resolved hash
-     * @throws OceanusException on error
-     */
-    private GordianKeySetHash resolveKeySetHash(final byte[] pHashBytes,
-                                                final char[] pPassword) throws OceanusException {
-        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        final GordianCoreKeySetHash myKeySetHash = (GordianCoreKeySetHash) myFactory.deriveKeySetHash(pHashBytes, pPassword);
-        theCache.addResolvedHash(myKeySetHash, pPassword);
-        return myKeySetHash;
     }
 
     /**

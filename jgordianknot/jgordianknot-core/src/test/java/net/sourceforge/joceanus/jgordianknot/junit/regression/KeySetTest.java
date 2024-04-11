@@ -34,14 +34,13 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -161,12 +160,12 @@ class KeySetTest {
         /**
          * the KeySetSpec.
          */
-        private final GordianKeySetHashSpec theSpec;
+        private final GordianPasswordLockSpec theSpec;
 
         /**
          * The keyHash.
          */
-        private final GordianKeySetHash theKeySetHash;
+        private final GordianKeySetLock theKeySetLock;
 
         /**
          * The keySet Cipher.
@@ -210,16 +209,16 @@ class KeySetTest {
             /* Create the keySetHashSpec */
             final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
                                              : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
-            theSpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
+            theSpec = new GordianPasswordLockSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
 
             /* Generate the hash */
             final GordianFactory myFactory = theFactory.getFactory();
-            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
-            theKeySetHash = myKeySets.generateKeySetHash(theSpec, DEF_PASSWORD.clone());
+            final GordianLockFactory myKeySets = myFactory.getLockFactory();
+            theKeySetLock = myKeySets.newKeySetLock(theSpec, DEF_PASSWORD.clone());
 
             /* Create the ciphers */
-            theKeySetCipher = theKeySetHash.getKeySet().createCipher();
-            theKeySetAADCipher = theKeySetHash.getKeySet().createAADCipher();
+            theKeySetCipher = theKeySetLock.getKeySet().createCipher();
+            theKeySetAADCipher = theKeySetLock.getKeySet().createAADCipher();
 
             /* Initialise data */
             final GordianRandomFactory myRandoms = myFactory.getRandomFactory();
@@ -238,19 +237,19 @@ class KeySetTest {
         }
 
         /**
-         * Obtain the keySetHashSpec.
-         * @return the keySetHashSpec
+         * Obtain the passwordLockSpec.
+         * @return the passwordLockSpec
          */
-        GordianKeySetHashSpec getKeySetHashSpec() {
+        GordianPasswordLockSpec getPasswordLockSpec() {
             return theSpec;
         }
 
         /**
-         * Obtain the keySetHash.
-         * @return the keySetHash
+         * Obtain the keySetLock.
+         * @return the keySetLock
          */
-        GordianKeySetHash getKeySetHash() {
-            return theKeySetHash;
+        GordianKeySetLock getKeySetLock() {
+            return theKeySetLock;
         }
 
         /**
@@ -274,7 +273,7 @@ class KeySetTest {
          * @return the keySet
          */
         GordianKeySet getKeySet() {
-            return theKeySetHash.getKeySet();
+            return theKeySetLock.getKeySet();
         }
 
         /**
@@ -358,31 +357,12 @@ class KeySetTest {
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer(myKeySet.toString(), Stream.of(
-                DynamicTest.dynamicTest("keySet", () -> checkKeySetHash(myKeySet)),
                 DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
                 DynamicTest.dynamicTest("encryptAAD", () -> checkEncryptAAD(myKeySet)),
                 DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
                 DynamicTest.dynamicTest("factory", () -> checkFactory(myKeySet)),
                 DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
         )));
-    }
-
-    /**
-     * Check keySetHash.
-     * @param pKeySet the keySet
-     * @throws OceanusException on error
-     */
-    private void checkKeySetHash(final FactoryKeySet pKeySet) throws OceanusException {
-        /* Access the keySet factory */
-        GordianKeySetFactory myKeySets = pKeySet.getFactory().getKeySetFactory();
-        final GordianKeySetHash myHash = myKeySets.deriveKeySetHash(pKeySet.getKeySetHash().getHash(), DEF_PASSWORD.clone());
-        final GordianKeySet myKeySet = myHash.getKeySet();
-
-        /* Check the keySets are the same */
-        Assertions.assertEquals(pKeySet.getKeySet(), myKeySet, "Failed to derive keySet");
-
-        /* Check the keySet Hash is the correct length */
-        Assertions.assertEquals(GordianUtilities.getKeySetHashLen(), myHash.getHash().length, "Hash is incorrect length");
     }
 
     /**
@@ -779,7 +759,7 @@ class KeySetTest {
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
         final GordianKey<GordianStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
         final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
-        final GordianLength myKeyLen = pKeySet.getKeySetHashSpec().getKeySetSpec().getKeyLength();
+        final GordianLength myKeyLen = pKeySet.getPasswordLockSpec().getKeySetSpec().getKeyLength();
 
         /* Check wrap of symKey */
         final byte[] mySymSafe = myKeySet.secureKey(mySymKey);

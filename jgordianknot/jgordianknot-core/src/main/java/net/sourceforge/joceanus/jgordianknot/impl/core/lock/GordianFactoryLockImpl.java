@@ -117,6 +117,7 @@ public class GordianFactoryLockImpl
     /**
      * UnLocking constructor.
      * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
      * @param pLockBytes the lockBytes
      * @param pPassword the password
      * @throws OceanusException on error

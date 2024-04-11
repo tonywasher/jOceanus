@@ -29,8 +29,10 @@ import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -67,6 +69,9 @@ public class GordianCoreLockFactory
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
                                              final GordianPasswordLockSpec pLockSpec,
                                              final char[] pPassword) throws OceanusException {
+        /* Check the passwordLockSpec */
+        checkPasswordLockSpec(pLockSpec);
+
         /* Create the factoryLock */
         return new GordianFactoryLockImpl(getLockingFactory(), (GordianCoreFactory) pFactoryToLock, pLockSpec, pPassword);
     }
@@ -106,6 +111,9 @@ public class GordianCoreLockFactory
     public GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
                                            final GordianPasswordLockSpec pLockSpec,
                                            final char[] pPassword) throws OceanusException {
+        /* Check the passwordLockSpec */
+        checkPasswordLockSpec(pLockSpec);
+
         /* Create the keySetLock */
         return new GordianKeySetLockImpl(theFactory, (GordianCoreKeySet) pKeySetToLock, pLockSpec, pPassword);
     }
@@ -144,6 +152,9 @@ public class GordianCoreLockFactory
     public GordianKeyPairLock newKeyPairLock(final GordianPasswordLockSpec pLockSpec,
                                              final GordianKeyPair pKeyPair,
                                              final char[] pPassword) throws OceanusException {
+        /* Check the passwordLockSpec */
+        checkPasswordLockSpec(pLockSpec);
+
         /* Create the keyPairLock */
         return new GordianKeyPairLockImpl(theFactory, pLockSpec, pKeyPair, pPassword);
     }
@@ -213,5 +224,32 @@ public class GordianCoreLockFactory
             LOGGER.error("Hostname can not be resolved", e);
             return "localhost".toCharArray();
         }
+    }
+
+    /**
+     * Check the passwordLockSpec.
+     * @param pSpec the passwoerdLockSpec
+     * @throws OceanusException on error
+     */
+    public void checkPasswordLockSpec(final GordianPasswordLockSpec pSpec) throws OceanusException {
+        /* Check validity of PasswordLockSpec */
+        if (!validPasswordLockSpec(pSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * check valid passwordLockSpec.
+     * @param pSpec the passwordLockSpec
+     * @return true/false
+     */
+    private static boolean validPasswordLockSpec(final GordianPasswordLockSpec pSpec) {
+        /* Check for invalid spec */
+        if (pSpec == null || !pSpec.isValid()) {
+            return false;
+        }
+
+        /* Check on length */
+        return GordianCoreKeySetFactory.validKeySetSpec(pSpec.getKeySetSpec());
     }
 }
