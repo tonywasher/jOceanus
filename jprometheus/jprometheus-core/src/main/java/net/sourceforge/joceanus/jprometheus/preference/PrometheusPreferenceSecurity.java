@@ -24,11 +24,11 @@ import java.util.Set;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -66,11 +66,11 @@ public class PrometheusPreferenceSecurity {
     PrometheusPreferenceSecurity(final PrometheusPreferenceManager pManager) throws OceanusException {
         /* Create a Security Factory */
         final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
+        final GordianLockFactory myLocks = myFactory.getLockFactory();
 
         /* Obtain the hash as a preference */
         final PrometheusBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(PrometheusBaseSecurityPreferences.class);
-        final byte[] myHash = myPrefs.getByteArrayValue(PrometheusSecurityPreferenceKey.HASH);
+        final byte[] myLock = myPrefs.getByteArrayValue(PrometheusSecurityPreferenceKey.LOCK);
 
         /* Derive the password */
         final char[] myHost = getHostName();
@@ -79,18 +79,18 @@ public class PrometheusPreferenceSecurity {
         System.arraycopy(myHost, 0, myPassword, 0, myHost.length);
         System.arraycopy(myUser, 0, myPassword, myHost.length, myUser.length);
 
-        /* Derive or create the hash */
-        final GordianKeySetHash myKeySetHash = myHash == null
-                ? myKeySets.generateKeySetHash(new GordianKeySetHashSpec(), myPassword)
-                : myKeySets.deriveKeySetHash(myHash, myPassword);
+        /* Derive or create the lock */
+        final GordianKeySetLock myKeySetLock = myLock == null
+                ? myLocks.newKeySetLock(new GordianPasswordLockSpec(), myPassword)
+                : myLocks.resolveKeySetLock(myLock, myPassword);
 
         /* record the KeySet */
-        theKeySet = myKeySetHash.getKeySet();
+        theKeySet = myKeySetLock.getKeySet();
 
-        /* If we have created a new hash */
-        if (myHash == null) {
-            /* Record the hash */
-            myPrefs.setHash(myKeySetHash.getHash());
+        /* If we have created a new lock */
+        if (myLock == null) {
+            /* Record the lock */
+            myPrefs.setHash(myKeySetLock.getLockBytes());
             myPrefs.storeChanges();
         }
     }
@@ -141,9 +141,9 @@ public class PrometheusPreferenceSecurity {
      */
     public enum PrometheusSecurityPreferenceKey implements MetisPreferenceKey {
         /**
-         * Hash.
+         * Lock.
          */
-        HASH("Hash", null),
+        LOCK("Lock", null),
 
         /**
          * Factory.
@@ -227,17 +227,17 @@ public class PrometheusPreferenceSecurity {
         }
 
         /**
-         * Set hash.
+         * Set lock.
          *
-         * @param pHash the hash
+         * @param pHash the lock
          */
         protected void setHash(final byte[] pHash) {
-            getByteArrayPreference(PrometheusSecurityPreferenceKey.HASH).setValue(pHash);
+            getByteArrayPreference(PrometheusSecurityPreferenceKey.LOCK).setValue(pHash);
         }
 
         @Override
         protected void definePreferences() {
-            defineByteArrayPreference(PrometheusSecurityPreferenceKey.HASH);
+            defineByteArrayPreference(PrometheusSecurityPreferenceKey.LOCK);
         }
 
         @Override
@@ -309,12 +309,12 @@ public class PrometheusPreferenceSecurity {
          *
          * @return the parameters
          */
-        public GordianKeySetHashSpec getKeySetHashSpec() {
+        public GordianPasswordLockSpec getPasswordLockSpec() {
             /* Build and return keySetSpec */
             final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             final int myIterations = getIntegerValue(PrometheusSecurityPreferenceKey.HASHITERATIONS);
             final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
-            return new GordianKeySetHashSpec(myIterations, new GordianKeySetSpec(myKeyLen, mySteps));
+            return new GordianPasswordLockSpec(myIterations, new GordianKeySetSpec(myKeyLen, mySteps));
         }
 
         @Override
@@ -367,13 +367,13 @@ public class PrometheusPreferenceSecurity {
             /* Make sure that the hashIterations is specified */
             myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianKeySetHashSpec.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianKeySetHashSpec.MINIMUM_ITERATIONS, GordianKeySetHashSpec.MAXIMUM_ITERATIONS);
+            myPref.setRange(GordianPasswordLockSpec.MINIMUM_ITERATIONS, GordianPasswordLockSpec.MAXIMUM_ITERATIONS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianKeySetHashSpec.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);
             }
 
             /* Make sure that the activeKeySets is specified */

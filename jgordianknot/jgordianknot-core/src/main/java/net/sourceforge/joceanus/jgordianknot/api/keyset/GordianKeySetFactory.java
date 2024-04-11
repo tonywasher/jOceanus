@@ -33,27 +33,6 @@ public interface GordianKeySetFactory {
     GordianKeySet generateKeySet(GordianKeySetSpec pKeySetSpec) throws OceanusException;
 
     /**
-     * Generate a keySetHash for the given password.
-     * @param pKeySetSpec the keySetSpec
-     * @param pPassword the password
-     * @return the Password hash
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash generateKeySetHash(GordianKeySetHashSpec pKeySetSpec,
-                                         char[] pPassword) throws OceanusException;
-
-    /**
-     * Derive a keySetHash for the given hash and password.
-     * @param pHashBytes the hash bytes
-     * @param pPassword the password
-     * @return the Password hash
-     * @throws OceanusException on error
-     * @throws GordianBadCredentialsException if password does not match
-     */
-    GordianKeySetHash deriveKeySetHash(byte[] pHashBytes,
-                                       char[] pPassword) throws OceanusException;
-
-    /**
      * Obtain predicate for supported KeySetSpecs.
      * @return the predicate
      */

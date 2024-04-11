@@ -54,15 +54,12 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryEncryptor;
@@ -99,7 +96,7 @@ class AsymmetricTest {
     /**
      * KeySetSpec.
      */
-    private static final GordianKeySetHashSpec KEYSETHASHSPEC = new GordianKeySetHashSpec();
+    private static final GordianKeySetSpec KEYSETSPEC = new GordianKeySetSpec();
 
     /**
      * SymCipherSpec.
@@ -257,7 +254,7 @@ class AsymmetricTest {
         /* Add self agreement test */
         Stream<DynamicNode> myTests = Stream.of(DynamicContainer.dynamicContainer("SelfAgree", Stream.of(
                 DynamicTest.dynamicTest("factory", () -> checkSelfAgreement(pAgreement, GordianFactoryType.BC)),
-                DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETHASHSPEC.getKeySetSpec())),
+                DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC)),
                 DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC)),
                 DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC)),
                 DynamicTest.dynamicTest("basic", () -> checkSelfAgreement(pAgreement, null))
@@ -352,9 +349,9 @@ class AsymmetricTest {
             /* Check for StateAware */
             Assertions.assertTrue(myPair instanceof GordianStateAwareKeyPair, "Pair");
             Assertions.assertTrue(myMirror instanceof GordianStateAwareKeyPair, "Mirror");
-            Assertions.assertTrue(myPairs.getTargetKeyPair() instanceof GordianStateAwareKeyPair, "Target");
-            Assertions.assertTrue(myPairs.getPartnerSelfKeyPair() instanceof GordianStateAwareKeyPair, "PartnerSelf");
-            Assertions.assertTrue(myPairs.getPartnerTargetKeyPair() instanceof GordianStateAwareKeyPair, "PartnerTarget");
+            Assertions.assertInstanceOf(GordianStateAwareKeyPair.class, myPairs.getTargetKeyPair(), "Target");
+            Assertions.assertInstanceOf(GordianStateAwareKeyPair.class, myPairs.getPartnerSelfKeyPair(), "PartnerSelf");
+            Assertions.assertInstanceOf(GordianStateAwareKeyPair.class, myPairs.getPartnerTargetKeyPair(), "PartnerTarget");
         }
     }
 
@@ -372,8 +369,7 @@ class AsymmetricTest {
 
         /* Create a keySet */
         final GordianKeySetFactory myKeySetFactory = myFactory.getFactory().getKeySetFactory();
-        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash(KEYSETHASHSPEC, "Hello".toCharArray());
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myHash.getKeySet();
+        final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(KEYSETSPEC);
         final byte[] mySecured = myKeySet.securePrivateKey(myPair);
         final GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
         Assertions.assertEquals(myPair, myDerived, "Incorrect derived pair");

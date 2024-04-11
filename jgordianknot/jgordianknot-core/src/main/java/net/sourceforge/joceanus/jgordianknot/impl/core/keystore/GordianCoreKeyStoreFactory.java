@@ -23,11 +23,11 @@ import java.io.InputStream;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -57,7 +57,7 @@ public class GordianCoreKeyStoreFactory
     }
 
     @Override
-    public GordianKeyStore createKeyStore(final GordianKeySetHashSpec pSpec) {
+    public GordianKeyStore createKeyStore(final GordianPasswordLockSpec pSpec) {
         return new GordianCoreKeyStore(theFactory, pSpec);
     }
 

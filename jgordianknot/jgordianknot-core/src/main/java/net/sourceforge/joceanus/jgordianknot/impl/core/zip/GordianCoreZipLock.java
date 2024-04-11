@@ -208,7 +208,7 @@ public class GordianCoreZipLock
     }
 
     /**
-     * Obtain LockASN1
+     * Obtain LockASN1.
      * @return the lockASN1
      */
     public GordianZipLockASN1 getZipLockASN1() {

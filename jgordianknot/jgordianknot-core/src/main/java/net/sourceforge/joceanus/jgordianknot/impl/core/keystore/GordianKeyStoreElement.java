@@ -22,14 +22,14 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -214,9 +214,9 @@ public interface GordianKeyStoreElement {
         private final byte[] theSecuredKey;
 
         /**
-         * The securing hash.
+         * The securing lock.
          */
-        private final GordianKeyStoreHashElement theSecuringHash;
+        private final GordianKeyStoreLockElement theSecuringLock;
 
         /**
          * The certificate chain.
@@ -226,22 +226,22 @@ public interface GordianKeyStoreElement {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pSpec the keySetHashSpec
+         * @param pSpec the passwordLockSpec
          * @param pKeyPair the keyPair
          * @param pPassword the securing password.
          * @param pChain the certificate chain.
          * @throws OceanusException on error
          */
         GordianKeyStorePairElement(final GordianFactory pFactory,
-                                   final GordianKeySetHashSpec pSpec,
+                                   final GordianPasswordLockSpec pSpec,
                                    final GordianKeyPair pKeyPair,
                                    final char[] pPassword,
                                    final List<GordianCertificate> pChain) throws OceanusException {
-            /* Create a securing hash */
-            final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pSpec, pPassword);
-            theSecuringHash = new GordianKeyStoreHashElement(myHash);
-            final GordianKeySet myKeySet = myHash.getKeySet();
+            /* Create a securing lock */
+            final GordianLockFactory myFactory = pFactory.getLockFactory();
+            final GordianKeySetLock myLock = myFactory.newKeySetLock(pSpec, pPassword);
+            theSecuringLock = new GordianKeyStoreLockElement(myLock);
+            final GordianKeySet myKeySet = myLock.getKeySet();
 
             /* Secure the privateKey */
             theSecuredKey = securePrivateKey(myKeySet, pKeyPair);
@@ -256,18 +256,18 @@ public interface GordianKeyStoreElement {
         /**
          * Constructor.
          * @param pSecuredKey the secured privateKey
-         * @param pSecuringHash the securing hash.
+         * @param pSecuringLock the securing keySetLock.
          * @param pChain the certificate chain.
          * @param pDate the creation date
          */
         GordianKeyStorePairElement(final byte[] pSecuredKey,
-                                   final byte[] pSecuringHash,
+                                   final byte[] pSecuringLock,
                                    final List<GordianKeyStoreCertificateKey> pChain,
                                    final TethysDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKey = pSecuredKey;
-            theSecuringHash = new GordianKeyStoreHashElement(pSecuringHash, pDate);
+            theSecuringLock = new GordianKeyStoreLockElement(pSecuringLock, pDate);
             theChain = new ArrayList<>(pChain);
         }
 
@@ -280,19 +280,19 @@ public interface GordianKeyStoreElement {
         }
 
         /**
-         * Obtain the securingHash.
-         * @return the securingHash
+         * Obtain the securingLock.
+         * @return the securingLock
          */
-        GordianKeyStoreHashElement getSecuringHash() {
-            return theSecuringHash;
+        GordianKeyStoreLockElement getSecuringLock() {
+            return theSecuringLock;
         }
 
         /**
-         * Obtain the securingHashHash.
-         * @return the securingHashHash
+         * Obtain the securingLockBytes.
+         * @return the securingLockBytes
          */
-        byte[] getSecuringHashHash() {
-            return theSecuringHash.getHash();
+        byte[] getSecuringLockBytes() {
+            return theSecuringLock.getLock();
         }
 
         @Override
@@ -358,8 +358,8 @@ public interface GordianKeyStoreElement {
             /* Create the chain */
             final List<GordianCertificate> myChain = buildChain(pKeyStore);
 
-            /* Resolve securing hash */
-            final GordianKeySetHash myHash = getSecuringHash().buildEntry(pKeyStore, pPassword);
+            /* Resolve securing lock */
+            final GordianKeySetLock myHash = getSecuringLock().buildEntry(pKeyStore, pPassword);
 
             /* derive the keyPair */
             final GordianKeySet myKeySet = myHash.getKeySet();
@@ -388,7 +388,7 @@ public interface GordianKeyStoreElement {
 
             /* Check that the hashes match */
             return Arrays.equals(theSecuredKey, myThat.getSecuredKey())
-                    && Arrays.equals(getSecuringHashHash(), myThat.getSecuringHashHash())
+                    && Arrays.equals(getSecuringLockBytes(), myThat.getSecuringLockBytes())
                     && theChain.equals(myThat.getCertificateChain())
                     && super.equals(pThat);
         }
@@ -396,49 +396,49 @@ public interface GordianKeyStoreElement {
         @Override
         public int hashCode() {
             return Arrays.hashCode(theSecuredKey)
-                    + Arrays.hashCode(getSecuringHashHash())
+                    + Arrays.hashCode(getSecuringLockBytes())
                     + theChain.hashCode()
                     + super.hashCode();
         }
     }
 
     /**
-     * KeyStore hash Element.
+     * KeyStore lock Element.
      */
-    class GordianKeyStoreHashElement
+    class GordianKeyStoreLockElement
             extends GordianCoreKeyStoreEntry {
         /**
          * The hash.
          */
-        private final byte[] theHash;
+        private final byte[] theLock;
 
         /**
          * Constructor.
-         * @param pHash the hash.
+         * @param pLock the lock.
          */
-        GordianKeyStoreHashElement(final GordianKeySetHash pHash) {
+        GordianKeyStoreLockElement(final GordianKeySetLock pLock) {
             /* Store details */
-            theHash = pHash.getHash();
+            theLock = pLock.getLockBytes();
         }
 
         /**
          * Constructor.
-         * @param pHash the hash.
+         * @param pLock the lock.
          * @param pDate the creation date
          */
-        GordianKeyStoreHashElement(final byte[] pHash,
+        GordianKeyStoreLockElement(final byte[] pLock,
                                    final TethysDate pDate) {
             /* Store details */
             super(pDate);
-            theHash = pHash;
+            theLock = pLock;
         }
 
         /**
          * Obtain the hash.
          * @return the hash
          */
-        byte[] getHash()  {
-            return theHash;
+        byte[] getLock()  {
+            return theLock;
         }
 
         /**
@@ -448,11 +448,11 @@ public interface GordianKeyStoreElement {
          * @return the keyStore certificate entry
          * @throws OceanusException on error
          */
-        GordianKeySetHash buildEntry(final GordianCoreKeyStore pKeyStore,
+        GordianKeySetLock buildEntry(final GordianCoreKeyStore pKeyStore,
                                      final char[] pPassword) throws OceanusException {
             /* Resolve the hash */
-            final GordianKeySetFactory myFactory = pKeyStore.getFactory().getKeySetFactory();
-            return myFactory.deriveKeySetHash(theHash, pPassword);
+            final GordianLockFactory myFactory = pKeyStore.getFactory().getLockFactory();
+            return myFactory.resolveKeySetLock(theLock, pPassword);
         }
 
         @Override
@@ -466,19 +466,19 @@ public interface GordianKeyStoreElement {
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStoreHashElement)) {
+            if (!(pThat instanceof GordianKeyStoreLockElement)) {
                 return false;
             }
-            final GordianKeyStoreHashElement myThat = (GordianKeyStoreHashElement) pThat;
+            final GordianKeyStoreLockElement myThat = (GordianKeyStoreLockElement) pThat;
 
             /* Check that the hashes match */
-            return Arrays.equals(theHash, myThat.getHash())
+            return Arrays.equals(theLock, myThat.getLock())
                     && super.equals(pThat);
         }
 
         @Override
         public int hashCode() {
-            return Arrays.hashCode(theHash)
+            return Arrays.hashCode(theLock)
                     + super.hashCode();
         }
     }
@@ -500,49 +500,49 @@ public interface GordianKeyStoreElement {
         private final byte[] theSecuredKey;
 
         /**
-         * The securing hash.
+         * The securing lock.
          */
-        private final GordianKeyStoreHashElement theSecuringHash;
+        private final GordianKeyStoreLockElement theSecuringLock;
 
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pSpec the keySetHashSpec
+         * @param pSpec the passwordLockSpec
          * @param pKey the key
          * @param pPassword the securing password.
          * @throws OceanusException on error
          */
         GordianKeyStoreKeyElement(final GordianFactory pFactory,
-                                  final GordianKeySetHashSpec pSpec,
+                                  final GordianPasswordLockSpec pSpec,
                                   final GordianKey<T> pKey,
                                   final char[] pPassword) throws OceanusException {
-            /* Create a securing hash */
-            final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pSpec, pPassword);
-            final GordianKeySet myKeySet = myHash.getKeySet();
+            /* Create a securing lock */
+            final GordianLockFactory myFactory = pFactory.getLockFactory();
+            final GordianKeySetLock myLock = myFactory.newKeySetLock(pSpec, pPassword);
+            final GordianKeySet myKeySet = myLock.getKeySet();
 
             /* Store details */
             theKeyType = pKey.getKeyType();
             theSecuredKey = myKeySet.secureKey(pKey);
-            theSecuringHash = new GordianKeyStoreHashElement(myHash);
+            theSecuringLock = new GordianKeyStoreLockElement(myLock);
         }
 
         /**
          * Constructor.
          * @param pKeyType the keyType
          * @param pSecuredKey the key
-         * @param pSecuringHash the securing hash.
+         * @param pSecuringLock the securing lock.
          * @param pDate the creation date
          */
         GordianKeyStoreKeyElement(final T pKeyType,
                                   final byte[] pSecuredKey,
-                                  final byte[] pSecuringHash,
+                                  final byte[] pSecuringLock,
                                   final TethysDate pDate) {
             /* Store details */
             super(pDate);
             theKeyType = pKeyType;
             theSecuredKey = pSecuredKey;
-            theSecuringHash = new GordianKeyStoreHashElement(pSecuringHash, pDate);
+            theSecuringLock = new GordianKeyStoreLockElement(pSecuringLock, pDate);
         }
 
         /**
@@ -562,19 +562,19 @@ public interface GordianKeyStoreElement {
         }
 
         /**
-         * Obtain the securingHash.
-         * @return the securingHash
+         * Obtain the securingLock.
+         * @return the securingLock
          */
-        GordianKeyStoreHashElement getSecuringHash() {
-            return theSecuringHash;
+        GordianKeyStoreLockElement getSecuringLock() {
+            return theSecuringLock;
         }
 
         /**
-         * Obtain the securingHashHash.
-         * @return the securingHashHash
+         * Obtain the securingLockBytes.
+         * @return the securingLockBytes
          */
-        byte[] getSecuringHashHash() {
-            return theSecuringHash.getHash();
+        byte[] getSecuringLockBytes() {
+            return theSecuringLock.getLock();
         }
 
         /**
@@ -586,11 +586,11 @@ public interface GordianKeyStoreElement {
          */
         GordianCoreKeyStoreKey<T> buildEntry(final GordianCoreKeyStore pKeyStore,
                                              final char[] pPassword) throws OceanusException {
-            /* Resolve securing hash */
-            final GordianKeySetHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
+            /* Resolve securing lock */
+            final GordianKeySetLock myLock = theSecuringLock.buildEntry(pKeyStore, pPassword);
 
             /* derive the key */
-            final GordianKeySet myKeySet = myHash.getKeySet();
+            final GordianKeySet myKeySet = myLock.getKeySet();
             final GordianKey<T> myKey = myKeySet.deriveKey(theSecuredKey, theKeyType);
             return new GordianCoreKeyStoreKey<>(myKey, getCreationDate());
         }
@@ -614,7 +614,7 @@ public interface GordianKeyStoreElement {
             /* Check that the hashes match */
             return theKeyType.equals(myThat.getKeyType())
                     && Arrays.equals(theSecuredKey, myThat.getSecuredKey())
-                    && Arrays.equals(getSecuringHashHash(), myThat.getSecuringHashHash())
+                    && Arrays.equals(getSecuringLockBytes(), myThat.getSecuringLockBytes())
                     && super.equals(pThat);
         }
 
@@ -622,7 +622,7 @@ public interface GordianKeyStoreElement {
         public int hashCode() {
             return theKeyType.hashCode()
                     + Arrays.hashCode(theSecuredKey)
-                    + Arrays.hashCode(getSecuringHashHash())
+                    + Arrays.hashCode(getSecuringLockBytes())
                     + super.hashCode();
         }
     }
@@ -638,9 +638,9 @@ public interface GordianKeyStoreElement {
         private final byte[] theSecuredKeySet;
 
         /**
-         * The securing hash.
+         * The securing lock.
          */
-        private final GordianKeyStoreHashElement theSecuringHash;
+        private final GordianKeyStoreLockElement theSecuringLock;
 
         /**
          * Constructor.
@@ -651,14 +651,14 @@ public interface GordianKeyStoreElement {
          * @throws OceanusException on error
          */
         GordianKeyStoreSetElement(final GordianFactory pFactory,
-                                  final GordianKeySetHashSpec pSpec,
+                                  final GordianPasswordLockSpec pSpec,
                                   final GordianKeySet pKeySet,
                                   final char[] pPassword) throws OceanusException {
             /* Create a securing hash */
-            final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pSpec, pPassword);
-            final GordianKeySet myKeySet = myHash.getKeySet();
-            theSecuringHash = new GordianKeyStoreHashElement(myHash);
+            final GordianLockFactory myFactory = pFactory.getLockFactory();
+            final GordianKeySetLock myLock = myFactory.newKeySetLock(pSpec, pPassword);
+            final GordianKeySet myKeySet = myLock.getKeySet();
+            theSecuringLock = new GordianKeyStoreLockElement(myLock);
 
             /* Secure the keySet */
             theSecuredKeySet = myKeySet.encryptKeySet(pKeySet);
@@ -667,16 +667,16 @@ public interface GordianKeyStoreElement {
         /**
          * Constructor.
          * @param pSecuredKeySet the securedKeySet
-         * @param pSecuringHash the securing hash.
+         * @param pSecuringLock the securing lock.
          * @param pDate the creation date
          */
         GordianKeyStoreSetElement(final byte[] pSecuredKeySet,
-                                  final byte[] pSecuringHash,
+                                  final byte[] pSecuringLock,
                                   final TethysDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKeySet = pSecuredKeySet;
-            theSecuringHash = new GordianKeyStoreHashElement(pSecuringHash, pDate);
+            theSecuringLock = new GordianKeyStoreLockElement(pSecuringLock, pDate);
         }
 
         /**
@@ -688,19 +688,19 @@ public interface GordianKeyStoreElement {
         }
 
         /**
-         * Obtain the securingHash.
-         * @return the securingHash
+         * Obtain the securingLock.
+         * @return the securingLock
          */
-        GordianKeyStoreHashElement getSecuringHash() {
-            return theSecuringHash;
+        GordianKeyStoreLockElement getSecuringLock() {
+            return theSecuringLock;
         }
 
         /**
-         * Obtain the securingHashHash.
-         * @return the securingHashHash
+         * Obtain the securingLockBytes.
+         * @return the securingLockBytes
          */
-        byte[] getSecuringHashHash() {
-            return theSecuringHash.getHash();
+        byte[] getSecuringLockBytes() {
+            return theSecuringLock.getLock();
         }
 
         /**
@@ -712,9 +712,9 @@ public interface GordianKeyStoreElement {
          */
         GordianCoreKeyStoreSet buildEntry(final GordianCoreKeyStore pKeyStore,
                                           final char[] pPassword) throws OceanusException {
-            /* Resolve the hash */
-            final GordianKeySetHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
-            final GordianKeySet mySecuringKeySet = myHash.getKeySet();
+            /* Resolve the lock */
+            final GordianKeySetLock myLock = theSecuringLock.buildEntry(pKeyStore, pPassword);
+            final GordianKeySet mySecuringKeySet = myLock.getKeySet();
 
             /* Derive the keySet */
             final GordianKeySet myKeySet = mySecuringKeySet.decryptKeySet(theSecuredKeySet);
@@ -741,14 +741,14 @@ public interface GordianKeyStoreElement {
 
             /* Check that the hashes match */
             return Arrays.equals(theSecuredKeySet, myThat.getSecuredKeySet())
-                    && Arrays.equals(getSecuringHashHash(), myThat.getSecuringHashHash())
+                    && Arrays.equals(getSecuringLockBytes(), myThat.getSecuringLockBytes())
                     && super.equals(pThat);
         }
 
         @Override
         public int hashCode() {
             return Arrays.hashCode(theSecuredKeySet)
-                    + Arrays.hashCode(getSecuringHashHash())
+                    + Arrays.hashCode(getSecuringLockBytes())
                     + super.hashCode();
         }
     }

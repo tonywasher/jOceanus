@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.keystore;
 import java.io.File;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -28,10 +28,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianKeyStoreFactory {
     /**
      * Create a new empty KeyStore.
-     * @param pSpec the keySetHashSpec
+     * @param pSpec the passwordLockSpec
      * @return the keyStore
      */
-    GordianKeyStore createKeyStore(GordianKeySetHashSpec pSpec);
+    GordianKeyStore createKeyStore(GordianPasswordLockSpec pSpec);
 
     /**
      * Load a keyStore from a File.

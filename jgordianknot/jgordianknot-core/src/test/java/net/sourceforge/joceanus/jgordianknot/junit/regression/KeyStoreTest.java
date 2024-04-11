@@ -63,7 +63,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
@@ -75,7 +74,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
-import net.sourceforge.joceanus.jgordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStore;
@@ -111,7 +110,7 @@ public class KeyStoreTest {
     /**
      * The KeySetHashSpec.
      */
-    private static final GordianKeySetHashSpec KEYSETHASHSPEC = new GordianKeySetHashSpec(KEYSETSPEC);
+    private static final GordianPasswordLockSpec KEYSETLOCKSPEC = new GordianPasswordLockSpec(KEYSETSPEC);
 
     /**
      * Create the keyStore test suite.
@@ -137,7 +136,7 @@ public class KeyStoreTest {
 
         /* Access keyStoreFactory and create a keyStore */
         final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
-        final GordianKeyStore myStore = myKSFactory.createKeyStore(KEYSETHASHSPEC);
+        final GordianKeyStore myStore = myKSFactory.createKeyStore(KEYSETLOCKSPEC);
         final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
 
         /* Return the stream */
