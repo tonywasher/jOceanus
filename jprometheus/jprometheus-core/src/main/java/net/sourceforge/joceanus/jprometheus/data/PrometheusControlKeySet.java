@@ -145,7 +145,7 @@ public class PrometheusControlKeySet
         if (myValue instanceof GordianKeySet) {
             setValueKeySet((GordianKeySet) myValue);
         } else if (getSecuredKeySetDef() != null) {
-            final GordianKeySet myKeySet = theSecurityFactory.getEmbeddedKeySet().decryptKeySet(getSecuredKeySetDef());
+            final GordianKeySet myKeySet = theSecurityFactory.getEmbeddedKeySet().deriveKeySet(getSecuredKeySetDef());
             setValueKeySet(myKeySet);
         }
 
@@ -181,7 +181,7 @@ public class PrometheusControlKeySet
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueSecuredKeySetDef(theSecurityFactory.getEmbeddedKeySet().encryptKeySet(myKeySet));
+            setValueSecuredKeySetDef(theSecurityFactory.getEmbeddedKeySet().secureKeySet(myKeySet));
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);

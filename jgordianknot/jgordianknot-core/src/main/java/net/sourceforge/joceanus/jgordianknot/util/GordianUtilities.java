@@ -46,8 +46,7 @@ public final class GordianUtilities {
      * @return the maximum keyWrap size
      */
     public static int getMaximumKeyWrapLength() {
-        return GordianCoreKeySet.getDataWrapLength(GordianLength.LEN_256.getByteLength(),
-                GordianKeySetSpec.MAXIMUM_CIPHER_STEPS);
+        return GordianCoreKeySet.getDataWrapLength(GordianLength.LEN_256.getByteLength());
     }
 
     /**

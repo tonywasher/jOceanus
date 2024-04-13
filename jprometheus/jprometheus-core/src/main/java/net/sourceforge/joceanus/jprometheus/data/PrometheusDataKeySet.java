@@ -143,7 +143,7 @@ public class PrometheusDataKeySet
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         } else if (getSecuredKeySetDef() != null) {
-            final GordianKeySet myKeySet = myControlKeySet.getKeySet().decryptKeySet(getSecuredKeySetDef());
+            final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         }
@@ -182,7 +182,7 @@ public class PrometheusDataKeySet
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueSecuredKeySetDef(pControlKeySet.getKeySet().encryptKeySet(myKeySet));
+            setValueSecuredKeySetDef(pControlKeySet.getKeySet().secureKeySet(myKeySet));
 
             /* Catch Exceptions */
         } catch (OceanusException e) {

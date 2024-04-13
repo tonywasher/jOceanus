@@ -125,17 +125,19 @@
         </section>
         <section name="KeySet Wrapping">
             <subsection name="Algorithm">
-                <p>Wrapping works by selecting a subSet of the available keys and initially encrypting the message with the first key and then wrapping the result
-                    using each remaining key in turn.</p>
+                <p>Wrapping works by selecting a subSet of the available keys and initially encrypting the message with the first key and then using the remaining
+                    keys to wrap the result using the standard wrapping algorithm. In each case where the normal cipher is used to encrypt/decrypt, the remaining set
+                    of keys is used to encrypt/decrypt in turn.</p>
                 <ol>
                     <li>A random 32-bit seed <strong>S</strong> and a random 128-bit initVector <strong>V</strong> are generated.</li>
                     <li>A subSet of <strong>n</strong> keys is selected (all different) using a seededRandom based on <strong>S</strong> and the personalisation value
                         <strong>I<sub>2</sub></strong></li>
-                    <li>An initiation vectors <strong>V<sub>1</sub></strong> is calculated by xor-ing <strong>V</strong> with <strong>IV<sub>1</sub></strong></li>
+                    <li>An initiation vector <strong>V<sub>1</sub></strong> is calculated by xor-ing <strong>V</strong> with <strong>IV<sub>1</sub></strong></li>
                     <li>The first encryption is performed on the bytes <strong>B</strong> using <strong>K<sub>1</sub></strong> in <strong>SIC</strong>
                         mode using <strong>V<sub>1</sub></strong> as the initialisation vector to create <strong>W<sub>1</sub></strong></li>
-                    <li>Further wrapping occurs wrapping <strong>W<sub>x-1</sub></strong> with keys <strong>K<sub>x</sub></strong> to produce <strong>W<sub>x</sub></strong></li>
-                    <li>The result is the concatenation of <strong>S||V||W<sub>n</sub></strong></li>
+                    <li>The result <strong>W<sub>1</sub></strong> is then wrapped using keys <strong>K<sub>2</sub></strong> to <strong>K<sub>x</sub></strong>
+                        to produce <strong>W<sub>2</sub></strong></li>
+                    <li>The result is the concatenation of <strong>S||V||W<sub>2</sub></strong></li>
                 </ol>
             </subsection>
             <subsection name="Sample">

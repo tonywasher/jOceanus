@@ -330,7 +330,7 @@ public class GordianPEMCoder {
         try {
             /* Build encoded object and return it */
             final GordianKeySet myKeySet = pLock.getKeySet();
-            final byte[] mySecuredKeySet = myKeySet.encryptKeySet(pKeySet.getKeySet());
+            final byte[] mySecuredKeySet = myKeySet.secureKeySet(pKeySet.getKeySet());
             final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKeySet);
             return new GordianPEMObject(GordianPEMObjectType.KEYSET, myInfo.getEncoded());
 
@@ -521,7 +521,7 @@ public class GordianPEMCoder {
         final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);
 
         /* Derive the keySet */
-        final GordianKeySet myKeySet = mySecuringKeySet.decryptKeySet(myInfo.getEncryptedData());
+        final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
         return new GordianCoreKeyStoreSet(myKeySet, new TethysDate());
     }
 

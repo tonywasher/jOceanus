@@ -780,8 +780,8 @@ class KeySetTest {
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myMacSafe.length, "Incorrect wrapped macLength: " + myMacKey.getKeyType());
 
         /* Check wrap of keySet */
-        final byte[] myKeySetSafe = myKeySet.encryptKeySet(myKeySet);
-        final GordianKeySet myKeySetResult = myKeySet.decryptKeySet(myKeySetSafe);
+        final byte[] myKeySetSafe = myKeySet.secureKeySet(myKeySet);
+        final GordianKeySet myKeySetResult = myKeySet.deriveKeySet(myKeySetSafe);
         Assertions.assertEquals(myKeySet, myKeySetResult, "Failed to wrap/unwrap keySet");
         Assertions.assertEquals(myKeySet.getKeySetWrapLength(), myKeySetSafe.length, "Incorrect wrapped keySetLength");
     }

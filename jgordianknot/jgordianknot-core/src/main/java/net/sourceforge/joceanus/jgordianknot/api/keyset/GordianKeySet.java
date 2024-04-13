@@ -105,20 +105,20 @@ public interface GordianKeySet {
                            byte[] pAAD) throws OceanusException;
 
     /**
-     * encrypt KeySet.
+     * secure KeySet.
      * @param pKeySetToSecure the keySet to secure
      * @return the encryptedKeySet
      * @throws OceanusException on error
      */
-    byte[] encryptKeySet(GordianKeySet pKeySetToSecure) throws OceanusException;
+    byte[] secureKeySet(GordianKeySet pKeySetToSecure) throws OceanusException;
 
     /**
-     * decrypt KeySet.
+     * derive KeySet.
      * @param pSecuredKeySet the secured keySet
      * @return the decrypted keySet
      * @throws OceanusException on error
      */
-    GordianKeySet decryptKeySet(byte[] pSecuredKeySet) throws OceanusException;
+    GordianKeySet deriveKeySet(byte[] pSecuredKeySet) throws OceanusException;
 
     /**
      * secure bytes.
@@ -179,13 +179,6 @@ public interface GordianKeySet {
      * @return the wrapped length
      */
     int getKeyWrapLength(GordianLength pKeyLen);
-
-    /**
-     * Obtain wrapped size of a byte array of the given length.
-     * @param pDataLength the length of the byte array
-     * @return the wrapped length
-     */
-    int getDataWrapLength(int pDataLength);
 
     /**
      * Obtain wrapped size of the privateKey of a keyPair.

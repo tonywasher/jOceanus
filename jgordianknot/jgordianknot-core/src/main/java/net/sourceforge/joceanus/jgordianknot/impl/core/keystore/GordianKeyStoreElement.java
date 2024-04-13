@@ -661,7 +661,7 @@ public interface GordianKeyStoreElement {
             theSecuringLock = new GordianKeyStoreLockElement(myLock);
 
             /* Secure the keySet */
-            theSecuredKeySet = myKeySet.encryptKeySet(pKeySet);
+            theSecuredKeySet = myKeySet.secureKeySet(pKeySet);
        }
 
         /**
@@ -717,7 +717,7 @@ public interface GordianKeyStoreElement {
             final GordianKeySet mySecuringKeySet = myLock.getKeySet();
 
             /* Derive the keySet */
-            final GordianKeySet myKeySet = mySecuringKeySet.decryptKeySet(theSecuredKeySet);
+            final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(theSecuredKeySet);
 
             /* build the new entry */
             return new GordianCoreKeyStoreSet(myKeySet, getCreationDate());
