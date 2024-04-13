@@ -31,7 +31,12 @@
                         <li>Finish each digest, updating its hash in <strong>R</strong> and xor-ing into <strong>I</strong></li>
                     </ol>
                 </li>
-                <li>Build <strong>IV</strong> as the xor of all the final elements of <strong>R</strong></li>
+                <li>Repeat above loop for 2K iterations, xor-ing results into <strong>IV</strong> instead of <strong>I</strong>.
+                    <ol>
+                        <li>Update each digest with <strong>ALL</strong> the elements of <strong>R</strong></li>
+                        <li>Finish each digest, updating its hash in <strong>R</strong> and xor-ing into <strong>I</strong></li>
+                    </ol>
+                </li>
             </ol>
         </section>
         <section name="Seeded Random">
