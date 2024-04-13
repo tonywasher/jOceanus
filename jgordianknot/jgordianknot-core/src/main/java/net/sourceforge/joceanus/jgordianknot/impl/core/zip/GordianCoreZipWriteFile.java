@@ -131,7 +131,7 @@ public class GordianCoreZipWriteFile
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySet();
         final GordianFactory myFactory = myKeySet.getFactory();
         theKeySet = (GordianCoreKeySet) myFactory.getKeySetFactory().generateKeySet(myKeySet.getKeySetSpec());
-        theSecuredKeySet = myKeySet.encryptKeySet(theKeySet);
+        theSecuredKeySet = myKeySet.secureKeySet(theKeySet);
 
         /* Create the Stream Manager */
         theStreamFactory = new GordianStreamManager(theKeySet);

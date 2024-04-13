@@ -104,7 +104,20 @@ public class GordianCoreWrapper
         theBlockLen = getKeySpec().getBlockLength().getByteLength() >> 1;
     }
 
-   @Override
+    /**
+     * Constructor.
+     * @param pFactory the Security Factory
+     * @param pBlockLen the blockLength
+     */
+    protected GordianCoreWrapper(final GordianCoreFactory pFactory,
+                                 final int pBlockLen) {
+        theFactory = pFactory;
+        theKey = null;
+        theCipher = null;
+        theBlockLen = pBlockLen >> 1;
+    }
+
+    @Override
     public GordianSymKeySpec getKeySpec() {
         return theCipher.getKeyType();
     }
@@ -244,7 +257,7 @@ public class GordianCoreWrapper
         System.arraycopy(pBytesToSecure, 0, myData, myHdrLen, myDataLen);
 
         /* Initialise the cipher */
-        theCipher.initForEncrypt(GordianCipherParameters.key(theKey));
+        initCipherForWrapping();
 
         /* Loop WRAP_COUNT times */
         int myCount = 1;
@@ -256,7 +269,7 @@ public class GordianCoreWrapper
                 System.arraycopy(myData, myOffset, myBuffer, theBlockLen, theBlockLen);
 
                 /* Encrypt the byte array */
-                theCipher.finish(myBuffer, 0, myBufferLen, myResult, 0);
+                iterateCipher(myBuffer, myBufferLen, myResult);
 
                 /* Adjust the result using the count as a mask */
                 for (int myMask = myCount++, myIndex = myBufferLen - 1; myMask != 0; myMask >>>= Byte.SIZE, myIndex--) {
@@ -295,7 +308,7 @@ public class GordianCoreWrapper
         final byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
-        theCipher.initForDecrypt(GordianCipherParameters.key(theKey));
+        initCipherForUnwrapping();
 
         /* Loop WRAP_COUNT times */
         int myCount = myNumBlocks * WRAP_COUNT;
@@ -313,7 +326,7 @@ public class GordianCoreWrapper
                 }
 
                 /* Decrypt the byte array */
-                theCipher.finish(myBuffer, 0, myBufferLen, myResult, 0);
+                iterateCipher(myBuffer, myBufferLen, myResult);
 
                 /* Restore decrypted data */
                 System.arraycopy(myResult, 0, myData, 0, theBlockLen);
@@ -371,6 +384,35 @@ public class GordianCoreWrapper
         return (pIndex + 1) % INTEGRITY_MODULO < 2
                ? INTEGRITY_VALUE1
                : INTEGRITY_VALUE2;
+    }
+
+    /**
+     * Initialise cipher for wrapping.
+     * @throws OceanusException on error
+     */
+    protected void initCipherForWrapping() throws OceanusException {
+        theCipher.initForEncrypt(GordianCipherParameters.key(theKey));
+    }
+
+    /**
+     * Initialise cipher for unwrapping.
+     * @throws OceanusException on error
+     */
+    protected void initCipherForUnwrapping() throws OceanusException {
+        theCipher.initForDecrypt(GordianCipherParameters.key(theKey));
+    }
+
+    /**
+     * Perform Cipher operation
+     * @param pInBuffer the input buffer
+     * @param pBufferLen the buffer length
+     * @param pResult the results buffer
+     * @throws OceanusException on erro
+     */
+    protected void iterateCipher(final byte[] pInBuffer,
+                                 final int pBufferLen,
+                                 final byte[] pResult) throws OceanusException {
+        theCipher.finish(pInBuffer, 0, pBufferLen, pResult, 0);
     }
 
     @Override

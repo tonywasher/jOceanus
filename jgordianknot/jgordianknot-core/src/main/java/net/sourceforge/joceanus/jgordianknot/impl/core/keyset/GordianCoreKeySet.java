@@ -181,23 +181,15 @@ public final class GordianCoreKeySet
         return getDataWrapLength(pKeyLen.getByteLength());
     }
 
-    @Override
-    public int getDataWrapLength(final int pDataLength) {
-        return getDataWrapLength(pDataLength, theSpec.getCipherSteps());
-    }
-
     /**
-     * Obtain wrapped size of a byte array of the given length.
-     * @param pDataLength the length of the byte array
-     * @param pNumSteps the numbert of cipher steps
+     * Obtain the wrapped length for a length of data
+     * @param pDataLength the dataLength
      * @return the wrapped length
      */
-    public static int getDataWrapLength(final int pDataLength,
-                                        final int pNumSteps) {
+    public static int getDataWrapLength(final int pDataLength) {
         return GordianCoreWrapper.getKeyWrapLength(pDataLength, BLOCKLEN)
                 + getEncryptionOverhead()
-                + (pNumSteps - 1)
-                * GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
+                + GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
     }
 
     /**
@@ -216,7 +208,7 @@ public final class GordianCoreKeySet
 
         /* Determine the length of the encoded keySet prior to wrapping */
         final int mySize = GordianKeySetASN1.getEncodedLength(pKeyLen.getByteLength(), myCount);
-        return getEncryptionLength(mySize);
+        return getDataWrapLength(mySize);
     }
 
     @Override
@@ -236,7 +228,7 @@ public final class GordianCoreKeySet
 
         /* Determine the size of the encoded ASN1 keySet */
         final int mySize = GordianKeySetASN1.getEncodedLength(theSpec.getKeyLength().getByteLength(), myCount);
-        return getEncryptionLength(mySize);
+        return getDataWrapLength(mySize);
     }
 
     @Override
@@ -415,15 +407,15 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public byte[] encryptKeySet(final GordianKeySet pKeySetToSecure) throws OceanusException {
+    public byte[] secureKeySet(final GordianKeySet pKeySetToSecure) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Encode the keySet */
             final GordianKeySetASN1 myEncoded = new GordianKeySetASN1((GordianCoreKeySet) pKeySetToSecure);
             final byte[] myBytesToSecure = myEncoded.toASN1Primitive().getEncoded();
 
-            /* encrypt the keySet */
-            return encryptBytes(myBytesToSecure);
+            /* secure the keySet */
+            return secureBytes(myBytesToSecure);
 
             /* Handle exceptions */
         } catch (IOException e) {
@@ -432,9 +424,9 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public GordianCoreKeySet decryptKeySet(final byte[] pSecuredKeySet) throws OceanusException {
-        /* Unwrap the bytes resolve them */
-        final byte[] mySecuredBytes = decryptBytes(pSecuredKeySet);
+    public GordianCoreKeySet deriveKeySet(final byte[] pSecuredKeySet) throws OceanusException {
+        /* Unwrap the bytes and resolve them */
+        final byte[] mySecuredBytes = deriveBytes(pSecuredKeySet);
         final GordianKeySetASN1 myEncoded = GordianKeySetASN1.getInstance(mySecuredBytes);
 
         /* Build the keySet and return it */

@@ -70,7 +70,7 @@ public class GordianKeySetLockImpl
             /* Generate the hash */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
-            final byte[] myPayload = myKeySet.encryptKeySet(pKeySetToLock);
+            final byte[] myPayload = myKeySet.secureKeySet(pKeySetToLock);
             theLockASN1 = myRecipe.buildLockASN1(myPassword.length, myPayload);
             theLockBytes = theLockASN1.getEncodedBytes();
 
@@ -132,7 +132,7 @@ public class GordianKeySetLockImpl
 
             /* Process the password, create parameters and factory */
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
-            theKeySet = myKeySet.decryptKeySet(myRecipe.getPayload());
+            theKeySet = myKeySet.deriveKeySet(myRecipe.getPayload());
 
         } finally {
             if (myPassword != null) {
