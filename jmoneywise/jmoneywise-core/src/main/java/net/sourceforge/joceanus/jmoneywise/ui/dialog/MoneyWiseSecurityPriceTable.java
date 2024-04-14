@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
@@ -26,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
@@ -37,6 +40,8 @@ import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetTableT
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
@@ -84,6 +89,7 @@ public class MoneyWiseSecurityPriceTable
 
         /* Create the date column */
         myTable.declareDateColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE)
+                .setDateConfigurator(this::handleDateConfig)
                 .setCellValueFactory(MoneyWiseSecurityPrice::getDate)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_DATE)
@@ -213,5 +219,33 @@ public class MoneyWiseSecurityPriceTable
         return super.isFiltered(pRow)
                 && theSecurity != null
                 && theSecurity.equals(pRow.getSecurity());
+    }
+
+    /**
+     * Handle dateConfig.
+     * @param pRow the row
+     * @param pConfig the dateConfig
+     */
+    private void handleDateConfig(final MoneyWiseSecurityPrice pRow,
+                                  final TethysDateConfig pConfig) {
+        /* Build a list of used dates */
+        final List<TethysDate> myDates = new ArrayList<>();
+        final Iterator<MoneyWiseSecurityPrice> myIterator = getTable().viewIterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseSecurityPrice myPrice = myIterator.next();
+            myDates.add(myPrice.getDate());
+        }
+
+        /* Set filter constraint */
+        final TethysDate myCurrent = pRow.getDate();
+        pConfig.setAllowed((d) -> {
+            return myCurrent.equals(d) || !myDates.contains(d);
+        });
+
+        /* Set range constraint */
+        final MoneyWiseDataSet myDataSet = pRow.getDataSet();
+        final TethysDateRange myRange = myDataSet.getDateRange();
+        pConfig.setEarliestDate(myRange.getStart());
+        pConfig.setLatestDate(myRange.getEnd());
     }
 }
