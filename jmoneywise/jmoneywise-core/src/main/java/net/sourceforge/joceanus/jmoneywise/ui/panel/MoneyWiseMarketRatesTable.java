@@ -25,12 +25,11 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotPricesSelect;
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseSpotSecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseSpotRatesSelect;
+import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseSpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseSpotSecurityPrice.MoneyWiseSpotSecurityList;
+import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseSpotExchangeRate.MoneyWiseSpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseViewResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseYQLDownloader;
@@ -56,19 +55,19 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
 
 /**
- * MoneyWise SpotPrices Table.
+ * MoneyWise SpotRates Table.
  */
-public class MoneyWiseSpotPricesTable
-        extends MoneyWiseBaseTable<MoneyWiseSpotSecurityPrice> {
+public class MoneyWiseMarketRatesTable
+        extends MoneyWiseBaseTable<MoneyWiseSpotExchangeRate> {
     /**
-     * The SpotPrices selection panel.
+     * The SpotRates selection panel.
      */
-    private final MoneyWiseSpotPricesSelect theSelect;
+    private final MoneyWiseSpotRatesSelect theSelect;
 
     /**
-     * The account price list.
+     * The exchangeRates list.
      */
-    private MoneyWiseSpotSecurityList thePrices;
+    private MoneyWiseSpotExchangeList theRates;
 
     /**
      * The selected date.
@@ -76,60 +75,64 @@ public class MoneyWiseSpotPricesTable
     private TethysDate theDate;
 
     /**
-     * The Portfolio.
-     */
-    private MoneyWisePortfolio thePortfolio;
-
-    /**
      * Constructor.
      * @param pView the view
      * @param pEditSet the editSet
      * @param pError the error panel
      */
-    MoneyWiseSpotPricesTable(final MoneyWiseView pView,
-                             final PrometheusEditSet pEditSet,
-                             final MetisErrorPanel pError) {
+    MoneyWiseMarketRatesTable(final MoneyWiseView pView,
+                              final PrometheusEditSet pEditSet,
+                              final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pEditSet, pError, MoneyWiseBasicDataType.SECURITYPRICE);
+        super(pView, pEditSet, pError, MoneyWiseBasicDataType.EXCHANGERATE);
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
-        final TethysUITableManager<MetisDataFieldId, MoneyWiseSpotSecurityPrice> myTable = getTable();
+        final TethysUITableManager<MetisDataFieldId, MoneyWiseSpotExchangeRate> myTable = getTable();
 
         /* Create new button */
         final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
         /* Create a selection panel */
-        theSelect = new MoneyWiseSpotPricesSelect(myGuiFactory, pView);
+        theSelect = new MoneyWiseSpotRatesSelect(myGuiFactory, pView);
 
         /* Set table configuration */
-        myTable.setDisabled(MoneyWiseSpotSecurityPrice::isDisabled)
-                .setComparator(MoneyWiseSpotSecurityPrice::compareTo);
+        myTable.setDisabled(MoneyWiseSpotExchangeRate::isDisabled)
+                .setComparator(MoneyWiseSpotExchangeRate::compareTo);
 
-        /* Create the asset column */
-        myTable.declareStringColumn(MoneyWiseBasicDataType.SECURITY)
-                .setCellValueFactory(MoneyWiseSpotSecurityPrice::getSecurityName)
+        /* Create the description column */
+        myTable.declareStringColumn(MoneyWiseBasicResource.XCHGRATE_FROM)
+                .setCellValueFactory(r -> r.getToCurrency().getDesc())
+                .setEditable(false)
+                .setColumnWidth(WIDTH_NAME);
+
+        /* Create the symbol column */
+        myTable.declareStringColumn(MoneyWiseBasicResource.XCHGRATE_TO)
+                .setCellValueFactory(r -> r.getToCurrency().getName())
+                .setName(MoneyWiseUIResource.SPOTRATE_COLUMN_SYMBOL.getValue())
                 .setEditable(false)
                 .setColumnWidth(WIDTH_NAME);
 
         /* Create the price column */
-        myTable.declarePriceColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE)
-                .setCellValueFactory(MoneyWiseSpotSecurityPrice::getPrice)
+        myTable.declareRatioColumn(MoneyWiseBasicResource.XCHGRATE_RATE)
+                .setCellValueFactory(MoneyWiseSpotExchangeRate::getExchangeRate)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isDisabled())
                 .setColumnWidth(WIDTH_PRICE)
-                .setOnCommit((r, v) -> updateField(MoneyWiseSpotSecurityPrice::setPrice, r, v));
+                .setOnCommit((r, v) -> updateField(MoneyWiseSpotExchangeRate::setExchangeRate, r, v));
 
-        /* Create the previous price column */
-        myTable.declarePriceColumn(MoneyWiseViewResource.SPOTPRICE_PREVPRICE)
-                .setCellValueFactory(MoneyWiseSpotSecurityPrice::getPrevPrice)
+        /* Create the previous rate column */
+        myTable.declareRatioColumn(MoneyWiseViewResource.SPOTRATE_PREVRATE)
+                .setCellValueFactory(MoneyWiseSpotExchangeRate::getPrevRate)
+                .setName(MoneyWiseViewResource.SPOTRATE_PREVRATE.getValue())
                 .setEditable(false)
                 .setColumnWidth(WIDTH_PRICE);
 
         /* Create the previous date column */
         myTable.declareDateColumn(MoneyWiseViewResource.SPOTEVENT_PREVDATE)
-                .setCellValueFactory(MoneyWiseSpotSecurityPrice::getPrevDate)
+                .setCellValueFactory(MoneyWiseSpotExchangeRate::getPrevDate)
+                .setName(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue())
                 .setEditable(false)
                 .setColumnWidth(WIDTH_DATE);
 
@@ -137,10 +140,10 @@ public class MoneyWiseSpotPricesTable
         final TethysUIIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);
         myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
-                .setCellValueFactory(r -> r.getPrice() != null && !r.isDisabled() ? MetisAction.DELETE : MetisAction.DO)
+                .setCellValueFactory(r -> r.getExchangeRate() != null && !r.isDisabled() ? MetisAction.DELETE : MetisAction.DO)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                 .setEditable(true)
-                .setCellEditable(r -> r.getPrice() != null && !r.isDisabled())
+                .setCellEditable(r -> r.getExchangeRate() != null && !r.isDisabled())
                 .setColumnWidth(WIDTH_ICON)
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
@@ -155,7 +158,7 @@ public class MoneyWiseSpotPricesTable
      * Obtain the selection panel.
      * @return the select panel
      */
-    MoneyWiseSpotPricesSelect getSelect() {
+    MoneyWiseSpotRatesSelect getSelect() {
         return theSelect;
     }
 
@@ -163,13 +166,13 @@ public class MoneyWiseSpotPricesTable
     protected void refreshData() {
         /* Obtain the active profile */
         TethysProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("SpotPrices1");
+        myTask = myTask.startTask("SpotRates1");
 
         /* Refresh the data */
         theSelect.refreshData();
 
         /* Access the selection details */
-        setSelection(theSelect.getPortfolio(), theSelect.getDate());
+        setSelection(theSelect.getDate());
 
         /* Create SavePoint */
         theSelect.createSavePoint();
@@ -179,35 +182,31 @@ public class MoneyWiseSpotPricesTable
     }
 
     /**
-     * Set Selection to the specified portfolio and date.
-     * @param pPortfolio the portfolio
+     * Set Selection to the date.
      * @param pDate the Date for the extract
      */
-    public void setSelection(final MoneyWisePortfolio pPortfolio,
-                             final TethysDate pDate) {
+    public void setSelection(final TethysDate pDate) {
         /* Record selection */
         theDate = pDate;
-        thePortfolio = pPortfolio;
 
         /* If selection is valid */
-        if (theDate != null
-                && thePortfolio != null) {
+        if (theDate != null) {
             /* Create the new list */
-            thePrices = new MoneyWiseSpotSecurityList(getView(), pPortfolio, pDate);
+            theRates = new MoneyWiseSpotExchangeList(getView(), pDate);
 
             /* Update Next/Previous values */
-            theSelect.setAdjacent(thePrices.getPrev(), thePrices.getNext());
+            theSelect.setAdjacent(theRates.getPrev(), theRates.getNext());
 
             /* else invalid selection */
         } else {
             /* Set no selection */
-            thePrices = null;
+            theRates = null;
             theSelect.setAdjacent(null, null);
         }
 
         /* Update other details */
-        getTable().setItems(thePrices.getUnderlyingList());
-        getEditEntry().setDataList(thePrices);
+        getTable().setItems(theRates.getUnderlyingList());
+        getEditEntry().setDataList(theRates);
         theSelect.setEnabled(true);
     }
 
@@ -215,42 +214,29 @@ public class MoneyWiseSpotPricesTable
      * handle new selection.
      */
     private void handleNewSelection() {
-        /* Set the deleted option */
-        setShowAll();
-
         /* Access selection */
-        final MoneyWisePortfolio myPortfolio = theSelect.getPortfolio();
         final TethysDate myDate = theSelect.getDate();
 
         /* If the selection differs */
-        if (!MetisDataDifference.isEqual(theDate, myDate)
-                || !MetisDataDifference.isEqual(thePortfolio, myPortfolio)) {
+        if (!MetisDataDifference.isEqual(theDate, myDate)) {
             /* Set selection */
-            setSelection(myPortfolio, myDate);
+            setSelection(myDate);
 
             /* Create SavePoint */
             theSelect.createSavePoint();
         }
     }
 
-    /**
-     * Set the showAll indicator.
-     */
-    private void setShowAll() {
-        cancelEditing();
-        getTable().setFilter(this::isFiltered);
-    }
-
     @Override
-    protected boolean isFiltered(final MoneyWiseSpotSecurityPrice pRow) {
+    protected boolean isFiltered(final MoneyWiseSpotExchangeRate pRow) {
         /* Handle filter */
-        return theSelect.getShowClosed() || !pRow.isDisabled();
+        return !pRow.isDisabled();
     }
 
     @Override
-    protected void deleteRow(final MoneyWiseSpotSecurityPrice pRow,
+    protected void deleteRow(final MoneyWiseSpotExchangeRate pRow,
                              final Object pValue) throws OceanusException {
-        pRow.setPrice(null);
+        pRow.setExchangeRate(null);
     }
 
     /**
@@ -276,8 +262,8 @@ public class MoneyWiseSpotPricesTable
 
         /* Protect against exceptions */
         try {
-            /* Download Prices */
-            if (MoneyWiseYQLDownloader.downloadPrices(thePrices)) {
+            /* Download Rates */
+            if (MoneyWiseYQLDownloader.downloadRates(theRates)) {
                 /* Increment data version */
                 getEditSet().incrementVersion();
 
@@ -292,14 +278,14 @@ public class MoneyWiseSpotPricesTable
     }
 
     /**
-     * SpotPrices Panel.
+     * SpotRates Panel.
      */
-    public static class MoneyWiseSpotPricesPanel
+    public static class MoneyWiseSpotRatesPanel
             implements TethysUIComponent, TethysEventProvider<PrometheusDataEvent> {
         /**
          * Text for DataEntry Title.
          */
-        private static final String NLS_DATAENTRY = MoneyWiseUIResource.PRICES_DATAENTRY.getValue();
+        private static final String NLS_DATAENTRY = MoneyWiseUIResource.RATES_DATAENTRY.getValue();
 
         /**
          * The Event Manager.
@@ -324,7 +310,7 @@ public class MoneyWiseSpotPricesTable
         /**
          * The table.
          */
-        private final MoneyWiseSpotPricesTable theTable;
+        private final MoneyWiseMarketRatesTable theTable;
 
         /**
          * The panel.
@@ -334,14 +320,14 @@ public class MoneyWiseSpotPricesTable
         /**
          * The viewer entry.
          */
-        private final MetisViewerEntry theViewerPrice;
+        private final MetisViewerEntry theViewerRate;
 
         /**
          * Constructor.
          *
          * @param pView the data view
          */
-        public MoneyWiseSpotPricesPanel(final MoneyWiseView pView) {
+        public MoneyWiseSpotRatesPanel(final MoneyWiseView pView) {
             /* Build the Update set and entry */
             theEditSet = new PrometheusEditSet(pView);
 
@@ -351,14 +337,14 @@ public class MoneyWiseSpotPricesTable
             /* Create the top level viewer entry for this view */
             final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
             final MetisViewerManager myViewer = pView.getViewerManager();
-            theViewerPrice = myViewer.newEntry(mySection, NLS_DATAENTRY);
-            theViewerPrice.setTreeObject(theEditSet);
+            theViewerRate = myViewer.newEntry(mySection, NLS_DATAENTRY);
+            theViewerRate.setTreeObject(theEditSet);
 
             /* Create the error panel for this view */
-            theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerPrice);
+            theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerRate);
 
             /* Create the table */
-            theTable = new MoneyWiseSpotPricesTable(pView, theEditSet, theError);
+            theTable = new MoneyWiseMarketRatesTable(pView, theEditSet, theError);
 
             /* Create the action buttons */
             final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
@@ -386,6 +372,16 @@ public class MoneyWiseSpotPricesTable
         @Override
         public TethysUIComponent getUnderlying() {
             return thePanel;
+        }
+
+        @Override
+        public void setEnabled(final boolean pEnabled) {
+            thePanel.setEnabled(pEnabled);
+        }
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+            thePanel.setVisible(pVisible);
         }
 
         @Override
@@ -433,7 +429,7 @@ public class MoneyWiseSpotPricesTable
             theTable.determineFocus();
 
             /* Focus on the Data entry */
-            theViewerPrice.setFocus();
+            theViewerRate.setFocus();
         }
 
         /**
@@ -476,3 +472,4 @@ public class MoneyWiseSpotPricesTable
         }
     }
 }
+
