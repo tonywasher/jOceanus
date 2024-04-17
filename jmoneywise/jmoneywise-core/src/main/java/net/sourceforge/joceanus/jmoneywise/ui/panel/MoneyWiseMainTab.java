@@ -22,8 +22,6 @@ import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseThreadWriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
-import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
@@ -66,14 +64,9 @@ public class MoneyWiseMainTab
     private static final String TITLE_REGISTER = MoneyWiseUIResource.MAIN_REGISTER.getValue();
 
     /**
-     * SpotPrices tab title.
+     * Market tab title.
      */
-    private static final String TITLE_SPOTPRICES = MoneyWiseUIResource.MAIN_SPOTPRICES.getValue();
-
-    /**
-     * SpotRates tab title.
-     */
-    private static final String TITLE_SPOTRATES = MoneyWiseUIResource.MAIN_SPOTRATES.getValue();
+    private static final String TITLE_MARKET = MoneyWiseUIResource.MAIN_MARKET.getValue();
 
     /**
      * Maintenance tab title.
@@ -96,14 +89,9 @@ public class MoneyWiseMainTab
     private MoneyWiseStatementPanel theRegister;
 
     /**
-     * The SpotPricesPanel.
+     * The MarketPanel.
      */
-    private MoneyWiseSpotPricesPanel theSpotPrices;
-
-    /**
-     * The SpotRatesPanel.
-     */
-    private MoneyWiseSpotRatesPanel theSpotRates;
+    private MoneyWiseMarketTabs theMarket;
 
     /**
      * The maintenance panel.
@@ -159,27 +147,22 @@ public class MoneyWiseMainTab
         theTabs = myFactory.paneFactory().newTabPane();
 
         /* Create the Report Tab */
-        myTask.startTask("Report");
+        myTask.startTask(TITLE_REPORT);
         final MoneyWiseReportTab myReports = new MoneyWiseReportTab(theView);
         theTabs.addTabItem(TITLE_REPORT, myReports);
 
         /* Create the Register Tab */
-        myTask.startTask("Register");
+        myTask.startTask(TITLE_REGISTER);
         theRegister = new MoneyWiseStatementPanel(theView);
         theTabs.addTabItem(TITLE_REGISTER, theRegister);
 
-        /* Create the SpotPrices Tab */
-        myTask.startTask("SpotPrices");
-        theSpotPrices = new MoneyWiseSpotPricesPanel(theView);
-        theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices);
-
-        /* Create the SpotRates Tab */
-        myTask.startTask("SpotRates");
-        theSpotRates = new MoneyWiseSpotRatesPanel(theView);
-        theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates);
+        /* Create the Market Tab */
+        myTask.startTask(TITLE_MARKET);
+        theMarket = new MoneyWiseMarketTabs(theView);
+        theTabs.addTabItem(TITLE_MARKET, theMarket);
 
         /* Create the Maintenance Tab */
-        myTask.startTask("Maintenance");
+        myTask.startTask(TITLE_MAINT);
         theMaint = new MoneyWiseMaintenance(theView);
         theTabs.addTabItem(TITLE_MAINT, theMaint);
 
@@ -194,8 +177,7 @@ public class MoneyWiseMainTab
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
         theView.getEventRegistrar().addEventListener(e -> setVisibility());
         myReports.getEventRegistrar().addEventListener(this::handleGoToEvent);
-        theSpotPrices.getEventRegistrar().addEventListener(e -> setVisibility());
-        theSpotRates.getEventRegistrar().addEventListener(e -> setVisibility());
+        theMarket.getEventRegistrar().addEventListener(e -> setVisibility());
         setChildListeners(theRegister.getEventRegistrar());
         setChildListeners(theMaint.getEventRegistrar());
 
@@ -237,10 +219,7 @@ public class MoneyWiseMainTab
         /* Determine whether we have edit session updates */
         boolean hasUpdates = theRegister.hasUpdates();
         if (!hasUpdates) {
-            hasUpdates = theSpotPrices.hasUpdates();
-        }
-        if (!hasUpdates) {
-            hasUpdates = theSpotRates.hasUpdates();
+            hasUpdates = theMarket.hasUpdates();
         }
         if (!hasUpdates) {
             hasUpdates = theMaint.hasUpdates();
@@ -256,10 +235,7 @@ public class MoneyWiseMainTab
         /* Determine whether we have edit session updates */
         boolean hasSession = theRegister.hasSession();
         if (!hasSession) {
-            hasSession = theSpotPrices.hasSession();
-        }
-        if (!hasSession) {
-            hasSession = theSpotRates.hasSession();
+            hasSession = theMarket.hasSession();
         }
         if (!hasSession) {
             hasSession = theMaint.hasSession();
@@ -350,16 +326,10 @@ public class MoneyWiseMainTab
         theTabs.enableItemByName(TITLE_REGISTER, doEnabled);
 
         /* Enable/Disable/Hide the spotPrices tab */
-        doEnabled = !hasWorker && (!hasSession || theSpotPrices.hasSession());
-        TethysUITabItem myItem = theTabs.findItemByName(TITLE_SPOTPRICES);
+        doEnabled = !hasWorker && (!hasSession || theMarket.hasSession());
+        TethysUITabItem myItem = theTabs.findItemByName(TITLE_MARKET);
         myItem.setEnabled(doEnabled);
-        myItem.setVisible(theView.hasActiveSecurities());
-
-        /* Enable/Disable/Hide the spotRates tab */
-        doEnabled = !hasWorker && (!hasSession || theSpotRates.hasSession());
-        myItem = theTabs.findItemByName(TITLE_SPOTRATES);
-        myItem.setEnabled(doEnabled);
-        myItem.setVisible(theView.hasMultipleCurrencies());
+        myItem.setVisible(theView.hasActiveSecurities() || theView.hasMultipleCurrencies());
 
         /* Enable/Disable the maintenance tab */
         doEnabled = !hasWorker && (!hasSession || theMaint.hasSession());
@@ -385,15 +355,10 @@ public class MoneyWiseMainTab
             /* Determine focus of Register */
             theRegister.determineFocus();
 
-            /* If the selected component is SpotPrices */
-        } else if (myId.equals(theSpotPrices.getId())) {
-            /* Determine focus of SpotPrices */
-            theSpotPrices.determineFocus();
-
-            /* If the selected component is SpotRates */
-        } else if (myId.equals(theSpotRates.getId())) {
-            /* Determine focus of SpotRates */
-            theSpotRates.determineFocus();
+            /* If the selected component is Market */
+        } else if (myId.equals(theMarket.getId())) {
+            /* Determine focus of Market */
+            theMarket.determineFocus();
 
             /* If the selected component is Maintenance */
         } else if (myId.equals(theMaint.getId())) {

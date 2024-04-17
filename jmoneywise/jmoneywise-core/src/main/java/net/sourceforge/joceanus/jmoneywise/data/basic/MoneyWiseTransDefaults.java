@@ -202,6 +202,9 @@ public class MoneyWiseTransDefaults {
         /* Access standard range */
         final TethysDateRange myRange = theRange;
 
+        /* Set default direction */
+        pTrans.setDirection(MoneyWiseAssetDirection.TO);
+
         /* Determine date */
         TethysDate myDate = new TethysDate();
         final int iResult = myRange.compareToDate(myDate);

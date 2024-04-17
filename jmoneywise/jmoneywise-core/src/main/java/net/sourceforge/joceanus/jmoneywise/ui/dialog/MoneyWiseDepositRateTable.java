@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
@@ -26,9 +28,11 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
@@ -37,6 +41,8 @@ import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetTableT
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
@@ -98,6 +104,7 @@ public class MoneyWiseDepositRateTable
 
         /* Create the endDate column */
         myTable.declareDateColumn(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE)
+                .setDateConfigurator(this::handleDateConfig)
                 .setCellValueFactory(MoneyWiseDepositRate::getEndDate)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_DATE)
@@ -230,5 +237,31 @@ public class MoneyWiseDepositRateTable
         return super.isFiltered(pRow)
                 && theDeposit != null
                 && theDeposit.equals(pRow.getDeposit());
+    }
+
+    /**
+     * Handle dateConfig.
+     * @param pRow the row
+     * @param pConfig the dateConfig
+     */
+    private void handleDateConfig(final MoneyWiseDepositRate pRow,
+                                  final TethysDateConfig pConfig) {
+        /* Build a list of used dates */
+        final List<TethysDate> myDates = new ArrayList<>();
+        final Iterator<MoneyWiseDepositRate> myIterator = getTable().viewIterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseDepositRate myRate = myIterator.next();
+            myDates.add(myRate.getEndDate());
+        }
+
+        /* Set filter constraint */
+        final TethysDate myCurrent = pRow.getEndDate();
+        pConfig.setAllowed((d) -> {
+            return d.equals(myCurrent) || !myDates.contains(d);
+        });
+
+        /* Set null constraint */
+        final boolean hasNull = myDates.contains(null);
+        pConfig.setAllowNullDateSelection(!hasNull || myCurrent == null);
     }
 }

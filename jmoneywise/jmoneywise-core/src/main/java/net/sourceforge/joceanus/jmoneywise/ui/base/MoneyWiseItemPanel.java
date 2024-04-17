@@ -31,7 +31,9 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.jprometheus.ui.panel.PrometheusDataItemPanel;
@@ -96,6 +98,16 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
      */
     private boolean isFieldChanged(final T pItem,
                                    final MetisDataFieldId pField) {
+        /* If the field is a dataInfoClass as part of an infoSetItem */
+        if (pField instanceof PrometheusDataInfoClass
+                && pItem instanceof PrometheusInfoSetItem) {
+            /* Check with the infoSet whether the field has changed */
+            final PrometheusInfoSetItem myItem = (PrometheusInfoSetItem) pItem;
+            final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) pField;
+            return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
+        }
+
+        /* Look at the base values as a standard item */
         final MetisFieldVersionValues myBaseValues = getBaseValues();
         return pField != null
                 && myBaseValues != null

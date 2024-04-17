@@ -143,9 +143,6 @@ public class TethysUISwingListButtonField<T extends Comparable<? super T>>
      * haltCellEditing.
      */
     private void haltCellEditing() {
-        if (isCellEditing) {
-            fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
-        }
         isCellEditing = false;
     }
 

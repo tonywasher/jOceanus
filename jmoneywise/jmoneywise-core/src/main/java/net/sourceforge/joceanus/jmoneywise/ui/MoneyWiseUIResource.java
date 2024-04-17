@@ -395,14 +395,9 @@ public enum MoneyWiseUIResource
     MAIN_REPORT("Main.Tab.Report"),
 
     /**
-     * Main SpotPrice Tab.
+     * Main Market Tab.
      */
-    MAIN_SPOTPRICES("Main.Tab.SpotPrices"),
-
-    /**
-     * Main SpotRates Tab.
-     */
-    MAIN_SPOTRATES("Main.Tab.SpotRates"),
+    MAIN_MARKET("Main.Tab.Market"),
 
     /**
      * Main Maintenance Tab.
@@ -413,6 +408,16 @@ public enum MoneyWiseUIResource
      * Main Log Tab.
      */
     MAIN_LOG("Main.Tab.Log"),
+
+    /**
+     * Market Prices Tab.
+     */
+    MARKET_PRICES("Market.Tab.Prices"),
+
+    /**
+     * Market Rates Tab.
+     */
+    MARKET_RATES("Market.Tab.Rates"),
 
     /**
      * Main Menu Backup SVN.

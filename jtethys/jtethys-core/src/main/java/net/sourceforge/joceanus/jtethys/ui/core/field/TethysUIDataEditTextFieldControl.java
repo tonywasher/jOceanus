@@ -185,6 +185,11 @@ public class TethysUIDataEditTextFieldControl<T>
                 return false;
             }
 
+            /* Clear any reporter error */
+            if (theReporter != null) {
+                theReporter.accept(null);
+            }
+
             /* set the value and fire Event */
             setValue(myValue);
             theField.fireEvent(TethysUIEvent.NEWVALUE, myValue);

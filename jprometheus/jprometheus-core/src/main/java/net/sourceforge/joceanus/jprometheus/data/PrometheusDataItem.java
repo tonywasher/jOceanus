@@ -518,7 +518,7 @@ public abstract class PrometheusDataItem
         /* Loop while version is too high */
         while (getValues().getVersion() > pVersion) {
             /* Pop history */
-            popHistory();
+            getValuesHistory().popTheHistory();
         }
     }
 
