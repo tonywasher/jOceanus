@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.ui;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
@@ -163,6 +165,18 @@ public class MetisErrorPanel
 
         /* Notify listeners */
         theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
+    }
+
+    /**
+     * Show validation error.
+     * @param pError the error message
+     */
+    public void showValidateError(final String pError) {
+        if (pError != null) {
+            setErrorText(pError);
+        } else {
+            thePanel.setVisible(false);
+        }
     }
 
     /**

@@ -143,7 +143,7 @@ public class MetisFieldVersionHistory
     /**
      * popItem from the history and remove from history.
      */
-    protected void popTheHistory() {
+    public void popTheHistory() {
         /* If we have an item on the stack */
         if (hasHistory()) {
             /* Remove it from the list */

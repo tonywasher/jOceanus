@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
-import java.util.Objects;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
@@ -550,11 +549,11 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     }
 
     /**
-     * Show validation error TODO use panel.
+     * Show validation error.
      * @param pError the error message
      */
     private void showValidateError(final String pError) {
-        System.out.println(Objects.requireNonNullElse(pError, "Error cleared"));
+        theError.showValidateError(pError);
     }
 
     /**
