@@ -190,7 +190,7 @@ public class MoneyWiseTransactionTable
         theBuilder = new MoneyWiseTransDefaults(getEditSet());
 
         /* Create a transaction panel */
-        theActiveTran = new MoneyWiseTransactionPanel(myGuiFactory, pEditSet, theBuilder, theSelect, pError);
+        theActiveTran = new MoneyWiseTransactionPanel(myGuiFactory, pEditSet, theBuilder, theSelect, this);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */

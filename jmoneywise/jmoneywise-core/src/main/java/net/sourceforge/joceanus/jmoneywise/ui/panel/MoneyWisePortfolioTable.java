@@ -77,7 +77,7 @@ public class MoneyWisePortfolioTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a portfolio panel */
-        theActivePortfolio = new MoneyWisePortfolioPanel(myGuiFactory, pEditSet, pError);
+        theActivePortfolio = new MoneyWisePortfolioPanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActivePortfolio);
 
         /* Finish the table */

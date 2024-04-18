@@ -85,7 +85,7 @@ public class MoneyWiseDepositTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a Deposit panel */
-        theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, pEditSet, pError);
+        theActiveDeposit = new MoneyWiseDepositPanel(myGuiFactory, pView, pEditSet, this);
         declareItemPanel(theActiveDeposit);
 
         /* Finish the table */

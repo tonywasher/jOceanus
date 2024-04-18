@@ -86,7 +86,7 @@ public class MoneyWiseTransTagTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a tag panel */
-        theActiveTag = new MoneyWiseTagPanel(myGuiFactory, pEditSet, pError);
+        theActiveTag = new MoneyWiseTagPanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveTag);
 
         /* Set table configuration */

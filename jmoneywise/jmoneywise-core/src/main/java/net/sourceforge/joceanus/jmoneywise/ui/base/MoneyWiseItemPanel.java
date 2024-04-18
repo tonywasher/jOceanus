@@ -56,6 +56,11 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
     private static final String FILTER_MENU = "Filter";
 
     /**
+     * The Owning table.
+     */
+    private final MoneyWiseBaseTable<T> theOwner;
+
+    /**
      * The DataItem GoToMenuMap.
      */
     private final List<PrometheusDataItem> theGoToItemList;
@@ -69,12 +74,13 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     protected MoneyWiseItemPanel(final TethysUIFactory<?> pFactory,
                                  final PrometheusEditSet pEditSet,
-                                 final MetisErrorPanel pError) {
-        super(pFactory, pEditSet, pError);
+                                 final MoneyWiseBaseTable<T> pOwner) {
+        super(pFactory, pEditSet, pOwner.getErrorPanel());
+        theOwner = pOwner;
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();
         getFieldSet().setChanged(this::isFieldChanged);
@@ -112,6 +118,24 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         return pField != null
                 && myBaseValues != null
                 && pItem.getValues().fieldChanged(pField, myBaseValues).isDifferent();
+    }
+
+    /**
+     * is Valid name?
+     * @param pNewName the new name
+     * @return error message or null
+     */
+    public String isValidName(final String pNewName) {
+        return theOwner.isValidName(pNewName, getItem());
+    }
+
+    /**
+     * is Valid description?
+     * @param pNewDesc the new description
+     * @return error message or null
+     */
+    public String isValidDesc(final String pNewDesc) {
+        return theOwner.isValidDesc(pNewDesc, getItem());
     }
 
     @Override

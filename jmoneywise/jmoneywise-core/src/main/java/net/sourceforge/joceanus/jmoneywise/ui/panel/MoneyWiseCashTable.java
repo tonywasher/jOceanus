@@ -76,7 +76,7 @@ public class MoneyWiseCashTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a Cash panel */
-        theActiveCash = new MoneyWiseCashPanel(myGuiFactory, pEditSet, pError);
+        theActiveCash = new MoneyWiseCashPanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveCash);
 
         /* Finish the table */

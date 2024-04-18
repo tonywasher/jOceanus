@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
@@ -40,13 +40,13 @@ public class MoneyWiseTagPanel
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWiseTagPanel(final TethysUIFactory<?> pFactory,
                              final PrometheusEditSet pEditSet,
-                             final MetisErrorPanel pError) {
+                             final MoneyWiseBaseTable<MoneyWiseTransTag> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Access the fieldSet */
         final PrometheusFieldSet<MoneyWiseTransTag> myFieldSet = getFieldSet();
@@ -59,6 +59,14 @@ public class MoneyWiseTagPanel
         /* Assign the fields to the panel */
         myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseTransTag::getName);
         myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseTransTag::getDesc);
+
+        /* Configure name checks */
+        myName.setValidator(this::isValidName);
+        myName.setReporter(pOwner::showValidateError);
+
+        /* Configure description checks */
+        myDesc.setValidator(this::isValidDesc);
+        myDesc.setReporter(pOwner::showValidateError);
     }
 
     @Override

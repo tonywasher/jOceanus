@@ -75,7 +75,7 @@ public class MoneyWisePayeeTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a payee panel */
-        theActivePayee = new MoneyWisePayeePanel(myGuiFactory, pEditSet, pError);
+        theActivePayee = new MoneyWisePayeePanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActivePayee);
 
         /* Finish the table */

@@ -89,7 +89,7 @@ public class MoneyWiseSecurityTable
         final TethysUITableManager<MetisDataFieldId, MoneyWiseSecurity> myTable = getTable();
 
         /* Create a security panel */
-        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pEditSet, pError);
+        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pEditSet, this);
         declareItemPanel(theActiveSecurity);
 
         /* Create the symbol column */

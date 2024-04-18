@@ -77,7 +77,7 @@ public class MoneyWiseLoanTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a Loan panel */
-        theActiveLoan = new MoneyWiseLoanPanel(myGuiFactory, pEditSet, pError);
+        theActiveLoan = new MoneyWiseLoanPanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveLoan);
 
         /* Finish the table */

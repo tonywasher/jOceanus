@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory;
@@ -28,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryCla
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
@@ -50,13 +50,13 @@ public class MoneyWiseLoanCategoryPanel
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWiseLoanCategoryPanel(final TethysUIFactory<?> pFactory,
                                       final PrometheusEditSet pEditSet,
-                                      final MetisErrorPanel pError) {
+                                      final MoneyWiseBaseTable<MoneyWiseLoanCategory> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Create a new panel */
         final PrometheusFieldSet<MoneyWiseLoanCategory> myFieldSet = getFieldSet();
@@ -81,6 +81,14 @@ public class MoneyWiseLoanCategoryPanel
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
+
+        /* Configure name checks */
+        mySubName.setValidator(this::isValidName);
+        mySubName.setReporter(pOwner::showValidateError);
+
+        /* Configure description checks */
+        myDesc.setValidator(this::isValidDesc);
+        myDesc.setReporter(pOwner::showValidateError);
     }
 
     @Override

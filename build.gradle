@@ -39,7 +39,7 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.78"
+        bouncyCastleVersion = "1.78.1"
         jUnitVersion = "5.10.2"
         jsonVersion = "20240303"
         mySQLVersion = "8.0.33"
@@ -66,7 +66,7 @@ allprojects {
         pmdVersion = "6.55.0"
 
         /* jacoco config */
-        jacocoVersion = "0.8.11"
+        jacocoVersion = "0.8.12"
 
         /* Distribution details */
         appDir = "$rootDir/dist"

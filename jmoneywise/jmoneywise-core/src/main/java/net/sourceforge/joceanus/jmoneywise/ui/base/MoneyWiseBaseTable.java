@@ -238,6 +238,14 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     }
 
     /**
+     * Obtain the error panel.
+     * @return the error panel
+     */
+    public MetisErrorPanel getErrorPanel() {
+        return theError;
+    }
+
+    /**
      * Set the table enabled status.
      * @param pEnabled true/false
      */
@@ -495,8 +503,8 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * @param pRow the row
      * @return error message or null
      */
-    protected String isValidName(final String pNewName,
-                                 final T pRow) {
+    public String isValidName(final String pNewName,
+                              final T pRow) {
         /* Reject null name */
         if (pNewName == null) {
             return "Null Name not allowed";
@@ -579,7 +587,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * Show validation error.
      * @param pError the error message
      */
-    private void showValidateError(final String pError) {
+    public void showValidateError(final String pError) {
         theError.showValidateError(pError);
     }
 
