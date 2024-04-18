@@ -28,7 +28,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
@@ -464,7 +466,18 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      */
     public boolean isFieldChanged(final MetisDataFieldId pField,
                                   final T pItem) {
-        return pField != null && !pItem.isHeader() && pItem.fieldChanged(pField).isDifferent();
+        /* If the field is a dataInfoClass as part of an infoSetItem */
+        if (pField instanceof PrometheusDataInfoClass
+                && pItem instanceof PrometheusInfoSetItem) {
+            /* Check with the infoSet whether the field has changed */
+            final PrometheusInfoSetItem myItem = (PrometheusInfoSetItem) pItem;
+            final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) pField;
+            return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
+        }
+
+        return pField != null
+                && !pItem.isHeader()
+                && pItem.fieldChanged(pField).isDifferent();
     }
 
     /**
@@ -513,13 +526,27 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
             /* Check for duplicate */
             final MetisDataNamedItem myNamed = (MetisDataNamedItem) myValue;
-            if (pNewName.equals(myNamed.getName())) {
+            if (isDuplicateName(pNewName, pRow, myNamed)) {
                 return "Duplicate name";
             }
         }
 
         /* Valid name */
         return null;
+    }
+
+    /**
+     * is name a match?
+     * @param pNewName the new name
+     * @param pRow the row
+     * @param pCheck the item to check against
+     * @return true/false
+     */
+    protected boolean isDuplicateName(final String pNewName,
+                                      final T pRow,
+                                      final MetisDataNamedItem pCheck) {
+        /* Check for duplicate */
+        return pNewName.equals(pCheck.getName());
     }
 
     /**

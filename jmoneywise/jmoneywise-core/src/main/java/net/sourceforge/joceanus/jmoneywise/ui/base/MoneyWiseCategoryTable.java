@@ -17,8 +17,10 @@
 package net.sourceforge.joceanus.jmoneywise.ui.base;
 
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
@@ -309,5 +311,15 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
     @Override
     protected String getInvalidNameChars() {
         return ":";
+    }
+
+    @Override
+    protected boolean isDuplicateName(final String pNewName,
+                                      final T pRow,
+                                      final MetisDataNamedItem pCheck) {
+        /* Check for duplicate */
+        final MoneyWiseCategoryBase myCheck = (MoneyWiseCategoryBase) pCheck;
+        return Objects.equals(myCheck.getParentCategory(), pRow.getParentCategory())
+                && pNewName.equals(myCheck.getSubCategory());
     }
 }
