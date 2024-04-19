@@ -23,7 +23,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseRegion;
@@ -87,6 +86,14 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
     }
 
     /**
+     * Obtain the owner.
+     * @return the owner
+     */
+    protected MoneyWiseBaseTable<T> getOwner() {
+        return theOwner;
+    }
+
+    /**
      * Set preferred Size.
      */
     void setPreferredSize() {
@@ -116,8 +123,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         /* Look at the base values as a standard item */
         final MetisFieldVersionValues myBaseValues = getBaseValues();
         return pField != null
-                && myBaseValues != null
-                && pItem.getValues().fieldChanged(pField, myBaseValues).isDifferent();
+                && myBaseValues != null;
     }
 
     /**
@@ -143,7 +149,6 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         /* Clear the goTo lists */
         theGoToFilterList.clear();
         theGoToItemList.clear();
-        pMenu.removeAllItems();
 
         /* Declare the goTo items */
         declareGoToItems(getEditSet().hasUpdates());

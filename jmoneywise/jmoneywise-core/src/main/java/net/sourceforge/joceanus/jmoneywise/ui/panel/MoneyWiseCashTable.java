@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.panel;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -27,8 +29,10 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseNameSpaceIterator;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseCashPanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
@@ -214,6 +218,11 @@ public class MoneyWiseCashTable
             /* Show the error */
             setError(myError);
         }
+    }
+
+    @Override
+    protected Iterator<PrometheusDataItem> nameSpaceIterator() {
+        return assetNameSpaceIterator();
     }
 }
 

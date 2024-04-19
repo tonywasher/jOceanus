@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency.MoneyW
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
@@ -96,7 +96,7 @@ public class MoneyWiseDepositPanel
     public MoneyWiseDepositPanel(final TethysUIFactory<?> pFactory,
                                  final MoneyWiseView pView,
                                  final PrometheusEditSet pEditSet,
-                                 final MoneyWiseBaseTable<MoneyWiseDeposit> pOwner) {
+                                 final MoneyWiseAssetTable<MoneyWiseDeposit> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 
@@ -129,7 +129,7 @@ public class MoneyWiseDepositPanel
      * @param pOwner the owning table
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory,
-                                final MoneyWiseBaseTable<MoneyWiseDeposit> pOwner) {
+                                final MoneyWiseAssetTable<MoneyWiseDeposit> pOwner) {
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUIStringEditField myName = myFields.newStringField();

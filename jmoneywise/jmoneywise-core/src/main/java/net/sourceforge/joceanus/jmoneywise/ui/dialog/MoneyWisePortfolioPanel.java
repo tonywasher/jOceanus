@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
@@ -75,7 +75,7 @@ public class MoneyWisePortfolioPanel
      */
     public MoneyWisePortfolioPanel(final TethysUIFactory<?> pFactory,
                                    final PrometheusEditSet pEditSet,
-                                   final MoneyWiseBaseTable<MoneyWisePortfolio> pOwner) {
+                                   final MoneyWiseAssetTable<MoneyWisePortfolio> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 
@@ -101,7 +101,7 @@ public class MoneyWisePortfolioPanel
      * @param pOwner the owning table
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory,
-                                final MoneyWiseBaseTable<MoneyWisePortfolio> pOwner) {
+                                final MoneyWiseAssetTable<MoneyWisePortfolio> pOwner) {
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUIStringEditField myName = myFields.newStringField();

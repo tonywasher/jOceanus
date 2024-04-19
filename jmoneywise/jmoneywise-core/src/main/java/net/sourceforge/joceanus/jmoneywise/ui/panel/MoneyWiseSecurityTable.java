@@ -94,7 +94,7 @@ public class MoneyWiseSecurityTable
 
         /* Create the symbol column */
         myTable.declareStringColumn(MoneyWiseAccountInfoClass.SYMBOL)
-                .setValidator(this::isValidDesc)
+                .setValidator(this::isValidSymbol)
                 .setCellValueFactory(MoneyWiseSecurity::getSymbol)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_NAME)

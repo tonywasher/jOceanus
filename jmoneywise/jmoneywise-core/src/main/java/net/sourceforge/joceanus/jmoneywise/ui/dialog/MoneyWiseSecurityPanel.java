@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
@@ -95,7 +95,7 @@ public class MoneyWiseSecurityPanel
     public MoneyWiseSecurityPanel(final TethysUIFactory<?> pFactory,
                                   final MoneyWiseView pView,
                                   final PrometheusEditSet pEditSet,
-                                  final MoneyWiseBaseTable<MoneyWiseSecurity> pOwner) {
+                                  final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 
@@ -106,7 +106,7 @@ public class MoneyWiseSecurityPanel
         buildMainPanel(pFactory, pOwner);
 
         /* Build the details panel */
-        buildDetailsPanel(pFactory);
+        buildDetailsPanel(pFactory, pOwner);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
@@ -122,13 +122,18 @@ public class MoneyWiseSecurityPanel
         });
     }
 
+    @Override
+    protected MoneyWiseAssetTable<MoneyWiseSecurity> getOwner() {
+        return (MoneyWiseAssetTable<MoneyWiseSecurity>) super.getOwner();
+    }
+
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
      * @param pOwner the owning table
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory,
-                                final MoneyWiseBaseTable<MoneyWiseSecurity> pOwner) {
+                                final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUIStringEditField myName = myFields.newStringField();
@@ -168,7 +173,8 @@ public class MoneyWiseSecurityPanel
      * Build details subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildDetailsPanel(final TethysUIFactory<?> pFactory) {
+    private void buildDetailsPanel(final TethysUIFactory<?> pFactory,
+                                   final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
@@ -191,6 +197,10 @@ public class MoneyWiseSecurityPanel
         myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));
         myStockButton.setMenuConfigurator(c -> buildStockMenu(c, getItem()));
         myPrice.setDeemedCurrency(() -> getItem().getCurrency());
+
+        /* Configure symbol checks */
+        mySymbol.setValidator(this::isValidSymbol);
+        mySymbol.setReporter(pOwner::showValidateError);
     }
 
     /**
@@ -605,5 +615,14 @@ public class MoneyWiseSecurityPanel
         if (myActive != null) {
             myActive.scrollToItem();
         }
+    }
+
+    /**
+     * is Valid symbol?
+     * @param pNewSymbol the new symbol
+     * @return error message or null
+     */
+    public String isValidSymbol(final String pNewSymbol) {
+        return getOwner().isValidSymbol(pNewSymbol, getItem());
     }
 }

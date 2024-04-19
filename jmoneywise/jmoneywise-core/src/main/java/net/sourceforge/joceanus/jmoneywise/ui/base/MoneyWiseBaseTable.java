@@ -521,9 +521,9 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
         }
 
         /* Loop through the existing values */
-        final Iterator<T> myIterator = theTable.itemIterator();
+        final Iterator<PrometheusDataItem> myIterator = nameSpaceIterator();
         while (myIterator.hasNext()) {
-            final T myValue = myIterator.next();
+            final PrometheusDataItem myValue = myIterator.next();
 
             /* Ignore self and deleted */
             if (!(myValue instanceof MetisDataNamedItem)
@@ -555,6 +555,14 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
                                       final MetisDataNamedItem pCheck) {
         /* Check for duplicate */
         return pNewName.equals(pCheck.getName());
+    }
+
+    /**
+     * Obtain the nameSpace iterator.
+      * @return the iterator
+     */
+    protected Iterator<PrometheusDataItem> nameSpaceIterator() {
+        return new MoneyWiseNameSpaceIterator(theEditSet, theItemType);
     }
 
     /**
