@@ -100,11 +100,19 @@ public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
 
         /* If we have a selected item */
         if (myItem != null) {
+            /* Check whether the selected item was a new item that has now been discarded */
+            final boolean isDiscarded = myItem.getOriginalValues().getVersion() > myItem.getList().getVersion();
+
+            /* Check whether the item is now filtered out */
+            final boolean isFiltered = theFilter != null && !theFilter.test(myItem);
+
             /* If it is no longer visible */
-            if (theFilter != null && !theFilter.test(myItem)) {
+            if (isDiscarded || isFiltered) {
                 /* locate the nearest item */
                 myItem = findNearest();
             }
+
+            /* Else nothing selected */
         } else {
             /* Find the first item */
             myItem = findFirst();
