@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.fieldset;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
@@ -167,6 +168,11 @@ public class PrometheusFieldSetTextArea<T>
         /* adjust the element */
         theTextArea.setVisible(pVisible);
         isVisible = pVisible;
+    }
+
+    @Override
+    public void setReporter(Consumer<String> pReporter) {
+        theTextArea.setReporter(pReporter);
     }
 }
 

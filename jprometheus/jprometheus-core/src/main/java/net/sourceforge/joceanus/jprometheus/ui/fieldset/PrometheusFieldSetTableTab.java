@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.fieldset;
 
+import java.util.function.Consumer;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
@@ -111,6 +113,11 @@ public class PrometheusFieldSetTableTab<T>
     @Override
     public void setVisible(final MetisDataFieldId pFieldId,
                            final boolean pVisible) {
+        /* NoOp */
+    }
+
+    @Override
+    public void setReporter(Consumer<String> pReporter) {
         /* NoOp */
     }
 }

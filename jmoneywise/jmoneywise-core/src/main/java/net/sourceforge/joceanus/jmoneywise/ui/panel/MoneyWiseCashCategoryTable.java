@@ -72,7 +72,7 @@ public class MoneyWiseCashCategoryTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseCashCategoryPanel(myGuiFactory, pEditSet, pError);
+        theActiveCategory = new MoneyWiseCashCategoryPanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveCategory);
 
         /* Add listeners */

@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
@@ -32,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -53,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * Panel to display/edit/create a Payee.
  */
 public class MoneyWisePayeePanel
-        extends MoneyWiseItemPanel<MoneyWisePayee> {
+        extends MoneyWiseAssetPanel<MoneyWisePayee> {
     /**
      * The fieldSet.
      */
@@ -68,16 +67,17 @@ public class MoneyWisePayeePanel
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWisePayeePanel(final TethysUIFactory<?> pFactory,
                                final PrometheusEditSet pEditSet,
-                               final MetisErrorPanel pError) {
+                               final MoneyWiseAssetTable<MoneyWisePayee> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
         buildMainPanel(pFactory);
@@ -116,7 +116,11 @@ public class MoneyWisePayeePanel
         myTypeButton.setMenuConfigurator(c -> buildPayeeTypeMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
-    }
+
+        /* Configure validation checks */
+        myName.setValidator(this::isValidName);
+        myDesc.setValidator(this::isValidDesc);
+     }
 
     /**
      * Build account subPanel.
@@ -136,6 +140,11 @@ public class MoneyWisePayeePanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePayee::getSortCode);
         theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePayee::getAccount);
         theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePayee::getReference);
+
+        /* Configure validation checks */
+        mySortCode.setValidator(this::isValidSortCode);
+        myAccount.setValidator(this::isValidAccount);
+        myReference.setValidator(this::isValidReference);
     }
 
     /**
@@ -158,6 +167,12 @@ public class MoneyWisePayeePanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.CUSTOMERNO, myCustNo, MoneyWisePayee::getCustNo);
         theFieldSet.addField(MoneyWiseAccountInfoClass.USERID, myUserId, MoneyWisePayee::getUserId);
         theFieldSet.addField(MoneyWiseAccountInfoClass.PASSWORD, myPassWord, MoneyWisePayee::getPassword);
+
+        /* Configure validation checks */
+        myWebSite.setValidator(this::isValidWebSite);
+        myCustNo.setValidator(this::isValidCustNo);
+        myUserId.setValidator(this::isValidUserId);
+        myPassWord.setValidator(this::isValidPassword);
     }
 
     /**
@@ -171,6 +186,9 @@ public class MoneyWisePayeePanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWisePayee::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

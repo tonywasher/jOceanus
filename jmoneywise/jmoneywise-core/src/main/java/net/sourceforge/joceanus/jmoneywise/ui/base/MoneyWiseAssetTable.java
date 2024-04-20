@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.base;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
@@ -23,15 +24,21 @@ import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
@@ -312,5 +319,81 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
     @Override
     protected String getInvalidNameChars() {
         return ":";
+    }
+
+    /**
+     * Obtain a new asset nameSpaceIterator.
+     * @return the iterator
+     */
+    protected Iterator<PrometheusDataItem> assetNameSpaceIterator() {
+        return new MoneyWiseNameSpaceIterator(getEditSet(),
+                MoneyWiseBasicDataType.PAYEE,
+                MoneyWiseBasicDataType.DEPOSIT,
+                MoneyWiseBasicDataType.CASH,
+                MoneyWiseBasicDataType.LOAN,
+                MoneyWiseBasicDataType.PORTFOLIO);
+    }
+
+    /**
+     * is Valid data?
+     * @param pNewData the new data
+     * @param pClazz the class
+     * @return error message or null
+     */
+    public String isValidData(final char[] pNewData,
+                              final MoneyWiseAccountInfoClass pClazz) {
+        /* Reject data that is too long */
+        if (pNewData.length > pClazz.getMaximumLength()) {
+            return "Data too long";
+        }
+
+        /* Valid notes */
+        return null;
+    }
+
+    /**
+     * is Valid symbol?
+     * @param pNewSymbol the new symbol
+     * @param pRow the row
+     * @return error message or null
+     */
+    public String isValidSymbol(final String pNewSymbol,
+                                final T pRow) {
+        /* Reject null symbol */
+        if (pNewSymbol == null) {
+            return "Null Symbol not allowed";
+        }
+
+        /* Reject invalid symbol */
+        if (!PrometheusDataItem.validString(pNewSymbol, getInvalidNameChars())) {
+            return "Invalid characters in symbol";
+        }
+
+        /* Reject symbol that is too long */
+        if (PrometheusDataItem.byteLength(pNewSymbol) > MoneyWiseSecurityType.SYMBOL_LEN) {
+            return "Symbol too long";
+        }
+
+        /* Loop through the existing values */
+        final Iterator<PrometheusDataItem> myIterator = nameSpaceIterator();
+        while (myIterator.hasNext()) {
+            final PrometheusDataItem myValue = myIterator.next();
+
+            /* Ignore self and deleted */
+            if (!(myValue instanceof MoneyWiseSecurity)
+                    || myValue.isDeleted()
+                    || myValue.equals(pRow)) {
+                continue;
+            }
+
+            /* Check for duplicate */
+            final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) myValue;
+            if (pNewSymbol.equals(mySecurity.getSymbol())) {
+                return "Duplicate symbol";
+            }
+        }
+
+        /* Valid symbol */
+        return null;
     }
 }

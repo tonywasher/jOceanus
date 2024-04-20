@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
@@ -80,6 +81,11 @@ public class PrometheusFieldSet<T>
      * is field changed predicate.
      */
     private BiPredicate<T, MetisDataFieldId> theChanged;
+
+    /**
+     * Reporter consumer.
+     */
+    private Consumer<String> theReporter;
 
     /**
      * Is the data being refreshed?
@@ -261,6 +267,7 @@ public class PrometheusFieldSet<T>
         /* Update all the panels */
         for (PrometheusFieldSetPanel<T> myPanel : thePanels) {
             myPanel.setItem(pItem);
+            myPanel.setReporter(theReporter);
             if (!areLabelsAdjusted) {
                 myPanel.adjustLabelWidth();
             }
@@ -360,5 +367,13 @@ public class PrometheusFieldSet<T>
         final TethysUIComponent myComponent = myPanel.getUnderlying();
         myComponent.setPreferredWidth(myWidth);
         myComponent.setPreferredHeight(pHeight);
+    }
+
+    /**
+     * Set reporter.
+     * @param pReporter the reporter
+     */
+    public void setReporter(final Consumer<String> pReporter) {
+        theReporter = pReporter;
     }
 }

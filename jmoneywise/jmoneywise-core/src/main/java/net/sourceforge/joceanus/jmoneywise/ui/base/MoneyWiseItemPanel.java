@@ -23,7 +23,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseRegion;
@@ -56,6 +55,11 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
     private static final String FILTER_MENU = "Filter";
 
     /**
+     * The Owning table.
+     */
+    private final MoneyWiseBaseTable<T> theOwner;
+
+    /**
      * The DataItem GoToMenuMap.
      */
     private final List<PrometheusDataItem> theGoToItemList;
@@ -69,15 +73,24 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     protected MoneyWiseItemPanel(final TethysUIFactory<?> pFactory,
                                  final PrometheusEditSet pEditSet,
-                                 final MetisErrorPanel pError) {
-        super(pFactory, pEditSet, pError);
+                                 final MoneyWiseBaseTable<T> pOwner) {
+        super(pFactory, pEditSet, pOwner.getErrorPanel());
+        theOwner = pOwner;
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();
         getFieldSet().setChanged(this::isFieldChanged);
+    }
+
+    /**
+     * Obtain the owner.
+     * @return the owner
+     */
+    protected MoneyWiseBaseTable<T> getOwner() {
+        return theOwner;
     }
 
     /**
@@ -110,8 +123,25 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         /* Look at the base values as a standard item */
         final MetisFieldVersionValues myBaseValues = getBaseValues();
         return pField != null
-                && myBaseValues != null
-                && pItem.getValues().fieldChanged(pField, myBaseValues).isDifferent();
+                && myBaseValues != null;
+    }
+
+    /**
+     * is Valid name?
+     * @param pNewName the new name
+     * @return error message or null
+     */
+    public String isValidName(final String pNewName) {
+        return theOwner.isValidName(pNewName, getItem());
+    }
+
+    /**
+     * is Valid description?
+     * @param pNewDesc the new description
+     * @return error message or null
+     */
+    public String isValidDesc(final String pNewDesc) {
+        return theOwner.isValidDesc(pNewDesc, getItem());
     }
 
     @Override
@@ -119,7 +149,6 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         /* Clear the goTo lists */
         theGoToFilterList.clear();
         theGoToItemList.clear();
-        pMenu.removeAllItems();
 
         /* Declare the goTo items */
         declareGoToItems(getEditSet().hasUpdates());

@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jprometheus.ui.fieldset;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
@@ -213,5 +214,13 @@ public class PrometheusFieldSetFields<T>
         /* adjust the element */
         final PrometheusFieldSetElement<?> myElement = theElements.get(pFieldId);
         myElement.setVisible(pVisible);
+    }
+
+    @Override
+    public void setReporter(final Consumer<String> pReporter) {
+        /* Loop through the elements */
+        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+            myElement.setReporter(pReporter);
+        }
     }
 }

@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -56,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * Panel to display/edit/create a Portfolio.
  */
 public class MoneyWisePortfolioPanel
-        extends MoneyWiseItemPanel<MoneyWisePortfolio> {
+        extends MoneyWiseAssetPanel<MoneyWisePortfolio> {
     /**
      * The fieldSet.
      */
@@ -71,16 +70,17 @@ public class MoneyWisePortfolioPanel
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWisePortfolioPanel(final TethysUIFactory<?> pFactory,
                                    final PrometheusEditSet pEditSet,
-                                   final MetisErrorPanel pError) {
+                                   final MoneyWiseAssetTable<MoneyWisePortfolio> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
         buildMainPanel(pFactory);
@@ -125,6 +125,10 @@ public class MoneyWisePortfolioPanel
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
+        /* Configure validation checks */
+        myName.setValidator(this::isValidName);
+        myDesc.setValidator(this::isValidDesc);
     }
 
     /**
@@ -145,6 +149,11 @@ public class MoneyWisePortfolioPanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePortfolio::getSortCode);
         theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePortfolio::getAccount);
         theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePortfolio::getReference);
+
+        /* Configure validation checks */
+        mySortCode.setValidator(this::isValidSortCode);
+        myAccount.setValidator(this::isValidAccount);
+        myReference.setValidator(this::isValidReference);
     }
 
     /**
@@ -167,6 +176,12 @@ public class MoneyWisePortfolioPanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.CUSTOMERNO, myCustNo, MoneyWisePortfolio::getCustNo);
         theFieldSet.addField(MoneyWiseAccountInfoClass.USERID, myUserId, MoneyWisePortfolio::getUserId);
         theFieldSet.addField(MoneyWiseAccountInfoClass.PASSWORD, myPassWord, MoneyWisePortfolio::getPassword);
+
+        /* Configure validation checks */
+        myWebSite.setValidator(this::isValidWebSite);
+        myCustNo.setValidator(this::isValidCustNo);
+        myUserId.setValidator(this::isValidUserId);
+        myPassWord.setValidator(this::isValidPassword);
     }
 
     /**
@@ -180,6 +195,9 @@ public class MoneyWisePortfolioPanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWisePortfolio::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

@@ -71,10 +71,10 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.78</BouncyCastleVersion>
+    <BouncyCastleVersion>1.78.1</BouncyCastleVersion>
     <JUnitVersion>5.10.2</JUnitVersion>
     <JSONVersion>20240303</JSONVersion>
-    <ApacheMavenVersion>3.9.5</ApacheMavenVersion>
+    <ApacheMavenVersion>3.9.6</ApacheMavenVersion>
     <MySQLVersion>8.3.0 </MySQLVersion>
     <MariaDBVersion>3.3.3</MariaDBVersion>
     <PostGreSQLVersion>42.7.3</PostGreSQLVersion>
@@ -99,21 +99,21 @@
     <ShadePluginVersion>3.5.2</ShadePluginVersion>
     <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
     <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
-    <BuildNumberPluginVersion>3.1.0</BuildNumberPluginVersion>
-    <BuildHelperPluginVersion>3.4.0</BuildHelperPluginVersion>
-    <JarPluginVersion>3.3.0</JarPluginVersion>
+    <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
+    <BuildHelperPluginVersion>3.5.0</BuildHelperPluginVersion>
+    <JarPluginVersion>3.4.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.5.0</ProjectInfoPluginVersion>
-    <JxrPluginVersion>3.3.1</JxrPluginVersion>
+    <JxrPluginVersion>3.3.2</JxrPluginVersion>
     <JavaDocPluginVersion>3.6.3</JavaDocPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
-    <SonarQubePluginVersion>3.9.1.2184</SonarQubePluginVersion>
+    <SonarQubePluginVersion>3.11.0.3922</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.21.2</PMDPluginVersion>
-    <JacocoPluginVersion>0.8.11</JacocoPluginVersion>
+    <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.3</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.16.1</VersionsPluginVersion>
+    <VersionsPluginVersion>2.16.2</VersionsPluginVersion>
   </properties>
   <build>
     <resources>

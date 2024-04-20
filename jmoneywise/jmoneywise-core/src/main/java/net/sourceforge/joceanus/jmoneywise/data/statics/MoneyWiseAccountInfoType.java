@@ -51,22 +51,17 @@ public class MoneyWiseAccountInfoType
     /**
      * WebSite length.
      */
-    protected static final int WEBSITE_LEN = 50;
+    public static final int WEBSITE_LEN = 50;
 
     /**
      * Data length.
      */
-    protected static final int DATA_LEN = 20;
-
-    /**
-     * Comment length.
-     */
-    protected static final int COMMENT_LEN = 50;
+    public static final int DATA_LEN = 20;
 
     /**
      * Notes length.
      */
-    protected static final int NOTES_LEN = 500;
+    public static final int NOTES_LEN = 500;
 
     /**
      * Copy Constructor.

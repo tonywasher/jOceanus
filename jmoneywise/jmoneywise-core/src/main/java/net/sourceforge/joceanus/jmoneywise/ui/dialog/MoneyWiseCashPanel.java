@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash;
@@ -40,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency.MoneyW
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -63,7 +62,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Cash.
  */
 public class MoneyWiseCashPanel
-        extends MoneyWiseItemPanel<MoneyWiseCash> {
+        extends MoneyWiseAssetPanel<MoneyWiseCash> {
     /**
      * The fieldSet.
      */
@@ -78,16 +77,17 @@ public class MoneyWiseCashPanel
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWiseCashPanel(final TethysUIFactory<?> pFactory,
                               final PrometheusEditSet pEditSet,
-                              final MetisErrorPanel pError) {
+                              final MoneyWiseAssetTable<MoneyWiseCash> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
         buildMainPanel(pFactory);
@@ -126,6 +126,10 @@ public class MoneyWiseCashPanel
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
+        /* Configure validation checks */
+        myName.setValidator(this::isValidName);
+        myDesc.setValidator(this::isValidDesc);
     }
 
     /**
@@ -165,6 +169,9 @@ public class MoneyWiseCashPanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseCash::getNotes);
+
+        /* Configure notes checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

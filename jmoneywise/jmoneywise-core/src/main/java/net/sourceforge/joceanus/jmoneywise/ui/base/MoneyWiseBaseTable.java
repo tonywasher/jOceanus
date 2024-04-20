@@ -28,7 +28,9 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
@@ -233,6 +235,14 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     @Override
     public TethysUIComponent getUnderlying() {
         return thePanel;
+    }
+
+    /**
+     * Obtain the error panel.
+     * @return the error panel
+     */
+    public MetisErrorPanel getErrorPanel() {
+        return theError;
     }
 
     /**
@@ -464,7 +474,18 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      */
     public boolean isFieldChanged(final MetisDataFieldId pField,
                                   final T pItem) {
-        return pField != null && !pItem.isHeader() && pItem.fieldChanged(pField).isDifferent();
+        /* If the field is a dataInfoClass as part of an infoSetItem */
+        if (pField instanceof PrometheusDataInfoClass
+                && pItem instanceof PrometheusInfoSetItem) {
+            /* Check with the infoSet whether the field has changed */
+            final PrometheusInfoSetItem myItem = (PrometheusInfoSetItem) pItem;
+            final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) pField;
+            return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
+        }
+
+        return pField != null
+                && !pItem.isHeader()
+                && pItem.fieldChanged(pField).isDifferent();
     }
 
     /**
@@ -482,8 +503,8 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * @param pRow the row
      * @return error message or null
      */
-    protected String isValidName(final String pNewName,
-                                 final T pRow) {
+    public String isValidName(final String pNewName,
+                              final T pRow) {
         /* Reject null name */
         if (pNewName == null) {
             return "Null Name not allowed";
@@ -500,9 +521,9 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
         }
 
         /* Loop through the existing values */
-        final Iterator<T> myIterator = theTable.itemIterator();
+        final Iterator<PrometheusDataItem> myIterator = nameSpaceIterator();
         while (myIterator.hasNext()) {
-            final T myValue = myIterator.next();
+            final PrometheusDataItem myValue = myIterator.next();
 
             /* Ignore self and deleted */
             if (!(myValue instanceof MetisDataNamedItem)
@@ -513,13 +534,35 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
             /* Check for duplicate */
             final MetisDataNamedItem myNamed = (MetisDataNamedItem) myValue;
-            if (pNewName.equals(myNamed.getName())) {
+            if (isDuplicateName(pNewName, pRow, myNamed)) {
                 return "Duplicate name";
             }
         }
 
         /* Valid name */
         return null;
+    }
+
+    /**
+     * is name a match?
+     * @param pNewName the new name
+     * @param pRow the row
+     * @param pCheck the item to check against
+     * @return true/false
+     */
+    protected boolean isDuplicateName(final String pNewName,
+                                      final T pRow,
+                                      final MetisDataNamedItem pCheck) {
+        /* Check for duplicate */
+        return pNewName.equals(pCheck.getName());
+    }
+
+    /**
+     * Obtain the nameSpace iterator.
+      * @return the iterator
+     */
+    protected Iterator<PrometheusDataItem> nameSpaceIterator() {
+        return new MoneyWiseNameSpaceIterator(theEditSet, theItemType);
     }
 
     /**
@@ -552,7 +595,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * Show validation error.
      * @param pError the error message
      */
-    private void showValidateError(final String pError) {
+    public void showValidateError(final String pError) {
         theError.showValidateError(pError);
     }
 

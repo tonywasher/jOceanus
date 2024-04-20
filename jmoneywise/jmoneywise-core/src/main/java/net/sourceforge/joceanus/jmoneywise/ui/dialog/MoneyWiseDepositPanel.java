@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
@@ -37,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency.MoneyW
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -65,7 +64,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Deposit.
  */
 public class MoneyWiseDepositPanel
-        extends MoneyWiseItemPanel<MoneyWiseDeposit> {
+        extends MoneyWiseAssetPanel<MoneyWiseDeposit> {
     /**
      * Rates Tab Title.
      */
@@ -91,17 +90,18 @@ public class MoneyWiseDepositPanel
      * @param pFactory the GUI factory
      * @param pView the data view
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWiseDepositPanel(final TethysUIFactory<?> pFactory,
                                  final MoneyWiseView pView,
                                  final PrometheusEditSet pEditSet,
-                                 final MetisErrorPanel pError) {
+                                 final MoneyWiseAssetTable<MoneyWiseDeposit> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
         buildMainPanel(pFactory);
@@ -113,7 +113,7 @@ public class MoneyWiseDepositPanel
         buildNotesPanel(pFactory);
 
         /* Create the DepositRates table and add to fieldSet */
-        theRates = new MoneyWiseDepositRateTable(pView, getEditSet(), pError);
+        theRates = new MoneyWiseDepositRateTable(pView, getEditSet(), pOwner.getErrorPanel());
         theFieldSet.newTable(TAB_RATES, theRates);
 
         /* Create the listeners */
@@ -153,7 +153,11 @@ public class MoneyWiseDepositPanel
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
-    }
+
+        /* Configure validation checks */
+        myName.setValidator(this::isValidName);
+        myDesc.setValidator(this::isValidDesc);
+     }
 
     /**
      * Build account subPanel.
@@ -180,6 +184,11 @@ public class MoneyWiseDepositPanel
 
         /* Configure the currency */
         myOpening.setDeemedCurrency(() -> getItem().getCurrency());
+
+        /* Configure validation checks */
+        mySortCode.setValidator(this::isValidSortCode);
+        myAccount.setValidator(this::isValidAccount);
+        myReference.setValidator(this::isValidReference);
     }
 
     /**
@@ -193,6 +202,9 @@ public class MoneyWiseDepositPanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseDeposit::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

@@ -89,12 +89,12 @@ public class MoneyWiseSecurityTable
         final TethysUITableManager<MetisDataFieldId, MoneyWiseSecurity> myTable = getTable();
 
         /* Create a security panel */
-        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pEditSet, pError);
+        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pEditSet, this);
         declareItemPanel(theActiveSecurity);
 
         /* Create the symbol column */
         myTable.declareStringColumn(MoneyWiseAccountInfoClass.SYMBOL)
-                .setValidator(this::isValidDesc)
+                .setValidator(this::isValidSymbol)
                 .setCellValueFactory(MoneyWiseSecurity::getSymbol)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_NAME)

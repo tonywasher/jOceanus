@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
@@ -55,6 +54,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryCl
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
@@ -148,15 +148,15 @@ public class MoneyWiseTransactionPanel
      * @param pEditSet the edit set
      * @param pBuilder the transaction builder
      * @param pAnalysisSelect the analysis selection panel
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWiseTransactionPanel(final TethysUIFactory<?> pFactory,
                                      final PrometheusEditSet pEditSet,
                                      final MoneyWiseTransDefaults pBuilder,
                                      final MoneyWiseAnalysisSelect pAnalysisSelect,
-                                     final MetisErrorPanel pError) {
+                                     final MoneyWiseBaseTable<MoneyWiseTransaction> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 

@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
@@ -40,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
@@ -64,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * Panel to display/edit/create a Security.
  */
 public class MoneyWiseSecurityPanel
-        extends MoneyWiseItemPanel<MoneyWiseSecurity> {
+        extends MoneyWiseAssetPanel<MoneyWiseSecurity> {
     /**
      * Prices Tab Title.
      */
@@ -90,29 +89,30 @@ public class MoneyWiseSecurityPanel
      * @param pFactory the GUI factory
      * @param pView the data view
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pOwner the owning table
      */
     public MoneyWiseSecurityPanel(final TethysUIFactory<?> pFactory,
                                   final MoneyWiseView pView,
                                   final PrometheusEditSet pEditSet,
-                                  final MetisErrorPanel pError) {
+                                  final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
         /* Initialise the panel */
-        super(pFactory, pEditSet, pError);
+        super(pFactory, pEditSet, pOwner);
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
         buildMainPanel(pFactory);
 
         /* Build the details panel */
-        buildDetailsPanel(pFactory);
+        buildDetailsPanel(pFactory, pOwner);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
 
         /* Create the SecurityPrices table */
-        thePrices = new MoneyWiseSecurityPriceTable(pView, getEditSet(), pError);
+        thePrices = new MoneyWiseSecurityPriceTable(pView, getEditSet(), pOwner.getErrorPanel());
         theFieldSet.newTable(TAB_PRICES, thePrices);
 
         /* Create the listener */
@@ -125,6 +125,7 @@ public class MoneyWiseSecurityPanel
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
+     * @param pOwner the owning table
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
@@ -152,13 +153,18 @@ public class MoneyWiseSecurityPanel
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
+        /* Configure validation checks */
+        myName.setValidator(this::isValidName);
+        myDesc.setValidator(this::isValidDesc);
     }
 
     /**
      * Build details subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildDetailsPanel(final TethysUIFactory<?> pFactory) {
+    private void buildDetailsPanel(final TethysUIFactory<?> pFactory,
+                                   final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 
@@ -181,6 +187,9 @@ public class MoneyWiseSecurityPanel
         myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));
         myStockButton.setMenuConfigurator(c -> buildStockMenu(c, getItem()));
         myPrice.setDeemedCurrency(() -> getItem().getCurrency());
+
+        /* Configure validation checks */
+        mySymbol.setValidator(this::isValidSymbol);
     }
 
     /**
@@ -194,6 +203,9 @@ public class MoneyWiseSecurityPanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseSecurity::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

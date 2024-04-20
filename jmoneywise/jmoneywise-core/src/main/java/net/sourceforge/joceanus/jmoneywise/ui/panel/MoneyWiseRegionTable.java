@@ -86,7 +86,7 @@ public class MoneyWiseRegionTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a region panel */
-        theActiveRegion = new MoneyWiseRegionPanel(myGuiFactory, pEditSet, pError);
+        theActiveRegion = new MoneyWiseRegionPanel(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveRegion);
 
         /* Set table configuration */
