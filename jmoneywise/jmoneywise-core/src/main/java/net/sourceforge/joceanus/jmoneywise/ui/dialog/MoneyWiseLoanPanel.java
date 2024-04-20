@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryCla
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -61,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
  * Panel to display/edit/create a Loan.
  */
 public class MoneyWiseLoanPanel
-        extends MoneyWiseItemPanel<MoneyWiseLoan> {
+        extends MoneyWiseAssetPanel<MoneyWiseLoan> {
     /**
      * The fieldSet.
      */
@@ -86,9 +85,10 @@ public class MoneyWiseLoanPanel
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
-        buildMainPanel(pFactory, pOwner);
+        buildMainPanel(pFactory);
 
         /* Build the account panel */
         buildAccountPanel(pFactory);
@@ -100,10 +100,8 @@ public class MoneyWiseLoanPanel
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @param pOwner the owning table
      */
-    private void buildMainPanel(final TethysUIFactory<?> pFactory,
-                                final MoneyWiseAssetTable<MoneyWiseLoan> pOwner) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUIStringEditField myName = myFields.newStringField();
@@ -130,13 +128,9 @@ public class MoneyWiseLoanPanel
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
-        /* Configure name checks */
+        /* Configure validation checks */
         myName.setValidator(this::isValidName);
-        myName.setReporter(pOwner::showValidateError);
-
-        /* Configure description checks */
         myDesc.setValidator(this::isValidDesc);
-        myDesc.setReporter(pOwner::showValidateError);
     }
 
     /**
@@ -162,7 +156,12 @@ public class MoneyWiseLoanPanel
 
         /* Configure the currency */
         myOpening.setDeemedCurrency(() -> getItem().getCurrency());
-    }
+
+        /* Configure validation checks */
+        mySortCode.setValidator(this::isValidSortCode);
+        myAccount.setValidator(this::isValidAccount);
+        myReference.setValidator(this::isValidReference);
+     }
 
     /**
      * Build Notes subPanel.
@@ -175,6 +174,9 @@ public class MoneyWiseLoanPanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseLoan::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

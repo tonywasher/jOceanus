@@ -581,6 +581,7 @@ public abstract class TethysUISwingDataTextField<T>
             /* Clear error indications */
             theTextField.setToolTipText(null);
             theErrorText = null;
+            theControl.clearErrorReport();
             adjustField();
 
             /* Restore cached background colour */

@@ -550,6 +550,7 @@ public abstract class TethysUIFXDataTextField<T>
         private void clearError() {
             theTextField.setTooltip(null);
             theErrorText = null;
+            theControl.clearErrorReport();
             theTextField.pseudoClassStateChanged(ERROR_CLASS, false);
             clearTheAttribute(TethysUIFieldAttribute.ERROR);
         }

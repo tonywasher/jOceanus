@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioType.M
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -56,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * Panel to display/edit/create a Portfolio.
  */
 public class MoneyWisePortfolioPanel
-        extends MoneyWiseItemPanel<MoneyWisePortfolio> {
+        extends MoneyWiseAssetPanel<MoneyWisePortfolio> {
     /**
      * The fieldSet.
      */
@@ -81,9 +80,10 @@ public class MoneyWisePortfolioPanel
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
-        buildMainPanel(pFactory, pOwner);
+        buildMainPanel(pFactory);
 
         /* Build the account panel */
         buildAccountPanel(pFactory);
@@ -98,10 +98,8 @@ public class MoneyWisePortfolioPanel
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @param pOwner the owning table
      */
-    private void buildMainPanel(final TethysUIFactory<?> pFactory,
-                                final MoneyWiseAssetTable<MoneyWisePortfolio> pOwner) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUIStringEditField myName = myFields.newStringField();
@@ -128,13 +126,9 @@ public class MoneyWisePortfolioPanel
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
-        /* Configure name checks */
+        /* Configure validation checks */
         myName.setValidator(this::isValidName);
-        myName.setReporter(pOwner::showValidateError);
-
-        /* Configure description checks */
         myDesc.setValidator(this::isValidDesc);
-        myDesc.setReporter(pOwner::showValidateError);
     }
 
     /**
@@ -155,6 +149,11 @@ public class MoneyWisePortfolioPanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePortfolio::getSortCode);
         theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePortfolio::getAccount);
         theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePortfolio::getReference);
+
+        /* Configure validation checks */
+        mySortCode.setValidator(this::isValidSortCode);
+        myAccount.setValidator(this::isValidAccount);
+        myReference.setValidator(this::isValidReference);
     }
 
     /**
@@ -177,6 +176,12 @@ public class MoneyWisePortfolioPanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.CUSTOMERNO, myCustNo, MoneyWisePortfolio::getCustNo);
         theFieldSet.addField(MoneyWiseAccountInfoClass.USERID, myUserId, MoneyWisePortfolio::getUserId);
         theFieldSet.addField(MoneyWiseAccountInfoClass.PASSWORD, myPassWord, MoneyWisePortfolio::getPassword);
+
+        /* Configure validation checks */
+        myWebSite.setValidator(this::isValidWebSite);
+        myCustNo.setValidator(this::isValidCustNo);
+        myUserId.setValidator(this::isValidUserId);
+        myPassWord.setValidator(this::isValidPassword);
     }
 
     /**
@@ -190,6 +195,9 @@ public class MoneyWisePortfolioPanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWisePortfolio::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

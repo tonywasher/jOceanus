@@ -154,6 +154,25 @@ public class TethysUIDataEditTextFieldControl<T>
     }
 
     /**
+     * Report error.
+     */
+    private void reportError() {
+        if (theReporter != null) {
+            theReporter.accept(theErrorText);
+        }
+    }
+
+    /**
+     * Clear error Report.
+     */
+    public void clearErrorReport() {
+        if (theReporter != null) {
+            theReporter.accept(null);
+        }
+        theErrorText = null;
+    }
+
+    /**
      * Process value.
      * @param pNewValue the new value
      * @return is value valid?
@@ -166,6 +185,9 @@ public class TethysUIDataEditTextFieldControl<T>
         if (Objects.equals(pNewValue, theEdit)) {
             /* Return success */
             theField.fireEvent(TethysUIEvent.EDITFOCUSLOST, null);
+
+            /* Clear any reporter error */
+            clearErrorReport();
             return true;
         }
 
@@ -179,16 +201,12 @@ public class TethysUIDataEditTextFieldControl<T>
             /* Invoke the validator and reject value if necessary */
             theErrorText = theValidator.apply(myValue);
             if (theErrorText != null) {
-                if (theReporter != null) {
-                    theReporter.accept(theErrorText);
-                }
+                reportError();
                 return false;
             }
 
             /* Clear any reporter error */
-            if (theReporter != null) {
-                theReporter.accept(null);
-            }
+            clearErrorReport();
 
             /* set the value and fire Event */
             setValue(myValue);
@@ -199,6 +217,7 @@ public class TethysUIDataEditTextFieldControl<T>
             /* Catch parsing error */
         } catch (IllegalArgumentException e) {
             theErrorText = ERROR_BADPARSE;
+            reportError();
             return false;
         }
     }

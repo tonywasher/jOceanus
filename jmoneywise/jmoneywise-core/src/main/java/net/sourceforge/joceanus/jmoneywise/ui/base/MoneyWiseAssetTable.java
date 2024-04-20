@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
@@ -30,6 +29,8 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType;
@@ -331,6 +332,23 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
                 MoneyWiseBasicDataType.CASH,
                 MoneyWiseBasicDataType.LOAN,
                 MoneyWiseBasicDataType.PORTFOLIO);
+    }
+
+    /**
+     * is Valid data?
+     * @param pNewData the new data
+     * @param pClazz the class
+     * @return error message or null
+     */
+    public String isValidData(final char[] pNewData,
+                              final MoneyWiseAccountInfoClass pClazz) {
+        /* Reject data that is too long */
+        if (pNewData.length > pClazz.getMaximumLength()) {
+            return "Data too long";
+        }
+
+        /* Valid notes */
+        return null;
     }
 
     /**

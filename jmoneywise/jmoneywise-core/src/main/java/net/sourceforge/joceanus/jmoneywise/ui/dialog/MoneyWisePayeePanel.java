@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeType.Money
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.jprometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -53,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  * Panel to display/edit/create a Payee.
  */
 public class MoneyWisePayeePanel
-        extends MoneyWiseItemPanel<MoneyWisePayee> {
+        extends MoneyWiseAssetPanel<MoneyWisePayee> {
     /**
      * The fieldSet.
      */
@@ -78,9 +77,10 @@ public class MoneyWisePayeePanel
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
+        theFieldSet.setReporter(pOwner::showValidateError);
 
         /* Build the main panel */
-        buildMainPanel(pFactory, pOwner);
+        buildMainPanel(pFactory);
 
         /* Build the account panel */
         buildAccountPanel(pFactory);
@@ -94,11 +94,9 @@ public class MoneyWisePayeePanel
 
     /**
      * Build Main subPanel.
-     * @param pOwner the owning table
      * @param pFactory the GUI factory
      */
-    private void buildMainPanel(final TethysUIFactory<?> pFactory,
-                                final MoneyWiseAssetTable<MoneyWisePayee> pOwner) {
+    private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
         final TethysUIStringEditField myName = myFields.newStringField();
@@ -119,14 +117,10 @@ public class MoneyWisePayeePanel
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
-        /* Configure name checks */
+        /* Configure validation checks */
         myName.setValidator(this::isValidName);
-        myName.setReporter(pOwner::showValidateError);
-
-        /* Configure description checks */
         myDesc.setValidator(this::isValidDesc);
-        myDesc.setReporter(pOwner::showValidateError);
-    }
+     }
 
     /**
      * Build account subPanel.
@@ -146,6 +140,11 @@ public class MoneyWisePayeePanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePayee::getSortCode);
         theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePayee::getAccount);
         theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePayee::getReference);
+
+        /* Configure validation checks */
+        mySortCode.setValidator(this::isValidSortCode);
+        myAccount.setValidator(this::isValidAccount);
+        myReference.setValidator(this::isValidReference);
     }
 
     /**
@@ -168,6 +167,12 @@ public class MoneyWisePayeePanel
         theFieldSet.addField(MoneyWiseAccountInfoClass.CUSTOMERNO, myCustNo, MoneyWisePayee::getCustNo);
         theFieldSet.addField(MoneyWiseAccountInfoClass.USERID, myUserId, MoneyWisePayee::getUserId);
         theFieldSet.addField(MoneyWiseAccountInfoClass.PASSWORD, myPassWord, MoneyWisePayee::getPassword);
+
+        /* Configure validation checks */
+        myWebSite.setValidator(this::isValidWebSite);
+        myCustNo.setValidator(this::isValidCustNo);
+        myUserId.setValidator(this::isValidUserId);
+        myPassWord.setValidator(this::isValidPassword);
     }
 
     /**
@@ -181,6 +186,9 @@ public class MoneyWisePayeePanel
 
         /* Assign the fields to the panel */
         theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWisePayee::getNotes);
+
+        /* Configure validation checks */
+        myNotes.setValidator(this::isValidNotes);
     }
 
     @Override

@@ -17,12 +17,15 @@
 
 package net.sourceforge.joceanus.jprometheus.ui.fieldset;
 
+import java.util.function.Consumer;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedField;
 import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
@@ -186,5 +189,15 @@ public class PrometheusFieldSetElement<V> {
     void adjustChanged(final boolean pChanged) {
         theField.setTheAttributeState(TethysUIFieldAttribute.CHANGED, pChanged);
         theField.adjustField();
+    }
+
+    /**
+     * Set reporter.
+     * @param pReporter the reporter
+     */
+    void setReporter(final Consumer<String> pReporter) {
+        if (theField instanceof TethysUIValidatedField) {
+            ((TethysUIValidatedField<?>)theField).setReporter(pReporter);
+        }
     }
 }
