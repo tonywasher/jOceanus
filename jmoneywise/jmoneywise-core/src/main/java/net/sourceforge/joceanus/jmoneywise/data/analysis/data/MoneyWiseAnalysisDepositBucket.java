@@ -70,8 +70,8 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pAnalysis the analysis
      * @param pDeposit the deposit
      */
-    protected MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
-                                             final MoneyWiseDeposit pDeposit) {
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseDeposit pDeposit) {
         /* Call super-constructor */
         super(pAnalysis, pDeposit);
 
@@ -200,7 +200,7 @@ public final class MoneyWiseAnalysisDepositBucket
     @Override
     public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
-        if (isPeer2Peer
+        if (Boolean.TRUE.equals(isPeer2Peer)
                 && isBadDebt(pHelper)) {
             /* Access the amount */
             final TethysMoney myAmount = pHelper.getDebitAmount();
@@ -220,7 +220,7 @@ public final class MoneyWiseAnalysisDepositBucket
     @Override
     public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a peer2peer and a bad debt transaction */
-        if (isPeer2Peer
+        if (Boolean.TRUE.equals(isPeer2Peer)
                 && isBadDebt(pHelper)) {
             /* Access the amount */
             TethysMoney myAmount = pHelper.getCreditAmount();
@@ -244,7 +244,7 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pHelper the transaction helper
      * @return true/false
      */
-    protected boolean isBadDebt(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    boolean isBadDebt(final MoneyWiseAnalysisTransactionHelper pHelper) {
         return pHelper.isCategoryClass(MoneyWiseTransCategoryClass.BADDEBTCAPITAL)
                 || pHelper.isCategoryClass(MoneyWiseTransCategoryClass.BADDEBTINTEREST);
     }
@@ -254,7 +254,7 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pHelper the transaction helper
      * @return the attribute
      */
-    protected MoneyWiseAnalysisAccountAttr badDebtAttr(final MoneyWiseAnalysisTransactionHelper pHelper) {
+    MoneyWiseAnalysisAccountAttr badDebtAttr(final MoneyWiseAnalysisTransactionHelper pHelper) {
         return pHelper.isCategoryClass(MoneyWiseTransCategoryClass.BADDEBTCAPITAL)
                 ? MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL
                 : MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST;
@@ -318,7 +318,7 @@ public final class MoneyWiseAnalysisDepositBucket
     /**
      * DepositBucket list class.
      */
-    public static class MoneyWiseAnalysisDepositBucketList
+    public static final class MoneyWiseAnalysisDepositBucketList
             extends MoneyWiseAnalysisAccountBucketList<MoneyWiseAnalysisDepositBucket, MoneyWiseDeposit> {
         /**
          * Local Report fields.
@@ -329,7 +329,7 @@ public final class MoneyWiseAnalysisDepositBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -339,8 +339,8 @@ public final class MoneyWiseAnalysisDepositBucket
          * @param pAnalysis the analysis
          * @param pBase the base list
          */
-        protected MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                     final MoneyWiseAnalysisDepositBucketList pBase) {
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -354,9 +354,9 @@ public final class MoneyWiseAnalysisDepositBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                     final MoneyWiseAnalysisDepositBucketList pBase,
-                                                     final TethysDate pDate) {
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucketList pBase,
+                                           final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -370,9 +370,9 @@ public final class MoneyWiseAnalysisDepositBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                     final MoneyWiseAnalysisDepositBucketList pBase,
-                                                     final TethysDateRange pRange) {
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucketList pBase,
+                                           final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

@@ -62,8 +62,8 @@ public final class MoneyWiseAnalysisLoanBucket
      * @param pAnalysis the analysis
      * @param pLoan the loan
      */
-    protected MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
-                                          final MoneyWiseLoan pLoan) {
+    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseLoan pLoan) {
         /* Call super-constructor */
         super(pAnalysis, pLoan);
 
@@ -162,7 +162,7 @@ public final class MoneyWiseAnalysisLoanBucket
     @Override
     public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a credit card */
-        if (isCreditCard) {
+        if (Boolean.TRUE.equals(isCreditCard)) {
             /* Access the amount */
             final TethysMoney myAmount = pHelper.getDebitAmount();
 
@@ -250,7 +250,7 @@ public final class MoneyWiseAnalysisLoanBucket
     /**
      * LoanBucket list class.
      */
-    public static class MoneyWiseAnalysisLoanBucketList
+    public static final class MoneyWiseAnalysisLoanBucketList
             extends MoneyWiseAnalysisAccountBucketList<MoneyWiseAnalysisLoanBucket, MoneyWiseLoan> {
         /**
          * Local Report fields.
@@ -261,7 +261,7 @@ public final class MoneyWiseAnalysisLoanBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -271,8 +271,8 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pAnalysis the analysis
          * @param pBase the base list
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisLoanBucketList pBase) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisLoanBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -286,9 +286,9 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisLoanBucketList pBase,
-                                                  final TethysDate pDate) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisLoanBucketList pBase,
+                                        final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -302,9 +302,9 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisLoanBucketList pBase,
-                                                  final TethysDateRange pRange) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisLoanBucketList pBase,
+                                        final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

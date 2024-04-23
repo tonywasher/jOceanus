@@ -63,8 +63,8 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
      * @param pCurrency the currency
      * @param pCategory the account category
      */
-    protected MoneyWiseAnalysisLoanCategoryBucket(final MoneyWiseCurrency pCurrency,
-                                                  final MoneyWiseLoanCategory pCategory) {
+    MoneyWiseAnalysisLoanCategoryBucket(final MoneyWiseCurrency pCurrency,
+                                        final MoneyWiseLoanCategory pCategory) {
         super(pCurrency);
         theCategory = pCategory;
     }
@@ -103,7 +103,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
      * Update active flag for Loan Bucket.
      * @param pBucket the Loan bucket
      */
-    protected void updateActive(final MoneyWiseAnalysisLoanBucket pBucket) {
+    void updateActive(final MoneyWiseAnalysisLoanBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -111,7 +111,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
      * Update active flag for Loan Category Bucket.
      * @param pBucket the Loan category bucket
      */
-    protected void updateActive(final MoneyWiseAnalysisLoanCategoryBucket pBucket) {
+    void updateActive(final MoneyWiseAnalysisLoanCategoryBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -162,7 +162,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisLoanCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisLoanCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
@@ -234,7 +234,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
          * @param pCategory the category
          * @return the bucket
          */
-        protected MoneyWiseAnalysisLoanCategoryBucket getBucket(final MoneyWiseLoanCategory pCategory) {
+        MoneyWiseAnalysisLoanCategoryBucket getBucket(final MoneyWiseLoanCategory pCategory) {
             /* Locate the bucket in the list */
             MoneyWiseAnalysisLoanCategoryBucket myItem = findItemById(pCategory.getIndexedId());
 
@@ -256,8 +256,8 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
          * @param pMarket the market analysis
          * @param pLoans the loan account buckets
          */
-        protected void analyseLoans(final MoneyWiseAnalysisMarket pMarket,
-                                    final MoneyWiseAnalysisLoanBucketList pLoans) {
+        void analyseLoans(final MoneyWiseAnalysisMarket pMarket,
+                          final MoneyWiseAnalysisLoanBucketList pLoans) {
             /* Sort the loans */
             pLoans.sortBuckets();
 
@@ -270,7 +270,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
                 final MoneyWiseLoanCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
-                if (myCurr.isForeignCurrency()) {
+                if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
                     myCurr.calculateFluctuations(myRange);
                     pMarket.processAccount(myCurr);
                     haveForeignCurrency = Boolean.TRUE;
@@ -307,7 +307,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
         /**
          * Produce totals for the categories.
          */
-        protected void produceTotals() {
+        void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
             final MetisListIndexed<MoneyWiseAnalysisLoanCategoryBucket> myTotals = new MetisListIndexed<>();
 

@@ -37,9 +37,12 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisT
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
@@ -47,6 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -85,9 +89,9 @@ public class MoneyWiseAnalysis
     }
 
     /**
-     * The DataSet.
+     * The EditSet.
      */
-    private final MoneyWiseDataSet theData;
+    private final PrometheusEditSet theEditSet;
 
     /**
      * The taxYear cache.
@@ -176,19 +180,20 @@ public class MoneyWiseAnalysis
 
     /**
      * Constructor for a full analysis.
-     * @param pData the data to analyse events for
+     * @param pEditSet the editSet to analyse events for
      * @param pPreferenceMgr the preference manager
      */
-    public MoneyWiseAnalysis(final MoneyWiseDataSet pData,
+    public MoneyWiseAnalysis(final PrometheusEditSet pEditSet,
                              final MetisPreferenceManager pPreferenceMgr) {
         /* Store the data */
-        theData = pData;
-        theCurrency = pData.getReportingCurrency();
+        theEditSet = pEditSet;
+        final MoneyWiseDataSet myDataSet = getData();
+        theCurrency = myDataSet.getReportingCurrency();
         thePreferences = pPreferenceMgr;
-        theDateRange = theData.getDateRange();
+        theDateRange = myDataSet.getDateRange();
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Create a new set of buckets */
         theDeposits = new MoneyWiseAnalysisDepositBucketList(this);
@@ -211,21 +216,20 @@ public class MoneyWiseAnalysis
     }
 
     /**
-     * Constructor for a view analysis.
+     * Constructor for a copy analysis.
      * @param pSource the base analysis
      */
     public MoneyWiseAnalysis(final MoneyWiseAnalysis pSource) {
         /* Store the data */
-        theData = pSource.getData();
+        theEditSet = pSource.getEditSet();
         theCurrency = pSource.getCurrency();
         thePreferences = pSource.getPreferenceMgr();
         theDateRange = pSource.getDateRange();
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseUKTaxYearCache) getData().getTaxFactory();
 
         /* Access the underlying maps/lists */
-        final TethysDate myStart = theDateRange.getStart();
         theSecurities = pSource.getSecurities();
 
         /* Create a new set of buckets */
@@ -254,13 +258,14 @@ public class MoneyWiseAnalysis
                              final TethysDate pDate) {
         /* Store the data */
         final MoneyWiseAnalysis myBase = pManager.getAnalysis();
-        theData = myBase.getData();
+        theEditSet = myBase.getEditSet();
+        final MoneyWiseDataSet myDataSet = getData();
         theCurrency = myBase.getCurrency();
         thePreferences = myBase.getPreferenceMgr();
-        theDateRange = new TethysDateRange(theData.getDateRange().getStart(), pDate);
+        theDateRange = new TethysDateRange(myDataSet.getDateRange().getStart(), pDate);
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Access the underlying maps/lists */
         theSecurities = myBase.getSecurities();
@@ -291,13 +296,14 @@ public class MoneyWiseAnalysis
                              final TethysDateRange pRange) {
         /* Store the data */
         final MoneyWiseAnalysis myBase = pManager.getAnalysis();
-        theData = myBase.getData();
+        theEditSet = myBase.getEditSet();
+        final MoneyWiseDataSet myDataSet = getData();
         theCurrency = myBase.getCurrency();
         thePreferences = myBase.getPreferenceMgr();
         theDateRange = pRange;
 
         /* Access the TaxYearCache */
-        theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
+        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Access the underlying maps/lists */
         theSecurities = myBase.getSecurities();
@@ -343,11 +349,19 @@ public class MoneyWiseAnalysis
     }
 
     /**
+     * Obtain the editSet.
+     * @return the editSet
+     */
+    public PrometheusEditSet getEditSet() {
+        return theEditSet;
+    }
+
+    /**
      * Obtain the data.
      * @return the data
      */
     public MoneyWiseDataSet getData() {
-        return theData;
+        return (MoneyWiseDataSet) theEditSet.getDataSet();
     }
 
     /**
@@ -500,7 +514,7 @@ public class MoneyWiseAnalysis
      */
     public void addOpeningBalances(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Iterate through the deposits */
-        final Iterator<MoneyWiseDeposit> myDepIterator = theData.getDeposits().iterator();
+        final Iterator<MoneyWiseDeposit> myDepIterator = theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).iterator();
         while (myDepIterator.hasNext()) {
             final MoneyWiseDeposit myDeposit = myDepIterator.next();
 
@@ -514,7 +528,7 @@ public class MoneyWiseAnalysis
         }
 
         /* Iterate through the cash */
-        final Iterator<MoneyWiseCash> myCashIterator = theData.getCash().iterator();
+        final Iterator<MoneyWiseCash> myCashIterator = theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseCash myCash = myCashIterator.next();
 
@@ -528,7 +542,7 @@ public class MoneyWiseAnalysis
         }
 
         /* Iterate through the loans */
-        final Iterator<MoneyWiseLoan> myLoanIterator = theData.getLoans().iterator();
+        final Iterator<MoneyWiseLoan> myLoanIterator = theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseLoan myLoan = myLoanIterator.next();
 

@@ -31,12 +31,13 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisH
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -80,11 +81,6 @@ public final class MoneyWiseAnalysisPayeeBucket
     private final MoneyWisePayee thePayee;
 
     /**
-     * The dataSet.
-     */
-    private final MoneyWiseDataSet theData;
-
-    /**
      * Values.
      */
     private final MoneyWiseAnalysisPayeeValues theValues;
@@ -109,7 +105,6 @@ public final class MoneyWiseAnalysisPayeeBucket
         /* Store the details */
         thePayee = pPayee;
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
 
         /* Create the history map */
         final MoneyWiseCurrency myDefault = theAnalysis.getCurrency();
@@ -136,7 +131,6 @@ public final class MoneyWiseAnalysisPayeeBucket
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
 
         /* Access the relevant history */
         theHistory = new MoneyWiseAnalysisHistory<>(pBase.getHistoryMap(), pDate);
@@ -158,7 +152,6 @@ public final class MoneyWiseAnalysisPayeeBucket
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
 
         /* Access the relevant history */
         theHistory = new MoneyWiseAnalysisHistory<>(pBase.getHistoryMap(), pRange);
@@ -215,18 +208,10 @@ public final class MoneyWiseAnalysisPayeeBucket
     }
 
     /**
-     * Obtain the dataSet.
-     * @return the dataSet
-     */
-    protected MoneyWiseDataSet getDataSet() {
-        return theData;
-    }
-
-    /**
      * Obtain the analysis.
      * @return the analysis
      */
-    protected MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysis getAnalysis() {
         return theAnalysis;
     }
 
@@ -298,8 +283,8 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setValue(final MoneyWiseAnalysisPayeeAttr pAttr,
-                            final Object pValue) {
+    void setValue(final MoneyWiseAnalysisPayeeAttr pAttr,
+                  final Object pValue) {
         /* Set the value */
         theValues.setValue(pAttr, pValue);
     }
@@ -334,8 +319,8 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pAttr the attribute
      * @param pDelta the delta
      */
-    protected void adjustCounter(final MoneyWiseAnalysisPayeeAttr pAttr,
-                                 final TethysMoney pDelta) {
+    void adjustCounter(final MoneyWiseAnalysisPayeeAttr pAttr,
+                       final TethysMoney pDelta) {
         TethysMoney myValue = theValues.getMoneyValue(pAttr);
         myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
@@ -670,7 +655,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Add bucket to totals.
      * @param pSource the bucket to add
      */
-    protected void addValues(final MoneyWiseAnalysisPayeeBucket pSource) {
+    void addValues(final MoneyWiseAnalysisPayeeBucket pSource) {
         /* Access source values */
         final MoneyWiseAnalysisPayeeValues mySource = pSource.getValues();
 
@@ -688,7 +673,7 @@ public final class MoneyWiseAnalysisPayeeBucket
     /**
      * Calculate delta.
      */
-    protected void calculateDelta() {
+    void calculateDelta() {
         /* Calculate delta for the values */
         theValues.calculateDelta();
     }
@@ -696,7 +681,7 @@ public final class MoneyWiseAnalysisPayeeBucket
     /**
      * Adjust to base.
      */
-    protected void adjustToBase() {
+    void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -792,7 +777,7 @@ public final class MoneyWiseAnalysisPayeeBucket
     /**
      * PayeeBucket list class.
      */
-    public static class MoneyWiseAnalysisPayeeBucketList
+    public static final class MoneyWiseAnalysisPayeeBucketList
             implements MetisFieldItem, MetisDataList<MoneyWiseAnalysisPayeeBucket> {
         /**
          * Local Report fields.
@@ -818,9 +803,9 @@ public final class MoneyWiseAnalysisPayeeBucket
         private final MetisListIndexed<MoneyWiseAnalysisPayeeBucket> theList;
 
         /**
-         * The data.
+         * The editSet.
          */
-        private final MoneyWiseDataSet theData;
+        private final PrometheusEditSet theEditSet;
 
         /**
          * The totals.
@@ -831,10 +816,10 @@ public final class MoneyWiseAnalysisPayeeBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
+            theEditSet = theAnalysis.getEditSet();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getPayee().compareTo(r.getPayee()));
@@ -846,9 +831,9 @@ public final class MoneyWiseAnalysisPayeeBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                   final MoneyWiseAnalysisPayeeBucketList pBase,
-                                                   final TethysDate pDate) {
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPayeeBucketList pBase,
+                                         final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -861,7 +846,7 @@ public final class MoneyWiseAnalysisPayeeBucket
                 final MoneyWiseAnalysisPayeeBucket myBucket = new MoneyWiseAnalysisPayeeBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -874,9 +859,9 @@ public final class MoneyWiseAnalysisPayeeBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                   final MoneyWiseAnalysisPayeeBucketList pBase,
-                                                   final TethysDateRange pRange) {
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPayeeBucketList pBase,
+                                         final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -889,7 +874,7 @@ public final class MoneyWiseAnalysisPayeeBucket
                 final MoneyWiseAnalysisPayeeBucket myBucket = new MoneyWiseAnalysisPayeeBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Adjust to the base and add to the list */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -926,7 +911,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          * Obtain the analysis.
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysis getAnalysis() {
             return theAnalysis;
         }
 
@@ -959,7 +944,7 @@ public final class MoneyWiseAnalysisPayeeBucket
             }
 
             /* Access as payee */
-            final MoneyWisePayee myPayee = MoneyWisePayee.class.cast(pPayee);
+            final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;
 
             /* Locate the bucket in the list */
             MoneyWiseAnalysisPayeeBucket myItem = findItemById(myPayee.getIndexedId());
@@ -984,7 +969,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          */
         public MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWisePayeeClass pClass) {
             /* Determine required payee */
-            final MoneyWisePayee myPayee = theData.getPayees().getSingularClass(pClass);
+            final MoneyWisePayee myPayee = theEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).getSingularClass(pClass);
 
             /* Return the bucket */
             return getBucket(myPayee);
@@ -1017,7 +1002,7 @@ public final class MoneyWiseAnalysisPayeeBucket
         /**
          * Produce totals for the Payees.
          */
-        protected void produceTotals() {
+        void produceTotals() {
             /* Loop through the buckets */
             final Iterator<MoneyWiseAnalysisPayeeBucket> myIterator = iterator();
             while (myIterator.hasNext()) {

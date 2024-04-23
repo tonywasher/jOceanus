@@ -110,11 +110,6 @@ public final class MoneyWiseAnalysisSecurityBucket
     private final MoneyWiseSecurityType theCategory;
 
     /**
-     * The dataSet.
-     */
-    private final MoneyWiseDataSet theData;
-
-    /**
      * Values.
      */
     private final MoneyWiseAnalysisSecurityValues theValues;
@@ -134,15 +129,14 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAnalysis the analysis
      * @param pHolding the security holding
      */
-    protected MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
-                                              final MoneyWiseSecurityHolding pHolding) {
+    MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
+                                    final MoneyWiseSecurityHolding pHolding) {
         /* Store the details */
         theHolding = pHolding;
         theCurrency = pHolding.getAssetCurrency();
         theSecurity = pHolding.getSecurity();
         thePortfolio = pHolding.getPortfolio();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
 
         /* Obtain category */
         theCategory = theSecurity.getCategory();
@@ -157,7 +151,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         final Currency myRepCurrency = MoneyWiseAnalysisAccountBucket.deriveCurrency(myReportingCurrency);
 
         /* Create the history map */
-        final MoneyWiseAnalysisSecurityValues myValues = isForeignCurrency
+        final MoneyWiseAnalysisSecurityValues myValues = Boolean.TRUE.equals(isForeignCurrency)
                 ? new MoneyWiseAnalysisSecurityValues(myCurrency, myRepCurrency)
                 : new MoneyWiseAnalysisSecurityValues(myCurrency);
         theHistory = new MoneyWiseAnalysisHistory<>(myValues);
@@ -181,7 +175,6 @@ public final class MoneyWiseAnalysisSecurityBucket
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
@@ -208,7 +201,6 @@ public final class MoneyWiseAnalysisSecurityBucket
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
@@ -235,7 +227,6 @@ public final class MoneyWiseAnalysisSecurityBucket
         thePortfolio = pBase.getPortfolio();
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
@@ -339,18 +330,10 @@ public final class MoneyWiseAnalysisSecurityBucket
     }
 
     /**
-     * Obtain the dataSet.
-     * @return the dataSet
-     */
-    protected MoneyWiseDataSet getDataSet() {
-        return theData;
-    }
-
-    /**
      * Obtain the analysis.
      * @return the analysis
      */
-    protected MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysis getAnalysis() {
         return theAnalysis;
     }
 
@@ -617,7 +600,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         /* Set the delta */
         setValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA, myValue);
 
-        if (isForeignCurrency) {
+        if (Boolean.TRUE.equals(isForeignCurrency)) {
             /* Obtain a copy of the value */
             myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE);
             myValue = new TethysMoney(myValue);
@@ -634,9 +617,9 @@ public final class MoneyWiseAnalysisSecurityBucket
      * Analyse the bucket.
      * @param pRange the range of valuation
      */
-    protected void analyseBucket(final TethysDateRange pRange) {
+    void analyseBucket(final TethysDateRange pRange) {
         /* Value the asset over the range */
-        if (isForeignCurrency) {
+        if (Boolean.TRUE.equals(isForeignCurrency)) {
             valueForeignAsset(pRange);
         } else {
             valueAsset(pRange);
@@ -649,7 +632,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         calculateProfit();
 
         /* Calculate the market movement */
-        if (isForeignCurrency) {
+        if (Boolean.TRUE.equals(isForeignCurrency)) {
             calculateForeignMarket();
         } else {
             calculateMarket();
@@ -659,7 +642,7 @@ public final class MoneyWiseAnalysisSecurityBucket
     /**
      * Adjust to base.
      */
-    protected void adjustToBase() {
+    void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -773,13 +756,13 @@ public final class MoneyWiseAnalysisSecurityBucket
     /**
      * SecurityValues class.
      */
-    public static class MoneyWiseAnalysisSecurityValues
+    public static final class MoneyWiseAnalysisSecurityValues
             extends MoneyWiseAnalysisValues<MoneyWiseAnalysisSecurityValues, MoneyWiseAnalysisSecurityAttr> {
         /**
          * Constructor.
          * @param pCurrency the account currency
          */
-        protected MoneyWiseAnalysisSecurityValues(final Currency pCurrency) {
+        MoneyWiseAnalysisSecurityValues(final Currency pCurrency) {
             /* Initialise class */
             super(MoneyWiseAnalysisSecurityAttr.class);
 
@@ -797,8 +780,8 @@ public final class MoneyWiseAnalysisSecurityBucket
          * @param pCurrency the account currency
          * @param pReportingCurrency the reporting currency
          */
-        protected MoneyWiseAnalysisSecurityValues(final Currency pCurrency,
-                                                  final Currency pReportingCurrency) {
+        MoneyWiseAnalysisSecurityValues(final Currency pCurrency,
+                                        final Currency pReportingCurrency) {
             /* Initialise class */
             this(pReportingCurrency);
 
@@ -887,7 +870,7 @@ public final class MoneyWiseAnalysisSecurityBucket
     /**
      * SecurityBucket list class.
      */
-    public static class MoneyWiseAnalysisSecurityBucketList
+    public static final class MoneyWiseAnalysisSecurityBucketList
             implements MetisFieldItem, MetisDataList<MoneyWiseAnalysisSecurityBucket> {
         /**
          * Local Report fields.
@@ -915,7 +898,7 @@ public final class MoneyWiseAnalysisSecurityBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getSecurity().compareTo(r.getSecurity()));
@@ -926,8 +909,8 @@ public final class MoneyWiseAnalysisSecurityBucket
          * @param pAnalysis the analysis
          * @param pBase the base list
          */
-        protected MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                      final MoneyWiseAnalysisSecurityBucketList pBase) {
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -943,7 +926,7 @@ public final class MoneyWiseAnalysisSecurityBucket
                  * Ignore idle securities. Note that we must include securities that have been
                  * closed in order to adjust Market Growth.
                  */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -956,9 +939,9 @@ public final class MoneyWiseAnalysisSecurityBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                      final MoneyWiseAnalysisSecurityBucketList pBase,
-                                                      final TethysDate pDate) {
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucketList pBase,
+                                            final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -974,7 +957,7 @@ public final class MoneyWiseAnalysisSecurityBucket
                  * Ignore idle securities. Note that we must include securities that have been
                  * closed in order to adjust Market Growth.
                  */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -987,9 +970,9 @@ public final class MoneyWiseAnalysisSecurityBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                      final MoneyWiseAnalysisSecurityBucketList pBase,
-                                                      final TethysDateRange pRange) {
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucketList pBase,
+                                            final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -1002,7 +985,7 @@ public final class MoneyWiseAnalysisSecurityBucket
                 final MoneyWiseAnalysisSecurityBucket myBucket = new MoneyWiseAnalysisSecurityBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || !myBucket.isIdle()) {
+                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -1029,7 +1012,7 @@ public final class MoneyWiseAnalysisSecurityBucket
          * Obtain the analysis.
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysis getAnalysis() {
             return theAnalysis;
         }
 
@@ -1046,7 +1029,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         /**
          * SortBuckets.
          */
-        protected void sortBuckets() {
+        void sortBuckets() {
             theList.sortList();
         }
 
@@ -1078,7 +1061,7 @@ public final class MoneyWiseAnalysisSecurityBucket
          * @return true/false are there active securities?
          * @throws OceanusException on error
          */
-        protected boolean markActiveSecurities() throws OceanusException {
+        boolean markActiveSecurities() throws OceanusException {
             /* Loop through the buckets */
             boolean areActive = false;
             final Iterator<MoneyWiseAnalysisSecurityBucket> myIterator = iterator();
@@ -1094,7 +1077,7 @@ public final class MoneyWiseAnalysisSecurityBucket
                 }
 
                 /* If we are closed */
-                if (mySecurity.isClosed()) {
+                if (Boolean.TRUE.equals(mySecurity.isClosed())) {
                     /* Ensure that we have correct closed dates */
                     mySecurity.adjustClosed();
 

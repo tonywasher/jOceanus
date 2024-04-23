@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jprometheus.database.PrometheusDatabase.Promethe
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataControl;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -182,7 +183,8 @@ public class MoneyWiseView
         pData.initialiseAnalysis();
 
         /* Create the analysis */
-        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, pData, getPreferenceManager());
+        final PrometheusEditSet myEditSet = new PrometheusEditSet(this);
+        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, getPreferenceManager());
 
         /* Post process the analysis */
         myAnalyser.postProcessAnalysis();

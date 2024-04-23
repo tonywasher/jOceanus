@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * The Portfolio Cash Bucket class.
  */
-public class MoneyWiseAnalysisPortfolioCashBucket
+public final class MoneyWiseAnalysisPortfolioCashBucket
         extends MoneyWiseAnalysisAccountBucket<MoneyWisePortfolio> {
     /**
      * Local Report fields.
@@ -37,8 +37,8 @@ public class MoneyWiseAnalysisPortfolioCashBucket
      * @param pAnalysis the analysis
      * @param pPortfolio the portfolio
      */
-    protected MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
-                                                   final MoneyWisePortfolio pPortfolio) {
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWisePortfolio pPortfolio) {
         /* Call super-constructor */
         super(pAnalysis, pPortfolio);
     }
@@ -48,8 +48,8 @@ public class MoneyWiseAnalysisPortfolioCashBucket
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
      */
-    protected MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
-                                                   final MoneyWiseAnalysisPortfolioCashBucket pBase) {
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPortfolioCashBucket pBase) {
         /* Call super-constructor */
         super(pAnalysis, pBase);
     }
@@ -60,9 +60,9 @@ public class MoneyWiseAnalysisPortfolioCashBucket
      * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
-    protected MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
-                                                   final MoneyWiseAnalysisPortfolioCashBucket pBase,
-                                                   final TethysDate pDate) {
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPortfolioCashBucket pBase,
+                                         final TethysDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
     }
@@ -73,9 +73,9 @@ public class MoneyWiseAnalysisPortfolioCashBucket
      * @param pBase the underlying bucket
      * @param pRange the range for the bucket
      */
-    protected MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
-                                                   final MoneyWiseAnalysisPortfolioCashBucket pBase,
-                                                   final TethysDateRange pRange) {
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPortfolioCashBucket pBase,
+                                         final TethysDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
     }
@@ -111,7 +111,7 @@ public class MoneyWiseAnalysisPortfolioCashBucket
      * Add Values.
      * @param pBucket the portfolio cash bucket
      */
-    protected void addValues(final MoneyWiseAnalysisPortfolioCashBucket pBucket) {
+    void addValues(final MoneyWiseAnalysisPortfolioCashBucket pBucket) {
         /* Add values */
         addValues(getValues(), pBucket.getValues());
 

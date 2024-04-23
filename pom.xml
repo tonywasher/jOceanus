@@ -101,7 +101,7 @@
     <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.5.0</BuildHelperPluginVersion>
-    <JarPluginVersion>3.4.0</JarPluginVersion>
+    <JarPluginVersion>3.4.1</JarPluginVersion>
     <ProjectInfoPluginVersion>3.5.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.3.2</JxrPluginVersion>
     <JavaDocPluginVersion>3.6.3</JavaDocPluginVersion>
@@ -111,7 +111,7 @@
     <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.21.2</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
-    <GPGPluginVersion>3.2.3</GPGPluginVersion>
+    <GPGPluginVersion>3.2.4</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.16.2</VersionsPluginVersion>
   </properties>
