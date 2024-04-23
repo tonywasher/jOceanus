@@ -131,15 +131,6 @@ public enum MoneyWiseAnalysisBaseResource
         theKeyName = pKeyName;
     }
 
-    /**
-     * Constructor.
-     * @param pResource the underlying resource
-     */
-    MoneyWiseAnalysisBaseResource(final TethysBundleId pResource) {
-        theKeyName = null;
-        theValue = pResource.getValue();
-    }
-
     @Override
     public String getKeyName() {
         return theKeyName;
