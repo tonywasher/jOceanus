@@ -16,9 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.analysis.data;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -43,7 +41,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
@@ -174,11 +171,6 @@ public class MoneyWiseAnalysis
     private final MoneyWiseTaxAnalysis theTaxAnalysis;
 
     /**
-     * The security transactions.
-     */
-    private final List<MoneyWiseTransaction> theSecurities;
-
-    /**
      * Constructor for a full analysis.
      * @param pEditSet the editSet to analyse events for
      * @param pPreferenceMgr the preference manager
@@ -210,9 +202,6 @@ public class MoneyWiseAnalysis
         theCashCategories = new MoneyWiseAnalysisCashCategoryBucketList(this);
         theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);
         theTaxAnalysis = null;
-
-        /* Create the Securities List */
-        theSecurities = new ArrayList<>();
     }
 
     /**
@@ -228,9 +217,6 @@ public class MoneyWiseAnalysis
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) getData().getTaxFactory();
-
-        /* Access the underlying maps/lists */
-        theSecurities = pSource.getSecurities();
 
         /* Create a new set of buckets */
         theDeposits = new MoneyWiseAnalysisDepositBucketList(this, pSource.getDeposits());
@@ -267,9 +253,6 @@ public class MoneyWiseAnalysis
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
-        /* Access the underlying maps/lists */
-        theSecurities = myBase.getSecurities();
-
         /* Create a new set of buckets */
         theDeposits = new MoneyWiseAnalysisDepositBucketList(this, myBase.getDeposits(), pDate);
         theCash = new MoneyWiseAnalysisCashBucketList(this, myBase.getCash(), pDate);
@@ -304,9 +287,6 @@ public class MoneyWiseAnalysis
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
-
-        /* Access the underlying maps/lists */
-        theSecurities = myBase.getSecurities();
 
         /* Create a new set of buckets */
         theDeposits = new MoneyWiseAnalysisDepositBucketList(this, myBase.getDeposits(), pRange);
@@ -498,14 +478,6 @@ public class MoneyWiseAnalysis
      */
     public MoneyWiseTaxAnalysis getTaxAnalysis() {
         return theTaxAnalysis;
-    }
-
-    /**
-     * Obtain the securities.
-     * @return the securities
-     */
-    public List<MoneyWiseTransaction> getSecurities() {
-        return theSecurities;
     }
 
     /**

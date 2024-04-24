@@ -175,11 +175,6 @@ public class MoneyWiseAnalysisTransAnalyser
     private final MoneyWiseAnalysisTaxBasisBucketList theTaxBasisBuckets;
 
     /**
-     * The security transactions.
-     */
-    private final List<MoneyWiseTransaction> theSecurities;
-
-    /**
      * The taxMan account.
      */
     private final MoneyWiseAnalysisPayeeBucket theTaxMan;
@@ -219,7 +214,6 @@ public class MoneyWiseAnalysisTransAnalyser
         /* Create a new analysis */
         myTask.startTask("Initialise");
         theAnalysis = new MoneyWiseAnalysis(pEditSet, pPreferenceMgr);
-        theSecurities = theAnalysis.getSecurities();
 
         /* Create new helper and set opening balances */
         theHelper = new MoneyWiseAnalysisTransactionHelper(myDataSet);
@@ -296,7 +290,6 @@ public class MoneyWiseAnalysisTransAnalyser
         theCategoryBuckets = theAnalysis.getTransCategories();
         theTagBuckets = theAnalysis.getTransactionTags();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
-        theSecurities = theAnalysis.getSecurities();
         theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);
 
         /* Access the StatePension security holding */
@@ -567,9 +560,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processDebitSecurityTransaction(final MoneyWiseSecurityHolding pDebit,
                                                  final MoneyWiseTransAsset pCredit) throws OceanusException {
-        /* Add to the securities transaction list */
-        theSecurities.add(theHelper.getTransaction());
-
         /* If credit account is also SecurityHolding */
         if (pCredit instanceof MoneyWiseSecurityHolding) {
             /* Split out working */
@@ -661,9 +651,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processCreditSecurityTransaction(final MoneyWiseTransAsset pDebit,
                                                   final MoneyWiseSecurityHolding pCredit) throws OceanusException {
-        /* Add to the securities transaction list */
-        theSecurities.add(theHelper.getTransaction());
-
         /* Input asset must be AssetBase */
         if (!(pDebit instanceof MoneyWiseAssetBase)) {
             throw new MoneyWiseLogicException("Invalid Debit Asset: "
@@ -699,9 +686,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processPortfolioXfer(final MoneyWisePortfolio pSource,
                                       final MoneyWisePortfolio pTarget) {
-        /* Add to the securities transaction list */
-        theSecurities.add(theHelper.getTransaction());
-
         /* Access the portfolio buckets */
         final MoneyWiseAnalysisPortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
         final MoneyWiseAnalysisPortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);

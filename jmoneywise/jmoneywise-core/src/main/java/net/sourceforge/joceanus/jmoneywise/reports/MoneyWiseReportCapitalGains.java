@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
@@ -77,9 +77,9 @@ public class MoneyWiseReportCapitalGains
     private MoneyWiseAnalysisSecurityBucket theSecurity;
 
     /**
-     * The Security related transactions.
+     * The transactions.
      */
-    private List<MoneyWiseTransaction> theSecurities;
+    private MoneyWiseTransactionList theTransactions;
 
     /**
      * The EndDate.
@@ -118,7 +118,7 @@ public class MoneyWiseReportCapitalGains
     @Override
     public Document createReport(final MoneyWiseAnalysis pAnalysis) {
         /* Access the securities and the date */
-        theSecurities = pAnalysis.getSecurities();
+        theTransactions = pAnalysis.getEditSet().getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
         theEndDate = pAnalysis.getDateRange().getEnd();
 
         /* Start the report */
@@ -144,7 +144,7 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatHistory() {
         /* Loop through the transactions */
-        final Iterator<MoneyWiseTransaction> myIterator = theSecurities.iterator();
+        final Iterator<MoneyWiseTransaction> myIterator = theTransactions.iterator();
         while (myIterator.hasNext()) {
             final MoneyWiseTransaction myTrans = myIterator.next();
 
