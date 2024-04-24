@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisHistory;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisCategoryValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
@@ -565,93 +565,6 @@ public final class MoneyWiseAnalysisTransCategoryBucket
     void registerTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Register the transaction in the history */
         theHistory.registerTransaction(pTrans.getTransaction(), theValues);
-    }
-
-    /**
-     * CategoryValues class.
-     */
-    public static final class MoneyWiseAnalysisCategoryValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisCategoryValues, MoneyWiseAnalysisTransAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the reporting currency
-         */
-        private MoneyWiseAnalysisCategoryValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisTransAttr.class);
-
-            /* Create all possible values */
-            super.setValue(MoneyWiseAnalysisTransAttr.INCOME, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisTransAttr.EXPENSE, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisCategoryValues(final MoneyWiseAnalysisCategoryValues pSource,
-                                                final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCategoryValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisCategoryValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCategoryValues getFullSnapShot() {
-            return new MoneyWiseAnalysisCategoryValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisCategoryValues pBase) {
-            /* Adjust income/expense values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTransAttr.INCOME);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTransAttr.EXPENSE);
-            calculateDelta();
-        }
-
-        /**
-         * Calculate delta.
-         */
-        private void calculateDelta() {
-            /* Obtain a copy of the value */
-            TethysMoney myDelta = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
-            myDelta = new TethysMoney(myDelta);
-
-            /* Subtract the expense value */
-            final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);
-            myDelta.subtractAmount(myExpense);
-
-            /* Set the delta */
-            super.setValue(MoneyWiseAnalysisTransAttr.PROFIT, myDelta);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Create a zero value in the correct currency */
-            TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
-            myValue = new TethysMoney(myValue);
-            myValue.setZero();
-
-            /* Reset Income and expense values */
-            super.setValue(MoneyWiseAnalysisTransAttr.INCOME, myValue);
-            super.setValue(MoneyWiseAnalysisTransAttr.EXPENSE, new TethysMoney(myValue));
-            super.setValue(MoneyWiseAnalysisTransAttr.PROFIT, new TethysMoney(myValue));
-        }
-
-        /**
-         * Are the values?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myIncome = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
-            final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);
-            return (myIncome.isNonZero()) || (myExpense.isNonZero());
-        }
     }
 
     /**

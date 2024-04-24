@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisT
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;

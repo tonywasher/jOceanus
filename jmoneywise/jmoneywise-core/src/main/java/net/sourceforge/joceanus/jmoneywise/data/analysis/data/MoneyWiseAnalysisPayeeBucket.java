@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisHistory;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisPayeeValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
@@ -686,93 +687,6 @@ public final class MoneyWiseAnalysisPayeeBucket
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
-    }
-
-    /**
-     * PayeeValues class.
-     */
-    public static final class MoneyWiseAnalysisPayeeValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisPayeeValues, MoneyWiseAnalysisPayeeAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the reporting currency
-         */
-        private MoneyWiseAnalysisPayeeValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisPayeeAttr.class);
-
-            /* Initialise income/expense to zero */
-            super.setValue(MoneyWiseAnalysisPayeeAttr.INCOME, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisPayeeAttr.EXPENSE, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisPayeeValues(final MoneyWiseAnalysisPayeeValues pSource,
-                                             final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisPayeeValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisPayeeValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisPayeeValues getFullSnapShot() {
-            return new MoneyWiseAnalysisPayeeValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisPayeeValues pBase) {
-            /* Adjust income/expense values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisPayeeAttr.INCOME);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisPayeeAttr.EXPENSE);
-            calculateDelta();
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Create a zero value in the correct currency */
-            TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-            myValue = new TethysMoney(myValue);
-            myValue.setZero();
-
-            /* Reset Income and expense values */
-            super.setValue(MoneyWiseAnalysisPayeeAttr.INCOME, myValue);
-            super.setValue(MoneyWiseAnalysisPayeeAttr.EXPENSE, new TethysMoney(myValue));
-            super.setValue(MoneyWiseAnalysisPayeeAttr.PROFIT, new TethysMoney(myValue));
-        }
-
-        /**
-         * Calculate delta.
-         */
-        private void calculateDelta() {
-            /* Obtain a copy of the value */
-            TethysMoney myDelta = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-            myDelta = new TethysMoney(myDelta);
-
-            /* Subtract the expense value */
-            final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
-            myDelta.subtractAmount(myExpense);
-
-            /* Set the delta */
-            super.setValue(MoneyWiseAnalysisPayeeAttr.PROFIT, myDelta);
-        }
-
-        /**
-         * Are the values?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myIncome = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-            final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
-            return (myIncome.isNonZero()) || (myExpense.isNonZero());
-        }
     }
 
     /**

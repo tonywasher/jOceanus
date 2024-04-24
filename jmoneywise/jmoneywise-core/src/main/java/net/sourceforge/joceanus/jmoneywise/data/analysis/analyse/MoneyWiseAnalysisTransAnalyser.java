@@ -40,12 +40,12 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisP
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransactionHelper;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;

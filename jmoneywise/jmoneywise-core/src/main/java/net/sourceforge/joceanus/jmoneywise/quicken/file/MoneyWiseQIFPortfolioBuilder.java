@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisP
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;

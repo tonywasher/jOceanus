@@ -22,6 +22,8 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisCreditCardValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory;
@@ -176,76 +178,6 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /* Pass call on */
         super.adjustForDebit(pHelper);
-    }
-
-    /**
-     * CreditCardValues class.
-     */
-    public static final class MoneyWiseAnalysisCreditCardValues
-            extends MoneyWiseAnalysisAccountValues {
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         */
-        private MoneyWiseAnalysisCreditCardValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(pCurrency);
-
-            /* Initialise spend to zero */
-            setValue(MoneyWiseAnalysisAccountAttr.SPEND, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         * @param pReportingCurrency the reporting currency
-         */
-        private MoneyWiseAnalysisCreditCardValues(final Currency pCurrency,
-                                                  final Currency pReportingCurrency) {
-            /* Initialise class */
-            super(pCurrency, pReportingCurrency);
-
-            /* Initialise spend to zero */
-            setValue(MoneyWiseAnalysisAccountAttr.SPEND, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisCreditCardValues(final MoneyWiseAnalysisCreditCardValues pSource,
-                                                  final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCreditCardValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisCreditCardValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCreditCardValues getFullSnapShot() {
-            return new MoneyWiseAnalysisCreditCardValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisAccountValues pBase) {
-            /* Adjust spend values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisAccountAttr.SPEND);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Reset spend values */
-            TethysMoney mySpend = getMoneyValue(MoneyWiseAnalysisAccountAttr.SPEND);
-            if (mySpend.isNonZero()) {
-                mySpend = new TethysMoney(mySpend);
-                mySpend.setZero();
-                setValue(MoneyWiseAnalysisAccountAttr.SPEND, mySpend);
-            }
-        }
     }
 
     /**

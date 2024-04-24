@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisBaseResource;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisHistory;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
@@ -677,93 +677,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pDate the date of valuation
      */
     protected void recordRate(final TethysDate pDate) {
-    }
-
-    /**
-     * AccountValues class.
-     */
-    public static class MoneyWiseAnalysisAccountValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisAccountValues, MoneyWiseAnalysisAccountAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         */
-        protected MoneyWiseAnalysisAccountValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisAccountAttr.class);
-
-            /* Initialise valuation to zero */
-            super.setValue(MoneyWiseAnalysisAccountAttr.VALUATION, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         * @param pReportingCurrency the reporting currency
-         */
-        protected MoneyWiseAnalysisAccountValues(final Currency pCurrency,
-                                                 final Currency pReportingCurrency) {
-            /* Initialise class */
-            this(pReportingCurrency);
-
-            /* Initialise valuation to zero */
-            super.setValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE, new TethysMoney(pReportingCurrency));
-            super.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        protected MoneyWiseAnalysisAccountValues(final MoneyWiseAnalysisAccountValues pSource,
-                                                 final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisAccountValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisAccountValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisAccountValues getFullSnapShot() {
-            return new MoneyWiseAnalysisAccountValues(this, false);
-        }
-
-        /**
-         * Are the values active?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myValuation = getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-            return (myValuation != null) && (myValuation.isNonZero());
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisAccountValues pBase) {
-            /* If we have a currency fluctuation */
-            if (getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT) != null) {
-                /* Adjust currency fluctuation values */
-                adjustMoneyToBase(pBase, MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
-            }
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* If we have a currency fluctuation */
-            TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
-            if (myValue != null) {
-                /* Create zero value */
-                myValue = new TethysMoney(myValue);
-                myValue.setZero();
-
-                /* Adjust currency fluctuation values */
-                super.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myValue);
-            }
-        }
     }
 
     /**

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisH
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket.MoneyWiseAnalysisTaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
@@ -764,79 +765,6 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         private boolean adjustNett() {
             return this != GROSS;
-        }
-    }
-
-    /**
-     * TaxBasisValues class.
-     */
-    public static final class MoneyWiseAnalysisTaxBasisValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisTaxBasisValues, MoneyWiseAnalysisTaxBasisAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the reporting currency
-         */
-        public MoneyWiseAnalysisTaxBasisValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisTaxBasisAttr.class);
-
-            /* Create all possible values */
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisTaxBasisValues(final MoneyWiseAnalysisTaxBasisValues pSource,
-                                                final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisTaxBasisValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisTaxBasisValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisTaxBasisValues getFullSnapShot() {
-            return new MoneyWiseAnalysisTaxBasisValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisTaxBasisValues pBase) {
-            /* Adjust gross/net/tax values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTaxBasisAttr.NETT);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Create a zero value in the correct currency */
-            TethysMoney myValue = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            myValue = new TethysMoney(myValue);
-            myValue.setZero();
-
-            /* Reset Income and expense values */
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, myValue);
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new TethysMoney(myValue));
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new TethysMoney(myValue));
-        }
-
-        /**
-         * Are the values?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myGross = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            final TethysMoney myNet = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
-            final TethysMoney myTax = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
-            return myGross.isNonZero() || myNet.isNonZero() || myTax.isNonZero();
         }
     }
 

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.Delaye
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;

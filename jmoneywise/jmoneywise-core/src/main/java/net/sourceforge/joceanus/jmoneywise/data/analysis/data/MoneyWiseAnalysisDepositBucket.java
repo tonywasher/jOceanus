@@ -22,6 +22,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
