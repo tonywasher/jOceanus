@@ -177,7 +177,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      * Obtain the analysis.
      * @return the analysis
      */
-    protected MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysis getAnalysis() {
         return theAnalysis;
     }
 
@@ -209,7 +209,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      * is the bucket idle.
      * @return true/false
      */
-    protected boolean isIdle() {
+    boolean isIdle() {
         return theHashMap.isEmpty();
     }
 
@@ -235,7 +235,7 @@ public final class MoneyWiseAnalysisTransTagBucket
     /**
      * TransactionTagBucketList class.
      */
-    public static class MoneyWiseAnalysisTransTagBucketList
+    public static final class MoneyWiseAnalysisTransTagBucketList
             implements MetisFieldItem, MetisDataList<MoneyWiseAnalysisTransTagBucket> {
         /**
          * Local Report fields.
@@ -263,7 +263,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getTransTag().compareTo(r.getTransTag()));
@@ -275,9 +275,9 @@ public final class MoneyWiseAnalysisTransTagBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                      final MoneyWiseAnalysisTransTagBucketList pBase,
-                                                      final TethysDate pDate) {
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisTransTagBucketList pBase,
+                                            final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -303,9 +303,9 @@ public final class MoneyWiseAnalysisTransTagBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                      final MoneyWiseAnalysisTransTagBucketList pBase,
-                                                      final TethysDateRange pRange) {
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisTransTagBucketList pBase,
+                                            final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -344,7 +344,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          * Obtain the analysis.
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysis getAnalysis() {
             return theAnalysis;
         }
 
@@ -407,7 +407,7 @@ public final class MoneyWiseAnalysisTransTagBucket
         /**
          * SortBuckets.
          */
-        protected void sortBuckets() {
+        void sortBuckets() {
             theList.sortList();
         }
 

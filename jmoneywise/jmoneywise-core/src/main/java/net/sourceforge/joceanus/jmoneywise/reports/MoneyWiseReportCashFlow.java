@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTa
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPayeeAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisPayeeValues;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;

@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.data.analysis.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,9 +71,9 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
      * @param pParent the parent bucket
      * @param pAccount the account
      */
-    protected MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysis pAnalysis,
-                                                     final MoneyWiseAnalysisTaxBasisBucket pParent,
-                                                     final MoneyWiseTransAsset pAccount) {
+    MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisTaxBasisBucket pParent,
+                                           final MoneyWiseTransAsset pAccount) {
         /* Store the parameters */
         super(pAnalysis, pParent.getTaxBasis());
         theAssetId = deriveAssetId(pAccount);
@@ -252,7 +251,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
                 final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseAnalysisTaxBasisAccountBucket(pAnalysis, theParent, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                     theMap.put(myBucket.getAssetId(), myBucket);
@@ -283,7 +282,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
                 final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseAnalysisTaxBasisAccountBucket(pAnalysis, theParent, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
 
@@ -401,7 +400,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          * SortBuckets.
          */
         protected void sortBuckets() {
-            Collections.sort(theList, (l, r) -> l.getAssetId().compareTo(r.getAssetId()));
+            theList.sort((l, r) -> l.getAssetId().compareTo(r.getAssetId()));
         }
 
         /**

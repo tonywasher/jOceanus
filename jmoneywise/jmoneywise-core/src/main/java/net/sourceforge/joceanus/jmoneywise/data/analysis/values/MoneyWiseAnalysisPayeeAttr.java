@@ -14,15 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.data.analysis.data;
+package net.sourceforge.joceanus.jmoneywise.data.analysis.values;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisAttribute;
 
 /**
- * TransactionAttribute enumeration.
+ * PayeeAttribute enumeration.
  */
-public enum MoneyWiseAnalysisTransAttr implements MoneyWiseAnalysisAttribute {
+public enum MoneyWiseAnalysisPayeeAttr implements MoneyWiseAnalysisAttribute {
     /**
      * Income.
      */
@@ -48,7 +48,7 @@ public enum MoneyWiseAnalysisTransAttr implements MoneyWiseAnalysisAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseAnalysisDataResource.getKeyForTransactionAttr(this).getValue();
+            theName = MoneyWiseAnalysisValuesResource.getKeyForPayeeAttr(this).getValue();
         }
 
         /* return the name */

@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisBaseResource;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisHistory;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
@@ -94,11 +95,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
     private final Boolean isForeignCurrency;
 
     /**
-     * The dataSet.
-     */
-    private final MoneyWiseDataSet theData;
-
-    /**
      * Values.
      */
     private final MoneyWiseAnalysisAccountValues theValues;
@@ -123,7 +119,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* Store the details */
         theAccount = pAccount;
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
 
         /* Determine currency */
         final MoneyWiseCurrency myReportingCurrency = pAnalysis.getCurrency();
@@ -137,7 +132,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         final Currency myRepCurrency = deriveCurrency(myReportingCurrency);
 
         /* Create the history map */
-        final MoneyWiseAnalysisAccountValues myValues = isForeignCurrency
+        final MoneyWiseAnalysisAccountValues myValues = Boolean.TRUE.equals(isForeignCurrency)
                 ? allocateForeignValues(myCurrency, myRepCurrency)
                 : allocateStandardValues(myCurrency);
         theHistory = new MoneyWiseAnalysisHistory<>(myValues);
@@ -157,7 +152,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
@@ -180,7 +174,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
@@ -203,7 +196,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
-        theData = theAnalysis.getData();
         isForeignCurrency = pBase.isForeignCurrency();
 
         /* Access the relevant history */
@@ -292,14 +284,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     public Boolean isIdle() {
         return theHistory.isIdle();
-    }
-
-    /**
-     * Obtain the dataSet.
-     * @return the dataSet
-     */
-    protected MoneyWiseDataSet getDataSet() {
-        return theData;
     }
 
     /**
@@ -448,7 +432,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
             myAmount.negate();
 
             /* If we are a foreign account */
-            if (isForeignCurrency) {
+            if (Boolean.TRUE.equals(isForeignCurrency)) {
                 /* Access local amount amount */
                 final TethysMoney myLocalAmount = pHelper.getLocalAmount();
 
@@ -481,7 +465,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
     }
 
     /**
-     * Adjust account for credit.
+     * Adjust account for credit. TODO rework
      * @param pHelper the transaction helper
      */
     public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
@@ -491,8 +475,8 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
-            if (isForeignCurrency) {
-                /* Access local amount amount */
+            if (Boolean.TRUE.equals(isForeignCurrency)) {
+                /* Access local amount */
                 final TethysMoney myLocalAmount = pHelper.getLocalAmount();
 
                 /* Adjust counters */
@@ -534,8 +518,8 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
-            if (isForeignCurrency) {
-                /* Access local amount amount */
+            if (Boolean.TRUE.equals(isForeignCurrency)) {
+                /* Access local amount */
                 final TethysMoney myLocalAmount = pHelper.getLocalReturnedCash();
 
                 /* Adjust counters */
@@ -578,13 +562,13 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         final TethysMoney myBaseValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
 
         /* If we are a foreign account */
-        if (isForeignCurrency) {
+        if (Boolean.TRUE.equals(isForeignCurrency)) {
             /* Obtain the foreign valuation */
             final TethysMoney myForeignValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE);
             final TethysMoney myLocalValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE);
 
             /* Obtain exchange rate and reporting value */
-            final TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theData.getDateRange().getStart());
+            final TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theAnalysis.getData().getDateRange().getStart());
             final TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
             /* Record details */
@@ -696,93 +680,6 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
     }
 
     /**
-     * AccountValues class.
-     */
-    public static class MoneyWiseAnalysisAccountValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisAccountValues, MoneyWiseAnalysisAccountAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         */
-        protected MoneyWiseAnalysisAccountValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisAccountAttr.class);
-
-            /* Initialise valuation to zero */
-            super.setValue(MoneyWiseAnalysisAccountAttr.VALUATION, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         * @param pReportingCurrency the reporting currency
-         */
-        protected MoneyWiseAnalysisAccountValues(final Currency pCurrency,
-                                                 final Currency pReportingCurrency) {
-            /* Initialise class */
-            this(pReportingCurrency);
-
-            /* Initialise valuation to zero */
-            super.setValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE, new TethysMoney(pReportingCurrency));
-            super.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        protected MoneyWiseAnalysisAccountValues(final MoneyWiseAnalysisAccountValues pSource,
-                                                 final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisAccountValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisAccountValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisAccountValues getFullSnapShot() {
-            return new MoneyWiseAnalysisAccountValues(this, false);
-        }
-
-        /**
-         * Are the values active?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myValuation = getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-            return (myValuation != null) && (myValuation.isNonZero());
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisAccountValues pBase) {
-            /* If we have a currency fluctuation */
-            if (getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT) != null) {
-                /* Adjust currency fluctuation values */
-                adjustMoneyToBase(pBase, MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
-            }
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* If we have a currency fluctuation */
-            TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
-            if (myValue != null) {
-                /* Create zero value */
-                myValue = new TethysMoney(myValue);
-                myValue.setZero();
-
-                /* Adjust currency fluctuation values */
-                super.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myValue);
-            }
-        }
-    }
-
-    /**
      * AccountBucket list class.
      * @param <B> the account bucket data type
      * @param <T> the account data type
@@ -855,7 +752,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
                 final B myBucket = newBucket(myCurr);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || !myBucket.isIdle()) {
+                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
                     /* add to list */
                     theList.add(myBucket);
                 }
@@ -885,7 +782,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
                 final B myBucket = newBucket(myCurr, pDate);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || !myBucket.isIdle()) {
+                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
                     /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
                     theList.add(myBucket);
@@ -919,7 +816,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive()
-                        || !myBucket.isIdle()) {
+                        || Boolean.TRUE.equals(!myBucket.isIdle())) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -999,7 +896,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
                 }
 
                 /* If we are closed */
-                if (myAccount.isClosed()) {
+                if (Boolean.TRUE.equals(myAccount.isClosed())) {
                     /* Ensure that we have correct closed/maturity dates */
                     myAccount.adjustClosed();
 

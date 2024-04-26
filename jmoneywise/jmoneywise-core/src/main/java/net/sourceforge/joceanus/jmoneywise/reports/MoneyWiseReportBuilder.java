@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 
 /**
@@ -41,17 +42,17 @@ public class MoneyWiseReportBuilder {
     /**
      * The Profit text.
      */
-    protected static final String TEXT_PROFIT = MoneyWiseAnalysisDataResource.SECURITYATTR_PROFIT.getValue();
+    protected static final String TEXT_PROFIT = MoneyWiseAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
 
     /**
      * The Income text.
      */
-    protected static final String TEXT_INCOME = MoneyWiseAnalysisDataResource.PAYEEATTR_INCOME.getValue();
+    protected static final String TEXT_INCOME = MoneyWiseAnalysisValuesResource.PAYEEATTR_INCOME.getValue();
 
     /**
      * The Expense text.
      */
-    protected static final String TEXT_EXPENSE = MoneyWiseAnalysisDataResource.PAYEEATTR_EXPENSE.getValue();
+    protected static final String TEXT_EXPENSE = MoneyWiseAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();
 
     /**
      * The Report Manager.

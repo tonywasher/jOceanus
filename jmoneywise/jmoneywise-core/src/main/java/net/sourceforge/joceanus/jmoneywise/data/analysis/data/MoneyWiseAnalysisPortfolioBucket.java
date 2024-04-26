@@ -29,9 +29,11 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisAccountBucket.MoneyWiseAnalysisAccountValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
@@ -334,8 +336,8 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
-                            final TethysMoney pValue) {
+    void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
+                  final TethysMoney pValue) {
         /* Set the value into the list */
         theValues.setValue(pAttr, pValue);
     }
@@ -434,7 +436,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
     /**
      * Calculate delta.
      */
-    protected void calculateDelta() {
+    void calculateDelta() {
         /* Obtain a copy of the value */
         TethysMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
         myValue = new TethysMoney(myValue);
@@ -451,7 +453,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * Add bucket to totals.
      * @param pBucket the underlying bucket
      */
-    protected void addValues(final MoneyWiseAnalysisSecurityBucket pBucket) {
+    void addValues(final MoneyWiseAnalysisSecurityBucket pBucket) {
         /* Add values */
         addValues(theValues, pBucket.getValues());
 
@@ -466,7 +468,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * Add bucket to totals.
      * @param pBucket the underlying bucket
      */
-    protected void addValues(final MoneyWiseAnalysisPortfolioCashBucket pBucket) {
+    void addValues(final MoneyWiseAnalysisPortfolioCashBucket pBucket) {
         /* Add values */
         addValues(theValues, pBucket.getValues());
 
@@ -584,7 +586,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     public boolean isIdle() {
         /* Look for non-idle cash */
-        if (!theCash.isIdle()) {
+        if (Boolean.FALSE.equals(theCash.isIdle())) {
             return false;
         }
 
@@ -594,7 +596,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
             final MoneyWiseAnalysisSecurityBucket mySecurity = myIterator.next();
 
             /* Look for active security */
-            if (!mySecurity.isIdle()) {
+            if (Boolean.FALSE.equals(mySecurity.isIdle())) {
                 return false;
             }
         }
@@ -678,7 +680,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
@@ -691,8 +693,8 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pAnalysis the analysis
          * @param pBase the base list
          */
-        protected MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                       final MoneyWiseAnalysisPortfolioBucketList pBase) {
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+                                             final MoneyWiseAnalysisPortfolioBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -718,9 +720,9 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                       final MoneyWiseAnalysisPortfolioBucketList pBase,
-                                                       final TethysDate pDate) {
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+                                             final MoneyWiseAnalysisPortfolioBucketList pBase,
+                                             final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -746,9 +748,9 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                       final MoneyWiseAnalysisPortfolioBucketList pBase,
-                                                       final TethysDateRange pRange) {
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+                                             final MoneyWiseAnalysisPortfolioBucketList pBase,
+                                             final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -787,7 +789,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * Obtain the analysis.
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysis getAnalysis() {
             return theAnalysis;
         }
 
@@ -949,7 +951,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * Analyse securities.
          * @param pMarket the market analysis
          */
-        protected void analyseSecurities(final MoneyWiseAnalysisMarket pMarket) {
+        void analyseSecurities(final MoneyWiseAnalysisMarket pMarket) {
             /* Access details */
             final TethysDateRange myRange = theAnalysis.getDateRange();
             final MoneyWiseAnalysisPortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
@@ -963,7 +965,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
                 final MoneyWiseAnalysisPortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
 
                 /* Handle foreign asset */
-                if (myCash.isForeignCurrency()) {
+                if (Boolean.TRUE.equals(myCash.isForeignCurrency())) {
                     myCash.calculateFluctuations(myRange);
                     pMarket.processAccount(myCash);
                     haveForeignCurrency = Boolean.TRUE;
@@ -995,7 +997,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
                     haveActiveSecurities = Boolean.TRUE;
 
                     /* Handle foreign asset */
-                    if (myCurr.isForeignCurrency()) {
+                    if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
                         haveForeignCurrency = Boolean.TRUE;
                     }
                 }
@@ -1029,7 +1031,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
                 if (mySecurities.markActiveSecurities()) {
                     /* Check closed state */
                     final MoneyWisePortfolio myPortfolio = myCurr.getPortfolio();
-                    if (myPortfolio.isClosed()
+                    if (Boolean.TRUE.equals(myPortfolio.isClosed())
                             && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */
                         throw new MoneyWiseDataException(myCurr, "Illegally closed portfolio");

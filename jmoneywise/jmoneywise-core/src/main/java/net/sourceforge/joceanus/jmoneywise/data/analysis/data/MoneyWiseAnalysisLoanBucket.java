@@ -21,6 +21,9 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisCreditCardValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory;
@@ -62,8 +65,8 @@ public final class MoneyWiseAnalysisLoanBucket
      * @param pAnalysis the analysis
      * @param pLoan the loan
      */
-    protected MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
-                                          final MoneyWiseLoan pLoan) {
+    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseLoan pLoan) {
         /* Call super-constructor */
         super(pAnalysis, pLoan);
 
@@ -162,7 +165,7 @@ public final class MoneyWiseAnalysisLoanBucket
     @Override
     public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a credit card */
-        if (isCreditCard) {
+        if (Boolean.TRUE.equals(isCreditCard)) {
             /* Access the amount */
             final TethysMoney myAmount = pHelper.getDebitAmount();
 
@@ -178,79 +181,9 @@ public final class MoneyWiseAnalysisLoanBucket
     }
 
     /**
-     * CreditCardValues class.
-     */
-    public static final class MoneyWiseAnalysisCreditCardValues
-            extends MoneyWiseAnalysisAccountValues {
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         */
-        private MoneyWiseAnalysisCreditCardValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(pCurrency);
-
-            /* Initialise spend to zero */
-            setValue(MoneyWiseAnalysisAccountAttr.SPEND, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pCurrency the account currency
-         * @param pReportingCurrency the reporting currency
-         */
-        private MoneyWiseAnalysisCreditCardValues(final Currency pCurrency,
-                                                  final Currency pReportingCurrency) {
-            /* Initialise class */
-            super(pCurrency, pReportingCurrency);
-
-            /* Initialise spend to zero */
-            setValue(MoneyWiseAnalysisAccountAttr.SPEND, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisCreditCardValues(final MoneyWiseAnalysisCreditCardValues pSource,
-                                                  final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCreditCardValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisCreditCardValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCreditCardValues getFullSnapShot() {
-            return new MoneyWiseAnalysisCreditCardValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisAccountValues pBase) {
-            /* Adjust spend values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisAccountAttr.SPEND);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Reset spend values */
-            TethysMoney mySpend = getMoneyValue(MoneyWiseAnalysisAccountAttr.SPEND);
-            if (mySpend.isNonZero()) {
-                mySpend = new TethysMoney(mySpend);
-                mySpend.setZero();
-                setValue(MoneyWiseAnalysisAccountAttr.SPEND, mySpend);
-            }
-        }
-    }
-
-    /**
      * LoanBucket list class.
      */
-    public static class MoneyWiseAnalysisLoanBucketList
+    public static final class MoneyWiseAnalysisLoanBucketList
             extends MoneyWiseAnalysisAccountBucketList<MoneyWiseAnalysisLoanBucket, MoneyWiseLoan> {
         /**
          * Local Report fields.
@@ -261,7 +194,7 @@ public final class MoneyWiseAnalysisLoanBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -271,8 +204,8 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pAnalysis the analysis
          * @param pBase the base list
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisLoanBucketList pBase) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisLoanBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -286,9 +219,9 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisLoanBucketList pBase,
-                                                  final TethysDate pDate) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisLoanBucketList pBase,
+                                        final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -302,9 +235,9 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisLoanBucketList pBase,
-                                                  final TethysDateRange pRange) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisLoanBucketList pBase,
+                                        final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

@@ -29,20 +29,22 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisHistory;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket.MoneyWiseAnalysisTaxBasisAccountBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetDirection;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -766,79 +768,6 @@ public class MoneyWiseAnalysisTaxBasisBucket
     }
 
     /**
-     * TaxBasisValues class.
-     */
-    public static final class MoneyWiseAnalysisTaxBasisValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisTaxBasisValues, MoneyWiseAnalysisTaxBasisAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the reporting currency
-         */
-        protected MoneyWiseAnalysisTaxBasisValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisTaxBasisAttr.class);
-
-            /* Create all possible values */
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisTaxBasisValues(final MoneyWiseAnalysisTaxBasisValues pSource,
-                                                final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisTaxBasisValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisTaxBasisValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisTaxBasisValues getFullSnapShot() {
-            return new MoneyWiseAnalysisTaxBasisValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisTaxBasisValues pBase) {
-            /* Adjust gross/net/tax values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTaxBasisAttr.NETT);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Create a zero value in the correct currency */
-            TethysMoney myValue = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            myValue = new TethysMoney(myValue);
-            myValue.setZero();
-
-            /* Reset Income and expense values */
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, myValue);
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new TethysMoney(myValue));
-            super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new TethysMoney(myValue));
-        }
-
-        /**
-         * Are the values?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myGross = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            final TethysMoney myNet = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
-            final TethysMoney myTax = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
-            return myGross.isNonZero() || myNet.isNonZero() || myTax.isNonZero();
-        }
-    }
-
-    /**
      * TaxBasisBucketList class.
      */
     public static class MoneyWiseAnalysisTaxBasisBucketList
@@ -868,9 +797,9 @@ public class MoneyWiseAnalysisTaxBasisBucket
         private final MetisListIndexed<MoneyWiseAnalysisTaxBasisBucket> theList;
 
         /**
-         * The data.
+         * The editSet.
          */
-        private final MoneyWiseDataSet theData;
+        private final PrometheusEditSet theEditSet;
 
         /**
          * The chargeableGains.
@@ -890,7 +819,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
         private MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis,
                                                     final MoneyWiseChargeableGainSliceList pGains) {
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
+            theEditSet = theAnalysis.getEditSet();
             theCharges = pGains;
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
@@ -926,7 +855,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 final MoneyWiseAnalysisTaxBasisBucket myBucket = new MoneyWiseAnalysisTaxBasisBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -954,7 +883,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 final MoneyWiseAnalysisTaxBasisBucket myBucket = new MoneyWiseAnalysisTaxBasisBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -1024,7 +953,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         public MoneyWiseAnalysisTaxBasisBucket getBucket(final MoneyWiseTaxClass pClass) {
             /* Locate the bucket in the list */
-            final MoneyWiseTaxBasis myBasis = theData.getTaxBases().findItemByClass(pClass);
+            final MoneyWiseTaxBasis myBasis = theEditSet.getDataList(MoneyWiseStaticDataType.TAXBASIS, MoneyWiseTaxBasisList.class).findItemByClass(pClass);
             MoneyWiseAnalysisTaxBasisBucket myItem = findItemById(myBasis.getIndexedId());
 
             /* If the item does not yet exist */

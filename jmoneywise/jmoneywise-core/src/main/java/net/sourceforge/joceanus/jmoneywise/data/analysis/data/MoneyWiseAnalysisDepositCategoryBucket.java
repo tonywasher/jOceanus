@@ -63,8 +63,8 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
      * @param pCurrency the currency
      * @param pCategory the account category
      */
-    protected MoneyWiseAnalysisDepositCategoryBucket(final MoneyWiseCurrency pCurrency,
-                                                     final MoneyWiseDepositCategory pCategory) {
+    MoneyWiseAnalysisDepositCategoryBucket(final MoneyWiseCurrency pCurrency,
+                                           final MoneyWiseDepositCategory pCategory) {
         super(pCurrency);
         theCategory = pCategory;
     }
@@ -103,7 +103,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
      * Update active flag for Deposit Bucket.
      * @param pBucket the Deposit bucket
      */
-    protected void updateActive(final MoneyWiseAnalysisDepositBucket pBucket) {
+    void updateActive(final MoneyWiseAnalysisDepositBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -111,7 +111,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
      * Update active flag for Deposit Category Bucket.
      * @param pBucket the Deposit category bucket
      */
-    protected void updateActive(final MoneyWiseAnalysisDepositCategoryBucket pBucket) {
+    void updateActive(final MoneyWiseAnalysisDepositCategoryBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -162,7 +162,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisDepositCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisDepositCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
@@ -256,8 +256,8 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
          * @param pMarket the market analysis
          * @param pDeposits the deposit account buckets
          */
-        protected void analyseDeposits(final MoneyWiseAnalysisMarket pMarket,
-                                       final MoneyWiseAnalysisDepositBucketList pDeposits) {
+        void analyseDeposits(final MoneyWiseAnalysisMarket pMarket,
+                             final MoneyWiseAnalysisDepositBucketList pDeposits) {
             /* Sort the deposits */
             pDeposits.sortBuckets();
 
@@ -270,7 +270,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
                 final MoneyWiseDepositCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
-                if (myCurr.isForeignCurrency()) {
+                if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
                     myCurr.calculateFluctuations(myRange);
                     pMarket.processAccount(myCurr);
                     haveForeignCurrency = Boolean.TRUE;
@@ -307,7 +307,7 @@ public final class MoneyWiseAnalysisDepositCategoryBucket
         /**
          * Produce totals for the categories.
          */
-        protected void produceTotals() {
+        void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
             final MetisListIndexed<MoneyWiseAnalysisDepositCategoryBucket> myTotals = new MetisListIndexed<>();
 

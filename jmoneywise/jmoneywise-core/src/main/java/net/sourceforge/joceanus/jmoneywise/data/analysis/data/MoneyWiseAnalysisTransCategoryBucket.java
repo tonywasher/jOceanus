@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.analysis.data;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -29,11 +29,11 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisHistory;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisCategoryValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -293,7 +294,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Obtain the analysis.
      * @return the analysis
      */
-    protected MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysis getAnalysis() {
         return theAnalysis;
     }
 
@@ -310,8 +311,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setValue(final MoneyWiseAnalysisTransAttr pAttr,
-                            final TethysMoney pValue) {
+    void setValue(final MoneyWiseAnalysisTransAttr pAttr,
+                  final TethysMoney pValue) {
         /* Set the value */
         theValues.setValue(pAttr, pValue);
     }
@@ -346,8 +347,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pAttr the attribute
      * @param pDelta the delta
      */
-    protected void adjustCounter(final MoneyWiseAnalysisTransAttr pAttr,
-                                 final TethysMoney pDelta) {
+    void adjustCounter(final MoneyWiseAnalysisTransAttr pAttr,
+                       final TethysMoney pDelta) {
         TethysMoney myValue = theValues.getMoneyValue(pAttr);
         myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
@@ -449,7 +450,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pTrans the transaction helper
      * @return isIncome true/false
      */
-    protected boolean adjustValues(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    boolean adjustValues(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Analyse the event */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
         MoneyWiseAssetDirection myDir = pTrans.getDirection();
@@ -510,7 +511,6 @@ public final class MoneyWiseAnalysisTransCategoryBucket
                 } else {
                     /* Add as income */
                     adjustCounter(MoneyWiseAnalysisTransAttr.INCOME, myAmount);
-                    isExpense = false;
                 }
             }
         }
@@ -525,7 +525,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
     /**
      * Calculate Income delta.
      */
-    protected void calculateDelta() {
+    void calculateDelta() {
         /* Calculate delta for the values */
         theValues.calculateDelta();
     }
@@ -533,7 +533,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
     /**
      * Adjust to base.
      */
-    protected void adjustToBase() {
+    void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -543,7 +543,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Add bucket to totals.
      * @param pSource the bucket to add
      */
-    protected void addValues(final MoneyWiseAnalysisTransCategoryBucket pSource) {
+    void addValues(final MoneyWiseAnalysisTransCategoryBucket pSource) {
         /* Access source values */
         final MoneyWiseAnalysisCategoryValues mySource = pSource.getValues();
 
@@ -562,96 +562,9 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * Register the transaction.
      * @param pTrans the transaction helper
      */
-    protected void registerTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
+    void registerTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Register the transaction in the history */
         theHistory.registerTransaction(pTrans.getTransaction(), theValues);
-    }
-
-    /**
-     * CategoryValues class.
-     */
-    public static final class MoneyWiseAnalysisCategoryValues
-            extends MoneyWiseAnalysisValues<MoneyWiseAnalysisCategoryValues, MoneyWiseAnalysisTransAttr> {
-        /**
-         * Constructor.
-         * @param pCurrency the reporting currency
-         */
-        private MoneyWiseAnalysisCategoryValues(final Currency pCurrency) {
-            /* Initialise class */
-            super(MoneyWiseAnalysisTransAttr.class);
-
-            /* Create all possible values */
-            super.setValue(MoneyWiseAnalysisTransAttr.INCOME, new TethysMoney(pCurrency));
-            super.setValue(MoneyWiseAnalysisTransAttr.EXPENSE, new TethysMoney(pCurrency));
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source map.
-         * @param pCountersOnly only copy counters
-         */
-        private MoneyWiseAnalysisCategoryValues(final MoneyWiseAnalysisCategoryValues pSource,
-                                                final boolean pCountersOnly) {
-            /* Initialise class */
-            super(pSource, pCountersOnly);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCategoryValues getCounterSnapShot() {
-            return new MoneyWiseAnalysisCategoryValues(this, true);
-        }
-
-        @Override
-        protected MoneyWiseAnalysisCategoryValues getFullSnapShot() {
-            return new MoneyWiseAnalysisCategoryValues(this, false);
-        }
-
-        @Override
-        protected void adjustToBaseValues(final MoneyWiseAnalysisCategoryValues pBase) {
-            /* Adjust income/expense values */
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTransAttr.INCOME);
-            adjustMoneyToBase(pBase, MoneyWiseAnalysisTransAttr.EXPENSE);
-            calculateDelta();
-        }
-
-        /**
-         * Calculate delta.
-         */
-        private void calculateDelta() {
-            /* Obtain a copy of the value */
-            TethysMoney myDelta = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
-            myDelta = new TethysMoney(myDelta);
-
-            /* Subtract the expense value */
-            final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);
-            myDelta.subtractAmount(myExpense);
-
-            /* Set the delta */
-            super.setValue(MoneyWiseAnalysisTransAttr.PROFIT, myDelta);
-        }
-
-        @Override
-        protected void resetBaseValues() {
-            /* Create a zero value in the correct currency */
-            TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
-            myValue = new TethysMoney(myValue);
-            myValue.setZero();
-
-            /* Reset Income and expense values */
-            super.setValue(MoneyWiseAnalysisTransAttr.INCOME, myValue);
-            super.setValue(MoneyWiseAnalysisTransAttr.EXPENSE, new TethysMoney(myValue));
-            super.setValue(MoneyWiseAnalysisTransAttr.PROFIT, new TethysMoney(myValue));
-        }
-
-        /**
-         * Are the values?
-         * @return true/false
-         */
-        public boolean isActive() {
-            final TethysMoney myIncome = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
-            final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);
-            return (myIncome.isNonZero()) || (myExpense.isNonZero());
-        }
     }
 
     /**
@@ -683,9 +596,9 @@ public final class MoneyWiseAnalysisTransCategoryBucket
         private final MetisListIndexed<MoneyWiseAnalysisTransCategoryBucket> theList;
 
         /**
-         * The data.
+         * The editSet.
          */
-        private final MoneyWiseDataSet theData;
+        private final PrometheusEditSet theEditSet;
 
         /**
          * The totals.
@@ -746,10 +659,10 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
+            theEditSet = theAnalysis.getEditSet();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
 
@@ -774,12 +687,12 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                           final MoneyWiseAnalysisTransCategoryBucketList pBase,
-                                                           final TethysDate pDate) {
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
+                                                 final MoneyWiseAnalysisTransCategoryBucketList pBase,
+                                                 final TethysDate pDate) {
             /* Initialise class */
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
+            theEditSet = theAnalysis.getEditSet();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
 
@@ -804,7 +717,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
                 final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -817,12 +730,12 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                           final MoneyWiseAnalysisTransCategoryBucketList pBase,
-                                                           final TethysDateRange pRange) {
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
+                                                 final MoneyWiseAnalysisTransCategoryBucketList pBase,
+                                                 final TethysDateRange pRange) {
             /* Initialise class */
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
+            theEditSet = theAnalysis.getEditSet();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
 
@@ -847,7 +760,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
                 final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (!myBucket.isIdle()) {
+                if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -874,7 +787,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * Obtain the analysis.
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysis getAnalysis() {
             return theAnalysis;
         }
 
@@ -910,9 +823,9 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pClass the transaction infoClass
          * @return the bucket
          */
-        protected MoneyWiseAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
+        MoneyWiseAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
             /* Determine category */
-            final MoneyWiseTransCategoryList myList = theData.getTransCategories();
+            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             final MoneyWiseTransCategory myCategory = myList.getEventInfoCategory(pClass);
 
             /* Access bucket */
@@ -926,9 +839,9 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pClass the transaction infoClass
          * @return the bucket
          */
-        protected MoneyWiseAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
+        MoneyWiseAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine category */
-            final MoneyWiseTransCategoryList myList = theData.getTransCategories();
+            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             final MoneyWiseTransCategory myCategory = myList.getSingularClass(pClass);
 
             /* Access bucket */
@@ -970,7 +883,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         public MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine required category */
-            final MoneyWiseTransCategory myCategory = theData.getTransCategories().getSingularClass(pClass);
+            final MoneyWiseTransCategory myCategory = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class)
+                                                                    .getSingularClass(pClass);
 
             /* Return the bucket */
             return getBucket(myCategory);
@@ -1137,7 +1051,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
         /**
          * Produce totals for the TransactionCategories.
          */
-        protected void produceTotals() {
+        void produceTotals() {
             /* Create a list of new buckets */
             final MetisListIndexed<MoneyWiseAnalysisTransCategoryBucket> myTotals = new MetisListIndexed<>();
 
@@ -1187,7 +1101,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
             }
 
             /* Sort the list */
-            Collections.sort(theList.getUnderlyingList(), (l, r) -> l.getTransactionCategory().compareTo(r.getTransactionCategory()));
+            theList.getUnderlyingList().sort(Comparator.comparing(MoneyWiseAnalysisTransCategoryBucket::getTransactionCategory));
 
             /* Calculate delta for the totals */
             if (theTotals != null) {

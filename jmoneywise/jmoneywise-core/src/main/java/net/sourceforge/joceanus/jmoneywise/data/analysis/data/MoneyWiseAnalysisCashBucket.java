@@ -53,8 +53,8 @@ public final class MoneyWiseAnalysisCashBucket
      * @param pAnalysis the analysis
      * @param pCash the cash account
      */
-    protected MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysis pAnalysis,
-                                          final MoneyWiseCash pCash) {
+    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseCash pCash) {
         /* Call super-constructor */
         super(pAnalysis, pCash);
 
@@ -124,7 +124,7 @@ public final class MoneyWiseAnalysisCashBucket
     /**
      * CashBucket list class.
      */
-    public static class MoneyWiseAnalysisCashBucketList
+    public static final class MoneyWiseAnalysisCashBucketList
             extends MoneyWiseAnalysisAccountBucketList<MoneyWiseAnalysisCashBucket, MoneyWiseCash> {
         /**
          * Local Report fields.
@@ -135,7 +135,7 @@ public final class MoneyWiseAnalysisCashBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -145,8 +145,8 @@ public final class MoneyWiseAnalysisCashBucket
          * @param pAnalysis the analysis
          * @param pBase the base list
          */
-        protected MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisCashBucketList pBase) {
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisCashBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -160,9 +160,9 @@ public final class MoneyWiseAnalysisCashBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        protected MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisCashBucketList pBase,
-                                                  final TethysDate pDate) {
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisCashBucketList pBase,
+                                        final TethysDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -176,9 +176,9 @@ public final class MoneyWiseAnalysisCashBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        protected MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
-                                                  final MoneyWiseAnalysisCashBucketList pBase,
-                                                  final TethysDateRange pRange) {
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
+                                        final MoneyWiseAnalysisCashBucketList pBase,
+                                        final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

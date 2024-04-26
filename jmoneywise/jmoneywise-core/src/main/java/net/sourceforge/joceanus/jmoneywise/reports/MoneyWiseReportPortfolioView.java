@@ -22,13 +22,13 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTa
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -60,27 +60,27 @@ public class MoneyWiseReportPortfolioView
     /**
      * The Cost text.
      */
-    private static final String TEXT_COST = MoneyWiseAnalysisDataResource.SECURITYATTR_RESIDUALCOST.getValue();
+    private static final String TEXT_COST = MoneyWiseAnalysisValuesResource.SECURITYATTR_RESIDUALCOST.getValue();
 
     /**
      * The Adjustment text.
      */
-    private static final String TEXT_ADJUST = MoneyWiseAnalysisDataResource.SECURITYATTR_GROWTHADJUST.getValue();
+    private static final String TEXT_ADJUST = MoneyWiseAnalysisValuesResource.SECURITYATTR_GROWTHADJUST.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = MoneyWiseAnalysisDataResource.ACCOUNTATTR_VALUATION.getValue();
+    private static final String TEXT_VALUE = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Gains text.
      */
-    private static final String TEXT_GAINS = MoneyWiseAnalysisDataResource.SECURITYATTR_REALISEDGAINS.getValue();
+    private static final String TEXT_GAINS = MoneyWiseAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();
 
     /**
      * The Dividend text.
      */
-    private static final String TEXT_DIVIDEND = MoneyWiseAnalysisDataResource.SECURITYATTR_DIVIDEND.getValue();
+    private static final String TEXT_DIVIDEND = MoneyWiseAnalysisValuesResource.SECURITYATTR_DIVIDEND.getValue();
 
     /**
      * HTML builder.

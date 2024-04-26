@@ -38,21 +38,23 @@ import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisP
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisTransactionHelper;
+import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
@@ -68,6 +70,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -172,11 +175,6 @@ public class MoneyWiseAnalysisTransAnalyser
     private final MoneyWiseAnalysisTaxBasisBucketList theTaxBasisBuckets;
 
     /**
-     * The security transactions.
-     */
-    private final List<MoneyWiseTransaction> theSecurities;
-
-    /**
      * The taxMan account.
      */
     private final MoneyWiseAnalysisPayeeBucket theTaxMan;
@@ -194,31 +192,31 @@ public class MoneyWiseAnalysisTransAnalyser
     /**
      * Constructor for a complete set of accounts.
      * @param pTask the profiled task
-     * @param pData the Data to analyse
+     * @param pEditSet the EditSet to analyse
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
     public MoneyWiseAnalysisTransAnalyser(final TethysProfile pTask,
-                                          final MoneyWiseDataSet pData,
+                                          final PrometheusEditSet pEditSet,
                                           final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
         final TethysProfile myTask = theProfile.startTask("analyseTransactions");
+        final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) pEditSet.getDataSet();
 
         /* Store the parameters */
-        theHoldingMap = pData.getPortfolios().getSecurityHoldingsMap();
-        thePriceMap = pData.getSecurityPriceDataMap();
+        theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
+        thePriceMap = myDataSet.getSecurityPriceDataMap();
 
         /* Access the lists */
-        final MoneyWiseTransactionList myTrans = pData.getTransactions();
+        final MoneyWiseTransactionList myTrans = pEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
 
         /* Create a new analysis */
         myTask.startTask("Initialise");
-        theAnalysis = new MoneyWiseAnalysis(pData, pPreferenceMgr);
-        theSecurities = theAnalysis.getSecurities();
+        theAnalysis = new MoneyWiseAnalysis(pEditSet, pPreferenceMgr);
 
         /* Create new helper and set opening balances */
-        theHelper = new MoneyWiseAnalysisTransactionHelper(pData);
+        theHelper = new MoneyWiseAnalysisTransactionHelper(myDataSet);
         theAnalysis.addOpeningBalances(theHelper);
 
         /* Access details from the analysis */
@@ -233,7 +231,7 @@ public class MoneyWiseAnalysisTransAnalyser
         theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);
 
         /* Access the StatePension security holding */
-        theStatePension = getStatePension(pData);
+        theStatePension = getStatePension(myDataSet);
 
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
@@ -292,7 +290,6 @@ public class MoneyWiseAnalysisTransAnalyser
         theCategoryBuckets = theAnalysis.getTransCategories();
         theTagBuckets = theAnalysis.getTransactionTags();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
-        theSecurities = theAnalysis.getSecurities();
         theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);
 
         /* Access the StatePension security holding */
@@ -563,9 +560,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processDebitSecurityTransaction(final MoneyWiseSecurityHolding pDebit,
                                                  final MoneyWiseTransAsset pCredit) throws OceanusException {
-        /* Add to the securities transaction list */
-        theSecurities.add(theHelper.getTransaction());
-
         /* If credit account is also SecurityHolding */
         if (pCredit instanceof MoneyWiseSecurityHolding) {
             /* Split out working */
@@ -657,9 +651,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processCreditSecurityTransaction(final MoneyWiseTransAsset pDebit,
                                                   final MoneyWiseSecurityHolding pCredit) throws OceanusException {
-        /* Add to the securities transaction list */
-        theSecurities.add(theHelper.getTransaction());
-
         /* Input asset must be AssetBase */
         if (!(pDebit instanceof MoneyWiseAssetBase)) {
             throw new MoneyWiseLogicException("Invalid Debit Asset: "
@@ -695,9 +686,6 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processPortfolioXfer(final MoneyWisePortfolio pSource,
                                       final MoneyWisePortfolio pTarget) {
-        /* Add to the securities transaction list */
-        theSecurities.add(theHelper.getTransaction());
-
         /* Access the portfolio buckets */
         final MoneyWiseAnalysisPortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
         final MoneyWiseAnalysisPortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
@@ -1274,7 +1262,7 @@ public class MoneyWiseAnalysisTransAnalyser
         final MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();
 
         /* If this is a foreign currency asset */
-        if (myAsset.isForeignCurrency()) {
+        if (Boolean.TRUE.equals(myAsset.isForeignCurrency())) {
             /* Adjust foreign invested amount */
             final TethysMoney myDelta = new TethysMoney(myAmount);
             myDelta.negate();
