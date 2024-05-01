@@ -847,16 +847,16 @@ public class MoneyWiseTransactionTable
         /* If we have one available */
         if (myTrans != null) {
             /* Add the new item */
-            myTrans.setNewVersion();
             theTransactions.add(myTrans);
+            myTrans.setNewVersion();
 
             /* Validate the new item and notify of the changes */
-            myTrans.validate();
             getEditSet().incrementVersion();
+            myTrans.validate();
 
             /* Lock the table */
-            setTableEnabled(false);
             theActiveTran.setNewItem(myTrans);
+            setTableEnabled(false);
         }
     }
 

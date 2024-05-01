@@ -363,7 +363,7 @@ public class MoneyWiseArchiveLoader {
             MoneyWiseSheetDepositRate.loadArchive(pReport, myWorkbook, pData);
 
             /* Load Transactions */
-            myStage.startTask(MoneyWiseDepositRate.LIST_NAME);
+            myStage.startTask(MoneyWiseTransaction.LIST_NAME);
             MoneyWiseSheetTransaction.loadArchive(pReport, myWorkbook, pData, this);
 
             /* Close the stream */

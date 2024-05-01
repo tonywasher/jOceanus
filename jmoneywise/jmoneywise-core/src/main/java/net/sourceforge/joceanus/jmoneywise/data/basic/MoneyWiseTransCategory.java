@@ -207,9 +207,9 @@ public final class MoneyWiseTransCategory
     public void setDefaults(final MoneyWiseTransCategory pParent) throws OceanusException {
         /* Set values */
         final MoneyWiseTransCategoryTypeList myTypes = getDataSet().getTransCategoryTypes();
-        final MoneyWiseTransCategoryClass myParentClass = pParent.getCategoryTypeClass();
+        final MoneyWiseTransCategoryClass myParentClass = pParent == null ? null : pParent.getCategoryTypeClass();
         final MoneyWiseTransCategoryClass myNewClass;
-        if (myParentClass.isTotals()) {
+        if (myParentClass == null || myParentClass.isTotals()) {
             myNewClass = MoneyWiseTransCategoryClass.EXPENSETOTALS;
         } else if (myParentClass.isIncome()) {
             myNewClass = MoneyWiseTransCategoryClass.TAXEDINCOME;
