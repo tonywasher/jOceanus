@@ -953,9 +953,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
         /* Adjust list value */
         setVersion(pNewVersion);
-
-        /* Validate the list */
-        validate();
     }
 
     /**

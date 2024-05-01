@@ -185,21 +185,31 @@ public class MoneyWisePayeeTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
-            /* Create the new category */
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
+            /* Create the new asset */
+            myTask.startTask("buildItem");
             final MoneyWisePayee myPayee = thePayees.addNewItem();
             myPayee.setDefaults();
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myPayee.setNewVersion();
             myPayee.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myPayee.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActivePayee.setNewItem(myPayee);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

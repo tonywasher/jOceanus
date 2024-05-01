@@ -672,7 +672,8 @@ public class MoneyWiseTransaction
         }
 
         /* If we have a category and an infoSet */
-        if ((myCategory != null) && (theInfoSet != null)) {
+        if (myCategory != null
+                && theInfoSet != null) {
             /* Validate the InfoSet */
             theInfoSet.validate();
         }
@@ -1086,6 +1087,14 @@ public class MoneyWiseTransaction
          */
         public PrometheusEditSet getEditSet() {
             return theEditSet;
+        }
+
+        /**
+         * Set the editSet.
+         * @param pEditSet the editSet
+         */
+        public void setEditSet(final PrometheusEditSet pEditSet) {
+            theEditSet = pEditSet;
         }
 
         @Override

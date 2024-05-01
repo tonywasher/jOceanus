@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
@@ -183,6 +184,9 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
      * handle new static class.
      */
     private void handleNewClass() {
+        /* Create a new profile */
+        final TethysProfile myTask = getView().getNewProfile("addNewClass");
+
         /* Access the new class */
         cancelEditing();
         final PrometheusStaticDataClass myClass = (PrometheusStaticDataClass) theNewButton.getValue().getData();
@@ -190,6 +194,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
         /* Protect the action */
         try {
             /* Look to find a deleted value */
+            myTask.startTask("addToList");
             T myValue = theStatic.findItemByClass(myClass);
 
             /* If we found a deleted value */
@@ -206,6 +211,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
             }
 
             /* Update the table */
+            myTask.startTask("incrementVersion");
             getEditSet().incrementVersion();
             updateTableData();
             selectItem(myValue);
@@ -215,6 +221,9 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
         } catch (OceanusException e) {
             setError(e);
         }
+
+        /* End the task */
+        myTask.end();
     }
 
     /**

@@ -223,21 +223,31 @@ public class MoneyWiseSecurityTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new asset */
+            myTask.startTask("buildItem");
             final MoneyWiseSecurity mySecurity = theSecurities.addNewItem();
             mySecurity.setDefaults(getEditSet());
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             mySecurity.setNewVersion();
             mySecurity.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             mySecurity.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActiveSecurity.setNewItem(mySecurity);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

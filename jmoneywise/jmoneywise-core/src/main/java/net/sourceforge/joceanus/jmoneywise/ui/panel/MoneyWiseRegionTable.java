@@ -218,21 +218,31 @@ public class MoneyWiseRegionTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new region */
+            myTask.startTask("buildItem");
             final MoneyWiseRegion myRegion = theRegions.addNewItem();
             myRegion.setDefaults();
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myRegion.setNewVersion();
             myRegion.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myRegion.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActiveRegion.setNewItem(myRegion);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

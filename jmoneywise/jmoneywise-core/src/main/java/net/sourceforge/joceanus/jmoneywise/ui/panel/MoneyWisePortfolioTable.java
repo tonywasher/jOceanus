@@ -201,21 +201,31 @@ public class MoneyWisePortfolioTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new asset */
+            myTask.startTask("buildItem");
             final MoneyWisePortfolio myPortfolio = thePortfolios.addNewItem();
             myPortfolio.setDefaults(getEditSet());
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myPortfolio.setNewVersion();
             myPortfolio.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myPortfolio.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActivePortfolio.setNewItem(myPortfolio);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {
