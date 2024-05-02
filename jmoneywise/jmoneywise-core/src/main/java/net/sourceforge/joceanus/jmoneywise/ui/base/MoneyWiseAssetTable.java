@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType;

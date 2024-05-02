@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.basic;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
@@ -143,6 +142,11 @@ public class MoneyWiseSecurityInfoSet
         return REVERSE_FIELDMAP.get(pClass);
     }
 
+    @Override
+    public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
+        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);
+    }
+
     /**
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
@@ -159,9 +163,7 @@ public class MoneyWiseSecurityInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-        final Iterator<MoneyWiseSecurityInfo> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseSecurityInfo myInfo = myIterator.next();
+        for (MoneyWiseSecurityInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
         }
     }
@@ -272,76 +274,86 @@ public class MoneyWiseSecurityInfoSet
     protected void validate() {
         /* Loop through the classes */
         for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* validate the class */
-            validateClass(myClass);
+            /* Access info for class */
+            final MoneyWiseSecurityInfo myInfo = getInfo(myClass);
+
+            /* If basic checks are passed */
+            if (checkClass(myInfo, myClass)) {
+                /* validate the class */
+                validateClass(myInfo, myClass);
+            }
         }
     }
 
     /**
      * Validate the class.
+     * @param pInfo the info
      * @param pClass the infoClass
      */
-    private void validateClass(final MoneyWiseAccountInfoClass pClass) {
-        /* Access details about the Security */
-        final MoneyWiseSecurity mySecurity = getOwner();
-
-        /* Access info for class */
-        final MoneyWiseSecurityInfo myInfo = getInfo(pClass);
-        final boolean isExisting = myInfo != null
-                && !myInfo.isDeleted();
-
-        /* Determine requirements for class */
-        final MetisFieldRequired myState = isClassRequired(pClass);
-
-        /* If the field is missing */
-        if (!isExisting) {
-            /* Handle required field missing */
-            if (myState == MetisFieldRequired.MUSTEXIST) {
-                mySecurity.addError(PrometheusDataItem.ERROR_MISSING, getFieldForClass(pClass));
-            }
-            return;
-        }
-
-        /* If field is not allowed */
-        if (myState == MetisFieldRequired.NOTALLOWED) {
-            mySecurity.addError(PrometheusDataItem.ERROR_EXIST, getFieldForClass(pClass));
-            return;
-        }
-
+    private void validateClass(final MoneyWiseSecurityInfo pInfo,
+                               final MoneyWiseAccountInfoClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case NOTES:
-                /* Access data */
-                final char[] myArray = myInfo.getValue(char[].class);
-                if (myArray.length > pClass.getMaximumLength()) {
-                    mySecurity.addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(pClass));
-                }
+                validateNotes(pInfo);
                 break;
             case SYMBOL:
-                /* Access data */
-                final String mySymbol = myInfo.getValue(String.class);
-                if (mySymbol.length() > pClass.getMaximumLength()) {
-                    mySecurity.addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(pClass));
-                }
+                validateSymbol(pInfo);
                 break;
             case UNDERLYINGSTOCK:
-                /* Access data */
-                final MoneyWiseSecurity myStock = myInfo.getValue(MoneyWiseSecurity.class);
-                if (!myStock.getCategoryClass().isShares()) {
-                    mySecurity.addError("Invalid underlying stock", getFieldForClass(pClass));
-                }
+                validateUnderlyingStock(pInfo);
                 break;
             case OPTIONPRICE:
-                /* Access data */
-                final TethysPrice myPrice = myInfo.getValue(TethysPrice.class);
-                if (myPrice.isZero()) {
-                    mySecurity.addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pClass));
-                } else if (!myPrice.isPositive()) {
-                    mySecurity.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                }
+                validateOptionPrice(pInfo);
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Validate the Notes info.
+     * @param pInfo the info
+     */
+    private void validateNotes(final MoneyWiseSecurityInfo pInfo) {
+        final char[] myArray = pInfo.getValue(char[].class);
+        if (myArray.length > MoneyWiseAccountInfoClass.NOTES.getMaximumLength()) {
+            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(MoneyWiseAccountInfoClass.NOTES));
+        }
+    }
+
+    /**
+     * Validate the Symbol info.
+     * @param pInfo the info
+     */
+    private void validateSymbol(final MoneyWiseSecurityInfo pInfo) {
+        final String mySymbol = pInfo.getValue(String.class);
+        if (mySymbol.length() > MoneyWiseAccountInfoClass.SYMBOL.getMaximumLength()) {
+            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
+        }
+    }
+
+    /**
+     * Validate the UnderlyingStock info.
+     * @param pInfo the info
+     */
+    private void validateUnderlyingStock(final MoneyWiseSecurityInfo pInfo) {
+        final MoneyWiseSecurity myStock = pInfo.getValue(MoneyWiseSecurity.class);
+        if (!myStock.getCategoryClass().isShares()) {
+            getOwner().addError("Invalid underlying stock", getFieldForClass(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK));
+        }
+    }
+
+    /**
+     * Validate the OptionPrice info.
+     * @param pInfo the info
+     */
+    private void validateOptionPrice(final MoneyWiseSecurityInfo pInfo) {
+        final TethysPrice myPrice = pInfo.getValue(TethysPrice.class);
+        if (myPrice.isZero()) {
+            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
+        } else if (!myPrice.isPositive()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
         }
     }
 }

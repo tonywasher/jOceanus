@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmoneywise.data.basic;
 
 import java.util.Currency;
-import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -151,6 +150,11 @@ public class MoneyWiseTransInfoSet
         return REVERSE_FIELDMAP.get(pClass);
     }
 
+    @Override
+    public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
+        return getFieldForClass((MoneyWiseTransInfoClass) pClass);
+    }
+
     /**
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
@@ -168,9 +172,7 @@ public class MoneyWiseTransInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-        final Iterator<MoneyWiseTransInfo> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseTransInfo myInfo = myIterator.next();
+        for (MoneyWiseTransInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
         }
     }
@@ -209,18 +211,16 @@ public class MoneyWiseTransInfoSet
     public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
         /* Access details about the Transaction */
         final MoneyWiseTransaction myTransaction = getOwner();
-        final MoneyWiseDataSet myData = myTransaction.getDataSet();
-        final MoneyWiseTransAsset myAccount = myTransaction.getAccount();
-        final MoneyWiseTransAsset myPartner = myTransaction.getPartner();
-        final MoneyWiseAssetDirection myDir = myTransaction.getDirection();
         final MoneyWiseTransCategory myCategory = myTransaction.getCategory();
-        final MoneyWiseTaxCredit myYear = myTransaction.getTaxYear();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
         final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();
+        if (myClass == null) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
 
         /* Switch on class */
         switch ((MoneyWiseTransInfoClass) pClass) {
@@ -249,15 +249,15 @@ public class MoneyWiseTransInfoSet
 
             /* Handle Tax Credit */
             case TAXCREDIT:
-                return isTaxCreditClassRequired(myAccount, myClass, myYear);
+                return isTaxCreditClassRequired(myClass);
 
             /* Handle AccountUnits */
             case ACCOUNTDELTAUNITS:
-                return isAccountUnitsDeltaRequired(myAccount, myPartner, myDir, myClass);
+                return isAccountUnitsDeltaRequired(myClass);
 
             /* Handle PartnerUnits */
             case PARTNERDELTAUNITS:
-                return isPartnerUnitsDeltaRequired(myPartner, myDir, myClass);
+                return isPartnerUnitsDeltaRequired(myClass);
 
             /* Handle Dilution separately */
             case DILUTION:
@@ -265,11 +265,7 @@ public class MoneyWiseTransInfoSet
 
             /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
-                return myClass == MoneyWiseTransCategoryClass.TRANSFER
-                        && myAccount instanceof MoneyWiseSecurityHolding
-                        && ((MoneyWiseSecurityHolding) myAccount).getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+                return isQualifyingYearsClassRequired(myClass);
 
             /* Handle ThirdParty separately */
             case RETURNEDCASHACCOUNT:
@@ -278,16 +274,16 @@ public class MoneyWiseTransInfoSet
                 return isReturnedCashRequired(myTransaction);
 
             case PARTNERAMOUNT:
-                return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
+                return isPartnerAmountClassRequired(myClass);
 
             case XCHANGERATE:
-                return isXchangeRateClassRequired(myClass, myAccount, myData.getReportingCurrency());
+                return isXchangeRateClassRequired(myClass);
 
             case PRICE:
-                return isPriceClassRequired(myClass, myAccount, myPartner);
+                return isPriceClassRequired(myClass);
 
             case COMMISSION:
-                return isCommissionClassRequired(myClass, myAccount, myPartner);
+                return isCommissionClassRequired(myClass);
 
             default:
                 return MetisFieldRequired.NOTALLOWED;
@@ -316,14 +312,14 @@ public class MoneyWiseTransInfoSet
 
     /**
      * Determine if a TaxCredit infoSet class is required.
-     * @param pDebit the debit account
      * @param pClass the category class
-     * @param pYear the TaxYear
      * @return the status
      */
-    private static MetisFieldRequired isTaxCreditClassRequired(final MoneyWiseTransAsset pDebit,
-                                                               final MoneyWiseTransCategoryClass pClass,
-                                                               final MoneyWiseTaxCredit pYear) {
+    private MetisFieldRequired isTaxCreditClassRequired(final MoneyWiseTransCategoryClass pClass) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseTaxCredit myYear = myTrans.getTaxYear();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
@@ -331,24 +327,24 @@ public class MoneyWiseTransInfoSet
             case LOANINTERESTCHARGED:
                 return MetisFieldRequired.CANEXIST;
             case LOYALTYBONUS:
-                return pDebit.isTaxFree()
-                        || pDebit.isGross()
+                return myAccount.isTaxFree()
+                        || myAccount.isGross()
                         ? MetisFieldRequired.NOTALLOWED
                         : MetisFieldRequired.MUSTEXIST;
             case INTEREST:
-                return pDebit.isTaxFree()
-                        || pDebit.isGross()
-                        || !pYear.isTaxCreditRequired()
+                return myAccount.isTaxFree()
+                        || myAccount.isGross()
+                        || !myYear.isTaxCreditRequired()
                         ? MetisFieldRequired.NOTALLOWED
                         : MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                return !pDebit.isTaxFree()
-                        && (pYear.isTaxCreditRequired() || pDebit.isForeign())
+                return Boolean.TRUE.equals(!myAccount.isTaxFree())
+                        && (myYear.isTaxCreditRequired() || myAccount.isForeign())
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;
             case TRANSFER:
-                return pDebit instanceof MoneyWiseSecurityHolding
-                        && ((MoneyWiseSecurityHolding) pDebit).getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
+                return myAccount instanceof MoneyWiseSecurityHolding
+                        && ((MoneyWiseSecurityHolding) myAccount).getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;
             default:
@@ -374,23 +370,22 @@ public class MoneyWiseTransInfoSet
 
     /**
      * Determine if an AccountDeltaUnits infoSet class is required.
-     * @param pAccount the account
-     * @param pPartner the partner
-     * @param pDir the direction
      * @param pClass the category class
      * @return the status
      */
-    private static MetisFieldRequired isAccountUnitsDeltaRequired(final MoneyWiseTransAsset pAccount,
-                                                                  final MoneyWiseTransAsset pPartner,
-                                                                  final MoneyWiseAssetDirection pDir,
-                                                                  final MoneyWiseTransCategoryClass pClass) {
+    private MetisFieldRequired isAccountUnitsDeltaRequired(final MoneyWiseTransCategoryClass pClass) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+        final MoneyWiseTransAsset myPartner = myTrans.getPartner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+
         /* Account must be security holding */
-        if (!(pAccount instanceof MoneyWiseSecurityHolding)) {
+        if (!(myAccount instanceof MoneyWiseSecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
         }
 
         /* Account cannot be autoUnits */
-        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAccount;
+        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myAccount;
         if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {
             return MetisFieldRequired.NOTALLOWED;
         }
@@ -405,11 +400,11 @@ public class MoneyWiseTransInfoSet
             case INHERITED:
                 return MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                return pAccount.equals(pPartner)
+                return myAccount.equals(myPartner)
                         ? MetisFieldRequired.CANEXIST
                         : MetisFieldRequired.NOTALLOWED;
             case STOCKRIGHTSISSUE:
-                return pDir.isFrom()
+                return myDir.isFrom()
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;
             default:
@@ -419,21 +414,21 @@ public class MoneyWiseTransInfoSet
 
     /**
      * Determine if an PartnerDeltaUnits infoSet class is required.
-     * @param pPartner the partner
-     * @param pDir the direction
      * @param pClass the category class
      * @return the status
      */
-    private static MetisFieldRequired isPartnerUnitsDeltaRequired(final MoneyWiseTransAsset pPartner,
-                                                                  final MoneyWiseAssetDirection pDir,
-                                                                  final MoneyWiseTransCategoryClass pClass) {
+    private MetisFieldRequired isPartnerUnitsDeltaRequired(final MoneyWiseTransCategoryClass pClass) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseTransAsset myPartner = myTrans.getPartner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+
         /* Partner must be security holding */
-        if (!(pPartner instanceof MoneyWiseSecurityHolding)) {
+        if (!(myPartner instanceof MoneyWiseSecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
         }
 
         /* Partner cannot be autoUnits */
-        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pPartner;
+        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myPartner;
         if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {
             return MetisFieldRequired.NOTALLOWED;
         }
@@ -447,7 +442,7 @@ public class MoneyWiseTransInfoSet
             case STOCKTAKEOVER:
                 return MetisFieldRequired.MUSTEXIST;
             case STOCKRIGHTSISSUE:
-                return pDir.isTo()
+                return myDir.isTo()
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;
             default:
@@ -498,21 +493,21 @@ public class MoneyWiseTransInfoSet
     /**
      * Determine if a PartnerAmount infoSet class is required.
      * @param pCategory the category
-     * @param pAccount the account
-     * @param pPartner the partner
      * @return the status
      */
-    private static MetisFieldRequired isPartnerAmountClassRequired(final MoneyWiseTransCategoryClass pCategory,
-                                                                   final MoneyWiseTransAsset pAccount,
-                                                                   final MoneyWiseTransAsset pPartner) {
+    private MetisFieldRequired isPartnerAmountClassRequired(final MoneyWiseTransCategoryClass pCategory) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+        final MoneyWiseTransAsset myPartner = myTrans.getPartner();
+
         /* If the transaction requires null amount, then partner amount must also be null */
         if (pCategory.needsNullAmount()) {
             return MetisFieldRequired.NOTALLOWED;
         }
 
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
-        final MoneyWiseCurrency myCurrency = pAccount.getAssetCurrency();
-        final MoneyWiseCurrency myPartnerCurrency = pPartner.getAssetCurrency();
+        final MoneyWiseCurrency myCurrency = myAccount.getAssetCurrency();
+        final MoneyWiseCurrency myPartnerCurrency = myPartner.getAssetCurrency();
         if (myCurrency == null || myPartnerCurrency == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
@@ -522,31 +517,43 @@ public class MoneyWiseTransInfoSet
     }
 
     /**
-     * Determine if an XchangeRate infoSet class is required.
+     * Determine if an QualifyingYears infoSet class is required.
      * @param pCategory the category
-     * @param pAccount the account
-     * @param pCurrency the reporting currency
      * @return the status
      */
-    private static MetisFieldRequired isXchangeRateClassRequired(final MoneyWiseTransCategoryClass pCategory,
-                                                                 final MoneyWiseTransAsset pAccount,
-                                                                 final MoneyWiseCurrency pCurrency) {
-        return pCategory.isDividend()
-                && !pAccount.getAssetCurrency().equals(pCurrency)
+    private MetisFieldRequired isQualifyingYearsClassRequired(final MoneyWiseTransCategoryClass pCategory) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+
+        return pCategory == MoneyWiseTransCategoryClass.TRANSFER
+                && myAccount instanceof MoneyWiseSecurityHolding
+                && ((MoneyWiseSecurityHolding) myAccount).getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
                 ? MetisFieldRequired.MUSTEXIST
                 : MetisFieldRequired.NOTALLOWED;
     }
 
     /**
-     * Determine if a Commission infoSet class is required.
+     * Determine if an XchangeRate infoSet class is required.
      * @param pCategory the category
-     * @param pAccount the account
-     * @param pPartner the partner
      * @return the status
      */
-    private static MetisFieldRequired isPriceClassRequired(final MoneyWiseTransCategoryClass pCategory,
-                                                           final MoneyWiseTransAsset pAccount,
-                                                           final MoneyWiseTransAsset pPartner) {
+    private MetisFieldRequired isXchangeRateClassRequired(final MoneyWiseTransCategoryClass pCategory) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseDataSet myData = myTrans.getDataSet();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+
+        return pCategory.isDividend()
+                && !myAccount.getAssetCurrency().equals(myData.getReportingCurrency())
+                ? MetisFieldRequired.MUSTEXIST
+                : MetisFieldRequired.NOTALLOWED;
+    }
+
+    /**
+     * Determine if a price infoSet class is required.
+     * @param pCategory the category
+     * @return the status
+     */
+    private static MetisFieldRequired isPriceClassRequired(final MoneyWiseTransCategoryClass pCategory) {
         /* Don't allow yet */
         return MetisFieldRequired.NOTALLOWED;
         /* Account or Partner must be security holding
@@ -574,13 +581,9 @@ public class MoneyWiseTransInfoSet
     /**
      * Determine if a Commission infoSet class is required.
      * @param pCategory the category
-     * @param pAccount the account
-     * @param pPartner the partner
      * @return the status
      */
-    private static MetisFieldRequired isCommissionClassRequired(final MoneyWiseTransCategoryClass pCategory,
-                                                                final MoneyWiseTransAsset pAccount,
-                                                                final MoneyWiseTransAsset pPartner) {
+    private static MetisFieldRequired isCommissionClassRequired(final MoneyWiseTransCategoryClass pCategory) {
         /* Don't allow yet */
         return MetisFieldRequired.NOTALLOWED;
         /* Account or Partner must be security holding
@@ -606,132 +609,56 @@ public class MoneyWiseTransInfoSet
     protected void validate() {
         /* Loop through the classes */
         for (final MoneyWiseTransInfoClass myClass : MoneyWiseTransInfoClass.values()) {
-            /* validate the class */
-            validateClass(myClass);
+            /* Access info for class */
+            final MoneyWiseTransInfo myInfo = myClass.isLinkSet()
+                    ? null
+                    : getInfo(myClass);
+
+            /* If basic checks are passed */
+            if (checkClass(myInfo, myClass)) {
+                /* validate the class */
+                validateClass(myInfo, myClass);
+            }
         }
     }
 
     /**
      * Validate the class.
+     * @param pInfo the info
      * @param pClass the infoClass
      */
-    private void validateClass(final MoneyWiseTransInfoClass pClass) {
-        /* Access details about the Transaction */
-        final MoneyWiseTransaction myTransaction = getOwner();
-        final MoneyWiseTransAsset myAccount = myTransaction.getAccount();
-        final MoneyWiseTransAsset myPartner = myTransaction.getPartner();
-        final MoneyWiseAssetDirection myDir = myTransaction.getDirection();
-        final MoneyWiseTransCategoryClass myCatClass = myTransaction.getCategoryClass();
-        final Currency myCurrency = myAccount.getCurrency();
-
-        /* Access info for class */
-        final boolean isExisting = isExisting(pClass);
-        final MoneyWiseTransInfo myInfo = pClass.isLinkSet()
-                ? null
-                : getInfo(pClass);
-
-        /* Determine requirements for class */
-        final MetisFieldRequired myState = isClassRequired(pClass);
-
-        /* If the field is missing */
-        if (!isExisting) {
-            /* Handle required field missing */
-            if (myState == MetisFieldRequired.MUSTEXIST) {
-                myTransaction.addError(PrometheusDataItem.ERROR_MISSING, getFieldForClass(pClass));
-            }
-            return;
-        }
-
-        /* If field is not allowed */
-        if (myState == MetisFieldRequired.NOTALLOWED) {
-            myTransaction.addError(PrometheusDataItem.ERROR_EXIST, getFieldForClass(pClass));
-            return;
-        }
-        if (myInfo == null) {
-            return;
-        }
-
+    private void validateClass(final MoneyWiseTransInfo pInfo,
+                               final MoneyWiseTransInfoClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case QUALIFYYEARS:
-                /* Check value */
-                final Integer myYears = myInfo.getValue(Integer.class);
-                if (myYears == 0) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pClass));
-                } else if (myYears < 0) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                }
+                validateQualifyYears(pInfo);
                 break;
             case TAXCREDIT:
-                /* Check value */
-                TethysMoney myAmount = myInfo.getValue(TethysMoney.class);
-                if (!myAmount.isPositive()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                } else if (!myAmount.getCurrency().equals(myCurrency)) {
-                    myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validateTaxCredit(pInfo);
                 break;
             case EMPLOYEENATINS:
+            case EMPLOYERNATINS:
             case DEEMEDBENEFIT:
             case WITHHELD:
-                /* Check value */
-                myAmount = myInfo.getValue(TethysMoney.class);
-                if (myAmount.isZero()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pClass));
-                } else if (!myAmount.isPositive()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                } else if (!myAmount.getCurrency().equals(myCurrency)) {
-                    myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validateOptionalTaxCredit(pInfo);
                 break;
             case PARTNERAMOUNT:
-                /* Check value */
-                myAmount = myInfo.getValue(TethysMoney.class);
-                if (!myAmount.isPositive()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
-                    myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validatePartnerAmount(pInfo);
                 break;
             case RETURNEDCASHACCOUNT:
-                MoneyWiseTransAsset myThirdParty = myInfo.getTransAsset();
-                if (!myCurrency.equals(myThirdParty.getCurrency())) {
-                    myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validateReturnedCashAccount(pInfo);
                 break;
             case RETURNEDCASH:
-                /* Check value */
-                myThirdParty = myTransaction.getReturnedCashAccount();
-                myAmount = myInfo.getValue(TethysMoney.class);
-                if (myAmount.isZero()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pClass));
-                } else if (!myAmount.isPositive()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {
-                    myTransaction.addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validateReturnedCash(pInfo);
                 break;
             case ACCOUNTDELTAUNITS:
             case PARTNERDELTAUNITS:
-                final MetisFieldRequired isRequired = pClass == MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS
-                        ? isAccountUnitsPositive(myDir, myCatClass)
-                        : isPartnerUnitsPositive(myDir, myCatClass);
-                final TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
-                if (myUnits.isZero()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pClass));
-                } else if (myUnits.isPositive() && isRequired.notAllowed()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_POSITIVE, getFieldForClass(pClass));
-                } else if (!myUnits.isPositive() && isRequired.mustExist()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
-                }
+                validateDeltaUnits(pInfo);
                 break;
             case REFERENCE:
             case COMMENTS:
-                /* Check length */
-                final String myValue = myInfo.getValue(String.class);
-                if (myValue.length() > pClass.getMaximumLength()) {
-                    myTransaction.addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(pClass));
-                }
+                validateInfoLength(pInfo);
                 break;
             case TRANSTAG:
             case DILUTION:
@@ -802,7 +729,7 @@ public class MoneyWiseTransInfoSet
                 setValue(pClass, TethysRatio.ONE);
                 break;
             case QUALIFYYEARS:
-                setValue(pClass, Integer.valueOf(1));
+                setValue(pClass, 1);
                 break;
             case TAXCREDIT:
                 setValue(pClass, TethysMoney.getWholeUnits(0));
@@ -812,6 +739,126 @@ public class MoneyWiseTransInfoSet
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Validate the qualifyingYears.
+     * @param pInfo the info
+     */
+    private void validateQualifyYears(final MoneyWiseTransInfo pInfo) {
+        final Integer myYears = pInfo.getValue(Integer.class);
+        if (myYears == 0) {
+            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));
+        } else if (myYears < 0) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));
+        }
+    }
+
+    /**
+     * Validate the taxCredit.
+     * @param pInfo the info
+     */
+    private void validateTaxCredit(final MoneyWiseTransInfo pInfo) {
+        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        final Currency myCurrency = getOwner().getAccount().getCurrency();
+        if (!myAmount.isPositive()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));
+        } else if (!myAmount.getCurrency().equals(myCurrency)) {
+            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));
+        }
+    }
+
+    /**
+     * Validate the optional taxCredits.
+     * @param pInfo the info
+     */
+    private void validateOptionalTaxCredit(final MoneyWiseTransInfo pInfo) {
+        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        final Currency myCurrency = getOwner().getAccount().getCurrency();
+        if (myAmount.isZero()) {
+            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pInfo.getInfoClass()));
+        } else if (!myAmount.isPositive()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pInfo.getInfoClass()));
+        } else if (!myAmount.getCurrency().equals(myCurrency)) {
+            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pInfo.getInfoClass()));
+        }
+    }
+
+
+    /**
+     * Validate the partnerAmount.
+     * @param pInfo the info
+     */
+    private void validatePartnerAmount(final MoneyWiseTransInfo pInfo) {
+        final MoneyWiseTransAsset myPartner = getOwner().getPartner();
+        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        if (!myAmount.isPositive()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
+        } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
+            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
+        }
+    }
+
+    /**
+     * Validate the returnedCashAccount.
+     * @param pInfo the info
+     */
+    private void validateReturnedCashAccount(final MoneyWiseTransInfo pInfo) {
+        final MoneyWiseTransAsset myThirdParty = pInfo.getTransAsset();
+        final Currency myCurrency = getOwner().getAccount().getCurrency();
+        if (!myCurrency.equals(myThirdParty.getCurrency())) {
+            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT));
+        }
+    }
+
+    /**
+     * Validate the returnedCash.
+     * @param pInfo the info
+     */
+    private void validateReturnedCash(final MoneyWiseTransInfo pInfo) {
+        final MoneyWiseTransAsset myThirdParty = getOwner().getReturnedCashAccount();
+        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        if (myAmount.isZero()) {
+            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
+        } else if (!myAmount.isPositive()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
+        } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {
+            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
+        }
+    }
+
+    /**
+     * Validate the deltaUnits.
+     * @param pInfo the info
+     */
+    private void validateDeltaUnits(final MoneyWiseTransInfo pInfo) {
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final MoneyWiseTransCategoryClass myCatClass = myTrans.getCategoryClass();
+        final MoneyWiseTransInfoClass myInfoClass = pInfo.getInfoClass();
+        final MetisFieldRequired isRequired = myInfoClass == MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS
+                ? isAccountUnitsPositive(myDir, myCatClass)
+                : isPartnerUnitsPositive(myDir, myCatClass);
+        final TethysUnits myUnits = pInfo.getValue(TethysUnits.class);
+        if (myUnits.isZero()) {
+            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(myInfoClass));
+        } else if (myUnits.isPositive() && isRequired.notAllowed()) {
+            getOwner().addError(PrometheusDataItem.ERROR_POSITIVE, getFieldForClass(myInfoClass));
+        } else if (!myUnits.isPositive() && isRequired.mustExist()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(myInfoClass));
+        }
+    }
+
+    /**
+     * Validate the info length.
+     * @param pInfo the info
+     */
+    private void validateInfoLength(final MoneyWiseTransInfo pInfo) {
+        final String myInfo = pInfo.getValue(String.class);
+        final MoneyWiseTransInfoClass myClass = pInfo.getInfoClass();
+        if (myInfo.length() > myClass.getMaximumLength()) {
+            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(myClass));
         }
     }
 }

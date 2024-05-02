@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
@@ -365,7 +366,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
         /* Return the info */
         final PrometheusDataInfoItem myInfo = theMap.get(pInfoClass);
-        return (PrometheusDataInfoLinkSet) myInfo;
+        return (PrometheusDataInfoLinkSet<T>) myInfo;
     }
 
     /**
@@ -977,4 +978,45 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
             }
         }
     }
+
+    /**
+     * Perform basic class validation.
+     * @param pInfo the info (or null)
+     * @param pClass the infoClass
+     * @return continue checks true/false
+     */
+    protected boolean checkClass(final T pInfo,
+                                 final PrometheusDataInfoClass pClass) {
+        /* Check whether info exists */
+        final boolean isExisting = pInfo != null
+                && !pInfo.isDeleted();
+
+        /* Determine requirements for class */
+        final MetisFieldRequired myState = isClassRequired(pClass);
+
+        /* If the field is missing */
+        if (!isExisting) {
+            /* Handle required field missing */
+            if (myState == MetisFieldRequired.MUSTEXIST) {
+                getOwner().addError(PrometheusDataItem.ERROR_MISSING, getFieldForClass(pClass));
+            }
+            return false;
+        }
+
+        /* If field is not allowed */
+        if (myState == MetisFieldRequired.NOTALLOWED) {
+            getOwner().addError(PrometheusDataItem.ERROR_EXIST, getFieldForClass(pClass));
+            return false;
+        }
+
+        /* Continue checks */
+        return true;
+    }
+
+    /**
+     * Obtain the field for the infoSet class.
+     * @param pClass the class
+     * @return the field
+     */
+    public abstract MetisDataFieldId getFieldForClass(PrometheusDataInfoClass pClass);
 }
