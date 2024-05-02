@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.basic;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
@@ -126,6 +125,11 @@ public class MoneyWiseLoanInfoSet
         return REVERSE_FIELDMAP.get(pClass);
     }
 
+    @Override
+    public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
+        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);
+    }
+
     /**
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
@@ -142,9 +146,7 @@ public class MoneyWiseLoanInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-        final Iterator<MoneyWiseLoanInfo> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseLoanInfo myInfo = myIterator.next();
+        for (MoneyWiseLoanInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
         }
     }
@@ -205,63 +207,60 @@ public class MoneyWiseLoanInfoSet
     protected void validate() {
         /* Loop through the classes */
         for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* validate the class */
-            validateClass(myClass);
+            /* Access info for class */
+            final MoneyWiseLoanInfo myInfo = getInfo(myClass);
+
+            /* If basic checks are passed */
+            if (checkClass(myInfo, myClass)) {
+                /* validate the class */
+                validateClass(myInfo, myClass);
+            }
         }
     }
 
     /**
      * Validate the class.
+     * @param pInfo the info
      * @param pClass the infoClass
      */
-    private void validateClass(final MoneyWiseAccountInfoClass pClass) {
-        /* Access details about the Loan */
-        final MoneyWiseLoan myLoan = getOwner();
-
-        /* Access info for class */
-        final MoneyWiseLoanInfo myInfo = getInfo(pClass);
-        final boolean isExisting = myInfo != null
-                && !myInfo.isDeleted();
-
-        /* Determine requirements for class */
-        final MetisFieldRequired myState = isClassRequired(pClass);
-
-        /* If the field is missing */
-        if (!isExisting) {
-            /* Handle required field missing */
-            if (myState == MetisFieldRequired.MUSTEXIST) {
-                myLoan.addError(PrometheusDataItem.ERROR_MISSING, getFieldForClass(pClass));
-            }
-            return;
-        }
-
-        /* If field is not allowed */
-        if (myState == MetisFieldRequired.NOTALLOWED) {
-            myLoan.addError(PrometheusDataItem.ERROR_EXIST, getFieldForClass(pClass));
-            return;
-        }
-
+    private void validateClass(final MoneyWiseLoanInfo pInfo,
+                               final MoneyWiseAccountInfoClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case OPENINGBALANCE:
-                /* Access data */
-                final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
-                if (!myBalance.getCurrency().equals(myLoan.getCurrency())) {
-                    myLoan.addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validateOpeningBalance(pInfo);
                 break;
             case SORTCODE:
             case ACCOUNT:
             case NOTES:
             case REFERENCE:
-                /* Access data */
-                final char[] myArray = myInfo.getValue(char[].class);
-                if (myArray.length > pClass.getMaximumLength()) {
-                    myLoan.addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(pClass));
-                }
+                validateInfoLength(pInfo);
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Validate the opening balance.
+     * @param pInfo the info
+     */
+    private void validateOpeningBalance(final MoneyWiseLoanInfo pInfo) {
+        final TethysMoney myBalance = pInfo.getValue(TethysMoney.class);
+        if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
+        }
+    }
+
+    /**
+     * Validate the info length.
+     * @param pInfo the info
+     */
+    private void validateInfoLength(final MoneyWiseLoanInfo pInfo) {
+        final char[] myArray = pInfo.getValue(char[].class);
+        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();
+        if (myArray.length > myClass.getMaximumLength()) {
+            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(myClass));
         }
     }
 }

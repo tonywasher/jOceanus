@@ -474,6 +474,11 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      */
     public boolean isFieldChanged(final MetisDataFieldId pField,
                                   final T pItem) {
+        /* Header is never changed */
+        if (pItem.isHeader()) {
+            return false;
+        }
+
         /* If the field is a dataInfoClass as part of an infoSetItem */
         if (pField instanceof PrometheusDataInfoClass
                 && pItem instanceof PrometheusInfoSetItem) {
@@ -483,8 +488,8 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
             return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
         }
 
+        /* Handle standard fields */
         return pField != null
-                && !pItem.isHeader()
                 && pItem.fieldChanged(pField).isDifferent();
     }
 

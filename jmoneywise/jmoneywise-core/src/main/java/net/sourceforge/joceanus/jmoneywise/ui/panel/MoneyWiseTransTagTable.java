@@ -218,21 +218,31 @@ public class MoneyWiseTransTagTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new tag */
+            myTask.startTask("buildItem");
             final MoneyWiseTransTag myTag = theTags.addNewItem();
             myTag.setDefaults();
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myTag.setNewVersion();
             myTag.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myTag.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActiveTag.setNewItem(myTag);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

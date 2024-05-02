@@ -214,21 +214,31 @@ public class MoneyWiseDepositTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new asset */
+            myTask.startTask("buildItem");
             final MoneyWiseDeposit myDeposit = theDeposits.addNewItem();
             myDeposit.setDefaults(getEditSet());
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myDeposit.setNewVersion();
             myDeposit.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myDeposit.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActiveDeposit.setNewItem(myDeposit);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

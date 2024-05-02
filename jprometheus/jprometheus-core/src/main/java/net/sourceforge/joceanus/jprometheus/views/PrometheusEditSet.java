@@ -137,6 +137,14 @@ public class PrometheusEditSet
     }
 
     /**
+     * Is the item editing?
+     * @return true/false
+     */
+    public Boolean isEditing() {
+        return itemEditing;
+    }
+
+    /**
      * Obtain the version.
      * @return the version
      */
@@ -235,35 +243,36 @@ public class PrometheusEditSet
      */
     public void incrementVersion() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getNewProfile("incrementVersion");
+        final TethysProfile myTask = theControl.getActiveTask();
+        final TethysProfile mySubTask = myTask == null
+                ? theControl.getNewProfile("incrementVersion")
+                : myTask.startTask("incrementVersion");
 
         /* Increment the version */
         theVersion++;
 
         /* Loop through the items in the list */
-        final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
+        for (PrometheusEditEntry<?> myEntry : theMap.values()) {
             /* Access list */
-            final PrometheusEditEntry<?> myEntry = myIterator.next();
             final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Increment the version if the list exists */
             if (myDataList != null) {
                 /* Note the new step */
-                myTask.startTask(myDataList.listName());
+                mySubTask.startTask(myDataList.listName());
 
                 /* Set the new version */
                 myDataList.setVersion(theVersion);
 
                 /* postProcess */
-                if (!itemEditing) {
+                if (Boolean.FALSE.equals(itemEditing)) {
                     myDataList.postProcessOnUpdate();
                 }
             }
         }
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
     }
 
     /**
@@ -309,20 +318,20 @@ public class PrometheusEditSet
                 mySubTask.startTask(myDataList.listName());
 
                 /* postProcess */
-                if (!itemEditing) {
+                if (Boolean.FALSE.equals(itemEditing)) {
                     myDataList.postProcessOnUpdate();
                 }
             }
         }
 
         /* Note the new step */
-        myTask.startTask("Notify");
+        mySubTask = myTask.startTask("Notify");
 
         /* Fire that we have rewound the updateSet */
         theEventManager.fireEvent(PrometheusDataEvent.REWINDUPDATES);
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
     }
 
     /**
@@ -362,8 +371,8 @@ public class PrometheusEditSet
      */
     private void applyChanges() {
         /* Obtain the active profile */
-        TethysProfile myTask = theControl.getActiveTask();
-        myTask = myTask.startTask("applyChanges");
+        final TethysProfile myTask = theControl.getActiveTask();
+        final TethysProfile mySubTask = myTask.startTask("applyChanges");
 
         /* Validate the changes */
         validate();
@@ -371,13 +380,13 @@ public class PrometheusEditSet
         /* Reject request if there are errors */
         if (hasErrors()) {
             /* We have finished */
-            myTask.startTask("Notify");
+            mySubTask.startTask("Notify");
 
             /* Fire that we have rewound the updateSet */
             theEventManager.fireEvent(PrometheusDataEvent.REWINDUPDATES);
 
             /* Complete the task */
-            myTask.end();
+            mySubTask.end();
             return;
         }
 
@@ -408,7 +417,7 @@ public class PrometheusEditSet
         }
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
     }
 
     /**
@@ -417,19 +426,16 @@ public class PrometheusEditSet
      */
     private boolean prepareChanges() {
         /* Obtain the active profile */
-        TethysProfile myTask = theControl.getActiveTask();
-        myTask = myTask.startTask("prepareChanges");
+        final TethysProfile myTask = theControl.getActiveTask();
+        final TethysProfile mySubTask = myTask.startTask("prepareChanges");
         boolean bSuccess = true;
 
         /* Protect against exceptions */
         try {
             /* Loop through the items in the list */
-            final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-            while (myIterator.hasNext()) {
-                final PrometheusEditEntry<?> myEntry = myIterator.next();
-
+            for (PrometheusEditEntry<?> myEntry : theMap.values()) {
                 /* Note the new step */
-                myTask.startTask(myEntry.getName());
+                mySubTask.startTask(myEntry.getName());
 
                 /* Prepare changes for the entry */
                 myEntry.prepareChanges();
@@ -441,7 +447,7 @@ public class PrometheusEditSet
         }
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
         return bSuccess;
     }
 
@@ -450,16 +456,13 @@ public class PrometheusEditSet
      */
     private void commitChanges() {
         /* Obtain the active profile */
-        TethysProfile myTask = theControl.getActiveTask();
-        myTask = myTask.startTask("commitChanges");
+        final TethysProfile myTask = theControl.getActiveTask();
+        final TethysProfile mySubTask = myTask.startTask("commitChanges");
 
         /* Loop through the items in the list */
-        final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
-            final PrometheusEditEntry<?> myEntry = myIterator.next();
-
+        for (PrometheusEditEntry<?> myEntry : theMap.values()) {
             /* Note the new step */
-            myTask.startTask(myEntry.getName());
+            mySubTask.startTask(myEntry.getName());
 
             /* Commit changes for the entry */
             myEntry.commitChanges();
@@ -470,7 +473,7 @@ public class PrometheusEditSet
         theVersion = 0;
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
     }
 
     /**
@@ -478,23 +481,20 @@ public class PrometheusEditSet
      */
     private void rollBackChanges() {
         /* Obtain the active profile */
-        TethysProfile myTask = theControl.getActiveTask();
-        myTask = myTask.startTask("rollBackChanges");
+        final TethysProfile myTask = theControl.getActiveTask();
+        final TethysProfile mySubTask = myTask.startTask("rollBackChanges");
 
         /* Loop through the items in the list */
-        final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
-            final PrometheusEditEntry<?> myEntry = myIterator.next();
-
+        for (PrometheusEditEntry<?> myEntry : theMap.values()) {
             /* Note the new step */
-            myTask.startTask(myEntry.getName());
+            mySubTask.startTask(myEntry.getName());
 
             /* RollBack changes for the entry */
             myEntry.rollBackChanges();
         }
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
     }
 
     /**
@@ -512,14 +512,12 @@ public class PrometheusEditSet
      */
     public boolean hasErrors() {
         /* Loop through the items in the list */
-        final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
+        for (PrometheusEditEntry<?> myEntry : theMap.values()) {
             /* Access entry */
-            final PrometheusEditEntry<?> myEntry = myIterator.next();
             final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Determine whether there are errors */
-            if ((myDataList != null) && (myDataList.hasErrors())) {
+            if (myDataList != null && myDataList.hasErrors()) {
                 return true;
             }
         }
@@ -533,20 +531,18 @@ public class PrometheusEditSet
      */
     public void validate() {
         /* Obtain the active profile */
-        TethysProfile myTask = theControl.getActiveTask();
-        myTask = myTask.startTask("validate");
+        final TethysProfile myTask = theControl.getActiveTask();
+        final TethysProfile mySubTask = myTask.startTask("validate");
 
         /* Loop through the items in the list */
-        final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
+        for (PrometheusEditEntry<?> myEntry : theMap.values()) {
             /* Access list */
-            final PrometheusEditEntry<?> myEntry = myIterator.next();
             final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* if list exists */
             if (myDataList != null) {
                 /* Note the new step */
-                myTask.startTask(myDataList.listName());
+                mySubTask.startTask(myDataList.listName());
 
                 /* Validate */
                 myDataList.validate();
@@ -554,7 +550,7 @@ public class PrometheusEditSet
         }
 
         /* Complete the task */
-        myTask.end();
+        mySubTask.end();
     }
 
     /**
@@ -661,20 +657,36 @@ public class PrometheusEditSet
      * @param pNewVersion the new maximum version
      */
     private void condenseHistory(final int pNewVersion) {
+        /* Obtain the active profile */
+        final TethysProfile myTask = theControl.getActiveTask();
+        TethysProfile mySubTask = myTask.startTask("condenseHistory");
+
         /* Loop through the items in the list */
-        final Iterator<PrometheusEditEntry<?>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
+        for (PrometheusEditEntry<?> myEntry : theMap.values()) {
             /* Access list */
-            final PrometheusEditEntry<?> myEntry = myIterator.next();
             final PrometheusDataList<?> myDataList = myEntry.getDataList();
 
             /* Condense history in the list */
             if (myDataList != null) {
+                /* Note the new step */
+                TethysProfile myListTask = mySubTask.startTask(myDataList.listName());
+                myListTask.startTask("Condense");
+
+                /* Condense history */
                 myDataList.condenseHistory(pNewVersion);
+
+                /* postProcess */
+                if (Boolean.FALSE.equals(itemEditing)) {
+                    myListTask.startTask("postProcess");
+                    myDataList.postProcessOnUpdate();
+                }
             }
         }
 
         /* Store version */
         theVersion = pNewVersion;
+
+        /* Complete the task */
+        mySubTask.end();
     }
 }

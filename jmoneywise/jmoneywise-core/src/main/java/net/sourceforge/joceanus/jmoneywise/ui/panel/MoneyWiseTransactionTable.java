@@ -841,23 +841,36 @@ public class MoneyWiseTransactionTable
         /* Make sure that we have finished editing */
         cancelEditing();
 
+        /* Create a new profile */
+        final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
         /* Create the new transaction */
+        myTask.startTask("buildItem");
         final MoneyWiseTransaction myTrans = theFilter.buildNewTransaction(theBuilder);
 
         /* If we have one available */
         if (myTrans != null) {
             /* Add the new item */
-            myTrans.setNewVersion();
+            myTask.startTask("addToList");
             theTransactions.add(myTrans);
+            myTrans.setNewVersion();
 
             /* Validate the new item and notify of the changes */
-            myTrans.validate();
+            myTask.startTask("incrementVersion");
             getEditSet().incrementVersion();
 
+            /* validate the item */
+            myTask.startTask("validate");
+            myTrans.validate();
+
             /* Lock the table */
-            setTableEnabled(false);
+            myTask.startTask("setItem");
             theActiveTran.setNewItem(myTrans);
+            setTableEnabled(false);
         }
+
+        /* End the task */
+        myTask.end();
     }
 
     /**

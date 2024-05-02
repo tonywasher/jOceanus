@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseNameSpaceIterator;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseCashPanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
@@ -194,21 +193,31 @@ public class MoneyWiseCashTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new asset */
+            myTask.startTask("buildItem");
             final MoneyWiseCash myCash = theCash.addNewItem();
             myCash.setDefaults(getEditSet());
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myCash.setNewVersion();
             myCash.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myCash.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActiveCash.setNewItem(myCash);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {

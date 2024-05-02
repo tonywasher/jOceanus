@@ -151,6 +151,11 @@ public class MoneyWiseCashInfoSet
         return REVERSE_FIELDMAP.get(pClass);
     }
 
+    @Override
+    public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
+        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);
+    }
+
     /**
      * Obtain the payee for the infoClass.
      * @param pInfoClass the Info Class
@@ -203,9 +208,7 @@ public class MoneyWiseCashInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-        final Iterator<MoneyWiseCashInfo> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseCashInfo myInfo = myIterator.next();
+        for (MoneyWiseCashInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
         }
     }
@@ -273,65 +276,34 @@ public class MoneyWiseCashInfoSet
     protected void validate() {
         /* Loop through the classes */
         for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* validate the class */
-            validateClass(myClass);
+            /* Access info for class */
+            final MoneyWiseCashInfo myInfo = getInfo(myClass);
+
+            /* If basic checks are passed */
+            if (checkClass(myInfo, myClass)) {
+                /* validate the class */
+                validateClass(myInfo, myClass);
+            }
         }
     }
 
     /**
      * Validate the class.
+     * @param pInfo the info
      * @param pClass the infoClass
      */
-    private void validateClass(final MoneyWiseAccountInfoClass pClass) {
-        /* Access details about the Cash */
-        final MoneyWiseCash myCash = getOwner();
-
-        /* Access info for class */
-        final MoneyWiseCashInfo myInfo = getInfo(pClass);
-        final boolean isExisting = myInfo != null
-                && !myInfo.isDeleted();
-
-        /* Determine requirements for class */
-        final MetisFieldRequired myState = isClassRequired(pClass);
-
-        /* If the field is missing */
-        if (!isExisting) {
-            /* Handle required field missing */
-            if (myState == MetisFieldRequired.MUSTEXIST) {
-                myCash.addError(PrometheusDataItem.ERROR_MISSING, getFieldForClass(pClass));
-            }
-            return;
-        }
-
-        /* If field is not allowed */
-        if (myState == MetisFieldRequired.NOTALLOWED) {
-            myCash.addError(PrometheusDataItem.ERROR_EXIST, getFieldForClass(pClass));
-            return;
-        }
-
+    private void validateClass(final MoneyWiseCashInfo pInfo,
+                               final MoneyWiseAccountInfoClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case OPENINGBALANCE:
-                /* Access data */
-                final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
-                if (!myBalance.getCurrency().equals(myCash.getCurrency())) {
-                    myCash.addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, getFieldForClass(pClass));
-                }
+                validateOpeningBalance(pInfo);
                 break;
             case AUTOEXPENSE:
-                /* Access data */
-                final MoneyWiseTransCategory myExpense = myInfo.getEventCategory();
-                final MoneyWiseTransCategoryClass myCatClass = myExpense.getCategoryTypeClass();
-                if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
-                    myCash.addError(ERROR_AUTOEXP, getFieldForClass(pClass));
-                }
+                validateAutoExpense(pInfo);
                 break;
             case NOTES:
-                /* Access data */
-                final char[] myArray = myInfo.getValue(char[].class);
-                if (myArray.length > pClass.getMaximumLength()) {
-                    myCash.addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(pClass));
-                }
+                validateNotes(pInfo);
                 break;
             default:
                 break;
@@ -400,12 +372,46 @@ public class MoneyWiseCashInfoSet
             final MoneyWisePayee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
-            if (!myPayee.isDeleted() && !myPayee.isClosed()) {
+            if (!myPayee.isDeleted() && Boolean.TRUE.equals(!myPayee.isClosed())) {
                 return myPayee;
             }
         }
 
         /* Return no payee */
         return null;
+    }
+
+    /**
+     * Validate the opening balance.
+     * @param pInfo the info
+     */
+    private void validateOpeningBalance(final MoneyWiseCashInfo pInfo) {
+        final TethysMoney myBalance = pInfo.getValue(TethysMoney.class);
+        if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
+        }
+    }
+
+    /**
+     * Validate the autoExpense info.
+     * @param pInfo the info
+     */
+    private void validateAutoExpense(final MoneyWiseCashInfo pInfo) {
+        final MoneyWiseTransCategory myExpense = pInfo.getEventCategory();
+        final MoneyWiseTransCategoryClass myCatClass = myExpense.getCategoryTypeClass();
+        if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
+            getOwner().addError(ERROR_AUTOEXP, getFieldForClass(MoneyWiseAccountInfoClass.AUTOEXPENSE));
+        }
+    }
+
+    /**
+     * Validate the Notes info.
+     * @param pInfo the info
+     */
+    private void validateNotes(final MoneyWiseCashInfo pInfo) {
+        final char[] myArray = pInfo.getValue(char[].class);
+        if (myArray.length > MoneyWiseAccountInfoClass.NOTES.getMaximumLength()) {
+            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(MoneyWiseAccountInfoClass.NOTES));
+        }
     }
 }

@@ -347,7 +347,7 @@ public class MoneyWiseStaticPanel
         myPanel.getEventRegistrar().addEventListener(e -> setVisibility());
 
         /* Access list name */
-        final String myName = pItemType.getFieldName();
+        final String myName = pItemType.getListName();
 
         /* Add to the card panels */
         theTableCard.addCard(myName, myPanel);
@@ -467,7 +467,7 @@ public class MoneyWiseStaticPanel
      */
     private void handlePanelSelection() {
         final MoneyWiseStaticTable<?, ?> myPanel = (MoneyWiseStaticTable<?, ?>) theSelectButton.getValue().getData();
-        final String myName = myPanel.getItemType().getItemName();
+        final String myName = myPanel.getItemType().getListName();
         theTableCard.selectCard(myName);
         theNewCard.selectCard(myName);
         myPanel.determineFocus(theViewerEntry);

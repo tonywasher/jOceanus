@@ -212,21 +212,31 @@ public class MoneyWiseCashCategoryTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
+            /* Create a new profile */
+            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+
             /* Create the new category */
+            myTask.startTask("buildItem");
             final MoneyWiseCashCategory myCategory = theCategories.addNewItem();
             myCategory.setDefaults(getParent());
 
             /* Set as new and adjust map */
+            myTask.startTask("incrementVersion");
             myCategory.setNewVersion();
             myCategory.adjustMapForItem();
             getEditSet().incrementVersion();
 
-            /* Validate the new item and update panel */
+            /* Validate the new item */
+            myTask.startTask("validate");
             myCategory.validate();
+
+            /* update panel */
+            myTask.startTask("setItem");
             theActiveCategory.setNewItem(myCategory);
 
             /* Lock the table */
             setTableEnabled(false);
+            myTask.end();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {
