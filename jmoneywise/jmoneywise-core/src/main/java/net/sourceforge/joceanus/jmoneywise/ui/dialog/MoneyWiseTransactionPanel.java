@@ -629,7 +629,8 @@ public class MoneyWiseTransactionPanel
 
         /* Access the analysis and the relevant filters */
         final MoneyWiseAnalysis myAnalysis = theAnalysisSelect.getAnalysis();
-        final MoneyWiseTransactionFilters myFilters = new MoneyWiseTransactionFilters(myAnalysis, myItem);
+        final TethysDateRange myDateRange = theAnalysisSelect.getRange();
+        final MoneyWiseTransactionFilters myFilters = new MoneyWiseTransactionFilters(myAnalysis, myDateRange, myItem);
 
         /* Remove the current filter */
         final MoneyWiseAnalysisFilter<?, ?> myCurrent = theAnalysisSelect.getFilter();

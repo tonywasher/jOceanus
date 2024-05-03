@@ -114,8 +114,8 @@ public class MoneyWiseDataTest {
         pData.initialiseAnalysis();
 
         /* Create the analysis */
-        final TethysProfile myTask = new TethysProfile("Dummy");
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
+        final TethysProfile myTask = myView.getNewProfile("Dummy");
         myView.setData(pData);
         final PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
         final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
@@ -235,13 +235,18 @@ public class MoneyWiseDataTest {
         /**
          * The active task.
          */
-        private final TethysProfile theProfile;
+        private TethysProfile theProfile;
 
         /**
          * Constructor.
          */
         NullThreadMgr() {
-            theProfile = new TethysProfile("Dummy");
+            setNewProfile("Dummy");
+        }
+
+        @Override
+        public void setNewProfile(final String pTask) {
+            theProfile = new TethysProfile(pTask);
         }
 
         @Override

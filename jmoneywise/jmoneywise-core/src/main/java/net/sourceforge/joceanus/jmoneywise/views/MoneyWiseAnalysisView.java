@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -59,7 +60,6 @@ public class MoneyWiseAnalysisView
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE, MoneyWiseAnalysisView::getBaseAnalysis);
         FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, MoneyWiseAnalysisView::getEditSet);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisView::getAnalysis);
     }
@@ -93,11 +93,6 @@ public class MoneyWiseAnalysisView
      * The info entry.
      */
     private final PrometheusEditEntry<MoneyWiseTransInfo> theInfoEntry;
-
-    /**
-     * The Underlying analysis.
-     */
-    private MoneyWiseAnalysis theBaseAnalysis;
 
     /**
      * The transactions.
@@ -162,14 +157,6 @@ public class MoneyWiseAnalysisView
     }
 
     /**
-     * Obtain the base analysis.
-     * @return the base analysis
-     */
-    private MoneyWiseAnalysis getBaseAnalysis() {
-        return theBaseAnalysis;
-    }
-
-    /**
      * Obtain the editSet.
      * @return the editSet
      */
@@ -197,30 +184,36 @@ public class MoneyWiseAnalysisView
      * Refresh data.
      */
     public void refreshData() {
-        /* Access the new analysis manager */
-        theManager = theView.getAnalysisManager();
+        /* Protect against exceptions */
+        try {
+            /* Access the new analysis manager */
+            theManager = theView.getAnalysisManager();
 
-        /* If we have a range */
-        if (theRange != null) {
-            /* Obtain the required analysis and reset to it */
-            theBaseAnalysis = theManager.getRangedAnalysis(theRange);
-            theAnalysis = theBaseAnalysis;
+            /* If we have a range */
+            if (theRange != null) {
+                /* Obtain the required analysis and reset to it */
+                theAnalysis = theManager.getRangedAnalysis(theRange);
 
-            /* Create the new transaction list */
-            final MoneyWiseDataSet myData = (MoneyWiseDataSet) theView.getData();
-            theTransactions = new MoneyWiseTransactionView(myData.getTransactions(), theRange);
-        } else {
-            /* Set nulls */
-            theBaseAnalysis = null;
-            theAnalysis = null;
-            theTransactions = null;
+                /* Create the new transaction list */
+                final MoneyWiseDataSet myData = theView.getData();
+                theTransactions = new MoneyWiseTransactionView(myData.getTransactions());
+
+                /* else no range */
+            } else {
+                /* Set nulls */
+                theAnalysis = null;
+                theTransactions = null;
+            }
+
+            /* register the lists */
+            registerLists();
+
+            /* Notify listeners */
+            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to refreshData", e);
         }
-
-        /* register the lists */
-        registerLists();
-
-        /* Notify listeners */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
@@ -232,17 +225,7 @@ public class MoneyWiseAnalysisView
         if (!MetisDataDifference.isEqual(theRange, pRange)) {
             /* Obtain the required analysis and reset to it */
             theRange = pRange;
-            theBaseAnalysis = theManager != null
-                    ? theManager.getRangedAnalysis(theRange)
-                    : null;
-            theAnalysis = theBaseAnalysis;
-
-            /* Create the new transaction list */
-            final MoneyWiseDataSet myData = (MoneyWiseDataSet) theView.getData();
-            theTransactions = new MoneyWiseTransactionView(myData.getTransactions(), theRange);
-
-            /* register the lists */
-            registerLists();
+            theAnalysis = theManager == null ? null : theManager.getRangedAnalysis(theRange);
 
             /* Notify listeners */
             theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
@@ -272,14 +255,13 @@ public class MoneyWiseAnalysisView
         /**
          * Constructor.
          * @param pSource the source transaction list
-         * @param pRange the date range
+         * @throws OceanusException on error
          */
-        private MoneyWiseTransactionView(final MoneyWiseTransactionList pSource,
-                                         final TethysDateRange pRange) {
+        private MoneyWiseTransactionView(final MoneyWiseTransactionList pSource) throws OceanusException {
             /* Initialise as edit list */
             super(pSource);
             setStyle(PrometheusListStyle.EDIT);
-            setRange(pRange);
+            setEditSet(theEditSet);
             theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, this);
 
             /* Store InfoType list */
@@ -300,20 +282,13 @@ public class MoneyWiseAnalysisView
                     continue;
                 }
 
-                /* Check the range */
-                final int myResult = pRange.compareToDate(myCurr.getDate());
-
-                /* Handle out of range */
-                if (myResult > 0) {
-                    continue;
-                } else if (myResult < 0) {
-                    break;
-                }
-
                 /* Build the new linked transaction and add it to the list */
                 final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, myCurr);
                 add(myTrans);
-                // myTrans.resolveEditSetLinks(); TODO
+                myTrans.resolveEditSetLinks();
+
+                /* Adjust the map */
+                myTrans.adjustMapForItem();
             }
         }
 
@@ -322,14 +297,30 @@ public class MoneyWiseAnalysisView
             /* Pass call on */
             super.postProcessOnUpdate();
 
+            /* Obtain the active profile */
+            TethysProfile myTask = theView.getActiveTask();
+            myTask = myTask.startTask("updateAnalysis");
+
             /* Protect against exceptions */
             try {
-                /* Build the new analysis */
-                final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(theView.getActiveProfile(), theBaseAnalysis, this);
-                theAnalysis = myAnalyser.getAnalysis();
+                /* Sort the transaction list */
+                myTask.startTask("sortTransactions");
+                reSort();
+
+                /* Initialise the analysis */
+                myTask.startTask("Initialise");
+                theView.getData().initialiseAnalysis();
+
+                /* Analyse the data */
+                myTask.startTask("analyseData");
+                final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, theEditSet, theView.getPreferenceManager());
+                final MoneyWiseAnalysis myAnalysis = myAnalyser.getAnalysis();
+                theManager = new MoneyWiseAnalysisManager(myAnalysis);
+                theAnalysis = theManager.getRangedAnalysis(theRange);
 
                 /* Notify listeners */
-                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+                myTask.startTask("Notify");
+                 theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
 
                 /* Catch exceptions */
             } catch (OceanusException e) {

@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -187,6 +188,7 @@ public class MoneyWiseTransTagSelect
 
         /* Set the tag */
         theState.setTheTag(myTag);
+        theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
 
@@ -205,6 +207,7 @@ public class MoneyWiseTransTagSelect
 
             /* Set the tag */
             theState.setTheTag(myTag);
+            theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
@@ -262,6 +265,11 @@ public class MoneyWiseTransTagSelect
         private MoneyWiseAnalysisTransTagBucket theTransTag;
 
         /**
+         * The dateRange.
+         */
+        private TethysDateRange theDateRange;
+
+        /**
          * The active filter.
          */
         private MoneyWiseAnalysisTagFilter theFilter;
@@ -279,6 +287,7 @@ public class MoneyWiseTransTagSelect
         private MoneyWiseTagState(final MoneyWiseTagState pState) {
             /* Initialise state */
             theTransTag = pState.getTag();
+            theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
@@ -288,6 +297,14 @@ public class MoneyWiseTransTagSelect
          */
         private MoneyWiseAnalysisTransTagBucket getTag() {
             return theTransTag;
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private TethysDateRange getDateRange() {
+            return theDateRange;
         }
 
         /**
@@ -320,9 +337,24 @@ public class MoneyWiseTransTagSelect
         private void setTheTag(final MoneyWiseAnalysisTransTagBucket pTag) {
             /* Store the tag */
             theTransTag = pTag;
-            theFilter = theTransTag != null
-                    ? new MoneyWiseAnalysisTagFilter(theTransTag)
-                    : null;
+            if (theTransTag != null) {
+                theFilter = new MoneyWiseAnalysisTagFilter(theTransTag);
+                theFilter.setDateRange(theDateRange);
+            } else {
+                theFilter = null;
+            }
+        }
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final TethysDateRange pRange) {
+            /* Store the dateRange */
+            theDateRange = pRange;
+            if (theFilter != null) {
+                theFilter.setDateRange(theDateRange);
+            }
         }
 
         /**

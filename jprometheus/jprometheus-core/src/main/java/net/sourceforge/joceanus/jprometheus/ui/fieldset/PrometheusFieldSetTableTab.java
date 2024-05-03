@@ -117,7 +117,7 @@ public class PrometheusFieldSetTableTab<T>
     }
 
     @Override
-    public void setReporter(Consumer<String> pReporter) {
+    public void setReporter(final Consumer<String> pReporter) {
         /* NoOp */
     }
 }

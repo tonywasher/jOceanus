@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -221,6 +222,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
 
         /* Set the basis */
         theState.setTheTaxBasis(myBasis);
+        theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
 
@@ -239,6 +241,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
 
             /* Set the taxBasis */
             theState.setTheTaxBasis(myTaxBasis);
+            theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
@@ -347,6 +350,11 @@ public class MoneyWiseTaxBasisAnalysisSelect
         private MoneyWiseAnalysisTaxBasisAccountBucket theAccount;
 
         /**
+         * The dateRange.
+         */
+        private TethysDateRange theDateRange;
+
+        /**
          * The active filter.
          */
         private MoneyWiseAnalysisTaxBasisFilter theFilter;
@@ -365,6 +373,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
             /* Initialise state */
             theBasis = pState.getTaxBasis();
             theAccount = pState.getAccount();
+            theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
@@ -382,6 +391,14 @@ public class MoneyWiseTaxBasisAnalysisSelect
          */
         private MoneyWiseAnalysisTaxBasisAccountBucket getAccount() {
             return theAccount;
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private TethysDateRange getDateRange() {
+            return theDateRange;
         }
 
         /**
@@ -416,12 +433,28 @@ public class MoneyWiseTaxBasisAnalysisSelect
                 theAccount = (MoneyWiseAnalysisTaxBasisAccountBucket) pTaxBasis;
                 theBasis = theAccount.getParent();
                 theFilter = new MoneyWiseAnalysisTaxBasisFilter(theAccount);
+                theFilter.setDateRange(theDateRange);
             } else {
                 theAccount = null;
                 theBasis = pTaxBasis;
-                theFilter = theBasis != null
-                        ? new MoneyWiseAnalysisTaxBasisFilter(theBasis)
-                        : null;
+                if (theBasis != null) {
+                    theFilter = new MoneyWiseAnalysisTaxBasisFilter(theBasis);
+                    theFilter.setDateRange(theDateRange);
+                } else {
+                    theFilter = null;
+                }
+            }
+        }
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final TethysDateRange pRange) {
+            /* Store the dateRange */
+            theDateRange = pRange;
+            if (theFilter != null) {
+                theFilter.setDateRange(theDateRange);
             }
         }
 

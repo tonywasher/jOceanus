@@ -274,11 +274,8 @@ public abstract class TethysUICoreDateRangeSelector
     private static void buildPeriodMenu(final TethysUIScrollMenu<TethysDatePeriod> pMenu) {
         /* Loop through the periods */
         for (TethysDatePeriod myPeriod : TethysDatePeriod.values()) {
-            /* Add as long as it is not the datesUpTo period */
-            if (!myPeriod.datesUpTo()) {
-                /* Create a new MenuItem for the period */
-                pMenu.addItem(myPeriod);
-            }
+            /* Create a new MenuItem for the period */
+            pMenu.addItem(myPeriod);
         }
     }
 

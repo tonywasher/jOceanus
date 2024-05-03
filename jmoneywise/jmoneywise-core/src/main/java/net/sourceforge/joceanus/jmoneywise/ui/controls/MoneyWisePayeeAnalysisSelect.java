@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -186,6 +187,7 @@ public class MoneyWisePayeeAnalysisSelect
 
         /* Set the payee */
         theState.setThePayee(myPayee);
+        theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
 
@@ -204,6 +206,7 @@ public class MoneyWisePayeeAnalysisSelect
 
             /* Set the payee */
             theState.setThePayee(myPayee);
+            theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
@@ -261,6 +264,11 @@ public class MoneyWisePayeeAnalysisSelect
         private MoneyWiseAnalysisPayeeBucket thePayee;
 
         /**
+         * The dateRange.
+         */
+        private TethysDateRange theDateRange;
+
+        /**
          * The active filter.
          */
         private MoneyWiseAnalysisPayeeFilter theFilter;
@@ -278,6 +286,7 @@ public class MoneyWisePayeeAnalysisSelect
         private MoneyWisePayeeState(final MoneyWisePayeeState pState) {
             /* Initialise state */
             thePayee = pState.getPayee();
+            theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
@@ -287,6 +296,14 @@ public class MoneyWisePayeeAnalysisSelect
          */
         private MoneyWiseAnalysisPayeeBucket getPayee() {
             return thePayee;
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private TethysDateRange getDateRange() {
+            return theDateRange;
         }
 
         /**
@@ -318,9 +335,24 @@ public class MoneyWisePayeeAnalysisSelect
         private void setThePayee(final MoneyWiseAnalysisPayeeBucket pPayee) {
             /* Store the payee */
             thePayee = pPayee;
-            theFilter = thePayee != null
-                    ? new MoneyWiseAnalysisPayeeFilter(thePayee)
-                    : null;
+            if (thePayee != null) {
+                theFilter = new MoneyWiseAnalysisPayeeFilter(thePayee);
+                theFilter.setDateRange(theDateRange);
+            } else {
+                theFilter = null;
+            }
+        }
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final TethysDateRange pRange) {
+            /* Store the dateRange */
+            theDateRange = pRange;
+            if (theFilter != null) {
+                theFilter.setDateRange(theDateRange);
+            }
         }
 
         /**

@@ -27,12 +27,9 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisAccountBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
@@ -250,73 +247,6 @@ public class MoneyWiseAnalysisTransAnalyser
             /* Process the transaction in the report set */
             processTransaction(myCurr);
         }
-
-        /* Complete the task */
-        myTask.end();
-    }
-
-    /**
-     * Constructor for a partially updated view accounts.
-     * @param pTask the profiled task
-     * @param pAnalysis the base analysis
-     * @param pTransactions the edited transactions
-     * @throws OceanusException on error
-     */
-    public MoneyWiseAnalysisTransAnalyser(final TethysProfile pTask,
-                                          final MoneyWiseAnalysis pAnalysis,
-                                          final MoneyWiseTransactionList pTransactions) throws OceanusException {
-        /* Start a new task */
-        theProfile = pTask;
-        final TethysProfile myTask = theProfile.startTask("analyseTransactions");
-
-        /* Store the parameters */
-        theAnalysis = new MoneyWiseAnalysis(pAnalysis);
-        final MoneyWiseDataSet myData = theAnalysis.getData();
-        theHoldingMap = myData.getPortfolios().getSecurityHoldingsMap();
-        thePriceMap = myData.getSecurityPriceDataMap();
-
-        /* Create new helper */
-        theHelper = new MoneyWiseAnalysisTransactionHelper(myData);
-
-        /* Create a new analysis */
-        myTask.startTask("Initialise");
-
-        /* Access details from the analysis */
-        theDepositBuckets = theAnalysis.getDeposits();
-        theCashBuckets = theAnalysis.getCash();
-        theLoanBuckets = theAnalysis.getLoans();
-        thePortfolioBuckets = theAnalysis.getPortfolios();
-        thePayeeBuckets = theAnalysis.getPayees();
-        theCategoryBuckets = theAnalysis.getTransCategories();
-        theTagBuckets = theAnalysis.getTransactionTags();
-        theTaxBasisBuckets = theAnalysis.getTaxBasis();
-        theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);
-
-        /* Access the StatePension security holding */
-        theStatePension = getStatePension(myData);
-
-        /* Loop through the Transactions extracting relevant elements */
-        myTask.startTask("Transactions");
-        final Iterator<MoneyWiseTransaction> myIterator = pTransactions.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseTransaction myCurr = myIterator.next();
-
-            /* Ignore deleted/header transactions */
-            if (myCurr.isDeleted() || myCurr.isHeader()) {
-                continue;
-            }
-
-            /* Process the transaction in the report set */
-            processTransaction(myCurr);
-        }
-
-        /* Build category buckets */
-        final MoneyWiseAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();
-        myCash.buildCategories(theCashBuckets);
-        final MoneyWiseAnalysisDepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
-        myDeposits.buildCategories(theDepositBuckets);
-        final MoneyWiseAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
-        myLoans.buildCategories(theLoanBuckets);
 
         /* Complete the task */
         myTask.end();

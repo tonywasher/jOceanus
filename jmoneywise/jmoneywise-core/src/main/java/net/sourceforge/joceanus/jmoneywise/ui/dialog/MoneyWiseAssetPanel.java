@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Panel to display/edit/create an asset.
+ * @param <T> the Asset type
  */
 public abstract class MoneyWiseAssetPanel<T extends MoneyWiseAssetBase>
         extends MoneyWiseItemPanel<T> {

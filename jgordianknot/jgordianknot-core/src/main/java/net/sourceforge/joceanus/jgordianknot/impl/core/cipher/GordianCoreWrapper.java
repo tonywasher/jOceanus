@@ -403,7 +403,7 @@ public class GordianCoreWrapper
     }
 
     /**
-     * Perform Cipher operation
+     * Perform Cipher operation.
      * @param pInBuffer the input buffer
      * @param pBufferLen the buffer length
      * @param pResult the results buffer

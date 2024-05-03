@@ -38,6 +38,7 @@ public class GordianKeySetWrapper
     /**
      * Constructor.
      * @param pFactory the Security Factory
+     * @param pCiphers the CipherSets
      */
     GordianKeySetWrapper(final GordianCoreFactory pFactory,
                          final GordianSymKeyCipherSet[] pCiphers) {
@@ -64,7 +65,7 @@ public class GordianKeySetWrapper
                                  final int pBufferLen,
                                  final byte[] pResult) throws OceanusException {
         byte[] myInBuffer = pInBuffer;
-        byte[][] myTempBuffers = { new byte[pBufferLen], new byte[pBufferLen] };
+        final byte[][] myTempBuffers = { new byte[pBufferLen], new byte[pBufferLen] };
         int myNextIndex = 0;
         byte[] myOutBuffer = myTempBuffers[myNextIndex++];
         for (GordianSymKeyCipherSet myCipher : theCiphers) {

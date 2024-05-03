@@ -659,7 +659,7 @@ public class PrometheusEditSet
     private void condenseHistory(final int pNewVersion) {
         /* Obtain the active profile */
         final TethysProfile myTask = theControl.getActiveTask();
-        TethysProfile mySubTask = myTask.startTask("condenseHistory");
+        final TethysProfile mySubTask = myTask.startTask("condenseHistory");
 
         /* Loop through the items in the list */
         for (PrometheusEditEntry<?> myEntry : theMap.values()) {
@@ -669,7 +669,7 @@ public class PrometheusEditSet
             /* Condense history in the list */
             if (myDataList != null) {
                 /* Note the new step */
-                TethysProfile myListTask = mySubTask.startTask(myDataList.listName());
+                final TethysProfile myListTask = mySubTask.startTask(myDataList.listName());
                 myListTask.startTask("Condense");
 
                 /* Condense history */

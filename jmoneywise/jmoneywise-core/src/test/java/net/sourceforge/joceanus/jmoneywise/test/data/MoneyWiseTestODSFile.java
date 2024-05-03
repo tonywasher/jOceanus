@@ -65,6 +65,7 @@ public class MoneyWiseTestODSFile {
 
         /* Create the output xmlZipFile */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
+        theManager.setNewProfile("WriteODS");
         mySheet.createBackup(theManager, pData, myZipStream, PrometheusSheetWorkBookType.OASIS);
         final byte[] myBytes = myZipStream.toByteArray();
 
@@ -73,6 +74,7 @@ public class MoneyWiseTestODSFile {
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);
+        theManager.setNewProfile("LoadODS");
         mySheet.loadBackup(theManager, myManager, myNewData, myInputStream, "Test");
 
         /* Create a difference set between the two data copies */

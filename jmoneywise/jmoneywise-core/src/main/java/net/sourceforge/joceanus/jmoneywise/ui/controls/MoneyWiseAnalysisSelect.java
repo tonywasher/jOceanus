@@ -626,6 +626,7 @@ public class MoneyWiseAnalysisSelect
             thePayeeSelect.setAnalysis(theAnalysis);
             theTaxBasisSelect.setAnalysis(theAnalysis);
             theTagSelect.setAnalysis(theAnalysis);
+            theAllSelect.setAnalysis(theAnalysis);
 
             /* Update the filter */
             updateFilter();

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 
 /**
- * NameSpace iterator,
+ * NameSpace iterator.
  */
 public class MoneyWiseNameSpaceIterator
         implements Iterator<PrometheusDataItem> {

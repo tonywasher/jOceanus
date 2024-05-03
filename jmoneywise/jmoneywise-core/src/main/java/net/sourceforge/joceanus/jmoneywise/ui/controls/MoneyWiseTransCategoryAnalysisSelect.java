@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryCl
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -191,6 +192,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
 
         /* Set the category */
         theState.setTheCategory(myCategory);
+        theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
 
@@ -209,6 +211,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
 
             /* Set the category */
             theState.setTheCategory(myCategory);
+            theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
@@ -281,6 +284,11 @@ public class MoneyWiseTransCategoryAnalysisSelect
         private MoneyWiseAnalysisTransCategoryBucket theCategory;
 
         /**
+         * The dateRange.
+         */
+        private TethysDateRange theDateRange;
+
+        /**
          * The active Filter.
          */
         private MoneyWiseAnalysisTransCategoryFilter theFilter;
@@ -298,6 +306,7 @@ public class MoneyWiseTransCategoryAnalysisSelect
         private MoneyWiseEventState(final MoneyWiseEventState pState) {
             /* Initialise state */
             theCategory = pState.getEventCategory();
+            theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
@@ -307,6 +316,14 @@ public class MoneyWiseTransCategoryAnalysisSelect
          */
         private MoneyWiseAnalysisTransCategoryBucket getEventCategory() {
             return theCategory;
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private TethysDateRange getDateRange() {
+            return theDateRange;
         }
 
         /**
@@ -338,9 +355,25 @@ public class MoneyWiseTransCategoryAnalysisSelect
         private void setTheCategory(final MoneyWiseAnalysisTransCategoryBucket pCategory) {
             /* Store the selected category */
             theCategory = pCategory;
-            theFilter = theCategory != null
-                    ? new MoneyWiseAnalysisTransCategoryFilter(theCategory)
-                    : null;
+            if (theCategory != null) {
+                theFilter = new MoneyWiseAnalysisTransCategoryFilter(theCategory);
+                theFilter.setDateRange(theDateRange);
+            } else {
+                theFilter = null;
+            }
+        }
+
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final TethysDateRange pRange) {
+            /* Store the dateRange */
+            theDateRange = pRange;
+            if (theFilter != null) {
+                theFilter.setDateRange(theDateRange);
+            }
         }
 
         /**

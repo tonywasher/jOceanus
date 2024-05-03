@@ -197,7 +197,7 @@ public class PrometheusFieldSetElement<V> {
      */
     void setReporter(final Consumer<String> pReporter) {
         if (theField instanceof TethysUIValidatedField) {
-            ((TethysUIValidatedField<?>)theField).setReporter(pReporter);
+            ((TethysUIValidatedField<?>) theField).setReporter(pReporter);
         }
     }
 }

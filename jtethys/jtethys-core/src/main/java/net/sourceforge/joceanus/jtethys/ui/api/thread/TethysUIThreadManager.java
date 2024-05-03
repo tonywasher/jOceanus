@@ -88,4 +88,10 @@ public interface TethysUIThreadManager
      * @return the active profile
      */
     TethysProfile getActiveProfile();
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     */
+    void setNewProfile(String pTask);
 }
