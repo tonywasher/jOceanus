@@ -133,6 +133,14 @@ public class TethysProfile {
             /* Prepare for the task */
             prepareForTask();
 
+            /* Loop through the subTasks */
+            for (TethysProfile myProfile : theSubTasks) {
+                /* Check for duplicate name */
+                if (pName.equals(myProfile.getName())) {
+                    throw new IllegalArgumentException("Duplicate Task - " + pName);
+                }
+            }
+
             /* Create the new task */
             final TethysProfile myTask = new TethysProfile(pName);
             theSubTasks.add(myTask);
