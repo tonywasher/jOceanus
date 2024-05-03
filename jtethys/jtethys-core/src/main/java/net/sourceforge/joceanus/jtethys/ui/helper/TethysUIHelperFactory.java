@@ -63,7 +63,7 @@ public class TethysUIHelperFactory
     /**
      * The Profile.
      */
-    private final TethysProfile theProfile;
+    private TethysProfile theProfile;
 
     /**
      * The LogSink.
@@ -129,7 +129,8 @@ public class TethysUIHelperFactory
 
     @Override
     public TethysProfile getNewProfile(final String pTask) {
-        return new TethysProfile(pTask);
+        theProfile = new TethysProfile(pTask);
+        return theProfile;
     }
 
     @Override
@@ -273,6 +274,11 @@ public class TethysUIHelperFactory
         @Override
         public TethysProfile getActiveProfile() {
             return null;
+        }
+
+        @Override
+        public void setNewProfile(final String pName) {
+            /* NoOp */
         }
 
         @Override

@@ -67,12 +67,14 @@ public class MoneyWiseTestDatabase {
 
         /* Update the database */
         final MoneyWiseDataSet myUpdates = pData.deriveUpdateSet();
+        theManager.setNewProfile("WriteDB");
         myDatabase.updateDatabase(myReport, myUpdates);
 
         /* Create the new dataSet */
         final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Load the database */
+        theManager.setNewProfile("LoadDB");
         myDatabase.loadDatabase(myReport, myNewData);
 
         /* Purge the data */

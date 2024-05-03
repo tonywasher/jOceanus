@@ -182,7 +182,7 @@ public final class GordianCoreKeySet
     }
 
     /**
-     * Obtain the wrapped length for a length of data
+     * Obtain the wrapped length for a length of data.
      * @param pDataLength the dataLength
      * @return the wrapped length
      */

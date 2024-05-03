@@ -327,7 +327,7 @@ public class MoneyWiseMainTab
 
         /* Enable/Disable/Hide the spotPrices tab */
         doEnabled = !hasWorker && (!hasSession || theMarket.hasSession());
-        TethysUITabItem myItem = theTabs.findItemByName(TITLE_MARKET);
+        final TethysUITabItem myItem = theTabs.findItemByName(TITLE_MARKET);
         myItem.setEnabled(doEnabled);
         myItem.setVisible(theView.hasActiveSecurities() || theView.hasMultipleCurrencies());
 

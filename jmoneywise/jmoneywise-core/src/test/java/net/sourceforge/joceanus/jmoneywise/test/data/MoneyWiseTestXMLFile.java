@@ -64,6 +64,7 @@ public class MoneyWiseTestXMLFile {
 
         /* Create the output xmlZipFile */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
+        theManager.setNewProfile("WriteZip");
         myFormatter.createBackup(pData, myZipStream);
         final byte[] myBytes = myZipStream.toByteArray();
 
@@ -72,6 +73,7 @@ public class MoneyWiseTestXMLFile {
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);
+        theManager.setNewProfile("LoadZip");
         myFormatter.loadZipFile(myNewData, myInputStream, "Test");
 
         /* Initialise the security, from the original data */

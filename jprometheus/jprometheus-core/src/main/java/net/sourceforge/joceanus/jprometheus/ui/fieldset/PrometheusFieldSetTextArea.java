@@ -171,7 +171,7 @@ public class PrometheusFieldSetTextArea<T>
     }
 
     @Override
-    public void setReporter(Consumer<String> pReporter) {
+    public void setReporter(final Consumer<String> pReporter) {
         theTextArea.setReporter(pReporter);
     }
 }

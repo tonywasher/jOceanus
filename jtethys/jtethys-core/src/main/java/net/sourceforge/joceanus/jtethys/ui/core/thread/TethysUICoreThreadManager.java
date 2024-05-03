@@ -345,10 +345,7 @@ public abstract class TethysUICoreThreadManager
      */
     protected abstract void publishStatus(TethysUICoreThreadStatus pStatus) throws OceanusException;
 
-    /**
-     * Create new profile.
-     * @param pTask the name of the task
-     */
+    @Override
     public void setNewProfile(final String pTask) {
         /* Create a new profile */
         theProfile = theFactory.getNewProfile(pTask);

@@ -37,12 +37,10 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -492,7 +490,7 @@ public final class GordianMultiCipher
         myStreamCipher.initForEncrypt(myParms);
 
         /* Process via the stream Cipher */
-        byte[] myBytes = myStreamCipher.finish(pBytesToSecure);
+        final byte[] myBytes = myStreamCipher.finish(pBytesToSecure);
 
         /* Create the keySetWrapper */
         final GordianSymKeyCipherSet[] mySymCiphers = new GordianSymKeyCipherSet[theNumSteps - 1];

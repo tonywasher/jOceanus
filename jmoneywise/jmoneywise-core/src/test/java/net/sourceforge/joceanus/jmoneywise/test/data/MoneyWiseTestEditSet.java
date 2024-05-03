@@ -73,9 +73,12 @@ public class MoneyWiseTestEditSet {
      * @throws OceanusException on error
      */
     void checkSeparateEditSets(final PrometheusToolkit pToolkit) throws OceanusException {
-        /* Craete view */
+        /* Create view */
+        pToolkit.getToolkit().getNewProfile("createView");
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
+        pToolkit.getToolkit().getNewProfile("setData");
         myView.setData(theDataSet);
+        myView.getNewProfile("separateEditSet");
 
         /* Build and validate statics */
         PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
@@ -103,9 +106,12 @@ public class MoneyWiseTestEditSet {
      * @throws OceanusException on error
      */
     void checkCombinedEditSet(final PrometheusToolkit pToolkit) throws OceanusException {
-        /* Craete view */
+        /* Create view */
+        pToolkit.getToolkit().getNewProfile("createView");
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
+        pToolkit.getToolkit().getNewProfile("setData");
         myView.setData(theDataSet);
+        myView.getNewProfile("combinedEditSet");
 
         /* Build and validate editSet */
         PrometheusEditSet myEditSet = new PrometheusEditSet(myView);

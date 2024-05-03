@@ -106,7 +106,7 @@ public class MoneyWiseSecurityPanel
         buildMainPanel(pFactory);
 
         /* Build the details panel */
-        buildDetailsPanel(pFactory, pOwner);
+        buildDetailsPanel(pFactory);
 
         /* Build the notes panel */
         buildNotesPanel(pFactory);
@@ -125,7 +125,6 @@ public class MoneyWiseSecurityPanel
     /**
      * Build Main subPanel.
      * @param pFactory the GUI factory
-     * @param pOwner the owning table
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory) {
         /* Create the text fields */
@@ -163,8 +162,7 @@ public class MoneyWiseSecurityPanel
      * Build details subPanel.
      * @param pFactory the GUI factory
      */
-    private void buildDetailsPanel(final TethysUIFactory<?> pFactory,
-                                   final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
+    private void buildDetailsPanel(final TethysUIFactory<?> pFactory) {
         /* Create a new panel */
         theFieldSet.newPanel(TAB_DETAILS);
 

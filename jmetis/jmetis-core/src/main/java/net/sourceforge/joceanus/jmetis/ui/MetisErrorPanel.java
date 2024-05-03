@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.ui;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;

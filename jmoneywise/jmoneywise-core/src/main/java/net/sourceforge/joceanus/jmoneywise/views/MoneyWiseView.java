@@ -205,7 +205,7 @@ public class MoneyWiseView
     protected boolean analyseData(final boolean bPreserve) {
         /* Obtain the active profile */
         TethysProfile myTask = getActiveTask();
-        myTask = myTask.startTask("analyseData");
+        myTask = myTask.startTask("analyseTheData");
 
         /* Clear the errors */
         if (!bPreserve) {
