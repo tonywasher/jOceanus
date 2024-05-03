@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseDepositCategory
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -228,6 +229,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /* Set the deposit */
         theState.setTheDeposit(myDeposit);
+        theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
 
@@ -246,6 +248,7 @@ public class MoneyWiseDepositAnalysisSelect
 
             /* Set the deposit */
             theState.setTheDeposit(myDeposit);
+            theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
@@ -382,6 +385,11 @@ public class MoneyWiseDepositAnalysisSelect
         private MoneyWiseAnalysisDepositBucket theDeposit;
 
         /**
+         * The dateRange.
+         */
+        private TethysDateRange theDateRange;
+
+        /**
          * The active Filter.
          */
         private MoneyWiseAnalysisDepositFilter theFilter;
@@ -400,6 +408,7 @@ public class MoneyWiseDepositAnalysisSelect
             /* Initialise state */
             theDeposit = pState.getDeposit();
             theCategory = pState.getCategory();
+            theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
@@ -417,6 +426,14 @@ public class MoneyWiseDepositAnalysisSelect
          */
         private MoneyWiseDepositCategory getCategory() {
             return theCategory;
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private TethysDateRange getDateRange() {
+            return theDateRange;
         }
 
         /**
@@ -466,9 +483,12 @@ public class MoneyWiseDepositAnalysisSelect
             theCategory = pCategory;
 
             /* Access filter */
-            theFilter = theDeposit != null
-                    ? new MoneyWiseAnalysisDepositFilter(theDeposit)
-                    : null;
+            if (theDeposit != null) {
+                theFilter = new MoneyWiseAnalysisDepositFilter(theDeposit);
+                theFilter.setDateRange(theDateRange);
+            } else {
+                theFilter = null;
+            }
         }
 
         /**
@@ -483,6 +503,18 @@ public class MoneyWiseDepositAnalysisSelect
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final TethysDateRange pRange) {
+            /* Store the dateRange */
+            theDateRange = pRange;
+            if (theFilter != null) {
+                theFilter.setDateRange(theDateRange);
+            }
         }
 
         /**

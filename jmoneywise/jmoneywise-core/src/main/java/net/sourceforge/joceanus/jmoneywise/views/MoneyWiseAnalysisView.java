@@ -317,24 +317,24 @@ public class MoneyWiseAnalysisView
             }
         }
 
-        @Override
-        public void postProcessOnUpdate() {
+        //@Override
+        //public void postProcessOnUpdate() {
             /* Pass call on */
-            super.postProcessOnUpdate();
+        //    super.postProcessOnUpdate();
 
             /* Protect against exceptions */
-            try {
+        //    try {
                 /* Build the new analysis */
-                final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(theView.getActiveProfile(), theBaseAnalysis, this);
-                theAnalysis = myAnalyser.getAnalysis();
+        //        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(theView.getActiveProfile(), theBaseAnalysis, this);
+        //        theAnalysis = myAnalyser.getAnalysis();
 
                 /* Notify listeners */
-                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+        //        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
 
                 /* Catch exceptions */
-            } catch (OceanusException e) {
-                LOGGER.error("Failed to analyse changes", e);
-            }
-        }
+        //    } catch (OceanusException e) {
+        //        LOGGER.error("Failed to analyse changes", e);
+        //    }
+        //}
     }
 }

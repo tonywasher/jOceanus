@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWi
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * List of filters for a transaction within an analysis.
@@ -68,13 +69,21 @@ public class MoneyWiseTransactionFilters
     private final MoneyWiseTransaction theTrans;
 
     /**
+     * The dateRange.
+     */
+    private final TethysDateRange theDateRange;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
+     * @param pDateRange the dateRange
      * @param pTrans the transaction
      */
     public MoneyWiseTransactionFilters(final MoneyWiseAnalysis pAnalysis,
+                                       final TethysDateRange pDateRange,
                                        final MoneyWiseTransaction pTrans) {
-        /* Store transaction */
+        /* Store dateRange and transaction */
+        theDateRange = pDateRange;
         theTrans = pTrans;
 
         /* Create the list */
@@ -119,7 +128,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisDepositFilter(myBucket));
+                final MoneyWiseAnalysisDepositFilter myFilter = new MoneyWiseAnalysisDepositFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -137,7 +148,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisCashFilter(myBucket));
+                final MoneyWiseAnalysisCashFilter myFilter = new MoneyWiseAnalysisCashFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -155,7 +168,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisLoanFilter(myBucket));
+                final MoneyWiseAnalysisLoanFilter myFilter = new MoneyWiseAnalysisLoanFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -177,7 +192,9 @@ public class MoneyWiseTransactionFilters
             final MoneyWiseAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();
             if (myCash.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisPortfolioCashFilter(myBucket));
+                final MoneyWiseAnalysisPortfolioCashFilter myFilter = new MoneyWiseAnalysisPortfolioCashFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -195,7 +212,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisSecurityFilter(myBucket));
+                final MoneyWiseAnalysisSecurityFilter myFilter = new MoneyWiseAnalysisSecurityFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -213,7 +232,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisPayeeFilter(myBucket));
+                final MoneyWiseAnalysisPayeeFilter myFilter = new MoneyWiseAnalysisPayeeFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -231,7 +252,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisTransCategoryFilter(myBucket));
+                final MoneyWiseAnalysisTransCategoryFilter myFilter = new MoneyWiseAnalysisTransCategoryFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -249,7 +272,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisTaxBasisFilter(myBucket));
+                final MoneyWiseAnalysisTaxBasisFilter myFilter = new MoneyWiseAnalysisTaxBasisFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }
@@ -267,7 +292,9 @@ public class MoneyWiseTransactionFilters
             /* If this bucket is relevant for the transaction */
             if (myBucket.hasTransaction(theTrans)) {
                 /* Add filter */
-                add(new MoneyWiseAnalysisTagFilter(myBucket));
+                final MoneyWiseAnalysisTagFilter myFilter = new MoneyWiseAnalysisTagFilter(myBucket);
+                myFilter.setDateRange(theDateRange);
+                add(myFilter);
             }
         }
     }

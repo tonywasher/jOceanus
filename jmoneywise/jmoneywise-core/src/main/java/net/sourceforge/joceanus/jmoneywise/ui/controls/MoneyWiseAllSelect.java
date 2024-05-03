@@ -82,11 +82,18 @@ public class MoneyWiseAllSelect
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
-        /* Nothing to do */
+        theFilter.setDateRange(pAnalysis.getDateRange());
     }
 
     @Override
     public void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
-        /* Nothing to do */
+        /* If this is the correct filter type */
+        if (pFilter instanceof MoneyWiseAnalysisAllFilter) {
+            /* Access filter */
+            final MoneyWiseAnalysisAllFilter myFilter = (MoneyWiseAnalysisAllFilter) pFilter;
+
+            /* Set the dateRange */
+            theFilter.setDateRange(myFilter.getDateRange());
+        }
     }
 }

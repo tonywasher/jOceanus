@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -189,6 +190,7 @@ public class MoneyWisePortfolioAnalysisSelect
 
         /* Set the portfolio */
         theState.setThePortfolio(myPortfolio);
+        theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
 
@@ -207,6 +209,7 @@ public class MoneyWisePortfolioAnalysisSelect
 
             /* Set the portfolio */
             theState.setThePortfolio(myPortfolio);
+            theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
@@ -264,6 +267,11 @@ public class MoneyWisePortfolioAnalysisSelect
         private MoneyWiseAnalysisPortfolioBucket thePortfolio;
 
         /**
+         * The dateRange.
+         */
+        private TethysDateRange theDateRange;
+
+        /**
          * The active filter.
          */
         private MoneyWiseAnalysisPortfolioCashFilter theFilter;
@@ -281,6 +289,7 @@ public class MoneyWisePortfolioAnalysisSelect
         private MoneyWisePortfolioState(final MoneyWisePortfolioState pState) {
             /* Initialise state */
             thePortfolio = pState.getPortfolio();
+            theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
@@ -290,6 +299,14 @@ public class MoneyWisePortfolioAnalysisSelect
          */
         private MoneyWiseAnalysisPortfolioBucket getPortfolio() {
             return thePortfolio;
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private TethysDateRange getDateRange() {
+            return theDateRange;
         }
 
         /**
@@ -321,9 +338,24 @@ public class MoneyWisePortfolioAnalysisSelect
         private void setThePortfolio(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
             /* Set the selected portfolio */
             thePortfolio = pPortfolio;
-            theFilter = thePortfolio != null
-                    ? new MoneyWiseAnalysisPortfolioCashFilter(thePortfolio)
-                    : null;
+            if (thePortfolio != null) {
+                theFilter = new MoneyWiseAnalysisPortfolioCashFilter(thePortfolio);
+                theFilter.setDateRange(theDateRange);
+            } else {
+                theFilter = null;
+            }
+        }
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final TethysDateRange pRange) {
+            /* Store the dateRange */
+            theDateRange = pRange;
+            if (theFilter != null) {
+                theFilter.setDateRange(theDateRange);
+            }
         }
 
         /**
