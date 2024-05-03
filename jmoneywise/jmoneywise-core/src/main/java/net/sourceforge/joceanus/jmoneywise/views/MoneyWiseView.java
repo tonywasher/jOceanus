@@ -167,6 +167,11 @@ public class MoneyWiseView
         super.setData(pData);
     }
 
+    @Override
+    public MoneyWiseDataSet getData() {
+        return theData;
+    }
+
     /**
      * Analyse the data.
      * @param pData the data

@@ -609,7 +609,7 @@ public class MoneyWiseTransactionTable
     protected void refreshData() {
         /* Obtain the active profile */
         TethysProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Statement");
+        myTask = myTask.startTask("refreshData");
 
         /* Update the selection */
         theSelect.refreshData();
@@ -674,7 +674,7 @@ public class MoneyWiseTransactionTable
         /* Update the table buttons */
         theActionButtons.setEnabled(true);
         theActionButtons.setVisible(hasUpdates && !isItemEditing);
-        theSelect.setEnabled(!hasUpdates && !isItemEditing);
+        theSelect.setEnabled(!isItemEditing);
         theNewButton.setEnabled(!isItemEditing);
 
         /* Adjust enable of the table */
