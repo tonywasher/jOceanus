@@ -42,7 +42,7 @@ allprojects {
         bouncyCastleVersion = "1.78.1"
         jUnitVersion = "5.10.2"
         jsonVersion = "20240303"
-        mySQLVersion = "8.0.33"
+        mySQLVersion = "8.4.0"
         MariaDBVersion = "3.3.3"
         postGreSQLVersion = "42.7.3"
         mssqlVersion = "12.6.1.jre11"
@@ -59,11 +59,11 @@ allprojects {
         jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.15.0"
+        checkStyleVersion = "10.16.0"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "6.55.0"
+        pmdVersion = "7.1.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.12"

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.3-SNAPSHOT</version>
+  <version>1.6.3-b2</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -44,6 +44,7 @@
     <system>Sourceforge</system>
     <url>https://sourceforge.net/p/joceanus/tickets/</url>
   </issueManagement>
+
   <distributionManagement>
     <site>
       <id>jOceanus.website</id>
@@ -58,11 +59,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMaster>master</scmMaster>
     <currentBranch>1.6.3</currentBranch>
-    <currentTag>SNAPSHOT</currentTag>
+    <currentTag>b2</currentTag>
     <baseBranch>1.6.3</baseBranch>
     <baseTag>b1</baseTag>
-    <currentRef>${scmMaster}</currentRef>
-    <!--<currentRef>${currentBranch}-${currentTag}</currentRef>-->
+    <!--<currentRef>${scmMaster}</currentRef>-->
+    <currentRef>${currentBranch}-${currentTag}</currentRef>
     <baseRef>${baseBranch}-${baseTag}</baseRef>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
@@ -75,7 +76,7 @@
     <JUnitVersion>5.10.2</JUnitVersion>
     <JSONVersion>20240303</JSONVersion>
     <ApacheMavenVersion>3.9.6</ApacheMavenVersion>
-    <MySQLVersion>8.3.0 </MySQLVersion>
+    <MySQLVersion>8.4.0</MySQLVersion>
     <MariaDBVersion>3.3.3</MariaDBVersion>
     <PostGreSQLVersion>42.7.3</PostGreSQLVersion>
     <MSSQLVersion>12.6.1.jre11</MSSQLVersion>
@@ -85,18 +86,18 @@
     <JFreeChartVersion>1.5.4</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>11</JavaVersion>
-    <JavaFXVersion>17.0.10</JavaFXVersion>
+    <JavaFXVersion>17.0.11</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.15.0</CheckStyleVersion>
-    <PMDVersion>6.55.0</PMDVersion>
+    <CheckStyleVersion>10.16.0</CheckStyleVersion>
+    <PMDVersion>7.1.0</PMDVersion>
     <CleanPluginVersion>3.3.2</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
-    <InstallPluginVersion>3.1.1</InstallPluginVersion>
+    <InstallPluginVersion>3.1.2</InstallPluginVersion>
     <SitePluginVersion>3.9.1</SitePluginVersion>
-    <DeployPluginVersion>3.1.1</DeployPluginVersion>
+    <DeployPluginVersion>3.1.2</DeployPluginVersion>
     <EnforcerPluginVersion>3.4.1</EnforcerPluginVersion>
     <CompilerPluginVersion>3.13.0</CompilerPluginVersion>
-    <ShadePluginVersion>3.5.2</ShadePluginVersion>
+    <ShadePluginVersion>3.5.3</ShadePluginVersion>
     <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
     <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
@@ -109,7 +110,7 @@
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.11.0.3922</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
-    <PMDPluginVersion>3.21.2</PMDPluginVersion>
+    <PMDPluginVersion>3.22.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.4</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
