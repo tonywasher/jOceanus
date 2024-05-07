@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanInfo;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
@@ -46,11 +45,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  */
 public class MoneyWiseLoanTable
         extends MoneyWiseAssetTable<MoneyWiseLoan> {
-    /**
-     * The Info UpdateEntry.
-     */
-    private final PrometheusEditEntry<MoneyWiseLoanInfo> theInfoEntry;
-
     /**
      * The Loan dialog.
      */
@@ -74,7 +68,7 @@ public class MoneyWiseLoanTable
         super(pView, pEditSet, pError, MoneyWiseBasicDataType.LOAN);
 
         /* register the infoEntry */
-        theInfoEntry = getEditSet().registerType(MoneyWiseBasicDataType.LOANINFO);
+        getEditSet().registerType(MoneyWiseBasicDataType.LOANINFO);
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
@@ -102,7 +96,7 @@ public class MoneyWiseLoanTable
         myTask = myTask.startTask("Loans");
 
         /* Access list */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final MoneyWiseLoanList myBase = myData.getLoans();
         theLoans = myBase.deriveEditList(getEditSet());
         getTable().setItems(theLoans.getUnderlyingList());

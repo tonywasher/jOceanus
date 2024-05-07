@@ -312,7 +312,7 @@ public abstract class PrometheusMainWindow
         theMenuBar.setEnabled(PrometheusMenuId.SECURITY, !hasWorker && hasControl);
 
         /* If we have changes but no updates enable the undo/reset options */
-        if ((hasWorker) || (!hasControl)) {
+        if (hasWorker || !hasControl) {
             theMenuBar.setEnabled(PrometheusMenuId.EDIT, false);
         } else {
             theMenuBar.setEnabled(PrometheusMenuId.EDIT, !hasUpdates && hasChanges);
@@ -564,7 +564,7 @@ public abstract class PrometheusMainWindow
     @Override
     public boolean handleAppClose() {
         /* If we have updates or changes */
-        if ((hasUpdates()) || (hasChanges())) {
+        if (hasUpdates() || hasChanges()) {
             /* Ask whether to continue */
             final TethysUIAlert myAlert = theGuiFactory.dialogFactory().newAlert();
             myAlert.setMessage(PROMPT_DISCARD);

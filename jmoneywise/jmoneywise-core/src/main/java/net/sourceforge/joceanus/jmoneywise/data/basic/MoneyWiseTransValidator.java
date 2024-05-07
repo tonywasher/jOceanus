@@ -108,7 +108,7 @@ public final class MoneyWiseTransValidator {
             case BADDEBTINTEREST:
                 /* Account must be peer2Peer */
                 return pAccount instanceof MoneyWiseDeposit
-                        && (((MoneyWiseDeposit) pAccount).isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER));
+                        && ((MoneyWiseDeposit) pAccount).isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER);
 
             case CASHBACK:
                 return checkCashBack(pAccount);

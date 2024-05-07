@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAccountInfoClass;
@@ -48,11 +47,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
  */
 public class MoneyWiseSecurityTable
         extends MoneyWiseAssetTable<MoneyWiseSecurity> {
-    /**
-     * The Info UpdateEntry.
-     */
-    private final PrometheusEditEntry<MoneyWiseSecurityInfo> theInfoEntry;
-
     /**
      * The Info UpdateEntry.
      */
@@ -81,7 +75,7 @@ public class MoneyWiseSecurityTable
         super(pView, pEditSet, pError, MoneyWiseBasicDataType.SECURITY);
 
         /* register the info/priceEntries */
-        theInfoEntry = getEditSet().registerType(MoneyWiseBasicDataType.SECURITYINFO);
+        getEditSet().registerType(MoneyWiseBasicDataType.SECURITYINFO);
         thePriceEntry = getEditSet().registerType(MoneyWiseBasicDataType.SECURITYPRICE);
 
         /* Access Gui factory */
@@ -119,7 +113,7 @@ public class MoneyWiseSecurityTable
         myTask = myTask.startTask("Securities");
 
         /* Access list */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final MoneyWiseSecurityList myBase = myData.getSecurities();
         theSecurities = myBase.deriveEditList(getEditSet());
         getTable().setItems(theSecurities.getUnderlyingList());

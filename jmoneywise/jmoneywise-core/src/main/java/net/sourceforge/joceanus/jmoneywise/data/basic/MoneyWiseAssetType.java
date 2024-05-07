@@ -123,7 +123,7 @@ public enum MoneyWiseAssetType {
                                         final int pBaseId) {
         final long myBase = pBaseId;
         final long myMajor = ((long) pMajorId) << Integer.SIZE;
-        final long myAsset = (((long) pType.getId()) << ASSETSHIFT);
+        final long myAsset = ((long) pType.getId()) << ASSETSHIFT;
         return myAsset + myMajor + myBase;
     }
 

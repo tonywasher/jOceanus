@@ -81,7 +81,7 @@ public class MoneyWiseAnalysisAccountValues
      */
     public boolean isActive() {
         final TethysMoney myValuation = getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-        return (myValuation != null) && (myValuation.isNonZero());
+        return myValuation != null && myValuation.isNonZero();
     }
 
     @Override

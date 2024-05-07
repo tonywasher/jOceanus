@@ -483,7 +483,7 @@ public final class MoneyWiseAnalysisPayeeBucket
 
         /* If there is a non-zero TaxCredit */
         final TethysMoney myTaxCred = pTrans.getTaxCredit();
-        if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
+        if (myTaxCred != null && myTaxCred.isNonZero()) {
             /* Adjust for Tax Credit */
             if (isExpense) {
                 if (myExpense == null) {

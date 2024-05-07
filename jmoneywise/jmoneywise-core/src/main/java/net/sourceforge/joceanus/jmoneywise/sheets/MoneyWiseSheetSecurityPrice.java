@@ -138,7 +138,7 @@ public class MoneyWiseSheetSecurityPrice
             /* Count the number of Prices */
             final int myRows = myView.getRowCount();
             final int myCols = myView.getColumnCount();
-            final int myTotal = (myRows - 1);
+            final int myTotal = myRows - 1;
             final String[] mySecurities = new String[myCols];
 
             /* Declare the number of steps */

@@ -308,7 +308,7 @@ public class GordianKeyAlgId {
         if (mySubSpec instanceof GordianDigestSpec) {
             myId = GordianDigestAlgId.appendDigestOID(myId, (GordianDigestSpec) mySubSpec);
         } else if (mySubSpec instanceof GordianSymKeySpec) {
-            myId = GordianKeyAlgId.appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
+            myId = appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
         } else if (mySubSpec instanceof GordianLength) {
             myId = myId.branch(Integer.toString(((GordianLength) mySubSpec).ordinal() + 1));
         } else if (mySubSpec instanceof GordianSipHashSpec) {

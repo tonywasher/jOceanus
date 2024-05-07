@@ -104,7 +104,7 @@ public final class MoneyWiseAnalysisCategoryValues
     public boolean isActive() {
         final TethysMoney myIncome = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);
         final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);
-        return (myIncome.isNonZero()) || (myExpense.isNonZero());
+        return myIncome.isNonZero() || myExpense.isNonZero();
     }
 }
 

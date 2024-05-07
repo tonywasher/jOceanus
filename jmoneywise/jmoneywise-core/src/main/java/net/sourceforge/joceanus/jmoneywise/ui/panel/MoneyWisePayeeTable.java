@@ -25,14 +25,12 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePayeePanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
@@ -44,11 +42,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  */
 public class MoneyWisePayeeTable
         extends MoneyWiseAssetTable<MoneyWisePayee> {
-    /**
-     * The Info UpdateEntry.
-     */
-    private final PrometheusEditEntry<MoneyWisePayeeInfo> theInfoEntry;
-
     /**
      * The Payee dialog.
      */
@@ -72,7 +65,7 @@ public class MoneyWisePayeeTable
         super(pView, pEditSet, pError, MoneyWiseBasicDataType.PAYEE);
 
         /* register the infoEntry */
-        theInfoEntry = getEditSet().registerType(MoneyWiseBasicDataType.PAYEEINFO);
+        getEditSet().registerType(MoneyWiseBasicDataType.PAYEEINFO);
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
@@ -100,7 +93,7 @@ public class MoneyWisePayeeTable
         myTask = myTask.startTask("Payees");
 
         /* Access list */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final MoneyWisePayeeList myBase = myData.getPayees();
         thePayees = myBase.deriveEditList(getEditSet());
         getTable().setItems(thePayees.getUnderlyingList());

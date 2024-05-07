@@ -765,15 +765,6 @@ public class MoneyWiseCash
             return myList;
         }
 
-        /**
-         * Set map.
-         * @param pMap the map
-         */
-        @Override
-        protected void setDataMap(final PrometheusDataMapItem pMap) {
-            super.setDataMap(pMap);
-        }
-
         @Override
         public MoneyWiseCash findItemByName(final String pName) {
             /* look up the name in the map */

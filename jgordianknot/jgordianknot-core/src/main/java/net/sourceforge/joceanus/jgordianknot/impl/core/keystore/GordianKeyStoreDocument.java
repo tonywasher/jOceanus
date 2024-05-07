@@ -898,7 +898,7 @@ public final class GordianKeyStoreDocument {
          * @return the entry type
          */
         public static GordianStoreEntryType determineEntryType(final String pElement) {
-            for (GordianStoreEntryType myType : GordianStoreEntryType.values()) {
+            for (GordianStoreEntryType myType : values()) {
                 if (pElement.equals(myType.getElementName())) {
                     return myType;
                 }

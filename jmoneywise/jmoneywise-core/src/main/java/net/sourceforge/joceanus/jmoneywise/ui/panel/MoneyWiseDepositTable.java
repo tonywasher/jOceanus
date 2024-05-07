@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositInfo;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
@@ -48,11 +47,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  */
 public class MoneyWiseDepositTable
         extends MoneyWiseAssetTable<MoneyWiseDeposit> {
-    /**
-     * The Info UpdateEntry.
-     */
-    private final PrometheusEditEntry<MoneyWiseDepositInfo> theInfoEntry;
-
     /**
      * The Rate UpdateEntry.
      */
@@ -81,7 +75,7 @@ public class MoneyWiseDepositTable
         super(pView, pEditSet, pError, MoneyWiseBasicDataType.DEPOSIT);
 
         /* register the info/rateEntries */
-        theInfoEntry = getEditSet().registerType(MoneyWiseBasicDataType.DEPOSITINFO);
+        getEditSet().registerType(MoneyWiseBasicDataType.DEPOSITINFO);
         theRateEntry = getEditSet().registerType(MoneyWiseBasicDataType.DEPOSITRATE);
 
         /* Access Gui factory */
@@ -110,7 +104,7 @@ public class MoneyWiseDepositTable
         myTask = myTask.startTask("Deposits");
 
         /* Access list */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final MoneyWiseDepositList myBase = myData.getDeposits();
         theDeposits = myBase.deriveEditList(getEditSet());
         getTable().setItems(theDeposits.getUnderlyingList());

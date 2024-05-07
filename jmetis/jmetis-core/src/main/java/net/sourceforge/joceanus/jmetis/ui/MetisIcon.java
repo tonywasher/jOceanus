@@ -201,7 +201,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureNewIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(NEW);
         pButton.setToolTip(TIP_NEW);
     }
@@ -211,7 +211,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureEditIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(EDIT);
         pButton.setToolTip(TIP_EDIT);
     }
@@ -221,7 +221,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureDeleteIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(DELETE);
         pButton.setToolTip(TIP_DELETE);
     }
@@ -231,7 +231,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureCommitIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(COMMIT);
         pButton.setToolTip(TIP_COMMIT);
     }
@@ -241,7 +241,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureUndoIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(UNDO);
         pButton.setToolTip(TIP_UNDO);
     }
@@ -251,7 +251,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureResetIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(RESET);
         pButton.setToolTip(TIP_RESET);
     }
@@ -261,7 +261,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureCancelIconButton(final TethysUIButton pButton) {
-        MetisIcon.configureButton(pButton);
+        configureButton(pButton);
         pButton.setIcon(CANCEL);
         pButton.setToolTip(TIP_CANCEL);
     }
@@ -314,8 +314,8 @@ public enum MetisIcon
     public static TethysUIIconMapSet<MetisAction> configureStatusIconButton(final TethysUIFactory<?> pFactory) {
         final TethysUIIconMapSet<MetisAction> myMapSet = pFactory.buttonFactory().newIconMapSet();
         myMapSet.setMappingsForValue(MetisAction.ACTIVE, MetisAction.ACTIVE, ACTIVE, TIP_ACTIVE);
-        myMapSet.setMappingsForValue(MetisAction.DELETE, MetisAction.DO, MetisIcon.DELETE, MetisIcon.TIP_DELETE);
-        myMapSet.setMappingsForValue(MetisAction.INSERT, MetisAction.DO, MetisIcon.NEW, MetisIcon.TIP_NEW);
+        myMapSet.setMappingsForValue(MetisAction.DELETE, MetisAction.DO, DELETE, TIP_DELETE);
+        myMapSet.setMappingsForValue(MetisAction.INSERT, MetisAction.DO, NEW, TIP_NEW);
         return myMapSet;
     }
 }

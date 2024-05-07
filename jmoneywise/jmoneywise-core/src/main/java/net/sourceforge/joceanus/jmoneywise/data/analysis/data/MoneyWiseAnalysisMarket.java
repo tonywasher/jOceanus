@@ -191,8 +191,8 @@ public class MoneyWiseAnalysisMarket {
         }
 
         /* If we have marketGrowth */
-        if ((theGrowthIncome.isNonZero())
-                || (theGrowthExpense.isNonZero())) {
+        if (theGrowthIncome.isNonZero()
+                || theGrowthExpense.isNonZero()) {
             /* Access marketGrowth category */
             final MoneyWiseAnalysisTransCategoryBucket myGrowth = myCategories.getBucket(MoneyWiseTransCategoryClass.MARKETGROWTH);
 
@@ -205,8 +205,8 @@ public class MoneyWiseAnalysisMarket {
         }
 
         /* If we have currencyFluctuation */
-        if ((theFluctIncome.isNonZero())
-                || (theFluctExpense.isNonZero())) {
+        if (theFluctIncome.isNonZero()
+                || theFluctExpense.isNonZero()) {
             /* Access currecyFluctuation category */
             final MoneyWiseAnalysisTransCategoryBucket myFluct = myCategories.getBucket(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION);
 

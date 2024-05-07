@@ -518,7 +518,7 @@ public class MoneyWiseSecurity
             final MoneyWisePayee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
-            if (myPayee.isDeleted() || myPayee.isClosed()) {
+            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
                 continue;
             }
 
@@ -641,7 +641,7 @@ public class MoneyWiseSecurity
         /* Switch on category type */
         if (MoneyWiseTransCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
             final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
-            if (isForeign()) {
+            if (Boolean.TRUE.equals(isForeign())) {
                 return myCategories.getSingularClass(MoneyWiseTransCategoryClass.FOREIGNDIVIDEND);
             }
             return myCategories.getSingularClass(getCategoryClass().isUnitTrust()
@@ -716,7 +716,7 @@ public class MoneyWiseSecurity
             addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* If we are open then parent must be open */
-            if (!isClosed() && myParent.isClosed()) {
+            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
 

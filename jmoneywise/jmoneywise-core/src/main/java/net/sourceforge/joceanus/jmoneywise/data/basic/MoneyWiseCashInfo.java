@@ -432,7 +432,7 @@ public class MoneyWiseCashInfo
             }
 
             /* Create the values */
-            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseCashInfo.OBJECT_NAME);
+            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);
             myValues.addValue(MetisDataResource.DATA_ID, pId);
             myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myInfoType);
             myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, pCash);

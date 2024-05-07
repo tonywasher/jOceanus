@@ -781,6 +781,6 @@ public enum MoneyWiseTransCategoryClass
 
     @Override
     public boolean isTotals() {
-        return this == MoneyWiseTransCategoryClass.TOTALS;
+        return this == TOTALS;
     }
 }

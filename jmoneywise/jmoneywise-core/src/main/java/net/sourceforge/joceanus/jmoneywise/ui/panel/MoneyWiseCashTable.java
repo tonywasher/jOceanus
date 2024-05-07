@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCashInfo;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
@@ -33,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseCashPanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
@@ -45,11 +43,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  */
 public class MoneyWiseCashTable
         extends MoneyWiseAssetTable<MoneyWiseCash> {
-    /**
-     * The Info UpdateEntry.
-     */
-    private final PrometheusEditEntry<MoneyWiseCashInfo> theInfoEntry;
-
     /**
      * The Cash dialog.
      */
@@ -73,7 +66,7 @@ public class MoneyWiseCashTable
         super(pView, pEditSet, pError, MoneyWiseBasicDataType.CASH);
 
         /* register the infoEntry */
-        theInfoEntry = getEditSet().registerType(MoneyWiseBasicDataType.CASHINFO);
+        getEditSet().registerType(MoneyWiseBasicDataType.CASHINFO);
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
@@ -101,7 +94,7 @@ public class MoneyWiseCashTable
         myTask = myTask.startTask("Cashs");
 
         /* Access list */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final MoneyWiseCashList myBase = myData.getCash();
         theCash = myBase.deriveEditList(getEditSet());
         getTable().setItems(theCash.getUnderlyingList());

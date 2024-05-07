@@ -271,7 +271,7 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the MacSpec
      */
     public static GordianMacSpec blake2Mac(final GordianLength pKeyLength) {
-        return GordianMacSpec.blake2Mac(pKeyLength, GordianDigestType.BLAKE2.getDefaultLength());
+        return blake2Mac(pKeyLength, GordianDigestType.BLAKE2.getDefaultLength());
     }
 
     /**
@@ -283,7 +283,7 @@ public final class GordianMacSpec implements GordianKeySpec {
     public static GordianMacSpec blake2Mac(final GordianLength pKeyLength,
                                            final GordianLength pLength) {
         final GordianDigestSpec mySpec = GordianDigestSpec.blake2(pLength);
-        return GordianMacSpec.blake2Mac(pKeyLength, mySpec);
+        return blake2Mac(pKeyLength, mySpec);
     }
 
     /**
@@ -321,7 +321,7 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the MacSpec
      */
     public static GordianMacSpec kupynaMac(final GordianLength pKeyLength) {
-        return GordianMacSpec.kupynaMac(pKeyLength, GordianDigestType.KUPYNA.getDefaultLength());
+        return kupynaMac(pKeyLength, GordianDigestType.KUPYNA.getDefaultLength());
     }
 
     /**
@@ -533,7 +533,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             case CFBMAC:
                 return getSymKeyHalfBlockLength();
             case ZUC:
-                return ((GordianLength) theSubSpec);
+                return (GordianLength) theSubSpec;
             case VMPC:
                 return GordianLength.LEN_160;
             case GOST:

@@ -291,8 +291,8 @@ public class TethysDecimalFormatter {
      */
     public String formatMoney(final TethysMoney pMoney) {
         /* If we are using accounting and have zero */
-        if ((useAccounting)
-            && (pMoney.isZero())) {
+        if (useAccounting
+            && pMoney.isZero()) {
             /* Format the zero */
             return formatZeroAccounting(pMoney.getCurrency());
         }

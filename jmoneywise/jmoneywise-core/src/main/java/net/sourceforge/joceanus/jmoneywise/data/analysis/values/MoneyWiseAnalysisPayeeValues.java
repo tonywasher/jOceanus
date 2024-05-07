@@ -104,7 +104,7 @@ public final class MoneyWiseAnalysisPayeeValues
     public boolean isActive() {
         final TethysMoney myIncome = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
         final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
-        return (myIncome.isNonZero()) || (myExpense.isNonZero());
+        return myIncome.isNonZero() || myExpense.isNonZero();
     }
 }
 
