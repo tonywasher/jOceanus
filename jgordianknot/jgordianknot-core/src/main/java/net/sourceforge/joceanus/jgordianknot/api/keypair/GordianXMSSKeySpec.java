@@ -296,14 +296,14 @@ public class GordianXMSSKeySpec {
         for (final GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
             /* Add XMSS Spec if valid */
             if (myHeight.validForKeyType(GordianXMSSKeyType.XMSS)) {
-                mySpecs.add(GordianXMSSKeySpec.xmss(pDigestType, myHeight));
+                mySpecs.add(xmss(pDigestType, myHeight));
             }
 
             /* Add XMSSMT Specs if valid */
             if (myHeight.validForKeyType(GordianXMSSKeyType.XMSSMT)) {
                 /* For all heights */
                 for (final GordianXMSSMTLayers myLayers : myHeight.getValidLayers()) {
-                    mySpecs.add(GordianXMSSKeySpec.xmssmt(pDigestType, myHeight, myLayers));
+                    mySpecs.add(xmssmt(pDigestType, myHeight, myLayers));
                 }
             }
         }

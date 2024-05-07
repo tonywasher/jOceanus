@@ -386,7 +386,7 @@ public class GordianAgreementAlgId {
             return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) pResultType);
         }
         if (pResultType == null) {
-            return new AlgorithmIdentifier(GordianAgreementAlgId.NULLRESULTOID, null);
+            return new AlgorithmIdentifier(NULLRESULTOID, null);
         }
         throw new GordianDataException("Illegal resultType set");
     }
@@ -420,7 +420,7 @@ public class GordianAgreementAlgId {
         }
 
         /* Look for a Factory */
-        if (GordianAgreementAlgId.NULLRESULTOID.equals(myAlgId)) {
+        if (NULLRESULTOID.equals(myAlgId)) {
             return null;
         }
         throw new GordianDataException("Unrecognised resultType");

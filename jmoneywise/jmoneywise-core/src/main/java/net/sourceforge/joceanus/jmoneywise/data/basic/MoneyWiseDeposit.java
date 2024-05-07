@@ -526,7 +526,7 @@ public class MoneyWiseDeposit
             final MoneyWisePayee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
-            if (myPayee.isDeleted() || myPayee.isClosed()) {
+            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
                 continue;
             }
 
@@ -671,21 +671,21 @@ public class MoneyWiseDeposit
         final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
-                if (isTaxFree()) {
+                if (Boolean.TRUE.equals(isTaxFree())) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
                 }
                 if (isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER)) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.PEER2PEERINTEREST);
                 }
-                return myCategories.getSingularClass(isGross()
+                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSINTEREST
                         : MoneyWiseTransCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
-                if (isTaxFree()) {
+                if (Boolean.TRUE.equals(isTaxFree())) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(isGross()
+                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS
                         : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);
@@ -755,7 +755,7 @@ public class MoneyWiseDeposit
             }
 
             /* If we are open then parent must be open */
-            if (!isClosed() && myParent.isClosed()) {
+            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -1071,7 +1071,7 @@ public class MoneyWiseDeposit
         /**
          * The assetMap.
          */
-        private MoneyWiseAssetDataMap theUnderlyingMap;
+        private final MoneyWiseAssetDataMap theUnderlyingMap;
 
         /**
          * Constructor.

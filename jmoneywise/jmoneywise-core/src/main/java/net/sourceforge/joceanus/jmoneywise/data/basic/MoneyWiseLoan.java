@@ -487,7 +487,7 @@ public class MoneyWiseLoan
             final MoneyWisePayee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
-            if (myPayee.isDeleted() || myPayee.isClosed()) {
+            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
                 continue;
             }
 
@@ -661,7 +661,7 @@ public class MoneyWiseLoan
             }
 
             /* If we are open then parent must be open */
-            if (!isClosed() && myParent.isClosed()) {
+            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -951,7 +951,7 @@ public class MoneyWiseLoan
         /**
          * The assetMap.
          */
-        private MoneyWiseAssetDataMap theUnderlyingMap;
+        private final MoneyWiseAssetDataMap theUnderlyingMap;
 
         /**
          * Constructor.

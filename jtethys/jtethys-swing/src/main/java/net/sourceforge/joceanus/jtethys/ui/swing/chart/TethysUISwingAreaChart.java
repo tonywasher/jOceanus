@@ -55,7 +55,7 @@ public class TethysUISwingAreaChart
     /**
      * The angle for labels.
      */
-    protected static final double LABEL_RADIANS = Math.PI * ((double) TethysUICoreAreaChart.LABEL_ANGLE / 180);
+    protected static final double LABEL_RADIANS = Math.PI * ((double) LABEL_ANGLE / 180);
 
     /**
      * The Node.

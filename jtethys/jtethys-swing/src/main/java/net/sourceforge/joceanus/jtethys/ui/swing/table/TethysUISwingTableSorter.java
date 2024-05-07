@@ -351,7 +351,7 @@ public class TethysUISwingTableSorter<T>
         }
 
         /* Determine the number of rows that we are inserting plus trailing entries */
-        final int iXtraLen = (pEndRow - pFirstRow) + 1;
+        final int iXtraLen = pEndRow - pFirstRow + 1;
         final int iNumTrailing = iNumRows - pFirstRow;
         final int iNewLen = iNumRows + iXtraLen;
         int iIndex;

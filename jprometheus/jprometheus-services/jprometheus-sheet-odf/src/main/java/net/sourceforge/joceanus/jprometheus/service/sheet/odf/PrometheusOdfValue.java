@@ -98,7 +98,7 @@ public enum PrometheusOdfValue {
         }
 
         /* Loop to find the value type */
-        for (final PrometheusOdfValue myValue : PrometheusOdfValue.values()) {
+        for (final PrometheusOdfValue myValue : values()) {
             if (pValue.equalsIgnoreCase(myValue.getValue())) {
                 return myValue;
             }

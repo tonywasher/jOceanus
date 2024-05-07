@@ -341,8 +341,8 @@ public abstract class TethysUICoreTableManager<C, R>
     @Override
     public void repaintColumn(final C pId) {
         final TethysUITableColumn<?, C, R> myCol = theColumnMap.get(pId);
-        if ((myCol != null)
-                && (myCol.isVisible())) {
+        if (myCol != null
+                && myCol.isVisible()) {
             myCol.setVisible(false);
             myCol.setVisible(true);
         }

@@ -327,7 +327,7 @@ public class GordianCRMBuilder {
                                 final ASN1Object pData,
                                 final PKMACValue pMACValue) throws OceanusException {
         final PBMParameter myParams = PBMParameter.getInstance(pMACValue.getAlgId().getParameters());
-        final PKMACValue myMACValue = GordianCRMBuilder.calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
+        final PKMACValue myMACValue = calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
         if (!pMACValue.equals(myMACValue)) {
             throw new GordianDataException("Invalid PKMacValue");
         }

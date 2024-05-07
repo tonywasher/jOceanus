@@ -44,11 +44,6 @@ public class PrometheusFieldGenerator {
     private static final String ERROR_BYTES_CONVERT = "Failed to convert value from bytes";
 
     /**
-     * Invalid class error text.
-     */
-    private static final String ERROR_CLASS = "Invalid Object Class for Encryption ";
-
-    /**
      * The Encryptor map.
      */
     private static final Map<MetisDataType, PrometheusDataEncryptor> ENCRYPTORS = buildEncryptorMap();

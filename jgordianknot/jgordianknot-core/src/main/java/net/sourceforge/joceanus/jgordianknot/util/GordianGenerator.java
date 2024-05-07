@@ -110,7 +110,7 @@ public final class GordianGenerator {
      */
     public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
                                                             final GordianPasswordLockSpec pLockSpec) throws OceanusException {
-        final GordianFactory mySecurityFactory = GordianGenerator.createRandomFactory();
+        final GordianFactory mySecurityFactory = createRandomFactory();
         return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
     }
 
@@ -141,7 +141,7 @@ public final class GordianGenerator {
                                                             final GordianPasswordLockSpec pLockSpec,
                                                             final GordianFactoryType pFactoryType,
                                                             final char[] pSecurityPhrase) throws OceanusException {
-        final GordianFactory mySecurityFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
+        final GordianFactory mySecurityFactory = createFactory(pFactoryType, pSecurityPhrase);
         return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
     }
 

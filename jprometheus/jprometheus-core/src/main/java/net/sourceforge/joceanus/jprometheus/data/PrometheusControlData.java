@@ -323,7 +323,7 @@ public class PrometheusControlData
          */
         public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
-            final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusControlData.OBJECT_NAME);
+            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);
             myValues.addValue(PrometheusDataResource.CONTROLDATA_VERSION, pVersion);
 
             /* Add the item */

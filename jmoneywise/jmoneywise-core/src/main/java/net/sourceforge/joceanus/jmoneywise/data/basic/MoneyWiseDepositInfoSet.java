@@ -260,7 +260,7 @@ public class MoneyWiseDepositInfoSet
     private void validateOpeningBalance(final MoneyWiseDepositInfo pInfo) {
         final TethysMoney myBalance = pInfo.getValue(TethysMoney.class);
         if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
-            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
+            getOwner().addError(ERROR_CURRENCY, getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
         }
     }
 

@@ -510,7 +510,7 @@ public abstract class PrometheusColumnDefinition {
 
                     /* Add the order string for the underlying table. */
                     /* Note that forced to implement in one line to avoid Sonar false positive. */
-                    pBuilder.append((((PrometheusReferenceColumn) myDef).theDefinition).getOrderString(myNewChar, myOffset));
+                    pBuilder.append(((PrometheusReferenceColumn) myDef).theDefinition.getOrderString(myNewChar, myOffset));
 
                     /* else standard column */
                 } else {

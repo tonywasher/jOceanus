@@ -581,7 +581,7 @@ public final class GordianAgreementMessageASN1
          * @throws OceanusException on error
          */
         private static GordianMessageType determineType(final int pId) throws OceanusException {
-            for (GordianMessageType myType : GordianMessageType.values()) {
+            for (GordianMessageType myType : values()) {
                 if (pId == myType.getId()) {
                     return myType;
                 }

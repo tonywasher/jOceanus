@@ -481,7 +481,7 @@ public class PrometheusControlKeySet
         protected PrometheusControlKeySet cloneControlKeySet(final PrometheusControlKey pControlKey,
                                                              final PrometheusControlKeySet pKeySet) throws OceanusException {
             /* Build data values */
-            final PrometheusDataValues myValues = new PrometheusDataValues(PrometheusDataKeySet.OBJECT_NAME);
+            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);
             myValues.addValue(MetisDataResource.DATA_ID, pKeySet.getIndexedId());
             myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, pControlKey);
             myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, pKeySet.getSecuredKeySetDef());

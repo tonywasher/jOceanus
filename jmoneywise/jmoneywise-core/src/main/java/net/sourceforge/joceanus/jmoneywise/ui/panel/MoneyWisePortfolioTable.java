@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.ui.base.MoneyWiseAssetTable;
@@ -46,11 +45,6 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
  */
 public class MoneyWisePortfolioTable
         extends MoneyWiseAssetTable<MoneyWisePortfolio> {
-    /**
-     * The Info UpdateEntry.
-     */
-    private final PrometheusEditEntry<MoneyWisePortfolioInfo> theInfoEntry;
-
     /**
      * The Portfolio dialog.
      */
@@ -74,7 +68,7 @@ public class MoneyWisePortfolioTable
         super(pView, pEditSet, pError, MoneyWiseBasicDataType.PORTFOLIO);
 
         /* register the infoEntry */
-        theInfoEntry = getEditSet().registerType(MoneyWiseBasicDataType.PORTFOLIOINFO);
+        getEditSet().registerType(MoneyWiseBasicDataType.PORTFOLIOINFO);
 
         /* Access Gui factory */
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
@@ -102,7 +96,7 @@ public class MoneyWisePortfolioTable
         myTask = myTask.startTask("Portfolios");
 
         /* Access list */
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final MoneyWisePortfolioList myBase = myData.getPortfolios();
         thePortfolios = myBase.deriveEditList(getEditSet());
         getTable().setItems(thePortfolios.getUnderlyingList());

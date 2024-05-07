@@ -1388,8 +1388,8 @@ public class MoneyWiseAnalysisTransAnalyser
         final MoneyWiseTransAsset myReturnedCashAct = theHelper.getReturnedCashAccount();
 
         /* If we have a returned cash part of the transaction */
-        if ((myReturnedCashAct != null)
-                && (myAmount.isNonZero())) {
+        if (myReturnedCashAct != null
+                && myAmount.isNonZero()) {
             /* Process a Stock And Cash TakeOver */
             processStockAndCashTakeOver(pDebit, pCredit);
         } else {

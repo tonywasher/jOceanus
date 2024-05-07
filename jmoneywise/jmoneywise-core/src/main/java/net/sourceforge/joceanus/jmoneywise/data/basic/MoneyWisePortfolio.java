@@ -670,7 +670,7 @@ public class MoneyWisePortfolio
                 if (Boolean.TRUE.equals(isTaxFree())) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass(isGross()
+                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSINTEREST
                         : MoneyWiseTransCategoryClass.TAXEDINTEREST);
@@ -750,7 +750,7 @@ public class MoneyWisePortfolio
             }
 
             /* If we are open then parent must be open */
-            if (!isClosed() && myParent.isClosed()) {
+            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -1104,7 +1104,7 @@ public class MoneyWisePortfolio
         /**
          * The assetMap.
          */
-        private MoneyWiseAssetDataMap theUnderlyingMap;
+        private final MoneyWiseAssetDataMap theUnderlyingMap;
 
         /**
          * Map of category counts.

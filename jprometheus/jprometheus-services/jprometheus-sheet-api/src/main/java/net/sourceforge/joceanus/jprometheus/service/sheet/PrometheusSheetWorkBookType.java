@@ -72,7 +72,7 @@ public enum PrometheusSheetWorkBookType {
      */
     public static PrometheusSheetWorkBookType determineType(final String pFileName) throws OceanusException {
         /* Loop through all values */
-        for (PrometheusSheetWorkBookType myType : PrometheusSheetWorkBookType.values()) {
+        for (PrometheusSheetWorkBookType myType : values()) {
             /* If we have matched the type */
             if (pFileName.endsWith(myType.getExtension())) {
                 /* Return it */

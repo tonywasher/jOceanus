@@ -296,7 +296,7 @@ public class MetisViewerFormatter {
 
         /* Skip false */
         if (myValue instanceof Boolean) {
-            return !((Boolean) myValue);
+            return !(Boolean) myValue;
         }
 
         /* Skip value if required */

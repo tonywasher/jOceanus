@@ -193,6 +193,6 @@ public enum GordianKeyPairType {
      * @return true/false
      */
     public boolean subTypeForSignatures() {
-        return this == GordianKeyPairType.XMSS;
+        return this == XMSS;
     }
 }

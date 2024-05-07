@@ -782,7 +782,7 @@ public class TethysDecimalParser {
         }
 
         /* Return value */
-        return Short.valueOf((short) myValue);
+        return (short) myValue;
     }
 
     /**
@@ -791,8 +791,8 @@ public class TethysDecimalParser {
      */
     private static void trimBuffer(final StringBuilder pBuffer) {
         /* Remove leading blanks */
-        while ((pBuffer.length() > 0)
-               && (Character.isWhitespace(pBuffer.charAt(0)))) {
+        while (pBuffer.length() > 0
+               && Character.isWhitespace(pBuffer.charAt(0))) {
             pBuffer.deleteCharAt(0);
         }
 

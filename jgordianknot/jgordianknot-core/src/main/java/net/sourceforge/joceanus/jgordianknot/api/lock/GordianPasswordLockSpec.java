@@ -135,8 +135,8 @@ public class GordianPasswordLockSpec {
         }
 
         /* Check iterations is in range */
-        return (theKIterations >= MINIMUM_ITERATIONS
-                && theKIterations <= MAXIMUM_ITERATIONS);
+        return theKIterations >= MINIMUM_ITERATIONS
+                && theKIterations <= MAXIMUM_ITERATIONS;
     }
 
     @Override
