@@ -244,10 +244,7 @@ public class MoneyWiseDeposit
                 : null;
     }
 
-    /**
-     * Obtain Opening Balance.
-     * @return the Opening balance
-     */
+    @Override
     public TethysMoney getOpeningBalance() {
         return hasInfoSet
                 ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, TethysMoney.class)
