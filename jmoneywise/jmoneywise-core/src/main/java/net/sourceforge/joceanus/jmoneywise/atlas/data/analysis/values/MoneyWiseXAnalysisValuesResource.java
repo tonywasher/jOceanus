@@ -22,7 +22,6 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 

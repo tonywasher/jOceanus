@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -266,7 +267,7 @@ public final class MoneyWiseXAnalysisTransTagBucket
         MoneyWiseXAnalysisTransTagBucketList(final MoneyWiseXAnalysis pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getTransTag().compareTo(r.getTransTag()));
+            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisTransTagBucket::getTransTag));
         }
 
         /**

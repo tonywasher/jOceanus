@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisValues;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**

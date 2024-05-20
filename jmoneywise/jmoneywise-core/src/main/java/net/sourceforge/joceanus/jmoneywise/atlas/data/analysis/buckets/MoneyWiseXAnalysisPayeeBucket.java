@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
@@ -48,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * The Payee Bucket class.
  */
 public final class MoneyWiseXAnalysisPayeeBucket
-        implements MetisFieldTableItem {
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketRegister {
     /**
      * Local Report fields.
      */
@@ -327,10 +328,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
         setValue(pAttr, myValue);
     }
 
-     /**
-     * Register the Event.
-     * @param pEvent the event
-     */
+    @Override
     public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
         /* Register the event in the history */
         theHistory.registerEvent(pEvent, theValues);

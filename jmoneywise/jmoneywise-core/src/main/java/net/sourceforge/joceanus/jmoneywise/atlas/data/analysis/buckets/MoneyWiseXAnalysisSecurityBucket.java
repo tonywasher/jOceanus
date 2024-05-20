@@ -30,6 +30,8 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
@@ -53,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * The Security Bucket class.
  */
 public final class MoneyWiseXAnalysisSecurityBucket
-        implements MetisFieldTableItem {
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketPriced {
     /**
      * Local Report fields.
      */
@@ -156,8 +158,15 @@ public final class MoneyWiseXAnalysisSecurityBucket
         theValues = theHistory.getValues();
         theBaseValues = theHistory.getBaseValues();
 
+        /* Register for price Updates */
+        final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
+        myCursor.registerForPriceUpdates(this);
+
         /* If this is a foreign currency account */
         if (isForeignCurrency) {
+            /* Register for xchangeRate Updates */
+            myCursor.registerForXchgRateUpdates(this);
+
             /* Record the exchangeRate and copy to base */
             recordExchangeRate();
             theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, getValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE));
@@ -284,10 +293,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         return theHolding;
     }
 
-    /**
-     * Obtain the security.
-     * @return the security
-     */
+    @Override
     public MoneyWiseSecurity getSecurity() {
         return theSecurity;
     }
@@ -300,10 +306,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         return thePortfolio;
     }
 
-    /**
-     * Obtain the currency.
-     * @return the currency
-     */
+    @Override
     public MoneyWiseCurrency getCurrency() {
         return theCurrency;
     }
@@ -400,7 +403,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
     }
 
     /**
-     * Obtain money delta for event
+     * Obtain money delta for event.
      * @param pEvent the event
      * @param pAttr the attribute
      * @return the delta (or null)
@@ -533,32 +536,24 @@ public final class MoneyWiseXAnalysisSecurityBucket
         setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, myValue);
     }
 
-    /**
-     * Record securityPrice.
-     */
+    @Override
     public void recordSecurityPrice() {
         final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
         final TethysPrice myPrice = myCursor.getCurrentPrice(getSecurity());
         theValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, myPrice);
     }
 
-    /**
-     * Record exchangeRate.
-     */
+    @Override
     public void recordExchangeRate() {
         final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
         final TethysRatio myRate = myCursor.getCurrentXchgRate(getSecurity().getAssetCurrency());
         theValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, myRate);
     }
 
-    /**
-     * Register the event.
-     * @param pEvent the event
-     * @return the registered values
-     */
-    public MoneyWiseXAnalysisSecurityValues registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+    @Override
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
         /* Register the event in the history */
-        return theHistory.registerEvent(pEvent, theValues);
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**

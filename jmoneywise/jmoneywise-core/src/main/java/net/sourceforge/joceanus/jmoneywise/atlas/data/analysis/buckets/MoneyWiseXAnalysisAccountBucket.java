@@ -32,6 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisBaseResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
@@ -51,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * @param <T> the account data type
  */
 public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBase>
-        implements MetisFieldTableItem {
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketForeign {
     /**
      * Default currency.
      */
@@ -111,8 +113,9 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pAccount the account
+     * @param pAccount  the account
      */
     protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                               final T pAccount) {
@@ -131,7 +134,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
         final Currency myCurrency = deriveCurrency(myAccountCurrency);
 
         /* Create the history map */
-        final MoneyWiseXAnalysisAccountValues myValues =  allocateValues(myCurrency);
+        final MoneyWiseXAnalysisAccountValues myValues = allocateValues(myCurrency);
         theHistory = new MoneyWiseXAnalysisHistory<>(myValues);
 
         /* Access the key value maps */
@@ -140,6 +143,9 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /* If this is a foreign currency account */
         if (isForeignCurrency) {
+            /* Register for xchangeRate Updates */
+            theAnalysis.getCursor().registerForXchgRateUpdates(this);
+
             /* Record the exchangeRate and copy to base */
             recordExchangeRate();
             theBaseValues.setValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, getValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE));
@@ -153,8 +159,9 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                               final MoneyWiseXAnalysisAccountBucket<T> pBase) {
@@ -173,9 +180,10 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                               final MoneyWiseXAnalysisAccountBucket<T> pBase,
@@ -195,9 +203,10 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                               final MoneyWiseXAnalysisAccountBucket<T> pBase,
@@ -227,6 +236,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * derive currency.
+     *
      * @param pAssetCurrency the asset currency
      * @return the actual currency to use
      */
@@ -234,6 +244,13 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
         return pAssetCurrency == null
                 ? DEFAULT_CURRENCY
                 : pAssetCurrency.getCurrency();
+    }
+
+    @Override
+    public MoneyWiseCurrency getCurrency() {
+        return theAccount == null
+                ? theAnalysis.getCurrency()
+                : theAccount.getAssetCurrency();
     }
 
     /**
@@ -456,9 +473,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
         theValues.setValue(MoneyWiseXAnalysisAccountAttr.MATURITY, ((MoneyWiseDeposit) getAccount()).getMaturity());
     }
 
-    /**
-     * Record exchangeRate.
-     */
+    @Override
     public void recordExchangeRate() {
         final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
         final TethysRatio myRate = myCursor.getCurrentXchgRate(getAccount().getAssetCurrency());
@@ -474,10 +489,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
         theValues.setValue(MoneyWiseXAnalysisAccountAttr.DEPOSITRATE, myRate);
     }
 
-    /**
-     * Register the event.
-     * @param pEvent the event
-     */
+    @Override
     public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
         /* Determine reported balance */
         final TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);

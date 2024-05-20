@@ -14,10 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets;
+package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -25,6 +28,10 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseNew
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate.MoneyWiseNewDepositRateList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
@@ -48,7 +55,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 /**
  * Analysis Cursor.
  */
-public class MoneyWiseXAnalysisCursor {
+public class MoneyWiseXAnalysisState
+        implements MoneyWiseXAnalysisCursor {
     /**
      * The securityPrice iterator.
      */
@@ -83,6 +91,21 @@ public class MoneyWiseXAnalysisCursor {
      * The depositRate map.
      */
     private final Map<MoneyWiseDeposit, TethysRate> theDepRateMap;
+
+    /**
+     * The pricedBucketMap.
+     */
+    private final Map<MoneyWiseSecurity, List<MoneyWiseXAnalysisBucketPriced>> thePricedBucketsMap;
+
+    /**
+     * The foreignBucketMap.
+     */
+    private final Map<MoneyWiseCurrency, List<MoneyWiseXAnalysisBucketForeign>> theForeignBucketsMap;
+
+    /**
+     * The eventBuckets.
+     */
+    private final List<MoneyWiseXAnalysisBucketRegister> theEventBuckets;
 
     /**
      * The editSet.
@@ -128,7 +151,7 @@ public class MoneyWiseXAnalysisCursor {
      * Constructor.
      * @param pEditSet the editSet
      */
-    MoneyWiseXAnalysisCursor(final PrometheusEditSet pEditSet) {
+    MoneyWiseXAnalysisState(final PrometheusEditSet pEditSet) {
         /* Store parameters */
         theEditSet = pEditSet;
 
@@ -145,6 +168,9 @@ public class MoneyWiseXAnalysisCursor {
         thePriceMap = new HashMap<>();
         theXchgRateMap = new HashMap<>();
         theDepRateMap = new HashMap<>();
+        thePricedBucketsMap = new HashMap<>();
+        theForeignBucketsMap = new HashMap<>();
+        theEventBuckets = new ArrayList<>();
 
         /* Set up first elements */
         iteratePrice();
@@ -268,7 +294,7 @@ public class MoneyWiseXAnalysisCursor {
     }
 
     /**
-     * Build next xchgRate event.
+     * Build next xchangeRate event.
      */
     private void nextXchgRate() {
         final TethysDate myDate = theNextXchgRate.getDate();
@@ -279,7 +305,7 @@ public class MoneyWiseXAnalysisCursor {
     }
 
     /**
-     * Process xchgRate.
+     * Process xchangeRate.
      */
     private void processXchgRate() {
         theNextEvent.declareExchangeRate(theNextXchgRate);
@@ -288,7 +314,7 @@ public class MoneyWiseXAnalysisCursor {
     }
 
     /**
-     * Build next xchgRate event.
+     * Build next depositRate event.
      */
     private void nextDepRate() {
         final TethysDate myDate = theNextDepRate.getDate();
@@ -299,7 +325,7 @@ public class MoneyWiseXAnalysisCursor {
     }
 
     /**
-     * Process xchgRate.
+     * Process depositRate.
      */
     private void processDepRate() {
         theNextEvent.declareDepositRate(theNextDepRate);
@@ -315,11 +341,7 @@ public class MoneyWiseXAnalysisCursor {
         iterateTrans();
     }
 
-    /**
-     * Obtain the current price for a security
-     *
-     * @param pSecurity the security
-     */
+    @Override
     public TethysPrice getCurrentPrice(final MoneyWiseSecurity pSecurity) {
         final TethysPrice myPrice = thePriceMap.get(pSecurity);
         return myPrice == null
@@ -327,23 +349,60 @@ public class MoneyWiseXAnalysisCursor {
                 : myPrice;
     }
 
-    /**
-     * Obtain the current rate for a currency
-     *
-     * @param pCurrency the currency
-     */
+    @Override
     public TethysRatio getCurrentXchgRate(final MoneyWiseCurrency pCurrency) {
         final TethysRatio myRate = theXchgRateMap.get(pCurrency);
         return myRate == null ? TethysRatio.ONE : myRate;
     }
 
-    /**
-     * Obtain the depositRate for a deposit
-     *
-     * @param pDeposit the deposit
-     */
+    @Override
     public TethysRate getCurrentDepositRate(final MoneyWiseDeposit pDeposit) {
         return theDepRateMap.get(pDeposit);
+    }
+
+    @Override
+    public void registerForPriceUpdates(final MoneyWiseXAnalysisBucketPriced pBucket) {
+        final List<MoneyWiseXAnalysisBucketPriced> myList = thePricedBucketsMap.computeIfAbsent(pBucket.getSecurity(), x -> new ArrayList<>());
+        myList.add(pBucket);
+    }
+
+    @Override
+    public void registerForXchgRateUpdates(final MoneyWiseXAnalysisBucketForeign pBucket) {
+        final List<MoneyWiseXAnalysisBucketForeign> myList = theForeignBucketsMap.computeIfAbsent(pBucket.getCurrency(), x -> new ArrayList<>());
+        myList.add(pBucket);
+    }
+
+    @Override
+    public void registerBucketForEvent(MoneyWiseXAnalysisBucketRegister pBucket) {
+        theEventBuckets.add(pBucket);
+    }
+
+    @Override
+    public void registerBucketsForEvent(MoneyWiseXAnalysisEvent pEvent) {
+        for (MoneyWiseXAnalysisBucketRegister myBucket : theEventBuckets) {
+            myBucket.registerEvent(pEvent);
+        }
+        theEventBuckets.clear();
+    }
+
+    /**
+     * Obtain the pricedBuckets iterator for a security.
+     * @param pSecurity the security
+     * @return the iterator
+     */
+    public Iterator<MoneyWiseXAnalysisBucketPriced> pricedBucketIterator(final MoneyWiseSecurity pSecurity) {
+        final List<MoneyWiseXAnalysisBucketPriced> myList = thePricedBucketsMap.get(pSecurity);
+        return myList != null ? myList.iterator() : Collections.emptyIterator();
+    }
+
+    /**
+     * Obtain the foreignBuckets iterator for a currency.
+     * @param pCurrency the currency
+     * @return the iterator
+     */
+    public Iterator<MoneyWiseXAnalysisBucketForeign> foreignBucketIterator(final MoneyWiseCurrency pCurrency) {
+        final List<MoneyWiseXAnalysisBucketForeign> myList = theForeignBucketsMap.get(pCurrency);
+        return myList != null ? myList.iterator() : Collections.emptyIterator();
     }
 
     /**
@@ -386,6 +445,7 @@ public class MoneyWiseXAnalysisCursor {
 
     /**
      * Build opening balances.
+     * @param pType the data type
      */
     private void buildBalances(final MoneyWiseBasicDataType pType) {
         final MoneyWiseAssetBaseList<?> myList = theEditSet.getDataList(pType, MoneyWiseAssetBaseList.class);

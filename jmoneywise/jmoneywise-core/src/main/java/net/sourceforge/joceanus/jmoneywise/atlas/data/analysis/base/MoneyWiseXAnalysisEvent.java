@@ -148,17 +148,17 @@ public class MoneyWiseXAnalysisEvent
      * @return the id
      */
     private Integer determineId() {
-        int myId = -(theDate.getId() << 2) + 1;
+        final int myId = -(theDate.getId() << 2);
         switch (theEventType) {
             case SECURITYPRICE:
-                return myId;
+                return myId - 1;
             case XCHANGERATE:
-                return myId + 1;
+                return myId;
             case DEPOSITRATE:
-                return myId + 2;
+                return myId + 1;
             case OPENINGBALANCE:
             default:
-                return myId + 3;
+                return myId + 2;
         }
     }
 
@@ -235,7 +235,7 @@ public class MoneyWiseXAnalysisEvent
 
         /* Check date and then data type */
         final MoneyWiseXAnalysisEvent myThat = (MoneyWiseXAnalysisEvent) pThat;
-        int iDiff = theDate.compareTo(myThat.getDate());
+        final int iDiff = theDate.compareTo(myThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }

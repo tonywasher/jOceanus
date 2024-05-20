@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisAttribute;
 
 /**
  * PayeeAttribute enumeration.

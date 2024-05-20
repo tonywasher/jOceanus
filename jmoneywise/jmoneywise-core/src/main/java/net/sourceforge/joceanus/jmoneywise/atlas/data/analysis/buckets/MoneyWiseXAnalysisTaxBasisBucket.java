@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket.MoneyWiseXAnalysisTaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisValues;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
@@ -56,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
  * The TaxBasis Bucket class.
  */
 public class MoneyWiseXAnalysisTaxBasisBucket
-        implements MetisFieldTableItem {
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketRegister {
     /**
      * Local Report fields.
      */
@@ -458,11 +457,8 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         }
     }
 
-    /**
-     * Register the event.
-     * @param pEvent the event
-     */
-    protected void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+    @Override
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
         /* Register the transaction in the history */
         theHistory.registerEvent(pEvent, theValues);
     }

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashCategoryBucket.MoneyWiseXAnalysisCashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket.MoneyWiseXAnalysisDepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositCategoryBucket.MoneyWiseXAnalysisDepositCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket.MoneyWiseXAnalysisLoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanCategoryBucket.MoneyWiseXAnalysisLoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket.MoneyWiseXAnalysisPayeeBucketList;
@@ -169,19 +170,19 @@ public class MoneyWiseXAnalysis
     /**
      * Constructor for a full analysis.
      * @param pEditSet the editSet to analyse events for
+     * @param pCursor the cursor
      * @param pPreferenceMgr the preference manager
      */
     public MoneyWiseXAnalysis(final PrometheusEditSet pEditSet,
+                              final MoneyWiseXAnalysisCursor pCursor,
                               final MetisPreferenceManager pPreferenceMgr) {
         /* Store the data */
         theEditSet = pEditSet;
+        theCursor = pCursor;
         final MoneyWiseDataSet myDataSet = getData();
         theCurrency = myDataSet.getReportingCurrency();
         thePreferences = pPreferenceMgr;
         theDateRange = myDataSet.getDateRange();
-
-        /* Create the cursor */
-        theCursor = new MoneyWiseXAnalysisCursor(theEditSet);
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
