@@ -147,34 +147,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
-     */
-    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysis pAnalysis,
-                                              final MoneyWiseXAnalysisPortfolioBucket pBase) {
-        /* Copy details from base */
-        thePortfolio = pBase.getPortfolio();
-        theCurrency = pBase.getCurrency();
-        isForeignCurrency = pBase.isForeignCurrency();
-        hasForeignCurrency = pBase.hasForeignCurrency();
-
-        /* Create the cash bucket */
-        theCash = new MoneyWiseXAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());
-
-        /* Create the securities list */
-        theSecurities = thePortfolio != null
-                ? new MoneyWiseXAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities())
-                : null;
-
-        /* Create the value maps and initialise them */
-        final Currency myCurrency = theCurrency.getCurrency();
-        theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        //initValues();
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
     private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysis pAnalysis,
@@ -633,32 +605,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getPortfolio().compareTo(r.getPortfolio()));
-        }
-
-        /**
-         * Construct a dated List.
-         * @param pAnalysis the analysis
-         * @param pBase the base list
-         */
-        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysis pAnalysis,
-                                              final MoneyWiseXAnalysisPortfolioBucketList pBase) {
-            /* Initialise class */
-            this(pAnalysis);
-
-            /* Loop through the buckets */
-            final Iterator<MoneyWiseXAnalysisPortfolioBucket> myIterator = pBase.iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseXAnalysisPortfolioBucket myCurr = myIterator.next();
-
-                /* Access the bucket */
-                final MoneyWiseXAnalysisPortfolioBucket myBucket = new MoneyWiseXAnalysisPortfolioBucket(pAnalysis, myCurr);
-
-                /* Ignore if portfolio is idle */
-                if (!myBucket.isIdle()) {
-                    /* Add to the list */
-                    theList.add(myBucket);
-                }
-            }
         }
 
         /**

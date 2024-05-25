@@ -605,27 +605,6 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
         }
 
         /**
-         * Construct a view List.
-         * @param pBase the base list
-         */
-        protected void constructFromBase(final MoneyWiseXAnalysisAccountBucketList<B, T> pBase) {
-            /* Loop through the buckets */
-            final Iterator<B> myIterator = pBase.iterator();
-            while (myIterator.hasNext()) {
-                final B myCurr = myIterator.next();
-
-                /* Access the bucket */
-                final B myBucket = newBucket(myCurr);
-
-                /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
-                    /* add to list */
-                    theList.add(myBucket);
-                }
-            }
-        }
-
-        /**
          * Construct a view bucket.
          * @param pBase the base bucket
          * @return the new bucket

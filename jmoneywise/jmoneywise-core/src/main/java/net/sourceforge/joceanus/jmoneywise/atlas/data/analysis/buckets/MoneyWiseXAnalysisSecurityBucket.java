@@ -688,35 +688,6 @@ public final class MoneyWiseXAnalysisSecurityBucket
         }
 
         /**
-         * Construct a view List.
-         * @param pAnalysis the analysis
-         * @param pBase the base list
-         */
-        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysis pAnalysis,
-                                            final MoneyWiseXAnalysisSecurityBucketList pBase) {
-            /* Initialise class */
-            this(pAnalysis);
-
-            /* Loop through the buckets */
-            final Iterator<MoneyWiseXAnalysisSecurityBucket> myIterator = pBase.iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseXAnalysisSecurityBucket myCurr = myIterator.next();
-
-                /* Access the bucket */
-                final MoneyWiseXAnalysisSecurityBucket myBucket = new MoneyWiseXAnalysisSecurityBucket(pAnalysis, myCurr);
-
-                /*
-                 * Ignore idle securities. Note that we must include securities that have been
-                 * closed in order to adjust Market Growth.
-                 */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
-                    /* Add to the list */
-                    theList.add(myBucket);
-                }
-            }
-        }
-
-        /**
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list

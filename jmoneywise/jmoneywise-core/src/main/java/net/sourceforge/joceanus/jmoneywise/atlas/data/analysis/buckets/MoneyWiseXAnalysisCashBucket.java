@@ -141,20 +141,6 @@ public final class MoneyWiseXAnalysisCashBucket
         }
 
         /**
-         * Construct a view List.
-         * @param pAnalysis the analysis
-         * @param pBase the base list
-         */
-        MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
-                                         final MoneyWiseXAnalysisCashBucketList pBase) {
-            /* Initialise class */
-            this(pAnalysis);
-
-            /* Construct list from base */
-            constructFromBase(pBase);
-        }
-
-        /**
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
@@ -178,7 +164,7 @@ public final class MoneyWiseXAnalysisCashBucket
          */
         MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucketList pBase,
-                                        final TethysDateRange pRange) {
+                                         final TethysDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

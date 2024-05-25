@@ -157,20 +157,6 @@ public final class MoneyWiseXAnalysisDepositBucket
         }
 
         /**
-         * Construct a view List.
-         * @param pAnalysis the analysis
-         * @param pBase the base list
-         */
-        MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis,
-                                            final MoneyWiseXAnalysisDepositBucketList pBase) {
-            /* Initialise class */
-            this(pAnalysis);
-
-            /* Construct list from base */
-            constructFromBase(pBase);
-        }
-
-        /**
          * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
