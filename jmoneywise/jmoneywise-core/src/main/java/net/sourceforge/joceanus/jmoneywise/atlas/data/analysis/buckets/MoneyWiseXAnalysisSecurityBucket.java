@@ -162,6 +162,9 @@ public final class MoneyWiseXAnalysisSecurityBucket
         final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
         myCursor.registerForPriceUpdates(this);
 
+        /* Store the security price */
+        recordSecurityPrice();
+
         /* If this is a foreign currency account */
         if (isForeignCurrency) {
             /* Register for xchangeRate Updates */
@@ -575,6 +578,25 @@ public final class MoneyWiseXAnalysisSecurityBucket
             myValue = myLocalValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
          }
         theValues.setValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, myValue);
+    }
+
+    @Override
+    public void adjustReportedBalance() {
+        /* Determine reported balance */
+        TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.LOCALVALUE);
+        if (isForeignCurrency) {
+            final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
+            myBalance = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+        }
+        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, myBalance);
+    }
+
+    @Override
+    public TethysMoney getDeltaReportedBalance() {
+        /* Determine the delta */
+        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE));
+        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE));
+        return myDelta;
     }
 
     /**

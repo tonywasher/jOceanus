@@ -244,6 +244,14 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
     }
 
     /**
+     * Obtain the last values.
+     * @return the last values
+     */
+    public T getLastValues() {
+        return theLastValues;
+    }
+
+    /**
      * Obtain the base values.
      * @return the base values
      */

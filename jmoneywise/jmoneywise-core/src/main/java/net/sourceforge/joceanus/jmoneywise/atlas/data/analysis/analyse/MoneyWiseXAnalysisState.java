@@ -219,18 +219,13 @@ public class MoneyWiseXAnalysisState
      * determine next eventType.
      * @return the next eventTupe (or null)
      */
-    public MoneyWiseXAnalysisEventType nextEventType() {
+    private MoneyWiseXAnalysisEventType nextEventType() {
         /* Look for a price event */
         TethysDate myDate = null;
         MoneyWiseXAnalysisEventType myType = null;
         if (theNextPrice != null) {
             myDate = theNextPrice.getDate();
             myType = MoneyWiseXAnalysisEventType.SECURITYPRICE;
-
-            /* Immediate return for starting prices */
-            if (theStartDate.equals(myDate)) {
-                return myType;
-            }
         }
 
         /* Look for an earlier xchgRate event */
@@ -238,11 +233,6 @@ public class MoneyWiseXAnalysisState
                 && (myDate == null || myDate.compareTo(theNextXchgRate.getDate()) > 0)) {
             myDate = theNextXchgRate.getDate();
             myType = MoneyWiseXAnalysisEventType.XCHANGERATE;
-
-            /* Immediate return for starting rates */
-            if (theStartDate.equals(myDate)) {
-                return myType;
-            }
         }
 
         /* Look for an earlier depRate event */
@@ -250,11 +240,11 @@ public class MoneyWiseXAnalysisState
                 && (myDate == null || myDate.compareTo(theNextDepRate.getDate()) > 0)) {
             myDate = theNextDepRate.getDate();
             myType = MoneyWiseXAnalysisEventType.DEPOSITRATE;
+        }
 
-            /* Immediate return for starting rates */
-            if (theStartDate.equals(myDate)) {
-                return myType;
-            }
+        /* Immediate return for starting prices */
+        if (theStartDate.equals(myDate)) {
+            return myType;
         }
 
         /* If we have not yet built opening balances */
@@ -309,7 +299,7 @@ public class MoneyWiseXAnalysisState
      */
     private void processXchgRate() {
         theNextEvent.declareExchangeRate(theNextXchgRate);
-        theXchgRateMap.put(theNextXchgRate.getFromCurrency(), theNextXchgRate.getExchangeRate());
+        theXchgRateMap.put(theNextXchgRate.getToCurrency(), theNextXchgRate.getExchangeRate());
         iterateXchgRate();
     }
 
@@ -430,7 +420,9 @@ public class MoneyWiseXAnalysisState
      * Iterate the Transactions.
      */
     private void iterateTrans() {
-        theNextTrans = theTransIterator.hasNext() ? theTransIterator.next() : null;
+        do {
+            theNextTrans = theTransIterator.hasNext() ? theTransIterator.next() : null;
+        } while (theNextTrans != null && theNextTrans.isDeleted());
     }
 
     /**

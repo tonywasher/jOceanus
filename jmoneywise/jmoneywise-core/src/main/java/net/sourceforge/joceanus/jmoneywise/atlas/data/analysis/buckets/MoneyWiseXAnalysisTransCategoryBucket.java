@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
@@ -375,6 +376,18 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
     }
 
     /**
+     * Adjust account for delta.
+     * @param pDelta the delta
+     */
+    public void adjustForDelta(final TethysMoney pDelta) {
+        if (pDelta.isPositive()) {
+            addIncome(pDelta);
+        } else {
+            subtractExpense(pDelta);
+        }
+    }
+
+    /**
      * Add expense value.
      * @param pValue the value to add
      */
@@ -397,7 +410,6 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
             adjustCounter(MoneyWiseXAnalysisTransAttr.EXPENSE, myExpense);
         }
     }
-
 
     /**
      * Calculate Income delta.

@@ -420,8 +420,8 @@ public class MoneyWiseXAnalysisTaxBasisBucket
      * @param pValue the value
      * @param pAdjust adjustment control
      */
-    protected void adjustValue(final TethysMoney pValue,
-                               final MoneyWiseXTaxBasisAdjust pAdjust) {
+    public void adjustValue(final TethysMoney pValue,
+                            final MoneyWiseXTaxBasisAdjust pAdjust) {
         /* If we are adjusting Gross */
         if (pAdjust.adjustGross()) {
             /* Access the existing value */
@@ -495,7 +495,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
     /**
      * Value adjust Modes.
      */
-    protected enum MoneyWiseXTaxBasisAdjust {
+    public enum MoneyWiseXTaxBasisAdjust {
         /**
          * Adjust both Gross and Nett.
          */

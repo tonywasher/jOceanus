@@ -422,7 +422,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
     /**
      * Record opening balance.
      */
-    void recordOpeningBalance() {
+    public void recordOpeningBalance() {
         /* Obtain the base valuation */
         final MoneyWiseXAnalysisAccountValues myValues = getBaseValues();
         final TethysMoney myBaseValue = myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
@@ -490,17 +490,28 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
     }
 
     @Override
-    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+    public void adjustReportedBalance() {
         /* Determine reported balance */
-        final TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
+        TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
         if (isForeignCurrency) {
             final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE);
-            final TethysMoney myReport = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
-            theValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myReport);
-            theValues.setValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, myRate);
-        } else {
-            theValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myBalance);
+            myBalance = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
         }
+        theValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myBalance);
+    }
+
+    @Override
+    public TethysMoney getDeltaReportedBalance() {
+        /* Determine the delta */
+        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE));
+        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE));
+        return myDelta;
+    }
+
+    @Override
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Make sure that reported balance is correct */
+        adjustReportedBalance();
 
         /* Register the transaction in the history */
         theHistory.registerEvent(pEvent, theValues);

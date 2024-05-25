@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAn
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -48,6 +49,17 @@ public abstract class MoneyWiseXAnalysisInterfaces {
          * Record exchangeRate.
          */
         void recordExchangeRate();
+
+        /**
+         * Adjust the reported balance.
+         */
+        public void adjustReportedBalance();
+
+        /**
+         * Obtain the delta reported balance.
+         * @return the delta
+         */
+        TethysMoney getDeltaReportedBalance();
 
         /**
          * Obtain currency for bucket.
