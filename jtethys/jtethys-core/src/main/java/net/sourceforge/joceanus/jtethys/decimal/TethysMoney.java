@@ -34,7 +34,7 @@ public class TethysMoney
     /**
      * Invalid Currency error text.
      */
-    private static final String ERROR_DIFFER = "Cannot add together two different currencies";
+    protected static final String ERROR_DIFFER = "Cannot add together two different currencies";
 
     /**
      * Currency code length.

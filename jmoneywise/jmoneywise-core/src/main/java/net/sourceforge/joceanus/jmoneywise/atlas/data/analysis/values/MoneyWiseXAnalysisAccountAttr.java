@@ -27,7 +27,7 @@ public enum MoneyWiseXAnalysisAccountAttr
     /**
      * Local Currency Balance.
      */
-    LOCALBALANCE,
+    BALANCE,
 
     /**
      * Exchange Rate.
@@ -35,9 +35,9 @@ public enum MoneyWiseXAnalysisAccountAttr
     EXCHANGERATE,
 
     /**
-     * Reported Balance.
+     * Reported Valuation.
      */
-    REPORTEDBALANCE,
+    VALUATION,
 
     /**
      * Valuation Delta.
@@ -74,11 +74,11 @@ public enum MoneyWiseXAnalysisAccountAttr
     @Override
     public boolean isPreserved() {
         switch (this) {
-            case LOCALBALANCE:
+            case BALANCE:
             case MATURITY:
             case DEPOSITRATE:
             case EXCHANGERATE:
-            case REPORTEDBALANCE:
+            case VALUATION:
                 return true;
             case VALUEDELTA:
             default:
@@ -95,8 +95,8 @@ public enum MoneyWiseXAnalysisAccountAttr
                 return MetisDataType.RATIO;
             case MATURITY:
                 return MetisDataType.DATE;
-            case LOCALBALANCE:
-            case REPORTEDBALANCE:
+            case BALANCE:
+            case VALUATION:
             case VALUEDELTA:
             default:
                 return MetisDataType.MONEY;

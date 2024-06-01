@@ -54,6 +54,7 @@ public class MoneyWiseTestAccounts {
     final static String idPY_Market = "Market";
     final static String idPY_CashExpense = "CashExpense";
     final static String idPY_Damage = "Damage";
+    final static String idPY_Parents = "Parents";
 
     /**
      * Deposit ids.
@@ -63,11 +64,13 @@ public class MoneyWiseTestAccounts {
     final static String idDP_NatWideLoyalty = "NatWideLoyalty";
     final static String idDP_StarlingSterling = "StarlingSterling";
     final static String idDP_StarlingEuro = "StarlingEuro";
+    final static String idDP_StarlingDollar = "StarlingDollar";
 
     /**
      * Cash ids.
      */
     final static String idCS_Cash = "Cash";
+    final static String idCS_EurosCash = "EurosCash";
 
     /**
      * Loan ids.
@@ -89,6 +92,12 @@ public class MoneyWiseTestAccounts {
     final static String idSC_BarclaysShares = "BarclaysShares";
     final static String idSC_BallShares = "BallShares";
     final static String idSC_StatePension = "StatePension";
+
+    /**
+     * Security holding ids.
+     */
+    final static String idSH_BarclaysShares = idPF_InteractiveInvestorStock + ":" + idSC_BarclaysShares;
+    final static String idSH_BallShares = idPF_InteractiveInvestorStock + ":" + idSC_BallShares;
 
     /**
      * PayeeBuilder.
@@ -169,6 +178,7 @@ public class MoneyWiseTestAccounts {
         thePayeeBuilder.name(idPY_Market).type(MoneyWisePayeeClass.MARKET).build();
         thePayeeBuilder.name(idPY_IBM).type(MoneyWisePayeeClass.EMPLOYER).build();
         thePayeeBuilder.name(idPY_Damage).type(MoneyWisePayeeClass.INDIVIDUAL).build();
+        thePayeeBuilder.name(idPY_Parents).type(MoneyWisePayeeClass.INDIVIDUAL).build();
         thePayeeBuilder.name(idPY_ASDA).type(MoneyWisePayeeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_CoOp).type(MoneyWisePayeeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_Tesco).type(MoneyWisePayeeClass.PAYEE).build();
@@ -188,6 +198,7 @@ public class MoneyWiseTestAccounts {
         theDepositBuilder.name(idDP_NatWideLoyalty).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Savings).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.EUR).build();
+        theDepositBuilder.name(idDP_StarlingDollar).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.USD).build();
     }
 
     /**
@@ -196,6 +207,8 @@ public class MoneyWiseTestAccounts {
      */
     private void createCash() throws OceanusException {
         theCashBuilder.name(idCS_Cash).category(MoneyWiseTestCategories.idCC_Cash).autoExpense(MoneyWiseTestCategories.idTC_ExpCash, idPY_CashExpense).build();
+        theCashBuilder.name(idCS_EurosCash).category(MoneyWiseTestCategories.idCC_Cash).currency(MoneyWiseCurrencyClass.EUR)
+                .autoExpense(MoneyWiseTestCategories.idTC_ExpCash, idPY_CashExpense).build();
     }
 
     /**

@@ -39,7 +39,7 @@ public final class MoneyWiseXAnalysisSecurityValues
 
         /* Initialise units etc. to zero */
         super.setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, new TethysUnits());
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.LOCALVALUE, new TethysMoney(pCurrency));
+        super.setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, new TethysMoney(pCurrency));
         super.setValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, new TethysMoney(pReportingCurrency));
         super.setValue(MoneyWiseXAnalysisSecurityAttr.INVESTED, new TethysMoney(pReportingCurrency));
         super.setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(pReportingCurrency));

@@ -31,14 +31,14 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 public enum MoneyWiseXAnalysisValuesResource
         implements TethysBundleId, MetisDataFieldId {
     /**
-     * AccountAttr LocalBalance.
+     * AccountAttr Balance.
      */
-    ACCOUNTATTR_LOCALBALANCE("AccountAttr.LocalBalance"),
+    ACCOUNTATTR_BALANCE("AccountAttr.Balance"),
 
     /**
      * AccountAttr ReportedBalance.
      */
-    ACCOUNTATTR_REPORTEDBALANCE("AccountAttr.ReportedBalance"),
+    ACCOUNTATTR_VALUATION("AccountAttr.Valuation"),
 
     /**
      * AccountAttr Delta.
@@ -81,14 +81,9 @@ public enum MoneyWiseXAnalysisValuesResource
     SECURITYATTR_UNITS(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_UNITS),
 
     /**
-     * SecurityAttr LocalValue.
+     * SecurityAttr Value.
      */
-    SECURITYATTR_LOCALVALUE("SecurityAttr.LocalValue"),
-
-    /**
-     * SecurityAttr ReportedValue.
-     */
-    SECURITYATTR_REPORTEDVALUE("SecurityAttr.ReportedValue"),
+    SECURITYATTR_VALUE("SecurityAttr.Value"),
 
     /**
      * SecurityAttr ResidualCost.
@@ -307,8 +302,8 @@ public enum MoneyWiseXAnalysisValuesResource
     private static Map<MoneyWiseXAnalysisAccountAttr, TethysBundleId> buildAccountMap() {
         /* Create the map and return it */
         final Map<MoneyWiseXAnalysisAccountAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseXAnalysisAccountAttr.class);
-        myMap.put(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE, ACCOUNTATTR_LOCALBALANCE);
-        myMap.put(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, ACCOUNTATTR_REPORTEDBALANCE);
+        myMap.put(MoneyWiseXAnalysisAccountAttr.BALANCE, ACCOUNTATTR_BALANCE);
+        myMap.put(MoneyWiseXAnalysisAccountAttr.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(MoneyWiseXAnalysisAccountAttr.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
         myMap.put(MoneyWiseXAnalysisAccountAttr.DEPOSITRATE, ACCOUNTATTR_DEPOSITRATE);
         myMap.put(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
@@ -376,8 +371,8 @@ public enum MoneyWiseXAnalysisValuesResource
     private static Map<MoneyWiseXAnalysisSecurityAttr, TethysBundleId> buildSecurityMap() {
         /* Create the map and return it */
         final Map<MoneyWiseXAnalysisSecurityAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseXAnalysisSecurityAttr.class);
-        myMap.put(MoneyWiseXAnalysisSecurityAttr.LOCALVALUE, SECURITYATTR_LOCALVALUE);
-        myMap.put(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, SECURITYATTR_REPORTEDVALUE);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.VALUE, SECURITYATTR_VALUE);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.UNITS, SECURITYATTR_UNITS);

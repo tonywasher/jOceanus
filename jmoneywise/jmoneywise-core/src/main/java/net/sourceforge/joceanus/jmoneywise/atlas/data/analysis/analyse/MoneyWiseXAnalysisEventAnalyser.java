@@ -27,11 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -63,14 +59,25 @@ public class MoneyWiseXAnalysisEventAnalyser {
     private final MoneyWiseXAnalysisMarket theMarket;
 
     /**
+     * The tax.
+     */
+    private final MoneyWiseXAnalysisTax theTax;
+
+    /**
+     * The basic trans analyser.
+     */
+    private final MoneyWiseXAnalysisTransAnalyser theTrans;
+
+    /**
      * Constructor.
      * @param pTask the task
      * @param pEditSet the editSet
      * @param pPreferenceMgr the preference manager
+     * @throws OceanusException on error
      */
     public MoneyWiseXAnalysisEventAnalyser(final TethysProfile pTask,
                                            final PrometheusEditSet pEditSet,
-                                           final MetisPreferenceManager pPreferenceMgr) {
+                                           final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Initialise the task */
         theProfile = pTask;
         final TethysProfile myTask = theProfile.startTask("analyseTransactions");
@@ -82,7 +89,8 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
         /* Create the analysers */
         theMarket = new MoneyWiseXAnalysisMarket(theAnalysis);
-        final MoneyWiseXAnalysisTransAnalyser myTransAnalyser = new MoneyWiseXAnalysisTransAnalyser(theAnalysis);
+        theTax = new MoneyWiseXAnalysisTax(theAnalysis);
+        theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
 
         /* Loop through the Events */
         for(;;) {
@@ -108,13 +116,45 @@ public class MoneyWiseXAnalysisEventAnalyser {
                     break;
                 case TRANSACTION:
                 default:
-                    myTransAnalyser.processTransaction(myEvent);
+                    theTrans.processTransaction(myEvent);
                     break;
             }
         }
 
         /* Complete the task */
         myTask.end();
+    }
+
+    /**
+     * Obtain the analysis.
+     * @return the analysis
+     */
+    MoneyWiseXAnalysis getAnalysis() {
+        return theAnalysis;
+    }
+
+    /**
+     * Obtain the state.
+     * @return the state
+     */
+    MoneyWiseXAnalysisState getState() {
+        return theState;
+    }
+
+    /**
+     * Obtain the market analysis.
+     * @return the market
+     */
+    MoneyWiseXAnalysisMarket getMarket() {
+        return theMarket;
+    }
+
+    /**
+     * Obtain the tax analysis.
+     * @return the tax
+     */
+    MoneyWiseXAnalysisTax getTax() {
+        return theTax;
     }
 
     /**
@@ -155,8 +195,8 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
                 /* update the rate and determine the value delta */
                 myBucket.recordSecurityPrice();
-                myBucket.adjustReportedBalance();
-                final TethysMoney myDelta = myBucket.getDeltaReportedBalance();
+                myBucket.adjustValuation();
+                final TethysMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */
                 theState.registerBucketForEvent(myBucket);
@@ -188,8 +228,8 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
                 /* update the rate and determine the value delta */
                 myBucket.recordExchangeRate();
-                myBucket.adjustReportedBalance();
-                final TethysMoney myDelta = myBucket.getDeltaReportedBalance();
+                myBucket.adjustValuation();
+                final TethysMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */
                 theState.registerBucketForEvent(myBucket);
@@ -235,33 +275,12 @@ public class MoneyWiseXAnalysisEventAnalyser {
             final MoneyWiseAssetBase myAsset = myBalanceIterator.next();
 
             /* Loop through the registered buckets */
-            final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(myAsset);
+            final MoneyWiseXAnalysisAccountBucket<?> myBucket = theTrans.getAccountBucket(myAsset);
             myBucket.recordOpeningBalance();
             theState.registerBucketForEvent(myBucket);
         }
 
         /* Register all the buckets */
         theState.registerBucketsForEvent(pEvent);
-
-    }
-
-    /**
-     * Obtain Account bucket for asset.
-     * @param pAsset the asset
-     * @return the bucket
-     */
-    private MoneyWiseXAnalysisAccountBucket<?> getAccountBucket(final MoneyWiseAssetBase pAsset) {
-        switch (pAsset.getAssetType()) {
-            case DEPOSIT:
-                return theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);
-            case CASH:
-                return theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);
-            case LOAN:
-                return theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);
-            case PORTFOLIO:
-                return theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);
-            default:
-                throw new IllegalArgumentException();
-        }
     }
 }

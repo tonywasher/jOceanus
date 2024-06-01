@@ -51,15 +51,15 @@ public abstract class MoneyWiseXAnalysisInterfaces {
         void recordExchangeRate();
 
         /**
-         * Adjust the reported balance.
+         * Adjust the valuation.
          */
-        public void adjustReportedBalance();
+        public void adjustValuation();
 
         /**
-         * Obtain the delta reported balance.
+         * Obtain the delta valuation.
          * @return the delta
          */
-        TethysMoney getDeltaReportedBalance();
+        TethysMoney getDeltaValuation();
 
         /**
          * Obtain currency for bucket.
@@ -77,6 +77,12 @@ public abstract class MoneyWiseXAnalysisInterfaces {
          * Record securityPrice.
          */
         void recordSecurityPrice();
+
+        /**
+         * Is this bucket a StockOption?
+         * @return true/false
+         */
+        boolean isStockOption();
 
         /**
          * Obtain security for bucket.

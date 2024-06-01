@@ -108,10 +108,10 @@ public final class MoneyWiseXAnalysisPortfolioCashBucket
     private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
                                   final MoneyWiseXAnalysisAccountValues pSource) {
         /* Add valuation values */
-        TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue = new TethysMoney(myValue);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue.addAmount(mySrcValue);
-        pTotals.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myValue);
+        pTotals.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myValue);
     }
 }

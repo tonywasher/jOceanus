@@ -36,8 +36,8 @@ public class MoneyWiseXAnalysisAccountValues
 
         /* Initialise valuation to zero */
         final TethysMoney myValue = new TethysMoney(pCurrency);
-        setValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE, myValue);
-        setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myValue);
+        setValue(MoneyWiseXAnalysisAccountAttr.BALANCE, myValue);
+        setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myValue);
     }
 
     /**
@@ -66,7 +66,7 @@ public class MoneyWiseXAnalysisAccountValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysMoney myValuation = getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
+        final TethysMoney myValuation = getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
         return myValuation != null && myValuation.isNonZero();
     }
 }

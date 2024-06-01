@@ -152,8 +152,8 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
             /* Create a new reportedValuation */
             final TethysMoney myReported = new TethysMoney(theAnalysis.getCurrency().getCurrency());
-            theValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myReported);
-            theBaseValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myReported);
+            theValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReported);
+            theBaseValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReported);
         }
     }
 
@@ -425,7 +425,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
     public void recordOpeningBalance() {
         /* Obtain the base valuation */
         final MoneyWiseXAnalysisAccountValues myValues = getBaseValues();
-        final TethysMoney myBaseValue = myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
+        final TethysMoney myBaseValue = myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
 
         /* Set the base value (this will set the current value as well) */
         myBaseValue.addAmount(getAccount().getOpeningBalance());
@@ -438,8 +438,8 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
             /* Record the starting reporting balance and copy to base values */
             final TethysMoney myReport = myBaseValue.convertCurrency(myCurrency.getCurrency(), myRate);
-            theValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myReport);
-            myValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myReport);
+            theValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReport);
+            myValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReport);
             myValues.setValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, myRate);
         }
     }
@@ -449,10 +449,10 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * @param pDelta the delta
      */
     public void addToBalance(final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
         myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
-        setValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE, myValue);
+        setValue(MoneyWiseXAnalysisAccountAttr.BALANCE, myValue);
     }
 
     /**
@@ -460,10 +460,10 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * @param pDelta the delta
      */
     public void subtractFromBalance(final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
         myValue = new TethysMoney(myValue);
         myValue.subtractAmount(pDelta);
-        setValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE, myValue);
+        setValue(MoneyWiseXAnalysisAccountAttr.BALANCE, myValue);
     }
 
     /**
@@ -490,28 +490,28 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
     }
 
     @Override
-    public void adjustReportedBalance() {
+    public void adjustValuation() {
         /* Determine reported balance */
-        TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.LOCALBALANCE);
+        TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
         if (isForeignCurrency) {
             final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE);
             myBalance = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
         }
-        theValues.setValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE, myBalance);
+        theValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myBalance);
     }
 
     @Override
-    public TethysMoney getDeltaReportedBalance() {
+    public TethysMoney getDeltaValuation() {
         /* Determine the delta */
-        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE));
-        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE));
+        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION));
+        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION));
         return myDelta;
     }
 
     @Override
     public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
-        /* Make sure that reported balance is correct */
-        adjustReportedBalance();
+        /* Make sure that valuation is correct */
+        adjustValuation();
 
         /* Register the transaction in the history */
         theHistory.registerEvent(pEvent, theValues);
@@ -522,11 +522,11 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myDelta = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        TethysMoney myDelta = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myDelta = new TethysMoney(myDelta);
 
         /* Subtract any base value */
-        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myDelta.subtractAmount(myBase);
 
         /* Set the delta */

@@ -352,7 +352,14 @@ public class MoneyWiseXAnalysisState
 
     @Override
     public void registerForPriceUpdates(final MoneyWiseXAnalysisBucketPriced pBucket) {
-        final List<MoneyWiseXAnalysisBucketPriced> myList = thePricedBucketsMap.computeIfAbsent(pBucket.getSecurity(), x -> new ArrayList<>());
+        /* Determine the security whose price we are tracking */
+        MoneyWiseSecurity mySecurity = pBucket.getSecurity();
+        if (pBucket.isStockOption()) {
+            mySecurity = mySecurity.getUnderlyingStock();
+        }
+
+        /* Add to list */
+        final List<MoneyWiseXAnalysisBucketPriced> myList = thePricedBucketsMap.computeIfAbsent(mySecurity, x -> new ArrayList<>());
         myList.add(pBucket);
     }
 

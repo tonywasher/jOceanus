@@ -37,7 +37,7 @@ public enum MoneyWiseXAnalysisSecurityAttr
     /**
      * Value in local currency.
      */
-    LOCALVALUE,
+    VALUE,
 
     /**
      * Exchange Rate.
@@ -47,7 +47,7 @@ public enum MoneyWiseXAnalysisSecurityAttr
     /**
      * Reporting Valuation.
      */
-    REPORTEDVALUE,
+    VALUATION,
 
     /**
      * Valuation Delta.
@@ -158,9 +158,9 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case DIVIDEND:
             case INVESTED:
             case RESIDUALCOST:
-            case REPORTEDVALUE:
+            case VALUATION:
             case EXCHANGERATE:
-            case LOCALVALUE:
+            case VALUE:
             case PRICE:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
@@ -194,8 +194,8 @@ public enum MoneyWiseXAnalysisSecurityAttr
                 return MetisDataType.RATIO;
             case CASHTYPE:
                 return MetisDataType.ENUM;
-            case LOCALVALUE:
-            case REPORTEDVALUE:
+            case VALUE:
+            case VALUATION:
             case VALUEDELTA:
             case RESIDUALCOST:
             case REALISEDGAINS:

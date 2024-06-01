@@ -172,11 +172,11 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -230,8 +230,8 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
     private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
                                   final MoneyWiseXAnalysisAccountValues pSource) {
         /* Add base values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
+        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -243,8 +243,8 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
     private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
                                   final MoneyWiseXAnalysisSecurityValues pSource) {
         /* Add base values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.REPORTEDBALANCE);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE);
+        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 }

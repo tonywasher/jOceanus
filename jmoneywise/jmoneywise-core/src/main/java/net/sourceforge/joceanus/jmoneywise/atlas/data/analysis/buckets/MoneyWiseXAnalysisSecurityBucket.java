@@ -105,6 +105,11 @@ public final class MoneyWiseXAnalysisSecurityBucket
     private final boolean isForeignCurrency;
 
     /**
+     * Is this a stock option?
+     */
+    private final boolean isStockOption;
+
+    /**
      * The security type.
      */
     private final MoneyWiseSecurityType theCategory;
@@ -150,6 +155,9 @@ public final class MoneyWiseXAnalysisSecurityBucket
         final Currency myCurrency = MoneyWiseXAnalysisAccountBucket.deriveCurrency(myHoldingCurrency);
         final Currency myRepCurrency = MoneyWiseXAnalysisAccountBucket.deriveCurrency(myReportingCurrency);
 
+        /* Note stockOption */
+        isStockOption = theSecurity.getUnderlyingStock() != null;
+
         /* Create the history map */
         final MoneyWiseXAnalysisSecurityValues myValues =  new MoneyWiseXAnalysisSecurityValues(myCurrency, myRepCurrency);
         theHistory = new MoneyWiseXAnalysisHistory<>(myValues);
@@ -176,33 +184,9 @@ public final class MoneyWiseXAnalysisSecurityBucket
 
             /* Create a new reportedValuation */
             final TethysMoney myReported = new TethysMoney(theAnalysis.getCurrency().getCurrency());
-            theValues.setValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, myReported);
-            theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, myReported);
+            theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myReported);
+            theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myReported);
         }
-    }
-
-    /**
-     * Constructor.
-     * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     */
-    private MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysis pAnalysis,
-                                             final MoneyWiseXAnalysisSecurityBucket pBase) {
-        /* Copy details from base */
-        theHolding = pBase.getSecurityHolding();
-        theCurrency = pBase.getCurrency();
-        theSecurity = pBase.getSecurity();
-        thePortfolio = pBase.getPortfolio();
-        theCategory = pBase.getSecurityType();
-        theAnalysis = pAnalysis;
-        isForeignCurrency = pBase.isForeignCurrency();
-
-        /* Access the relevant history */
-        theHistory = new MoneyWiseXAnalysisHistory<>(pBase.getHistoryMap());
-
-        /* Access the key value maps */
-        theValues = theHistory.getValues();
-        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -222,6 +206,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         isForeignCurrency = pBase.isForeignCurrency();
+        isStockOption = pBase.isStockOption();
 
         /* Access the relevant history */
         theHistory = new MoneyWiseXAnalysisHistory<>(pBase.getHistoryMap(), pDate);
@@ -248,6 +233,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         isForeignCurrency = pBase.isForeignCurrency();
+        isStockOption = pBase.isStockOption();
 
         /* Access the relevant history */
         theHistory = new MoneyWiseXAnalysisHistory<>(pBase.getHistoryMap(), pRange);
@@ -320,6 +306,11 @@ public final class MoneyWiseXAnalysisSecurityBucket
      */
     public boolean isForeignCurrency() {
         return isForeignCurrency;
+    }
+
+    @Override
+    public boolean isStockOption() {
+        return isStockOption;
     }
 
     @Override
@@ -542,7 +533,14 @@ public final class MoneyWiseXAnalysisSecurityBucket
     @Override
     public void recordSecurityPrice() {
         final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
-        final TethysPrice myPrice = myCursor.getCurrentPrice(getSecurity());
+        TethysPrice myPrice = myCursor.getCurrentPrice(getSecurity());
+        if (isStockOption) {
+            myPrice = new TethysPrice(myPrice);
+            myPrice.subtractPrice(getSecurity().getOptionPrice());
+            if (!myPrice.isPositive()) {
+                myPrice.setZero();
+            }
+        }
         theValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, myPrice);
     }
 
@@ -569,7 +567,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
 
         /* Calculate the value */
         final TethysMoney myLocalValue = myUnits.valueAtPrice(myPrice);
-        setValue(MoneyWiseXAnalysisSecurityAttr.LOCALVALUE, myLocalValue);
+        setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, myLocalValue);
 
         /* If this is a foreign holding */
         TethysMoney myValue = myLocalValue;
@@ -577,25 +575,25 @@ public final class MoneyWiseXAnalysisSecurityBucket
             final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
             myValue = myLocalValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
          }
-        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, myValue);
+        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myValue);
     }
 
     @Override
-    public void adjustReportedBalance() {
+    public void adjustValuation() {
         /* Determine reported balance */
-        TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.LOCALVALUE);
+        TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUE);
         if (isForeignCurrency) {
             final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
             myBalance = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
         }
-        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE, myBalance);
+        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myBalance);
     }
 
     @Override
-    public TethysMoney getDeltaReportedBalance() {
+    public TethysMoney getDeltaValuation() {
         /* Determine the delta */
-        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE));
-        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE));
+        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
+        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
         return myDelta;
     }
 
@@ -623,11 +621,11 @@ public final class MoneyWiseXAnalysisSecurityBucket
      */
     private void calculateDeltas() {
         /* Obtain a copy of the value */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE);
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        myValue.subtractAmount(theBaseValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REPORTEDVALUE));
+        myValue.subtractAmount(theBaseValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
 
         /* Set the delta */
         setValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA, myValue);
