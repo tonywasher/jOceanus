@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
@@ -60,12 +59,12 @@ public class MoneyWiseXAnalysisState
     /**
      * The securityPrice iterator.
      */
-    private final ListIterator<MoneyWiseSecurityPrice> thePriceIterator;
+    private final Iterator<MoneyWiseSecurityPrice> thePriceIterator;
 
     /**
      * The exchangeRate iterator.
      */
-    private final ListIterator<MoneyWiseExchangeRate> theXchgRateIterator;
+    private final Iterator<MoneyWiseExchangeRate> theXchgRateIterator;
 
     /**
      * The depositRate iterator.
@@ -156,9 +155,9 @@ public class MoneyWiseXAnalysisState
         theEditSet = pEditSet;
 
         final MoneyWiseSecurityPriceList myPrices = theEditSet.getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);
-        thePriceIterator = myPrices.listIterator(myPrices.size());
+        thePriceIterator = myPrices.iterator();
         final MoneyWiseExchangeRateList myXchgRates = theEditSet.getDataList(MoneyWiseBasicDataType.EXCHANGERATE, MoneyWiseExchangeRateList.class);
-        theXchgRateIterator = myXchgRates.listIterator(myXchgRates.size());
+        theXchgRateIterator = myXchgRates.iterator();
         theDepRateIterator = new MoneyWiseNewDepositRateList(theEditSet).iterator();
         theTransIterator = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class).iterator();
         theStartDate = ((MoneyWiseDataSet) theEditSet.getDataSet()).getDateRange().getStart();
@@ -406,14 +405,14 @@ public class MoneyWiseXAnalysisState
      * Iterate the SecurityPrices.
      */
     private void iteratePrice() {
-        theNextPrice = thePriceIterator.hasPrevious() ? thePriceIterator.previous() : null;
+        theNextPrice = thePriceIterator.hasNext() ? thePriceIterator.next() : null;
     }
 
     /**
      * Iterate the ExchangeRates.
      */
     private void iterateXchgRate() {
-        theNextXchgRate = theXchgRateIterator.hasPrevious() ? theXchgRateIterator.previous() : null;
+        theNextXchgRate = theXchgRateIterator.hasNext() ? theXchgRateIterator.next() : null;
     }
 
     /**

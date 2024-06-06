@@ -117,7 +117,7 @@ public class MoneyWiseDepositCategoryBuilder {
         myCategory.adjustMapForItem();
         myCategory.validate();
         if (myCategory.hasErrors()) {
-            theDataSet.getDepositCategories().remove(myCategory);
+            myCategory.removeItem();
             throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 

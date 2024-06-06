@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetDirection;
@@ -25,12 +23,13 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * TRansaction details.
  */
-public class MoneyWiseXAnalysisTran {
+public class MoneyWiseXAnalysisTransaction {
     /**
      * The event.
      */
@@ -80,7 +79,7 @@ public class MoneyWiseXAnalysisTran {
      * Constructor.
      * @param pEvent the event
      */
-    MoneyWiseXAnalysisTran(final MoneyWiseXAnalysisEvent pEvent) {
+    MoneyWiseXAnalysisTransaction(final MoneyWiseXAnalysisEvent pEvent) {
         /* Store the base */
         theEvent = pEvent;
         theTrans = theEvent.getTransaction();
@@ -161,6 +160,32 @@ public class MoneyWiseXAnalysisTran {
      */
     MoneyWiseTransCategory getCategory() {
         return theCategory;
+    }
+
+    /**
+     * Obtain the categoryClass.
+     * @return the categoryClass
+     */
+    MoneyWiseTransCategoryClass getCategoryClass() {
+        return theCategory == null ? null : theCategory.getCategoryTypeClass();
+    }
+
+    /**
+     * is this an income?
+     * @return true/false
+     */
+    boolean isIncome() {
+        final MoneyWiseTransCategoryClass myClass = getCategoryClass();
+        return myClass != null && Boolean.TRUE.equals(myClass.isIncome());
+    }
+
+    /**
+     * is this an expense?
+     * @return true/false
+     */
+    boolean isExpense() {
+        final MoneyWiseTransCategoryClass myClass = getCategoryClass();
+        return myClass != null && Boolean.TRUE.equals(myClass.isExpense());
     }
 
     /**

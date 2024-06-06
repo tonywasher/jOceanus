@@ -470,7 +470,10 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * Set maturity.
       */
     public void recordMaturity() {
-        theValues.setValue(MoneyWiseXAnalysisAccountAttr.MATURITY, ((MoneyWiseDeposit) getAccount()).getMaturity());
+        final TethysDate myMaturity = ((MoneyWiseDeposit) getAccount()).getMaturity();
+        if (myMaturity != null) {
+            theValues.setValue(MoneyWiseXAnalysisAccountAttr.MATURITY, ((MoneyWiseDeposit) getAccount()).getMaturity());
+        }
     }
 
     @Override

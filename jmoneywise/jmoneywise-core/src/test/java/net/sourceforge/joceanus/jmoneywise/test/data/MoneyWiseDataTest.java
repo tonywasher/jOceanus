@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisEventAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
@@ -85,7 +86,7 @@ public class MoneyWiseDataTest {
         /* Initialise the data */
         new MoneyWiseTestCategories(pData).buildBasic();
         new MoneyWiseTestAccounts(pData).createAccounts();
-        new MoneyWiseTestTransactions(pData).createTransfers();
+        new MoneyWiseTestTransactions(pData).buildTransactions();
         new MoneyWiseTestSecurity(pData).initSecurity(pToolkit);
     }
 
@@ -176,6 +177,35 @@ public class MoneyWiseDataTest {
         Assertions.assertEquals(myDepTotal, myTaxTotal, "TaxBasis total mismatch");
     }
 
+
+    /**
+     * Analyse the data.
+     * @param pData the dataSet to analyse
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    public void analyse1Data(final MoneyWiseDataSet pData,
+                             final PrometheusToolkit pToolkit) throws OceanusException {
+        /* Initialise the analysis */
+        pData.initialiseAnalysis();
+
+        /* Create the analysis */
+        final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
+        final TethysProfile myTask = myView.getNewProfile("Dummy");
+        myView.setData(pData);
+        final PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
+        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
+
+        /* Post process the analysis */
+        myAnalyser.postProcessAnalysis();
+
+        /* Create secondary analysis */
+        final MoneyWiseXAnalysisEventAnalyser myAnalyser1 = new MoneyWiseXAnalysisEventAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
+
+        /* Post process the analysis */
+        myAnalyser1.postProcessAnalysis();
+    }
+
     /**
      * Create the localData tests.
      * @param pToolkit the toolkit
@@ -186,7 +216,7 @@ public class MoneyWiseDataTest {
         final MoneyWiseDataSet myData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pToolkit)));
         myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pToolkit))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyse1Data(myData, pToolkit))));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pToolkit))));
 
         /* Return the stream */

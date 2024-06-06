@@ -72,7 +72,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     /**
      * The current transaction.
      */
-    private MoneyWiseXAnalysisTran theTrans;
+    private MoneyWiseXAnalysisTransaction theTrans;
 
     /**
      * Constructor.
@@ -95,7 +95,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     public void processTransaction(final MoneyWiseXAnalysisEvent pEvent) throws OceanusException {
         /* Parse the event */
-        theTrans = new MoneyWiseXAnalysisTran(pEvent);
+        theTrans = new MoneyWiseXAnalysisTransaction(pEvent);
         final MoneyWiseTransaction myTrans = theTrans.getTransaction();
 
         /* Ignore header transactions */
@@ -126,17 +126,17 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWiseTransAsset myCredit = theTrans.getCreditAccount();
 
         /* If the event relates to a security holding account, split out the workings */
-        if (myDebit instanceof MoneyWiseSecurityHolding) {
+        if (isSecurityHolding(myDebit)) {
             /* Process as a Security transaction */
             theSecurity.processDebitSecurity(theTrans);
 
             /* If the event relates to a security holding partner, split out the workings */
-        } else if (myCredit instanceof MoneyWiseSecurityHolding) {
+        } else if (isSecurityHolding(myCredit)) {
             /* Process as a Security transaction */
             theSecurity.processCreditSecurity(theTrans);
 
             /* If the event is portfolioXfer, split out the workings */
-        } else if (theTrans.getCategory().getCategoryTypeClass() == MoneyWiseTransCategoryClass.PORTFOLIOXFER) {
+        } else if (isPortfolioXfer(theTrans.getCategoryClass())) {
             /* Process as a Security transaction */
             theSecurity.processPortfolioXfer(theTrans);
 
@@ -173,7 +173,9 @@ public class MoneyWiseXAnalysisTransAnalyser {
         processPayees();
 
         /* Register the eventBuckets */
-        theState.registerBucketsForEvent(theTrans.getEvent());
+        final MoneyWiseXAnalysisEvent myEvent = theTrans.getEvent();
+        theMarket.adjustMarketTotals(myEvent);
+        theState.registerBucketsForEvent(myEvent);
     }
 
     /**
@@ -200,7 +202,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
             if (Boolean.TRUE.equals(myDebit.isForeign())) {
                 /* convert debit amount to reporting currency */
                 myDebitAmount = myBucket.getDeltaValuation();
-                theTrans.setDebitAmount(myCreditAmount);
+                theTrans.setDebitAmount(myDebitAmount);
             }
         }
 
@@ -397,5 +399,23 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private boolean isAutoExpense(final MoneyWiseAssetBase pAccount) {
         return pAccount.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE;
+    }
+
+    /**
+     * is the account a securityHolding?
+     * @param pAccount the account
+     * @return true/false
+     */
+    private boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
+        return pAccount instanceof MoneyWiseSecurityHolding;
+    }
+
+    /**
+     * is the category PortfolioXfer?
+     * @param pCategoryClass the categoryClass
+     * @return true/false
+     */
+    private boolean isPortfolioXfer(final MoneyWiseTransCategoryClass pCategoryClass) {
+        return pCategoryClass == MoneyWiseTransCategoryClass.PORTFOLIOXFER;
     }
 }

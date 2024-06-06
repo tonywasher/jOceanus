@@ -160,7 +160,6 @@ public class MoneyWiseTestAccounts {
         createLoans();
         createPortfolios();
         createSecurities();
-        createSecurityPrices();
     }
 
     /**
@@ -239,16 +238,5 @@ public class MoneyWiseTestAccounts {
         theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES).symbol("BARC.L").build();
         theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(MoneyWiseSecurityClass.SHARES).symbol("BALL.NY").currency(MoneyWiseCurrencyClass.USD).build();
         theSecurityBuilder.name(idSC_StatePension).parent(idPY_Government).type(MoneyWiseSecurityClass.STATEPENSION).build();
-    }
-
-    /**
-     * Create securityPrices.
-     * @throws OceanusException on error
-     */
-    private void createSecurityPrices() throws OceanusException {
-        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01-Jun-1980").price("5.00").build();
-        theSecurityPriceBuilder.security(idSC_BallShares).date("01-Jun-1980").price("15.00").build();
-        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01-Jun-2010").price("10.00").build();
-        theSecurityPriceBuilder.security(idSC_BallShares).date("01-Jun-2010").price("25.00").build();
     }
 }

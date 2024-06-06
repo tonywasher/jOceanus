@@ -900,6 +900,17 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
     }
 
     /**
+     * Remove items.
+     */
+    public void removeItems() {
+        final InfoIterator myIterator = new InfoIterator();
+        while (myIterator.hasNext()) {
+            final T myItem = myIterator.next();
+            myItem.removeItem();
+        }
+    }
+
+    /**
      * Iterator class.
      */
     private final class InfoIterator

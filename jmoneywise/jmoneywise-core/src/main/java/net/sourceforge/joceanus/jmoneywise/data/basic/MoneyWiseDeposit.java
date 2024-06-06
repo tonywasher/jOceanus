@@ -799,6 +799,12 @@ public class MoneyWiseDeposit
         myMap.adjustForItem(this);
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Deposit List class.
      */

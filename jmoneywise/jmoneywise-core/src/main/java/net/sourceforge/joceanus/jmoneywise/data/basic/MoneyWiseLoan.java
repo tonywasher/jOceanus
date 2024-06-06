@@ -705,6 +705,12 @@ public class MoneyWiseLoan
         myMap.adjustForItem(this);
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Loan List class.
      */

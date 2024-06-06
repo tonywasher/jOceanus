@@ -16,9 +16,31 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.test.data;
 
+import org.junit.jupiter.api.Assertions;
+
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseTransactionBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.builder.MoneyWiseXchgRateBuilder;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Transactions builder.
@@ -30,25 +52,73 @@ public class MoneyWiseTestTransactions {
     private final MoneyWiseTransactionBuilder theTransBuilder;
 
     /**
+     * XchgRateBuilder.
+     */
+    private final MoneyWiseXchgRateBuilder theXchgRateBuilder;
+
+    /**
      * The dataSet.
      */
     private final MoneyWiseDataSet theData;
 
     /**
+     * The analysis.
+     */
+    private MoneyWiseXAnalysis theAnalysis;
+
+    /**
      * Constructor.
      * @param pDataSet the dataSet
+     * @throws OceanusException on error
      */
-    MoneyWiseTestTransactions(final MoneyWiseDataSet pDataSet) {
+    MoneyWiseTestTransactions(final MoneyWiseDataSet pDataSet) throws OceanusException {
         /* Create the builders */
         theTransBuilder = new MoneyWiseTransactionBuilder(pDataSet);
+        theXchgRateBuilder = new MoneyWiseXchgRateBuilder(pDataSet);
         theData = pDataSet;
+     }
+
+    /**
+     * Create transaction test.
+     * @throws OceanusException on error
+     */
+    public void buildTransactions() throws OceanusException {
+        createXchgRates();
+        //createTransfers();
+        createExpenses();
+        //createAutoExpenses();
+        //createIncomes();
+    }
+
+    /**
+     * Check analysis.
+     * @param pAnalysis the analysis
+     * @throws OceanusException on error
+     */
+    public void checkAnalysis(final MoneyWiseXAnalysis pAnalysis) throws OceanusException {
+        theAnalysis = pAnalysis;
+        //checkTransferTotals();
+        //checkExpenseTotals();
+        //checkAutoExpenseTotals();
+        //checkIncomeTotals();
+    }
+
+    /**
+     * build xchgRates.
+     * @throws OceanusException on error
+     */
+    private void createXchgRates() throws OceanusException {
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
     }
 
     /**
      * Create simple transfers.
      * @throws OceanusException on error
      */
-    public void createTransfers() throws OceanusException {
+    private void createTransfers() throws OceanusException {
         /* A simple transfer from one account to another */
         theTransBuilder.date("01-Jun-1985").category(MoneyWiseTestCategories.idTC_Transfer)
                 .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idDP_NatWideFlexDirect)
@@ -69,15 +139,42 @@ public class MoneyWiseTestTransactions {
                 .pair(MoneyWiseTestAccounts.idDP_StarlingEuro, MoneyWiseTestAccounts.idDP_StarlingDollar)
                 .amount("500").partnerAmount("550").build();
 
+        /* Check for failure on a transfer with same account as debit/credit */
+        Assertions.assertThrows(MoneyWiseDataException.class,
+                () -> theTransBuilder.date("05-Jun-1985").category(MoneyWiseTestCategories.idTC_Transfer)
+                .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idDP_BarclaysCurrent)
+                .amount("500").partnerAmount("550").build(),
+        "Failed to reject identical Debit/Credit for transfer");
+
+        /* Check for failure on a transfer from standard currency to non-standard currency with no partnerAmount */
+        Assertions.assertThrows(MoneyWiseDataException.class,
+                () -> theTransBuilder.date("06-Jun-1985").category(MoneyWiseTestCategories.idTC_Transfer)
+                .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idDP_StarlingEuro)
+                .amount("2000").build(),
+        "Failed to reject missing partnerAmount when transferring between accounts with differing currencies");
+
         /* Resolve the transactions */
         theData.getTransactions().resolveDataSetLinks();
+    }
+
+    /**
+     * Check transfer totals.
+     */
+    private void checkTransferTotals() {
+        checkAccountValue(MoneyWiseTestAccounts.idDP_BarclaysCurrent, "6950");
+        checkAccountValue(MoneyWiseTestAccounts.idDP_NatWideFlexDirect, "12000");
+        checkAccountValue(MoneyWiseTestAccounts.idDP_StarlingEuro, "570");
+        checkAccountValue(MoneyWiseTestAccounts.idDP_StarlingDollar, "467.5");
+        checkPayeeValue(MoneyWiseTestAccounts.idPY_Market, "107.5", "120");
+        checkCategoryValue(MoneyWiseTestCategories.idTC_MktCurrAdjust, "107.5", "120");
+        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "-12.5");
     }
 
     /**
      * Create simple expenses.
      * @throws OceanusException on error
      */
-    public void createExpenses() throws OceanusException {
+    private void createExpenses() throws OceanusException {
         /* A simple expense */
         theTransBuilder.date("01-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopFood)
                 .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idPY_ASDA)
@@ -106,7 +203,7 @@ public class MoneyWiseTestTransactions {
      * Create simple transfers.
      * @throws OceanusException on error
      */
-    public void createAutoExpenses() throws OceanusException {
+    private void createAutoExpenses() throws OceanusException {
         /* A simple expense to auto-expense */
         theTransBuilder.date("01-Jun-1987").category(MoneyWiseTestCategories.idTC_ShopFood)
                 .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idCS_Cash)
@@ -155,7 +252,7 @@ public class MoneyWiseTestTransactions {
      * Create simple incomes.
      * @throws OceanusException on error
      */
-    public void createIncomes() throws OceanusException {
+    private void createIncomes() throws OceanusException {
         /* A simple salary income */
         theTransBuilder.date("01-Jun-1988").category(MoneyWiseTestCategories.idTC_Salary)
                 .pair(MoneyWiseTestAccounts.idPY_IBM, MoneyWiseTestAccounts.idDP_BarclaysCurrent)
@@ -185,7 +282,7 @@ public class MoneyWiseTestTransactions {
      * Create simple share buy/sell.
      * @throws OceanusException on error
      */
-    public void createShareBuySell() throws OceanusException {
+    private void createShareBuySell() throws OceanusException {
         /* A simple inherited holding */
         theTransBuilder.date("01-Jun-1989").category(MoneyWiseTestCategories.idTC_Inheritance)
                 .pair(MoneyWiseTestAccounts.idPY_Parents, MoneyWiseTestAccounts.idSH_BarclaysShares)
@@ -213,5 +310,94 @@ public class MoneyWiseTestTransactions {
 
         /* Resolve the transactions */
         theData.getTransactions().resolveDataSetLinks();
+    }
+
+    /**
+     * Check account valuation.
+     * @param pAccount the account
+     * @param pValue the expected value
+     */
+    private void checkAccountValue(final String pAccount,
+                                   final String pValue) {
+        /* Obtain the value */
+        final TethysMoney myAmount = new TethysMoney(pValue);
+        final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) theTransBuilder.resolveTransactionAsset(pAccount);
+        final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(myAsset);
+        Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION),
+                "Bad total for " + pAccount);
+    }
+
+    /**
+     * Check payee income/expense.
+     * @param pPayee the payee
+     * @param pIncome the expected income
+     * @param pExpense the expected expense
+     */
+    private void checkPayeeValue(final String pPayee,
+                                 final String pIncome,
+                                 final String pExpense) {
+        /* Obtain the value */
+        final TethysMoney myIncome = new TethysMoney(pIncome);
+        final TethysMoney myExpense = new TethysMoney(pExpense);
+        final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) theTransBuilder.resolveTransactionAsset(pPayee);
+        final MoneyWiseXAnalysisPayeeBucket myBucket = theAnalysis.getPayees().getBucket(myAsset);
+        Assertions.assertEquals(myIncome, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME),
+                "Bad income for " + pPayee);
+        Assertions.assertEquals(myExpense, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.EXPENSE),
+                "Bad expense for " + pPayee);
+    }
+
+    /**
+     * Check category income/expense.
+     * @param pCategory the category
+     * @param pIncome the expected income
+     * @param pExpense the expected expense
+     */
+    private void checkCategoryValue(final String pCategory,
+                                    final String pIncome,
+                                    final String pExpense) {
+        /* Obtain the value */
+        final TethysMoney myIncome = new TethysMoney(pIncome);
+        final TethysMoney myExpense = new TethysMoney(pExpense);
+        final MoneyWiseTransCategory myCategory = theAnalysis.getData().getTransCategories().findItemByName(pCategory);
+        final MoneyWiseXAnalysisTransCategoryBucket myBucket = theAnalysis.getTransCategories().getBucket(myCategory);
+        Assertions.assertEquals(myIncome, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.INCOME),
+                "Bad income for " + pCategory);
+        Assertions.assertEquals(myExpense, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.EXPENSE),
+                "Bad expense for " + pCategory);
+    }
+
+    /**
+     * Check taxBasis value.
+     * @param pTaxBasis the taxBasis
+     * @param pValue the expected value
+     */
+    private void checkTaxBasisValue(final MoneyWiseTaxClass pTaxBasis,
+                                    final String pValue) {
+        /* Obtain the value */
+        final TethysMoney myAmount = new TethysMoney(pValue);
+        final MoneyWiseXAnalysisTaxBasisBucket myBucket = theAnalysis.getTaxBasis().getBucket(pTaxBasis);
+        Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT),
+                "Bad value for " + pTaxBasis);
+    }
+
+    /**
+     * Obtain Account bucket for asset.
+     * @param pAsset the asset
+     * @return the bucket
+     */
+    private MoneyWiseXAnalysisAccountBucket<?> getAccountBucket(final MoneyWiseAssetBase pAsset) {
+        switch (pAsset.getAssetType()) {
+            case DEPOSIT:
+                return theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);
+            case CASH:
+                return theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);
+            case LOAN:
+                return theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);
+            case PORTFOLIO:
+                return theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

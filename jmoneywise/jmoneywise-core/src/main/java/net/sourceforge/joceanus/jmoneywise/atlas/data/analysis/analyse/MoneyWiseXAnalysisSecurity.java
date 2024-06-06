@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -53,7 +48,7 @@ public class MoneyWiseXAnalysisSecurity {
      * @param pTrans  the transaction
      * @throws OceanusException on error
      */
-    void processDebitSecurity(final MoneyWiseXAnalysisTran pTrans) throws OceanusException {
+    void processDebitSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
 
     }
 
@@ -63,7 +58,7 @@ public class MoneyWiseXAnalysisSecurity {
      * @param pTrans  the transaction
      * @throws OceanusException on error
      */
-    void processCreditSecurity(final MoneyWiseXAnalysisTran pTrans) throws OceanusException {
+    void processCreditSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
 
     }
 
@@ -73,6 +68,6 @@ public class MoneyWiseXAnalysisSecurity {
      * This capital event relates only to both Debit and credit accounts.
      * @param pTrans  the transaction
      */
-    void processPortfolioXfer(final MoneyWiseXAnalysisTran pTrans) {
+    void processPortfolioXfer(final MoneyWiseXAnalysisTransaction pTrans) {
     }
 }

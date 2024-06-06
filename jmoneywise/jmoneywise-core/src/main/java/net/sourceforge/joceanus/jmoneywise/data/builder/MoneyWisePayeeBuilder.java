@@ -96,7 +96,7 @@ public class MoneyWisePayeeBuilder {
         myPayee.adjustMapForItem();
         myPayee.validate();
         if (myPayee.hasErrors()) {
-            theDataSet.getPayees().remove(myPayee);
+            myPayee.removeItem();
             throw new MoneyWiseDataException(myPayee, "Failed validation");
         }
 

@@ -70,6 +70,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
         /* Create base as a snapshot */
         theBaseValues = theValues.getFullSnapShot();
+        theLastValues = theBaseValues;
     }
 
     /**

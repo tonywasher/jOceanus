@@ -56,7 +56,6 @@ public class MoneyWiseXAnalysisEvent
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID, MoneyWiseXAnalysisEvent::getId);
         FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_DATE, MoneyWiseXAnalysisEvent::getDate);
         FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_TYPE, MoneyWiseXAnalysisEvent::getEventType);
         FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.TRANSACTION_NAME, MoneyWiseXAnalysisEvent::getTransaction);
@@ -162,11 +161,8 @@ public class MoneyWiseXAnalysisEvent
         }
     }
 
-    /**
-     * Obtain the id.
-     * @return the id
-     */
-    public Integer getId() {
+    @Override
+    public Integer getIndexedId() {
         return theId;
     }
 

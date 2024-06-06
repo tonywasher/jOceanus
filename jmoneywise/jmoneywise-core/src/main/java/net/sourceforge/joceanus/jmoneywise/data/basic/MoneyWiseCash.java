@@ -628,6 +628,12 @@ public class MoneyWiseCash
         myMap.adjustForItem(this);
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Cash List class.
      */

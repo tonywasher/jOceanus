@@ -65,6 +65,16 @@ public class MoneyWiseXAnalysisMarket {
     private final TethysMoney theMarketExpense;
 
     /**
+     * Is there currency fluctuation?
+     */
+    private boolean isFluctuation;
+
+    /**
+     * Is there growth?
+     */
+    private boolean isGrowth;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      */
@@ -95,7 +105,10 @@ public class MoneyWiseXAnalysisMarket {
                                      final TethysMoney pDelta) {
         /* Adjust marketGrowth for delta */
         theMarketGrowthBucket.adjustForDelta(pDelta);
-        theMarketGrowthBucket.registerEvent(pEvent);
+        if (!isGrowth) {
+            theMarketGrowthBucket.registerEvent(pEvent);
+            isGrowth = true;
+        }
 
         /* Adjust income expense */
         if (pDelta.isPositive()) {
@@ -114,7 +127,10 @@ public class MoneyWiseXAnalysisMarket {
                                             final TethysMoney pDelta) {
         /* Adjust currencyFluctuation for delta */
         theCurrencyFluctuationBucket.adjustForDelta(pDelta);
-        theCurrencyFluctuationBucket.registerEvent(pEvent);
+        if (!isFluctuation) {
+            theCurrencyFluctuationBucket.registerEvent(pEvent);
+            isFluctuation = true;
+        }
 
         /* Adjust income expense */
         if (pDelta.isPositive()) {
@@ -129,18 +145,23 @@ public class MoneyWiseXAnalysisMarket {
      * @param pEvent the event
      */
     void adjustMarketTotals(final MoneyWiseXAnalysisEvent pEvent) {
-        /* Adjust marketTotals */
-        theMarketBucket.addIncome(theMarketIncome);
-        theMarketBucket.addExpense(theMarketExpense);
-        theMarketBucket.registerEvent(pEvent);
+        /* If we are active */
+        if (isGrowth || isFluctuation) {
+            /* Adjust marketTotals */
+            theMarketBucket.addIncome(theMarketIncome);
+            theMarketBucket.addExpense(theMarketExpense);
+            theMarketBucket.registerEvent(pEvent);
 
-        /* Adjust taxBasisTotals */
-        theMarketIncome.subtractAmount(theMarketExpense);
-        theTaxBasisBucket.adjustValue(theMarketIncome, MoneyWiseXTaxBasisAdjust.STANDARD);
-        theTaxBasisBucket.registerEvent(pEvent);
+            /* Adjust taxBasisTotals */
+            theMarketIncome.subtractAmount(theMarketExpense);
+            theTaxBasisBucket.adjustValue(theMarketIncome, MoneyWiseXTaxBasisAdjust.STANDARD);
+            theTaxBasisBucket.registerEvent(pEvent);
 
-        /* Reset totals */
-        theMarketIncome.setZero();
-        theMarketExpense.setZero();
+            /* Reset totals */
+            theMarketIncome.setZero();
+            theMarketExpense.setZero();
+            isGrowth = false;
+            isFluctuation = false;
+        }
     }
 }

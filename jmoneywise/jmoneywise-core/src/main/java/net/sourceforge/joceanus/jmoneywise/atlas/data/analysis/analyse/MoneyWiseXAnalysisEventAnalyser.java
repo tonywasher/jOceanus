@@ -80,7 +80,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
                                            final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Initialise the task */
         theProfile = pTask;
-        final TethysProfile myTask = theProfile.startTask("analyseTransactions");
+        final TethysProfile myTask = theProfile.startTask("analyseEvents");
 
         /* Create the new Analysis */
         myTask.startTask("Initialise");
@@ -163,7 +163,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
      */
     public void postProcessAnalysis() throws OceanusException {
         /* Start a new task */
-        final TethysProfile myTask = theProfile.startTask("postProcessAnalysis");
+        final TethysProfile myTask = theProfile.startTask("postProcessAnalysis1");
         myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */

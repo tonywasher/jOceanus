@@ -987,6 +987,12 @@ public class MoneyWiseTransaction
         }
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Transaction List class.
      */

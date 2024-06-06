@@ -265,12 +265,6 @@ public class MoneyWiseTestCategories {
      * TagBuilder.
      */
     private final MoneyWiseTagBuilder theTagBuilder;
-
-    /**
-     * XchgRateBuilder.
-     */
-    private final MoneyWiseXchgRateBuilder theXchgRateBuilder;
-
     /**
      * Constructor.
      * @param pDataSet the dataSet
@@ -284,7 +278,6 @@ public class MoneyWiseTestCategories {
         theTransBuilder = new MoneyWiseTransCategoryBuilder(pDataSet);
         theRegionBuilder = new MoneyWiseRegionBuilder(pDataSet);
         theTagBuilder = new MoneyWiseTagBuilder(pDataSet);
-        theXchgRateBuilder = new MoneyWiseXchgRateBuilder(pDataSet);
     }
 
     /**
@@ -304,9 +297,6 @@ public class MoneyWiseTestCategories {
         /* Build regions and tags */
         buildRegions();
         buildTransactionTags();
-
-        /* Build xchageRates */
-        buildXchgRates();
     }
 
     /**
@@ -566,16 +556,5 @@ public class MoneyWiseTestCategories {
         theTagBuilder.name(idTG_Important).build();
         theTagBuilder.name(idTG_Work).build();
         theTagBuilder.name(idTG_Personal).build();
-    }
-
-    /**
-     * build xchgRates.
-     * @throws OceanusException on error
-     */
-    private void buildXchgRates() throws OceanusException {
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
     }
 }

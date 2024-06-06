@@ -705,6 +705,12 @@ public class MoneyWisePayee
         myMap.adjustForItem(this);
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Payee List class.
      */

@@ -165,7 +165,7 @@ public class MoneyWisePortfolioBuilder {
         myPortfolio.adjustMapForItem();
         myPortfolio.validate();
         if (myPortfolio.hasErrors()) {
-            theDataSet.getPortfolios().remove(myPortfolio);
+            myPortfolio.removeItem();
             throw new MoneyWiseDataException(myPortfolio, "Failed validation");
         }
 

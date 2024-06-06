@@ -77,7 +77,7 @@ public class MoneyWiseRegionBuilder {
         myRegion.adjustMapForItem();
         myRegion.validate();
         if (myRegion.hasErrors()) {
-            theDataSet.getRegions().remove(myRegion);
+            myRegion.removeItem();
             throw new MoneyWiseDataException(myRegion, "Failed validation");
         }
 

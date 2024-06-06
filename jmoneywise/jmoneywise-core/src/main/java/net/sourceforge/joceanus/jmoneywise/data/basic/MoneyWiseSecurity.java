@@ -801,6 +801,12 @@ public class MoneyWiseSecurity
         myMap.adjustForItem(this);
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Security List class.
      */
