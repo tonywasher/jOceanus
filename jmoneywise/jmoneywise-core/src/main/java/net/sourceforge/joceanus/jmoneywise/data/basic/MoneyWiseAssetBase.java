@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jprometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -308,6 +309,14 @@ public abstract class MoneyWiseAssetBase
                 ? getDataSet().getReportingCurrency()
                 : myCurrency;
         return myCurrency == null ? null : myCurrency.getCurrency();
+    }
+
+    /**
+     * Obtain Opening Balance.
+     * @return the Opening balance
+     */
+    public TethysMoney getOpeningBalance() {
+        return null;
     }
 
     @Override

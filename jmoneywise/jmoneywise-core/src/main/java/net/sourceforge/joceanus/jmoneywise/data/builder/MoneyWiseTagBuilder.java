@@ -68,7 +68,7 @@ public class MoneyWiseTagBuilder {
         myTag.adjustMapForItem();
         myTag.validate();
         if (myTag.hasErrors()) {
-            theDataSet.getTransactionTags().remove(myTag);
+            myTag.removeItem();
             throw new MoneyWiseDataException(myTag, "Failed validation");
         }
 

@@ -151,6 +151,16 @@ public class MoneyWiseTransactionBuilder {
     private TethysPrice thePrice;
 
     /**
+     * The Reference.
+     */
+    private String theReference;
+
+    /**
+     * The Comment.
+     */
+    private String theComment;
+
+    /**
      * Constructor.
      * @param pDataSet the dataSet
      */
@@ -498,6 +508,26 @@ public class MoneyWiseTransactionBuilder {
     }
 
     /**
+     * Set reference.
+     * @param pRef the reference
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder reference(final String pRef) {
+        theReference = pRef;
+        return this;
+    }
+
+    /**
+     * Set comment.
+     * @param pComment the comment
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder comment(final String pComment) {
+        theComment = pComment;
+        return this;
+    }
+
+    /**
      * Build the transaction.
      * @return the new Transaction
      * @throws OceanusException on error
@@ -517,6 +547,8 @@ public class MoneyWiseTransactionBuilder {
         myTrans.setReconciled(theReconciled);
 
         /* Add details */
+        myTrans.setComments(theComment);
+        myTrans.setReference(theReference);
         myTrans.setTaxCredit(theTaxCredit);
         myTrans.setEmployerNatIns(theErNI);
         myTrans.setEmployeeNatIns(theEeNI);
@@ -535,7 +567,7 @@ public class MoneyWiseTransactionBuilder {
         /* Check for errors */
         myTrans.validate();
         if (myTrans.hasErrors()) {
-            theDataSet.getTransactions().remove(myTrans);
+            myTrans.removeItem();
             throw new MoneyWiseDataException(myTrans, "Failed validation");
         }
 
@@ -546,6 +578,8 @@ public class MoneyWiseTransactionBuilder {
         switchDirection = false;
         theCategory = null;
         theAmount = null;
+        theComment = null;
+        theReference = null;
         theTaxCredit = null;
         theErNI = null;
         theEeNI = null;
@@ -571,7 +605,7 @@ public class MoneyWiseTransactionBuilder {
      * @param pAsset the asset name
      * @return the asset
      */
-    private MoneyWiseTransAsset resolveTransactionAsset(final String pAsset) {
+    public MoneyWiseTransAsset resolveTransactionAsset(final String pAsset) {
         /* Look fot security holding */
         final int myIndex = pAsset.lastIndexOf(':');
         if (myIndex != -1) {

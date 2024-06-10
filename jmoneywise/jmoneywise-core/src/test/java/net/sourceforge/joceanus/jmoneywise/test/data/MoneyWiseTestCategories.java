@@ -118,9 +118,11 @@ public class MoneyWiseTestCategories {
     final static String idTC_CarLease = idTC_Car + ":Lease";
     final static String idTC_CarElectric = idTC_Car + ":Electric";
     final static String idTC_Charges = "Charges";
-    final static String idTC_ChgFees = idTC_Market + ":Fees";
-    final static String idTC_ChgFines = idTC_Market + ":Fines";
-    final static String idTC_ChgInterest = idTC_Market + ":Interest";
+    final static String idTC_ChgBadDebtInt = idTC_Charges + ":BadDebtInterest";
+    final static String idTC_ChgBadDebtCap = idTC_Charges + ":BadDebtCapital";
+    final static String idTC_ChgFees = idTC_Charges + ":Fees";
+    final static String idTC_ChgFines = idTC_Charges + ":Fines";
+    final static String idTC_ChgInterest = idTC_Charges + ":Interest";
     final static String idTC_Expenses = "Expenses";
     final static String idTC_ExpBusiness = idTC_Expenses + ":Business";
     final static String idTC_ExpCash = idTC_Expenses + ":Cash";
@@ -265,12 +267,6 @@ public class MoneyWiseTestCategories {
      * TagBuilder.
      */
     private final MoneyWiseTagBuilder theTagBuilder;
-
-    /**
-     * XchgRateBuilder.
-     */
-    private final MoneyWiseXchgRateBuilder theXchgRateBuilder;
-
     /**
      * Constructor.
      * @param pDataSet the dataSet
@@ -284,7 +280,6 @@ public class MoneyWiseTestCategories {
         theTransBuilder = new MoneyWiseTransCategoryBuilder(pDataSet);
         theRegionBuilder = new MoneyWiseRegionBuilder(pDataSet);
         theTagBuilder = new MoneyWiseTagBuilder(pDataSet);
-        theXchgRateBuilder = new MoneyWiseXchgRateBuilder(pDataSet);
     }
 
     /**
@@ -304,9 +299,6 @@ public class MoneyWiseTestCategories {
         /* Build regions and tags */
         buildRegions();
         buildTransactionTags();
-
-        /* Build xchageRates */
-        buildXchgRates();
     }
 
     /**
@@ -422,6 +414,8 @@ public class MoneyWiseTestCategories {
 
         /* Charges */
         theTransBuilder.name(idTC_Charges).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_ChgBadDebtCap).type(MoneyWiseTransCategoryClass.BADDEBTCAPITAL).build();
+        theTransBuilder.name(idTC_ChgBadDebtInt).type(MoneyWiseTransCategoryClass.BADDEBTINTEREST).build();
         theTransBuilder.name(idTC_ChgFees).type(MoneyWiseTransCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_ChgFines).type(MoneyWiseTransCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_ChgInterest).type(MoneyWiseTransCategoryClass.EXPENSE).build();
@@ -566,16 +560,5 @@ public class MoneyWiseTestCategories {
         theTagBuilder.name(idTG_Important).build();
         theTagBuilder.name(idTG_Work).build();
         theTagBuilder.name(idTG_Personal).build();
-    }
-
-    /**
-     * build xchgRates.
-     * @throws OceanusException on error
-     */
-    private void buildXchgRates() throws OceanusException {
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
     }
 }

@@ -117,7 +117,7 @@ public class MoneyWiseCashCategoryBuilder {
         myCategory.adjustMapForItem();
         myCategory.validate();
         if (myCategory.hasErrors()) {
-            theDataSet.getCashCategories().remove(myCategory);
+            myCategory.removeItem();
             throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 

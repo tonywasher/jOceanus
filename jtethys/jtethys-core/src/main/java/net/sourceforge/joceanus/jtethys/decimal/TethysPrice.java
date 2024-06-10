@@ -122,4 +122,20 @@ public class TethysPrice
         myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
         return myResult;
     }
+
+    /**
+     * Subtract a monetary price from the value.
+     *
+     * @param pValue The money to subtract from this one.
+     */
+    public void subtractPrice(final TethysPrice pValue) {
+        /* Currency must be identical */
+        if (!getCurrency().equals(pValue.getCurrency())) {
+            throw new IllegalArgumentException(ERROR_DIFFER);
+        }
+
+        /* Subtract the value */
+        super.subtractValue(pValue);
+    }
+
 }

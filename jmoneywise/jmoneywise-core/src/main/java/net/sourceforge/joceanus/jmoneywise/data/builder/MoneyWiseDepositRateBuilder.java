@@ -155,7 +155,7 @@ public class MoneyWiseDepositRateBuilder {
         myRate.adjustMapForItem();
         myRate.validate();
         if (myRate.hasErrors()) {
-            theDataSet.getDepositRates().remove(myRate);
+            myRate.removeItem();
             throw new MoneyWiseDataException(myRate, "Failed validation");
         }
 

@@ -815,6 +815,12 @@ public class MoneyWisePortfolio
         myMap.adjustForItem(this);
     }
 
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
+    }
+
     /**
      * The Portfolio List class.
      */

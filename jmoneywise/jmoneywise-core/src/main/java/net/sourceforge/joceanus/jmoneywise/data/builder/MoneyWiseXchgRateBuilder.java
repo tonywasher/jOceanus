@@ -142,7 +142,7 @@ public class MoneyWiseXchgRateBuilder {
         myRate.adjustMapForItem();
         myRate.validate();
         if (myRate.hasErrors()) {
-            theDataSet.getExchangeRates().remove(myRate);
+            myRate.removeItem();
             throw new MoneyWiseDataException(myRate, "Failed validation");
         }
 

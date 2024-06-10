@@ -798,6 +798,13 @@ public abstract class PrometheusDataItem
     }
 
     /**
+     * Remove the item (and any subitems from the lists).
+     */
+    public void removeItem() {
+        theList.remove(this);
+    }
+
+    /**
      * Obtain the field state.
      * @param pField the field
      * @return the state

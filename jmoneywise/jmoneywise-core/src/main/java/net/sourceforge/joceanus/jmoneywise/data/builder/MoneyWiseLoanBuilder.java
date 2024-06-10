@@ -190,7 +190,7 @@ public class MoneyWiseLoanBuilder {
         myLoan.adjustMapForItem();
         myLoan.validate();
         if (myLoan.hasErrors()) {
-            theDataSet.getLoans().remove(myLoan);
+            myLoan.removeItem();
             throw new MoneyWiseDataException(myLoan, "Failed validation");
         }
 

@@ -190,7 +190,7 @@ public class MoneyWiseDepositBuilder {
         myDeposit.adjustMapForItem();
         myDeposit.validate();
         if (myDeposit.hasErrors()) {
-            theDataSet.getDeposits().remove(myDeposit);
+            myDeposit.removeItem();
             throw new MoneyWiseDataException(myDeposit, "Failed validation");
         }
 

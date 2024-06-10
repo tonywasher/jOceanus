@@ -217,10 +217,7 @@ public class MoneyWiseCash
                 : null;
     }
 
-    /**
-     * Obtain Opening Balance.
-     * @return the Opening balance
-     */
+    @Override
     public TethysMoney getOpeningBalance() {
         return hasInfoSet
                 ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, TethysMoney.class)
@@ -268,7 +265,7 @@ public class MoneyWiseCash
     @Override
     public Boolean isForeign() {
         final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
-        return !isAutoExpense() && !myDefault.equals(getAssetCurrency());
+        return !myDefault.equals(getAssetCurrency());
     }
 
     @Override
@@ -629,6 +626,12 @@ public class MoneyWiseCash
         final MoneyWiseCashList myList = getList();
         final MoneyWiseCashDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
+    }
+
+    @Override
+    public void removeItem() {
+        theInfoSet.removeItems();
+        super.removeItem();
     }
 
     /**

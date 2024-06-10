@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWisePortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.profile.TethysProfile;

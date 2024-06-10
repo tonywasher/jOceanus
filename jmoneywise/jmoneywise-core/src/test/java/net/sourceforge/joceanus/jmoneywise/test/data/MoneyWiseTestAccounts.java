@@ -41,6 +41,7 @@ public class MoneyWiseTestAccounts {
     final static String idPY_Nationwide = "Nationwide";
     final static String idPY_Starling = "Starling";
     final static String idPY_InteractiveInvestor = "InteractiveInvestor";
+    final static String idPY_FundingCircle = "FundingCircle";
     final static String idPY_BallCorp = "BallCorp";
     final static String idPY_IBM = "IBM";
     final static String idPY_Petrol = "Petrol";
@@ -54,6 +55,7 @@ public class MoneyWiseTestAccounts {
     final static String idPY_Market = "Market";
     final static String idPY_CashExpense = "CashExpense";
     final static String idPY_Damage = "Damage";
+    final static String idPY_Parents = "Parents";
 
     /**
      * Deposit ids.
@@ -63,11 +65,14 @@ public class MoneyWiseTestAccounts {
     final static String idDP_NatWideLoyalty = "NatWideLoyalty";
     final static String idDP_StarlingSterling = "StarlingSterling";
     final static String idDP_StarlingEuro = "StarlingEuro";
+    final static String idDP_StarlingDollar = "StarlingDollar";
+    final static String idDP_FundingCircleLoans = "FundingCircleLoans";
 
     /**
      * Cash ids.
      */
     final static String idCS_Cash = "Cash";
+    final static String idCS_EurosCash = "EurosCash";
 
     /**
      * Loan ids.
@@ -89,6 +94,12 @@ public class MoneyWiseTestAccounts {
     final static String idSC_BarclaysShares = "BarclaysShares";
     final static String idSC_BallShares = "BallShares";
     final static String idSC_StatePension = "StatePension";
+
+    /**
+     * Security holding ids.
+     */
+    final static String idSH_BarclaysShares = idPF_InteractiveInvestorStock + ":" + idSC_BarclaysShares;
+    final static String idSH_BallShares = idPF_InteractiveInvestorStock + ":" + idSC_BallShares;
 
     /**
      * PayeeBuilder.
@@ -151,7 +162,6 @@ public class MoneyWiseTestAccounts {
         createLoans();
         createPortfolios();
         createSecurities();
-        createSecurityPrices();
     }
 
     /**
@@ -164,11 +174,13 @@ public class MoneyWiseTestAccounts {
         thePayeeBuilder.name(idPY_Starling).type(MoneyWisePayeeClass.INSTITUTION).build();
         thePayeeBuilder.name(idPY_BallCorp).type(MoneyWisePayeeClass.INSTITUTION).build();
         thePayeeBuilder.name(idPY_InteractiveInvestor).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_FundingCircle).type(MoneyWisePayeeClass.INSTITUTION).build();
         thePayeeBuilder.name(idPY_Government).type(MoneyWisePayeeClass.GOVERNMENT).build();
         thePayeeBuilder.name(idPY_HMRC).type(MoneyWisePayeeClass.TAXMAN).build();
         thePayeeBuilder.name(idPY_Market).type(MoneyWisePayeeClass.MARKET).build();
         thePayeeBuilder.name(idPY_IBM).type(MoneyWisePayeeClass.EMPLOYER).build();
         thePayeeBuilder.name(idPY_Damage).type(MoneyWisePayeeClass.INDIVIDUAL).build();
+        thePayeeBuilder.name(idPY_Parents).type(MoneyWisePayeeClass.INDIVIDUAL).build();
         thePayeeBuilder.name(idPY_ASDA).type(MoneyWisePayeeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_CoOp).type(MoneyWisePayeeClass.PAYEE).build();
         thePayeeBuilder.name(idPY_Tesco).type(MoneyWisePayeeClass.PAYEE).build();
@@ -188,6 +200,8 @@ public class MoneyWiseTestAccounts {
         theDepositBuilder.name(idDP_NatWideLoyalty).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Savings).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.EUR).build();
+        theDepositBuilder.name(idDP_StarlingDollar).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.USD).build();
+        theDepositBuilder.name(idDP_FundingCircleLoans).parent(idPY_FundingCircle).category(MoneyWiseTestCategories.idDC_Peer2Peer).build();
     }
 
     /**
@@ -196,6 +210,8 @@ public class MoneyWiseTestAccounts {
      */
     private void createCash() throws OceanusException {
         theCashBuilder.name(idCS_Cash).category(MoneyWiseTestCategories.idCC_Cash).autoExpense(MoneyWiseTestCategories.idTC_ExpCash, idPY_CashExpense).build();
+        theCashBuilder.name(idCS_EurosCash).category(MoneyWiseTestCategories.idCC_Cash).currency(MoneyWiseCurrencyClass.EUR)
+                .autoExpense(MoneyWiseTestCategories.idTC_ExpCash, idPY_CashExpense).build();
     }
 
     /**
@@ -226,16 +242,5 @@ public class MoneyWiseTestAccounts {
         theSecurityBuilder.name(idSC_BarclaysShares).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES).symbol("BARC.L").build();
         theSecurityBuilder.name(idSC_BallShares).parent(idPY_BallCorp).type(MoneyWiseSecurityClass.SHARES).symbol("BALL.NY").currency(MoneyWiseCurrencyClass.USD).build();
         theSecurityBuilder.name(idSC_StatePension).parent(idPY_Government).type(MoneyWiseSecurityClass.STATEPENSION).build();
-    }
-
-    /**
-     * Create securityPrices.
-     * @throws OceanusException on error
-     */
-    private void createSecurityPrices() throws OceanusException {
-        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01-Jun-1980").price("5.00").build();
-        theSecurityPriceBuilder.security(idSC_BallShares).date("01-Jun-1980").price("15.00").build();
-        theSecurityPriceBuilder.security(idSC_BarclaysShares).date("01-Jun-2010").price("10.00").build();
-        theSecurityPriceBuilder.security(idSC_BallShares).date("01-Jun-2010").price("25.00").build();
     }
 }

@@ -127,7 +127,7 @@ public class MoneyWiseTransCategoryBuilder {
         myCategory.adjustMapForItem();
         myCategory.validate();
         if (myCategory.hasErrors()) {
-            theDataSet.getTransCategories().remove(myCategory);
+            myCategory.removeItem();
             throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 

@@ -240,7 +240,7 @@ public class MoneyWiseSecurityBuilder {
         mySecurity.adjustMapForItem();
         mySecurity.validate();
         if (mySecurity.hasErrors()) {
-            theDataSet.getSecurities().remove(mySecurity);
+            mySecurity.removeItem();
             throw new MoneyWiseDataException(mySecurity, "Failed validation");
         }
 
