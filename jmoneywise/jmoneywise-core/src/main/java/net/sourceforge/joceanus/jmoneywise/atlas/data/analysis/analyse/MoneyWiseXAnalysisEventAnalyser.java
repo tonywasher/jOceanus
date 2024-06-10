@@ -27,7 +27,10 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseExchangeRate;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -47,6 +50,11 @@ public class MoneyWiseXAnalysisEventAnalyser {
      * The analysis.
      */
     private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The security holding map.
+     */
+    private final MoneyWiseSecurityHoldingMap theHoldingMap;
 
     /**
      * The State.
@@ -86,6 +94,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
         myTask.startTask("Initialise");
         theState = new MoneyWiseXAnalysisState(pEditSet);
         theAnalysis = new MoneyWiseXAnalysis(pEditSet, theState, pPreferenceMgr);
+        theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
 
         /* Create the analysers */
         theMarket = new MoneyWiseXAnalysisMarket(theAnalysis);
@@ -131,6 +140,14 @@ public class MoneyWiseXAnalysisEventAnalyser {
      */
     MoneyWiseXAnalysis getAnalysis() {
         return theAnalysis;
+    }
+
+    /**
+     * Obtain the securityHoldingMap.
+     * @return the map
+     */
+    MoneyWiseSecurityHoldingMap getSecurityHoldingMap() {
+        return theHoldingMap;
     }
 
     /**
@@ -193,7 +210,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
             while (myBucketIterator.hasNext()) {
                 final MoneyWiseXAnalysisBucketPriced myBucket = myBucketIterator.next();
 
-                /* update the rate and determine the value delta */
+                /* update the price and determine the value delta */
                 myBucket.recordSecurityPrice();
                 myBucket.adjustValuation();
                 final TethysMoney myDelta = myBucket.getDeltaValuation();

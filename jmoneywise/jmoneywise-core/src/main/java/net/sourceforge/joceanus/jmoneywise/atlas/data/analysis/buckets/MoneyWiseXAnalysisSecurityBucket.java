@@ -468,7 +468,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * Adjust Units.
      * @param pDelta the delta
      */
-    public void adjusUNits(final TethysUnits pDelta) {
+    public void adjustUnits(final TethysUnits pDelta) {
         TethysUnits myValue = theValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
         myValue = new TethysUnits(myValue);
         myValue.addUnits(pDelta);
@@ -509,17 +509,6 @@ public final class MoneyWiseXAnalysisSecurityBucket
     }
 
     /**
-     * Adjust UnrealisedGains.
-     * @param pDelta the delta
-     */
-    public void adjustUnrealisedGains(final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS);
-        myValue = new TethysMoney(myValue);
-        myValue.addAmount(pDelta);
-        setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, myValue);
-    }
-
-    /**
      * Adjust Dividends.
      * @param pDelta the delta
      */
@@ -528,6 +517,36 @@ public final class MoneyWiseXAnalysisSecurityBucket
         myValue = new TethysMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, myValue);
+    }
+
+    /**
+     * Adjust Funded.
+     * @param pDelta the delta
+     */
+    public void adjustFunded(final TethysMoney pDelta) {
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED);
+        myValue = new TethysMoney(myValue);
+        myValue.addAmount(pDelta);
+        setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, myValue);
+    }
+
+    /**
+     * Set startDate.
+     * @param pDate the startDate
+     */
+    public void setStartDate(final TethysDate pDate) {
+        setValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE, pDate);
+    }
+
+    /**
+     * Calculate unrealisedGains.
+     */
+    public void calculateUnrealisedGains() {
+        /* Unrealised gains is VALUATION - RESIDUALCOST */
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myValue = new TethysMoney(myValue);
+        myValue.subtractAmount(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST));
+        setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, myValue);
     }
 
     @Override

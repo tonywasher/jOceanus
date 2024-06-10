@@ -83,11 +83,11 @@ public class MoneyWiseTestTransactions {
      * @throws OceanusException on error
      */
     public void buildTransactions() throws OceanusException {
-        createXchgRates();
+        //createXchgRates();
         //createTransfers();
-        createExpenses();
+        //createExpenses();
         //createAutoExpenses();
-        //createIncomes();
+        createIncomes();
     }
 
     /**
@@ -176,24 +176,64 @@ public class MoneyWiseTestTransactions {
      */
     private void createExpenses() throws OceanusException {
         /* A simple expense */
-        theTransBuilder.date("01-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopFood)
-                .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idPY_ASDA)
-                .amount("21.95").build();
+        //theTransBuilder.date("01-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopFood)
+        //        .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idPY_ASDA)
+        //        .amount("21.95").build();
 
         /* A simple refunded expense */
-        theTransBuilder.date("02-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopFood)
-                .pair(MoneyWiseTestAccounts.idPY_ASDA, MoneyWiseTestAccounts.idDP_BarclaysCurrent)
-                .amount("9.99").build();
+        //theTransBuilder.date("02-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopFood)
+        //        .pair(MoneyWiseTestAccounts.idPY_ASDA, MoneyWiseTestAccounts.idDP_BarclaysCurrent)
+        //        .amount("9.99").build();
 
         /* A simple expense from non-standard currency */
-        theTransBuilder.date("03-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopClothes)
-                .pair(MoneyWiseTestAccounts.idDP_StarlingEuro, MoneyWiseTestAccounts.idPY_ASDA)
-                .amount("31.2").build();
+        //theTransBuilder.date("03-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopClothes)
+        //        .pair(MoneyWiseTestAccounts.idDP_StarlingEuro, MoneyWiseTestAccounts.idPY_ASDA)
+        //        .amount("31.2").build();
 
         /* A simple refunded expense from non-standard currency */
-        theTransBuilder.date("04-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopClothes)
-                .pair(MoneyWiseTestAccounts.idPY_ASDA, MoneyWiseTestAccounts.idDP_StarlingEuro)
-                .amount("500").partnerAmount("550").build();
+        //theTransBuilder.date("04-Jun-1986").category(MoneyWiseTestCategories.idTC_ShopClothes)
+        //       .pair(MoneyWiseTestAccounts.idPY_ASDA, MoneyWiseTestAccounts.idDP_StarlingEuro)
+        //        .amount("500").partnerAmount("550").build();
+
+        /* Create a private loan */
+        //theTransBuilder.date("05-Jun-1986").category(MoneyWiseTestCategories.idTC_Transfer)
+        //        .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idLN_DamageLoan)
+        //        .amount("1000").build();
+
+        /* Write some of the loan off */
+        //theTransBuilder.date("06-Jun-1986").category(MoneyWiseTestCategories.idTC_LoanWriteDown)
+        //        .pair(MoneyWiseTestAccounts.idLN_DamageLoan, MoneyWiseTestAccounts.idLN_DamageLoan)
+        //        .amount("500").build();
+
+        /* Create a mortgage */
+        //theTransBuilder.date("07-Jun-1986").category(MoneyWiseTestCategories.idTC_Transfer)
+        //        .pair(MoneyWiseTestAccounts.idLN_BarclaysMortgage, MoneyWiseTestAccounts.idDP_BarclaysCurrent)
+        //        .amount("10000").build();
+
+        /* Make a mortgage payment */
+        //theTransBuilder.date("08-Jun-1986").category(MoneyWiseTestCategories.idTC_Transfer)
+        //        .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idLN_BarclaysMortgage)
+        //        .amount("1000").build();
+
+        /* Handle Mortgage interest */
+        //theTransBuilder.date("09-Jun-1986").category(MoneyWiseTestCategories.idTC_MortgageInterest)
+        //        .pair(MoneyWiseTestAccounts.idLN_BarclaysMortgage, MoneyWiseTestAccounts.idLN_BarclaysMortgage)
+        //        .amount("500").taxCredit("100").build();
+
+        /* Create a peer2Peer portfolio */
+        //theTransBuilder.date("10-Jun-1986").category(MoneyWiseTestCategories.idTC_Transfer)
+        //        .pair(MoneyWiseTestAccounts.idDP_BarclaysCurrent, MoneyWiseTestAccounts.idDP_FundingCircleLoans)
+        //        .amount("1000").build();
+
+        /* Create a peer2Peer capitalGainsCharge */
+        //theTransBuilder.date("11-Jun-1986").category(MoneyWiseTestCategories.idTC_ChgBadDebtCap)
+        //        .pair(MoneyWiseTestAccounts.idDP_FundingCircleLoans, MoneyWiseTestAccounts.idPY_FundingCircle)
+        //        .amount("50").build();
+
+        /* Create a peer2Peer interestCharge */
+        //theTransBuilder.date("12-Jun-1986").category(MoneyWiseTestCategories.idTC_ChgBadDebtCap)
+        //        .pair(MoneyWiseTestAccounts.idDP_FundingCircleLoans, MoneyWiseTestAccounts.idPY_FundingCircle)
+        //        .amount("100").build();
 
         /* Resolve the transactions */
         theData.getTransactions().resolveDataSetLinks();
@@ -256,23 +296,23 @@ public class MoneyWiseTestTransactions {
         /* A simple salary income */
         theTransBuilder.date("01-Jun-1988").category(MoneyWiseTestCategories.idTC_Salary)
                 .pair(MoneyWiseTestAccounts.idPY_IBM, MoneyWiseTestAccounts.idDP_BarclaysCurrent)
-                .amount("1000").taxCredit("100")
-                .employeesNI("60").employersNI("20").benefit("50").build();
+                .amount("1000.23").taxCredit("10.71")
+                .employeesNI("60.89").employersNI("20.56").benefit("50.83").build();
 
         /* A simple interest income */
-        theTransBuilder.date("02-Jun-1988").category(MoneyWiseTestCategories.idTC_Interest)
-                .pair(MoneyWiseTestAccounts.idDP_NatWideFlexDirect, MoneyWiseTestAccounts.idDP_NatWideLoyalty)
-                .amount("199.99").taxCredit("20").withheld("10").build();
+        //theTransBuilder.date("02-Jun-1988").category(MoneyWiseTestCategories.idTC_Interest)
+        //        .pair(MoneyWiseTestAccounts.idDP_NatWideFlexDirect, MoneyWiseTestAccounts.idDP_NatWideLoyalty)
+        //        .amount("199.99").taxCredit("20.34").withheld("10.78").build();
 
         /* A simple cashback income */
-        theTransBuilder.date("03-Jun-1988").category(MoneyWiseTestCategories.idTC_CashBack)
-                .pair(MoneyWiseTestAccounts.idDP_NatWideFlexDirect, MoneyWiseTestAccounts.idDP_NatWideLoyalty)
-                .amount("25").build();
+        //theTransBuilder.date("03-Jun-1988").category(MoneyWiseTestCategories.idTC_CashBack)
+        //        .pair(MoneyWiseTestAccounts.idDP_NatWideFlexDirect, MoneyWiseTestAccounts.idDP_NatWideLoyalty)
+        //        .amount("25").build();
 
         /* A simple dividend income */
-        theTransBuilder.date("04-Jun-1988").category(MoneyWiseTestCategories.idTC_Dividend)
-                .pair(MoneyWiseTestAccounts.idPY_IBM, MoneyWiseTestAccounts.idDP_NatWideFlexDirect)
-                .amount("125").taxCredit("20").build();
+        //theTransBuilder.date("04-Jun-1988").category(MoneyWiseTestCategories.idTC_Dividend)
+        //        .pair(MoneyWiseTestAccounts.idPY_IBM, MoneyWiseTestAccounts.idDP_NatWideFlexDirect)
+        //        .amount("125").taxCredit("20").build();
 
         /* Resolve the transactions */
         theData.getTransactions().resolveDataSetLinks();

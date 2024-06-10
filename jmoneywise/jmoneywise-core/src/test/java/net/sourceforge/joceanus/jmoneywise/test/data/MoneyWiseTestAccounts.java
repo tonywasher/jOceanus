@@ -41,6 +41,7 @@ public class MoneyWiseTestAccounts {
     final static String idPY_Nationwide = "Nationwide";
     final static String idPY_Starling = "Starling";
     final static String idPY_InteractiveInvestor = "InteractiveInvestor";
+    final static String idPY_FundingCircle = "FundingCircle";
     final static String idPY_BallCorp = "BallCorp";
     final static String idPY_IBM = "IBM";
     final static String idPY_Petrol = "Petrol";
@@ -65,6 +66,7 @@ public class MoneyWiseTestAccounts {
     final static String idDP_StarlingSterling = "StarlingSterling";
     final static String idDP_StarlingEuro = "StarlingEuro";
     final static String idDP_StarlingDollar = "StarlingDollar";
+    final static String idDP_FundingCircleLoans = "FundingCircleLoans";
 
     /**
      * Cash ids.
@@ -172,6 +174,7 @@ public class MoneyWiseTestAccounts {
         thePayeeBuilder.name(idPY_Starling).type(MoneyWisePayeeClass.INSTITUTION).build();
         thePayeeBuilder.name(idPY_BallCorp).type(MoneyWisePayeeClass.INSTITUTION).build();
         thePayeeBuilder.name(idPY_InteractiveInvestor).type(MoneyWisePayeeClass.INSTITUTION).build();
+        thePayeeBuilder.name(idPY_FundingCircle).type(MoneyWisePayeeClass.INSTITUTION).build();
         thePayeeBuilder.name(idPY_Government).type(MoneyWisePayeeClass.GOVERNMENT).build();
         thePayeeBuilder.name(idPY_HMRC).type(MoneyWisePayeeClass.TAXMAN).build();
         thePayeeBuilder.name(idPY_Market).type(MoneyWisePayeeClass.MARKET).build();
@@ -198,6 +201,7 @@ public class MoneyWiseTestAccounts {
         theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.EUR).build();
         theDepositBuilder.name(idDP_StarlingDollar).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.USD).build();
+        theDepositBuilder.name(idDP_FundingCircleLoans).parent(idPY_FundingCircle).category(MoneyWiseTestCategories.idDC_Peer2Peer).build();
     }
 
     /**

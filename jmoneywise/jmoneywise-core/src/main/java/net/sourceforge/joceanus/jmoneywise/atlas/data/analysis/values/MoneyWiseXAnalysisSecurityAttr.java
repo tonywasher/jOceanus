@@ -130,6 +130,16 @@ public enum MoneyWiseXAnalysisSecurityAttr
     XFERREDCOST,
 
     /**
+     * Funded.
+     */
+    FUNDED,
+
+    /**
+     * StartDate.
+     */
+    STARTDATE,
+
+    /**
      * CashType.
      */
     CASHTYPE;
@@ -164,6 +174,8 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case PRICE:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
+            case FUNDED:
+            case STARTDATE:
                 return true;
             case PROFIT:
             case MARKETPROFIT:
@@ -194,6 +206,8 @@ public enum MoneyWiseXAnalysisSecurityAttr
                 return MetisDataType.RATIO;
             case CASHTYPE:
                 return MetisDataType.ENUM;
+            case STARTDATE:
+                return MetisDataType.DATE;
             case VALUE:
             case VALUATION:
             case VALUEDELTA:
@@ -211,6 +225,7 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case ALLOWEDCOST:
             case CASHINVESTED:
             case CAPITALGAIN:
+            case FUNDED:
             default:
                 return MetisDataType.MONEY;
         }

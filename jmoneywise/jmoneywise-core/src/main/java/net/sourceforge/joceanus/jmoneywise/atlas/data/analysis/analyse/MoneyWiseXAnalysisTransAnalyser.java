@@ -70,12 +70,18 @@ public class MoneyWiseXAnalysisTransAnalyser {
     private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
+     * The portfolioXfer analyser.
+     */
+    private final MoneyWiseXAnalysisPortfolioXfer thePortfolioXfer;
+
+    /**
      * The current transaction.
      */
     private MoneyWiseXAnalysisTransaction theTrans;
 
     /**
      * Constructor.
+     * @param pAnalyser the analyser
      */
     MoneyWiseXAnalysisTransAnalyser(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
         /* Store details */
@@ -83,6 +89,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState = pAnalyser.getState();
         theMarket = pAnalyser.getMarket();
         theTax = pAnalyser.getTax();
+        thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser);
 
         /* Create the security analyser */
         theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser);
@@ -137,8 +144,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
 
             /* If the event is portfolioXfer, split out the workings */
         } else if (isPortfolioXfer(theTrans.getCategoryClass())) {
-            /* Process as a Security transaction */
-            theSecurity.processPortfolioXfer(theTrans);
+            /* Process the portfolioXfer */
+            thePortfolioXfer.processPortfolioXfer(theTrans);
 
             /* Else handle the event normally */
         } else if (myDebit instanceof MoneyWiseAssetBase
@@ -367,7 +374,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pAccount the account
      * @return true/false
      */
-    private boolean isAsset(final MoneyWiseAssetBase pAccount) {
+    boolean isAsset(final MoneyWiseAssetBase pAccount) {
         switch (pAccount.getAssetType()) {
             case DEPOSIT:
             case LOAN:
@@ -406,8 +413,17 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pAccount the account
      * @return true/false
      */
-    private boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
+    static boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
         return pAccount instanceof MoneyWiseSecurityHolding;
+    }
+
+    /**
+     * is the account a securityHolding?
+     * @param pAccount the account
+     * @return true/false
+     */
+    static boolean isPortfolio(final MoneyWiseTransAsset pAccount) {
+        return pAccount instanceof MoneyWisePortfolio;
     }
 
     /**
@@ -415,7 +431,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pCategoryClass the categoryClass
      * @return true/false
      */
-    private boolean isPortfolioXfer(final MoneyWiseTransCategoryClass pCategoryClass) {
+    private static boolean isPortfolioXfer(final MoneyWiseTransCategoryClass pCategoryClass) {
         return pCategoryClass == MoneyWiseTransCategoryClass.PORTFOLIOXFER;
     }
 }

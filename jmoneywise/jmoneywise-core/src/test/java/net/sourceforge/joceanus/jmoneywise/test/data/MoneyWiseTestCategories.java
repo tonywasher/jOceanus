@@ -118,9 +118,11 @@ public class MoneyWiseTestCategories {
     final static String idTC_CarLease = idTC_Car + ":Lease";
     final static String idTC_CarElectric = idTC_Car + ":Electric";
     final static String idTC_Charges = "Charges";
-    final static String idTC_ChgFees = idTC_Market + ":Fees";
-    final static String idTC_ChgFines = idTC_Market + ":Fines";
-    final static String idTC_ChgInterest = idTC_Market + ":Interest";
+    final static String idTC_ChgBadDebtInt = idTC_Charges + ":BadDebtInterest";
+    final static String idTC_ChgBadDebtCap = idTC_Charges + ":BadDebtCapital";
+    final static String idTC_ChgFees = idTC_Charges + ":Fees";
+    final static String idTC_ChgFines = idTC_Charges + ":Fines";
+    final static String idTC_ChgInterest = idTC_Charges + ":Interest";
     final static String idTC_Expenses = "Expenses";
     final static String idTC_ExpBusiness = idTC_Expenses + ":Business";
     final static String idTC_ExpCash = idTC_Expenses + ":Cash";
@@ -412,6 +414,8 @@ public class MoneyWiseTestCategories {
 
         /* Charges */
         theTransBuilder.name(idTC_Charges).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
+        theTransBuilder.name(idTC_ChgBadDebtCap).type(MoneyWiseTransCategoryClass.BADDEBTCAPITAL).build();
+        theTransBuilder.name(idTC_ChgBadDebtInt).type(MoneyWiseTransCategoryClass.BADDEBTINTEREST).build();
         theTransBuilder.name(idTC_ChgFees).type(MoneyWiseTransCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_ChgFines).type(MoneyWiseTransCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_ChgInterest).type(MoneyWiseTransCategoryClass.EXPENSE).build();

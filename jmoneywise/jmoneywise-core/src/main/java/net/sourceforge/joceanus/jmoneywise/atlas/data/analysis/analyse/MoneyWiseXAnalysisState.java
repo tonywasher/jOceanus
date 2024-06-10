@@ -382,6 +382,16 @@ public class MoneyWiseXAnalysisState
     }
 
     /**
+     * Set new price for security as part of a transaction.
+     * @param pSecurity the security
+     * @param pPrice the new price
+     */
+    public void setNewPriceViaTransaction(final MoneyWiseSecurity pSecurity,
+                                          final TethysPrice pPrice) {
+        thePriceMap.put(pSecurity, pPrice);
+    }
+
+    /**
      * Obtain the pricedBuckets iterator for a security.
      * @param pSecurity the security
      * @return the iterator

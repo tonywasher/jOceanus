@@ -96,14 +96,9 @@ public enum MoneyWiseXAnalysisValuesResource
     SECURITYATTR_REALISEDGAINS("SecurityAttr.RealisedGains"),
 
     /**
-     * SecurityAttr GrowthAdjustment.
+     * SecurityAttr unrealisedGains.
      */
-    SECURITYATTR_GROWTHADJUST("SecurityAttr.GrowthAdjust"),
-
-    /**
-     * SecurityAttr ForeignValueDelta.
-     */
-    SECURITYATTR_FOREIGNVALUEDELTA("SecurityAttr.ForeignValueDelta"),
+    SECURITYATTR_UNREALISEDGAINS("SecurityAttr.UnRealisedGains"),
 
     /**
      * SecurityAttr Invested.
@@ -111,29 +106,9 @@ public enum MoneyWiseXAnalysisValuesResource
     SECURITYATTR_INVESTED("SecurityAttr.Invested"),
 
     /**
-     * SecurityAttr Foreign Invested.
-     */
-    SECURITYATTR_FOREIGNINVESTED("SecurityAttr.ForeignInvested"),
-
-    /**
      * SecurityAttr Dividend.
      */
     SECURITYATTR_DIVIDEND("SecurityAttr.Dividend"),
-
-    /**
-     * SecurityAttr MarketGrowth.
-     */
-    SECURITYATTR_MARKETGROWTH("SecurityAttr.MarketGrowth"),
-
-    /**
-     * SecurityAttr ForeignMarketGrowth.
-     */
-    SECURITYATTR_FOREIGNMARKETGROWTH("SecurityAttr.ForeignMarketGrowth"),
-
-    /**
-     * SecurityAttr LocalMarketGrowth.
-     */
-    SECURITYATTR_LOCALMARKETGROWTH("SecurityAttr.LocalMarketGrowth"),
 
     /**
      * SecurityAttr MarketProfit.
@@ -189,6 +164,16 @@ public enum MoneyWiseXAnalysisValuesResource
      * SecurityAttr Price.
      */
     SECURITYATTR_PRICE(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE),
+
+    /**
+     * SecurityAttr StartDate.
+     */
+    SECURITYATTR_STARTDATE("SecurityAttr.StartDate"),
+
+    /**
+     * SecurityAttr Funded.
+     */
+    SECURITYATTR_FUNDED("SecurityAttr.Funded"),
 
     /**
      * SecurityAttr CashType.
@@ -377,7 +362,10 @@ public enum MoneyWiseXAnalysisValuesResource
         myMap.put(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.UNITS, SECURITYATTR_UNITS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, SECURITYATTR_RESIDUALCOST);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.INVESTED, SECURITYATTR_INVESTED);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, SECURITYATTR_DIVIDEND);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, SECURITYATTR_REALISEDGAINS);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, SECURITYATTR_UNREALISEDGAINS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.PROFIT, SECURITYATTR_PROFIT);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, SECURITYATTR_CONSIDER);
@@ -389,6 +377,8 @@ public enum MoneyWiseXAnalysisValuesResource
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, SECURITYATTR_CAPITALGAIN);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, SECURITYATTR_ALLOWEDCOST);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.PRICE, SECURITYATTR_PRICE);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.STARTDATE, SECURITYATTR_STARTDATE);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.FUNDED, SECURITYATTR_FUNDED);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, SECURITYATTR_CASHTYPE);
         return myMap;
     }

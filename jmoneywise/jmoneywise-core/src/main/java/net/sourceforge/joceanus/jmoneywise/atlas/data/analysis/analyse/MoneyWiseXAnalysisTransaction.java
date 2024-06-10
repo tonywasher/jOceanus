@@ -25,9 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
- * TRansaction details.
+ * Transaction details.
  */
 public class MoneyWiseXAnalysisTransaction {
     /**
@@ -76,6 +77,16 @@ public class MoneyWiseXAnalysisTransaction {
     private MoneyWiseTransCategory theCategory;
 
     /**
+     * The debitUnitsDelta.
+     */
+    private final TethysUnits theDebitUnitsDelta;
+
+    /**
+     * The creditUnitsDelta.
+     */
+    private final TethysUnits theCreditUnitsDelta;
+
+    /**
      * Constructor.
      * @param pEvent the event
      */
@@ -104,6 +115,10 @@ public class MoneyWiseXAnalysisTransaction {
             theCreditAmount = myAmount;
         }
         theDebitAmount.negate();
+
+        /* Access delta units */
+        theDebitUnitsDelta = isTo ? theTrans.getAccountDeltaUnits() : theTrans.getPartnerDeltaUnits();
+        theCreditUnitsDelta = isTo ? theTrans.getPartnerDeltaUnits() : theTrans.getAccountDeltaUnits();
     }
 
     /**
@@ -171,21 +186,44 @@ public class MoneyWiseXAnalysisTransaction {
     }
 
     /**
-     * is this an income?
-     * @return true/false
+     * Obtain the debit unitsDelta.
+     * @return the delta
      */
-    boolean isIncome() {
-        final MoneyWiseTransCategoryClass myClass = getCategoryClass();
-        return myClass != null && Boolean.TRUE.equals(myClass.isIncome());
+    TethysUnits getDebitUnitsDelta() {
+        return theDebitUnitsDelta;
     }
 
     /**
-     * is this an expense?
+     * Obtain the credit unitsDelta.
+     * @return the delta
+     */
+    TethysUnits getCreditUnitsDelta() {
+        return theCreditUnitsDelta;
+    }
+
+    /**
+     * is this an income Category?
      * @return true/false
      */
-    boolean isExpense() {
+    boolean isIncomeCategory() {
         final MoneyWiseTransCategoryClass myClass = getCategoryClass();
-        return myClass != null && Boolean.TRUE.equals(myClass.isExpense());
+        return myClass != null && myClass.isIncome();
+    }
+
+    /**
+     * is this a refund?
+     * @return true/false
+     */
+    boolean isRefund() {
+        return isIncomeCategory() ? theCredit instanceof MoneyWisePayee : theDebit instanceof MoneyWisePayee;
+    }
+
+    /**
+     * Obtain the transaction value.
+     * @return the value
+     */
+    TethysMoney getTransactionValue() {
+        return isRefund() ? theDebitAmount : theCreditAmount;
     }
 
     /**
@@ -233,22 +271,31 @@ public class MoneyWiseXAnalysisTransaction {
      */
     void adjustParent() {
         /* Switch on category class */
-        switch (theCategory.getCategoryTypeClass()) {
+        switch (getCategoryClass()) {
             case INTEREST:
             case LOYALTYBONUS:
                 /* Obtain detailed category */
                 theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());
 
-                /* True debit account is the parent */
+                /* The interest bearing account should be replaced by its parent */
                 theChild = theDebit.equals(theCredit)
                         ? null
-                        : theDebit;
-                theDebit = theDebit.getParent();
+                        : theTrans.getAccount();
+                if (isTo) {
+                    theDebit = theDebit.getParent();
+                } else {
+                    theCredit = theCredit.getParent();
+                }
                 break;
             case LOANINTERESTEARNED:
             case CASHBACK:
                 /* True debit account is the parent of the asset */
-                theDebit = theDebit.getParent();
+                /* Note that debit and credit must be identical */
+                if (isTo) {
+                    theDebit = theDebit.getParent();
+                } else {
+                    theCredit = theCredit.getParent();
+                }
                 break;
             case RENTALINCOME:
             case ROOMRENTALINCOME:
@@ -261,7 +308,12 @@ public class MoneyWiseXAnalysisTransaction {
             case WRITEOFF:
             case LOANINTERESTCHARGED:
                 /* True credit account is the parent of the loan */
-                theCredit = theCredit.getParent();
+                /* Note that credit and debit must be identical */
+                if (isTo) {
+                    theCredit = theCredit.getParent();
+                } else {
+                    theDebit = theDebit.getParent();
+                }
                 break;
             default:
                 break;
