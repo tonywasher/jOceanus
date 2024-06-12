@@ -211,6 +211,15 @@ public class MoneyWiseXAnalysisTransaction {
     }
 
     /**
+     * is this an expense Category?
+     * @return true/false
+     */
+    boolean isExpenseCategory() {
+        final MoneyWiseTransCategoryClass myClass = getCategoryClass();
+        return myClass != null && myClass.isExpense();
+    }
+
+    /**
      * is this a refund?
      * @return true/false
      */

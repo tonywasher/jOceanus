@@ -87,6 +87,10 @@ public final class MoneyWiseXAnalysisPortfolioCashBucket
         return FIELD_DEFS;
     }
 
+    @Override
+    public Long getBucketId() {
+        return getAccount().getExternalId();
+    }
 
     /**
      * Add Values.

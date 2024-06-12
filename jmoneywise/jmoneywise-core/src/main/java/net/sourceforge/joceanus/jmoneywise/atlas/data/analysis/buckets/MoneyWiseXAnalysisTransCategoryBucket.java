@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransValues;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -190,6 +191,11 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
     @Override
     public String toString() {
         return getName();
+    }
+
+    @Override
+    public Long getBucketId() {
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.TRANSACTIONCATEGORY, getIndexedId());
     }
 
     /**

@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDepositCategory;
@@ -135,6 +136,11 @@ public final class MoneyWiseXAnalysisDepositBucket
      */
     public MoneyWiseDepositCategory getCategory() {
         return theCategory;
+    }
+
+    @Override
+    public Long getBucketId() {
+        return getAccount().getExternalId();
     }
 
     /**

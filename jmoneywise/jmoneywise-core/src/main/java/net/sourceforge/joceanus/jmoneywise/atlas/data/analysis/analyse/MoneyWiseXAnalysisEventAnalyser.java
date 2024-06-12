@@ -216,7 +216,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
                 final TethysMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */
-                theState.registerBucketForEvent(myBucket);
+                theState.registerBucketInterest(myBucket);
 
                 /* Record the delta as a market growth */
                 theMarket.adjustTotalsForMarketGrowth(pEvent, myDelta);
@@ -225,7 +225,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
         /* Register all the buckets */
         theMarket.adjustMarketTotals(pEvent);
-        theState.registerBucketsForEvent(pEvent);
+        theState.registerInterestedBucketsForEvent(pEvent);
     }
 
     /**
@@ -249,7 +249,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
                 final TethysMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */
-                theState.registerBucketForEvent(myBucket);
+                theState.registerBucketInterest(myBucket);
 
                 /* Record the delta as a currency fluctuation */
                 theMarket.adjustTotalsForCurrencyFluctuation(pEvent, myDelta);
@@ -258,7 +258,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
         /* Register all the buckets */
         theMarket.adjustMarketTotals(pEvent);
-        theState.registerBucketsForEvent(pEvent);
+        theState.registerInterestedBucketsForEvent(pEvent);
     }
 
     /**
@@ -274,11 +274,11 @@ public class MoneyWiseXAnalysisEventAnalyser {
             /* Access the bucket and update the depositRate */
             final MoneyWiseXAnalysisDepositBucket myBucket = theAnalysis.getDeposits().getBucket(myRate.getDeposit());
             myBucket.recordDepositRate();
-            theState.registerBucketForEvent(myBucket);
+            theState.registerBucketInterest(myBucket);
         }
 
         /* Register all the buckets */
-        theState.registerBucketsForEvent(pEvent);
+        theState.registerInterestedBucketsForEvent(pEvent);
     }
 
     /**
@@ -294,10 +294,10 @@ public class MoneyWiseXAnalysisEventAnalyser {
             /* Loop through the registered buckets */
             final MoneyWiseXAnalysisAccountBucket<?> myBucket = theTrans.getAccountBucket(myAsset);
             myBucket.recordOpeningBalance();
-            theState.registerBucketForEvent(myBucket);
+            theState.registerBucketInterest(myBucket);
         }
 
         /* Register all the buckets */
-        theState.registerBucketsForEvent(pEvent);
+        theState.registerInterestedBucketsForEvent(pEvent);
     }
 }

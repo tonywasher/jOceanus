@@ -25,6 +25,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
@@ -95,7 +96,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                                                     final TethysDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
-        theAssetId = pBase.getAssetId();
+        theAssetId = pBase.getBucketId();
         theAccount = pBase.getAccount();
         theParent = pParent;
     }
@@ -113,7 +114,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                                                     final TethysDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
-        theAssetId = pBase.getAssetId();
+        theAssetId = pBase.getBucketId();
         theAccount = pBase.getAccount();
         theParent = pParent;
     }
@@ -125,7 +126,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
      */
     private static Long deriveAssetId(final MoneyWiseTransAsset pAsset) {
         /* Calculate the key */
-        return pAsset.getExternalId();
+        return MoneyWiseAssetType.createAlternateExternalId(MoneyWiseAssetType.TAXBASISACCOUNT, pAsset.getExternalId());
     }
 
     @Override
@@ -138,11 +139,8 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         return theAccount.getExternalId().intValue();
     }
 
-    /**
-     * Obtain assetId.
-     * @return the assetId
-     */
-    public Long getAssetId() {
+    @Override
+    public Long getBucketId() {
         return theAssetId;
     }
 
@@ -255,7 +253,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                 if (Boolean.FALSE.equals(myBucket.isIdle())) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
-                    theMap.put(myBucket.getAssetId(), myBucket);
+                    theMap.put(myBucket.getBucketId(), myBucket);
                 }
             }
         }
@@ -289,7 +287,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
                     /* Add to list and to map */
                     theList.add(myBucket);
-                    theMap.put(myBucket.getAssetId(), myBucket);
+                    theMap.put(myBucket.getBucketId(), myBucket);
                 }
             }
         }
@@ -401,7 +399,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * SortBuckets.
          */
         protected void sortBuckets() {
-            theList.sort((l, r) -> l.getAssetId().compareTo(r.getAssetId()));
+            theList.sort((l, r) -> l.getBucketId().compareTo(r.getBucketId()));
         }
 
         /**

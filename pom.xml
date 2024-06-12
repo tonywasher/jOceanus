@@ -98,19 +98,19 @@
     <EnforcerPluginVersion>3.5.0</EnforcerPluginVersion>
     <CompilerPluginVersion>3.13.0</CompilerPluginVersion>
     <ShadePluginVersion>3.6.0</ShadePluginVersion>
-    <DependencyPluginVersion>3.6.1</DependencyPluginVersion>
+    <DependencyPluginVersion>3.7.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.5.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.4.1</JarPluginVersion>
     <ProjectInfoPluginVersion>3.5.0</ProjectInfoPluginVersion>
-    <JxrPluginVersion>3.3.2</JxrPluginVersion>
-    <JavaDocPluginVersion>3.6.3</JavaDocPluginVersion>
+    <JxrPluginVersion>3.4.0</JxrPluginVersion>
+    <JavaDocPluginVersion>3.7.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
-    <SonarQubePluginVersion>3.11.0.3922</SonarQubePluginVersion>
-    <CheckStylePluginVersion>3.3.1</CheckStylePluginVersion>
-    <PMDPluginVersion>3.22.0</PMDPluginVersion>
+    <SonarQubePluginVersion>4.0.0.4121</SonarQubePluginVersion>
+    <CheckStylePluginVersion>3.4.0</CheckStylePluginVersion>
+    <PMDPluginVersion>3.23.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.4</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>

@@ -254,6 +254,11 @@ public final class MoneyWiseXAnalysisSecurityBucket
     }
 
     @Override
+    public Long getBucketId() {
+        return theHolding.getExternalId();
+    }
+
+    @Override
     public String toString() {
         return getDecoratedName();
     }
@@ -588,13 +593,8 @@ public final class MoneyWiseXAnalysisSecurityBucket
         final TethysMoney myLocalValue = myUnits.valueAtPrice(myPrice);
         setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, myLocalValue);
 
-        /* If this is a foreign holding */
-        TethysMoney myValue = myLocalValue;
-        if (isForeignCurrency) {
-            final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
-            myValue = myLocalValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
-         }
-        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myValue);
+        /* Adjust the valuation */
+        adjustValuation();
     }
 
     @Override

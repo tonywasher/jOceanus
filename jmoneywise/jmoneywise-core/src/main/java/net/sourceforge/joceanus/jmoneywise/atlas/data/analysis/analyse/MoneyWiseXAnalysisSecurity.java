@@ -466,8 +466,8 @@ public class MoneyWiseXAnalysisSecurity {
         theMarket.adjustTotalsForMarketGrowth(theTrans.getEvent(), myDeltaValue);
 
         /* Register the transaction */
-        theState.registerBucketForEvent(myAsset);
-        theState.registerBucketsForEvent(theTrans.getEvent());
+        theState.registerBucketInterest(myAsset);
+        theState.registerInterestedBucketsForEvent(theTrans.getEvent());
 
         /* StockSplit/Adjust is a transfer, so no need to update the categories */
     }

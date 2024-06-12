@@ -201,6 +201,11 @@ public final class MoneyWiseXAnalysisPayeeBucket
         return thePayee.getIndexedId();
     }
 
+    @Override
+    public Long getBucketId() {
+        return thePayee.getExternalId();
+    }
+
     /**
      * Is this bucket idle?
      * @return true/false
