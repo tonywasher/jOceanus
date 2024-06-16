@@ -422,28 +422,56 @@ public class MoneyWiseXAnalysisTaxBasisBucket
     }
 
     /**
+     * Adjust Gross and Nett values by amount.
+     * @param pAccount the relevant account
+     * @param pAmount the amount
+     */
+    public void adjustGrossAndNett(final MoneyWiseTransAsset pAccount,
+                                   final TethysMoney pAmount) {
+        adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.STANDARD);
+    }
+
+    /**
+     * Adjust Gross value by amount.
+     * @param pAccount the relevant account
+     * @param pAmount the amount
+     */
+    public void adjustGross(final MoneyWiseTransAsset pAccount,
+                            final TethysMoney pAmount) {
+        adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.GROSS);
+    }
+
+    /**
+     * Adjust Gross and Tax values by amount.
+     * @param pAccount the relevant account
+     * @param pAmount the amount
+     */
+    public void adjustGrossAndTax(final MoneyWiseTransAsset pAccount,
+                                  final TethysMoney pAmount) {
+        adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.TAXCREDIT);
+    }
+
+    /**
      * Adjust value.
      * @param pValue the value
      * @param pAdjust adjustment control
      */
-    public void adjustValue(final TethysMoney pValue,
-                            final MoneyWiseXTaxBasisAdjust pAdjust) {
-        /* If we are adjusting Gross */
-        if (pAdjust.adjustGross()) {
-            /* Access the existing value */
-            TethysMoney myGross = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
-            myGross = new TethysMoney(myGross);
+    private void adjustValue(final MoneyWiseTransAsset pAccount,
+                             final TethysMoney pValue,
+                             final MoneyWiseXTaxBasisAdjust pAdjust) {
+        /* Access the existing value */
+        TethysMoney myGross = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
+        myGross = new TethysMoney(myGross);
 
-            /* Subtract or add the value depending as to whether we are an expense bucket */
-            if (isExpense) {
-                myGross.subtractAmount(pValue);
-            } else {
-                myGross.addAmount(pValue);
-            }
-
-            /* Record the new value */
-            setValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS, myGross);
+        /* Subtract or add the value depending as to whether we are an expense bucket */
+        if (isExpense) {
+            myGross.subtractAmount(pValue);
+        } else {
+            myGross.addAmount(pValue);
         }
+
+        /* Record the new value */
+        setValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS, myGross);
 
         /* If we are adjusting Nett */
         if (pAdjust.adjustNett()) {
@@ -460,6 +488,23 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
             /* Record the new value */
             setValue(MoneyWiseXAnalysisTaxBasisAttr.NETT, myNett);
+        }
+
+        /* If we are adjusting TaxCredit */
+        if (pAdjust.adjustTaxCredit()) {
+            /* Access the existing value */
+            TethysMoney myTax = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.TAXCREDIT);
+            myTax = new TethysMoney(myTax);
+
+            /* Subtract or add the value if we are an expense/income bucket */
+            if (isExpense) {
+                myTax.subtractAmount(pValue);
+            } else {
+                myTax.addAmount(pValue);
+            }
+
+            /* Record the new value */
+            setValue(MoneyWiseXAnalysisTaxBasisAttr.TAXCREDIT, myTax);
         }
     }
 
@@ -508,29 +553,29 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         STANDARD,
 
         /**
-         * Only adjust Nett figure.
+         * Adjust Gross only.
          */
-        NETT,
+        GROSS,
 
         /**
-         * Only adjust Gross figure.
+         * Adjust Gross and Tax.
          */
-        GROSS;
-
-        /**
-         * should we adjust Gross?
-         * @return true/false
-         */
-        private boolean adjustGross() {
-            return this != NETT;
-        }
+        TAXCREDIT;
 
         /**
          * should we adjust Nett?
          * @return true/false
          */
         private boolean adjustNett() {
-            return this != GROSS;
+            return this == STANDARD;
+        }
+
+        /**
+         * should we adjust TaxCredit?
+         * @return true/false
+         */
+        private boolean adjustTaxCredit() {
+            return this == TAXCREDIT;
         }
     }
 
@@ -967,7 +1012,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
             /* Access the bucket and adjust it */
             final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(MoneyWiseTaxClass.MARKET);
-            myBucket.adjustValue(myDelta, MoneyWiseXTaxBasisAdjust.STANDARD);
+            myBucket.adjustValue(null, myDelta, MoneyWiseXTaxBasisAdjust.STANDARD);
         }
 
         /**

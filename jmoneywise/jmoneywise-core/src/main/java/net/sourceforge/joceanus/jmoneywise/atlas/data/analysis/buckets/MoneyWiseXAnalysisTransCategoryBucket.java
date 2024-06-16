@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
@@ -627,7 +626,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          * @param pClass the transaction infoClass
          * @return the bucket
          */
-        MoneyWiseXAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
+        public MoneyWiseXAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
             /* Determine category */
             final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             final MoneyWiseTransCategory myCategory = myList.getEventInfoCategory(pClass);
@@ -643,7 +642,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          * @param pClass the transaction infoClass
          * @return the bucket
          */
-        MoneyWiseXAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
+        public MoneyWiseXAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine category */
             final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             final MoneyWiseTransCategory myCategory = myList.getSingularClass(pClass);

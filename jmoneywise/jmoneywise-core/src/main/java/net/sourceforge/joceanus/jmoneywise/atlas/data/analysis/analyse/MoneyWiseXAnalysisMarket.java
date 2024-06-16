@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAn
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXTaxBasisAdjust;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeClass;
@@ -34,6 +33,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Process NatInsurance.
  */
 public class MoneyWiseXAnalysisMarket {
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
     /**
      * The market payee bucket.
      */
@@ -76,22 +80,26 @@ public class MoneyWiseXAnalysisMarket {
 
     /**
      * Constructor.
-     * @param pAnalysis the analysis
+     * @param pAnalyser the analyser
      */
-    MoneyWiseXAnalysisMarket(final MoneyWiseXAnalysis pAnalysis) {
+    MoneyWiseXAnalysisMarket(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
+        /* Store the state */
+        theState = pAnalyser.getState();
+
         /* Obtain the market bucket */
-        theMarketBucket = pAnalysis.getPayees().getBucket(MoneyWisePayeeClass.MARKET);
+        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
+        theMarketBucket = myAnalysis.getPayees().getBucket(MoneyWisePayeeClass.MARKET);
 
         /* Obtain the category buckets */
-        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = pAnalysis.getTransCategories();
+        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();
         theCurrencyFluctuationBucket = myCategories.getBucket(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION);
         theMarketGrowthBucket = myCategories.getBucket(MoneyWiseTransCategoryClass.MARKETGROWTH);
 
         /* Obtain the tax basis bucket */
-        theTaxBasisBucket = pAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.MARKET);
+        theTaxBasisBucket = myAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.MARKET);
 
         /* Allocate the market counters */
-        final Currency myCurrency = pAnalysis.getCurrency().getCurrency();
+        final Currency myCurrency = myAnalysis.getCurrency().getCurrency();
         theMarketIncome = new TethysMoney(myCurrency);
         theMarketExpense = new TethysMoney(myCurrency);
     }
@@ -106,7 +114,7 @@ public class MoneyWiseXAnalysisMarket {
         /* Adjust marketGrowth for delta */
         theMarketGrowthBucket.adjustForDelta(pDelta);
         if (!isGrowth) {
-            theMarketGrowthBucket.registerEvent(pEvent);
+            theState.registerBucketInterest(theMarketGrowthBucket);
             isGrowth = true;
         }
 
@@ -128,7 +136,7 @@ public class MoneyWiseXAnalysisMarket {
         /* Adjust currencyFluctuation for delta */
         theCurrencyFluctuationBucket.adjustForDelta(pDelta);
         if (!isFluctuation) {
-            theCurrencyFluctuationBucket.registerEvent(pEvent);
+            theState.registerBucketInterest(theCurrencyFluctuationBucket);
             isFluctuation = true;
         }
 
@@ -150,12 +158,12 @@ public class MoneyWiseXAnalysisMarket {
             /* Adjust marketTotals */
             theMarketBucket.addIncome(theMarketIncome);
             theMarketBucket.addExpense(theMarketExpense);
-            theMarketBucket.registerEvent(pEvent);
+            theState.registerBucketInterest(theMarketBucket);
 
             /* Adjust taxBasisTotals */
             theMarketIncome.subtractAmount(theMarketExpense);
-            theTaxBasisBucket.adjustValue(theMarketIncome, MoneyWiseXTaxBasisAdjust.STANDARD);
-            theTaxBasisBucket.registerEvent(pEvent);
+            theTaxBasisBucket.adjustGrossAndNett(null, theMarketIncome);
+            theState.registerBucketInterest(theTaxBasisBucket);
 
             /* Reset totals */
             theMarketIncome.setZero();

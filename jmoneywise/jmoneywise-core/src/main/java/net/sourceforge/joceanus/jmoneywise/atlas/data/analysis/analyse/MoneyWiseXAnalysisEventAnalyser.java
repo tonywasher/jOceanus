@@ -97,8 +97,8 @@ public class MoneyWiseXAnalysisEventAnalyser {
         theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
 
         /* Create the analysers */
-        theMarket = new MoneyWiseXAnalysisMarket(theAnalysis);
-        theTax = new MoneyWiseXAnalysisTax(theAnalysis);
+        theMarket = new MoneyWiseXAnalysisMarket(this);
+        theTax = new MoneyWiseXAnalysisTax(this);
         theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
 
         /* Loop through the Events */

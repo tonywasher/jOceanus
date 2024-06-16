@@ -161,6 +161,14 @@ public class MoneyWiseXAnalysisTransAnalyser {
                     + " "
                     + myTrans.getPartner().getAssetType());
         }
+
+        /* Process taxBasis */
+        theTax.adjustTaxBasis(theTrans);
+
+        /* Register the eventBuckets */
+        final MoneyWiseXAnalysisEvent myEvent = theTrans.getEvent();
+        theMarket.adjustMarketTotals(myEvent);
+        theState.registerInterestedBucketsForEvent(myEvent);
     }
 
     /**
@@ -178,11 +186,6 @@ public class MoneyWiseXAnalysisTransAnalyser {
 
         /* Process Payee accounts */
         processPayees();
-
-        /* Register the eventBuckets */
-        final MoneyWiseXAnalysisEvent myEvent = theTrans.getEvent();
-        theMarket.adjustMarketTotals(myEvent);
-        theState.registerInterestedBucketsForEvent(myEvent);
     }
 
     /**
@@ -306,6 +309,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState.registerBucketInterest(myCategory);
 
         /* Adjust expense taxBasis */
+        theTax.processAutoExpense(myAmount);
     }
 
 
@@ -330,6 +334,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState.registerBucketInterest(myCategory);
 
         /* Adjust expense taxBasis */
+        theTax.processAutoExpense(myAmount);
     }
 
     /**
@@ -381,7 +386,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         }
         theState.registerBucketInterest(myCatBucket);
 
-        /* TODO Need to adjust taxBasis */
+        /* Record payee bucket */
+        theTax.recordPayeeBucket(myPayeeBucket);
     }
 
     /**
@@ -412,7 +418,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         }
         theState.registerBucketInterest(myCatBucket);
 
-        /* TODO Need to adjust taxBasis */
+        /* Record payee bucket */
+        theTax.recordPayeeBucket(myPayeeBucket);
     }
 
     /**

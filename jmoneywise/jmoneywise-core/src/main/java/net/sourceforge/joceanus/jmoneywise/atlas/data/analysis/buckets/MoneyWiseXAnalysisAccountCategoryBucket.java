@@ -234,17 +234,4 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
         final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
-
-    /**
-     * Add bucket to totals.
-     * @param pTotals the totals
-     * @param pSource the values to add
-     */
-    private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
-                                  final MoneyWiseXAnalysisSecurityValues pSource) {
-        /* Add base values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
-        myValue.addAmount(mySrcValue);
-    }
 }
