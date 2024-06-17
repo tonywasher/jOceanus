@@ -335,7 +335,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * Is this bucket idle?
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -728,7 +728,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
                  * Ignore idle securities. Note that we must include securities that have been
                  * closed in order to adjust Market Growth.
                  */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -756,7 +756,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
                 final MoneyWiseXAnalysisSecurityBucket myBucket = new MoneyWiseXAnalysisSecurityBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
                     theList.add(myBucket);

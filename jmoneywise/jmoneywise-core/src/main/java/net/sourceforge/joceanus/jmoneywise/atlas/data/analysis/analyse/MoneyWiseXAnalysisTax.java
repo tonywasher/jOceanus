@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
@@ -155,8 +156,11 @@ public class MoneyWiseXAnalysisTax {
             adjustForAdditionalTax();
 
             /* Adjust the Gross and Nett values */
-            theTaxBucket.adjustGrossAndNett(theAccount, pTrans.getTransactionValue());
+            final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, pTrans.getTransactionValue());
             theState.registerBucketInterest(theTaxBucket);
+            if (myAccBucket != null) {
+                theState.registerBucketInterest(myAccBucket);
+            }
         }
 
         /* Reset Payee bucket */
@@ -177,7 +181,7 @@ public class MoneyWiseXAnalysisTax {
      */
     void processAutoExpense(final TethysMoney pAmount) {
         /* Adjust the expense taxBasis by amount */
-        theExpenseTax.adjustGrossAndNett(theAccount, pAmount);
+        theExpenseTax.adjustGrossAndNett(pAmount);
         theState.registerBucketInterest(theExpenseTax);
     }
 
@@ -225,8 +229,11 @@ public class MoneyWiseXAnalysisTax {
                 theTaxCreditCat.addExpense(myTaxCredit);
 
                 /* Register income and expense for tax */
-                theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(theAccount, myTaxCredit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
+                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
 
                 /* else this is expense */
             } else {
@@ -239,8 +246,11 @@ public class MoneyWiseXAnalysisTax {
                 theTaxCreditCat.addIncome(myTaxCredit);
 
                 /* Register income and expense for tax */
-                theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(theAccount, myTaxCredit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
+                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
             }
 
             /* Register the various interests */
@@ -280,7 +290,10 @@ public class MoneyWiseXAnalysisTax {
                 theCategoryBucket.addIncome(myNatIns);
 
                 /* Income for tax */
-                theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
 
                 /* else this is expense */
             } else {
@@ -291,7 +304,10 @@ public class MoneyWiseXAnalysisTax {
                 theCategoryBucket.addExpense(myNatIns);
 
                 /* Register income for tax */
-                theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
             }
         }
     }
@@ -327,7 +343,10 @@ public class MoneyWiseXAnalysisTax {
                 theEmployerNatInsCat.addIncome(myNatIns);
 
                 /* Income for tax */
-                theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
 
                 /* else this is expense */
             } else {
@@ -338,7 +357,10 @@ public class MoneyWiseXAnalysisTax {
                 theEmployerNatInsCat.addExpense(myNatIns);
 
                 /* Register income for tax */
-                theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
             }
 
             /* Register the various interests */
@@ -378,8 +400,11 @@ public class MoneyWiseXAnalysisTax {
                 theDeemedBenefitCat.addExpense(myBenefit);
 
                 /* Register income and expense for tax */
-                theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);
-                theVirtualTax.adjustGrossAndNett(theAccount, myBenefit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);
+                theVirtualTax.adjustGrossAndNett(myBenefit);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
 
                 /* else this is expense */
             } else {
@@ -392,8 +417,11 @@ public class MoneyWiseXAnalysisTax {
                 theDeemedBenefitCat.addIncome(myBenefit);
 
                 /* Register income and expense for tax */
-                theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);
-                theVirtualTax.adjustGrossAndNett(theAccount, myBenefit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);
+                theVirtualTax.adjustGrossAndNett(myBenefit);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
             }
 
             /* Register the various interests */
@@ -433,8 +461,11 @@ public class MoneyWiseXAnalysisTax {
                 theWithheldCat.addExpense(myWithheld);
 
                 /* Register income and expense for tax */
-                theTaxBucket.adjustGrossAndNett(theAccount, myWithheld);
-                theVirtualTax.adjustGrossAndNett(theAccount, myWithheld);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myWithheld);
+                theVirtualTax.adjustGrossAndNett(myWithheld);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
 
                 /* else this is expense */
             } else {
@@ -447,8 +478,11 @@ public class MoneyWiseXAnalysisTax {
                 theWithheldCat.addIncome(myWithheld);
 
                 /* Register income and expense for tax */
-                theTaxBucket.adjustGrossAndNett(theAccount, myWithheld);
-                theVirtualTax.adjustGrossAndNett(theAccount, myWithheld);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myWithheld);
+                theVirtualTax.adjustGrossAndNett(myWithheld);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
             }
 
             /* Register the various interests */

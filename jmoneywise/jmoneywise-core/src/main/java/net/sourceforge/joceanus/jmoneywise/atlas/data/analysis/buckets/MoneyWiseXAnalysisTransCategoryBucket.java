@@ -232,7 +232,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
      * Is this bucket idle?
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -532,7 +532,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
                 final MoneyWiseXAnalysisTransCategoryBucket myBucket = new MoneyWiseXAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -563,7 +563,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
                 final MoneyWiseXAnalysisTransCategoryBucket myBucket = new MoneyWiseXAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);

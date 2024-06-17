@@ -162,7 +162,7 @@ public class MoneyWiseXAnalysisMarket {
 
             /* Adjust taxBasisTotals */
             theMarketIncome.subtractAmount(theMarketExpense);
-            theTaxBasisBucket.adjustGrossAndNett(null, theMarketIncome);
+            theTaxBasisBucket.adjustGrossAndNett(theMarketIncome);
             theState.registerBucketInterest(theTaxBasisBucket);
 
             /* Reset totals */

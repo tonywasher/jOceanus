@@ -505,7 +505,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      */
     public boolean isIdle() {
         /* Look for non-idle cash */
-        if (Boolean.FALSE.equals(theCash.isIdle())) {
+        if (!theCash.isIdle()) {
             return false;
         }
 
@@ -515,7 +515,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
             final MoneyWiseXAnalysisSecurityBucket mySecurity = myIterator.next();
 
             /* Look for active security */
-            if (Boolean.FALSE.equals(mySecurity.isIdle())) {
+            if (!mySecurity.isIdle()) {
                 return false;
             }
         }
