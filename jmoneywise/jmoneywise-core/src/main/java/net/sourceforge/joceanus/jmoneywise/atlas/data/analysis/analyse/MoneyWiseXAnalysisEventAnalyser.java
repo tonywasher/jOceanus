@@ -102,7 +102,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
         theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
 
         /* Loop through the Events */
-        for(;;) {
+        for (;;) {
             /* Access next event */
             final MoneyWiseXAnalysisEvent myEvent = theState.nextEvent();
             if (myEvent == null) {
@@ -196,7 +196,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
     }
 
     /**
-     * process securityPrice
+     * process securityPrice.
      * @param pEvent the event
      */
     private void processSecurityPrice(final MoneyWiseXAnalysisEvent pEvent) {
@@ -229,7 +229,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
     }
 
     /**
-     * process ExchangeRate
+     * process ExchangeRate.
      * @param pEvent the event
      */
     private void processExchangeRate(final MoneyWiseXAnalysisEvent pEvent) {
@@ -262,7 +262,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
     }
 
     /**
-     * process depositRate
+     * process depositRate.
      * @param pEvent the event
      */
     private void processDepositRate(final MoneyWiseXAnalysisEvent pEvent) {
@@ -282,7 +282,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
     }
 
     /**
-     * process OpeningBalance
+     * process OpeningBalance.
      * @param pEvent the event
      */
     private void processOpeningBalance(final MoneyWiseXAnalysisEvent pEvent) {

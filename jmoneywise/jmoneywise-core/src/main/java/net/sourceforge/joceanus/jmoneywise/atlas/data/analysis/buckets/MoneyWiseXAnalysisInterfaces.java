@@ -59,7 +59,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
         /**
          * Adjust the valuation.
          */
-        public void adjustValuation();
+        void adjustValuation();
 
         /**
          * Obtain the delta valuation.

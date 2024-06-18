@@ -75,7 +75,7 @@
     <BouncyCastleVersion>1.78.1</BouncyCastleVersion>
     <JUnitVersion>5.10.2</JUnitVersion>
     <JSONVersion>20240303</JSONVersion>
-    <ApacheMavenVersion>3.9.6</ApacheMavenVersion>
+    <ApacheMavenVersion>3.9.8</ApacheMavenVersion>
     <MySQLVersion>8.4.0</MySQLVersion>
     <MariaDBVersion>3.4.0</MariaDBVersion>
     <PostGreSQLVersion>42.7.3</PostGreSQLVersion>
@@ -99,11 +99,11 @@
     <CompilerPluginVersion>3.13.0</CompilerPluginVersion>
     <ShadePluginVersion>3.6.0</ShadePluginVersion>
     <DependencyPluginVersion>3.7.0</DependencyPluginVersion>
-    <SurefirePluginVersion>3.2.5</SurefirePluginVersion>
+    <SurefirePluginVersion>3.3.0</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.6.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.4.1</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.5.0</ProjectInfoPluginVersion>
+    <ProjectInfoPluginVersion>3.6.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.4.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.7.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>

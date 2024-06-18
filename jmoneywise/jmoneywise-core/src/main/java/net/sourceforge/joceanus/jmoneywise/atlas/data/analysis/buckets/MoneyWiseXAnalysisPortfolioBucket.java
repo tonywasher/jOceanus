@@ -340,29 +340,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
     }
 
     /**
-     * InitialiseValues.
-     */
-    //private void initValues() {
-    //    /* Determine currency */
-    //    final Currency myCurrency = theCurrency == null
-    //            ? MoneyWiseXAnalysisAccountBucket.DEFAULT_CURRENCY
-    //            : theCurrency.getCurrency();
-
-        /* Create valuation fields for the portfolio */
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new TethysMoney(myCurrency));
-    //    theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new TethysMoney(myCurrency));
-
-        /* Create profit fields for the portfolio */
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.PROFIT, new TethysMoney(myCurrency));
-    //    theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.PROFIT, new TethysMoney(myCurrency));
-
-        /* Create market fields for the portfolio */
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.MARKETGROWTH, new TethysMoney(myCurrency));
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.CURRENCYFLUCT, new TethysMoney(myCurrency));
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT, new TethysMoney(myCurrency));
-    //}
-
-    /**
      * Obtain the SecurityBucket from this portfolio for a security holding.
      * @param pHolding the security holding
      * @return the bucket

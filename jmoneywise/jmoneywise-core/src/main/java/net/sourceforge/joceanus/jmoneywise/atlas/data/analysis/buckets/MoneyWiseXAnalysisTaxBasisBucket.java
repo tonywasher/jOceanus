@@ -36,8 +36,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseX
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis;

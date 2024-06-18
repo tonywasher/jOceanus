@@ -193,8 +193,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processAssets() {
         /* Access debit and credit accounts and amounts */
-        MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
-        MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
+        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
+        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
         TethysMoney myDebitAmount = theTrans.getDebitAmount();
         TethysMoney myCreditAmount = theTrans.getCreditAmount();
 
@@ -272,8 +272,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processAutoExpense() {
         /* Access debit and credit accounts and amounts */
-        MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
-        MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
+        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
+        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
 
         /* If the debit account is auto-Expense */
         if (isAutoExpense(myDebit)) {

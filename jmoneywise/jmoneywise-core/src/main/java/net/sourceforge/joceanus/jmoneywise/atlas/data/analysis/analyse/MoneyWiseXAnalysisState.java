@@ -369,12 +369,12 @@ public class MoneyWiseXAnalysisState
     }
 
     @Override
-    public void registerBucketInterest(MoneyWiseXAnalysisBucketRegister pBucket) {
+    public void registerBucketInterest(final MoneyWiseXAnalysisBucketRegister pBucket) {
         theEventBuckets.put(pBucket.getBucketId(), pBucket);
     }
 
     @Override
-    public void registerInterestedBucketsForEvent(MoneyWiseXAnalysisEvent pEvent) {
+    public void registerInterestedBucketsForEvent(final MoneyWiseXAnalysisEvent pEvent) {
         for (MoneyWiseXAnalysisBucketRegister myBucket : theEventBuckets.values()) {
             myBucket.registerEvent(pEvent);
         }
