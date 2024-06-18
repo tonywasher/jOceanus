@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project>
-  <bannerLeft>
-    <name>jOceanus</name>
-    <!--<src>http://maven.apache.org/images/apache-maven-project-2.png</src>
-    <href>http://maven.apache.org/</href>-->
-  </bannerLeft>
-  <!--<bannerRight>
-    <src>http://maven.apache.org/images/maven-logo-2.gif</src>
-  </bannerRight>-->
+<site>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.10.0</version>
+  </skin>
+  <!-- http://maven.apache.org/skins/maven-fluido-skin/ -->
+  <custom>
+    <fluidoSkin>
+      <topBarEnabled>true</topBarEnabled>
+      <sideBarEnabled>true</sideBarEnabled>
+    </fluidoSkin>
+  </custom>
   <body>
-    <links>
-      <!--<item name="Apache" href="http://www.apache.org/" />
-      <item name="Maven 1.x" href="http://maven.apache.org/maven-1.x/"/>
-      <item name="Maven 2" href="http://maven.apache.org/"/>-->
-    </links>
-
     <menu name="jOceanus">
       <item name="Introduction" href="index.html"/>
-      <!--<item name="Download" href="http://sourceforge.net/projects/joceanus/files/"/>-->
       <item name="Release Notes" href="releaseNotes.html" />
       <item name="JavaDoc" href="apidocs/index.html" />
       <item name="Source Xref" href="xref/index.html" />
     </menu>
-
     <menu ref="modules"/>
     <menu ref="reports"/>
   </body>
-</project>
+</site>
