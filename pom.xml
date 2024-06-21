@@ -90,7 +90,7 @@
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>10.17.0</CheckStyleVersion>
     <PMDVersion>7.2.0</PMDVersion>
-    <CleanPluginVersion>3.3.2</CleanPluginVersion>
+    <CleanPluginVersion>3.4.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.2</InstallPluginVersion>
     <SitePluginVersion>4.0.0-M15</SitePluginVersion>
@@ -102,7 +102,7 @@
     <SurefirePluginVersion>3.3.0</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.6.0</BuildHelperPluginVersion>
-    <JarPluginVersion>3.4.1</JarPluginVersion>
+    <JarPluginVersion>3.4.2</JarPluginVersion>
     <ProjectInfoPluginVersion>3.6.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.4.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.7.0</JavaDocPluginVersion>

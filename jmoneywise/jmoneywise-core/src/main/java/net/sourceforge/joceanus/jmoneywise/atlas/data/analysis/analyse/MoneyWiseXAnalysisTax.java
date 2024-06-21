@@ -19,16 +19,26 @@ package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -47,6 +57,11 @@ public class MoneyWiseXAnalysisTax {
     private final MoneyWiseXAnalysisState theState;
 
     /**
+     * The statePension bucket.
+     */
+    private final MoneyWiseXAnalysisSecurityBucket theStatePension;
+
+    /**
      * The taxMan account.
      */
     private final MoneyWiseXAnalysisPayeeBucket theTaxManPayee;
@@ -55,6 +70,11 @@ public class MoneyWiseXAnalysisTax {
      * The taxCredit category.
      */
     private final MoneyWiseXAnalysisTransCategoryBucket theTaxCreditCat;
+
+    /**
+     * The employeeNatIns category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theEmployeeNatInsCat;
 
     /**
      * The employerNatIns category.
@@ -131,6 +151,7 @@ public class MoneyWiseXAnalysisTax {
         /* Store the various Category buckets */
         final MoneyWiseXAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();
         theTaxCreditCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.TAXCREDIT);
+        theEmployeeNatInsCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYEENATINS);
         theEmployerNatInsCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYERNATINS);
         theDeemedBenefitCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.DEEMEDBENEFIT);
         theWithheldCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.WITHHELD);
@@ -140,6 +161,31 @@ public class MoneyWiseXAnalysisTax {
         theTaxFreeTax = theAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.TAXFREE);
         theExpenseTax = theAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.EXPENSE);
         theVirtualTax = theAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.VIRTUAL);
+
+        /* Access the StatePension */
+        theStatePension = getStatePension(theAnalysis.getEditSet());
+    }
+
+    /**
+     * Obtain statePension bucket.
+     * @param pEditSet the editSet
+     * @return the statePension bucket
+     */
+    private MoneyWiseXAnalysisSecurityBucket getStatePension(final PrometheusEditSet pEditSet) {
+        /* Access the singular portfolio and security */
+        final MoneyWisePortfolioList myPortfolioList = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+        final MoneyWisePortfolio myPensionPort = myPortfolioList.getSingularClass(MoneyWisePortfolioClass.PENSION);
+        final MoneyWiseSecurity myStatePension = pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class).getSingularClass(MoneyWiseSecurityClass.STATEPENSION);
+
+        /* If they exist, access the bucket */
+        if (myPensionPort != null
+                && myStatePension != null) {
+            final MoneyWiseSecurityHolding myHolding = myPortfolioList.getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
+            return theAnalysis.getPortfolios().getBucket(myHolding);
+        }
+
+        /* Default to no bucket */
+        return null;
     }
 
     /**
@@ -191,7 +237,11 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForAdditionalTax() throws OceanusException {
         /* adjust for various additions */
-        adjustForTaxCredit();
+        if (theTrans.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED)) {
+            adjustForTaxCredit();
+        } else {
+            adjustForTaxRelief();
+        }
         adjustForEmployerNI();
         adjustForEmployeeNI();
         adjustForBenefit();
@@ -261,6 +311,68 @@ public class MoneyWiseXAnalysisTax {
     }
 
     /**
+     * Adjust Buckets for taxCredit.
+     * @throws OceanusException on error
+     */
+    private void adjustForTaxRelief() throws OceanusException {
+        /* If we have taxCredit */
+        TethysMoney myTaxCredit = theTrans.getTransaction().getTaxCredit();
+        if (myTaxCredit != null && myTaxCredit.isNonZero()) {
+            /* Determine whether this is income or expense */
+            final boolean isIncome = theTrans.isIncomeCategory();
+
+            /* check validity of transaction */
+            checkForValidAdditional();
+
+            /* If this is a refund, negate the taxCredit */
+            if (theTrans.isRefund()) {
+                myTaxCredit = new TethysMoney(myTaxCredit);
+                myTaxCredit.negate();
+            }
+
+            /* If this is an income */
+            if (isIncome) {
+                /* CashFlow is Income from Payee and Expense to taxMan */
+                thePayeeBucket.addIncome(myTaxCredit);
+                theTaxManPayee.addExpense(myTaxCredit);
+
+                /* Income from category and Expense to taxCredit */
+                theCategoryBucket.addIncome(myTaxCredit);
+                theTaxCreditCat.addExpense(myTaxCredit);
+
+                /* Register income and expense for tax */
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
+                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
+
+                /* else this is expense */
+            } else {
+                /* CashFlow is Expense from Payee and Income from taxMan */
+                thePayeeBucket.addExpense(myTaxCredit);
+                theTaxManPayee.addIncome(myTaxCredit);
+
+                /* Expense to category and Income from taxCredit */
+                theCategoryBucket.addExpense(myTaxCredit);
+                theTaxCreditCat.addIncome(myTaxCredit);
+
+                /* Register income and expense for tax */
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
+                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                if (myAccBucket != null) {
+                    theState.registerBucketInterest(myAccBucket);
+                }
+            }
+
+            /* Register the various interests */
+            theState.registerBucketInterest(theTaxManPayee);
+            theState.registerBucketInterest(theTaxCreditCat);
+            theState.registerBucketInterest(theExpenseTax);
+        }
+    }
+
+    /**
      * Adjust Buckets for employeeNI.
      * @throws OceanusException on error
      */
@@ -270,6 +382,8 @@ public class MoneyWiseXAnalysisTax {
         if (myNatIns != null && myNatIns.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTrans.isIncomeCategory();
+            final boolean isPension = theTrans.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);
+            final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = isPension ? theCategoryBucket : theEmployerNatInsCat;
 
             /* check validity of transaction */
             checkForValidAdditional();
@@ -287,7 +401,7 @@ public class MoneyWiseXAnalysisTax {
                 // TODO do transfer to statePension
 
                 /* Income from EeNatIns */
-                theCategoryBucket.addIncome(myNatIns);
+                myCatBucket.addIncome(myNatIns);
 
                 /* Income for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);
@@ -301,7 +415,7 @@ public class MoneyWiseXAnalysisTax {
                 thePayeeBucket.addExpense(myNatIns);
 
                 /* Expense to category and Income from virtual */
-                theCategoryBucket.addExpense(myNatIns);
+                myCatBucket.addExpense(myNatIns);
 
                 /* Register income for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);
@@ -322,7 +436,9 @@ public class MoneyWiseXAnalysisTax {
         TethysMoney myNatIns = theTrans.getTransaction().getEmployerNatIns();
         if (myNatIns != null && myNatIns.isNonZero()) {
             /* Determine whether this is income or expense */
-             final boolean isIncome = theTrans.isIncomeCategory();
+            final boolean isIncome = theTrans.isIncomeCategory();
+            final boolean isPension = theTrans.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);
+            final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = isPension ? theCategoryBucket : theEmployerNatInsCat;
 
             /* check validity of transaction */
             checkForValidAdditional();
@@ -340,7 +456,7 @@ public class MoneyWiseXAnalysisTax {
                 // TODO do transfer to statePension
 
                 /* Income from ErNatIns */
-                theEmployerNatInsCat.addIncome(myNatIns);
+                myCatBucket.addIncome(myNatIns);
 
                 /* Income for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);
@@ -354,7 +470,7 @@ public class MoneyWiseXAnalysisTax {
                 thePayeeBucket.addExpense(myNatIns);
 
                 /* Expense to category and Income from virtual */
-                theEmployerNatInsCat.addExpense(myNatIns);
+                myCatBucket.addExpense(myNatIns);
 
                 /* Register income for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);
@@ -395,9 +511,9 @@ public class MoneyWiseXAnalysisTax {
                 thePayeeBucket.addIncome(myBenefit);
                 thePayeeBucket.addExpense(myBenefit);
 
-                /* Income from category and Expense to virtual */
-                theCategoryBucket.addIncome(myBenefit);
-                theDeemedBenefitCat.addExpense(myBenefit);
+                /* Income from Benefit and Expense to withheld */
+                theDeemedBenefitCat.addIncome(myBenefit);
+                theWithheldCat.addExpense(myBenefit);
 
                 /* Register income and expense for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);
@@ -412,9 +528,9 @@ public class MoneyWiseXAnalysisTax {
                 thePayeeBucket.addIncome(myBenefit);
                 thePayeeBucket.addExpense(myBenefit);
 
-                /* Expense to category and Income from virtual */
-                theCategoryBucket.addExpense(myBenefit);
-                theDeemedBenefitCat.addIncome(myBenefit);
+                /* Expense to benefit and Income from withheld */
+                theDeemedBenefitCat.addExpense(myBenefit);
+                theWithheldCat.addIncome(myBenefit);
 
                 /* Register income and expense for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);
@@ -500,6 +616,7 @@ public class MoneyWiseXAnalysisTax {
             throw new MoneyWiseLogicException("Invalid additional items on transaction");
         }
     }
+
     /**
      * Record the account for a transaction.
      * @param pTrans the transaction

@@ -175,6 +175,14 @@ public class MoneyWiseXAnalysisEventAnalyser {
     }
 
     /**
+     * Obtain the transaction analyser.
+     * @return the analyser
+     */
+    MoneyWiseXAnalysisTransAnalyser getAnalyser() {
+        return theTrans;
+    }
+
+    /**
      * Mark active accounts.
      * @throws OceanusException on error
      */

@@ -77,7 +77,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     /**
      * The current transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTrans;
+    private MoneyWiseXAnalysisTransaction theTransaction;
 
     /**
      * Constructor.
@@ -102,8 +102,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     public void processTransaction(final MoneyWiseXAnalysisEvent pEvent) throws OceanusException {
         /* Parse the event */
-        theTrans = new MoneyWiseXAnalysisTransaction(pEvent);
-        final MoneyWiseTransaction myTrans = theTrans.getTransaction();
+        theTransaction = new MoneyWiseXAnalysisTransaction(pEvent);
+        final MoneyWiseTransaction myTrans = theTransaction.getTransaction();
 
         /* Ignore header transactions */
         if (!myTrans.isHeader()) {
@@ -128,24 +128,24 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processTransaction() throws OceanusException {
         /* Access account and partner */
-        final MoneyWiseTransaction myTrans = theTrans.getTransaction();
-        final MoneyWiseTransAsset myDebit = theTrans.getDebitAccount();
-        final MoneyWiseTransAsset myCredit = theTrans.getCreditAccount();
+        final MoneyWiseTransaction myTrans = theTransaction.getTransaction();
+        final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();
+        final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
 
         /* If the event relates to a security holding account, split out the workings */
         if (isSecurityHolding(myDebit)) {
             /* Process as a Security transaction */
-            theSecurity.processDebitSecurity(theTrans);
+            theSecurity.processDebitSecurity(theTransaction);
 
             /* If the event relates to a security holding partner, split out the workings */
         } else if (isSecurityHolding(myCredit)) {
             /* Process as a Security transaction */
-            theSecurity.processCreditSecurity(theTrans);
+            theSecurity.processCreditSecurity(theTransaction);
 
             /* If the event is portfolioXfer, split out the workings */
-        } else if (isPortfolioXfer(theTrans.getCategoryClass())) {
+        } else if (isPortfolioXfer(theTransaction.getCategoryClass())) {
             /* Process the portfolioXfer */
-            thePortfolioXfer.processPortfolioXfer(theTrans);
+            thePortfolioXfer.processPortfolioXfer(theTransaction);
 
             /* Else handle the event normally */
         } else if (myDebit instanceof MoneyWiseAssetBase
@@ -162,11 +162,14 @@ public class MoneyWiseXAnalysisTransAnalyser {
                     + myTrans.getPartner().getAssetType());
         }
 
+        /* adjust category bucket */
+        adjustCategoryBucket();
+
         /* Process taxBasis */
-        theTax.adjustTaxBasis(theTrans);
+        theTax.adjustTaxBasis(theTransaction);
 
         /* Register the eventBuckets */
-        final MoneyWiseXAnalysisEvent myEvent = theTrans.getEvent();
+        final MoneyWiseXAnalysisEvent myEvent = theTransaction.getEvent();
         theMarket.adjustMarketTotals(myEvent);
         theState.registerInterestedBucketsForEvent(myEvent);
     }
@@ -176,7 +179,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processNonSecurity() {
         /* Adjust parent details */
-        theTrans.adjustParent();
+        theTransaction.adjustParent();
 
         /* Process Asset accounts */
         processAssets();
@@ -193,10 +196,10 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processAssets() {
         /* Access debit and credit accounts and amounts */
-        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
-        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
-        TethysMoney myDebitAmount = theTrans.getDebitAmount();
-        TethysMoney myCreditAmount = theTrans.getCreditAmount();
+        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
+        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();
+        TethysMoney myDebitAmount = theTransaction.getDebitAmount();
+        TethysMoney myCreditAmount = theTransaction.getCreditAmount();
 
         /* If the debit account is an asset */
         if (isAsset(myDebit)) {
@@ -214,7 +217,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final TethysMoney myFluctuation = new TethysMoney(myDebitAmount);
         myFluctuation.addAmount(myCreditAmount);
         if (myFluctuation.isNonZero()) {
-            theMarket.adjustTotalsForCurrencyFluctuation(theTrans.getEvent(), myFluctuation);
+            theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
         }
     }
 
@@ -226,7 +229,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     TethysMoney processDebitAsset(final MoneyWiseAssetBase pDebit) {
         /* Adjust the debit asset bucket */
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(pDebit);
-        TethysMoney myDebitAmount = theTrans.getDebitAmount();
+        TethysMoney myDebitAmount = theTransaction.getDebitAmount();
         myBucket.addToBalance(myDebitAmount);
         myBucket.adjustValuation();
         theState.registerBucketInterest(myBucket);
@@ -235,7 +238,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         if (Boolean.TRUE.equals(pDebit.isForeign())) {
             /* convert debit amount to reporting currency */
             myDebitAmount = myBucket.getDeltaValuation();
-            theTrans.setDebitAmount(myDebitAmount);
+            theTransaction.setDebitAmount(myDebitAmount);
         }
 
         /* Return the debit amount */
@@ -251,7 +254,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     TethysMoney processCreditAsset(final MoneyWiseAssetBase pCredit) {
         /* Adjust the credit asset bucket */
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(pCredit);
-        TethysMoney myCreditAmount = theTrans.getCreditAmount();
+        TethysMoney myCreditAmount = theTransaction.getCreditAmount();
         myBucket.addToBalance(myCreditAmount);
         myBucket.adjustValuation();
         theState.registerBucketInterest(myBucket);
@@ -260,7 +263,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         if (Boolean.TRUE.equals(pCredit.isForeign())) {
             /* convert credit amount to reporting currency */
             myCreditAmount = myBucket.getDeltaValuation();
-            theTrans.setCreditAmount(myCreditAmount);
+            theTransaction.setCreditAmount(myCreditAmount);
         }
 
         /* Return the credit amount */
@@ -272,8 +275,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processAutoExpense() {
         /* Access debit and credit accounts and amounts */
-        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
-        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
+        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
+        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();
 
         /* If the debit account is auto-Expense */
         if (isAutoExpense(myDebit)) {
@@ -298,7 +301,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWisePayee myDebit = pDebit.getAutoPayee();
 
         /* Adjust expense for autoPayee bucket */
-        final TethysMoney myAmount = theTrans.getDebitAmount();
+        final TethysMoney myAmount = theTransaction.getDebitAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myDebit);
         myPayee.addExpense(myAmount);
         theState.registerBucketInterest(myPayee);
@@ -323,7 +326,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWisePayee myCredit = pCredit.getAutoPayee();
 
         /* Adjust expense for autoPayee bucket */
-        final TethysMoney myAmount = theTrans.getCreditAmount();
+        final TethysMoney myAmount = theTransaction.getCreditAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myCredit);
         myPayee.addExpense(myAmount);
         theState.registerBucketInterest(myPayee);
@@ -342,8 +345,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private void processPayees() {
         /* Access debit and credit accounts and amounts */
-        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTrans.getDebitAccount();
-        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTrans.getCreditAccount();
+        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
+        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();
 
         /* If the debit account is payee */
         if (isPayee(myDebit)) {
@@ -363,12 +366,11 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pDebit the debit asset
      */
     void processDebitPayee(final MoneyWisePayee pDebit) {
-        /* Access category */
-        final MoneyWiseTransCategory myCategory = theTrans.getCategory();
-        final boolean isExpense = theTrans.isExpenseCategory();
+        /* Determine income/expense */
+        final boolean isExpense = theTransaction.isExpenseCategory();
 
         /* Adjust expense for Payee bucket */
-        final TethysMoney myAmount = theTrans.getDebitAmount();
+        final TethysMoney myAmount = theTransaction.getDebitAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayeeBucket = theAnalysis.getPayees().getBucket(pDebit);
         if (isExpense) {
             myPayeeBucket.addExpense(myAmount);
@@ -376,15 +378,6 @@ public class MoneyWiseXAnalysisTransAnalyser {
             myPayeeBucket.subtractIncome(myAmount);
         }
         theState.registerBucketInterest(myPayeeBucket);
-
-        /* Adjust expense for Category bucket */
-        final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = theAnalysis.getTransCategories().getBucket(myCategory);
-        if (isExpense) {
-            myCatBucket.addExpense(myAmount);
-        } else {
-            myCatBucket.subtractIncome(myAmount);
-        }
-        theState.registerBucketInterest(myCatBucket);
 
         /* Record payee bucket */
         theTax.recordPayeeBucket(myPayeeBucket);
@@ -395,12 +388,11 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pCredit the credit asset
      */
     void processCreditPayee(final MoneyWisePayee pCredit) {
-        /* Access category */
-        final MoneyWiseTransCategory myCategory = theTrans.getCategory();
-        final boolean isExpense = theTrans.isExpenseCategory();
+        /* Determine income/expense */
+        final boolean isExpense = theTransaction.isExpenseCategory();
 
         /* Adjust expense for Payee bucket */
-        final TethysMoney myAmount = theTrans.getCreditAmount();
+        final TethysMoney myAmount = theTransaction.getCreditAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayeeBucket = theAnalysis.getPayees().getBucket(pCredit);
         if (isExpense) {
             myPayeeBucket.addExpense(myAmount);
@@ -409,17 +401,31 @@ public class MoneyWiseXAnalysisTransAnalyser {
         }
         theState.registerBucketInterest(myPayeeBucket);
 
-        /* Adjust expense for Category bucket */
+        /* Record payee bucket */
+        theTax.recordPayeeBucket(myPayeeBucket);
+    }
+
+    /**
+     * Adjust category buckets.
+     */
+    void adjustCategoryBucket() {
+        /* Access the credit amount and category */
+        final TethysMoney myAmount = theTransaction.getCreditAmount();
+        final MoneyWiseTransCategory myCategory = theTransaction.getCategory();
+
+        /* Ignore transfers */
+        if (myCategory.isTransfer()) {
+            return;
+        }
+
+        /* Adjust income/expense for Category bucket */
         final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = theAnalysis.getTransCategories().getBucket(myCategory);
-        if (isExpense) {
+        if (theTransaction.isExpenseCategory()) {
             myCatBucket.addExpense(myAmount);
-        } else {
+        } else if (theTransaction.isIncomeCategory()) {
             myCatBucket.subtractIncome(myAmount);
         }
         theState.registerBucketInterest(myCatBucket);
-
-        /* Record payee bucket */
-        theTax.recordPayeeBucket(myPayeeBucket);
     }
 
     /**

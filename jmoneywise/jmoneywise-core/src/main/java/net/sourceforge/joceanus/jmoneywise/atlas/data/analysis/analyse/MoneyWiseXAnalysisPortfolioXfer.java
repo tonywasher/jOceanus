@@ -43,7 +43,7 @@ public class MoneyWiseXAnalysisPortfolioXfer {
     /**
      * The current transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTrans;
+    private MoneyWiseXAnalysisTransaction theTransaction;
 
     /**
      * Constructor.
@@ -62,16 +62,16 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      */
     void processPortfolioXfer(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException  {
         /* Store the transaction */
-        theTrans = pTrans;
+        theTransaction = pTrans;
 
         /* Target must be portfolio */
-        final MoneyWiseTransAsset myCredit = theTrans.getCreditAccount();
+        final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
         if (!MoneyWiseXAnalysisTransAnalyser.isPortfolio(myCredit)) {
             throw new MoneyWiseLogicException("Credit account is no portfolio");
         }
 
         /* If this is a transfer from a portfolio */
-        final MoneyWiseTransAsset myDebit = theTrans.getDebitAccount();
+        final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();
         if (MoneyWiseXAnalysisTransAnalyser.isPortfolio(myDebit)) {
             processPortfolio2Portfolio();
         } else if (MoneyWiseXAnalysisTransAnalyser.isSecurityHolding(myDebit)) {
@@ -124,8 +124,8 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      */
     private void processHolding2Portfolio() {
         /* Access the portfolio buckets */
-        final MoneyWiseSecurityHolding mySrcHolding = (MoneyWiseSecurityHolding) theTrans.getDebitAccount();
-        final MoneyWisePortfolio myTgtPortfolio = (MoneyWisePortfolio) theTrans.getCreditAccount();
+        final MoneyWiseSecurityHolding mySrcHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
+        final MoneyWisePortfolio myTgtPortfolio = (MoneyWisePortfolio) theTransaction.getCreditAccount();
         final MoneyWiseXAnalysisPortfolioBucket mySource = thePortfolios.getBucket(mySrcHolding.getPortfolio());
         final MoneyWiseXAnalysisPortfolioBucket myTarget = thePortfolios.getBucket(myTgtPortfolio);
 
