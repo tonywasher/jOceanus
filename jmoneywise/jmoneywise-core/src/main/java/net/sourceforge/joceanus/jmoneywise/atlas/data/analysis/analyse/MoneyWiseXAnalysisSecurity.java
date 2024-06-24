@@ -77,11 +77,6 @@ public class MoneyWiseXAnalysisSecurity {
     private final MoneyWiseXAnalysisTakeover theTakeover;
 
     /**
-     * The transAnalyser.
-     */
-    private final MoneyWiseXAnalysisTransAnalyser theTrans;
-
-    /**
      * The transaction.
      */
     private MoneyWiseXAnalysisTransaction theTransaction;
@@ -90,17 +85,25 @@ public class MoneyWiseXAnalysisSecurity {
      * Constructor.
      *
      * @param pAnalyser the analyser
+     * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
+    MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {
         thePortfolios = pAnalyser.getAnalysis().getPortfolios();
         theState = pAnalyser.getState();
-        theTrans = pAnalyser.getAnalyser();
         theMarket = pAnalyser.getMarket();
         theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser);
         theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser);
         theDividend = new MoneyWiseXAnalysisDividend(pAnalyser);
         theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser);
         theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser);
+    }
+
+    /**
+     * Obtain the xferIn analyser
+     * @return the xferInAnalyser
+     */
+    MoneyWiseXAnalysisXferIn getXferInAnalyser() {
+        return theXferIn;
     }
 
     /**
@@ -243,15 +246,17 @@ public class MoneyWiseXAnalysisSecurity {
             myAsset.recordSecurityPrice();
         }
 
-        /* Value the asset and determine the unrealisedGains and MarketGrowth */
+        /* Value the asset and determine the unrealisedGains */
         myAsset.valueAsset();
+        myAsset.adjustValuation();
         myAsset.calculateUnrealisedGains();
+
+        /* determine the MarketGrowth */
         final TethysMoney myDeltaValue = myAsset.getDeltaValuation();
         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
 
         /* Register the transaction */
         theState.registerBucketInterest(myAsset);
-        theState.registerInterestedBucketsForEvent(theTransaction.getEvent());
     }
 
     /**

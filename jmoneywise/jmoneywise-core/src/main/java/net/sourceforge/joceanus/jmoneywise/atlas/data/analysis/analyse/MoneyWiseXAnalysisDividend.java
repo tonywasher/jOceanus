@@ -35,7 +35,7 @@ public class MoneyWiseXAnalysisDividend {
      * @param pAnalyser the event analyser.
      */
     MoneyWiseXAnalysisDividend(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getAnalyser();
+        theTrans = pAnalyser.getTransAnalyser();
     }
 
     /**

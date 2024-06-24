@@ -338,7 +338,7 @@ public class MoneyWiseTransInfoSet
                         ? MetisFieldRequired.NOTALLOWED
                         : MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                return Boolean.TRUE.equals(!myAccount.isTaxFree())
+                return !myAccount.isTaxFree()
                         && (myYear.isTaxCreditRequired() || myAccount.isForeign())
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;

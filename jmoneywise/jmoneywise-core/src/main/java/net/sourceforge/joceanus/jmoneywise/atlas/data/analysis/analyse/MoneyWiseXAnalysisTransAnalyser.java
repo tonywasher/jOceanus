@@ -82,8 +82,9 @@ public class MoneyWiseXAnalysisTransAnalyser {
     /**
      * Constructor.
      * @param pAnalyser the analyser
+     * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisTransAnalyser(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
+    MoneyWiseXAnalysisTransAnalyser(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {
         /* Store details */
         theAnalysis = pAnalyser.getAnalysis();
         theState = pAnalyser.getState();
@@ -93,6 +94,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
 
         /* Create the security analyser */
         theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser);
+        theTax.declareSecurityAnalyser(theSecurity);
     }
 
     /**
@@ -235,7 +237,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState.registerBucketInterest(myBucket);
 
         /* If the asset is foreign, convert debit amount to reporting currency */
-        if (Boolean.TRUE.equals(pDebit.isForeign())) {
+        if (pDebit.isForeign()) {
             /* convert debit amount to reporting currency */
             myDebitAmount = myBucket.getDeltaValuation();
             theTransaction.setDebitAmount(myDebitAmount);
@@ -260,7 +262,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState.registerBucketInterest(myBucket);
 
         /* If the asset is foreign */
-        if (Boolean.TRUE.equals(pCredit.isForeign())) {
+        if (pCredit.isForeign()) {
             /* convert credit amount to reporting currency */
             myCreditAmount = myBucket.getDeltaValuation();
             theTransaction.setCreditAmount(myCreditAmount);
@@ -474,7 +476,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pAccount the account
      * @return true/false
      */
-    private boolean isPayee(final MoneyWiseAssetBase pAccount) {
+    boolean isPayee(final MoneyWiseAssetBase pAccount) {
         return pAccount.getAssetType() == MoneyWiseAssetType.PAYEE;
     }
 

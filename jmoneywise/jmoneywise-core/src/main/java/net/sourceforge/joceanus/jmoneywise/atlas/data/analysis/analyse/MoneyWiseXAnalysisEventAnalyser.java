@@ -178,7 +178,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
      * Obtain the transaction analyser.
      * @return the analyser
      */
-    MoneyWiseXAnalysisTransAnalyser getAnalyser() {
+    MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
         return theTrans;
     }
 

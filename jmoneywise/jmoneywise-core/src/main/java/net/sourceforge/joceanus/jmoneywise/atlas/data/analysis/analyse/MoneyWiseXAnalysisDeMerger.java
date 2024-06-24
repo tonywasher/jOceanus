@@ -35,7 +35,7 @@ public class MoneyWiseXAnalysisDeMerger {
      * @param pAnalyser the event analyser.
      */
     MoneyWiseXAnalysisDeMerger(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getAnalyser();
+        theTrans = pAnalyser.getTransAnalyser();
     }
 
     /**

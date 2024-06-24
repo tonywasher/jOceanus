@@ -385,7 +385,7 @@ public enum MoneyWiseSecurityClass
      * Obtain autoUnits.
      * @return the number of units for this security if active.
      */
-    public Integer getAutoUnits() {
+    public int getAutoUnits() {
         switch (this) {
             case ENDOWMENT:
             case DEFINEDCONTRIBUTION:
@@ -395,7 +395,7 @@ public enum MoneyWiseSecurityClass
             case DEFINEDBENEFIT:
                 return PENSION_YEARS;
             default:
-                return null;
+                return 0;
         }
     }
 }

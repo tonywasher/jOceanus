@@ -37,7 +37,7 @@ public class MoneyWiseXAnalysisTakeover {
      * @param pAnalyser the event analyser.
      */
     MoneyWiseXAnalysisTakeover(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getAnalyser();
+        theTrans = pAnalyser.getTransAnalyser();
     }
 
     /**

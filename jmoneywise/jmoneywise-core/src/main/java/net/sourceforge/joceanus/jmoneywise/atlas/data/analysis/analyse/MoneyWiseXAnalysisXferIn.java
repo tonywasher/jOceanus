@@ -16,19 +16,67 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Credit XferIn Analysis.
  */
 public class MoneyWiseXAnalysisXferIn {
     /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
      * The transAnalyser.
      */
     private final MoneyWiseXAnalysisTransAnalyser theTrans;
+
+    /**
+     * The market analysis.
+     */
+    private final MoneyWiseXAnalysisMarket theMarket;
+
+    /**
+     * The reporting currency.
+     */
+    private final MoneyWiseCurrency theCurrency;
+
+    /**
+     * The statePension bucket.
+     */
+    private final MoneyWiseXAnalysisSecurityBucket theStatePension;
 
     /**
      * The transaction.
@@ -38,9 +86,42 @@ public class MoneyWiseXAnalysisXferIn {
     /**
      * Constructor.
      * @param pAnalyser the event analyser.
+     * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getAnalyser();
+    MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {
+        /* Initialise values */
+        theAnalysis = pAnalyser.getAnalysis();
+        thePortfolios = theAnalysis.getPortfolios();
+        theState = pAnalyser.getState();
+        theTrans = pAnalyser.getTransAnalyser();
+        theMarket = pAnalyser.getMarket();
+        theCurrency = theAnalysis.getCurrency();
+
+        /* Access the StatePension */
+        theStatePension = getStatePension(theAnalysis.getEditSet());
+    }
+
+    /**
+     * Obtain statePension bucket.
+     * @param pEditSet the editSet
+     * @return the statePension bucket
+     * @throws OceanusException on error
+     */
+    private MoneyWiseXAnalysisSecurityBucket getStatePension(final PrometheusEditSet pEditSet) throws OceanusException  {
+        /* Access the singular portfolio and security */
+        final MoneyWisePortfolioList myPortfolioList = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+        final MoneyWisePortfolio myPensionPort = myPortfolioList.getSingularClass(MoneyWisePortfolioClass.PENSION);
+        final MoneyWiseSecurity myStatePension = pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class).getSingularClass(MoneyWiseSecurityClass.STATEPENSION);
+
+        /* If they exist, access the bucket */
+        if (myPensionPort != null
+                && myStatePension != null) {
+            final MoneyWiseSecurityHolding myHolding = myPortfolioList.getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
+            return theAnalysis.getPortfolios().getBucket(myHolding);
+        }
+
+        /* Default to no bucket */
+        throw new MoneyWiseLogicException("StatePension not found");
     }
 
     /**
@@ -54,16 +135,20 @@ public class MoneyWiseXAnalysisXferIn {
         /* Access debit account and category */
         final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
         final MoneyWiseSecurityHolding myCredit = (MoneyWiseSecurityHolding) theTransaction.getCreditAccount();
+        final boolean isPayee = theTrans.isPayee(myDebit);
 
-        /* Process on the type of the debit account */
-        if (myDebit.getAssetType() == MoneyWiseAssetType.PAYEE) {
-            theTrans.processDebitPayee((MoneyWisePayee) myDebit);
-        } else {
+        /* Process debit asset */
+        if (!isPayee) {
             theTrans.processDebitAsset(myDebit);
         }
 
         /* Adjust the credit transfer details */
         processCreditXferIn(myCredit);
+
+        /* Process debit payee */
+        if (isPayee) {
+            theTrans.processDebitPayee((MoneyWisePayee) myDebit);
+        }
     }
 
     /**
@@ -84,65 +169,72 @@ public class MoneyWiseXAnalysisXferIn {
      * @param pHolding the credit holding
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
-//        /* Transfer is to the credit account and may or may not have a change to the units */
-//        TethysMoney myAmount = theHelper.getCreditAmount();
-//        final TethysRatio myExchangeRate = theHelper.getCreditExchangeRate();
-//        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-//
-//        /* Access the Asset Security Bucket */
-//        final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-//        final boolean isForeign = myAsset.isForeignCurrency();
-//
-//        /* If this is a foreign currency asset */
-//        if (isForeign) {
-//            /* Adjust foreign invested amount */
-//            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myAmount);
-//
-//            /* Switch to local amount */
-//            myAmount = theHelper.getLocalAmount();
-//        }
-//
-//        /* Adjust the cost and investment */
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myAmount);
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myAmount);
-//
-//        /* Determine the delta units */
-//        final MoneyWiseSecurityClass mySecClass = mySecurity.getCategoryClass();
-//        TethysUnits myDeltaUnits = theHelper.getCreditUnits();
-//        TethysUnits myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-//        if (mySecClass.isAutoUnits() && myUnits.isZero()) {
-//            myDeltaUnits = TethysUnits.getWholeUnits(mySecClass.getAutoUnits());
-//        }
-//
-//        /* If we have new units */
-//        if (myDeltaUnits != null) {
-//            /* Record change in units */
-//            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);
-//        }
-//
-//        /* Adjust for National Insurance */
-//        myAsset.adjustForNIPayments(theHelper);
-//
-//        /* Get the appropriate price for the account */
-//        final TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
-//
-//        /* Determine value of this stock after the transaction */
-//        myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-//        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
-//
-//        /* If we are foreign */
-//        if (isForeign) {
-//            /* Determine local value */
-//            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myExchangeRate);
-//        }
-//
-//        /* Register the transaction */
-//        final MoneyWiseAnalysisSecurityValues myValues = myAsset.registerTransaction(theHelper);
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myValue);
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.CASHINVESTED, myAmount);
-//        if (isForeign) {
-//            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myExchangeRate);
-//        }
+        /* Obtain credit amount and credit delta units */
+        TethysMoney myAmount = theTransaction.getCreditAmount();
+        TethysUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
+
+        /* Access the Asset Security Bucket */
+        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);
+        final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
+
+        /* If this is a foreign asset */
+        if (myAsset.isForeignCurrency()) {
+            /* Calculate the value in the local currency */
+            final TethysRatio myRate = myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
+            myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), myRate);
+            theTransaction.setCreditAmount(myAmount);
+
+            /* Adjust for currencyFluctuation */
+            final TethysMoney myDebitAmount = theTransaction.getDebitAmount();
+            final TethysMoney myFluctuation = new TethysMoney(myDebitAmount);
+            myFluctuation.addAmount(myAmount);
+            if (myFluctuation.isNonZero()) {
+                theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
+            }
+        }
+
+        /* Adjust the cost and investment */
+        myAsset.adjustResidualCost(myAmount);
+        myAsset.adjustInvested(myAmount);
+
+        /* If there is no change to the # of units */
+        if (myDeltaUnits == null || myDeltaUnits.isZero()) {
+            /* Adjust the funded value and ensure the startDate */
+            myAsset.adjustFunded(myAmount);
+            myAsset.ensureStartDate(theTransaction.getTransaction().getDate());
+
+            /* else record change in units */
+        } else {
+            myAsset.adjustUnits(myDeltaUnits);
+        }
+
+        /* Determine the valuation */
+        myAsset.valueAsset();
+        myAsset.adjustValuation();
+        myAsset.calculateUnrealisedGains();
+
+        /* determine the MarketGrowth */
+        final TethysMoney myDeltaValue = myAsset.getDeltaUnrealisedGains();
+        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
+
+        /* Register the interest in the bucket */
+        theState.registerBucketInterest(myAsset);
+    }
+
+    /**
+     * Process statePension contribution.
+     * @param pAmount the statePension contribution
+     */
+    void processStatePensionContribution(final TethysMoney pAmount) {
+        /* Adjust the cost and investment */
+        theStatePension.adjustResidualCost(pAmount);
+        theStatePension.adjustInvested(pAmount);
+        theStatePension.adjustFunded(pAmount);
+
+        /* Adjust the valuation */
+        theStatePension.adjustValuation();
+
+        /* Register the interest in the bucket */
+        theState.registerBucketInterest(theStatePension);
     }
 }

@@ -38,7 +38,7 @@ public class MoneyWiseXAnalysisXferOut {
      * @param pAnalyser the event analyser.
      */
     MoneyWiseXAnalysisXferOut(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getAnalyser();
+        theTrans = pAnalyser.getTransAnalyser();
     }
 
     /**
