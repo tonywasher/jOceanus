@@ -93,7 +93,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser);
 
         /* Create the security analyser */
-        theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser);
+        theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser, this);
         theTax.declareSecurityAnalyser(theSecurity);
     }
 

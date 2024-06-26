@@ -85,15 +85,17 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Constructor.
-     * @param pAnalyser the event analyser.
+     * @param pAnalyser the event analyser
+     * @param pTrans the transAnalyser
      * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {
+    MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+                             final MoneyWiseXAnalysisTransAnalyser pTrans) throws OceanusException {
         /* Initialise values */
         theAnalysis = pAnalyser.getAnalysis();
         thePortfolios = theAnalysis.getPortfolios();
         theState = pAnalyser.getState();
-        theTrans = pAnalyser.getTransAnalyser();
+        theTrans = pTrans;
         theMarket = pAnalyser.getMarket();
         theCurrency = theAnalysis.getCurrency();
 

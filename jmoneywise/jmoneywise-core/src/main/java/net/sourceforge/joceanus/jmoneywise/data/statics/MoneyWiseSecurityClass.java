@@ -320,6 +320,15 @@ public enum MoneyWiseSecurityClass
     }
 
     /**
+     * Determine whether the SecurityType is subject to Residential Gains.
+     * @return <code>true</code> if the security type is subject to Residential Gains,
+     * <code>false</code> otherwise.
+     */
+    public boolean isResidentialGains() {
+        return this == PROPERTY;
+    }
+
+    /**
      * Determine whether the SecurityType is Capital.
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */

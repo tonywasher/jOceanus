@@ -84,15 +84,17 @@ public class MoneyWiseXAnalysisSecurity {
     /**
      * Constructor.
      *
-     * @param pAnalyser the analyser
+     * @param pAnalyser the event analyser
+     * @param pTrans the transAnalyser
      * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {
+    MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+                               final MoneyWiseXAnalysisTransAnalyser pTrans) throws OceanusException {
         thePortfolios = pAnalyser.getAnalysis().getPortfolios();
         theState = pAnalyser.getState();
         theMarket = pAnalyser.getMarket();
-        theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser);
-        theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser);
+        theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser, pTrans);
+        theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser, pTrans);
         theDividend = new MoneyWiseXAnalysisDividend(pAnalyser);
         theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser);
         theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser);
