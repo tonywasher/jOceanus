@@ -141,11 +141,6 @@ public enum MoneyWiseXAnalysisValuesResource
     SECURITYATTR_XFERREDCOST("SecurityAttr.XferredCost"),
 
     /**
-     * SecurityAttr CostDilution.
-     */
-    SECURITYATTR_COSTDILUTION("SecurityAttr.CostDilution"),
-
-    /**
      * SecurityAttr CashInvested.
      */
     SECURITYATTR_CASHINVESTED("SecurityAttr.CashInvested"),
@@ -174,6 +169,16 @@ public enum MoneyWiseXAnalysisValuesResource
      * SecurityAttr Funded.
      */
     SECURITYATTR_FUNDED("SecurityAttr.Funded"),
+
+    /**
+     * SecurityAttr SliceGain.
+     */
+    SECURITYATTR_SLICEGAIN("SecurityAttr.SliceGain"),
+
+    /**
+     * SecurityAttr SliceYears.
+     */
+    SECURITYATTR_SLICEYEARS("SecurityAttr.SliceYears"),
 
     /**
      * SecurityAttr CashType.
@@ -372,13 +377,14 @@ public enum MoneyWiseXAnalysisValuesResource
         myMap.put(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, SECURITYATTR_RETURNEDCASH);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, SECURITYATTR_XFERREDVALUE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, SECURITYATTR_XFERREDCOST);
-        myMap.put(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, SECURITYATTR_COSTDILUTION);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CASHINVESTED, SECURITYATTR_CASHINVESTED);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, SECURITYATTR_CAPITALGAIN);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, SECURITYATTR_ALLOWEDCOST);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.PRICE, SECURITYATTR_PRICE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.STARTDATE, SECURITYATTR_STARTDATE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.FUNDED, SECURITYATTR_FUNDED);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.SLICEGAIN, SECURITYATTR_SLICEGAIN);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.SLICEYEARS, SECURITYATTR_SLICEYEARS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, SECURITYATTR_CASHTYPE);
         return myMap;
     }

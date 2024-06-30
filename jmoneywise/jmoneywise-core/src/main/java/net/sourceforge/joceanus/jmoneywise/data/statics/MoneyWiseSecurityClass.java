@@ -329,6 +329,15 @@ public enum MoneyWiseSecurityClass
     }
 
     /**
+     * Determine whether the SecurityType is subject to Chargeable Gains.
+     * @return <code>true</code> if the security type is subject to Chargeable Gains,
+     * <code>false</code> otherwise.
+     */
+    public boolean isChargeableGains() {
+        return this == LIFEBOND;
+    }
+
+    /**
      * Determine whether the SecurityType is Capital.
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import java.time.temporal.ChronoUnit;
+
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -34,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -94,6 +97,11 @@ public class MoneyWiseXAnalysisXferOut {
     private final MoneyWiseXAnalysisTransCategoryBucket theResidentialCat;
 
     /**
+     * The chargeableGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theChargeableCat;
+
+    /**
      * The capitalGains TaxBasis.
      */
     private final MoneyWiseXAnalysisTaxBasisBucket theCapitalTax;
@@ -107,6 +115,11 @@ public class MoneyWiseXAnalysisXferOut {
      * The residentialGains TaxBasis.
      */
     private final MoneyWiseXAnalysisTaxBasisBucket theResidentialTax;
+
+    /**
+     * The chargeableGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theChargeableTax;
 
     /**
      * The transaction.
@@ -133,12 +146,14 @@ public class MoneyWiseXAnalysisXferOut {
         theCapitalCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CAPITALGAIN);
         theTaxFreeCat = myCategories.getBucket(MoneyWiseTransCategoryClass.TAXFREEGAIN);
         theResidentialCat = myCategories.getBucket(MoneyWiseTransCategoryClass.RESIDENTIALGAIN);
+        theChargeableCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CHARGEABLEGAIN);
 
         /* Determine important taxBuckets */
         final MoneyWiseXAnalysisTaxBasisBucketList myTaxBases = myAnalysis.getTaxBasis();
         theCapitalTax = myTaxBases.getBucket(MoneyWiseTaxClass.CAPITALGAINS);
         theTaxFreeTax = myTaxBases.getBucket(MoneyWiseTaxClass.TAXFREE);
         theResidentialTax = myTaxBases.getBucket(MoneyWiseTaxClass.RESIDENTIALGAINS);
+        theChargeableTax = myTaxBases.getBucket(MoneyWiseTaxClass.CHARGEABLEGAINS);
     }
 
     /**
@@ -159,105 +174,6 @@ public class MoneyWiseXAnalysisXferOut {
         /* Adjust the debit transfer details */
         processDebitXferOut(myDebit);
     }
-
-    /**
-     * Process a transaction that is a chargeableGain.
-     * @param pTrans  the transaction
-     */
-    void processChargeableGain(final MoneyWiseXAnalysisTransaction pTrans) {
-        /* Chargeable Gain is from the debit account and may or may not have units */
-        //final MoneyWiseSecurity myDebit = pHolding.getSecurity();
-        //TethysMoney myAmount = theTransaction.getDebitAmount();
-        //TethysUnits myDeltaUnits = theTransaction.getDebitUnitsDelta();
-
-        /* Access the Asset Security Bucket */
-        //final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);
-        //final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
-
-        /* If this is a foreign currency asset */
-        //if (myAsset.isForeignCurrency()) {
-            /* Adjust foreign invested amount */
-        //    final TethysMoney myDelta = new TethysMoney(myAmount);
-        //    myDelta.negate();
-        //    myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, theHelper.getDebitExchangeRate());
-        //    myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myDelta);
-
-            /* Switch to local amount */
-        //   myAmount = theHelper.getLocalAmount();
-        //}
-
-        /* Record the delta investment */
-        //final TethysMoney myDelta = new TethysMoney(myAmount);
-        //myDelta.negate();
-        //myAsset.adjustInvested(myDelta);
-
-        /* Assume the cost reduction is the full value */
-        //TethysMoney myReduction = new TethysMoney(myAmount);
-        //final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-
-        /* If we are reducing units in the account */
-        //if (myDeltaUnits != null) {
-            /* The reduction is the relevant fraction of the cost */
-        //    final TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-       //     myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
-
-            /* Access units as negative value */
-        //    myDeltaUnits = new TethysUnits(myDeltaUnits);
-        //    myDeltaUnits.negate();
-
-            /* Record delta to units */
-        //    myAsset.adjustUnits(myDeltaUnits);
-        //}
-
-        /* If the reduction is greater than the total cost */
-        //if (myReduction.compareTo(myCost) > 0) {
-            /* Reduction is the total cost */
-        //    myReduction = new TethysMoney(myCost);
-        //}
-
-        /* Determine the delta to the cost */
-        //final TethysMoney myDeltaCost = new TethysMoney(myReduction);
-        //myDeltaCost.negate();
-
-        /* If we have a delta to the cost */
-        //if (myDeltaCost.isNonZero()) {
-            /* Adjust the cost */
-        //    myAsset.adjustResidualCost(myDeltaCost);
-        //}
-
-        /* Determine the delta to the gains */
-        //final TethysMoney myDeltaGains = new TethysMoney(myAmount);
-        //myDeltaGains.addAmount(myDeltaCost);
-
-        /* If we have a delta to the gains */
-        //if (myDeltaGains.isNonZero()) {
-            /* Adjust the gains */
-        //    myAsset.adjustRealisedGains(myDeltaGains);
-        //}
-
-        /* Register the event */
-        //myAsset.registerTransaction(theHelper);
-
-        /* True debit account is the parent */
-        //final MoneyWiseAssetBase myParent = myDebit.getParent();
-
-        /* Adjust the debit account bucket */
-        //final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myParent);
-        //myPayee.adjustForTaxCredit(theHelper);
-
-        /* Adjust the credit account bucket */
-        //final MoneyWiseAnalysisAccountBucket<?> myBucket = getAccountBucket(pCredit);
-        //myBucket.adjustForCredit(theHelper);
-
-        /* Adjust the chargeableGains category bucket */
-        //theCategoryBuckets.adjustChargeableGain(theHelper, myReduction);
-
-        /* Adjust the TaxMan account for the tax credit */
-        //theTaxMan.adjustForTaxPayments(theHelper);
-
-        /* Add the chargeable event */
-        //theTaxBasisBuckets.recordChargeableGain(theHelper.getTransaction(), myDeltaGains);
-  }
 
     /**
      * Process the credit side of a transfer in transaction.
@@ -285,7 +201,7 @@ public class MoneyWiseXAnalysisXferOut {
 
         /* Access the Asset Security Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);
-        MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
+        final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
         /* If this is a foreign asset */
         if (myAsset.isForeignCurrency()) {
@@ -310,8 +226,6 @@ public class MoneyWiseXAnalysisXferOut {
         TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
         TethysMoney myAllowedCost = new TethysMoney(myAmount);
         final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-        TethysRatio myCostDilution = null;
-        TethysMoney myConsideration = null;
 
         /* Determine the delta units */
         TethysUnits myDeltaUnits = theTransaction.getCategoryClass().isSecurityClosure()
@@ -330,10 +244,6 @@ public class MoneyWiseXAnalysisXferOut {
 
             /* Record delta to units */
             myAsset.adjustUnits(myDeltaUnits);
-            final TethysUnits myNewUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-
-            /* Determine the cost dilution */
-            myCostDilution = new TethysRatio(myNewUnits, myUnits);
         }
 
         /* Determine the valuation */
@@ -344,7 +254,7 @@ public class MoneyWiseXAnalysisXferOut {
 
         /* If we are performing a capital distribution */
         if (isCapitalDistribution) {
-            /* Determine condition as to whether this is a large cash transaction */
+            /* Determine whether this is a large cash transaction */
             final TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
             isLargeCash = myAmount.compareTo(LIMIT_VALUE) > 0
                     && myAmount.compareTo(myPortion) > 0;
@@ -352,14 +262,12 @@ public class MoneyWiseXAnalysisXferOut {
             /* If this is large cash */
             if (isLargeCash) {
                 /* Determine the total value of rights plus share value */
-                myConsideration = new TethysMoney(myAmount);
+                final TethysMoney myConsideration = new TethysMoney(myAmount);
                 myConsideration.addAmount(myValue);
 
                 /* Determine the allowedCost as a proportion of the total value */
                 myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);
-
-                /* Determine the cost dilution */
-                myCostDilution = new TethysRatio(myValue, myConsideration);
+                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
 
                 /* else this is viewed as small and is taken out of the cost */
             } else {
@@ -368,6 +276,11 @@ public class MoneyWiseXAnalysisXferOut {
                         ? new TethysMoney(myCost)
                         : new TethysMoney(myAmount);
             }
+
+            /* Record details */
+            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, isLargeCash
+                    ? MoneyWiseCashType.LARGECASH
+                    : MoneyWiseCashType.SMALLCASH);
         }
 
         /* Determine the delta to the cost */
@@ -380,7 +293,7 @@ public class MoneyWiseXAnalysisXferOut {
             myAsset.adjustResidualCost(myDeltaCost);
         }
 
-        /* Determine the capital gain */
+        /* Determine the gain */
         final TethysMoney myCapitalGain = new TethysMoney(myAmount);
         myCapitalGain.addAmount(myDeltaCost);
 
@@ -388,6 +301,21 @@ public class MoneyWiseXAnalysisXferOut {
         if (myCapitalGain.isNonZero()) {
             /* Adjust the gains */
             myAsset.adjustRealisedGains(myCapitalGain);
+            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);
+
+            /* If this is a chargeable Gain */
+            if (myAsset.getSecurity().getCategoryClass().isChargeableGains()) {
+                /* Determine the # of years that the bond has been open */
+                final TethysDate myCurrent = theTransaction.getTransaction().getDate();
+                final TethysDate myStart = myValues.getDateValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE);
+                final int myYears = (int) ChronoUnit.YEARS.between(myStart.getDate(), myCurrent.getDate()) + 1;
+                final TethysRatio myRatio = new TethysRatio(String.valueOf(myYears)).getInverseRatio();
+                final TethysMoney mySlice = myCapitalGain.valueAtRatio(myRatio);
+
+                /* Record details */
+                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEYEARS, myYears);
+                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEGAIN, mySlice);
+            }
 
             /* Adjust the capitalGains category bucket */
             adjustStandardGain(pHolding, myCapitalGain);
@@ -396,20 +324,6 @@ public class MoneyWiseXAnalysisXferOut {
         /* record details */
         myValues.setValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, myAmount);
         myValues.setValue(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);
-        if (myCostDilution != null) {
-            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
-        }
-        if (myConsideration != null) {
-            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
-        }
-        if (myCapitalGain.isNonZero()) {
-            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);
-        }
-        if (isCapitalDistribution) {
-            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, isLargeCash
-                    ? MoneyWiseCashType.LARGECASH
-                    : MoneyWiseCashType.SMALLCASH);
-        }
 
         /* Register the transaction */
         theState.registerBucketInterest(myAsset);
@@ -430,12 +344,15 @@ public class MoneyWiseXAnalysisXferOut {
         /* Determine the type of gains */
         MoneyWiseXAnalysisTransCategoryBucket myCategory = theCapitalCat;
         MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = theCapitalTax;
-        if (myPortfolio.isTaxFree() || !myClass.isCapitalGains()) {
+        if (myPortfolio.isTaxFree()) {
             myCategory = theTaxFreeCat;
             myTaxBasis = theTaxFreeTax;
         } else if (myClass.isResidentialGains()) {
             myCategory = theResidentialCat;
             myTaxBasis = theResidentialTax;
+        } else if (myClass.isChargeableGains()) {
+            myCategory = theChargeableCat;
+            myTaxBasis = theChargeableTax;
         }
 
         /* Add to Capital Gains income/expense */

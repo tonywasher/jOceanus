@@ -95,7 +95,7 @@ public class MoneyWiseXAnalysisSecurity {
         theMarket = pAnalyser.getMarket();
         theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser, pTrans);
         theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser, pTrans);
-        theDividend = new MoneyWiseXAnalysisDividend(pAnalyser);
+        theDividend = new MoneyWiseXAnalysisDividend(pAnalyser, pTrans);
         theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser);
         theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser);
     }
@@ -129,10 +129,6 @@ public class MoneyWiseXAnalysisSecurity {
         final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();
         final MoneyWiseSecurityHolding myDebitHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
         switch (myCatClass) {
-            /* Process a stock right waived */
-            case STOCKRIGHTSISSUE:
-                theXferOut.processTransferOut(theTransaction);
-                break;
             /* Process a dividend */
             case DIVIDEND:
                 theDividend.processDividend(theTransaction);
@@ -143,11 +139,8 @@ public class MoneyWiseXAnalysisSecurity {
             case EXPENSE:
             case INHERITED:
             case OTHERINCOME:
-                if (myDebitHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)) {
-                    theXferOut.processChargeableGain(theTransaction);
-                } else {
-                    theXferOut.processTransferOut(theTransaction);
-                }
+            case STOCKRIGHTSISSUE:
+                theXferOut.processTransferOut(theTransaction);
                 break;
             /* Throw an Exception */
             default:

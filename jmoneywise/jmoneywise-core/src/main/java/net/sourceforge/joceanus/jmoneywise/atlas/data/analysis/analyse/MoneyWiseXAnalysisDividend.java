@@ -16,10 +16,45 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+
 /**
  * Dividend Analysis.
  */
 public class MoneyWiseXAnalysisDividend {
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The market analysis.
+     */
+    private final MoneyWiseXAnalysisMarket theMarket;
+
+    /**
+     * The reporting currency.
+     */
+    private final MoneyWiseCurrency theCurrency;
+
     /**
      * The transAnalyser.
      */
@@ -34,8 +69,14 @@ public class MoneyWiseXAnalysisDividend {
      * Constructor.
      * @param pAnalyser the event analyser.
      */
-    MoneyWiseXAnalysisDividend(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getTransAnalyser();
+    MoneyWiseXAnalysisDividend(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+                               final MoneyWiseXAnalysisTransAnalyser pTrans) {
+        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
+        thePortfolios = myAnalysis.getPortfolios();
+        theState = pAnalyser.getState();
+        theMarket = pAnalyser.getMarket();
+        theCurrency = myAnalysis.getCurrency();
+        theTrans = pTrans;
     }
 
     /**
@@ -43,88 +84,85 @@ public class MoneyWiseXAnalysisDividend {
      * @param pTrans  the transaction
      */
     void processDividend(final MoneyWiseXAnalysisTransaction pTrans) {
-        /* The main security that we are interested in is the debit account */
-        //final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
-        //final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        //TethysMoney myAmount = theHelper.getDebitAmount();
-        //final TethysMoney myTaxCredit = theHelper.getTaxCredit();
-        //final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
-        //final MoneyWiseTaxCredit myYear = theHelper.getTransaction().getTaxYear();
+        /* Adjust the parent for the transaction */
+        theTransaction = pTrans;
+        theTransaction.adjustParent();
 
-        /* Obtain detailed category */
-        //MoneyWiseTransCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory(), myYear);
-        //myCat = mySecurity.getDetailedCategory(myCat, myYear);
+        /* The main security that we are interested in is the base account */
+        final MoneyWiseTransaction myTransaction = theTransaction.getTransaction();
+        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myTransaction.getAccount();
+        final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
+        final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
+        TethysMoney myAmount = theTransaction.getDebitAmount();
+        final TethysMoney myTaxCredit = myTransaction.getTaxCredit();
+        final TethysUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
 
         /* True debit account is the parent */
-        //final MoneyWiseAssetBase myDebit = mySecurity.getParent();
+        final MoneyWiseAssetBase myDebit = mySecurity.getParent();
 
         /* Adjust the debit payee bucket */
-        //final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-        //myPayee.adjustForDebit(theHelper);
+        theTrans.processDebitAsset(myDebit);
 
         /* Access the Asset Account Bucket */
-        //final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-        //final boolean isForeign = myAsset.isForeignCurrency();
-        //final boolean isReInvest = pCredit instanceof MoneyWiseSecurityHolding;
+        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);
+        final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
+        final boolean isForeign = myAsset.isForeignCurrency();
+        final boolean isReInvest = myCredit instanceof MoneyWiseSecurityHolding;
 
         /* If this is a foreign dividend */
-        //if (isForeign) {
-        /* If this is a reInvestment */
-        //    if (isReInvest) {
-        //        /* Adjust counters */
-        //        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myAmount);
-        //        myAsset.getValues().setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, theHelper.getCreditExchangeRate());
-        //    }
+        if (isForeign) {
+            /* Calculate the value in the local currency */
+            final TethysRatio myRate = myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
+            myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), myRate);
+            theTransaction.setDebitAmount(myAmount);
 
-        /* Switch to local amount */
-        //    myAmount = theHelper.getLocalAmount();
-        //}
+            /* Adjust for currencyFluctuation */
+            final TethysMoney myCreditAmount = theTransaction.getCreditAmount();
+            final TethysMoney myFluctuation = new TethysMoney(myAmount);
+            myFluctuation.addAmount(myCreditAmount);
+            if (myFluctuation.isNonZero()) {
+                theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
+            }
+        }
 
         /* If this is a re-investment */
-        //if (isReInvest) {
-        /* This amount is added to the cost, so record as the delta cost */
-        //    myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myAmount);
+        if (isReInvest) {
+            /* This amount is added to the cost, so record as the delta cost */
+            myAsset.adjustResidualCost(myAmount);
 
-        /* Record the investment */
-        //    myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myAmount);
+            /* Record the investment */
+            myAsset.adjustInvested(myAmount);
 
-        /* If we have new units */
-        //    if (myDeltaUnits != null) {
-        /* Record delta units */
-        //        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);
-        //    }
+            /* If we have new units */
+            if (myDeltaUnits != null) {
+                /* Record delta units */
+                myAsset.adjustUnits(myDeltaUnits);
+            }
 
-        /* If we have a tax credit */
-        //    if (myTaxCredit != null) {
-        //        /* The Tax Credit is viewed as a received dividend from the account */
-        //        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.DIVIDEND, myTaxCredit);
-        //    }
+            /* If we have a tax credit */
+            if (myTaxCredit != null) {
+                /* The Tax Credit is viewed as a received dividend from the account */
+                myAsset.adjustDividend(myTaxCredit);
+            }
 
-        /* else we are paying out to another account */
-        //} else {
-        /* Adjust the dividend total for this asset */
-        //    final TethysMoney myAdjust = new TethysMoney(myAmount);
+            /* else we are paying out to another account */
+        } else {
+            /* Adjust the dividend total for this asset */
+            final TethysMoney myAdjust = new TethysMoney(myAmount);
 
-        /* Any tax credit is viewed as a realised dividend from the account */
-        //    if (myTaxCredit != null) {
-        //        myAdjust.addAmount(myTaxCredit);
-        //    }
+            /* Any tax credit is viewed as a realised dividend from the account */
+            if (myTaxCredit != null) {
+                myAdjust.addAmount(myTaxCredit);
+            }
 
-        /* The Dividend is viewed as a dividend from the account */
-        //   myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.DIVIDEND, myAdjust);
+            /* The Dividend is viewed as a dividend from the account */
+            myAsset.adjustDividend(myAdjust);
 
-        /* Adjust the credit account bucket */
-        //    final MoneyWiseAnalysisAccountBucket<?> myBucket = getAccountBucket((MoneyWiseAssetBase) pCredit);
-        //    myBucket.adjustForCredit(theHelper);
-        //}
+            /* Adjust the credit account bucket */
+            theTrans.processCreditAsset((MoneyWiseAssetBase) myCredit);
+        }
 
         /* Register the transaction */
-        //myAsset.registerTransaction(theHelper);
-
-        /* Adjust the tax payments */
-        //theTaxMan.adjustForTaxPayments(theHelper);
-
-        /* Adjust the relevant category buckets */
-        //theCategoryBuckets.adjustCategories(theHelper, myCat);
+        theState.registerBucketInterest(myAsset);
     }
 }

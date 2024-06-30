@@ -283,6 +283,7 @@ public class MoneyWiseXAnalysisTransaction {
         switch (getCategoryClass()) {
             case INTEREST:
             case LOYALTYBONUS:
+            case DIVIDEND:
                 /* Obtain detailed category */
                 theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());
 

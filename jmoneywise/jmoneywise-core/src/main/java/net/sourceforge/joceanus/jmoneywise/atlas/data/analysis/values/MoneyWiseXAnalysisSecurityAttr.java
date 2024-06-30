@@ -110,11 +110,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
     XFERREDVALUE,
 
     /**
-     * CostDilution.
-     */
-    COSTDILUTION,
-
-    /**
      * Capital Gain.
      */
     CAPITALGAIN,
@@ -138,6 +133,16 @@ public enum MoneyWiseXAnalysisSecurityAttr
      * StartDate.
      */
     STARTDATE,
+
+    /**
+     * SliceYears.
+     */
+    SLICEYEARS,
+
+    /**
+     * SliceGain.
+     */
+    SLICEGAIN,
 
     /**
      * CashType.
@@ -181,7 +186,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case MARKETPROFIT:
             case VALUEDELTA:
             case XFERREDCOST:
-            case COSTDILUTION:
             case CONSIDERATION:
             case RETURNEDCASH:
             case XFERREDVALUE:
@@ -202,7 +206,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case PRICE:
                 return MetisDataType.PRICE;
             case EXCHANGERATE:
-            case COSTDILUTION:
                 return MetisDataType.RATIO;
             case CASHTYPE:
                 return MetisDataType.ENUM;
