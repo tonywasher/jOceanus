@@ -36,9 +36,11 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * Transaction analyser.
@@ -75,6 +77,11 @@ public class MoneyWiseXAnalysisTransAnalyser {
     private final MoneyWiseXAnalysisPortfolioXfer thePortfolioXfer;
 
     /**
+     * The reporting currency.
+     */
+    private final MoneyWiseCurrency theCurrency;
+
+    /**
      * The current transaction.
      */
     private MoneyWiseXAnalysisTransaction theTransaction;
@@ -91,6 +98,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theMarket = pAnalyser.getMarket();
         theTax = pAnalyser.getTax();
         thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser);
+        theCurrency = theAnalysis.getCurrency();
 
         /* Create the security analyser */
         theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser, this);
@@ -428,6 +436,52 @@ public class MoneyWiseXAnalysisTransAnalyser {
             myCatBucket.subtractIncome(myAmount);
         }
         theState.registerBucketInterest(myCatBucket);
+    }
+
+    /**
+     * adjustForeignDebit
+     * @param pExchangeRate the exchangeRate
+     * @return the adjusted debitAmount
+     */
+    TethysMoney adjustForeignAssetDebit(final TethysRatio pExchangeRate) {
+        /* Calculate the value in the local currency */
+        TethysMoney myAmount = theTransaction.getDebitAmount();
+        myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);
+        theTransaction.setDebitAmount(myAmount);
+
+        /* Adjust for currencyFluctuation */
+        final TethysMoney myCreditAmount = theTransaction.getCreditAmount();
+        final TethysMoney myFluctuation = new TethysMoney(myCreditAmount);
+        myFluctuation.addAmount(myAmount);
+        if (myFluctuation.isNonZero()) {
+            theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
+        }
+
+        /* return the new debit amount */
+        return myAmount;
+    }
+
+    /**
+     * adjustForeignCredit
+     * @param pExchangeRate the exchangeRate
+     * @return the adjusted creditAmount
+     */
+    TethysMoney adjustForeignAssetCredit(final TethysRatio pExchangeRate) {
+        /* Calculate the value in the local currency */
+        TethysMoney myAmount = theTransaction.getCreditAmount();
+        myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);
+        theTransaction.setCreditAmount(myAmount);
+
+        /* Adjust for currencyFluctuation */
+        final TethysMoney myDebitAmount = theTransaction.getDebitAmount();
+        final TethysMoney myFluctuation = new TethysMoney(myDebitAmount);
+        myFluctuation.addAmount(myAmount);
+        if (myFluctuation.isNonZero()) {
+            theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
+        }
+
+        /* return the new credit amount */
+        return myAmount;
     }
 
     /**

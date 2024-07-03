@@ -30,13 +30,11 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio.MoneyWi
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
@@ -61,17 +59,12 @@ public class MoneyWiseXAnalysisXferIn {
     /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTrans;
+    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
 
     /**
-     * The market analysis.
+     * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisMarket theMarket;
-
-    /**
-     * The reporting currency.
-     */
-    private final MoneyWiseCurrency theCurrency;
+    private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
      * The statePension bucket.
@@ -86,18 +79,17 @@ public class MoneyWiseXAnalysisXferIn {
     /**
      * Constructor.
      * @param pAnalyser the event analyser
-     * @param pTrans the transAnalyser
+     * @param pSecurity the securityAnalyser
      * @throws OceanusException on error
      */
     MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                             final MoneyWiseXAnalysisTransAnalyser pTrans) throws OceanusException {
+                             final MoneyWiseXAnalysisSecurity pSecurity) throws OceanusException {
         /* Initialise values */
         theAnalysis = pAnalyser.getAnalysis();
         thePortfolios = theAnalysis.getPortfolios();
         theState = pAnalyser.getState();
-        theTrans = pTrans;
-        theMarket = pAnalyser.getMarket();
-        theCurrency = theAnalysis.getCurrency();
+        theSecurity = pSecurity;
+        theTransAnalyser = theSecurity.getTransAnalyser();
 
         /* Access the StatePension */
         theStatePension = getStatePension(theAnalysis.getEditSet());
@@ -137,11 +129,11 @@ public class MoneyWiseXAnalysisXferIn {
         /* Access debit account and category */
         final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
         final MoneyWiseSecurityHolding myCredit = (MoneyWiseSecurityHolding) theTransaction.getCreditAccount();
-        final boolean isPayee = theTrans.isPayee(myDebit);
+        final boolean isPayee = theTransAnalyser.isPayee(myDebit);
 
         /* Process debit asset */
         if (!isPayee) {
-            theTrans.processDebitAsset(myDebit);
+            theTransAnalyser.processDebitAsset(myDebit);
         }
 
         /* Adjust the credit transfer details */
@@ -149,7 +141,7 @@ public class MoneyWiseXAnalysisXferIn {
 
         /* Process debit payee */
         if (isPayee) {
-            theTrans.processDebitPayee((MoneyWisePayee) myDebit);
+            theTransAnalyser.processDebitPayee((MoneyWisePayee) myDebit);
         }
     }
 
@@ -172,7 +164,6 @@ public class MoneyWiseXAnalysisXferIn {
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
         /* Obtain credit amount and credit delta units */
-        TethysMoney myAmount = theTransaction.getCreditAmount();
         TethysUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
 
         /* Access the Asset Security Bucket */
@@ -180,20 +171,9 @@ public class MoneyWiseXAnalysisXferIn {
         final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
         /* If this is a foreign asset */
-        if (myAsset.isForeignCurrency()) {
-            /* Calculate the value in the local currency */
-            final TethysRatio myRate = myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
-            myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), myRate);
-            theTransaction.setCreditAmount(myAmount);
-
-            /* Adjust for currencyFluctuation */
-            final TethysMoney myDebitAmount = theTransaction.getDebitAmount();
-            final TethysMoney myFluctuation = new TethysMoney(myDebitAmount);
-            myFluctuation.addAmount(myAmount);
-            if (myFluctuation.isNonZero()) {
-                theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
-            }
-        }
+        final TethysMoney myAmount = myAsset.isForeignCurrency()
+                ? theTransAnalyser.adjustForeignAssetCredit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
+                : theTransaction.getCreditAmount();
 
         /* Adjust the cost and investment */
         myAsset.adjustResidualCost(myAmount);
@@ -210,14 +190,8 @@ public class MoneyWiseXAnalysisXferIn {
             myAsset.adjustUnits(myDeltaUnits);
         }
 
-        /* Determine the valuation */
-        myAsset.valueAsset();
-        myAsset.adjustValuation();
-        myAsset.calculateUnrealisedGains();
-
-        /* determine the MarketGrowth */
-        final TethysMoney myDeltaValue = myAsset.getDeltaUnrealisedGains();
-        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
+        /* Adjust the valuation */
+        theSecurity.adjustAssetValuation(myAsset);
 
         /* Register the interest in the bucket */
         theState.registerBucketInterest(myAsset);

@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
@@ -67,19 +66,14 @@ public class MoneyWiseXAnalysisXferOut {
     private final MoneyWiseXAnalysisState theState;
 
     /**
-     * The market analysis.
-     */
-    private final MoneyWiseXAnalysisMarket theMarket;
-
-    /**
-     * The reporting currency.
-     */
-    private final MoneyWiseCurrency theCurrency;
-
-    /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTrans;
+    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
      * The capitalGains category.
@@ -129,17 +123,16 @@ public class MoneyWiseXAnalysisXferOut {
     /**
      * Constructor.
      * @param pAnalyser the event analyser
-     * @param pTrans the transAnalyser
+     * @param pSecurity the securityAnalyser
      */
     MoneyWiseXAnalysisXferOut(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                              final MoneyWiseXAnalysisTransAnalyser pTrans) {
+                              final MoneyWiseXAnalysisSecurity pSecurity) {
         /* Store parameters */
         final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
         theState = pAnalyser.getState();
-        theMarket = pAnalyser.getMarket();
-        theTrans = pTrans;
-        theCurrency = myAnalysis.getCurrency();
+        theSecurity = pSecurity;
+        theTransAnalyser = theSecurity.getTransAnalyser();
 
         /* Determine important categoryBuckets */
         final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();
@@ -169,7 +162,7 @@ public class MoneyWiseXAnalysisXferOut {
         final MoneyWiseSecurityHolding myDebit = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
 
         /* Adjust the credit account bucket */
-        theTrans.processCreditAsset(myCredit);
+        theTransAnalyser.processCreditAsset(myCredit);
 
         /* Adjust the debit transfer details */
         processDebitXferOut(myDebit);
@@ -195,29 +188,17 @@ public class MoneyWiseXAnalysisXferOut {
      * @param pHolding the debit holding
      */
     private void processDebitXferOut(final MoneyWiseSecurityHolding pHolding) {
-        /* Transfer out is from the debit account and may or may not have units */
-        TethysMoney myAmount = theTransaction.getDebitAmount();
-        boolean isLargeCash = false;
-
         /* Access the Asset Security Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);
         final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
-        /* If this is a foreign asset */
-        if (myAsset.isForeignCurrency()) {
-            /* Calculate the value in the local currency */
-            final TethysRatio myRate = myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
-            myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), myRate);
-            theTransaction.setDebitAmount(myAmount);
+        /* Determine the initial value of the asset */
+        final TethysMoney myInitialValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
 
-            /* Adjust for currencyFluctuation */
-            final TethysMoney myCreditAmount = theTransaction.getCreditAmount();
-            final TethysMoney myFluctuation = new TethysMoney(myAmount);
-            myFluctuation.addAmount(myCreditAmount);
-            if (myFluctuation.isNonZero()) {
-                theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
-            }
-        }
+        /* Determine the debit amount */
+        final TethysMoney myAmount = myAsset.isForeignCurrency()
+                ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
+                : theTransaction.getDebitAmount();
 
         /* Adjust the investment total */
         myAsset.adjustInvested(myAmount);
@@ -244,30 +225,18 @@ public class MoneyWiseXAnalysisXferOut {
 
             /* Record delta to units */
             myAsset.adjustUnits(myDeltaUnits);
-        }
 
-        /* Determine the valuation */
-        myAsset.valueAsset();
-        myAsset.adjustValuation();
-        myAsset.calculateUnrealisedGains();
-        final TethysMoney myValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
-
-        /* If we are performing a capital distribution */
-        if (isCapitalDistribution) {
+        /* else we are performing a capital distribution */
+        } else {
             /* Determine whether this is a large cash transaction */
-            final TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
-            isLargeCash = myAmount.compareTo(LIMIT_VALUE) > 0
+            final TethysMoney myPortion = myInitialValue.valueAtRate(LIMIT_RATE);
+            final boolean isLargeCash = myAmount.compareTo(LIMIT_VALUE) > 0
                     && myAmount.compareTo(myPortion) > 0;
 
             /* If this is large cash */
             if (isLargeCash) {
-                /* Determine the total value of rights plus share value */
-                final TethysMoney myConsideration = new TethysMoney(myAmount);
-                myConsideration.addAmount(myValue);
-
-                /* Determine the allowedCost as a proportion of the total value */
-                myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);
-                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
+                /* Determine the allowedCost as a proportion of the initial value */
+                myAllowedCost = myCost.valueAtWeight(myAmount, myInitialValue);
 
                 /* else this is viewed as small and is taken out of the cost */
             } else {
@@ -320,6 +289,9 @@ public class MoneyWiseXAnalysisXferOut {
             /* Adjust the capitalGains category bucket */
             adjustStandardGain(pHolding, myCapitalGain);
         }
+
+        /* Adjust the valuation */
+        theSecurity.adjustAssetValuation(myAsset);
 
         /* record details */
         myValues.setValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, myAmount);

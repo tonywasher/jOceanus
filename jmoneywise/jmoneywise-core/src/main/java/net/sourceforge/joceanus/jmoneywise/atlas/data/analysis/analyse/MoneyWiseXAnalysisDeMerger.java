@@ -16,26 +16,46 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+
 /**
  * Share deMerge Analysis.
  */
 public class MoneyWiseXAnalysisDeMerger {
     /**
-     * The transAnalyser.
+     * The portfolioBuckets.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTrans;
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
 
     /**
-     * The transaction.
+     * The analysis state.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
      * Constructor.
-     * @param pAnalyser the event analyser.
+     * @param pAnalyser the event analyser
+     * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisDeMerger(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
-        theTrans = pAnalyser.getTransAnalyser();
+    MoneyWiseXAnalysisDeMerger(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+                               final MoneyWiseXAnalysisSecurity pSecurity) {
+        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
+        thePortfolios = myAnalysis.getPortfolios();
+        theState = pAnalyser.getState();
+        theSecurity = pSecurity;
     }
 
     /**
@@ -43,92 +63,65 @@ public class MoneyWiseXAnalysisDeMerger {
      * @param pTrans  the transaction
      */
     void processStockDeMerger(final MoneyWiseXAnalysisTransaction pTrans) {
-//        /* Access the Debit Asset Security Bucket */
-//        MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
-//        MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();
-//        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-//
-//        /* Obtain current cost */
-//        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-//        final TethysRatio myDilution = theHelper.getDilution();
-//        final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
-//
-//        /* If we reduced the units */
-//        if (myDeltaUnits != null) {
-//            /* Record the delta units */
-//            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);
-//        }
-//
-//        /* Calculate the cost dilution */
-//        final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
-//        final TethysRatio myCostDilution = new TethysRatio(myNewCost, myCost);
-//
-//        /* Calculate the delta to the cost */
-//        TethysMoney myDeltaCost = new TethysMoney(myNewCost);
-//        myDeltaCost.subtractAmount(myCost);
-//
-//        /* Record the delta cost/investment */
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDeltaCost);
-//        final boolean isForeignDebit = myAsset.isForeignCurrency();
-//        if (isForeignDebit) {
-//            final TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);
-//            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
-//        }
-//
-//        /* Register the event */
-//        myValues = myAsset.registerTransaction(theHelper);
-//
-//        /* Access the Credit Asset Account Bucket */
-//        myAsset = thePortfolioBuckets.getBucket(pCredit);
-//
-//        /* The deltaCost is transferred to the credit account */
-//        myDeltaCost = new TethysMoney(myDeltaCost);
-//        myDeltaCost.negate();
-//
-//        /* Record details */
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
-//        if (isForeignDebit) {
-//            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myDebitRate);
-//        }
-//
-//        /* Record the delta cost/investment */
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDeltaCost);
-//        final boolean isForeignCredit = myAsset.isForeignCurrency();
-//        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
-//        if (isForeignCredit) {
-//            final TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);
-//            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
-//        }
-//
-//        /* Get the appropriate prices/rates for the stock */
-//        final TethysDate myDate = theHelper.getDate();
-//        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);
-//        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
-//
-//        /* Determine value of the stock being deMerged */
-//        final TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-//        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
-//        if (isForeignCredit) {
-//            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
-//        }
-//
-//        /* Record the current/delta units */
-//        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);
-//
-//        /* Register the transaction */
-//        myValues = myAsset.registerTransaction(theHelper);
-//
-//        /* Record values */
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myCreditPrice);
-//        myValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);
-//        if (isForeignCredit) {
-//            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myCreditRate);
-//        }
-//
-//        /* StockDeMerger is a transfer, so no need to update the categories */
+        /* Access the Debit Asset Security Bucket */
+        final MoneyWiseSecurityHolding mySource = (MoneyWiseSecurityHolding) pTrans.getDebitAccount();
+        MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(mySource);
+        MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
+
+        /* Obtain current cost */
+        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        final TethysRatio myDilution = pTrans.getTransaction().getDilution();
+        final TethysUnits myDeltaUnits = pTrans.getDebitUnitsDelta();
+
+        /* If we reduced the units */
+        if (myDeltaUnits != null) {
+            /* Record the delta units */
+            myAsset.adjustUnits(myDeltaUnits);
+        }
+
+        /* Calculate the cost dilution */
+        final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
+
+        /* Calculate the delta to the cost */
+        TethysMoney myDeltaCost = new TethysMoney(myNewCost);
+        myDeltaCost.subtractAmount(myCost);
+
+        /* Record the delta cost/investment */
+        myAsset.adjustResidualCost(myDeltaCost);
+        myAsset.adjustInvested(myDeltaCost);
+
+        /* Adjust the valuation */
+        theSecurity.adjustAssetValuation(myAsset);
+
+        /* Register the event */
+        theState.registerBucketInterest(myAsset);
+
+        /* Access the Credit Asset Account Bucket */
+        final MoneyWiseSecurityHolding myTarget = (MoneyWiseSecurityHolding) pTrans.getCreditAccount();
+        myAsset = thePortfolios.getBucket(myTarget);
+
+        /* The deltaCost is transferred to the credit account */
+        myDeltaCost = new TethysMoney(myDeltaCost);
+        myDeltaCost.negate();
+
+        /* Record details */
+        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);
+
+        /* Record the delta cost/investment */
+        myAsset.adjustResidualCost(myDeltaCost);
+        myAsset.adjustInvested(myDeltaCost);
+
+        /* Determine value of the stock being deMerged */
+        final TethysUnits myCreditUnits = pTrans.getCreditUnitsDelta();
+        myAsset.adjustUnits(myCreditUnits);
+
+        /* Adjust the valuation */
+        theSecurity.adjustAssetValuation(myAsset);
+
+        /* Register the transaction */
+        theState.registerBucketInterest(myAsset);
+
+        /* Record values */
+        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);
     }
 }

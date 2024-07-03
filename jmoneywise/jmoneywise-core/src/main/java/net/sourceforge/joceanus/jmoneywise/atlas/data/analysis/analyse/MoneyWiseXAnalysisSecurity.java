@@ -20,7 +20,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -50,6 +49,11 @@ public class MoneyWiseXAnalysisSecurity {
      * The market analysis.
      */
     private final MoneyWiseXAnalysisMarket theMarket;
+
+    /**
+     * The transAnalyser.
+     */
+    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
 
     /**
      * The xferIn analysis.
@@ -93,11 +97,20 @@ public class MoneyWiseXAnalysisSecurity {
         thePortfolios = pAnalyser.getAnalysis().getPortfolios();
         theState = pAnalyser.getState();
         theMarket = pAnalyser.getMarket();
-        theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser, pTrans);
-        theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser, pTrans);
-        theDividend = new MoneyWiseXAnalysisDividend(pAnalyser, pTrans);
-        theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser);
-        theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser);
+        theTransAnalyser = pTrans;
+        theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser, this);
+        theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser, this);
+        theDividend = new MoneyWiseXAnalysisDividend(pAnalyser, this);
+        theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser, this);
+        theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser, this);
+    }
+
+    /**
+     * Obtain the trans analyser
+     * @return the transAnalyser
+     */
+    MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
+        return theTransAnalyser;
     }
 
     /**
@@ -127,7 +140,6 @@ public class MoneyWiseXAnalysisSecurity {
 
         /* Switch on the category */
         final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();
-        final MoneyWiseSecurityHolding myDebitHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
         switch (myCatClass) {
             /* Process a dividend */
             case DIVIDEND:
@@ -220,6 +232,20 @@ public class MoneyWiseXAnalysisSecurity {
     }
 
     /**
+     * adjust Asset Valuation.
+     */
+    void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
+        /* Value the asset and calculate unrealised gains */
+        pAsset.valueAsset();
+        pAsset.adjustValuation();
+        pAsset.calculateUnrealisedGains();
+
+        /* determine the MarketGrowth */
+        final TethysMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();
+        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
+    }
+
+    /**
      * Process a transaction that is a unitsAdjust.
      */
     void processUnitsAdjust() {
@@ -241,14 +267,8 @@ public class MoneyWiseXAnalysisSecurity {
             myAsset.recordSecurityPrice();
         }
 
-        /* Value the asset and determine the unrealisedGains */
-        myAsset.valueAsset();
-        myAsset.adjustValuation();
-        myAsset.calculateUnrealisedGains();
-
-        /* determine the MarketGrowth */
-        final TethysMoney myDeltaValue = myAsset.getDeltaValuation();
-        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
+        /* Adjust the valuation */
+        adjustAssetValuation(myAsset);
 
         /* Register the transaction */
         theState.registerBucketInterest(myAsset);

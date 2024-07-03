@@ -315,21 +315,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
     }
 
     /**
-     * Get an attribute value.
-     * @param pAttr the attribute
-     * @return the value to set
-     */
-    private Object getAttributeValue(final MoneyWiseXAnalysisAccountAttr pAttr) {
-        /* Access value of object */
-        final Object myValue = getValue(pAttr);
-
-        /* Return the value */
-        return myValue != null
-                ? myValue
-                : MetisDataFieldValue.SKIP;
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -822,7 +807,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
           */
         void analyseSecurities() {
             /* Access details */
-            final TethysDateRange myRange = theAnalysis.getDateRange();
             final MoneyWiseXAnalysisPortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
             /* Loop through the portfolio buckets */
@@ -834,7 +818,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                 final MoneyWiseXAnalysisPortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
 
                 /* Handle foreign asset */
-                if (Boolean.TRUE.equals(myCash.isForeignCurrency())) {
+                if (myCash.isForeignCurrency()) {
                     haveForeignCurrency = Boolean.TRUE;
                 }
 
@@ -861,7 +845,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                     haveActiveSecurities = Boolean.TRUE;
 
                     /* Handle foreign asset */
-                    if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
+                    if (myCurr.isForeignCurrency()) {
                         haveForeignCurrency = Boolean.TRUE;
                     }
                 }
