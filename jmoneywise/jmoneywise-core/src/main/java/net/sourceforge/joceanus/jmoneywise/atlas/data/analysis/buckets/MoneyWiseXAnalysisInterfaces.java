@@ -34,6 +34,12 @@ public abstract class MoneyWiseXAnalysisInterfaces {
      */
     public interface MoneyWiseXAnalysisBucketRegister {
         /**
+         * Obtain the bucket Id.
+         * @return the id
+         */
+        Long getBucketId();
+
+        /**
          * Register the event.
          * @param pEvent the event
          */
@@ -53,7 +59,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
         /**
          * Adjust the valuation.
          */
-        public void adjustValuation();
+        void adjustValuation();
 
         /**
          * Obtain the delta valuation.
@@ -134,17 +140,17 @@ public abstract class MoneyWiseXAnalysisInterfaces {
         void registerForXchgRateUpdates(MoneyWiseXAnalysisBucketForeign pBucket);
 
         /**
-         * Register a bucket for an event.
+         * Register a buckets interest in the current event.
          *
          * @param pBucket the bucket
          */
-        void registerBucketForEvent(MoneyWiseXAnalysisBucketRegister pBucket);
+        void registerBucketInterest(MoneyWiseXAnalysisBucketRegister pBucket);
 
         /**
-         * Register buckets for an event.
+         * Register interested buckets for an event.
          *
          * @param pEvent the event
          */
-        void registerBucketsForEvent(MoneyWiseXAnalysisEvent pEvent);
+        void registerInterestedBucketsForEvent(MoneyWiseXAnalysisEvent pEvent);
     }
 }

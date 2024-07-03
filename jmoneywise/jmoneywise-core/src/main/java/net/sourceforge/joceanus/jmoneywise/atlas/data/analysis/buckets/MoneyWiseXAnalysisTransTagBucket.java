@@ -290,7 +290,7 @@ public final class MoneyWiseXAnalysisTransTagBucket
                 /* Access the bucket for this date */
                 final MoneyWiseXAnalysisTransTagBucket myBucket = new MoneyWiseXAnalysisTransTagBucket(pAnalysis, myCurr, pDate);
 
-                /* If the bucket is non-idle */
+                /* If the bucket is active */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
                     theList.add(myBucket);
@@ -318,7 +318,7 @@ public final class MoneyWiseXAnalysisTransTagBucket
                 /* Access the bucket for this range */
                 final MoneyWiseXAnalysisTransTagBucket myBucket = new MoneyWiseXAnalysisTransTagBucket(pAnalysis, myCurr, pRange);
 
-                /* If the bucket is non-idle */
+                /* If the bucket is active */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
                     theList.add(myBucket);

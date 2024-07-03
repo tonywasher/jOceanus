@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransValues;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -192,6 +192,11 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
         return getName();
     }
 
+    @Override
+    public Long getBucketId() {
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.TRANSACTIONCATEGORY, getIndexedId());
+    }
+
     /**
      * Obtain the name.
      * @return the name
@@ -227,7 +232,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
      * Is this bucket idle?
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -527,7 +532,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
                 final MoneyWiseXAnalysisTransCategoryBucket myBucket = new MoneyWiseXAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -558,7 +563,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
                 final MoneyWiseXAnalysisTransCategoryBucket myBucket = new MoneyWiseXAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -621,7 +626,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          * @param pClass the transaction infoClass
          * @return the bucket
          */
-        MoneyWiseXAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
+        public MoneyWiseXAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
             /* Determine category */
             final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             final MoneyWiseTransCategory myCategory = myList.getEventInfoCategory(pClass);
@@ -637,7 +642,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          * @param pClass the transaction infoClass
          * @return the bucket
          */
-        MoneyWiseXAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
+        public MoneyWiseXAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine category */
             final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             final MoneyWiseTransCategory myCategory = myList.getSingularClass(pClass);

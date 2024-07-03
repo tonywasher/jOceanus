@@ -290,23 +290,21 @@ public class MoneyWiseDeposit
     }
 
     @Override
-    public Boolean isGross() {
+    public boolean isGross() {
         final MoneyWiseDepositCategory myCategory = getCategory();
-        return myCategory == null
-                ? Boolean.FALSE
-                : myCategory.getCategoryTypeClass().isGross();
+        final MoneyWiseDepositCategoryClass myClass = myCategory == null ? null : myCategory.getCategoryTypeClass();
+        return myClass != null && myClass.isGross();
     }
 
     @Override
-    public Boolean isTaxFree() {
+    public boolean isTaxFree() {
         final MoneyWiseDepositCategory myCategory = getCategory();
-        return myCategory == null
-                ? Boolean.FALSE
-                : myCategory.getCategoryTypeClass().isTaxFree();
+        final MoneyWiseDepositCategoryClass myClass = myCategory == null ? null : myCategory.getCategoryTypeClass();
+        return myClass != null && myClass.isTaxFree();
     }
 
     @Override
-    public Boolean isForeign() {
+    public boolean isForeign() {
         final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
@@ -668,21 +666,21 @@ public class MoneyWiseDeposit
         final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
-                if (Boolean.TRUE.equals(isTaxFree())) {
+                if (isTaxFree()) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
                 }
                 if (isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER)) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.PEER2PEERINTEREST);
                 }
-                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
+                return myCategories.getSingularClass(isGross()
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSINTEREST
                         : MoneyWiseTransCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
-                if (Boolean.TRUE.equals(isTaxFree())) {
+                if (isTaxFree()) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
+                return myCategories.getSingularClass(isGross()
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS
                         : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);
@@ -1014,7 +1012,7 @@ public class MoneyWiseDeposit
          * @return the default holding
          */
         public MoneyWiseDeposit getDefaultHolding(final MoneyWisePayee pParent,
-                                                  final Boolean isTaxFree) {
+                                                  final boolean isTaxFree) {
             /* loop through the deposits */
             final Iterator<MoneyWiseDeposit> myIterator = iterator();
             while (myIterator.hasNext()) {
@@ -1023,7 +1021,7 @@ public class MoneyWiseDeposit
                 /* Ignore deleted and closed deposits and wrong taxFree status */
                 boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
                 bIgnore |= !pParent.equals(myDeposit.getParent());
-                bIgnore |= !isTaxFree.equals(myDeposit.isTaxFree());
+                bIgnore |= !isTaxFree == myDeposit.isTaxFree();
                 if (!bIgnore) {
                     return myDeposit;
                 }

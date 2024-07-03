@@ -121,6 +121,11 @@ public final class MoneyWiseXAnalysisCashBucket
         return theCategory;
     }
 
+    @Override
+    public Long getBucketId() {
+        return getAccount().getExternalId();
+    }
+
     /**
      * CashBucket list class.
      */

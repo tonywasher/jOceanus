@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -254,6 +255,11 @@ public final class MoneyWiseXAnalysisSecurityBucket
     }
 
     @Override
+    public Long getBucketId() {
+        return theHolding.getExternalId();
+    }
+
+    @Override
     public String toString() {
         return getDecoratedName();
     }
@@ -330,7 +336,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * Is this bucket idle?
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -531,11 +537,13 @@ public final class MoneyWiseXAnalysisSecurityBucket
     }
 
     /**
-     * Set startDate.
+     * Ensure that start date is set.
      * @param pDate the startDate
      */
-    public void setStartDate(final TethysDate pDate) {
-        setValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE, pDate);
+    public void ensureStartDate(final TethysDate pDate) {
+        if (theValues.getValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE) == null) {
+            setValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE, pDate);
+        }
     }
 
     /**
@@ -551,16 +559,39 @@ public final class MoneyWiseXAnalysisSecurityBucket
 
     @Override
     public void recordSecurityPrice() {
+        /* Access the current price */
         final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
         TethysPrice myPrice = myCursor.getCurrentPrice(getSecurity());
+
+        /* If this is a stockOption */
         if (isStockOption) {
+            /* Price is any positive difference between stockPrice and optioonPrice */
             myPrice = new TethysPrice(myPrice);
             myPrice.subtractPrice(getSecurity().getOptionPrice());
             if (!myPrice.isPositive()) {
                 myPrice.setZero();
             }
         }
-        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, myPrice);
+
+        /* If we are funded */
+        TethysMoney myFunded = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED));
+        if (myFunded.isNonZero()) {
+            /* Set funded to zero */
+            myFunded = new TethysMoney(myFunded);
+            myFunded.setZero();
+            theValues.setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, myFunded);
+
+            /* If we have zero units, honour autoUnits */
+            final MoneyWiseSecurityClass mySecClass = getSecurity().getCategoryClass();
+            TethysUnits myUnits = theValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+            if (myUnits.isZero() && mySecClass.isAutoUnits()) {
+                final TethysUnits myAutoUnits = TethysUnits.getWholeUnits(mySecClass.getAutoUnits());
+                theValues.setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, myAutoUnits);
+            }
+        }
+
+        /* Store the price */
+        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.PRICE, myPrice);
     }
 
     @Override
@@ -588,23 +619,30 @@ public final class MoneyWiseXAnalysisSecurityBucket
         final TethysMoney myLocalValue = myUnits.valueAtPrice(myPrice);
         setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, myLocalValue);
 
-        /* If this is a foreign holding */
-        TethysMoney myValue = myLocalValue;
-        if (isForeignCurrency) {
-            final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
-            myValue = myLocalValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
-         }
-        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myValue);
+        /* Adjust the valuation */
+        adjustValuation();
     }
 
     @Override
     public void adjustValuation() {
-        /* Determine reported balance */
+        /* Calculate the value of the asset */
         TethysMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUE);
+
+        /* If this is a foreign asset */
         if (isForeignCurrency) {
+            /* Calculate the value in the local currency */
             final TethysRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
             myBalance = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
         }
+
+        /* If we have a funded value */
+        final TethysMoney myFunded = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED);
+        if (myFunded.isNonZero()) {
+            /* Add to valuation */
+            myBalance.addAmount(myFunded);
+        }
+
+        /* Record the valuation */
         theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myBalance);
     }
 
@@ -613,6 +651,17 @@ public final class MoneyWiseXAnalysisSecurityBucket
         /* Determine the delta */
         final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
         myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
+        return myDelta;
+    }
+
+    /**
+     * Obtain the delta of unrealisedGains.
+     * @return the delta
+     */
+    public TethysMoney getDeltaUnrealisedGains() {
+        /* Determine the delta */
+        final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS));
+        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS));
         return myDelta;
     }
 
@@ -728,7 +777,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
                  * Ignore idle securities. Note that we must include securities that have been
                  * closed in order to adjust Market Growth.
                  */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -756,7 +805,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
                 final MoneyWiseXAnalysisSecurityBucket myBucket = new MoneyWiseXAnalysisSecurityBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
                     theList.add(myBucket);

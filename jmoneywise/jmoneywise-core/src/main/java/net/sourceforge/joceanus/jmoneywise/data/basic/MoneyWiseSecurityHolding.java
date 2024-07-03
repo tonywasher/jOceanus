@@ -153,12 +153,12 @@ public final class MoneyWiseSecurityHolding
     }
 
     @Override
-    public Boolean isTaxFree() {
+    public boolean isTaxFree() {
         return thePortfolio.isTaxFree();
     }
 
     @Override
-    public Boolean isGross() {
+    public boolean isGross() {
         return thePortfolio.isGross();
     }
 
@@ -214,7 +214,7 @@ public final class MoneyWiseSecurityHolding
     }
 
     @Override
-    public Boolean isForeign() {
+    public boolean isForeign() {
         final MoneyWiseCurrency myDefault = thePortfolio.getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }

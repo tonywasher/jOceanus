@@ -320,6 +320,24 @@ public enum MoneyWiseSecurityClass
     }
 
     /**
+     * Determine whether the SecurityType is subject to Residential Gains.
+     * @return <code>true</code> if the security type is subject to Residential Gains,
+     * <code>false</code> otherwise.
+     */
+    public boolean isResidentialGains() {
+        return this == PROPERTY;
+    }
+
+    /**
+     * Determine whether the SecurityType is subject to Chargeable Gains.
+     * @return <code>true</code> if the security type is subject to Chargeable Gains,
+     * <code>false</code> otherwise.
+     */
+    public boolean isChargeableGains() {
+        return this == LIFEBOND;
+    }
+
+    /**
      * Determine whether the SecurityType is Capital.
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */
@@ -385,7 +403,7 @@ public enum MoneyWiseSecurityClass
      * Obtain autoUnits.
      * @return the number of units for this security if active.
      */
-    public Integer getAutoUnits() {
+    public int getAutoUnits() {
         switch (this) {
             case ENDOWMENT:
             case DEFINEDCONTRIBUTION:
@@ -395,7 +413,7 @@ public enum MoneyWiseSecurityClass
             case DEFINEDBENEFIT:
                 return PENSION_YEARS;
             default:
-                return null;
+                return 0;
         }
     }
 }

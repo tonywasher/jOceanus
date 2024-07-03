@@ -58,19 +58,19 @@ public interface MoneyWiseTransAsset
      * Is the Asset taxFree?
      * @return true/false
      */
-    Boolean isTaxFree();
+    boolean isTaxFree();
 
     /**
      * Is the Asset gross?
      * @return true/false
      */
-    Boolean isGross();
+    boolean isGross();
 
     /**
      * Is the Asset foreign?
      * @return true/false
      */
-    Boolean isForeign();
+    boolean isForeign();
 
     /**
      * Touch underlying item.

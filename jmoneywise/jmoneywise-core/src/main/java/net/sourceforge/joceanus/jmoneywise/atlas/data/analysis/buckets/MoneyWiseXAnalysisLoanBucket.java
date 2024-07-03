@@ -142,6 +142,11 @@ public final class MoneyWiseXAnalysisLoanBucket
         return isCreditCard;
     }
 
+    @Override
+    public Long getBucketId() {
+        return getAccount().getExternalId();
+    }
+
     /**
      * LoanBucket list class.
      */

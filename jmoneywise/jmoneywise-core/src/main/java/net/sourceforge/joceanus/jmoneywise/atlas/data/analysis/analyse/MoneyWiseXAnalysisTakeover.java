@@ -23,6 +23,44 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
  */
 public class MoneyWiseXAnalysisTakeover {
     /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The transAnalyser.
+     */
+    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
+
+    /**
+     * The market analysis.
+     */
+    private final MoneyWiseXAnalysisMarket theMarket;
+
+    /**
+     * The transaction.
+     */
+    private MoneyWiseXAnalysisTransaction theTransaction;
+
+    /**
+     * Constructor.
+     * @param pAnalyser the event analyser
+     * @param pSecurity the securityAnalyser
+     */
+    MoneyWiseXAnalysisTakeover(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+                               final MoneyWiseXAnalysisSecurity pSecurity) {
+        theState = pAnalyser.getState();
+        theSecurity = pSecurity;
+        theTransAnalyser = theSecurity.getTransAnalyser();
+        theMarket = pAnalyser.getMarket();
+    }
+
+    /**
      * Process a transaction that is a stockTakeover.
      * @param pTrans  the transaction
      */

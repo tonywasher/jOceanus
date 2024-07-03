@@ -61,7 +61,27 @@ public enum MoneyWiseAssetType {
     /**
      * SecurityHolding.
      */
-    SECURITYHOLDING(8);
+    SECURITYHOLDING(8),
+
+    /**
+     * PortfolioCash.
+     */
+    PORTFOLIOCASH(9),
+
+    /**
+     * TransactionCategory.
+     */
+    TRANSACTIONCATEGORY(10),
+
+    /**
+     * TaxBasis.
+     */
+    TAXBASIS(11),
+
+    /**
+     * TaxBasisAccount.
+     */
+    TAXBASISACCOUNT(12);
 
     /**
      * The asset shift for external Ids.
@@ -69,9 +89,19 @@ public enum MoneyWiseAssetType {
     public static final int ASSETSHIFT = 60;
 
     /**
+     * The asset shift for alternate external Ids.
+     */
+    public static final int ALTERNATESHIFT = 56;
+
+    /**
      * The asset mask for external Ids.
      */
     public static final int ASSETMASK = 0xF0000000;
+
+    /**
+     * The alternate mask for external Ids.
+     */
+    public static final long ALTERNATEMASK = 0xFF00000000000000L;
 
     /**
      * The String name.
@@ -123,6 +153,21 @@ public enum MoneyWiseAssetType {
                                         final int pBaseId) {
         final long myBase = pBaseId;
         final long myMajor = ((long) pMajorId) << Integer.SIZE;
+        final long myAsset = ((long) pType.getId()) << ASSETSHIFT;
+        return myAsset + myMajor + myBase;
+    }
+
+    /**
+     * Obtain the alternate external id.
+     * @param pType the asset type
+     * @param pExternalId the id
+     * @return the external id
+     */
+    public static long createAlternateExternalId(final MoneyWiseAssetType pType,
+                                                 final long pExternalId) {
+        final long myOldType = pExternalId >>> ASSETSHIFT;
+        final long myBase = pExternalId & ~ALTERNATEMASK;
+        final long myMajor = myOldType << ALTERNATESHIFT;
         final long myAsset = ((long) pType.getId()) << ASSETSHIFT;
         return myAsset + myMajor + myBase;
     }

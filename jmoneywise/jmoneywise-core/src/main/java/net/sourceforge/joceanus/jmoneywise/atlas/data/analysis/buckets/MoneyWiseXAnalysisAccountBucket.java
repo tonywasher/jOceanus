@@ -297,7 +297,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * Is this bucket idle?
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -630,7 +630,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
                 final B myBucket = newBucket(myCurr, pDate);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     theList.add(myBucket);
                 }
             }
@@ -661,8 +661,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
                 final B myBucket = newBucket(myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive()
-                        || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }

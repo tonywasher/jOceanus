@@ -315,21 +315,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
     }
 
     /**
-     * Get an attribute value.
-     * @param pAttr the attribute
-     * @return the value to set
-     */
-    private Object getAttributeValue(final MoneyWiseXAnalysisAccountAttr pAttr) {
-        /* Access value of object */
-        final Object myValue = getValue(pAttr);
-
-        /* Return the value */
-        return myValue != null
-                ? myValue
-                : MetisDataFieldValue.SKIP;
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -338,29 +323,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         /* Obtain the attribute */
         return theValues.getValue(pAttr);
     }
-
-    /**
-     * InitialiseValues.
-     */
-    //private void initValues() {
-    //    /* Determine currency */
-    //    final Currency myCurrency = theCurrency == null
-    //            ? MoneyWiseXAnalysisAccountBucket.DEFAULT_CURRENCY
-    //            : theCurrency.getCurrency();
-
-        /* Create valuation fields for the portfolio */
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new TethysMoney(myCurrency));
-    //    theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new TethysMoney(myCurrency));
-
-        /* Create profit fields for the portfolio */
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.PROFIT, new TethysMoney(myCurrency));
-    //    theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.PROFIT, new TethysMoney(myCurrency));
-
-        /* Create market fields for the portfolio */
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.MARKETGROWTH, new TethysMoney(myCurrency));
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.CURRENCYFLUCT, new TethysMoney(myCurrency));
-    //    theValues.setValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT, new TethysMoney(myCurrency));
-    //}
 
     /**
      * Obtain the SecurityBucket from this portfolio for a security holding.
@@ -505,7 +467,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      */
     public boolean isIdle() {
         /* Look for non-idle cash */
-        if (Boolean.FALSE.equals(theCash.isIdle())) {
+        if (!theCash.isIdle()) {
             return false;
         }
 
@@ -515,7 +477,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
             final MoneyWiseXAnalysisSecurityBucket mySecurity = myIterator.next();
 
             /* Look for active security */
-            if (Boolean.FALSE.equals(mySecurity.isIdle())) {
+            if (!mySecurity.isIdle()) {
                 return false;
             }
         }
@@ -845,7 +807,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
           */
         void analyseSecurities() {
             /* Access details */
-            final TethysDateRange myRange = theAnalysis.getDateRange();
             final MoneyWiseXAnalysisPortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
             /* Loop through the portfolio buckets */
@@ -857,7 +818,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                 final MoneyWiseXAnalysisPortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
 
                 /* Handle foreign asset */
-                if (Boolean.TRUE.equals(myCash.isForeignCurrency())) {
+                if (myCash.isForeignCurrency()) {
                     haveForeignCurrency = Boolean.TRUE;
                 }
 
@@ -884,7 +845,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                     haveActiveSecurities = Boolean.TRUE;
 
                     /* Handle foreign asset */
-                    if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
+                    if (myCurr.isForeignCurrency()) {
                         haveForeignCurrency = Boolean.TRUE;
                     }
                 }

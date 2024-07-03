@@ -25,10 +25,9 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -95,7 +94,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                                                     final TethysDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
-        theAssetId = pBase.getAssetId();
+        theAssetId = pBase.getBucketId();
         theAccount = pBase.getAccount();
         theParent = pParent;
     }
@@ -113,7 +112,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                                                     final TethysDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
-        theAssetId = pBase.getAssetId();
+        theAssetId = pBase.getBucketId();
         theAccount = pBase.getAccount();
         theParent = pParent;
     }
@@ -125,7 +124,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
      */
     private static Long deriveAssetId(final MoneyWiseTransAsset pAsset) {
         /* Calculate the key */
-        return pAsset.getExternalId();
+        return MoneyWiseAssetType.createAlternateExternalId(MoneyWiseAssetType.TAXBASISACCOUNT, pAsset.getExternalId());
     }
 
     @Override
@@ -138,11 +137,8 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         return theAccount.getExternalId().intValue();
     }
 
-    /**
-     * Obtain assetId.
-     * @return the assetId
-     */
-    public Long getAssetId() {
+    @Override
+    public Long getBucketId() {
         return theAssetId;
     }
 
@@ -156,11 +152,9 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     @Override
     public String getName() {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(getTaxBasis().getName());
-        myBuilder.append(':');
-        myBuilder.append(getSimpleName());
-        return myBuilder.toString();
+        return getTaxBasis().getName()
+               + ':'
+               + getSimpleName();
     }
 
     /**
@@ -252,10 +246,10 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseXAnalysisTaxBasisAccountBucket(pAnalysis, theParent, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
-                    theMap.put(myBucket.getAssetId(), myBucket);
+                    theMap.put(myBucket.getBucketId(), myBucket);
                 }
             }
         }
@@ -283,13 +277,13 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseXAnalysisTaxBasisAccountBucket(pAnalysis, theParent, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
 
                     /* Add to list and to map */
                     theList.add(myBucket);
-                    theMap.put(myBucket.getAssetId(), myBucket);
+                    theMap.put(myBucket.getBucketId(), myBucket);
                 }
             }
         }
@@ -318,59 +312,20 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         }
 
         /**
-         * Register delta transaction value.
-         * @param pTrans the transaction
-         * @param pGross the gross delta value
-         * @param pNett the net delta value
-         * @param pTax the tax delta value
+         * Adjust value.
+         * @param pAccount the relevant account
+         * @param pValue the value
+         * @param pAdjust adjustment control
+         * @return the adjusted taxBasisAccountBucket (or null)
          */
-        protected void registerDeltaValues(final MoneyWiseTransaction pTrans,
-                                           final TethysMoney pGross,
-                                           final TethysMoney pNett,
-                                           final TethysMoney pTax) {
-            /* Determine required asset */
-            final MoneyWiseTransAsset myAsset = deriveAsset(pTrans);
-
+        MoneyWiseXAnalysisTaxBasisAccountBucket  adjustValue(final MoneyWiseTransAsset pAccount,
+                                                             final TethysMoney pValue,
+                                                             final MoneyWiseXTaxBasisAdjust pAdjust) {
             /* Access the relevant account bucket */
-            final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = getBucket(myAsset);
+            final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = getBucket(pAccount);
 
             /* register deltas */
-            //myBucket.registerDeltaValues(pTrans, pGross, pNett, pTax);
-        }
-
-        /**
-         * Adjust value.
-         * @param pTrans the transaction
-         * @param pGross the gross delta value
-         * @param pAdjust adjustment control
-         */
-        protected void adjustValue(final MoneyWiseTransaction pTrans,
-                                   final TethysMoney pGross,
-                                   final MoneyWiseXTaxBasisAdjust pAdjust) {
-            /* Determine required asset */
-            final MoneyWiseTransAsset myAsset = deriveAsset(pTrans);
-
-            /* Access the relevant account bucket */
-            final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = getBucket(myAsset);
-
-            /* adjust value */
-            //myBucket.adjustValue(pTrans, pGross, pAdjust);
-        }
-
-        /**
-         * Adjust value.
-         * @param pTrans the transaction
-         * @return the relevant asset
-         */
-        private static MoneyWiseTransAsset deriveAsset(final MoneyWiseTransaction pTrans) {
-            /* Determine required asset */
-            MoneyWiseTransAsset myAsset = pTrans.getPartner();
-            if (!(myAsset instanceof MoneyWisePayee)) {
-                myAsset = pTrans.getAccount();
-            }
-
-            /* return the asset */
-            return myAsset;
+            return myBucket.adjustValue(pAccount, pValue, pAdjust);
         }
 
         /**
@@ -381,27 +336,22 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         private MoneyWiseXAnalysisTaxBasisAccountBucket getBucket(final MoneyWiseTransAsset pAccount) {
             /* Locate the bucket in the list */
             final Long myKey = deriveAssetId(pAccount);
-            MoneyWiseXAnalysisTaxBasisAccountBucket myItem = theMap.get(myKey);
-
-            /* If the item does not yet exist */
-            if (myItem == null) {
+            return theMap.computeIfAbsent(myKey, m -> {
                 /* Create the new bucket */
-                myItem = new MoneyWiseXAnalysisTaxBasisAccountBucket(theAnalysis, theParent, pAccount);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myNew = new MoneyWiseXAnalysisTaxBasisAccountBucket(theAnalysis, theParent, pAccount);
 
                 /* Add to the list */
-                theList.add(myItem);
-                theMap.put(myKey, myItem);
-            }
-
-            /* Return the bucket */
-            return myItem;
+                theList.add(myNew);
+                theMap.put(myKey, myNew);
+                return myNew;
+            });
         }
 
         /**
          * SortBuckets.
          */
         protected void sortBuckets() {
-            theList.sort((l, r) -> l.getAssetId().compareTo(r.getAssetId()));
+            theList.sort((l, r) -> l.getBucketId().compareTo(r.getBucketId()));
         }
 
         /**

@@ -102,9 +102,9 @@ public class MoneyWiseXAnalysisState
     private final Map<MoneyWiseCurrency, List<MoneyWiseXAnalysisBucketForeign>> theForeignBucketsMap;
 
     /**
-     * The eventBuckets.
+     * The eventBuckets that are to be registered to the event.
      */
-    private final List<MoneyWiseXAnalysisBucketRegister> theEventBuckets;
+    private final Map<Long, MoneyWiseXAnalysisBucketRegister> theEventBuckets;
 
     /**
      * The editSet.
@@ -169,7 +169,7 @@ public class MoneyWiseXAnalysisState
         theDepRateMap = new HashMap<>();
         thePricedBucketsMap = new HashMap<>();
         theForeignBucketsMap = new HashMap<>();
-        theEventBuckets = new ArrayList<>();
+        theEventBuckets = new HashMap<>();
 
         /* Set up first elements */
         iteratePrice();
@@ -369,13 +369,13 @@ public class MoneyWiseXAnalysisState
     }
 
     @Override
-    public void registerBucketForEvent(MoneyWiseXAnalysisBucketRegister pBucket) {
-        theEventBuckets.add(pBucket);
+    public void registerBucketInterest(final MoneyWiseXAnalysisBucketRegister pBucket) {
+        theEventBuckets.put(pBucket.getBucketId(), pBucket);
     }
 
     @Override
-    public void registerBucketsForEvent(MoneyWiseXAnalysisEvent pEvent) {
-        for (MoneyWiseXAnalysisBucketRegister myBucket : theEventBuckets) {
+    public void registerInterestedBucketsForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        for (MoneyWiseXAnalysisBucketRegister myBucket : theEventBuckets.values()) {
             myBucket.registerEvent(pEvent);
         }
         theEventBuckets.clear();

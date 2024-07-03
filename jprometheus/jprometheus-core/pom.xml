@@ -30,7 +30,7 @@
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
-      <version>12.6.1.jre11</version>
+      <version>${MSSQLVersion}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -75,12 +75,4 @@
   <properties>
     <moduleName>${packageName}.core</moduleName>
   </properties>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>

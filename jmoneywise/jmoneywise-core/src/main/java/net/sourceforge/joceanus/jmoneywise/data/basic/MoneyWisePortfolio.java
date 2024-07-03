@@ -322,15 +322,13 @@ public class MoneyWisePortfolio
     }
 
     @Override
-    public Boolean isTaxFree() {
-        final MoneyWisePortfolioType myType = getCategory();
-        return myType == null
-                ? Boolean.FALSE
-                : myType.getPortfolioClass().isTaxFree();
+    public boolean isTaxFree() {
+        final MoneyWisePortfolioClass myClass = getCategoryClass();
+        return myClass != null && myClass.isTaxFree();
     }
 
     @Override
-    public Boolean isForeign() {
+    public boolean isForeign() {
         final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
@@ -667,22 +665,22 @@ public class MoneyWisePortfolio
         final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
-                if (Boolean.TRUE.equals(isTaxFree())) {
+                if (isTaxFree()) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
+                return myCategories.getSingularClass(isGross()
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSINTEREST
                         : MoneyWiseTransCategoryClass.TAXEDINTEREST);
             case LOYALTYBONUS:
-                if (Boolean.TRUE.equals(isTaxFree())) {
+                if (isTaxFree()) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(Boolean.TRUE.equals(isGross())
+                return myCategories.getSingularClass(isGross()
                         ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS
                         : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);
             case DIVIDEND:
-                return Boolean.TRUE.equals(isTaxFree())
+                return isTaxFree()
                         ? myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND)
                         : pCategory;
             default:

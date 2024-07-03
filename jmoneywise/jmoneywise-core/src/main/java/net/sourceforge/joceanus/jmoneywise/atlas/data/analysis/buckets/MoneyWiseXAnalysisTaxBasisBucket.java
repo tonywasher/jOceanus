@@ -34,9 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket.MoneyWiseXAnalysisTaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisValues;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis;
@@ -228,6 +227,11 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         return theTaxBasis.getIndexedId();
     }
 
+    @Override
+    public Long getBucketId() {
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.TAXBASIS, getIndexedId());
+    }
+
     /**
      * Obtain name.
      * @return the name
@@ -295,7 +299,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
      * Is this bucket idle?
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -416,28 +420,85 @@ public class MoneyWiseXAnalysisTaxBasisBucket
     }
 
     /**
+     * Adjust Gross and Nett values by amount.
+     * @param pAmount the amount
+     */
+    public void adjustGrossAndNett(final TethysMoney pAmount) {
+        adjustGrossAndNett(null, pAmount);
+    }
+
+    /**
+     * Adjust Gross value by amount.
+     * @param pAmount the amount
+     */
+    public void adjustGross(final TethysMoney pAmount) {
+        adjustGross(null, pAmount);
+    }
+
+    /**
+     * Adjust Gross and Tax values by amount.
+     * @param pAmount the amount
+     */
+    public void adjustGrossAndTax(final TethysMoney pAmount) {
+        adjustGrossAndTax(null, pAmount);
+    }
+
+    /**
+     * Adjust Gross and Nett values by amount.
+     * @param pAccount the relevant account
+     * @param pAmount the amount
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGrossAndNett(final MoneyWiseTransAsset pAccount,
+                                                                      final TethysMoney pAmount) {
+        return adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.STANDARD);
+    }
+
+    /**
+     * Adjust Gross value by amount.
+     * @param pAccount the relevant account
+     * @param pAmount the amount
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGross(final MoneyWiseTransAsset pAccount,
+                                                               final TethysMoney pAmount) {
+        return adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.GROSS);
+    }
+
+    /**
+     * Adjust Gross and Tax values by amount.
+     * @param pAccount the relevant account
+     * @param pAmount the amount
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGrossAndTax(final MoneyWiseTransAsset pAccount,
+                                                                     final TethysMoney pAmount) {
+        return adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.TAXCREDIT);
+    }
+
+    /**
      * Adjust value.
+     * @param pAccount the relevant account
      * @param pValue the value
      * @param pAdjust adjustment control
+     * @return the adjusted taxBasisAccountBucket (or null)
      */
-    public void adjustValue(final TethysMoney pValue,
-                            final MoneyWiseXTaxBasisAdjust pAdjust) {
-        /* If we are adjusting Gross */
-        if (pAdjust.adjustGross()) {
-            /* Access the existing value */
-            TethysMoney myGross = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
-            myGross = new TethysMoney(myGross);
+    MoneyWiseXAnalysisTaxBasisAccountBucket adjustValue(final MoneyWiseTransAsset pAccount,
+                                                        final TethysMoney pValue,
+                                                        final MoneyWiseXTaxBasisAdjust pAdjust) {
+        /* Access the existing value */
+        TethysMoney myGross = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
+        myGross = new TethysMoney(myGross);
 
-            /* Subtract or add the value depending as to whether we are an expense bucket */
-            if (isExpense) {
-                myGross.subtractAmount(pValue);
-            } else {
-                myGross.addAmount(pValue);
-            }
-
-            /* Record the new value */
-            setValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS, myGross);
+        /* Subtract or add the value depending as to whether we are an expense bucket */
+        if (isExpense) {
+            myGross.subtractAmount(pValue);
+        } else {
+            myGross.addAmount(pValue);
         }
+
+        /* Record the new value */
+        setValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS, myGross);
 
         /* If we are adjusting Nett */
         if (pAdjust.adjustNett()) {
@@ -455,6 +516,28 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             /* Record the new value */
             setValue(MoneyWiseXAnalysisTaxBasisAttr.NETT, myNett);
         }
+
+        /* If we are adjusting TaxCredit */
+        if (pAdjust.adjustTaxCredit()) {
+            /* Access the existing value */
+            TethysMoney myTax = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.TAXCREDIT);
+            myTax = new TethysMoney(myTax);
+
+            /* Subtract or add the value if we are an expense/income bucket */
+            if (isExpense) {
+                myTax.subtractAmount(pValue);
+            } else {
+                myTax.addAmount(pValue);
+            }
+
+            /* Record the new value */
+            setValue(MoneyWiseXAnalysisTaxBasisAttr.TAXCREDIT, myTax);
+        }
+
+        /* If we have accounts and are passed an account, adjust value for account and return the bucket */
+        return hasAccounts && pAccount != null
+                ? theAccounts.adjustValue(pAccount, pValue, pAdjust)
+                : null;
     }
 
     @Override
@@ -502,29 +585,29 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         STANDARD,
 
         /**
-         * Only adjust Nett figure.
+         * Adjust Gross only.
          */
-        NETT,
+        GROSS,
 
         /**
-         * Only adjust Gross figure.
+         * Adjust Gross and Tax.
          */
-        GROSS;
-
-        /**
-         * should we adjust Gross?
-         * @return true/false
-         */
-        private boolean adjustGross() {
-            return this != NETT;
-        }
+        TAXCREDIT;
 
         /**
          * should we adjust Nett?
          * @return true/false
          */
         private boolean adjustNett() {
-            return this != GROSS;
+            return this == STANDARD;
+        }
+
+        /**
+         * should we adjust TaxCredit?
+         * @return true/false
+         */
+        private boolean adjustTaxCredit() {
+            return this == TAXCREDIT;
         }
     }
 
@@ -616,7 +699,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
                 final MoneyWiseXAnalysisTaxBasisBucket myBucket = new MoneyWiseXAnalysisTaxBasisBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -644,7 +727,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
                 final MoneyWiseXAnalysisTaxBasisBucket myBucket = new MoneyWiseXAnalysisTaxBasisBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -771,208 +854,6 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             return isEmpty()
                     ? null
                     : theList.getUnderlyingList().get(0);
-        }
-
-        /**
-         * Adjust basis buckets.
-         * @param pTrans the transaction helper
-         * @param pCategory primary category
-         */
-        protected void adjustBasis(final MoneyWiseTransaction pTrans,
-                                   final MoneyWiseTransCategory pCategory) {
-            /* Switch on the category type */
-            switch (pCategory.getCategoryTypeClass()) {
-                case TAXEDINCOME:
-                case GROSSINCOME:
-                    addIncome(pTrans, MoneyWiseTaxClass.SALARY);
-                    break;
-                case OTHERINCOME:
-                    addIncome(pTrans, MoneyWiseTaxClass.OTHERINCOME);
-                    break;
-                case INTEREST:
-                case TAXEDINTEREST:
-                case TAXEDLOYALTYBONUS:
-                    addIncome(pTrans, MoneyWiseTaxClass.TAXEDINTEREST);
-                    break;
-                case GROSSINTEREST:
-                case GROSSLOYALTYBONUS:
-                    addIncome(pTrans, MoneyWiseTaxClass.UNTAXEDINTEREST);
-                    break;
-                case PEER2PEERINTEREST:
-                    addIncome(pTrans, MoneyWiseTaxClass.PEER2PEERINTEREST);
-                    break;
-                case DIVIDEND:
-                case SHAREDIVIDEND:
-                    addIncome(pTrans, MoneyWiseTaxClass.DIVIDEND);
-                    break;
-                case UNITTRUSTDIVIDEND:
-                    addIncome(pTrans, MoneyWiseTaxClass.UNITTRUSTDIVIDEND);
-                    break;
-                case FOREIGNDIVIDEND:
-                    addIncome(pTrans, MoneyWiseTaxClass.FOREIGNDIVIDEND);
-                    break;
-                case RENTALINCOME:
-                    addIncome(pTrans, MoneyWiseTaxClass.RENTALINCOME);
-                    break;
-                case ROOMRENTALINCOME:
-                    addIncome(pTrans, MoneyWiseTaxClass.ROOMRENTAL);
-                    break;
-                case INCOMETAX:
-                    addExpense(pTrans, MoneyWiseTaxClass.TAXPAID);
-                    break;
-                case TAXFREEINTEREST:
-                case TAXFREEDIVIDEND:
-                case LOANINTERESTEARNED:
-                case INHERITED:
-                case CASHBACK:
-                case LOYALTYBONUS:
-                case TAXFREELOYALTYBONUS:
-                case GIFTEDINCOME:
-                    addIncome(pTrans, MoneyWiseTaxClass.TAXFREE);
-                    break;
-                case PENSIONCONTRIB:
-                    addIncome(pTrans, MoneyWiseTaxClass.TAXFREE);
-                    break;
-                case BADDEBTCAPITAL:
-                    addExpense(pTrans, MoneyWiseTaxClass.CAPITALGAINS);
-                    break;
-                case BADDEBTINTEREST:
-                    addExpense(pTrans, MoneyWiseTaxClass.PEER2PEERINTEREST);
-                    break;
-                case EXPENSE:
-                case LOCALTAXES:
-                case WRITEOFF:
-                case LOANINTERESTCHARGED:
-                case TAXRELIEF:
-                case RECOVEREDEXPENSES:
-                    addExpense(pTrans, MoneyWiseTaxClass.EXPENSE);
-                    break;
-                case RENTALEXPENSE:
-                    addExpense(pTrans, MoneyWiseTaxClass.RENTALINCOME);
-                    break;
-                case UNITSADJUST:
-                case SECURITYREPLACE:
-                case STOCKTAKEOVER:
-                case STOCKSPLIT:
-                case STOCKDEMERGER:
-                case STOCKRIGHTSISSUE:
-                case PORTFOLIOXFER:
-                case TRANSFER:
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Adjust basis for income.
-         * @param pClass the class
-         * @param pTrans the transaction
-         */
-        private void addIncome(final MoneyWiseTransaction pTrans,
-                               final MoneyWiseTaxClass pClass) {
-            /* Access the bucket and adjust it */
-            final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            //myBucket.addIncomeTransaction(pTrans);
-        }
-
-        /**
-         * Adjust basis for expense.
-         * @param pClass the class
-         * @param pTrans the transaction
-         */
-        private void addExpense(final MoneyWiseTransaction pTrans,
-                                final MoneyWiseTaxClass pClass) {
-            /* Access the bucket and adjust it */
-            final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            //myBucket.addExpenseTransaction(pTrans);
-        }
-
-        /**
-         * Adjust basis buckets.
-         * @param pTrans the transaction
-         * @param pClass the class
-         * @param pIncome the income
-         */
-        protected void adjustValue(final MoneyWiseTransaction pTrans,
-                                   final MoneyWiseTaxClass pClass,
-                                   final TethysMoney pIncome) {
-            /* Access the bucket and adjust it */
-            final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            //myBucket.adjustValue(pTrans, pIncome, MoneyWiseXTaxBasisAdjust.STANDARD);
-        }
-
-        /**
-         * Adjust basis buckets for Gross only.
-         * @param pTrans the transaction
-         * @param pClass the class
-         * @param pIncome the income
-         */
-        protected void adjustGrossValue(final MoneyWiseTransaction pTrans,
-                                        final MoneyWiseTaxClass pClass,
-                                        final TethysMoney pIncome) {
-            /* Access the bucket and adjust it */
-            final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            //myBucket.adjustValue(pTrans, pIncome, MoneyWiseXTaxBasisAdjust.GROSS);
-        }
-
-        /**
-         * Adjust basis buckets for Nett only.
-         * @param pTrans the transaction
-         * @param pClass the class
-         * @param pIncome the income
-         */
-        protected void adjustNettValue(final MoneyWiseTransaction pTrans,
-                                       final MoneyWiseTaxClass pClass,
-                                       final TethysMoney pIncome) {
-            /* Access the bucket and adjust it */
-            final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(pClass);
-            //myBucket.adjustValue(pTrans, pIncome, MoneyWiseXTaxBasisAdjust.NETT);
-        }
-
-        /**
-         * Adjust autoExpense.
-         * @param pTrans the transaction
-         * @param isExpense true/false
-         */
-        //public void adjustAutoExpense(final MoneyWiseTransaction pTrans,
-        //                              final boolean isExpense) {
-            /* Determine value */
-            //TethysMoney myAmount = pTrans.getLocalAmount();
-            //if (!isExpense) {
-            //    myAmount = new TethysMoney(myAmount);
-            //    myAmount.negate();
-            //}
-
-            /* Access the bucket and adjust it */
-            //final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(MoneyWiseTaxClass.EXPENSE);
-            //myBucket.adjustValue(pTrans, myAmount, MoneyWiseXTaxBasisAdjust.STANDARD);
-        //}
-
-        /**
-         * Adjust for market growth.
-         * @param pIncome the income
-         * @param pExpense the expense
-         */
-        protected void adjustMarket(final TethysMoney pIncome,
-                                    final TethysMoney pExpense) {
-            /* Calculate the delta */
-            final TethysMoney myDelta = new TethysMoney(pIncome);
-            myDelta.subtractAmount(pExpense);
-
-            /* Access the bucket and adjust it */
-            final MoneyWiseXAnalysisTaxBasisBucket myBucket = getBucket(MoneyWiseTaxClass.MARKET);
-            myBucket.adjustValue(myDelta, MoneyWiseXTaxBasisAdjust.STANDARD);
-        }
-
-        /**
-         * record ChargeableGain.
-         * @param pTrans the transaction
-         * @param pGain the gain
-         */
-        public void recordChargeableGain(final MoneyWiseTransaction pTrans,
-                                         final TethysMoney pGain) {
-            /* record the chargeable gain */
-            theCharges.addTransaction(pTrans, pGain);
         }
 
         /**

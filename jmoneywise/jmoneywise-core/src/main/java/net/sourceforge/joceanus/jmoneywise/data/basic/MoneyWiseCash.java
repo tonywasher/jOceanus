@@ -263,7 +263,7 @@ public class MoneyWiseCash
     }
 
     @Override
-    public Boolean isForeign() {
+    public boolean isForeign() {
         final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }

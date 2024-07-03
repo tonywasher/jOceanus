@@ -44,11 +44,6 @@ public final class MoneyWiseXAnalysisDepositBucket
     }
 
     /**
-     * The analysis.
-     */
-    private final MoneyWiseXAnalysis theAnalysis;
-
-    /**
      * The deposit category.
      */
     private final MoneyWiseDepositCategory theCategory;
@@ -64,7 +59,6 @@ public final class MoneyWiseXAnalysisDepositBucket
         super(pAnalysis, pDeposit);
 
         /* Obtain category */
-        theAnalysis = pAnalysis;
         theCategory = pDeposit.getCategory();
         recordMaturity();
     }
@@ -80,7 +74,6 @@ public final class MoneyWiseXAnalysisDepositBucket
         super(pAnalysis, pBase);
 
         /* Copy details from base */
-        theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         recordMaturity();
     }
@@ -98,7 +91,6 @@ public final class MoneyWiseXAnalysisDepositBucket
         super(pAnalysis, pBase, pDate);
 
         /* Obtain category */
-        theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
         recordMaturity();
     }
@@ -116,7 +108,6 @@ public final class MoneyWiseXAnalysisDepositBucket
         super(pAnalysis, pBase, pRange);
 
         /* Copy details from base */
-        theAnalysis = pAnalysis;
         theCategory = pBase.getCategory();
 
         /* Record initial depositRate and Maturity */
@@ -135,6 +126,11 @@ public final class MoneyWiseXAnalysisDepositBucket
      */
     public MoneyWiseDepositCategory getCategory() {
         return theCategory;
+    }
+
+    @Override
+    public Long getBucketId() {
+        return getAccount().getExternalId();
     }
 
     /**

@@ -179,21 +179,17 @@ public class MoneyWiseXAnalysisManager
      */
     public MoneyWiseXAnalysis getRangedAnalysis(final TethysDateRange pRange) {
         /* Look for the existing analysis */
-        MoneyWiseXAnalysis myAnalysis = theAnalysisMap.get(pRange);
-        if (myAnalysis == null) {
+        return theAnalysisMap.computeIfAbsent(pRange, r -> {
             /* Create the new event analysis */
-            myAnalysis = new MoneyWiseXAnalysis(this, pRange);
+            final MoneyWiseXAnalysis myAnalysis = new MoneyWiseXAnalysis(this, r);
             produceTotals(myAnalysis);
 
             /* Check the totals */
             checkTotals(myAnalysis);
 
             /* Put it into the map */
-            theAnalysisMap.put(pRange, myAnalysis);
-        }
-
-        /* return the analysis */
-        return myAnalysis;
+            return myAnalysis;
+        });
     }
 
     /**

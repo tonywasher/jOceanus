@@ -287,7 +287,7 @@ public class MoneyWiseSecurity
     }
 
     @Override
-    public Boolean isForeign() {
+    public boolean isForeign() {
         final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
@@ -641,7 +641,7 @@ public class MoneyWiseSecurity
         /* Switch on category type */
         if (MoneyWiseTransCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
             final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
-            if (Boolean.TRUE.equals(isForeign())) {
+            if (isForeign()) {
                 return myCategories.getSingularClass(MoneyWiseTransCategoryClass.FOREIGNDIVIDEND);
             }
             return myCategories.getSingularClass(getCategoryClass().isUnitTrust()

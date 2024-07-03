@@ -320,18 +320,18 @@ public abstract class MoneyWiseAssetBase
     }
 
     @Override
-    public Boolean isTaxFree() {
-        return Boolean.FALSE;
+    public boolean isTaxFree() {
+        return false;
     }
 
     @Override
-    public Boolean isGross() {
-        return Boolean.FALSE;
+    public boolean isGross() {
+        return false;
     }
 
     @Override
-    public Boolean isForeign() {
-        return Boolean.FALSE;
+    public boolean isForeign() {
+        return false;
     }
 
     /**

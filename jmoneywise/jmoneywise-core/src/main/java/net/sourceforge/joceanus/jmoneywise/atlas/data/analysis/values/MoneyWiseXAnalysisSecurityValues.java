@@ -45,6 +45,7 @@ public final class MoneyWiseXAnalysisSecurityValues
         super.setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(pReportingCurrency));
         super.setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, new TethysMoney(pReportingCurrency));
         super.setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(pReportingCurrency));
+        super.setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, new TethysMoney(pReportingCurrency));
     }
 
     /**
