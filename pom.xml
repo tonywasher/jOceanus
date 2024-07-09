@@ -103,7 +103,7 @@
     <BuildNumberPluginVersion>3.2.0</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.6.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.4.2</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.6.0</ProjectInfoPluginVersion>
+    <ProjectInfoPluginVersion>3.6.1</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.4.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.7.0</JavaDocPluginVersion>
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
@@ -115,7 +115,7 @@
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.4</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.16.2</VersionsPluginVersion>
+    <VersionsPluginVersion>2.17.0</VersionsPluginVersion>
   </properties>
   <build>
     <resources>

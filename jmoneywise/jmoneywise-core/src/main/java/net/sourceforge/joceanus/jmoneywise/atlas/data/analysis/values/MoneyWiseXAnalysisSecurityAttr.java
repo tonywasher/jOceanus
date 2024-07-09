@@ -55,11 +55,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
     VALUEDELTA,
 
     /**
-     * Invested.
-     */
-    INVESTED,
-
-    /**
      * Residual Cost.
      */
     RESIDUALCOST,
@@ -93,11 +88,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
      * CashInvested.
      */
     CASHINVESTED,
-
-    /**
-     * Consideration.
-     */
-    CONSIDERATION,
 
     /**
      * CashConsideration (returned cash).
@@ -171,7 +161,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
         switch (this) {
             case UNITS:
             case DIVIDEND:
-            case INVESTED:
             case RESIDUALCOST:
             case VALUATION:
             case EXCHANGERATE:
@@ -186,7 +175,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case MARKETPROFIT:
             case VALUEDELTA:
             case XFERREDCOST:
-            case CONSIDERATION:
             case RETURNEDCASH:
             case XFERREDVALUE:
             case CASHINVESTED:
@@ -217,11 +205,9 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case RESIDUALCOST:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
-            case INVESTED:
             case DIVIDEND:
             case MARKETPROFIT:
             case PROFIT:
-            case CONSIDERATION:
             case RETURNEDCASH:
             case XFERREDVALUE:
             case XFERREDCOST:

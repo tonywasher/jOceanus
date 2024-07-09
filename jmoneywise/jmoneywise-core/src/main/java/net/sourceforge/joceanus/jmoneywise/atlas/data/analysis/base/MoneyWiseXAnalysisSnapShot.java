@@ -90,7 +90,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
         theDate = pEvent.getDate();
 
         /* Store the snapshot map */
-        theSnapShot = pValues.getCounterSnapShot();
+        theSnapShot = pValues.newSnapShot();
         thePrevious = pPrevious;
     }
 
@@ -109,7 +109,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
         theDate = pSnapShot.getDate();
 
         /* Store the snapshot map */
-        theSnapShot = pSnapShot.getFullSnapShot();
+        theSnapShot = pSnapShot.newSnapShot();
         theSnapShot.adjustToBaseValues(pBaseValues);
         thePrevious = pPrevious;
     }
@@ -166,19 +166,11 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
     }
 
     /**
-     * Obtain counter snapShot.
+     * Obtain new snapShot.
      * @return the snapShot
      */
-    protected T getCounterSnapShot() {
-        return theSnapShot.getCounterSnapShot();
-    }
-
-    /**
-     * Obtain full snapShot.
-     * @return the snapShot
-     */
-    protected T getFullSnapShot() {
-        return theSnapShot.getFullSnapShot();
+    protected T newSnapShot() {
+        return theSnapShot.newSnapShot();
     }
 
     /**

@@ -38,41 +38,32 @@ public final class MoneyWiseXAnalysisSecurityValues
         super(MoneyWiseXAnalysisSecurityAttr.class);
 
         /* Initialise units etc. to zero */
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, new TethysUnits());
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, new TethysMoney(pReportingCurrency));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.INVESTED, new TethysMoney(pReportingCurrency));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(pReportingCurrency));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, new TethysMoney(pReportingCurrency));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(pReportingCurrency));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, new TethysMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, new TethysUnits());
+        setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, new TethysMoney(pCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, new TethysMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, new TethysMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, new TethysMoney(pReportingCurrency));
     }
 
     /**
      * Constructor.
      * @param pSource the source map.
-     * @param pCountersOnly only copy counters
      */
-    public MoneyWiseXAnalysisSecurityValues(final MoneyWiseXAnalysisSecurityValues pSource,
-                                            final boolean pCountersOnly) {
+    public MoneyWiseXAnalysisSecurityValues(final MoneyWiseXAnalysisSecurityValues pSource) {
         /* Initialise class */
-        super(pSource, pCountersOnly);
+        super(pSource);
     }
 
     @Override
-    protected MoneyWiseXAnalysisSecurityValues getCounterSnapShot() {
-        return new MoneyWiseXAnalysisSecurityValues(this, true);
-    }
-
-    @Override
-    protected MoneyWiseXAnalysisSecurityValues getFullSnapShot() {
-        return new MoneyWiseXAnalysisSecurityValues(this, false);
+    protected MoneyWiseXAnalysisSecurityValues newSnapShot() {
+        return new MoneyWiseXAnalysisSecurityValues(this);
     }
 
     @Override
     public void adjustToBaseValues(final MoneyWiseXAnalysisSecurityValues pBase) {
         /* Adjust invested/gains values */
-        adjustMoneyToBase(pBase, MoneyWiseXAnalysisSecurityAttr.INVESTED);
         adjustMoneyToBase(pBase, MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
         adjustMoneyToBase(pBase, MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS);
         adjustMoneyToBase(pBase, MoneyWiseXAnalysisSecurityAttr.DIVIDEND);
@@ -86,10 +77,28 @@ public final class MoneyWiseXAnalysisSecurityValues
         myValue.setZero();
 
         /* Reset Growth Adjust values */
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, myValue);
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.INVESTED, new TethysMoney(myValue));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(myValue));
-        super.setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(myValue));
+        setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, myValue);
+        setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(myValue));
+        setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(myValue));
+    }
+
+    /**
+     * Set zero money.
+     * @param pAttr the attribute
+     */
+    public void setZeroMoney(final MoneyWiseXAnalysisSecurityAttr pAttr) {
+        TethysMoney myValue = getMoneyValue(pAttr);
+        myValue = new TethysMoney(myValue);
+        myValue.setZero();
+        setValue(pAttr, myValue);
+    }
+
+    /**
+     * Set zero money.
+     * @param pAttr the attribute
+     */
+    public void setZeroUnits(final MoneyWiseXAnalysisSecurityAttr pAttr) {
+         setValue(pAttr, new TethysUnits());
     }
 
     /**

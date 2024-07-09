@@ -21,19 +21,10 @@ import java.time.temporal.ChronoUnit;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
-import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -48,12 +39,12 @@ public class MoneyWiseXAnalysisXferOut {
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
-    private static final TethysMoney LIMIT_VALUE = TethysMoney.getWholeUnits(3000);
+    static final TethysMoney LIMIT_VALUE = TethysMoney.getWholeUnits(3000);
 
     /**
      * The Rate Tax threshold for "small" transactions (5%).
      */
-    private static final TethysRate LIMIT_RATE = TethysRate.getWholePercentage(5);
+    static final TethysRate LIMIT_RATE = TethysRate.getWholePercentage(5);
 
     /**
      * The portfolioBuckets.
@@ -76,46 +67,6 @@ public class MoneyWiseXAnalysisXferOut {
     private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
-     * The capitalGains category.
-     */
-    private final MoneyWiseXAnalysisTransCategoryBucket theCapitalCat;
-
-    /**
-     * The taxFreeGains category.
-     */
-    private final MoneyWiseXAnalysisTransCategoryBucket theTaxFreeCat;
-
-    /**
-     * The residentialGains category.
-     */
-    private final MoneyWiseXAnalysisTransCategoryBucket theResidentialCat;
-
-    /**
-     * The chargeableGains category.
-     */
-    private final MoneyWiseXAnalysisTransCategoryBucket theChargeableCat;
-
-    /**
-     * The capitalGains TaxBasis.
-     */
-    private final MoneyWiseXAnalysisTaxBasisBucket theCapitalTax;
-
-    /**
-     * The taxFreeGains TaxBasis.
-     */
-    private final MoneyWiseXAnalysisTaxBasisBucket theTaxFreeTax;
-
-    /**
-     * The residentialGains TaxBasis.
-     */
-    private final MoneyWiseXAnalysisTaxBasisBucket theResidentialTax;
-
-    /**
-     * The chargeableGains TaxBasis.
-     */
-    private final MoneyWiseXAnalysisTaxBasisBucket theChargeableTax;
-
-    /**
      * The transaction.
      */
     private MoneyWiseXAnalysisTransaction theTransaction;
@@ -133,20 +84,6 @@ public class MoneyWiseXAnalysisXferOut {
         theState = pAnalyser.getState();
         theSecurity = pSecurity;
         theTransAnalyser = theSecurity.getTransAnalyser();
-
-        /* Determine important categoryBuckets */
-        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();
-        theCapitalCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CAPITALGAIN);
-        theTaxFreeCat = myCategories.getBucket(MoneyWiseTransCategoryClass.TAXFREEGAIN);
-        theResidentialCat = myCategories.getBucket(MoneyWiseTransCategoryClass.RESIDENTIALGAIN);
-        theChargeableCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CHARGEABLEGAIN);
-
-        /* Determine important taxBuckets */
-        final MoneyWiseXAnalysisTaxBasisBucketList myTaxBases = myAnalysis.getTaxBasis();
-        theCapitalTax = myTaxBases.getBucket(MoneyWiseTaxClass.CAPITALGAINS);
-        theTaxFreeTax = myTaxBases.getBucket(MoneyWiseTaxClass.TAXFREE);
-        theResidentialTax = myTaxBases.getBucket(MoneyWiseTaxClass.RESIDENTIALGAINS);
-        theChargeableTax = myTaxBases.getBucket(MoneyWiseTaxClass.CHARGEABLEGAINS);
     }
 
     /**
@@ -200,12 +137,9 @@ public class MoneyWiseXAnalysisXferOut {
                 ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : theTransaction.getDebitAmount();
 
-        /* Adjust the investment total */
-        myAsset.adjustInvested(myAmount);
-
         /* Assume that the allowed cost is the full value */
         TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-        TethysMoney myAllowedCost = new TethysMoney(myAmount);
+        TethysMoney myAllowedCost;
         final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Determine the delta units */
@@ -287,7 +221,7 @@ public class MoneyWiseXAnalysisXferOut {
             }
 
             /* Adjust the capitalGains category bucket */
-            adjustStandardGain(pHolding, myCapitalGain);
+            theSecurity.adjustStandardGain(pHolding, myCapitalGain);
         }
 
         /* Adjust the valuation */
@@ -299,44 +233,5 @@ public class MoneyWiseXAnalysisXferOut {
 
         /* Register the transaction */
         theState.registerBucketInterest(myAsset);
-    }
-
-    /**
-     * Adjust for Standard Gains.
-     * @param pSource the source security holding
-     * @param pGains the gains
-     */
-    public void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
-                                   final TethysMoney pGains) {
-        /* Access security and portfolio */
-        final MoneyWiseSecurity mySecurity = pSource.getSecurity();
-        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
-        final MoneyWiseSecurityClass myClass = mySecurity.getCategoryClass();
-
-        /* Determine the type of gains */
-        MoneyWiseXAnalysisTransCategoryBucket myCategory = theCapitalCat;
-        MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = theCapitalTax;
-        if (myPortfolio.isTaxFree()) {
-            myCategory = theTaxFreeCat;
-            myTaxBasis = theTaxFreeTax;
-        } else if (myClass.isResidentialGains()) {
-            myCategory = theResidentialCat;
-            myTaxBasis = theResidentialTax;
-        } else if (myClass.isChargeableGains()) {
-            myCategory = theChargeableCat;
-            myTaxBasis = theChargeableTax;
-        }
-
-        /* Add to Capital Gains income/expense */
-        if (pGains.isPositive()) {
-            myCategory.addIncome(pGains);
-        } else {
-            myCategory.subtractExpense(pGains);
-        }
-        myTaxBasis.adjustGrossAndNett(pGains);
-
-        /* Register the buckets */
-        theState.registerBucketInterest(myCategory);
-        theState.registerBucketInterest(myTaxBasis);
     }
 }

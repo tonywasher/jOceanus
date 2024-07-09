@@ -101,11 +101,6 @@ public enum MoneyWiseXAnalysisValuesResource
     SECURITYATTR_UNREALISEDGAINS("SecurityAttr.UnRealisedGains"),
 
     /**
-     * SecurityAttr Invested.
-     */
-    SECURITYATTR_INVESTED("SecurityAttr.Invested"),
-
-    /**
      * SecurityAttr Dividend.
      */
     SECURITYATTR_DIVIDEND("SecurityAttr.Dividend"),
@@ -119,11 +114,6 @@ public enum MoneyWiseXAnalysisValuesResource
      * SecurityAttr Profit.
      */
     SECURITYATTR_PROFIT("SecurityAttr.Profit"),
-
-    /**
-     * SecurityAttr Consideration.
-     */
-    SECURITYATTR_CONSIDER("SecurityAttr.Consider"),
 
     /**
      * SecurityAttr CashConsideration/ReturnedCash.
@@ -367,13 +357,11 @@ public enum MoneyWiseXAnalysisValuesResource
         myMap.put(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.UNITS, SECURITYATTR_UNITS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, SECURITYATTR_RESIDUALCOST);
-        myMap.put(MoneyWiseXAnalysisSecurityAttr.INVESTED, SECURITYATTR_INVESTED);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, SECURITYATTR_DIVIDEND);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, SECURITYATTR_REALISEDGAINS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, SECURITYATTR_UNREALISEDGAINS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.PROFIT, SECURITYATTR_PROFIT);
-        myMap.put(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, SECURITYATTR_CONSIDER);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, SECURITYATTR_RETURNEDCASH);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, SECURITYATTR_XFERREDVALUE);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, SECURITYATTR_XFERREDCOST);

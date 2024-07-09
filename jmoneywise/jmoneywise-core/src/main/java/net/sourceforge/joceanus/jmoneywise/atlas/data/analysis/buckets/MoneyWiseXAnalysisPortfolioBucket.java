@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -136,7 +135,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                 : theCurrency.getCurrency();
         theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
         theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        //initValues();
 
         /* Determine whether the portfolio is a foreign currency */
         isForeignCurrency = !MetisDataDifference.isEqual(pAnalysis.getCurrency(), theCurrency);
@@ -169,7 +167,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         final Currency myCurrency = theCurrency.getCurrency();
         theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
         theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        //initValues();
     }
 
     /**
@@ -198,7 +195,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         final Currency myCurrency = theCurrency.getCurrency();
         theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
         theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        //initValues();
     }
 
     @Override
@@ -833,9 +829,6 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                 while (mySecIterator.hasNext()) {
                     /* Access bucket and category */
                     final MoneyWiseXAnalysisSecurityBucket myCurr = mySecIterator.next();
-
-                    /* Analyse the security bucket */
-                    //myCurr.analyseBucket(myRange);
 
                     /* Add to the portfolio bucket and add values */
                     myPortfolio.addValues(myCurr);

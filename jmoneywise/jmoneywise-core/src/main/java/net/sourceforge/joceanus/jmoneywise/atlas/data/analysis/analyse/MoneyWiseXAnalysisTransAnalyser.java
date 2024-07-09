@@ -106,6 +106,14 @@ public class MoneyWiseXAnalysisTransAnalyser {
     }
 
     /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    MoneyWiseCurrency getCurrency() {
+        return theCurrency;
+    }
+
+    /**
      * Process transaction event.
      * @param pEvent the event
      * @throws OceanusException on error

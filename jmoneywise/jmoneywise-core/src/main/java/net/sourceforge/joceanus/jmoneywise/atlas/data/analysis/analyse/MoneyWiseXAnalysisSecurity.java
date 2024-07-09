@@ -17,9 +17,18 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -86,6 +95,46 @@ public class MoneyWiseXAnalysisSecurity {
     private MoneyWiseXAnalysisTransaction theTransaction;
 
     /**
+     * The capitalGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theCapitalCat;
+
+    /**
+     * The taxFreeGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theTaxFreeCat;
+
+    /**
+     * The residentialGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theResidentialCat;
+
+    /**
+     * The chargeableGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theChargeableCat;
+
+    /**
+     * The capitalGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theCapitalTax;
+
+    /**
+     * The taxFreeGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxFreeTax;
+
+    /**
+     * The residentialGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theResidentialTax;
+
+    /**
+     * The chargeableGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theChargeableTax;
+
+    /**
      * Constructor.
      *
      * @param pAnalyser the event analyser
@@ -94,15 +143,33 @@ public class MoneyWiseXAnalysisSecurity {
      */
     MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
                                final MoneyWiseXAnalysisTransAnalyser pTrans) throws OceanusException {
-        thePortfolios = pAnalyser.getAnalysis().getPortfolios();
+        /* Record important classes */
+        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
+        thePortfolios = myAnalysis.getPortfolios();
         theState = pAnalyser.getState();
         theMarket = pAnalyser.getMarket();
         theTransAnalyser = pTrans;
+
+        /* Create analysers */
         theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser, this);
         theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser, this);
         theDividend = new MoneyWiseXAnalysisDividend(pAnalyser, this);
         theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser, this);
         theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser, this);
+
+        /* Determine important categoryBuckets */
+        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();
+        theCapitalCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CAPITALGAIN);
+        theTaxFreeCat = myCategories.getBucket(MoneyWiseTransCategoryClass.TAXFREEGAIN);
+        theResidentialCat = myCategories.getBucket(MoneyWiseTransCategoryClass.RESIDENTIALGAIN);
+        theChargeableCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CHARGEABLEGAIN);
+
+        /* Determine important taxBuckets */
+        final MoneyWiseXAnalysisTaxBasisBucketList myTaxBases = myAnalysis.getTaxBasis();
+        theCapitalTax = myTaxBases.getBucket(MoneyWiseTaxClass.CAPITALGAINS);
+        theTaxFreeTax = myTaxBases.getBucket(MoneyWiseTaxClass.TAXFREE);
+        theResidentialTax = myTaxBases.getBucket(MoneyWiseTaxClass.RESIDENTIALGAINS);
+        theChargeableTax = myTaxBases.getBucket(MoneyWiseTaxClass.CHARGEABLEGAINS);
     }
 
     /**
@@ -243,6 +310,46 @@ public class MoneyWiseXAnalysisSecurity {
         /* determine the MarketGrowth */
         final TethysMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();
         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
+    }
+
+
+    /**
+     * Adjust for Standard Gains.
+     * @param pSource the source security holding
+     * @param pGains the gains
+     */
+    void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
+                            final TethysMoney pGains) {
+        /* Access security and portfolio */
+        final MoneyWiseSecurity mySecurity = pSource.getSecurity();
+        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
+        final MoneyWiseSecurityClass myClass = mySecurity.getCategoryClass();
+
+        /* Determine the type of gains */
+        MoneyWiseXAnalysisTransCategoryBucket myCategory = theCapitalCat;
+        MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = theCapitalTax;
+        if (myPortfolio.isTaxFree()) {
+            myCategory = theTaxFreeCat;
+            myTaxBasis = theTaxFreeTax;
+        } else if (myClass.isResidentialGains()) {
+            myCategory = theResidentialCat;
+            myTaxBasis = theResidentialTax;
+        } else if (myClass.isChargeableGains()) {
+            myCategory = theChargeableCat;
+            myTaxBasis = theChargeableTax;
+        }
+
+        /* Add to Capital Gains income/expense */
+        if (pGains.isPositive()) {
+            myCategory.addIncome(pGains);
+        } else {
+            myCategory.subtractExpense(pGains);
+        }
+        myTaxBasis.adjustGrossAndNett(pGains);
+
+        /* Register the buckets */
+        theState.registerBucketInterest(myCategory);
+        theState.registerBucketInterest(myTaxBasis);
     }
 
     /**

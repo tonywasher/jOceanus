@@ -307,7 +307,6 @@ public final class MoneyWiseUKTaxYearFactory {
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2021, MoneyWiseUKTaxBandsFactory.BANDS_2020,
             MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
 
-
     /**
      * The 2022 TaxYear.
      */
@@ -329,13 +328,12 @@ public final class MoneyWiseUKTaxYearFactory {
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2024, MoneyWiseUKTaxBandsFactory.BANDS_2024_2028,
             MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT1, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
 
-
     /**
      * The 2025 TaxYear.
      */
     static final MoneyWiseUKTaxYear YEAR_2025 = new MoneyWiseUKTaxYear(2025,
             MoneyWiseUKAllowanceFactory.ALLOWANCE_2025, MoneyWiseUKTaxBandsFactory.BANDS_2024_2028,
-            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT1, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
+            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT1, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL2);
 
     /**
      * Private Constructor.

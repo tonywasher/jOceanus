@@ -16,12 +16,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import java.util.Currency;
+import java.util.Objects;
+
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Stock Takeover analysis.
  */
 public class MoneyWiseXAnalysisTakeover {
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
     /**
      * The analysis state.
      */
@@ -38,11 +58,6 @@ public class MoneyWiseXAnalysisTakeover {
     private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
-     * The market analysis.
-     */
-    private final MoneyWiseXAnalysisMarket theMarket;
-
-    /**
      * The transaction.
      */
     private MoneyWiseXAnalysisTransaction theTransaction;
@@ -54,10 +69,10 @@ public class MoneyWiseXAnalysisTakeover {
      */
     MoneyWiseXAnalysisTakeover(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
                                final MoneyWiseXAnalysisSecurity pSecurity) {
+        thePortfolios = pAnalyser.getAnalysis().getPortfolios();
         theState = pAnalyser.getState();
         theSecurity = pSecurity;
         theTransAnalyser = theSecurity.getTransAnalyser();
-        theMarket = pAnalyser.getMarket();
     }
 
     /**
@@ -65,314 +80,176 @@ public class MoneyWiseXAnalysisTakeover {
      * @param pTrans  the transaction
      */
     void processStockTakeover(final MoneyWiseXAnalysisTransaction pTrans) {
-//        final TethysMoney myAmount = theHelper.getReturnedCash();
-//        final MoneyWiseTransAsset myReturnedCashAct = theHelper.getReturnedCashAccount();
-//
-//        /* If we have a returned cash part of the transaction */
-//        if (myReturnedCashAct != null
-//                && myAmount.isNonZero()) {
-//            /* Process a Stock And Cash TakeOver */
-//            processStockAndCashTakeOver(pDebit, pCredit);
-//        } else {
-//            /* Process a StockOnly TakeOver */
-//            processStockOnlyTakeOver(pDebit, pCredit);
-//        }
+        /* Store the transaction */
+        theTransaction = pTrans;
+
+        /* Access returned cash */
+        final MoneyWiseTransaction myTrans = pTrans.getTransaction();
+        final TethysMoney myAmount = myTrans.getReturnedCash();
+
+        /* If we have a returned cash part of the transaction */
+        if (myAmount != null
+                && myAmount.isNonZero()) {
+            /* Process a Stock And Cash TakeOver */
+            processStockAndCashTakeOver(myAmount);
+        } else {
+            /* Process a StockOnly TakeOver */
+            processStockOnlyTakeOver();
+        }
     }
 
     /**
      * Process a transaction that is a StockOnlyTakeover.
-     * <p>
-     * This capital event relates to both the Credit and Debit accounts
-     * @param pDebit the debit holding
-     * @param pCredit the credit holding
      */
-    private void processStockOnlyTakeOver(final MoneyWiseSecurityHolding pDebit,
-                                          final MoneyWiseSecurityHolding pCredit) {
-//        /* Access details */
-//        final MoneyWiseSecurity myCredit = pCredit.getSecurity();
-//        final MoneyWiseSecurity myDebit = pDebit.getSecurity();
-//
-//        /* Access the Asset Security Buckets */
-//        final MoneyWiseAnalysisSecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
-//        MoneyWiseAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
-//        final MoneyWiseAnalysisSecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
-//        final TethysDate myDate = theHelper.getDate();
-//
-//        /* Get the appropriate prices/rates for the stock */
-//        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
-//        final TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
-//        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-//        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
-//        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
-//
-//        /* Determine value of the stock in both parts of the takeOver */
-//        TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-//        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
-//        TethysUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-//        TethysMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
-//        TethysMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
-//
-//        /* Handle foreign debit */
-//        final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
-//        if (isForeignDebit) {
-//            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);
-//        }
-//
-//        /* Handle foreign credit */
-//        final boolean isForeignCredit = myCreditAsset.isForeignCurrency();
-//        if (isForeignCredit) {
-//            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
-//        }
-//
-//        /* Determine the residual cost of the old stock */
-//        final TethysMoney myDebitCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-//
-//        /* Allocate current profit between the two stocks */
-//        TethysMoney myProfit = new TethysMoney(myDebitValue);
-//        myProfit.subtractAmount(myDebitCost);
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-//        myProfit = new TethysMoney(myProfit);
-//        myProfit.negate();
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-//
-//        /* Adjust cost/units/invested of the credit account */
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDebitCost);
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);
-//        if (isForeignCredit) {
-//            final TethysMoney myForeign = myInvested.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
-//            myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeign);
-//        }
-//
-//        /* Determine final value of the credit stock after the takeOver */
-//        myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-//        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
-//        if (isForeignCredit) {
-//            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
-//        }
-//
-//        /* Register the transaction */
-//        final MoneyWiseAnalysisSecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myCreditPrice);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDebitCost);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myCreditValue);
-//        if (isForeignCredit) {
-//            myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myCreditRate);
-//        }
-//
-//        /* Drive debit cost down to zero */
-//        final TethysMoney myDeltaCost = new TethysMoney(myDebitCost);
-//        myDeltaCost.negate();
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
-//        myDeltaCost.negate();
-//
-//        /* Drive debit units down to zero */
-//        myDebitUnits = new TethysUnits(myDebitUnits);
-//        myDebitUnits.negate();
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDebitUnits);
-//
-//        /* Adjust debit Invested amount */
-//        myInvested = new TethysMoney(myInvested);
-//        myInvested.negate();
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);
-//        if (isForeignDebit) {
-//            myInvested = new TethysMoney(myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED));
-//            myInvested.negate();
-//            myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
-//        }
-//
-//        /* Register the transaction */
-//        myDebitValues = myDebitAsset.registerTransaction(theHelper);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myDebitPrice);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myDebitValue);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);
-//        if (isForeignDebit) {
-//            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myDebitRate);
-//        }
+    void processStockOnlyTakeOver() {
+        /* Access details */
+        final MoneyWiseSecurityHolding myCreditHolding = (MoneyWiseSecurityHolding) theTransaction.getCreditAccount();
+        final MoneyWiseSecurityHolding myDebitHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
+
+        /* Access the Asset Security Buckets */
+        final MoneyWiseXAnalysisSecurityBucket myDebitAsset = thePortfolios.getBucket(myDebitHolding);
+        final MoneyWiseXAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
+        final MoneyWiseXAnalysisSecurityBucket myCreditAsset = thePortfolios.getBucket(myCreditHolding);
+        final MoneyWiseXAnalysisSecurityValues myCreditValues = myCreditAsset.getValues();
+
+        /* Determine value of the stock in both parts of the takeOver */
+        final TethysMoney myDebitXferValue = myDebitValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        final TethysPrice myCreditPrice = myDebitValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);
+        final TethysUnits myCreditUnits = theTransaction.getCreditUnitsDelta();
+        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        if (myCreditAsset.isForeignCurrency()) {
+            final Currency myCurrency = theTransAnalyser.getCurrency().getCurrency();
+            final TethysRatio myRate = myCreditValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);
+            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myRate);
+        }
+
+        /* Record the transferValues */
+        myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myDebitXferValue);
+        myCreditValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);
+
+        /* Adjust units of debit and credit */
+        myCreditAsset.adjustUnits(myCreditUnits);
+        myDebitValues.setZeroUnits(MoneyWiseXAnalysisSecurityAttr.UNITS);
+
+        /* Adjust the residual cost of debit and credit */
+        final TethysMoney myXferCost = myDebitValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        myDebitValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        myCreditAsset.adjustResidualCost(myXferCost);
+
+        /* Adjust the debit Funded to zero */
+        myDebitValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.FUNDED);
+
+        /* Value the assets */
+        theSecurity.adjustAssetValuation(myDebitAsset);
+        theSecurity.adjustAssetValuation(myCreditAsset);
+
+        /* Register the transaction */
+        theState.registerBucketInterest(myDebitAsset);
+        theState.registerBucketInterest(myCreditAsset);
     }
 
     /**
      * Process a transaction that is StockAndCashTakeover.
-     * <p>
-     * This capital event relates to both the Credit and Debit accounts. In particular it makes
-     * reference to the CashTakeOver aspect of the debit account
-     * @param pDebit the debit holding
-     * @param pCredit the credit holding
+     * @param pCashValue the cash part of the takeOver
      */
-    private void processStockAndCashTakeOver(final MoneyWiseSecurityHolding pDebit,
-                                             final MoneyWiseSecurityHolding pCredit) {
-//        /* Access details */
-//        final MoneyWiseSecurity myDebit = pDebit.getSecurity();
-//        final MoneyWiseSecurity myCredit = pCredit.getSecurity();
-//        final TethysDate myDate = theHelper.getDate();
-//        final MoneyWiseTransAsset myReturnedCashAccount = theHelper.getReturnedCashAccount();
-//        final TethysMoney myAmount = theHelper.getLocalReturnedCash();
-//
-//        /* Access the Asset Security Buckets */
-//        final MoneyWiseAnalysisSecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
-//        MoneyWiseAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
-//        final MoneyWiseAnalysisSecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
-//
-//        /* Get the appropriate prices for the assets */
-//        final TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
-//        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
-//        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-//        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
-//        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
-//
-//        /* Determine value of the base stock */
-//        TethysUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-//        TethysMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
-//
-//        /* Determine value of the stock part of the takeOver */
-//        TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-//        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
-//
-//        /* Handle foreign debit */
-//        final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
-//        if (isForeignDebit) {
-//            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);
-//        }
-//
-//        /* Handle foreign credit */
-//        final boolean isForeignCredit = myCreditAsset.isForeignCurrency();
-//        if (isForeignCredit) {
-//            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
-//        }
-//
-//        /* Calculate the total consideration */
-//        final TethysMoney myConsideration = new TethysMoney(myAmount);
-//        myConsideration.addAmount(myCreditXferValue);
-//
-//        /* Access the current debit cost */
-//        final TethysMoney myCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-//        TethysRatio myCostDilution = null;
-//        final TethysMoney myCostXfer;
-//        final TethysMoney myAllowedCost;
-//
-//        /* Determine condition as to whether this is a large cash transaction */
-//        final TethysMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
-//        final boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
-//                && (myAmount.compareTo(myPortion) > 0);
-//
-//        /* If this is a large cash takeOver */
-//        if (isLargeCash) {
-//            /* Determine the transferable cost */
-//            myCostXfer = myCost.valueAtWeight(myCreditXferValue, myConsideration);
-//
-//            /* Determine the cost dilution */
-//            myCostDilution = new TethysRatio(myAmount, myConsideration);
-//
-//            /* Determine the allowed cost */
-//            myAllowedCost = new TethysMoney(myCost);
-//            myAllowedCost.subtractAmount(myCostXfer);
-//
-//            /* else this is viewed as small and is taken out of the cost */
-//        } else {
-//            /* Set the allowed cost to be the least of the cost or the returned cash */
-//            myAllowedCost = myAmount.compareTo(myCost) > 0
-//                    ? new TethysMoney(myCost)
-//                    : new TethysMoney(myAmount);
-//
-//            /* Transferred cost is cost minus the allowed cost */
-//            myCostXfer = new TethysMoney(myCost);
-//            myCostXfer.subtractAmount(myAllowedCost);
-//        }
-//
-//        /* Determine the capital gain */
-//        final TethysMoney myCapitalGain = new TethysMoney(myAmount);
-//        myCapitalGain.subtractAmount(myAllowedCost);
-//        if (myCapitalGain.isNonZero()) {
-//            /* Record the delta gains */
-//            myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myCapitalGain);
-//
-//            /* Adjust the capitalGains category bucket */
-//            theCategoryBuckets.adjustStandardGain(theHelper, pDebit, myCapitalGain);
-//        }
-//
-//        /* Allocate current profit between the two stocks */
-//        TethysMoney myProfit = new TethysMoney(myCreditXferValue);
-//        myProfit.subtractAmount(myCostXfer);
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-//        myProfit = new TethysMoney(myProfit);
-//        myProfit.negate();
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-//
-//        /* Adjust cost/units/invested of the credit account */
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myCostXfer);
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);
-//        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myCostXfer);
-//        if (isForeignCredit) {
-//            final TethysMoney myForeign = myCostXfer.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
-//            myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeign);
-//        }
-//
-//        /* Determine final value of the credit stock after the takeOver */
-//        myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-//        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
-//        if (isForeignCredit) {
-//            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
-//        }
-//
-//        /* Register the transaction */
-//        final MoneyWiseAnalysisSecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myCreditPrice);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCostXfer);
-//        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myCreditValue);
-//        if (isForeignCredit) {
-//            myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myCreditRate);
-//        }
-//
-//        /* Drive debit cost down to zero */
-//        final TethysMoney myDeltaCost = new TethysMoney(myCost);
-//        myDeltaCost.negate();
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
-//
-//        /* Drive debit units down to zero */
-//        myDebitUnits = new TethysUnits(myDebitUnits);
-//        myDebitUnits.negate();
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDebitUnits);
-//
-//        /* Adjust debit Invested amount */
-//        TethysMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
-//        myInvested = new TethysMoney(myInvested);
-//        myInvested.setZero();
-//        myInvested.subtractAmount(myAmount);
-//        myInvested.subtractAmount(myCostXfer);
-//        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);
-//        if (isForeignDebit) {
-//            myInvested = myInvested.convertCurrency(myDebitAsset.getCurrency().getCurrency(), myDebitRate);
-//            myInvested.negate();
-//            myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
-//        }
-//
-//        /* Register the transaction */
-//        myDebitValues = myDebitAsset.registerTransaction(theHelper);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myDebitPrice);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myDebitValue);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION, myConsideration);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH, myAmount);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCostXfer);
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);
-//        if (myCostDilution != null) {
-//            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
-//        }
-//        if (myCapitalGain.isNonZero()) {
-//            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);
-//        }
-//        if (isForeignDebit) {
-//            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myDebitRate);
-//        }
-//        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.CASHTYPE, isLargeCash
-//                ? MoneyWiseCashType.LARGECASH
-//                : MoneyWiseCashType.SMALLCASH);
-//
-//        /* Adjust the ThirdParty account bucket */
-//        final MoneyWiseAnalysisAccountBucket<?> myBucket = getAccountBucket((MoneyWiseAssetBase) myReturnedCashAccount);
-//        myBucket.adjustForReturnedCashCredit(theHelper);
-    }
+    private void processStockAndCashTakeOver(final TethysMoney pCashValue) {
+        /* Access details */
+        final MoneyWiseSecurityHolding myDebit = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
+        final MoneyWiseSecurityHolding myCredit = (MoneyWiseSecurityHolding) theTransaction.getCreditAccount();
+        final MoneyWiseAssetBase myReturnedCashAccount = (MoneyWiseAssetBase) Objects.requireNonNull(theTransaction.getTransaction().getReturnedCashAccount());
+
+        /* Access the Asset Security Buckets */
+        final MoneyWiseXAnalysisSecurityBucket myDebitAsset = thePortfolios.getBucket(myDebit);
+        MoneyWiseXAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
+        final MoneyWiseXAnalysisSecurityBucket myCreditAsset = thePortfolios.getBucket(myCredit);
+        MoneyWiseXAnalysisSecurityValues myCreditValues = myDebitAsset.getValues();
+
+        /* Get the appropriate prices for the assets */
+        final TethysMoney myStartingDebitValue = myDebitValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        final TethysMoney myStartingCreditValue = myCreditValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStartingDebitValue);
+
+        /* Adjust units of the stocks */
+        myDebitAsset.adjustUnits(theTransaction.getDebitUnitsDelta());
+        myCreditAsset.adjustUnits(theTransaction.getCreditUnitsDelta());
+
+        /* Adjust the debit Funded to zero */
+        myDebitValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.FUNDED);
+
+        /* Determine value of the stock part of the takeOver */
+        myCreditAsset.valueAsset();
+        myCreditAsset.adjustValuation();
+        TethysMoney myStockValue = myCreditValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myStockValue = new TethysMoney(myStockValue);
+        myStockValue.addAmount(myStartingCreditValue);
+        myCreditValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);
+
+        /* Calculate the total consideration */
+        final TethysMoney myConsideration = new TethysMoney(pCashValue);
+        myConsideration.addAmount(myStockValue);
+
+        /* Determine whether this is a large cash transaction */
+        final TethysMoney myPortion = myConsideration.valueAtRate(MoneyWiseXAnalysisXferOut.LIMIT_RATE);
+        final boolean isLargeCash = pCashValue.compareTo(MoneyWiseXAnalysisXferOut.LIMIT_VALUE) > 0
+                && pCashValue.compareTo(myPortion) > 0;
+        myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, isLargeCash
+                ? MoneyWiseCashType.LARGECASH
+                : MoneyWiseCashType.SMALLCASH);
+
+        /* Access the current debit cost */
+        final TethysMoney myCost = myDebitValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        final TethysMoney myAllowedCost;
+        final TethysMoney myCostXfer;
+
+        /* If this is a large cash takeOver */
+        if (isLargeCash) {
+            /* Determine the transferable cost */
+            myCostXfer = myCost.valueAtWeight(myStockValue, myConsideration);
+
+            /* Determine the allowed cost */
+            myAllowedCost = new TethysMoney(myCost);
+            myAllowedCost.subtractAmount(myCostXfer);
+
+            /* else this is viewed as small and is taken out of the cost */
+        } else {
+            /* Set the allowed cost to be the least of the cost or the returned cash */
+            myAllowedCost = pCashValue.compareTo(myCost) > 0
+                    ? new TethysMoney(myCost)
+                    : new TethysMoney(pCashValue);
+
+            /* Transferred cost is cost minus the allowed cost */
+            myCostXfer = new TethysMoney(myCost);
+            myCostXfer.subtractAmount(myAllowedCost);
+        }
+        myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);
+        myCreditValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);
+
+        /* Value the assets */
+        theSecurity.adjustAssetValuation(myDebitAsset);
+        myCreditAsset.calculateUnrealisedGains();
+
+        /* Register the transaction */
+        theState.registerBucketInterest(myDebitAsset);
+        theState.registerBucketInterest(myCreditAsset);
+
+        /* Determine the capital gain */
+        final TethysMoney myCapitalGain = new TethysMoney(pCashValue);
+        myCapitalGain.subtractAmount(myAllowedCost);
+        if (myCapitalGain.isNonZero()) {
+            /* Record the delta gains */
+            myDebitAsset.adjustRealisedGains(myCapitalGain);
+            myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);
+            theSecurity.adjustStandardGain(myDebit, myCapitalGain);
+        }
+
+        /* Adjust residualCost of debit/credit */
+        myCreditAsset.adjustResidualCost(myCostXfer);
+        myDebitValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+
+        /* Adjust the ThirdParty account bucket */
+        final MoneyWiseXAnalysisAccountBucket<?> myBucket = theTransAnalyser.getAccountBucket(myReturnedCashAccount);
+        myBucket.addToBalance(pCashValue);
+        myBucket.adjustValuation();
+        theState.registerBucketInterest(myBucket);
+   }
 }

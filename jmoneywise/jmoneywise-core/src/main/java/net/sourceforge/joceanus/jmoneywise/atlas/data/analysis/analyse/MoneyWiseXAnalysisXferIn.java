@@ -175,9 +175,8 @@ public class MoneyWiseXAnalysisXferIn {
                 ? theTransAnalyser.adjustForeignAssetCredit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : theTransaction.getCreditAmount();
 
-        /* Adjust the cost and investment */
+        /* Adjust the residual cost */
         myAsset.adjustResidualCost(myAmount);
-        myAsset.adjustInvested(myAmount);
 
         /* If there is no change to the # of units */
         if (myDeltaUnits == null || myDeltaUnits.isZero()) {
@@ -204,7 +203,6 @@ public class MoneyWiseXAnalysisXferIn {
     void processStatePensionContribution(final TethysMoney pAmount) {
         /* Adjust the cost and investment */
         theStatePension.adjustResidualCost(pAmount);
-        theStatePension.adjustInvested(pAmount);
         theStatePension.adjustFunded(pAmount);
 
         /* Adjust the valuation */
