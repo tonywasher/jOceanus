@@ -286,9 +286,6 @@ public class MoneyWiseXAnalysisSecurity {
                 break;
             /* Process standard transfer in/out */
             case TRANSFER:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
                 processStockXchange();
                 break;
             /* Throw an Exception */
@@ -311,7 +308,6 @@ public class MoneyWiseXAnalysisSecurity {
         final TethysMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();
         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
     }
-
 
     /**
      * Adjust for Standard Gains.

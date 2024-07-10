@@ -16,15 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
 /**
  * Portfolio Xfer support.
@@ -34,6 +42,16 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      * The portfolioBuckets.
      */
     private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
 
     /**
      * The security holding map.
@@ -48,10 +66,14 @@ public class MoneyWiseXAnalysisPortfolioXfer {
     /**
      * Constructor.
      * @param pAnalyser the analyser
+     * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisPortfolioXfer(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
+    MoneyWiseXAnalysisPortfolioXfer(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+                                    final MoneyWiseXAnalysisSecurity pSecurity) {
         /* Access details */
         thePortfolios = pAnalyser.getAnalysis().getPortfolios();
+        theState = pAnalyser.getState();
+        theSecurity = pSecurity;
         theHoldingMap = pAnalyser.getSecurityHoldingMap();
     }
 
@@ -85,38 +107,43 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      * Process a transaction that is a portfolio to portfolio transfer.
      */
     private void processPortfolio2Portfolio() {
-//        /* Access the portfolio buckets */
-//        final MoneyWisePortfolio mySrcPortfolio = (MoneyWisePortfolio) theTrans.getDebitAccount();
-//        final MoneyWisePortfolio myTgtPortfolio = (MoneyWisePortfolio) theTrans.getCreditAccount();
-//        final MoneyWiseXAnalysisPortfolioBucket mySource = thePortfolios.getBucket(mySrcPortfolio);
-//        final MoneyWiseXAnalysisPortfolioBucket myTarget = thePortfolios.getBucket(myTgtPortfolio);
-//
-//        /* Access source cash bucket */
-//        final MoneyWiseXAnalysisPortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
-//        if (mySourceCash.isActive()) {
-//            /* Transfer any cash element */
-//            final MoneyWiseXAnalysisPortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();
-//            myTargetCash.adjustForXfer(mySourceCash, theHelper);
-//        }
-//
-//        /* Loop through the source portfolio */
-//        final Iterator<MoneyWiseXAnalysisSecurityBucket> myIterator = mySource.securityIterator();
-//        while (myIterator.hasNext()) {
-//            final MoneyWiseXAnalysisSecurityBucket myBucket = myIterator.next();
-//
-//            /* If the bucket is active */
-//            if (myBucket.isActive()) {
-//                /* Adjust the Target Bucket */
-//                final MoneyWiseSecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
-//                final MoneyWiseXAnalysisSecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
-//                theHelper.setSecurity(myBucket.getSecurity());
-//
-//                /* Process the Transfer */
-//                processPortfolioXfer(myBucket, myTargetBucket);
-//            }
-//        }
-//
-//        /* PortfolioXfer is a transfer, so no need to update the categories */
+        /* Access the portfolio buckets */
+        final MoneyWisePortfolio mySrcPortfolio = (MoneyWisePortfolio) theTransaction.getDebitAccount();
+        final MoneyWisePortfolio myTgtPortfolio = (MoneyWisePortfolio) theTransaction.getCreditAccount();
+        final MoneyWiseXAnalysisPortfolioBucket mySource = thePortfolios.getBucket(mySrcPortfolio);
+        final MoneyWiseXAnalysisPortfolioBucket myTarget = thePortfolios.getBucket(myTgtPortfolio);
+
+        /* Access source cash bucket */
+        final MoneyWiseXAnalysisPortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
+        if (mySourceCash.isActive()) {
+            /* Adjust target bucket */
+            final TethysMoney myCashValue = mySourceCash.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
+            mySourceCash.addToBalance(myCashValue);
+            mySourceCash.adjustValuation();
+            theState.registerBucketInterest(mySourceCash);
+
+            /* Adjust target bucket */
+            final MoneyWiseXAnalysisPortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();
+            myTargetCash.addToBalance(myCashValue);
+            myTargetCash.adjustValuation();
+            theState.registerBucketInterest(myTargetCash);
+        }
+
+        /* Loop through the source portfolio */
+        final Iterator<MoneyWiseXAnalysisSecurityBucket> myIterator = mySource.securityIterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseXAnalysisSecurityBucket myBucket = myIterator.next();
+
+            /* If the bucket is active */
+            if (myBucket.isActive()) {
+                /* Adjust the Target Bucket */
+                final MoneyWiseSecurityHolding myTargetHolding = theHoldingMap.declareHolding(myTgtPortfolio, myBucket.getSecurity());
+                final MoneyWiseXAnalysisSecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
+
+                /* Process the Transfer */
+                processPortfolioXfer(myBucket, myTargetBucket);
+            }
+        }
     }
 
     /**
@@ -141,8 +168,6 @@ public class MoneyWiseXAnalysisPortfolioXfer {
             /* Process the Transfer */
             processPortfolioXfer(myBucket, myTargetBucket);
         }
-
-        /* PortfolioXfer is a transfer, so no need to update the categories */
     }
 
     /**
@@ -152,75 +177,36 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      */
     private void processPortfolioXfer(final MoneyWiseXAnalysisSecurityBucket pSource,
                                       final MoneyWiseXAnalysisSecurityBucket pTarget) {
-//        /* Access source details */
-//        MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();
-//        TethysUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-//        TethysMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-//        TethysMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
-//        TethysMoney myInvested = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED);
-//        final boolean isForeign = pSource.isForeignCurrency();
-//
-//        /* Determine value of the stock being transferred */
-//        final TethysPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
-//        TethysMoney myStockValue = myUnits.valueAtPrice(myPrice);
-//        TethysMoney myForeignValue = null;
-//        TethysRatio myRate = null;
-//
-//        /* If we are foreign */
-//        if (isForeign) {
-//            /* Determine foreign and local value */
-//            myRate = theHelper.getDebitExchangeRate();
-//            myForeignValue = myStockValue;
-//            myStockValue = myStockValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
-//        }
-//
-//        /* Allocate current profit between the two stocks */
-//        TethysMoney myProfit = new TethysMoney(myStockValue);
-//        myProfit.subtractAmount(myCost);
-//        pSource.adjustCounter(MoneyWiseXAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-//        myProfit = new TethysMoney(myProfit);
-//        myProfit.negate();
-//        pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-//
-//        /* Transfer Units/Cost/Invested to target */
-//        pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits);
-//        pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myCost);
-//        pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.INVESTED, myInvested);
-//        pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, myGains);
-//        final MoneyWiseXAnalysisSecurityValues myTargetValues = pTarget.registerTransaction(theHelper);
-//        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.PRICE, myPrice);
-//        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myStockValue);
-//        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCost);
-//        if (isForeign) {
-//            myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.FOREIGNVALUE, myForeignValue);
-//            myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, myRate);
-//            pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.FOREIGNINVESTED, myForeignInvested);
-//        }
-//
-//        /* Adjust the Source Units/Cost/Invested to zero */
-//        myUnits = new TethysUnits(myUnits);
-//        myUnits.negate();
-//        pSource.adjustCounter(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits);
-//        myCost = new TethysMoney(myCost);
-//        myCost.negate();
-//        pSource.adjustCounter(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myCost);
-//        myCost.negate();
-//        myInvested = new TethysMoney(myInvested);
-//        myInvested.negate();
-//        pSource.adjustCounter(MoneyWiseXAnalysisSecurityAttr.INVESTED, myInvested);
-//        myGains = new TethysMoney(myGains);
-//        myGains.negate();
-//        pSource.adjustCounter(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, myGains);
-//        mySourceValues = pSource.registerTransaction(theHelper);
-//        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.PRICE, myPrice);
-//        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, myStockValue);
-//        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCost);
-//        if (isForeign) {
-//            mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.FOREIGNVALUE, myForeignValue);
-//            mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE, myRate);
-//            myForeignInvested = new TethysMoney(myForeignInvested);
-//            myForeignInvested.negate();
-//            pTarget.adjustCounter(MoneyWiseXAnalysisSecurityAttr.FOREIGNINVESTED, myForeignInvested);
-//        }
+        /* Access source details */
+        MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();
+        TethysUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        TethysMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        TethysMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
+
+        /* Determine value of the stock being transferred */
+        final TethysMoney myStockValue = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+
+        /* Transfer Units/Cost/Gains to target */
+        pTarget.adjustUnits(myUnits);
+        pTarget.adjustResidualCost(myCost);
+        pTarget.adjustRealisedGains(myGains);
+        final MoneyWiseXAnalysisSecurityValues myTargetValues = pTarget.getValues();
+        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCost);
+        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);
+
+        /* Adjust the Source Units/Cost/Invested to zero */
+        mySourceValues.setZeroUnits(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        mySourceValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        mySourceValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
+        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCost);
+        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);
+
+        /* Value the assets */
+        theSecurity.adjustAssetValuation(pSource);
+        theSecurity.adjustAssetValuation(pTarget);
+
+        /* Register the transaction */
+        theState.registerBucketInterest(pSource);
+        theState.registerBucketInterest(pTarget);
     }
 }
