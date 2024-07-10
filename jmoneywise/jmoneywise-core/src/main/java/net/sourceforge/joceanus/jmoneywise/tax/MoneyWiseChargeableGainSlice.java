@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.jmoneywise.tax;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
@@ -84,17 +84,36 @@ public class MoneyWiseChargeableGainSlice
      * @param pTrans the transaction
      * @param pGain the gain
      */
-    public MoneyWiseChargeableGainSlice(final MoneyWiseTransaction pTrans,
-                                        final TethysMoney pGain) {
+    private MoneyWiseChargeableGainSlice(final MoneyWiseTransaction pTrans,
+                                         final TethysMoney pGain) {
         /* Store the parameters */
         theDate = pTrans.getDate();
         theGain = pGain;
         theTrans = pTrans;
-        theYears = pTrans.getYears();
+        theYears = Objects.requireNonNull(pTrans.getYears());
 
         /* Calculate slice */
         theSlice = new TethysMoney(pGain);
         theSlice.divide(theYears);
+    }
+
+    /**
+     * Constructor.
+     * @param pTrans the transaction
+     * @param pGain the gain
+     * @param pSlice the slice
+     * @param pYears the years
+     */
+    private MoneyWiseChargeableGainSlice(final MoneyWiseTransaction pTrans,
+                                         final TethysMoney pGain,
+                                         final TethysMoney pSlice,
+                                         final Integer pYears) {
+        /* Store the parameters */
+        theTrans = pTrans;
+        theDate = theTrans.getDate();
+        theGain = pGain;
+        theSlice= pSlice;
+        theYears = pYears;
     }
 
     /**
@@ -175,10 +194,7 @@ public class MoneyWiseChargeableGainSlice
             this();
 
             /* Loop through the source */
-            final Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.theSlices.iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseChargeableGainSlice mySlice = myIterator.next();
-
+            for (MoneyWiseChargeableGainSlice mySlice : pSource.theSlices) {
                 /* Check the range */
                 final int iDiff = pRange.compareToDate(mySlice.getDate());
 
@@ -209,6 +225,24 @@ public class MoneyWiseChargeableGainSlice
                                    final TethysMoney pGains) {
             /* Create the chargeable event */
             final MoneyWiseChargeableGainSlice mySlice = new MoneyWiseChargeableGainSlice(pTrans, pGains);
+
+            /* Add it to the list */
+            theSlices.add(mySlice);
+        }
+
+        /**
+         * Add Chargeable Transaction to List.
+         * @param pTrans the base transaction
+         * @param pGains the gains
+         * @param pSlice the slice
+         * @param pYears the years
+         */
+        public void addTransaction(final MoneyWiseTransaction pTrans,
+                                   final TethysMoney pGains,
+                                   final TethysMoney pSlice,
+                                   final Integer pYears) {
+            /* Create the chargeable event */
+            final MoneyWiseChargeableGainSlice mySlice = new MoneyWiseChargeableGainSlice(pTrans, pGains, pSlice, pYears);
 
             /* Add it to the list */
             theSlices.add(mySlice);

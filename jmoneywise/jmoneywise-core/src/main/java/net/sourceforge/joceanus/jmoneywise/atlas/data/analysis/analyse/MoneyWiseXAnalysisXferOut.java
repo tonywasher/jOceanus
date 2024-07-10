@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
@@ -52,6 +53,11 @@ public class MoneyWiseXAnalysisXferOut {
     private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
 
     /**
+     * The taxBasisBuckets.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucketList theTaxBases;
+
+    /**
      * The analysis state.
      */
     private final MoneyWiseXAnalysisState theState;
@@ -81,6 +87,7 @@ public class MoneyWiseXAnalysisXferOut {
         /* Store parameters */
         final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
+        theTaxBases = myAnalysis.getTaxBasis();
         theState = pAnalyser.getState();
         theSecurity = pSecurity;
         theTransAnalyser = theSecurity.getTransAnalyser();
@@ -218,6 +225,9 @@ public class MoneyWiseXAnalysisXferOut {
                 /* Record details */
                 myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEYEARS, myYears);
                 myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEGAIN, mySlice);
+
+                /* Adjust slices */
+                theTaxBases.recordChargeableGain(theTransaction.getTransaction(), myCapitalGain, mySlice, myYears);
             }
 
             /* Adjust the capitalGains category bucket */

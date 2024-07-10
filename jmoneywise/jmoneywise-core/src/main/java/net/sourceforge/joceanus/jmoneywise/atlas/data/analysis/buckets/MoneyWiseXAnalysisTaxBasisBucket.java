@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseX
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxBasis;
@@ -854,6 +855,21 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             return isEmpty()
                     ? null
                     : theList.getUnderlyingList().get(0);
+        }
+
+        /**
+         * record ChargeableGain.
+         * @param pTrans the transaction
+         * @param pGain the gain
+         * @param pSlice the slice
+         * @param pYears the years
+         */
+        public void recordChargeableGain(final MoneyWiseTransaction pTrans,
+                                         final TethysMoney pGain,
+                                         final TethysMoney pSlice,
+                                         final Integer pYears) {
+            /* record the chargeable gain */
+            theCharges.addTransaction(pTrans, pGain, pSlice, pYears);
         }
 
         /**
