@@ -420,8 +420,8 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysUnits getUnitsDeltaForTransaction(final MoneyWiseXAnalysisEvent pEvent,
-                                                   final MoneyWiseXAnalysisSecurityAttr pAttr) {
+    public TethysUnits getUnitsDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                             final MoneyWiseXAnalysisSecurityAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaUnitsValue(pEvent, pAttr);
     }

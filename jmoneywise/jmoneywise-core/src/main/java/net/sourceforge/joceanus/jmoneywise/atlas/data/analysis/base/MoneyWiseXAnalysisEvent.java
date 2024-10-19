@@ -354,6 +354,14 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Is the event a header?.
+     * @return true/false
+     */
+    public boolean isHeader() {
+        return theTransaction != null && theTransaction.isHeader();
+    }
+
+    /**
      * Obtain the account.
      * @return the account
      */

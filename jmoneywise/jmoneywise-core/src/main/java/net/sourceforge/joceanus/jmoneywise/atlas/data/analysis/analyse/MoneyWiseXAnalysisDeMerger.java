@@ -83,6 +83,7 @@ public class MoneyWiseXAnalysisDeMerger {
 
         /* Calculate the cost dilution */
         final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
+        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myDilution);
 
         /* Calculate the delta to the cost */
         TethysMoney myDeltaCost = new TethysMoney(myNewCost);

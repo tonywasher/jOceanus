@@ -30,6 +30,14 @@ public final class MoneyWiseXAnalysisSecurityValues
     /**
      * Constructor.
      * @param pCurrency the account currency
+     */
+    public MoneyWiseXAnalysisSecurityValues(final Currency pCurrency) {
+        this(pCurrency, pCurrency);
+    }
+
+    /**
+     * Constructor.
+     * @param pCurrency the account currency
      * @param pReportingCurrency the reporting currency
      */
     public MoneyWiseXAnalysisSecurityValues(final Currency pCurrency,

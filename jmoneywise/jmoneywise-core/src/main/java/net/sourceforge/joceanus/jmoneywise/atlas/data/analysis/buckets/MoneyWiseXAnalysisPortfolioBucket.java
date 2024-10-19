@@ -62,7 +62,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_BASEVALUES, MoneyWiseXAnalysisPortfolioBucket::getPortfolioCash);
         FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.CASH, MoneyWiseXAnalysisPortfolioBucket::getBaseValues);
         FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.SECURITY.getListId(), MoneyWiseXAnalysisPortfolioBucket::getSecurities);
-        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseXAnalysisAccountAttr.class, MoneyWiseXAnalysisPortfolioBucket::getValue);
+        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseXAnalysisSecurityAttr.class, MoneyWiseXAnalysisPortfolioBucket::getValue);
     }
 
     /**
@@ -93,12 +93,12 @@ public final class MoneyWiseXAnalysisPortfolioBucket
     /**
      * Values.
      */
-    private final MoneyWiseXAnalysisAccountValues theValues;
+    private final MoneyWiseXAnalysisSecurityValues theValues;
 
     /**
      * The base values.
      */
-    private final MoneyWiseXAnalysisAccountValues theBaseValues;
+    private final MoneyWiseXAnalysisSecurityValues theBaseValues;
 
     /**
      * Is this a foreign currency?
@@ -133,8 +133,8 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         final Currency myCurrency = theCurrency == null
                 ? MoneyWiseXAnalysisAccountBucket.DEFAULT_CURRENCY
                 : theCurrency.getCurrency();
-        theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
+        theValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
+        theBaseValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
 
         /* Determine whether the portfolio is a foreign currency */
         isForeignCurrency = !MetisDataDifference.isEqual(pAnalysis.getCurrency(), theCurrency);
@@ -165,8 +165,8 @@ public final class MoneyWiseXAnalysisPortfolioBucket
 
         /* Create the value maps and initialise them */
         final Currency myCurrency = theCurrency.getCurrency();
-        theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
+        theValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
+        theBaseValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
     }
 
     /**
@@ -193,8 +193,8 @@ public final class MoneyWiseXAnalysisPortfolioBucket
 
         /* Create the value maps and initialise them */
         final Currency myCurrency = theCurrency.getCurrency();
-        theValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
-        theBaseValues = new MoneyWiseXAnalysisAccountValues(myCurrency);
+        theValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
+        theBaseValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
     }
 
     @Override
@@ -287,7 +287,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * Obtain the values.
      * @return the values
      */
-    public MoneyWiseXAnalysisAccountValues getValues() {
+    public MoneyWiseXAnalysisSecurityValues getValues() {
         return theValues;
     }
 
@@ -295,7 +295,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * Obtain the base values.
      * @return the base values
      */
-    public MoneyWiseXAnalysisAccountValues getBaseValues() {
+    public MoneyWiseXAnalysisSecurityValues getBaseValues() {
         return theBaseValues;
     }
 
@@ -304,7 +304,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    void setValue(final MoneyWiseXAnalysisAccountAttr pAttr,
+    void setValue(final MoneyWiseXAnalysisSecurityAttr pAttr,
                   final TethysMoney pValue) {
         /* Set the value into the list */
         theValues.setValue(pAttr, pValue);
@@ -315,7 +315,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getValue(final MoneyWiseXAnalysisAccountAttr pAttr) {
+    private Object getValue(final MoneyWiseXAnalysisSecurityAttr pAttr) {
         /* Obtain the attribute */
         return theValues.getValue(pAttr);
     }
@@ -368,15 +368,15 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      */
     void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA, myValue);
+        setValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA, myValue);
     }
 
     /**
@@ -411,10 +411,10 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pTotals the totals
      * @param pSource the values to add
      */
-    private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
+    private static void addValues(final MoneyWiseXAnalysisSecurityValues pTotals,
                                   final MoneyWiseXAnalysisAccountValues pSource) {
         /* Add valuation values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
@@ -424,12 +424,46 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pTotals the totals
      * @param pSource the values to add
      */
-    private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
+    private static void addValues(final MoneyWiseXAnalysisSecurityValues pTotals,
                                   final MoneyWiseXAnalysisSecurityValues pSource) {
         /* Add valuation values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myValue.addAmount(mySrcValue);
+
+        /* Add cost values */
+        myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        myValue.addAmount(mySrcValue);
+
+        /* Add gains values */
+        myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
+        mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
+        myValue.addAmount(mySrcValue);
+
+        /* Add profit adjustment values */
+        myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST);
+        mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST);
+        myValue.addAmount(mySrcValue);
+
+        /* Add dividends values */
+        myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND);
+        mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND);
+        myValue.addAmount(mySrcValue);
+
+        /* Add market profit values */
+        myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT);
+        mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT);
+        if (mySrcValue != null) {
+            myValue.addAmount(mySrcValue);
+        }
+
+        /* Add profit values */
+        myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.PROFIT);
+        mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.PROFIT);
+        if (mySrcValue != null) {
+            myValue.addAmount(mySrcValue);
+        }
     }
 
     /**
@@ -502,10 +536,10 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      */
     public TethysMoney getNonCashValue(final boolean pBase) {
         /* Handle valuation by subtracting the cash valuation */
-        final MoneyWiseXAnalysisAccountValues myValues = pBase
+        final MoneyWiseXAnalysisSecurityValues myValues = pBase
                 ? theBaseValues
                 : theValues;
-        final TethysMoney myValue = new TethysMoney(myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION));
+        final TethysMoney myValue = new TethysMoney(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
         myValue.subtractAmount(getCashValue(pBase));
         return myValue;
     }

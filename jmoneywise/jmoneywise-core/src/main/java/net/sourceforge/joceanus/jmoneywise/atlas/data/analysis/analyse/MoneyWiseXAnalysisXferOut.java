@@ -136,8 +136,8 @@ public class MoneyWiseXAnalysisXferOut {
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);
         final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
-        /* Determine the initial value of the asset */
-        final TethysMoney myInitialValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        /* Determine the stock value of the asset */
+        final TethysMoney myStockValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
 
         /* Determine the debit amount */
         final TethysMoney myAmount = myAsset.isForeignCurrency()
@@ -164,20 +164,30 @@ public class MoneyWiseXAnalysisXferOut {
             myDeltaUnits = new TethysUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
-            /* Record delta to units */
+            /* Record delta to units and costDilution */
             myAsset.adjustUnits(myDeltaUnits);
+            final TethysUnits myNewUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+            final TethysRatio myCostDilution = new TethysRatio(myNewUnits, myUnits);
+            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
 
         /* else we are performing a capital distribution */
         } else {
             /* Determine whether this is a large cash transaction */
-            final TethysMoney myPortion = myInitialValue.valueAtRate(LIMIT_RATE);
+            final TethysMoney myPortion = myStockValue.valueAtRate(LIMIT_RATE);
             final boolean isLargeCash = myAmount.compareTo(LIMIT_VALUE) > 0
                     && myAmount.compareTo(myPortion) > 0;
 
             /* If this is large cash */
             if (isLargeCash) {
-                /* Determine the allowedCost as a proportion of the initial value */
-                myAllowedCost = myCost.valueAtWeight(myAmount, myInitialValue);
+                /* Determine the consideration and costDilution */
+                final TethysMoney myConsideration = new TethysMoney(myAmount);
+                myConsideration.addAmount(myStockValue);
+                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
+                final TethysRatio myCostDilution = new TethysRatio(myStockValue, myConsideration);
+                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
+
+                /* Determine the allowedCost as a proportion of the consideration */
+                myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);
 
                 /* else this is viewed as small and is taken out of the cost */
             } else {

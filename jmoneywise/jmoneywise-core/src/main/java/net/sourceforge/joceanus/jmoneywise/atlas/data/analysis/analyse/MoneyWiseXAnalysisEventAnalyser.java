@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.analyse;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
@@ -77,6 +79,11 @@ public class MoneyWiseXAnalysisEventAnalyser {
     private final MoneyWiseXAnalysisTransAnalyser theTrans;
 
     /**
+     * The list of events.
+     */
+    private final List<MoneyWiseXAnalysisEvent> theEvents;
+
+    /**
      * Constructor.
      * @param pTask the task
      * @param pEditSet the editSet
@@ -100,6 +107,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
         theMarket = new MoneyWiseXAnalysisMarket(this);
         theTax = new MoneyWiseXAnalysisTax(this);
         theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
+        theEvents = new ArrayList<>();
 
         /* Loop through the Events */
         for (;;) {
@@ -108,6 +116,9 @@ public class MoneyWiseXAnalysisEventAnalyser {
             if (myEvent == null) {
                 break;
             }
+
+            /* Store the event */
+            theEvents.add(myEvent);
 
             /* Switch on eventType */
             switch (myEvent.getEventType()) {
@@ -180,6 +191,14 @@ public class MoneyWiseXAnalysisEventAnalyser {
      */
     MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
         return theTrans;
+    }
+
+    /**
+     * Obtain the events iterator.
+     * @return the events iterator
+     */
+    Iterator<MoneyWiseXAnalysisEvent> eventsIterator() {
+        return theEvents.iterator();
     }
 
     /**

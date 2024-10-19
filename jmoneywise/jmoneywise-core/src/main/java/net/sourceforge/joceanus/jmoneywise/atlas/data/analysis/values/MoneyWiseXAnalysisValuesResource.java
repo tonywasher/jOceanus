@@ -101,6 +101,11 @@ public enum MoneyWiseXAnalysisValuesResource
     SECURITYATTR_UNREALISEDGAINS("SecurityAttr.UnRealisedGains"),
 
     /**
+     * SecurityAttr unrealisedGainsAdjust.
+     */
+    SECURITYATTR_GAINSADJUST("SecurityAttr.GainsAdjust"),
+
+    /**
      * SecurityAttr Dividend.
      */
     SECURITYATTR_DIVIDEND("SecurityAttr.Dividend"),
@@ -169,6 +174,16 @@ public enum MoneyWiseXAnalysisValuesResource
      * SecurityAttr SliceYears.
      */
     SECURITYATTR_SLICEYEARS("SecurityAttr.SliceYears"),
+
+    /**
+     * SecurityAttr Consideration.
+     */
+    SECURITYATTR_CONSIDERATION("SecurityAttr.Consideration"),
+
+    /**
+     * SecurityAttr CostDilution.
+     */
+    SECURITYATTR_COSTDILUTION("SecurityAttr.CostDilution"),
 
     /**
      * SecurityAttr CashType.
@@ -360,6 +375,7 @@ public enum MoneyWiseXAnalysisValuesResource
         myMap.put(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, SECURITYATTR_DIVIDEND);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, SECURITYATTR_REALISEDGAINS);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, SECURITYATTR_UNREALISEDGAINS);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST, SECURITYATTR_GAINSADJUST);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.PROFIT, SECURITYATTR_PROFIT);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, SECURITYATTR_RETURNEDCASH);
@@ -373,6 +389,8 @@ public enum MoneyWiseXAnalysisValuesResource
         myMap.put(MoneyWiseXAnalysisSecurityAttr.FUNDED, SECURITYATTR_FUNDED);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.SLICEGAIN, SECURITYATTR_SLICEGAIN);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.SLICEYEARS, SECURITYATTR_SLICEYEARS);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, SECURITYATTR_CONSIDERATION);
+        myMap.put(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, SECURITYATTR_COSTDILUTION);
         myMap.put(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, SECURITYATTR_CASHTYPE);
         return myMap;
     }

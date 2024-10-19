@@ -187,6 +187,7 @@ public class MoneyWiseXAnalysisTakeover {
         /* Calculate the total consideration */
         final TethysMoney myConsideration = new TethysMoney(pCashValue);
         myConsideration.addAmount(myStockValue);
+        myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
 
         /* Determine whether this is a large cash transaction */
         final TethysMoney myPortion = myConsideration.valueAtRate(MoneyWiseXAnalysisXferOut.LIMIT_RATE);
@@ -205,6 +206,10 @@ public class MoneyWiseXAnalysisTakeover {
         if (isLargeCash) {
             /* Determine the transferable cost */
             myCostXfer = myCost.valueAtWeight(myStockValue, myConsideration);
+
+            /* Determine the cost dilution */
+            final TethysRatio myCostDilution = new TethysRatio(pCashValue, myConsideration);
+            myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
 
             /* Determine the allowed cost */
             myAllowedCost = new TethysMoney(myCost);
