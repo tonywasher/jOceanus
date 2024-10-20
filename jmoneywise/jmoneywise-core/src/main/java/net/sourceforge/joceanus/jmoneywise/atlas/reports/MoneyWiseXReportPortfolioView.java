@@ -33,10 +33,9 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket.MoneyWiseXAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -56,32 +55,32 @@ public class MoneyWiseXReportPortfolioView
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.PORTFOLIO_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.PORTFOLIO_TITLE.getValue();
 
     /**
      * The Cost text.
      */
-    private static final String TEXT_COST = MoneyWiseAnalysisValuesResource.SECURITYATTR_RESIDUALCOST.getValue();
+    private static final String TEXT_COST = MoneyWiseXAnalysisValuesResource.SECURITYATTR_RESIDUALCOST.getValue();
 
     /**
      * The Adjustment text.
      */
-    private static final String TEXT_ADJUST = MoneyWiseAnalysisValuesResource.SECURITYATTR_GROWTHADJUST.getValue();
+    private static final String TEXT_ADJUST = MoneyWiseXAnalysisValuesResource.SECURITYATTR_GAINSADJUST.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
+    private static final String TEXT_VALUE = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Gains text.
      */
-    private static final String TEXT_GAINS = MoneyWiseAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();
+    private static final String TEXT_GAINS = MoneyWiseXAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();
 
     /**
      * The Dividend text.
      */
-    private static final String TEXT_DIVIDEND = MoneyWiseAnalysisValuesResource.SECURITYATTR_DIVIDEND.getValue();
+    private static final String TEXT_DIVIDEND = MoneyWiseXAnalysisValuesResource.SECURITYATTR_DIVIDEND.getValue();
 
     /**
      * HTML builder.

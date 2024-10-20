@@ -24,11 +24,10 @@ import org.w3c.dom.Document;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDataResource;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportType;
 
 /**
  * Report Classes.
@@ -38,22 +37,22 @@ public class MoneyWiseXReportBuilder {
     /**
      * The Total text.
      */
-    protected static final String TEXT_TOTAL = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS.getValue();
+    protected static final String TEXT_TOTAL = MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS.getValue();
 
     /**
      * The Profit text.
      */
-    protected static final String TEXT_PROFIT = MoneyWiseAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
+    protected static final String TEXT_PROFIT = MoneyWiseXAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
 
     /**
      * The Income text.
      */
-    protected static final String TEXT_INCOME = MoneyWiseAnalysisValuesResource.PAYEEATTR_INCOME.getValue();
+    protected static final String TEXT_INCOME = MoneyWiseXAnalysisValuesResource.PAYEEATTR_INCOME.getValue();
 
     /**
      * The Expense text.
      */
-    protected static final String TEXT_EXPENSE = MoneyWiseAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();
+    protected static final String TEXT_EXPENSE = MoneyWiseXAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();
 
     /**
      * The Report Manager.
@@ -63,7 +62,7 @@ public class MoneyWiseXReportBuilder {
     /**
      * Map of allocated reports.
      */
-    private final Map<MoneyWiseReportType, MetisReportBase<MoneyWiseXAnalysis, MoneyWiseXAnalysisFilter<?, ?>>> theReportMap;
+    private final Map<MoneyWiseXReportType, MetisReportBase<MoneyWiseXAnalysis, MoneyWiseXAnalysisFilter<?, ?>>> theReportMap;
 
     /**
      * Constructor.
@@ -74,7 +73,7 @@ public class MoneyWiseXReportBuilder {
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<>(MoneyWiseReportType.class);
+        theReportMap = new EnumMap<>(MoneyWiseXReportType.class);
     }
 
     /**
@@ -85,7 +84,7 @@ public class MoneyWiseXReportBuilder {
      * @return the Web document
      */
     public Document createReport(final MoneyWiseXAnalysis pAnalysis,
-                                 final MoneyWiseReportType pType,
+                                 final MoneyWiseXReportType pType,
                                  final MoneyWiseXAnalysisSecurityBucket pSecurity) {
         /* Access existing report */
         MetisReportBase<MoneyWiseXAnalysis, MoneyWiseXAnalysisFilter<?, ?>> myReport = theReportMap.get(pType);

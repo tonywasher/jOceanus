@@ -22,13 +22,13 @@ import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisAttribute;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseAnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisAllFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisAllFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;

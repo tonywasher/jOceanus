@@ -33,10 +33,9 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket.MoneyWiseXAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -55,47 +54,47 @@ public class MoneyWiseXReportMarketGrowth
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.MARKETGROWTH_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.MARKETGROWTH_TITLE.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
+    private static final String TEXT_VALUE = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Invested text.
      */
-    private static final String TEXT_INVEST = MoneyWiseAnalysisValuesResource.SECURITYATTR_INVESTED.getValue();
+    //private static final String TEXT_INVEST = MoneyWiseXAnalysisValuesResource.SECURITYATTR_INVESTED.getValue();
 
     /**
      * The Adjustment text.
      */
-    private static final String TEXT_ADJUST = MoneyWiseAnalysisValuesResource.SECURITYATTR_GROWTHADJUST.getValue();
+    //private static final String TEXT_ADJUST = MoneyWiseXAnalysisValuesResource.SECURITYATTR_GROWTHADJUST.getValue();
 
     /**
      * The Adjustment text.
      */
-    private static final String TEXT_GAINS = MoneyWiseAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();
+    private static final String TEXT_GAINS = MoneyWiseXAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();
 
     /**
      * The Base text.
      */
-    private static final String TEXT_BASE = MoneyWiseReportResource.MARKETGROWTH_BASE.getValue();
+    private static final String TEXT_BASE = MoneyWiseXReportResource.MARKETGROWTH_BASE.getValue();
 
     /**
      * The Growth text.
      */
-    private static final String TEXT_GROWTH = MoneyWiseAnalysisValuesResource.SECURITYATTR_MARKETGROWTH.getValue();
+    //private static final String TEXT_GROWTH = MoneyWiseXAnalysisValuesResource.SECURITYATTR_MARKETGROWTH.getValue();
 
     /**
      * The CurrenctFluctuation text.
      */
-    private static final String TEXT_CURRENCY = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_CURRENCYFLUCT.getValue();
+    //private static final String TEXT_CURRENCY = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_CURRENCYFLUCT.getValue();
 
     /**
      * The Profit text.
      */
-    private static final String TEXT_PROFIT = MoneyWiseAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
+    private static final String TEXT_PROFIT = MoneyWiseXAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
 
     /**
      * HTML builder.
@@ -142,13 +141,13 @@ public class MoneyWiseXReportMarketGrowth
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
         theBuilder.makeTitleCell(myTable, TEXT_BASE);
-        theBuilder.makeTitleCell(myTable, TEXT_INVEST);
-        theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
+        //theBuilder.makeTitleCell(myTable, TEXT_INVEST);
+        //theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
-        theBuilder.makeTitleCell(myTable, TEXT_GROWTH);
-        if (hasForeign) {
-            theBuilder.makeTitleCell(myTable, TEXT_CURRENCY);
-        }
+        //theBuilder.makeTitleCell(myTable, TEXT_GROWTH);
+        //if (hasForeign) {
+        //    theBuilder.makeTitleCell(myTable, TEXT_CURRENCY);
+        //}
         theBuilder.makeTitleCell(myTable, TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */

@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTransCategoryFilter;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -48,7 +47,7 @@ public class MoneyWiseXReportIncomeExpense
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.INCEXP_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.INCEXP_TITLE.getValue();
 
     /**
      * HTML builder.

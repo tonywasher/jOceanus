@@ -32,10 +32,9 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWise
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -48,17 +47,17 @@ public class MoneyWiseXReportTaxationBasis
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.TAXBASIS_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.TAXBASIS_TITLE.getValue();
 
     /**
      * The Net text.
      */
-    private static final String TEXT_NETT = MoneyWiseAnalysisValuesResource.TAXATTR_NETT.getValue();
+    private static final String TEXT_NETT = MoneyWiseXAnalysisValuesResource.TAXATTR_NETT.getValue();
 
     /**
      * The Gross text.
      */
-    private static final String TEXT_GROSS = MoneyWiseAnalysisValuesResource.TAXATTR_GROSS.getValue();
+    private static final String TEXT_GROSS = MoneyWiseXAnalysisValuesResource.TAXATTR_GROSS.getValue();
 
     /**
      * HTML builder.

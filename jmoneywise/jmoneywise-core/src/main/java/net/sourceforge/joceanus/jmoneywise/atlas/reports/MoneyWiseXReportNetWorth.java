@@ -49,14 +49,13 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseX
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisCashFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisDepositFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisLoanFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPortfolioCashFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDataResource;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseCashCategory;
@@ -65,7 +64,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -78,12 +77,12 @@ public class MoneyWiseXReportNetWorth
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.NETWORTH_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.NETWORTH_TITLE.getValue();
 
     /**
      * The Asset text.
      */
-    private static final String TEXT_ASSET = MoneyWiseReportResource.NETWORTH_ASSET.getValue();
+    private static final String TEXT_ASSET = MoneyWiseXReportResource.NETWORTH_ASSET.getValue();
 
     /**
      * The Units text.
@@ -98,12 +97,12 @@ public class MoneyWiseXReportNetWorth
     /**
      * The ForeignValue text.
      */
-    private static final String TEXT_FOREIGNVALUE = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_FOREIGNVALUE.getValue();
+    private static final String TEXT_FOREIGNVALUE = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_BALANCE.getValue();
 
     /**
      * The Value text.
      */
-    private static final String TEXT_VALUE = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
+    private static final String TEXT_VALUE = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
      * The Account text.
@@ -118,7 +117,7 @@ public class MoneyWiseXReportNetWorth
     /**
      * The Maturity text.
      */
-    private static final String TEXT_MATURITY = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_MATURITY.getValue();
+    private static final String TEXT_MATURITY = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_MATURITY.getValue();
 
     /**
      * HTML builder.

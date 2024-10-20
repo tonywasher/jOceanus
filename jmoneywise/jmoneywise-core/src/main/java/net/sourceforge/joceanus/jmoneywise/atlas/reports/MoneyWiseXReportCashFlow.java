@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseX
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeValues;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPayeeFilter;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
@@ -45,7 +44,7 @@ public class MoneyWiseXReportCashFlow
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.CASHFLOW_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.CASHFLOW_TITLE.getValue();
 
     /**
      * HTML builder.

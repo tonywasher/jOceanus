@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseTaxClass;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
@@ -47,7 +46,7 @@ public class MoneyWiseXReportTaxCalculation
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.TAXCALC_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.TAXCALC_TITLE.getValue();
 
     /**
      * The Income text.

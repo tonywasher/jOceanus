@@ -63,7 +63,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseLoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
@@ -76,7 +75,7 @@ public class MoneyWiseXReportBalanceSheet
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.BALANCESHEET_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.BALANCESHEET_TITLE.getValue();
 
     /**
      * The Portfolio cash account name.

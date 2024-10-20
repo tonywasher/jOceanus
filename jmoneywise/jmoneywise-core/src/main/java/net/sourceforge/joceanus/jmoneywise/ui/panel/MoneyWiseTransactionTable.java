@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.MoneyWiseTransactionPanel;
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;

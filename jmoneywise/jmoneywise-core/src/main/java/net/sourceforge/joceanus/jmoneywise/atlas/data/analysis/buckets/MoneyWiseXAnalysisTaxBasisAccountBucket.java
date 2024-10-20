@@ -342,7 +342,6 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
                 /* Add to the list */
                 theList.add(myNew);
-                theMap.put(myKey, myNew);
                 return myNew;
             });
         }

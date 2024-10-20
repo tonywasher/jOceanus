@@ -17,9 +17,9 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseRegion;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues.PrometheusInfoSetItem;

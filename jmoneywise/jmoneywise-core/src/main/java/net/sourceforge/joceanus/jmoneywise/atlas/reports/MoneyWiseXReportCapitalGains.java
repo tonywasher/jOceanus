@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.reports;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -38,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jmoneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -56,7 +54,7 @@ public class MoneyWiseXReportCapitalGains
     /**
      * The Title text.
      */
-    private static final String TEXT_TITLE = MoneyWiseReportResource.CAPITALGAINS_TITLE.getValue();
+    private static final String TEXT_TITLE = MoneyWiseXReportResource.CAPITALGAINS_TITLE.getValue();
 
     /**
      * HTML builder.
