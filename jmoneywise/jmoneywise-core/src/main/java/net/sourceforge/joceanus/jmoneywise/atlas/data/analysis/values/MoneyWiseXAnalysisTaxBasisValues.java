@@ -43,22 +43,15 @@ public final class MoneyWiseXAnalysisTaxBasisValues
     /**
      * Constructor.
      * @param pSource the source map.
-     * @param pCountersOnly only copy counters
      */
-    private MoneyWiseXAnalysisTaxBasisValues(final MoneyWiseXAnalysisTaxBasisValues pSource,
-                                             final boolean pCountersOnly) {
+    private MoneyWiseXAnalysisTaxBasisValues(final MoneyWiseXAnalysisTaxBasisValues pSource) {
         /* Initialise class */
-        super(pSource, pCountersOnly);
+        super(pSource);
     }
 
     @Override
-    protected MoneyWiseXAnalysisTaxBasisValues getCounterSnapShot() {
-        return new MoneyWiseXAnalysisTaxBasisValues(this, true);
-    }
-
-    @Override
-    protected MoneyWiseXAnalysisTaxBasisValues getFullSnapShot() {
-        return new MoneyWiseXAnalysisTaxBasisValues(this, false);
+    protected MoneyWiseXAnalysisTaxBasisValues newSnapShot() {
+        return new MoneyWiseXAnalysisTaxBasisValues(this);
     }
 
     @Override

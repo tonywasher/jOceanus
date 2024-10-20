@@ -37,92 +37,98 @@ public final class MoneyWiseUKSchemeFactory {
     /**
      * The Dividends asIncome Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_ASINCOME = new MoneyWiseUKDividendAsIncomeScheme();
+    static final MoneyWiseUKDividendScheme DIVIDEND_ASINCOME = new MoneyWiseUKDividendAsIncomeScheme();
 
     /**
      * The Dividends TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_TAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20));
+    static final MoneyWiseUKDividendScheme DIVIDEND_TAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20));
 
     /**
      * The Dividends Non-refund-able TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_FIXEDTAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20), false);
+    static final MoneyWiseUKDividendScheme DIVIDEND_FIXEDTAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20), false);
 
     /**
      * The Dividends Low TaxCredit Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendLoHigherRateScheme(getRate(10), getFractionalRate(325));
+    static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendLoHigherRateScheme(getRate(10), getFractionalRate(325));
 
     /**
      * The Dividends Low TaxCredit Scheme Mark 2.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT2 = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getFractionalRate(325));
+    static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT2 = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getFractionalRate(325));
 
     /**
      * The Dividends Additional Rate Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),
+    static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),
             getFractionalRate(325), getFractionalRate(425));
 
     /**
      * The Dividends Additional Rate Scheme Mark 2.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),
+    static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),
             getFractionalRate(325), getFractionalRate(375));
 
     /**
      * The Dividends Additional Rate Scheme with no TaxCredit.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75),
+    static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75),
             getFractionalRate(325), getFractionalRate(381), Boolean.TRUE);
 
     /**
      * The Dividends Additional Rate Scheme with no TaxCredit and new rates.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875),
+    static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875),
             getTenthFractionalRate(3375), getTenthFractionalRate(3935), Boolean.TRUE);
 
     /**
      * The Interest asIncome Scheme.
      */
-    protected static final MoneyWiseUKInterestScheme INTEREST_ASINCOME = new MoneyWiseUKInterestAsIncomeScheme();
+    static final MoneyWiseUKInterestScheme INTEREST_ASINCOME = new MoneyWiseUKInterestAsIncomeScheme();
 
     /**
      * The Interest base Scheme.
      */
-    protected static final MoneyWiseUKInterestScheme INTEREST_BASE = new MoneyWiseUKInterestBaseRateScheme(getRate(20));
+    static final MoneyWiseUKInterestScheme INTEREST_BASE = new MoneyWiseUKInterestBaseRateScheme(getRate(20));
 
     /**
      * The LowInterest base Scheme.
      */
-    protected static final MoneyWiseUKInterestScheme INTEREST_LOBASE = new MoneyWiseUKInterestLoBaseRateScheme(getRate(20));
+    static final MoneyWiseUKInterestScheme INTEREST_LOBASE = new MoneyWiseUKInterestLoBaseRateScheme(getRate(20));
 
     /**
      * The Old Capital Gains Scheme.
      */
-    protected static final MoneyWiseUKCapitalScheme CAPITAL_OLD = new MoneyWiseUKCapitalFlatRateScheme(getRate(30));
+    static final MoneyWiseUKCapitalScheme CAPITAL_OLD = new MoneyWiseUKCapitalFlatRateScheme(getRate(30));
 
     /**
      * The Capital Gains asIncome Scheme.
      */
-    protected static final MoneyWiseUKCapitalScheme CAPITAL_ASINCOME = new MoneyWiseUKCapitalAsIncomeScheme();
+    static final MoneyWiseUKCapitalScheme CAPITAL_ASINCOME = new MoneyWiseUKCapitalAsIncomeScheme();
 
     /**
      * The New Capital Gains Scheme.
      */
-    protected static final MoneyWiseUKCapitalScheme CAPITAL_NEW = new MoneyWiseUKCapitalFlatRateScheme(getRate(18));
+    static final MoneyWiseUKCapitalScheme CAPITAL_NEW = new MoneyWiseUKCapitalFlatRateScheme(getRate(18));
 
     /**
      * The Split Capital Gains Scheme.
      */
-    protected static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(28));
+    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(28));
 
     /**
      * The Residential Capital Gains Scheme.
      */
-    protected static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10),
+    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10),
             getRate(20), getRate(18), getRate(28));
+
+    /**
+     * The Residential Capital Gains Scheme.
+     */
+    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL2 = new MoneyWiseUKCapitalResidentialScheme(getRate(10),
+            getRate(20), getRate(18), getRate(24));
 
     /**
      * Constructor.

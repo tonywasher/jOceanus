@@ -105,9 +105,6 @@ public class MoneyWiseXAnalysisDividend {
             /* This amount is added to the cost, so record as the delta cost */
             myAsset.adjustResidualCost(myAmount);
 
-            /* Record the investment */
-            myAsset.adjustInvested(myAmount);
-
             /* If we have new units */
             if (myDeltaUnits != null) {
                 /* Record delta units */

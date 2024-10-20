@@ -420,8 +420,8 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysUnits getUnitsDeltaForTransaction(final MoneyWiseXAnalysisEvent pEvent,
-                                                   final MoneyWiseXAnalysisSecurityAttr pAttr) {
+    public TethysUnits getUnitsDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                             final MoneyWiseXAnalysisSecurityAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaUnitsValue(pEvent, pAttr);
     }
@@ -479,17 +479,6 @@ public final class MoneyWiseXAnalysisSecurityBucket
         myValue = new TethysUnits(myValue);
         myValue.addUnits(pDelta);
         setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, myValue);
-    }
-
-    /**
-     * Adjust Invested.
-     * @param pDelta the delta
-     */
-    public void adjustInvested(final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED);
-        myValue = new TethysMoney(myValue);
-        myValue.addAmount(pDelta);
-        setValue(MoneyWiseXAnalysisSecurityAttr.INVESTED, myValue);
     }
 
     /**
@@ -577,9 +566,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         TethysMoney myFunded = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED));
         if (myFunded.isNonZero()) {
             /* Set funded to zero */
-            myFunded = new TethysMoney(myFunded);
-            myFunded.setZero();
-            theValues.setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, myFunded);
+            theValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.FUNDED);
 
             /* If we have zero units, honour autoUnits */
             final MoneyWiseSecurityClass mySecClass = getSecurity().getCategoryClass();
@@ -663,25 +650,6 @@ public final class MoneyWiseXAnalysisSecurityBucket
         final TethysMoney myDelta = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS));
         myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS));
         return myDelta;
-    }
-
-    /**
-     * calculate the profit for a priced asset.
-     */
-    private void calculateProfit() {
-        /* Calculate the profit */
-        final TethysMoney myValuation = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA);
-        final TethysMoney myProfit = new TethysMoney(myValuation);
-        myProfit.subtractAmount(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED));
-        myProfit.addAmount(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND));
-
-        /* Set the attribute */
-        setValue(MoneyWiseXAnalysisSecurityAttr.PROFIT, myProfit);
-
-        /* Calculate the profit minus the dividend */
-        final TethysMoney myMarketProfit = new TethysMoney(myProfit);
-        myMarketProfit.subtractAmount(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND));
-        setValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT, myMarketProfit);
     }
 
     /**

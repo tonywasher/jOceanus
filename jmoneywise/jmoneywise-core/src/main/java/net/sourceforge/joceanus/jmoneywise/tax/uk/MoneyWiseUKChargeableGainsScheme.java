@@ -111,9 +111,7 @@ public class MoneyWiseUKChargeableGainsScheme
             theNettTaxDue = new TethysMoney(myZero);
 
             /* Process the slices */
-            final Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.getGainSlices().getUnderlyingList().iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseChargeableGainSlice mySlice = myIterator.next();
+            for (MoneyWiseChargeableGainSlice mySlice : pSource.getGainSlices().getUnderlyingList()) {
                 processSlice(mySlice);
             }
 

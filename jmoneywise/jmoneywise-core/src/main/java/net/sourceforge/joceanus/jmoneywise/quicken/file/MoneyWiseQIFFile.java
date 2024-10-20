@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;

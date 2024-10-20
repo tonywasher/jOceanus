@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.MoneyWiseQIFFile;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.MoneyWiseQIFParser;

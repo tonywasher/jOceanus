@@ -55,11 +55,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
     VALUEDELTA,
 
     /**
-     * Invested.
-     */
-    INVESTED,
-
-    /**
      * Residual Cost.
      */
     RESIDUALCOST,
@@ -73,6 +68,11 @@ public enum MoneyWiseXAnalysisSecurityAttr
      * UnrealisedGains.
      */
     UNREALISEDGAINS,
+
+    /**
+     * UnrealisedGainsAdjust.
+     */
+    GAINSADJUST,
 
     /**
      * Dividend.
@@ -93,11 +93,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
      * CashInvested.
      */
     CASHINVESTED,
-
-    /**
-     * Consideration.
-     */
-    CONSIDERATION,
 
     /**
      * CashConsideration (returned cash).
@@ -145,6 +140,16 @@ public enum MoneyWiseXAnalysisSecurityAttr
     SLICEGAIN,
 
     /**
+     * Consideration.
+     */
+    CONSIDERATION,
+
+    /**
+     * CostDilution.
+     */
+    COSTDILUTION,
+
+    /**
      * CashType.
      */
     CASHTYPE;
@@ -171,7 +176,6 @@ public enum MoneyWiseXAnalysisSecurityAttr
         switch (this) {
             case UNITS:
             case DIVIDEND:
-            case INVESTED:
             case RESIDUALCOST:
             case VALUATION:
             case EXCHANGERATE:
@@ -179,6 +183,7 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case PRICE:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
+            case GAINSADJUST:
             case FUNDED:
             case STARTDATE:
                 return true;
@@ -186,12 +191,13 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case MARKETPROFIT:
             case VALUEDELTA:
             case XFERREDCOST:
-            case CONSIDERATION:
             case RETURNEDCASH:
             case XFERREDVALUE:
             case CASHINVESTED:
             case CAPITALGAIN:
             case ALLOWEDCOST:
+            case CONSIDERATION:
+            case COSTDILUTION:
             case CASHTYPE:
             default:
                 return false;
@@ -206,6 +212,7 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case PRICE:
                 return MetisDataType.PRICE;
             case EXCHANGERATE:
+            case COSTDILUTION:
                 return MetisDataType.RATIO;
             case CASHTYPE:
                 return MetisDataType.ENUM;
@@ -217,17 +224,17 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case RESIDUALCOST:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
-            case INVESTED:
+            case GAINSADJUST:
             case DIVIDEND:
             case MARKETPROFIT:
             case PROFIT:
-            case CONSIDERATION:
             case RETURNEDCASH:
             case XFERREDVALUE:
             case XFERREDCOST:
             case ALLOWEDCOST:
             case CASHINVESTED:
             case CAPITALGAIN:
+            case CONSIDERATION:
             case FUNDED:
             default:
                 return MetisDataType.MONEY;

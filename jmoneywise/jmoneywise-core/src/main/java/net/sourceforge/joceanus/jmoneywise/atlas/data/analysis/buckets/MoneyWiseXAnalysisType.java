@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.buckets;
 
-import net.sourceforge.joceanus.jmoneywise.data.analysis.base.MoneyWiseAnalysisAttribute;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisAccountAttr;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 
 /**
  * Analysis Types.
@@ -98,8 +98,8 @@ public enum MoneyWiseXAnalysisType {
      * Obtain default value.
      * @return the default
      */
-    public MoneyWiseAnalysisAttribute getDefaultValue() {
-        final MoneyWiseAnalysisAttribute[] myValues = getValues();
+    public MoneyWiseXAnalysisAttribute getDefaultValue() {
+        final MoneyWiseXAnalysisAttribute[] myValues = getValues();
         return myValues != null && myValues.length > 0
                 ? myValues[0]
                 : null;
@@ -131,7 +131,7 @@ public enum MoneyWiseXAnalysisType {
      * Obtain values.
      * @return values
      */
-    public MoneyWiseAnalysisAttribute[] getValues() {
+    public MoneyWiseXAnalysisAttribute[] getValues() {
         switch (this) {
             case DEPOSIT:
             case CASH:
@@ -139,15 +139,15 @@ public enum MoneyWiseXAnalysisType {
             case PORTFOLIO:
             case TRANSTAG:
             case ALL:
-                return MoneyWiseAnalysisAccountAttr.values();
+                return MoneyWiseXAnalysisAccountAttr.values();
             case SECURITY:
-                return MoneyWiseAnalysisSecurityAttr.values();
+                return MoneyWiseXAnalysisSecurityAttr.values();
             case PAYEE:
-                return MoneyWiseAnalysisPayeeAttr.values();
+                return MoneyWiseXAnalysisPayeeAttr.values();
             case CATEGORY:
-                return MoneyWiseAnalysisTransAttr.values();
+                return MoneyWiseXAnalysisTransAttr.values();
             case TAXBASIS:
-                return MoneyWiseAnalysisTaxBasisAttr.values();
+                return MoneyWiseXAnalysisTaxBasisAttr.values();
             default:
                 throw new IllegalArgumentException("Invalid Attribute type " + toString());
         }

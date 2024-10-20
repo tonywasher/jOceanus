@@ -24,6 +24,8 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
 import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.jmoneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -230,6 +232,19 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
         /* Add base values */
         final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        myValue.addAmount(mySrcValue);
+    }
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
+                                  final MoneyWiseXAnalysisSecurityValues pSource) {
+        /* Add base values */
+        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 }

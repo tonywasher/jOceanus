@@ -97,12 +97,20 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState = pAnalyser.getState();
         theMarket = pAnalyser.getMarket();
         theTax = pAnalyser.getTax();
-        thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser);
         theCurrency = theAnalysis.getCurrency();
 
         /* Create the security analyser */
         theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser, this);
+        thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser, theSecurity);
         theTax.declareSecurityAnalyser(theSecurity);
+    }
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    MoneyWiseCurrency getCurrency() {
+        return theCurrency;
     }
 
     /**

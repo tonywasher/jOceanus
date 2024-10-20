@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import net.sourceforge.joceanus.jmoneywise.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 
 /**

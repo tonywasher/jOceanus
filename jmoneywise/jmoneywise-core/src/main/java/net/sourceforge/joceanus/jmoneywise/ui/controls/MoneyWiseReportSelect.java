@@ -20,12 +20,12 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.reports.MoneyWiseReportType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDatePeriod;

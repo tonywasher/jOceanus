@@ -43,22 +43,15 @@ public class MoneyWiseXAnalysisAccountValues
     /**
      * Constructor.
      * @param pSource the source map.
-     * @param pCountersOnly only copy counters
      */
-    protected MoneyWiseXAnalysisAccountValues(final MoneyWiseXAnalysisAccountValues pSource,
-                                              final boolean pCountersOnly) {
+    protected MoneyWiseXAnalysisAccountValues(final MoneyWiseXAnalysisAccountValues pSource) {
         /* Initialise class */
-        super(pSource, pCountersOnly);
+        super(pSource);
     }
 
     @Override
-    protected MoneyWiseXAnalysisAccountValues getCounterSnapShot() {
-        return new MoneyWiseXAnalysisAccountValues(this, true);
-    }
-
-    @Override
-    protected MoneyWiseXAnalysisAccountValues getFullSnapShot() {
-        return new MoneyWiseXAnalysisAccountValues(this, false);
+    protected MoneyWiseXAnalysisAccountValues newSnapShot() {
+        return new MoneyWiseXAnalysisAccountValues(this);
     }
 
     /**

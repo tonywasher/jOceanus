@@ -72,6 +72,8 @@ public class MoneyWiseXAnalysisDeMerger {
         final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
         final TethysRatio myDilution = pTrans.getTransaction().getDilution();
         final TethysUnits myDeltaUnits = pTrans.getDebitUnitsDelta();
+        TethysMoney myDeltaValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myDeltaValue = new TethysMoney(myDeltaValue);
 
         /* If we reduced the units */
         if (myDeltaUnits != null) {
@@ -81,17 +83,20 @@ public class MoneyWiseXAnalysisDeMerger {
 
         /* Calculate the cost dilution */
         final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
+        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myDilution);
 
         /* Calculate the delta to the cost */
         TethysMoney myDeltaCost = new TethysMoney(myNewCost);
         myDeltaCost.subtractAmount(myCost);
 
-        /* Record the delta cost/investment */
+        /* Record the delta cost */
         myAsset.adjustResidualCost(myDeltaCost);
-        myAsset.adjustInvested(myDeltaCost);
 
         /* Adjust the valuation */
         theSecurity.adjustAssetValuation(myAsset);
+        TethysMoney myNewValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myDeltaValue.subtractAmount(myNewValue);
+        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myDeltaValue);
 
         /* Register the event */
         theState.registerBucketInterest(myAsset);
@@ -99,6 +104,10 @@ public class MoneyWiseXAnalysisDeMerger {
         /* Access the Credit Asset Account Bucket */
         final MoneyWiseSecurityHolding myTarget = (MoneyWiseSecurityHolding) pTrans.getCreditAccount();
         myAsset = thePortfolios.getBucket(myTarget);
+        myValues = myAsset.getValues();
+        myDeltaValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myDeltaValue = new TethysMoney(myDeltaValue);
+        myDeltaValue.negate();
 
         /* The deltaCost is transferred to the credit account */
         myDeltaCost = new TethysMoney(myDeltaCost);
@@ -107,9 +116,8 @@ public class MoneyWiseXAnalysisDeMerger {
         /* Record details */
         myValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);
 
-        /* Record the delta cost/investment */
+        /* Record the delta cost */
         myAsset.adjustResidualCost(myDeltaCost);
-        myAsset.adjustInvested(myDeltaCost);
 
         /* Determine value of the stock being deMerged */
         final TethysUnits myCreditUnits = pTrans.getCreditUnitsDelta();
@@ -117,6 +125,9 @@ public class MoneyWiseXAnalysisDeMerger {
 
         /* Adjust the valuation */
         theSecurity.adjustAssetValuation(myAsset);
+        myNewValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myDeltaValue.addAmount(myNewValue);
+        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myDeltaValue);
 
         /* Register the transaction */
         theState.registerBucketInterest(myAsset);

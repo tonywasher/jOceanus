@@ -599,7 +599,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void recordTransaction(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
         /* Determine the taxBucket */
-        theTaxBucket = determineTaxBasicBucket(theTransaction);
+        theTaxBucket = determineTaxBasicBucket(pTrans);
 
         /* Record transaction and account */
         theTransaction = pTrans;
@@ -628,6 +628,9 @@ public class MoneyWiseXAnalysisTax {
      * @throws OceanusException on error
      */
     private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+        if (pTrans == null) {
+            int i = 0;
+        }
         /* Switch on the category type */
         switch (pTrans.getCategoryClass()) {
             case TAXEDINCOME:

@@ -69,7 +69,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
         theHistoryMap = new LinkedHashMap<>();
 
         /* Create base as a snapshot */
-        theBaseValues = theValues.getFullSnapShot();
+        theBaseValues = theValues.newSnapShot();
         theLastValues = theBaseValues;
     }
 
@@ -79,8 +79,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
      */
     public MoneyWiseXAnalysisHistory(final MoneyWiseXAnalysisHistory<T, E> pHistory) {
         /* Copy the base values */
-        theBaseValues = pHistory.getBaseValues().getFullSnapShot();
-        theValues = theBaseValues.getCounterSnapShot();
+        theBaseValues = pHistory.getBaseValues().newSnapShot();
+        theValues = theBaseValues.newSnapShot();
+        theValues.resetNonPreserved();
         theLastValues = theBaseValues;
 
         /* Create the history map */
@@ -95,7 +96,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
     public MoneyWiseXAnalysisHistory(final MoneyWiseXAnalysisHistory<T, E> pHistory,
                                      final TethysDate pDate) {
         /* Copy the base values */
-        theBaseValues = pHistory.getBaseValues().getFullSnapShot();
+        theBaseValues = pHistory.getBaseValues().newSnapShot();
         theLastValues = theBaseValues;
 
         /* Create the history map */
@@ -127,10 +128,10 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
         /* If we have no entries */
         if (myLatest == null) {
             /* Values are identical to base values */
-            theValues = theBaseValues.getCounterSnapShot();
+            theValues = theBaseValues.newSnapShot();
         } else {
             /* Take a snapShot of the latest values */
-            theValues = myLatest.getCounterSnapShot();
+            theValues = myLatest.newSnapShot();
         }
     }
 
@@ -173,8 +174,8 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
         /* Determine the base values */
         theBaseValues = (myFirst == null)
-                ? pHistory.getBaseValues().getFullSnapShot()
-                : myFirst.getFullSnapShot();
+                ? pHistory.getBaseValues().newSnapShot()
+                : myFirst.newSnapShot();
         theLastValues = theBaseValues;
 
         /* If we broke the loop because we found an event */
@@ -205,9 +206,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
         }
 
         /* Store the values */
-        theValues = (myLatest != null)
-                ? myLatest.getCounterSnapShot()
-                : theBaseValues.getCounterSnapShot();
+        theValues = myLatest != null
+                ? myLatest.newSnapShot()
+                : theBaseValues.newSnapShot();
     }
 
     @Override
@@ -264,17 +265,16 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
      * Register the event.
      * @param pEvent the event to register.
      * @param pValues the values
-     * @return the snapShot values
      */
-    public T registerEvent(final MoneyWiseXAnalysisEvent pEvent,
-                           final T pValues) {
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent,
+                              final T pValues) {
         /* Allocate the transaction and add to map */
         final MoneyWiseXAnalysisSnapShot<T, E> myEvent = new MoneyWiseXAnalysisSnapShot<>(pEvent, pValues, theLastValues);
         theHistoryMap.put(pEvent.getIndexedId(), myEvent);
         theLastValues = myEvent.getSnapShot();
 
-        /* Return the values */
-        return theLastValues;
+        /* Reset non-preserved values */
+        theValues.resetNonPreserved();
     }
 
     /**

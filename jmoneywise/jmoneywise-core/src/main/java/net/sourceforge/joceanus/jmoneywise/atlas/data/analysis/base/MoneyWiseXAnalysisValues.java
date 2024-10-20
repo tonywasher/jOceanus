@@ -59,22 +59,22 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
     /**
      * Constructor.
      * @param pSource the source values
-     * @param pCountersOnly only copy counters
      */
-    protected MoneyWiseXAnalysisValues(final T pSource,
-                                       final boolean pCountersOnly) {
-        this(pSource.getEnumClass());
+    protected MoneyWiseXAnalysisValues(final T pSource) {
+        theMap = new EnumMap<>(pSource.getUnderlyingMap());
+        theClass = pSource.getEnumClass();
+    }
 
+    /**
+     * Reset nonPreserved items
+     */
+    void resetNonPreserved() {
         /* Loop through the constants */
         for (E myKey : theClass.getEnumConstants()) {
             /* If we are copying all or the attribute is preserved */
-            if (!pCountersOnly
-                    || myKey.isPreserved()) {
-                /* Copy non-null values */
-                final Object myValue = pSource.getValue(myKey);
-                if (myValue != null) {
-                    theMap.put(myKey, myValue);
-                }
+            if (!myKey.isPreserved()) {
+                /* Remove values that are not preserved */
+                theMap.remove(myKey);
             }
         }
     }
@@ -93,16 +93,10 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
     }
 
     /**
-     * Obtain counter snapShot.
+     * Obtain new snapShot.
      * @return the snapShot.
      */
-    protected abstract T getCounterSnapShot();
-
-    /**
-     * Obtain full snapShot.
-     * @return the snapShot.
-     */
-    protected abstract T getFullSnapShot();
+    protected abstract T newSnapShot();
 
     @Override
     public Map<E, Object> getUnderlyingMap() {

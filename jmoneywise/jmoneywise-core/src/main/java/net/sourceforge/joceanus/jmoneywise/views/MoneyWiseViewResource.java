@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.views;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmoneywise.data.analysis.data.MoneyWiseAnalysisDataResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
