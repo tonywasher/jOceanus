@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
@@ -39,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
@@ -564,7 +566,7 @@ public final class GordianMultiCipher
 
         /* Obtain the keyGenerator */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianMacSpec mySpec = GordianMacSpec.poly1305Mac();
+        final GordianMacSpec mySpec = GordianMacSpecBuilder.poly1305Mac();
         final GordianCoreKeyGenerator<GordianMacSpec> myGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myMacs.getKeyGenerator(mySpec);
         return myGenerator.buildKeyFromBytes(myKeyBytes);
     }
@@ -625,9 +627,9 @@ public final class GordianMultiCipher
             final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
             /* Create the standard ciphers */
-            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.PKCS7));
-            theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.NONE));
-            theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.sic(myKeySpec));
+            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianPadding.PKCS7));
+            theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianPadding.NONE));
+            theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.sic(myKeySpec));
         }
 
         /**

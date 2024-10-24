@@ -16,8 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * The SymCipherSpec class.
@@ -67,136 +68,6 @@ public class GordianSymCipherSpec
         theMode = pMode;
         thePadding = pPadding;
         isValid = checkValidity();
-    }
-
-    /**
-     * Create an ECB symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @param pPadding the padding
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec ecb(final GordianSymKeySpec pKeySpec,
-                                           final GordianPadding pPadding) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.ECB, pPadding);
-    }
-
-    /**
-     * Create a CBC symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @param pPadding the padding
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec cbc(final GordianSymKeySpec pKeySpec,
-                                           final GordianPadding pPadding) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CBC, pPadding);
-    }
-
-    /**
-     * Create a CFB symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec cfb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CFB, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a GCFB symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec gcfb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCFB, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a OFB symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec ofb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OFB, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a GOFB symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec gofb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GOFB, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a SIC symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec sic(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.SIC, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a KCTR symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec kctr(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KCTR, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a CCM symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec ccm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CCM, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a KCCM symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec kccm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KCCM, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a GCM symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec gcm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCM, GordianPadding.NONE);
-    }
-
-    /**
-     * Create a KGCM symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec kgcm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KGCM, GordianPadding.NONE);
-    }
-
-    /**
-     * Create an EAX symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec eax(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.EAX, GordianPadding.NONE);
-    }
-
-    /**
-     * Create an OCB symKey cipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianSymCipherSpec ocb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OCB, GordianPadding.NONE);
     }
 
     /**
@@ -302,26 +173,14 @@ public class GordianSymCipherSpec
         /* Access the target cipherSpec */
         final GordianSymCipherSpec myThat = (GordianSymCipherSpec) pThat;
 
-        /* Check KeyType */
-        if (!getKeyType().equals(myThat.getKeyType())) {
-            return false;
-        }
-
-        /* Match subfields */
-        return theMode == myThat.getCipherMode()
+        /* Check KeyType, Mode and padding */
+        return getKeyType().equals(myThat.getKeyType())
+                && theMode == myThat.getCipherMode()
                 && thePadding == myThat.getPadding();
     }
 
     @Override
     public int hashCode() {
-        int hashCode = super.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        if (theMode != null) {
-            hashCode += theMode.ordinal() + 1;
-            hashCode <<= TethysDataConverter.BYTE_SHIFT;
-        }
-        if (thePadding != null) {
-            hashCode += thePadding.ordinal() + 1;
-        }
-        return hashCode;
+        return Objects.hash(getKeyType(), theMode, thePadding);
     }
 }

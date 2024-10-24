@@ -20,7 +20,6 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * SecureRandom Specification.
@@ -69,78 +68,6 @@ public class GordianRandomSpec {
         theSubSpec = pSubSpec;
         isPredictionResistant = pResistant;
         isValid = checkValidity();
-    }
-
-    /**
-     * Create hashSpec.
-     * @param pDigest the digestSpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec hash(final GordianDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HASH, pDigest, false);
-    }
-
-    /**
-     * Create prediction resistant hashSpec.
-     * @param pDigest the digestSpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec hashResist(final GordianDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HASH, pDigest, true);
-    }
-
-    /**
-     * Create hMacSpec.
-     * @param pDigest the digestSpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec hMac(final GordianDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, false);
-    }
-
-    /**
-     * Create prediction resistant hMacSpec.
-     * @param pDigest the digestSpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec hMacResist(final GordianDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, true);
-    }
-
-    /**
-     * Create ctrSpec.
-     * @param pSymKeySpec the symKeySpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec ctr(final GordianSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, false);
-    }
-
-    /**
-     * Create prediction resistant ctrSpec.
-     * @param pSymKeySpec the symKeySpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec ctrResist(final GordianSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, true);
-    }
-
-    /**
-     * Create x931Spec.
-     * @param pSymKeySpec the symKeySpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec x931(final GordianSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec, false);
-    }
-
-    /**
-     * Create prediction resistant x931Spec.
-     * @param pSymKeySpec the symKeySpec
-     * @return the RandomSpec
-     */
-    public static GordianRandomSpec x931Resist(final GordianSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec, true);
     }
 
     /**
@@ -258,24 +185,14 @@ public class GordianRandomSpec {
         /* Access the targetSpec */
         final GordianRandomSpec myThat = (GordianRandomSpec) pThat;
 
-        /* Check KeyType and prediction */
-        if (theRandomType != myThat.getRandomType()) {
-            return false;
-        }
-        if (isPredictionResistant != myThat.isPredictionResistant()) {
-            return false;
-        }
-
-        /* Match subSpecs */
-        return Objects.equals(theSubSpec, myThat.getSubSpec());
+        /* Check KeyType, prediction and subSpec */
+        return theRandomType == myThat.getRandomType()
+                && isPredictionResistant == myThat.isPredictionResistant()
+                && Objects.equals(theSubSpec, myThat.getSubSpec());
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theRandomType.ordinal() << TethysDataConverter.BYTE_SHIFT;
-        hashCode += theSubSpec != null
-                    ? theSubSpec.hashCode()
-                    : 0;
-        return hashCode + (isPredictionResistant ? 1 : 0);
+        return Objects.hash(theRandomType, theSubSpec, isPredictionResistant);
     }
 }

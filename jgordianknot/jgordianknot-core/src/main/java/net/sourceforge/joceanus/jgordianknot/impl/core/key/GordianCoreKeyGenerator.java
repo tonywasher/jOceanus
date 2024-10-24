@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
@@ -135,11 +136,11 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         /* Create the MACs and initialise them */
         final GordianMacFactory myFactory = theFactory.getMacFactory();
         final GordianMac[] myMacs = new GordianMac[2];
-        GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestTypes[0]);
+        GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigestTypes[0]);
         GordianMac myMac = myFactory.createMac(myMacSpec);
         initMacKeyBytes(myMac, pSecret);
         myMacs[0] = myMac;
-        myMacSpec = GordianMacSpec.hMac(myDigestTypes[1]);
+        myMacSpec = GordianMacSpecBuilder.hMac(myDigestTypes[1]);
         myMac =  myFactory.createMac(myMacSpec);
         initMacKeyBytes(myMac, pSecret);
         myMacs[1] = myMac;

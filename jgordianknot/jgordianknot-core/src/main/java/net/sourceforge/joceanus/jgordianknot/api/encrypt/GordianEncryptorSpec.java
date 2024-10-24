@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +23,6 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Asymmetric Encryption Specification.
@@ -70,75 +68,6 @@ public final class GordianEncryptorSpec {
         theKeyPairType = pKeyPairType;
         theEncryptorType = pEncryptorType;
         isValid = checkValidity();
-    }
-
-    /**
-     * Create RSA Encryptor.
-     * @param pSpec the digestSpec
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec rsa(final GordianDigestSpec pSpec) {
-        return new GordianEncryptorSpec(GordianKeyPairType.RSA, pSpec);
-    }
-
-    /**
-     * Create ElGamal Encryptor.
-     * @param pSpec the digestSpec
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec elGamal(final GordianDigestSpec pSpec) {
-        return new GordianEncryptorSpec(GordianKeyPairType.ELGAMAL, pSpec);
-    }
-
-    /**
-     * Create EC Encryptor.
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec ec() {
-        return new GordianEncryptorSpec(GordianKeyPairType.EC, null);
-    }
-
-    /**
-     * Create GOST Encryptor.
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec gost2012() {
-        return new GordianEncryptorSpec(GordianKeyPairType.GOST2012, null);
-    }
-
-    /**
-     * Create SM2 Encryptor.
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec sm2() {
-        return new GordianEncryptorSpec(GordianKeyPairType.SM2, null);
-    }
-
-    /**
-     * Create SM2 Encryptor.
-     * @param pSpec the sm2EncryptionSpec
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec sm2(final GordianSM2EncryptionSpec pSpec) {
-        return new GordianEncryptorSpec(GordianKeyPairType.SM2, pSpec);
-    }
-
-    /**
-     * Create CompositeSpec.
-     * @param pSpecs the list of encryptorSpecs
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec composite(final GordianEncryptorSpec... pSpecs) {
-        return composite(Arrays.asList(pSpecs));
-    }
-
-    /**
-     * Create CompositeSpec.
-     * @param pSpecs the list of encryptorSpecs
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec composite(final List<GordianEncryptorSpec> pSpecs) {
-        return new GordianEncryptorSpec(GordianKeyPairType.COMPOSITE, pSpecs);
     }
 
     /**
@@ -328,10 +257,6 @@ public final class GordianEncryptorSpec {
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        if (theEncryptorType != null) {
-            hashCode += theEncryptorType.hashCode();
-        }
-        return hashCode;
+        return Objects.hash(theKeyPairType, theEncryptorType);
     }
 }

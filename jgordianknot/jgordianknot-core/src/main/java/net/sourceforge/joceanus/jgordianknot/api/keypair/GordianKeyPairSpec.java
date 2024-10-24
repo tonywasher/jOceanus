@@ -17,16 +17,12 @@
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Asymmetric KeyPair Specification.
@@ -67,289 +63,6 @@ public class GordianKeyPairSpec {
         theKeyPairType = pKeyType;
         theSubKeyType = pSubKeyType;
         isValid = checkValidity();
-    }
-
-    /**
-     * Create RSAKey.
-     * @param pModulus the modulus
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec rsa(final GordianRSAModulus pModulus) {
-        return new GordianKeyPairSpec(GordianKeyPairType.RSA, pModulus);
-    }
-
-    /**
-     * Create ECKey.
-     * @param pCurve the curve
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec ec(final GordianDSAElliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.EC, pCurve);
-    }
-
-    /**
-     * Create SM2Key.
-     * @param pCurve the curve
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec sm2(final GordianSM2Elliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SM2, pCurve);
-    }
-
-    /**
-     * Create DSTU4145Key.
-     * @param pCurve the curve
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec dstu4145(final GordianDSTU4145Elliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DSTU4145, pCurve);
-    }
-
-    /**
-     * Create GOST2012Key.
-     * @param pCurve the curve
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec gost2012(final GordianGOSTElliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.GOST2012, pCurve);
-    }
-
-    /**
-     * Create DSAKey.
-     * @param pKeyType the keyType
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec dsa(final GordianDSAKeyType pKeyType) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DSA, pKeyType);
-    }
-
-    /**
-     * Create DHKey.
-     * @param pGroup the group
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec dh(final GordianDHGroup pGroup) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DH, pGroup);
-    }
-
-    /**
-     * Create ElGamalKey.
-     * @param pGroup the group
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec elGamal(final GordianDHGroup pGroup) {
-        return new GordianKeyPairSpec(GordianKeyPairType.ELGAMAL, pGroup);
-    }
-
-    /**
-     * Create EdDSA25519 Key.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec x25519() {
-        return new GordianKeyPairSpec(GordianKeyPairType.XDH, GordianEdwardsElliptic.CURVE25519);
-    }
-
-    /**
-     * Create EdX448 Key.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec x448() {
-        return new GordianKeyPairSpec(GordianKeyPairType.XDH, GordianEdwardsElliptic.CURVE448);
-    }
-
-    /**
-     * Create EdDSA25519 Key.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec ed25519() {
-        return new GordianKeyPairSpec(GordianKeyPairType.EDDSA, GordianEdwardsElliptic.CURVE25519);
-    }
-
-    /**
-     * Create EdDSA448 Key.
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec ed448() {
-        return new GordianKeyPairSpec(GordianKeyPairType.EDDSA, GordianEdwardsElliptic.CURVE448);
-    }
-
-    /**
-     * Create xmssKey.
-     * @param pDigestType the xmss digestType
-     * @param pHeight the height
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec xmss(final GordianXMSSDigestType pDigestType,
-                                          final GordianXMSSHeight pHeight) {
-        return new GordianKeyPairSpec(GordianKeyPairType.XMSS, GordianXMSSKeySpec.xmss(pDigestType, pHeight));
-    }
-
-    /**
-     * Create xmssMTKey.
-     * @param pDigestType the xmss digestType
-     * @param pHeight the height
-     * @param pLayers the layers
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec xmssmt(final GordianXMSSDigestType pDigestType,
-                                            final GordianXMSSHeight pHeight,
-                                            final GordianXMSSMTLayers pLayers) {
-        return new GordianKeyPairSpec(GordianKeyPairType.XMSS, GordianXMSSKeySpec.xmssmt(pDigestType, pHeight, pLayers));
-    }
-
-    /**
-     * Create lmsKey.
-     * @param pKeySpec the keySpec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec lms(final GordianLMSKeySpec pKeySpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.LMS, pKeySpec);
-    }
-
-    /**
-     * Create hssKey.
-     * @param pKeySpec the keySpec
-     * @param pDepth the treeDepth
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec hss(final GordianLMSKeySpec pKeySpec,
-                                         final int pDepth) {
-        return new GordianKeyPairSpec(GordianKeyPairType.LMS, new GordianHSSKeySpec(pKeySpec, pDepth));
-    }
-
-    /**
-     * Create SPHINCSPlusKey.
-     * @param pSpec the SPHINCSPlus Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec sphincsPlus(final GordianSPHINCSPlusSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SPHINCSPLUS, pSpec);
-    }
-
-    /**
-     * Create CMCEKey.
-     * @param pSpec the CMCE Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec cmce(final GordianCMCESpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.CMCE, pSpec);
-    }
-
-    /**
-     * Create FRODOKey.
-     * @param pSpec the FRODO Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec frodo(final GordianFRODOSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.FRODO, pSpec);
-    }
-
-    /**
-     * Create SABERKey.
-     * @param pSpec the SABER Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec saber(final GordianSABERSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SABER, pSpec);
-    }
-
-    /**
-     * Create KYBERKey.
-     * @param pSpec the KYBER Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec kyber(final GordianKYBERSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.KYBER, pSpec);
-    }
-
-    /**
-     * Create DILITHIUMKey.
-     * @param pSpec the DILITHIUM Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec dilithium(final GordianDILITHIUMSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DILITHIUM, pSpec);
-    }
-
-    /**
-     * Create HQCKey.
-     * @param pSpec the HQC Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec hqc(final GordianHQCSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.HQC, pSpec);
-    }
-
-    /**
-     * Create BIKEKey.
-     * @param pSpec the BIKE Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec bike(final GordianBIKESpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.BIKE, pSpec);
-    }
-
-    /**
-     * Create NTRUKey.
-     * @param pSpec the NTRU Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec ntru(final GordianNTRUSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.NTRU, pSpec);
-    }
-
-    /**
-     * Create NTRUPRIMEKey.
-     * @param pSpec the NTRUPRIME Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec ntruprime(final GordianNTRUPrimeSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.NTRUPRIME, pSpec);
-    }
-
-    /**
-     * Create FalconKey.
-     * @param pSpec the FALCON Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec falcon(final GordianFALCONSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.FALCON, pSpec);
-    }
-
-    /**
-     * Create PicnicKey.
-     * @param pSpec the Picnic Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec picnic(final GordianPICNICSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.PICNIC, pSpec);
-    }
-
-    /**
-     * Create RainbowKey.
-     * @param pSpec the Rainbow Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec rainbow(final GordianRainbowSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.RAINBOW, pSpec);
-    }
-
-    /**
-     * Create CompositeKey.
-     * @param pSpecs the list of keySpecs
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec composite(final GordianKeyPairSpec... pSpecs) {
-        return composite(Arrays.asList(pSpecs));
-    }
-
-    /**
-     * Create CompositeKey.
-     * @param pSpecs the list of keySpecs
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec composite(final List<GordianKeyPairSpec> pSpecs) {
-        return new GordianKeyPairSpec(GordianKeyPairType.COMPOSITE, pSpecs);
     }
 
     /**
@@ -695,22 +408,14 @@ public class GordianKeyPairSpec {
         /* Access the target KeySpec */
         final GordianKeyPairSpec myThat = (GordianKeyPairSpec) pThat;
 
-        /* Check KeyPairType */
-        if (theKeyPairType != myThat.getKeyPairType()) {
-            return false;
-        }
-
-        /* Match subfields */
-        return Objects.equals(theSubKeyType, myThat.theSubKeyType);
+        /* Check KeyPairType and subKeyType */
+        return theKeyPairType == myThat.getKeyPairType()
+                && Objects.equals(theSubKeyType, myThat.theSubKeyType);
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        if (theSubKeyType != null) {
-            hashCode += theSubKeyType.hashCode();
-        }
-        return hashCode;
+        return Objects.hash(theKeyPairType, theSubKeyType);
     }
 
     /**

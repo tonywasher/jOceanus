@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 
 /**
@@ -66,54 +68,6 @@ public abstract class GordianPBESpec {
      */
     void setValid() {
         isValid = true;
-    }
-
-    /**
-     * Create a pbkdf2Spec.
-     * @param pDigestSpec the digestSpec.
-     * @param pCount the iteration count
-     * @return the new spec
-     */
-    public static GordianPBEDigestAndCountSpec pbKDF2(final GordianDigestSpec pDigestSpec,
-                                                      final int pCount) {
-        return new GordianPBEDigestAndCountSpec(GordianPBEType.PBKDF2, pDigestSpec, pCount);
-    }
-
-    /**
-     * Create a pbkdf2Spec.
-     * @param pDigestSpec the digestSpec.
-     * @param pCount the iteration count
-     * @return the new spec
-     */
-    public static GordianPBEDigestAndCountSpec pkcs12(final GordianDigestSpec pDigestSpec,
-                                                      final int pCount) {
-        return new GordianPBEDigestAndCountSpec(GordianPBEType.PKCS12, pDigestSpec, pCount);
-    }
-
-    /**
-     * Create a scryptSpec.
-     * @param pCost the cost
-     * @param pBlockSize the blockSize
-     * @param pParallel the parallelisation
-     * @return the new spec
-     */
-    public static GordianPBESCryptSpec scrypt(final int pCost,
-                                              final int pBlockSize,
-                                              final int pParallel) {
-        return new GordianPBESCryptSpec(pCost, pBlockSize, pParallel);
-    }
-
-    /**
-     * Create an argonSpec.
-     * @param pLanes the Lanes
-     * @param pMemory the Memory
-     * @param pIterations the iterations
-     * @return the new spec
-     */
-    public static GordianPBEArgon2Spec argon2(final int pLanes,
-                                              final int pMemory,
-                                              final int pIterations) {
-        return new GordianPBEArgon2Spec(pLanes, pMemory, pIterations);
     }
 
     /**
@@ -199,19 +153,15 @@ public abstract class GordianPBESpec {
             }
             final GordianPBEDigestAndCountSpec myThat = (GordianPBEDigestAndCountSpec) pThat;
 
-            /* Check count and digestSpec */
-            if (theCount != myThat.getIterationCount()
-                || theDigestSpec.equals(myThat.getDigestSpec())) {
-                return false;
-            }
-
-            /* Check the PBEType */
-            return getPBEType() == myThat.getPBEType();
+            /* Check count, digestSpec and PBEType */
+            return theCount == myThat.getIterationCount()
+                    && theDigestSpec.equals(myThat.getDigestSpec())
+                    && getPBEType() == myThat.getPBEType();
         }
 
         @Override
         public int hashCode() {
-            return theDigestSpec.hashCode() + theCount + getPBEType().hashCode();
+            return Objects.hash(theDigestSpec, theCount, getPBEType());
         }
 
         @Override
@@ -341,12 +291,13 @@ public abstract class GordianPBESpec {
             /* Check cost, blockSize and parallel */
             return theCost == myThat.getCost()
                     && theBlockSize == myThat.getBlockSize()
-                    && theParallel == myThat.getParallel();
+                    && theParallel == myThat.getParallel()
+                    && getPBEType() == myThat.getPBEType();
         }
 
         @Override
         public int hashCode() {
-            return theBlockSize + theCost + theParallel + getPBEType().hashCode();
+            return Objects.hash(theBlockSize, theCost, theParallel, getPBEType());
         }
 
         @Override
@@ -453,12 +404,13 @@ public abstract class GordianPBESpec {
             /* Check lanes, memory and iterations */
             return theLanes == myThat.getLanes()
                     && theMemory == myThat.getMemory()
-                    && theIterations == myThat.getIterationCount();
+                    && theIterations == myThat.getIterationCount()
+                    && getPBEType() == myThat.getPBEType();
         }
 
         @Override
         public int hashCode() {
-            return theLanes + theMemory + theIterations  + getPBEType().hashCode();
+            return Objects.hash(theLanes, theMemory, theIterations, getPBEType().hashCode());
         }
 
         @Override

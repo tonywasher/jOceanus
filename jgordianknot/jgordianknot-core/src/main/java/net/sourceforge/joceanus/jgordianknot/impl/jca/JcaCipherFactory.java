@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.Gor
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
@@ -144,7 +145,7 @@ public class JcaCipherFactory
     public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         /* Create the cipher */
         final JcaKey<GordianSymKeySpec> myKey = JcaKey.accessKey(pKey);
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(myKey.getKeyType(), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), GordianPadding.NONE);
         final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myKey, myJcaCipher);
     }

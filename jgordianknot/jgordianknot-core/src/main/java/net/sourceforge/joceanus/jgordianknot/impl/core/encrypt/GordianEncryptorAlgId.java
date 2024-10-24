@@ -34,8 +34,10 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
@@ -123,7 +125,7 @@ public class GordianEncryptorAlgId {
             while (en.hasMoreElements()) {
                 myList.add(getSpecForIdentifier(AlgorithmIdentifier.getInstance(en.nextElement())));
             }
-            return GordianEncryptorSpec.composite(myList);
+            return GordianEncryptorSpecBuilder.composite(myList);
         }
         return theIdentifierMap.get(pIdentifier);
     }
@@ -132,21 +134,21 @@ public class GordianEncryptorAlgId {
      * Add WellKnown encryptors.
      */
     private void addWellKnownEncryptors() {
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sm3())),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sm3())),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sm3, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha2(GordianLength.LEN_224))),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha224, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha2(GordianLength.LEN_256))),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha256, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha2(GordianLength.LEN_384))),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha384, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha2(GordianLength.LEN_512))),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha512, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.whirlpool())),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.whirlpool())),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_whirlpool, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.blake2(GordianLength.LEN_256))),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.blake2(GordianLength.LEN_256))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2s256, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.blake2(GordianLength.LEN_512))),
+        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.blake2(GordianLength.LEN_512))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2b512, DERNull.INSTANCE));
     }
 

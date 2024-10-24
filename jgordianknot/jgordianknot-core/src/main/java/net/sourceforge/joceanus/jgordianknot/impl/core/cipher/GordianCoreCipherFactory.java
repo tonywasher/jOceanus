@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
@@ -40,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -358,7 +360,7 @@ public abstract class GordianCoreCipherFactory
         final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
         if (myPBESpec instanceof GordianPBEDigestAndCountSpec) {
             final GordianDigestSpec mySpec = ((GordianPBEDigestAndCountSpec) myPBESpec).getDigestSpec();
-            return GordianDigestSpec.sha2(GordianLength.LEN_512).equals(mySpec);
+            return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512).equals(mySpec);
         }
 
         /* OK */
@@ -393,12 +395,12 @@ public abstract class GordianCoreCipherFactory
         final List<GordianStreamCipherSpec> myResult = new ArrayList<>();
         for (GordianStreamKeySpec mySpec : listAllSupportedStreamKeySpecs(pKeyLen)) {
             /* Add the standard cipher */
-            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
+            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(mySpec);
             myResult.add(myCipherSpec);
 
             /* Add the AAD Cipher if supported */
             if (mySpec.supportsAAD()) {
-                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(mySpec, true);
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(mySpec, true);
                 if (supportedStreamCipherSpecs().test(myAADSpec)) {
                     myResult.add(myAADSpec);
                 }

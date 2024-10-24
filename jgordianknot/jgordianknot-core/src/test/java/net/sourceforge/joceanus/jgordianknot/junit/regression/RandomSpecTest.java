@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -248,7 +249,7 @@ class RandomSpecTest {
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) pFactory.getMacFactory();
         final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
-        myValid.remove(GordianMacSpec.poly1305Mac());
+        myValid.remove(GordianMacSpecBuilder.poly1305Mac());
 
         /* Loop a large number of times to ensure that all macs are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {

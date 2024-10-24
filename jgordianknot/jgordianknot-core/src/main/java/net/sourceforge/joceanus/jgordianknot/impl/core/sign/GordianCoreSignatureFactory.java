@@ -26,12 +26,14 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -342,33 +344,33 @@ public abstract class GordianCoreSignatureFactory
     public GordianSignatureSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpec.sha3(GordianLength.LEN_512));
+                return GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512));
             case DSA:
-                return GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case EC:
-                return GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512));
+                return GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512));
             case SM2:
-                return GordianSignatureSpec.sm2();
+                return GordianSignatureSpecBuilder.sm2();
             case DSTU4145:
-                return GordianSignatureSpec.dstu4145();
+                return GordianSignatureSpecBuilder.dstu4145();
             case GOST2012:
-                return GordianSignatureSpec.gost2012(GordianLength.LEN_512);
+                return GordianSignatureSpecBuilder.gost2012(GordianLength.LEN_512);
             case EDDSA:
-                return GordianSignatureSpec.edDSA();
+                return GordianSignatureSpecBuilder.edDSA();
             case SPHINCSPLUS:
-                return GordianSignatureSpec.sphincsPlus();
+                return GordianSignatureSpecBuilder.sphincsPlus();
             case DILITHIUM:
-                return GordianSignatureSpec.dilithium();
+                return GordianSignatureSpecBuilder.dilithium();
             case FALCON:
-                return GordianSignatureSpec.falcon();
+                return GordianSignatureSpecBuilder.falcon();
             case PICNIC:
-                return GordianSignatureSpec.picnic();
+                return GordianSignatureSpecBuilder.picnic();
             case RAINBOW:
-                return GordianSignatureSpec.rainbow();
+                return GordianSignatureSpecBuilder.rainbow();
             case XMSS:
-                return GordianSignatureSpec.xmss();
+                return GordianSignatureSpecBuilder.xmss();
             case LMS:
-                return GordianSignatureSpec.lms();
+                return GordianSignatureSpecBuilder.lms();
             case COMPOSITE:
                 final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
                 final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
@@ -376,7 +378,7 @@ public abstract class GordianCoreSignatureFactory
                     final GordianKeyPairSpec mySpec = myIterator.next();
                     mySpecs.add(defaultForKeyPair(mySpec));
                 }
-                final GordianSignatureSpec mySpec = GordianSignatureSpec.composite(mySpecs);
+                final GordianSignatureSpec mySpec = GordianSignatureSpecBuilder.composite(mySpecs);
                 return mySpec.isValid() ? mySpec : null;
             default:
                 return null;

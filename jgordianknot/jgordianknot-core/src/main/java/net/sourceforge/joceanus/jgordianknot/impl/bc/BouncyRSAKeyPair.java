@@ -58,6 +58,7 @@ import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -393,10 +394,10 @@ public final class BouncyRSAKeyPair {
                     return new RSADigestSigner(myDigest.getDigest());
                 case PSS128:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            pFactory.getDigestFactory().createDigest(GordianDigestSpec.shake128(GordianLength.LEN_256)).getDigest(), mySaltLength);
+                            pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake128(GordianLength.LEN_256)).getDigest(), mySaltLength);
                 case PSS256:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            pFactory.getDigestFactory().createDigest(GordianDigestSpec.shake256(GordianLength.LEN_512)).getDigest(), mySaltLength);
+                            pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake256(GordianLength.LEN_512)).getDigest(), mySaltLength);
                 case PSSMGF1:
                 default:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);

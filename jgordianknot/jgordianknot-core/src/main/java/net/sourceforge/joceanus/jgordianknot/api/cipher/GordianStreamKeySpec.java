@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * GordianKnot StreamKeySpec.
@@ -85,169 +85,6 @@ public class GordianStreamKeySpec
         theKeyLength = pKeyLength;
         theSubKeyType = pSubKeyType;
         isValid = checkValidity();
-    }
-
-    /**
-     * Create hcKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec hc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.HC, pKeyLength);
-    }
-
-    /**
-     * Create chachaKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec chacha(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.STD);
-    }
-
-    /**
-     * Create chacha7539KeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec chacha7539(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.ISO7539);
-    }
-
-    /**
-     * Create xchachaKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec xchacha(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.XCHACHA);
-    }
-
-    /**
-     * Create salsaKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec salsa(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength, GordianSalsa20Key.STD);
-    }
-
-    /**
-     * Create xsalsaKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec xsalsa(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength, GordianSalsa20Key.XSALSA);
-    }
-
-    /**
-     * Create isaacKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec isaac(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ISAAC, pKeyLength);
-    }
-
-    /**
-     * Create rc4KeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec rc4(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.RC4, pKeyLength);
-    }
-
-    /**
-     * Create vmpcKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec vmpc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength, GordianVMPCKey.STD);
-    }
-
-    /**
-     * Create vmpcKSAKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec vmpcKSA(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength, GordianVMPCKey.KSA);
-    }
-
-    /**
-     * Create grainKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec grain(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.GRAIN, pKeyLength);
-    }
-
-    /**
-     * Create rabbitKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec rabbit(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.RABBIT, pKeyLength);
-    }
-
-    /**
-     * Create sosemanukKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec sosemanuk(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SOSEMANUK, pKeyLength);
-    }
-
-    /**
-     * Create snow3GKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec snow3G(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SNOW3G, pKeyLength);
-    }
-
-    /**
-     * Create zucKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec zuc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ZUC, pKeyLength);
-    }
-
-    /**
-     * Create skeinKeySpec.
-     * @param pKeyLength the keyLength
-     * @param pStateLength the stateLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec skeinXof(final GordianLength pKeyLength,
-                                                final GordianLength pStateLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SKEINXOF, pKeyLength, GordianSkeinXofKey.getKeyTypeForLength(pStateLength));
-    }
-
-    /**
-     * Create blake2KeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec blake2Xof(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE2XOF, pKeyLength);
-    }
-
-    /**
-     * Create blake3KeySpec.
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec blake3Xof() {
-        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE2XOF, GordianLength.LEN_256);
     }
 
     /**
@@ -517,12 +354,7 @@ public class GordianStreamKeySpec
 
     @Override
     public int hashCode() {
-        int hashCode = theStreamKeyType.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
-        hashCode += theKeyLength.ordinal() + 1;
-        if (theSubKeyType != null) {
-            hashCode += theSubKeyType.hashCode();
-        }
-        return hashCode;
+        return Objects.hash(theStreamKeyType, theKeyLength, theSubKeyType);
     }
 
     /**

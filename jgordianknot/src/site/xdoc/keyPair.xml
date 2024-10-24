@@ -23,7 +23,7 @@
                     final GordianKeyPairFactory myKeyPairFactory = myBaseFactory.getKeyPairFactory();
 
                     /* Access keyPairGenerator */
-                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048);
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myPair = myGenerator.generateKeyPair();
 
@@ -91,8 +91,8 @@
                     final GordianKeyPairFactory myKeyPairFactory = myBaseFactory.getKeyPairFactory();
 
                     /* Access keyPairGenerator */
-                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
-                                                                                   GordianKeyPairSpec.elGamal(GordiaDHGroup.rfc7919_ffdhe2048));
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
+                                                                                          GordianKeyPairSpecBuilder.elGamal(GordiaDHGroup.rfc7919_ffdhe2048));
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myPair = myGenerator.generateKeyPair();
 

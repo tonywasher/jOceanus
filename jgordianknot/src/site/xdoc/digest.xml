@@ -19,7 +19,7 @@
                     final GordianDigestFactory myDigestFactory = myBaseFactory.getDigestFactory();
 
                     /* Create digest */
-                    final GordianDigestSpec mySpec = GordianDigestSpec.sha2(GordianLength.LEN_256);
+                    final GordianDigestSpec mySpec = GordianDigestSpecBuilder.sha2(GordianLength.LEN_256);
                     final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
 
                     /* Calculate digest */

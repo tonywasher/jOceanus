@@ -21,9 +21,11 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -200,8 +202,8 @@ public final class GordianStreamManager {
                 myPadding = GordianPadding.ISO7816D4;
             }
             final GordianSymCipherSpec mySymSpec = bFirst
-                                                    ? GordianSymCipherSpec.sic(myKey.getKeyType())
-                                                    : GordianSymCipherSpec.ecb(myKey.getKeyType(), myPadding);
+                                                    ? GordianSymCipherSpecBuilder.sic(myKey.getKeyType())
+                                                    : GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), myPadding);
 
             /* Build the cipher stream */
             final GordianSymCipher mySymCipher = myCiphers.createSymKeyCipher(mySymSpec);
@@ -217,7 +219,7 @@ public final class GordianStreamManager {
         final GordianStreamKeySpec myStreamKeySpec = myIdMgr.generateRandomStreamKeySpec(myKeyLen, true);
         final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCiphers.getKeyGenerator(myStreamKeySpec);
         final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
-        final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
+        final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpecBuilder.stream(myStreamKey.getKeyType()));
         myStreamCipher.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myStreamKey));
         myCurrent = new GordianCipherOutputStream<>(myStreamCipher, myCurrent);
 
