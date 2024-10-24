@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
@@ -88,7 +89,9 @@ public class BouncyDigestFactory
 
         /* Create digest */
         final Digest myBCDigest = getBCDigest(pDigestSpec);
-        return new BouncyDigest(pDigestSpec, myBCDigest);
+        return myBCDigest instanceof Xof
+                ? new BouncyDigestXof(pDigestSpec, (Xof) myBCDigest)
+                : new BouncyDigest(pDigestSpec, myBCDigest);
     }
 
     /**

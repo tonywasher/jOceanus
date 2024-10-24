@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
@@ -124,7 +125,9 @@ public class BouncyMacFactory
 
         /* Create Mac */
         final Mac myBCMac = getBCMac(pMacSpec);
-        return new BouncyMac(getFactory(), pMacSpec, myBCMac);
+        return myBCMac instanceof Xof
+                ? new BouncyMacXof(getFactory(), pMacSpec, (Xof) myBCMac)
+                : new BouncyMac(getFactory(), pMacSpec, myBCMac);
     }
 
     /**

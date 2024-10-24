@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Wrapper for BouncyCastle MAC.
  */
-public final class BouncyMac
+public class BouncyMac
         extends GordianCoreMac {
     /**
      * Mac.
@@ -132,19 +132,13 @@ public final class BouncyMac
     @Override
     public byte[] finish() {
         final byte[] myResult = new byte[getMacSize()];
-        if (theMac instanceof KMAC) {
-            ((KMAC) theMac).doFinal(myResult, 0, getMacSize());
-        } else {
-            theMac.doFinal(myResult, 0);
-        }
+        doFinish(myResult, 0);
         return myResult;
     }
 
     @Override
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) {
-        return theMac instanceof KMAC
-            ? ((KMAC) theMac).doFinal(pBuffer, pOffset, getMacSize())
-            : theMac.doFinal(pBuffer, pOffset);
+        return theMac.doFinal(pBuffer, pOffset);
     }
 }
