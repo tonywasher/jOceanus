@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
@@ -52,6 +53,7 @@ import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupilamiFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
+import org.bouncycastle.crypto.ext.digests.SkeinXof;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -88,7 +90,9 @@ public class BouncyDigestFactory
 
         /* Create digest */
         final Digest myBCDigest = getBCDigest(pDigestSpec);
-        return new BouncyDigest(pDigestSpec, myBCDigest);
+        return myBCDigest instanceof Xof
+                ? new BouncyDigestXof(pDigestSpec, (Xof) myBCDigest)
+                : new BouncyDigest(pDigestSpec, myBCDigest);
     }
 
     /**
@@ -267,7 +271,8 @@ public class BouncyDigestFactory
      */
     private static Digest getSkeinDigest(final GordianLength pStateLength,
                                          final GordianLength pLength) {
-        return new SkeinDigest(pStateLength.getLength(), pLength.getLength());
+        final SkeinDigest myDigest = new SkeinDigest(pStateLength.getLength(), pLength.getLength());
+        return new SkeinXof(myDigest);
     }
 
     /**

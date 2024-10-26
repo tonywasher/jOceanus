@@ -20,13 +20,16 @@ import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -189,13 +192,13 @@ public final class GordianKeyPairValidity {
             case LMS:
                 return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
-                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case DH:
-                return GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF);
+                return GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsElliptic().is25519()
-                        ? GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF)
-                        : GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA512KDF);
+                        ? GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF)
+                        : GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA512KDF);
             case CMCE:
             case FRODO:
             case SABER:
@@ -204,7 +207,7 @@ public final class GordianKeyPairValidity {
             case BIKE:
             case NTRU:
             case NTRUPRIME:
-                return GordianAgreementSpec.kem(mySpec, GordianKDFType.NONE);
+                return GordianAgreementSpecBuilder.kem(mySpec, GordianKDFType.NONE);
             default:
                 return null;
         }

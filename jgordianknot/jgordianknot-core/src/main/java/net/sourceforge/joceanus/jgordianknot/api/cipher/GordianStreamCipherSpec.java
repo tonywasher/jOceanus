@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 
 /**
@@ -43,7 +45,7 @@ public final class GordianStreamCipherSpec
      * Constructor.
      * @param pKeySpec the keySpec
      */
-    private GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec) {
+    public GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec) {
         this(pKeySpec, false);
     }
 
@@ -52,31 +54,11 @@ public final class GordianStreamCipherSpec
      * @param pKeySpec the keySpec
      * @param pAAD is this an AAD cipher?
      */
-    private GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec,
-                                    final boolean pAAD) {
+    public GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec,
+                                   final boolean pAAD) {
         super(pKeySpec);
         isAAD = pAAD;
         isValid = checkValidity();
-    }
-
-    /**
-     * Create a streamCipherSpec.
-     * @param pKeySpec the keySpec
-     * @return the cipherSpec
-     */
-    public static GordianStreamCipherSpec stream(final GordianStreamKeySpec pKeySpec) {
-        return new GordianStreamCipherSpec(pKeySpec);
-    }
-
-    /**
-     * Create a streamCipherSpec.
-     * @param pKeySpec the keySpec
-     * @param pAAD is this an AAD cipher?
-     * @return the cipherSpec
-     */
-    public static GordianStreamCipherSpec stream(final GordianStreamKeySpec pKeySpec,
-                                                 final boolean pAAD) {
-        return new GordianStreamCipherSpec(pKeySpec, pAAD);
     }
 
     @Override
@@ -164,6 +146,6 @@ public final class GordianStreamCipherSpec
 
     @Override
     public int hashCode() {
-       return getKeyType().hashCode() + (isAAD() ? 1 : 0);
+       return Objects.hash(getKeyType(), isAAD());
     }
 }

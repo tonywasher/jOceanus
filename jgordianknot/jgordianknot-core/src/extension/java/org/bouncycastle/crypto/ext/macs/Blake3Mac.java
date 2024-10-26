@@ -18,6 +18,7 @@ package org.bouncycastle.crypto.ext.macs;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.params.Blake3Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -26,7 +27,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * Bouncy implementation of Blake3Mac.
  */
 public class Blake3Mac
-        implements Mac {
+        implements Mac, Xof {
     /**
      * Digest.
      */
@@ -58,7 +59,7 @@ public class Blake3Mac
         }
         final Blake3Parameters myBlakeParams = (Blake3Parameters) myParams;
         if (myBlakeParams.getKey() == null) {
-            throw new IllegalArgumentException("Blake2Mac requires a key parameter.");
+            throw new IllegalArgumentException("Blake3Mac requires a key parameter.");
         }
 
         /* Configure the digest */
@@ -88,5 +89,25 @@ public class Blake3Mac
     @Override
     public void reset() {
         theDigest.reset();
+    }
+
+    @Override
+    public int doFinal(final byte[] out, final int outOff, final int outLen) {
+        return theDigest.doFinal(out, outOff, outLen);
+    }
+
+    @Override
+    public int doOutput(final byte[] out, final int outOff, final int outLen) {
+        return theDigest.doOutput(out, outOff, outLen);
+    }
+
+    @Override
+    public int getByteLength() {
+        return theDigest.getByteLength();
+    }
+
+    @Override
+    public int getDigestSize() {
+        return theDigest.getDigestSize();
     }
 }

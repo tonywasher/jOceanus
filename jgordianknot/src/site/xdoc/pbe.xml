@@ -16,12 +16,12 @@
                 final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                 /* Create cipher */
-                final GordianSymKeySpec myKeySpec = GordianSymKeySpec.aes(GordianLength.LEN_256);
-                final GordianSymCipherSpec myCipherSpec = GordianSymSpec.cbc(myKeySpec, GordianPadding.PKCS7);
+                final GordianSymKeySpec myKeySpec = GordianSymKeySpecBuilder.aes(GordianLength.LEN_256);
+                final GordianSymCipherSpec myCipherSpec = GordianSymSpecBuilder.cbc(myKeySpec, GordianPadding.PKCS7);
                 final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
                 /* Create pbeSpec */
-                final GordianPBESpec myPBESpec = GordianPBESpec.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_256), 2000);
+                final GordianPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_256), 2000);
                 final byte[] myPassword = ....
 
                 /* Encrypt message with random nonce */

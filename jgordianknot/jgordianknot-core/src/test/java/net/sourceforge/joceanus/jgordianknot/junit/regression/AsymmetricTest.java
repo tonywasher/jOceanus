@@ -39,9 +39,13 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
@@ -51,6 +55,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -101,12 +106,12 @@ class AsymmetricTest {
     /**
      * SymCipherSpec.
      */
-    private static final GordianSymCipherSpec SYMKEYSPEC = GordianSymCipherSpec.sic(GordianSymKeySpec.aes(GordianLength.LEN_256));
+    private static final GordianSymCipherSpec SYMKEYSPEC = GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256));
 
     /**
      * StreamCipherSpec.
      */
-    private static final GordianStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpec.stream(GordianStreamKeySpec.chacha(GordianLength.LEN_256));
+    private static final GordianStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpecBuilder.stream(GordianStreamKeySpecBuilder.chacha(GordianLength.LEN_256));
 
     /**
      * Initialise Factories.
@@ -119,7 +124,7 @@ class AsymmetricTest {
         JCAFACTORY = GordianGenerator.createFactory(GordianFactoryType.JCA);
 
         /* Create the BC Signer */
-        final GordianKeyPairSpec mySpec = GordianKeyPairSpec.ed448();
+        final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
         GordianKeyPairFactory myFactory = BCFACTORY.getKeyPairFactory();
         GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         BCSIGNER = myGenerator.generateKeyPair();

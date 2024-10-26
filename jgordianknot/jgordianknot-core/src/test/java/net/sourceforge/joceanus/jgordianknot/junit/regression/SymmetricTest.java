@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
@@ -499,7 +500,7 @@ class SymmetricTest {
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileStreamKey(pKeySpec)));
 
         /* Add cipher test */
-        final FactoryStreamCipherSpec myCipherSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpec.stream(pKeySpec.getSpec()));
+        final FactoryStreamCipherSpec myCipherSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpecBuilder.stream(pKeySpec.getSpec()));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkCipher(myCipherSpec))));
 
         /* Add externalId tests */
@@ -520,7 +521,7 @@ class SymmetricTest {
 
         /* Add AAD cipher tests if required */
         if (pKeySpec.hasAAD()) {
-            final FactoryStreamCipherSpec myAADSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpec.stream(pKeySpec.getSpec(), true));
+            final FactoryStreamCipherSpec myAADSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpecBuilder.stream(pKeySpec.getSpec(), true));
             myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("AAD", streamAADCipherTests(myAADSpec))));
         }
 
@@ -969,7 +970,7 @@ class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Create the Cipher */
-        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
+        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
          GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         myCipher.initForEncrypt(myParms);
@@ -1055,7 +1056,7 @@ class SymmetricTest {
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianFactory myPartner = pKeySpec.getPartner();
         final GordianStreamKeySpec mySpec = pKeySpec.getSpec();
-        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
+        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(mySpec);
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
@@ -1181,7 +1182,7 @@ class SymmetricTest {
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
         byte[] myBytes = getTestData();
-        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
+        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         final long myStart = System.nanoTime();

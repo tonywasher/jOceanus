@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigest;
 /**
  * BouncyCastle Digest.
  */
-public final class BouncyDigest
+public class BouncyDigest
         extends GordianCoreDigest {
     /**
      * Digest.
@@ -85,8 +85,6 @@ public final class BouncyDigest
     @Override
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) {
-        return theDigest instanceof Xof
-               ? ((Xof) theDigest).doFinal(pBuffer, pOffset, getDigestSize())
-               : theDigest.doFinal(pBuffer, pOffset);
+        return theDigest.doFinal(pBuffer, pOffset);
     }
 }

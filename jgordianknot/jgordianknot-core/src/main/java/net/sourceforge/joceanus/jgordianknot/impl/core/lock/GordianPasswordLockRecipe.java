@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
@@ -242,22 +243,22 @@ public final class GordianPasswordLockRecipe {
         final GordianMacFactory myMacs = pFactory.getMacFactory();
 
         /* Create the primeMac */
-        GordianMacSpec myMacSpec = GordianMacSpec.hMac(theParams.getPrimeDigest());
+        GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(theParams.getPrimeDigest());
         final GordianMac myPrimeMac = myMacs.createMac(myMacSpec);
         myPrimeMac.initKeyBytes(pPassword);
 
         /* Create the alternateMac */
-        myMacSpec = GordianMacSpec.hMac(theParams.getSecondaryDigest());
+        myMacSpec = GordianMacSpecBuilder.hMac(theParams.getSecondaryDigest());
         final GordianMac mySecondaryMac = myMacs.createMac(myMacSpec);
         mySecondaryMac.initKeyBytes(pPassword);
 
         /* Create the alternateMac */
-        myMacSpec = GordianMacSpec.hMac(theParams.getTertiaryDigest());
+        myMacSpec = GordianMacSpecBuilder.hMac(theParams.getTertiaryDigest());
         final GordianMac myTertiaryMac = myMacs.createMac(myMacSpec);
         myTertiaryMac.initKeyBytes(pPassword);
 
         /* Create the secretMac */
-        myMacSpec = GordianMacSpec.hMac(new GordianDigestSpec(theParams.getSecretDigest(), GordianLength.LEN_512));
+        myMacSpec = GordianMacSpecBuilder.hMac(new GordianDigestSpec(theParams.getSecretDigest(), GordianLength.LEN_512));
         final GordianMac mySecretMac = myMacs.createMac(myMacSpec);
         mySecretMac.initKeyBytes(pPassword);
 

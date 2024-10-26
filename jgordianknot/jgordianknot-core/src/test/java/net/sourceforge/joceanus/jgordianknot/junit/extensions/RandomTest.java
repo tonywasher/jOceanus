@@ -33,12 +33,16 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
@@ -499,7 +503,7 @@ class RandomTest {
 
         /* Create the digest */
         final GordianDigestFactory myFactory = BCFACTORY.getDigestFactory();
-        final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpec.sha1());
+        final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpecBuilder.sha1());
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -563,7 +567,7 @@ class RandomTest {
 
         /* Create the mac */
         final GordianMacFactory myFactory = BCFACTORY.getMacFactory();
-        final GordianMac myMac = myFactory.createMac(GordianMacSpec.hMac(GordianDigestSpec.sha1()));
+        final GordianMac myMac = myFactory.createMac(GordianMacSpecBuilder.hMac(GordianDigestSpecBuilder.sha1()));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -705,7 +709,7 @@ class RandomTest {
 
         /* Build the digest */
         final GordianDigestFactory myFactory = BCFACTORY.getDigestFactory();
-        final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpec.sha2(GordianLength.LEN_512));
+        final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
@@ -826,7 +830,7 @@ class RandomTest {
 
         /* Create the mac */
         final GordianMacFactory myFactory = BCFACTORY.getMacFactory();
-        final GordianMac myMac = myFactory.createMac(GordianMacSpec.hMac(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+        final GordianMac myMac = myFactory.createMac(GordianMacSpecBuilder.hMac(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED,
@@ -903,7 +907,7 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(GordianLength.LEN_128), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
@@ -949,7 +953,7 @@ class RandomTest {
 
         /* Run the tests */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(GordianLength.LEN_128), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
 
@@ -1009,7 +1013,7 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */

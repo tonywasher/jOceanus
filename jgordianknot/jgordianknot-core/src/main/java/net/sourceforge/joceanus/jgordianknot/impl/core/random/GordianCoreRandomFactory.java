@@ -35,11 +35,13 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -48,8 +50,10 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -163,13 +167,13 @@ public class GordianCoreRandomFactory
             case HASH:
                 return buildHash(myDigests.createDigest(myDigest), isResistent);
             case HMAC:
-                final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigest);
+                final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigest);
                 return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
             case CTR:
-                GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                GordianSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
                 return buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             case X931:
-                myCipherSpec = GordianSymCipherSpec.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
                 return buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pRandomSpec));
@@ -266,11 +270,11 @@ public class GordianCoreRandomFactory
     GordianCombinedRandom generateRandomCombined() throws OceanusException {
         /* Create a random ctrSpec */
         final GordianSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
-        final GordianRandomSpec myCtrSpec = GordianRandomSpec.ctr(mySymKeySpec);
+        final GordianRandomSpec myCtrSpec = GordianRandomSpecBuilder.ctr(mySymKeySpec);
 
         /* Create a random hashSpec */
         final GordianDigestSpec myDigestSpec = generateRandomDigestSpec();
-        final GordianRandomSpec myHashSpec = GordianRandomSpec.hash(myDigestSpec);
+        final GordianRandomSpec myHashSpec = GordianRandomSpecBuilder.hash(myDigestSpec);
 
         /* Build the combinedRandom */
         return createRandom(myCtrSpec, myHashSpec);
@@ -504,12 +508,12 @@ public class GordianCoreRandomFactory
         /* For each digestSpec */
         for (final GordianDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
             /* Add a hash random */
-            myList.add(GordianRandomSpec.hash(mySpec));
-            myList.add(GordianRandomSpec.hashResist(mySpec));
+            myList.add(GordianRandomSpecBuilder.hash(mySpec));
+            myList.add(GordianRandomSpecBuilder.hashResist(mySpec));
 
             /* Add an hMac random */
-            myList.add(GordianRandomSpec.hMac(mySpec));
-            myList.add(GordianRandomSpec.hMacResist(mySpec));
+            myList.add(GordianRandomSpecBuilder.hMac(mySpec));
+            myList.add(GordianRandomSpecBuilder.hMacResist(mySpec));
         }
 
         /* For each KeyLength */
@@ -520,12 +524,12 @@ public class GordianCoreRandomFactory
             /* For each symKeySpec */
             for (final GordianSymKeySpec mySpec : theFactory.getCipherFactory().listAllSymKeySpecs(myKeyLen)) {
                 /* Add a CTR random */
-                myList.add(GordianRandomSpec.ctr(mySpec));
-                myList.add(GordianRandomSpec.ctrResist(mySpec));
+                myList.add(GordianRandomSpecBuilder.ctr(mySpec));
+                myList.add(GordianRandomSpecBuilder.ctrResist(mySpec));
 
                 /* Add an X931 random */
-                myList.add(GordianRandomSpec.x931(mySpec));
-                myList.add(GordianRandomSpec.x931Resist(mySpec));
+                myList.add(GordianRandomSpecBuilder.x931(mySpec));
+                myList.add(GordianRandomSpecBuilder.x931Resist(mySpec));
             }
         }
 

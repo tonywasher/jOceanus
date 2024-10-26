@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -453,7 +454,7 @@ public abstract class GordianCoreEphemeralAgreement
         /* Create the hMac and initialise with the key */
         final GordianFactory myBaseFactory = getFactory();
         final GordianMacFactory myMacs = myBaseFactory.getMacFactory();
-        final GordianMacSpec mySpec = GordianMacSpec.hMac(GordianDigestType.WHIRLPOOL);
+        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianDigestType.WHIRLPOOL);
         final GordianMac myMac = myMacs.createMac(mySpec);
         myMac.initKeyBytes(myKey);
 

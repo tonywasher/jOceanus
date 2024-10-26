@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
@@ -38,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
@@ -474,7 +476,7 @@ public class GordianCoreKnuthObfuscater
         final GordianStreamKeySpec mySpec = deriveStreamKeySpecFromEncodedId(myCode);
 
         /* Create the cipherSpec */
-        return GordianStreamCipherSpec.stream(mySpec, myAAD != 0);
+        return GordianStreamCipherSpecBuilder.stream(mySpec, myAAD != 0);
     }
 
     /**
@@ -613,7 +615,7 @@ public class GordianCoreKnuthObfuscater
         /* Switch on the MacType */
         switch (myMacType) {
             case HMAC:
-                return GordianMacSpec.hMac(deriveDigestSpecFromEncodedId(myId), myKeyLen);
+                return GordianMacSpecBuilder.hMac(deriveDigestSpecFromEncodedId(myId), myKeyLen);
             case GMAC:
             case CMAC:
             case KALYNA:
@@ -622,26 +624,26 @@ public class GordianCoreKnuthObfuscater
                 return new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case POLY1305:
                 return myId == 0
-                            ? GordianMacSpec.poly1305Mac()
+                            ? GordianMacSpecBuilder.poly1305Mac()
                             : new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case SKEIN:
                 GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpec.skeinMac(myKeyLen, mySpec);
+                return GordianMacSpecBuilder.skeinMac(myKeyLen, mySpec);
             case BLAKE2:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpec.blake2Mac(myKeyLen, mySpec);
+                return GordianMacSpecBuilder.blake2Mac(myKeyLen, mySpec);
             case BLAKE3:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpec.blake3Mac(mySpec.getDigestLength());
+                return GordianMacSpecBuilder.blake3Mac(mySpec.getDigestLength());
             case KMAC:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpec.kMac(myKeyLen, mySpec);
+                return GordianMacSpecBuilder.kMac(myKeyLen, mySpec);
             case KUPYNA:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpec.kupynaMac(myKeyLen, mySpec.getDigestLength());
+                return GordianMacSpecBuilder.kupynaMac(myKeyLen, mySpec.getDigestLength());
             case ZUC:
                 final GordianLength myLength = deriveLengthFromEncodedId(myId);
-                return GordianMacSpec.zucMac(myKeyLen, myLength);
+                return GordianMacSpecBuilder.zucMac(myKeyLen, myLength);
             case SIPHASH:
                 return new GordianMacSpec(GordianMacType.SIPHASH, deriveSipHashSpecFromEncodedId(myId));
             default:

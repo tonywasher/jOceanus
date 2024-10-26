@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 
 /**
  * SM2 EncryptionSpec.
@@ -186,14 +187,14 @@ public class GordianSM2EncryptionSpec {
 
         /* Loop through the encryptionTypes */
         for (GordianSM2EncryptionType myType : GordianSM2EncryptionType.values()) {
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sm3()));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_224)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_256)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_384)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_512)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.blake2Alt(GordianLength.LEN_256)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.blake2(GordianLength.LEN_512)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.whirlpool()));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sm3()));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_256)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2(GordianLength.LEN_512)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.whirlpool()));
         }
 
         /* Return the list */

@@ -37,14 +37,14 @@
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator and create sending/receiving pairs */
-                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048);
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myClientPair = myGenerator.generateKeyPair();
                     final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
 
                     /* Create anonymous agreement */
-                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF);
-                    final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.cbc(GordianGordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.PKCS7);
+                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
+                    final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.cbc(GordianGordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.PKCS7);
                     final GordianAnonymousAgreement myAnonClient = (GordianAnonymousAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
                     final GordianAnonymousAgreement myAnonServer = (GordianAnonymousAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
 
@@ -82,13 +82,13 @@
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator and create sending/receiving pairs */
-                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048);
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myClientPair = myGenerator.generateKeyPair();
                     final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
 
                     /* Create handshake agreement */
-                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.unified(mySpec, GordianKDFType.SHA256KDF);
+                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unified(mySpec, GordianKDFType.SHA256KDF);
                     final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
                     final GordianHandshakeAgreement myHandshakeClient = (GordianHandshakeAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
                     final GordianHandshakeAgreement myHandshakeServer = (GordianHandshakeAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
@@ -139,12 +139,12 @@
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator and create server pair */
-                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.ed448();
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
 
                     /* Create signed agreement */
-                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.signed(mySpec, GordianKDFType.SHA256KDF);
+                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.signed(mySpec, GordianKDFType.SHA256KDF);
                     final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
                     final GordianSignedAgreement myHandshakeClient = (GordianSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
                     final GordianSignedAgreement myHandshakeServer = (GordianSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
@@ -208,14 +208,14 @@
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator */
-                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.composite(GordianKeyPairSpec.dh(GordianDGroup.FFDHE2048),
-                                                                                   GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1));
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpec.dh(GordianDGroup.FFDHE2048),
+                                                                                          GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1));
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
                     GordianKeyPair mySigningPair = myKeyPair;
 
                     /* Access agreement */
-                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.composite(mySpec, GordianKDFType.SHA256KDF);
+                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.composite(mySpec, GordianKDFType.SHA256KDF);
                     final GordianAgreement myAgree = myAgreementFactory.createAgreement(myAgreeSpec);
 
                     /* Handle as standard */

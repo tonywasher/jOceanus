@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
@@ -88,9 +89,9 @@ class ZipFileTest {
 
         /* Create the keyPair */
         final GordianKeyPairFactory myAsymFactory = myFactory.getKeyPairFactory();
-        GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpec.x448());
+        GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpecBuilder.x448());
         final GordianKeyPair myKeyPair1 = myPairGenerator.generateKeyPair();
-        myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpec.kyber(GordianKYBERSpec.KYBER512));
+        myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER512));
         final GordianKeyPair myKeyPair2 = myPairGenerator.generateKeyPair();
 
         /* Return the stream */

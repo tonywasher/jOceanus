@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHash;
@@ -826,21 +827,21 @@ class AsymmetricStore {
      */
     private static List<GordianKeyPairSpec> compositeKeySpecProvider() {
         final List<GordianKeyPairSpec> myResult = new ArrayList<>();
-        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
-                                                  GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
-                                                  GordianKeyPairSpec.ed25519()));
-        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048),
-                                                  GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1)));
-        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1),
-                                                  GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1)));
-        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488),
-                                                  GordianKeyPairSpec.frodo(GordianFRODOSpec.AES640),
-                                                  GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)));
-        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
-                                                  GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048),
-                                                  GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1)));
-        myResult.add(GordianKeyPairSpec.composite(GordianKeyPairSpec.xmss(GordianXMSSDigestType.SHA256, GordianXMSSHeight.H10),
-                                                  GordianKeyPairSpec.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
+                                                         GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1),
+                                                         GordianKeyPairSpecBuilder.ed25519()));
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048),
+                                                         GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1)));
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1),
+                                                         GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1)));
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488),
+                                                         GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640),
+                                                         GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)));
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
+                                                         GordianKeyPairSpecBuilder.elGamal(GordianDHGroup.FFDHE2048),
+                                                         GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1)));
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA256, GordianXMSSHeight.H10),
+                                                         GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
                                                                                                GordianLMSWidth.W1, GordianLength.LEN_256))));
         return myResult;
     }

@@ -28,6 +28,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
@@ -277,7 +278,7 @@ public abstract class GordianCoreAgreementFactory
             case BIKE:
             case NTRU:
             case NTRUPRIME:
-                myAgreements.add(GordianAgreementSpec.kem(pKeyPairSpec, GordianKDFType.NONE));
+                myAgreements.add(GordianAgreementSpecBuilder.kem(pKeyPairSpec, GordianKDFType.NONE));
                 break;
             case EC:
             case SM2:

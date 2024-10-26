@@ -26,8 +26,10 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -222,26 +224,26 @@ public abstract class GordianCoreEncryptorFactory
         /* Switch on keyPairType */
         switch (pKeyPairType) {
             case RSA:
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
                 break;
             case ELGAMAL:
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
                 break;
             case EC:
             case SM2:
             case GOST2012:
                 /* Add EC-ElGamal */
-                myEncryptors.add(GordianEncryptorSpec.ec());
+                myEncryptors.add(GordianEncryptorSpecBuilder.ec());
 
                 /* Loop through the encryptionSpecs */
                 for (GordianSM2EncryptionSpec mySpec : GordianSM2EncryptionSpec.listPossibleSpecs()) {
-                    myEncryptors.add(GordianEncryptorSpec.sm2(mySpec));
+                    myEncryptors.add(GordianEncryptorSpecBuilder.sm2(mySpec));
                 }
                 break;
             default:
@@ -256,13 +258,13 @@ public abstract class GordianCoreEncryptorFactory
     public GordianEncryptorSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case EC:
             case SM2:
             case GOST2012:
-                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sm3()));
+                return GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sm3()));
             case ELGAMAL:
-                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case COMPOSITE:
                 final List<GordianEncryptorSpec> mySpecs = new ArrayList<>();
                 final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
@@ -270,7 +272,7 @@ public abstract class GordianCoreEncryptorFactory
                     final GordianKeyPairSpec mySpec = myIterator.next();
                     mySpecs.add(defaultForKeyPair(mySpec));
                 }
-                final GordianEncryptorSpec mySpec = GordianEncryptorSpec.composite(mySpecs);
+                final GordianEncryptorSpec mySpec = GordianEncryptorSpecBuilder.composite(mySpecs);
                 return mySpec.isValid() ? mySpec : null;
             default:
                 return null;

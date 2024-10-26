@@ -23,7 +23,7 @@
                     final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                     /* Access keyGenerator */
-                    final GordianStreamKeySpec mySpec = GordianStreamKeySpec.hc(GordianLength.LEN_256);
+                    final GordianStreamKeySpec mySpec = GordianStreamKeySpecBuilder.hc(GordianLength.LEN_256);
                     final GordianKeyGenerator&lt;GordianStreamKeySpec&gt; myGenerator = myCipherFactory.getKeyGenerator(mySpec);
                     final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                 </source>
@@ -68,12 +68,12 @@
                     final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                     /* Create key */
-                    final GordianStreamKeySpec myKeySpec = GordianStreamKeySpec.hc(GordianLength.LEN_256);
+                    final GordianStreamKeySpec myKeySpec = GordianStreamKeySpecBuilder.hc(GordianLength.LEN_256);
                     final GordianKeyGenerator&lt;GordianStreamKeySpec&gt; myGenerator = myCipherFactory.getKeyGenerator(myKeySpec);
                     final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
 
                     /* Create cipher */
-                    final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
+                    final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
                     final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
 
                     /* Encrypt message with random nonce */

@@ -19,10 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.ext.params.Blake2Parameters;
-import org.bouncycastle.crypto.macs.KMAC;
+import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.crypto.params.SkeinParameters;
 
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -33,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Wrapper for BouncyCastle MAC.
  */
-public final class BouncyMac
+public class BouncyMac
         extends GordianCoreMac {
     /**
      * Mac.
@@ -71,9 +70,7 @@ public final class BouncyMac
 
     @Override
     public int getMacSize() {
-        return theMac instanceof KMAC
-               ? getMacSpec().getDigestSpec().getDigestLength().getByteLength()
-               : theMac.getMacSize();
+        return theMac.getMacSize();
     }
 
     /**
@@ -86,7 +83,7 @@ public final class BouncyMac
                                              final byte[] pIV) {
         /* Handle Skein Parameters */
         if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
-            final SkeinParameters.Builder myBuilder = new SkeinParameters.Builder();
+            final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setNonce(pIV);
@@ -132,19 +129,13 @@ public final class BouncyMac
     @Override
     public byte[] finish() {
         final byte[] myResult = new byte[getMacSize()];
-        if (theMac instanceof KMAC) {
-            ((KMAC) theMac).doFinal(myResult, 0, getMacSize());
-        } else {
-            theMac.doFinal(myResult, 0);
-        }
+        doFinish(myResult, 0);
         return myResult;
     }
 
     @Override
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) {
-        return theMac instanceof KMAC
-            ? ((KMAC) theMac).doFinal(pBuffer, pOffset, getMacSize())
-            : theMac.doFinal(pBuffer, pOffset);
+        return theMac.doFinal(pBuffer, pOffset);
     }
 }

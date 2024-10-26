@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -120,7 +121,7 @@ public class GordianCoreKeySetAADCipher
 
         /* Create mac and buffers */
         final GordianMacFactory myMacFactory = pKeySet.getFactory().getMacFactory();
-        theMac = myMacFactory.createMac(GordianMacSpec.poly1305Mac());
+        theMac = myMacFactory.createMac(GordianMacSpecBuilder.poly1305Mac());
         theAEAD = new ByteArrayOutputStream();
         cachedBytes = new byte[MACSIZE];
     }

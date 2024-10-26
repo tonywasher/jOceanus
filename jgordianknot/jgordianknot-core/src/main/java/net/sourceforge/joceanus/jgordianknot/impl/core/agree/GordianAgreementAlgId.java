@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
@@ -82,7 +83,7 @@ public class GordianAgreementAlgId {
     /**
      * Null KeyPairSpec for Partial AgreementSpec.
      */
-    private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpec.ed448();
+    private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpecBuilder.ed448();
 
     /**
      * The factory.
@@ -175,7 +176,7 @@ public class GordianAgreementAlgId {
             /* Add agreements */
             addKeyPair(mySpec);
         }
-        addKeyPair(GordianKeyPairSpec.composite());
+        addKeyPair(GordianKeyPairSpecBuilder.composite());
     }
 
     /**
@@ -297,7 +298,7 @@ public class GordianAgreementAlgId {
         final GordianKeyPairSpec mySpec = pSpec.getKeyPairSpec();
         if (mySpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
             final ASN1EncodableVector v = new ASN1EncodableVector();
-            final ASN1ObjectIdentifier myId = theKeyPair2IdMap.get(GordianKeyPairSpec.composite());
+            final ASN1ObjectIdentifier myId = theKeyPair2IdMap.get(GordianKeyPairSpecBuilder.composite());
             final Iterator<GordianKeyPairSpec> myIterator = mySpec.keySpecIterator();
             while (myIterator.hasNext()) {
                 final GordianKeyPairSpec myPair = myIterator.next();
@@ -332,7 +333,7 @@ public class GordianAgreementAlgId {
             while (en.hasMoreElements()) {
                 mySpecs.add(theId2KeyPairMap.get(ASN1ObjectIdentifier.getInstance(en.nextElement())));
             }
-            return new GordianAgreementSpec(GordianKeyPairSpec.composite(mySpecs), mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
+            return new GordianAgreementSpec(GordianKeyPairSpecBuilder.composite(mySpecs), mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
         }
 
         /* Return the AgreementSpec */

@@ -21,6 +21,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -371,13 +372,13 @@ public class GordianXMSSKeySpec {
         public GordianDigestSpec getDigestSpec() {
             switch (this) {
                 case SHA256:
-                    return GordianDigestSpec.sha2(GordianLength.LEN_256);
+                    return GordianDigestSpecBuilder.sha2(GordianLength.LEN_256);
                 case SHA512:
-                    return GordianDigestSpec.sha2(GordianLength.LEN_512);
+                    return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512);
                 case SHAKE128:
-                    return GordianDigestSpec.shake128(GordianLength.LEN_256);
+                    return GordianDigestSpecBuilder.shake128(GordianLength.LEN_256);
                 case SHAKE256:
-                    return GordianDigestSpec.shake256(GordianLength.LEN_512);
+                    return GordianDigestSpecBuilder.shake256(GordianLength.LEN_512);
                 default:
                     throw new IllegalStateException();
             }

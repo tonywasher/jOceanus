@@ -82,6 +82,14 @@ public class SkeinDigest
     }
 
     /**
+     * Obtain the base.
+     * @return the base
+     */
+    SkeinBase getBase() {
+        return engine;
+    }
+
+    /**
      * Optionally initialises the Skein digest with the provided parameters.<br>
      * See {@link SkeinParameters} for details on the parameterisation of the Skein hash function.
      *

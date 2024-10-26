@@ -23,11 +23,14 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -639,7 +642,7 @@ class SymmetricStore {
          */
         public boolean hasAAD() {
             if (theKeySpec.supportsAAD()) {
-                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(theKeySpec, true);
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(theKeySpec, true);
                 return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);
             }
             return false;
@@ -997,19 +1000,16 @@ class SymmetricStore {
      */
     static List<FactorySymPBECipherSpec> symPBECipherProvider(final FactorySymCipherSpec pCipherSpec) {
         /* Access details */
-        final GordianFactory myFactory = pCipherSpec.getFactory();
-        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
-        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final List<FactorySymPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        GordianPBESpec myPBESpec = GordianPBESpec.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        GordianPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpec.pkcs12(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        myPBESpec = GordianPBESpecBuilder.pkcs12(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpec.scrypt(16, 1, 1);
+        myPBESpec = GordianPBESpecBuilder.scrypt(16, 1, 1);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpec.argon2(1, 4096, 2);
+        myPBESpec = GordianPBESpecBuilder.argon2(1, 4096, 2);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
 
         /* Return the list */
@@ -1049,19 +1049,16 @@ class SymmetricStore {
      */
     static List<FactoryStreamPBECipherSpec> streamPBECipherProvider(final FactoryStreamCipherSpec pCipherSpec) {
         /* Access details */
-        final GordianFactory myFactory = pCipherSpec.getFactory();
-        final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
-        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final List<FactoryStreamPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        GordianPBESpec myPBESpec = GordianPBESpec.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        GordianPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpec.pkcs12(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        myPBESpec = GordianPBESpecBuilder.pkcs12(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpec.scrypt(16, 1, 1);
+        myPBESpec = GordianPBESpecBuilder.scrypt(16, 1, 1);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpec.argon2(1, 4096, 2);
+        myPBESpec = GordianPBESpecBuilder.argon2(1, 4096, 2);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
 
         /* Return the list */

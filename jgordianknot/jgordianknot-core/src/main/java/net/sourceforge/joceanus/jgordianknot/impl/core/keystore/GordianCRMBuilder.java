@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
@@ -414,7 +415,7 @@ public class GordianCRMBuilder {
         /* Create the digest */
         final GordianCoreFactory myFactory = theGateway.getFactory();
         final GordianDigestFactory myDigests = myFactory.getDigestFactory();
-        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpec.sha2(GordianLength.LEN_256));
+        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));
 
         /* Calculate the digest */
         if (myMACSecret != null) {

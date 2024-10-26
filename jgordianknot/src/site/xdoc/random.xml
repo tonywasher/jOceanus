@@ -22,11 +22,11 @@
                     final GordianRandomFactory myRandomFactory = myBaseFactory.getRandomFactory();
 
                     /* Create secureRandom */
-                    final GordianRandomSpec myHashSpec = GordianRandomSpec.hash(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                    final GordianRandomSpec myHashSpec = GordianRandomSpecBuilder.hash(GordianDigestSpec.sha2(GordianLength.LEN_512));
                     final SecureRandom myRandom = myRandomFactory.createRandom(myHashSpec);
 
                     /* Create combinedRandom */
-                    final GordianRandomSpec myCtrSpec = GordianRandomSpec.ctr(GordianSymKeySpec.aes2(GordianLength.LEN_128));
+                    final GordianRandomSpec myCtrSpec = GordianRandomSpecBuilder.ctr(GordianSymKeySpec.aes2(GordianLength.LEN_128));
                     final SecureRandom myComboRandom = myRandomFactory.createRandom(myCtrSpec, myHashSpec);
                 </source>
             </subsection>

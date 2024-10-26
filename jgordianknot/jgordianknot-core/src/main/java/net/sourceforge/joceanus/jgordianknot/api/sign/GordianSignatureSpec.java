@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +23,6 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Signature Specification.
@@ -98,162 +96,6 @@ public final class GordianSignatureSpec {
         isValid = checkValidity();
     }
 
-    /**
-     * Create RSASpec.
-     * @param pSignatureType the signatureType
-     * @param pDigestSpec the digestSpec
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec rsa(final GordianSignatureType pSignatureType,
-                                           final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianKeyPairType.RSA, pSignatureType, pDigestSpec);
-    }
-
-    /**
-     * Create DSASpec.
-     * @param pSignatureType the signatureType
-     * @param pDigestSpec the digestSpec
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec dsa(final GordianSignatureType pSignatureType,
-                                           final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianKeyPairType.DSA, pSignatureType, pDigestSpec);
-    }
-
-    /**
-     * Create ECSpec.
-     * @param pSignatureType the signatureType
-     * @param pDigestSpec the digestSpec
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec ec(final GordianSignatureType pSignatureType,
-                                          final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianKeyPairType.EC, pSignatureType, pDigestSpec);
-    }
-
-    /**
-     * Create SM2Spec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec sm2() {
-        return new GordianSignatureSpec(GordianKeyPairType.SM2, GordianDigestSpec.sm3());
-    }
-
-    /**
-     * Create DSTU4145Spec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec dstu4145() {
-        return new GordianSignatureSpec(GordianKeyPairType.DSTU4145, GordianDigestSpec.gost());
-    }
-
-    /**
-     * Create GOST2012Spec.
-     * @param pLength the length
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec gost2012(final GordianLength pLength) {
-        return new GordianSignatureSpec(GordianKeyPairType.GOST2012, GordianDigestSpec.streebog(pLength));
-    }
-
-    /**
-     * Create EdDSASpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec edDSA() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create SPHINCSPlusSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec sphincsPlus() {
-        return new GordianSignatureSpec(GordianKeyPairType.SPHINCSPLUS, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create DilithiumSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec dilithium() {
-        return new GordianSignatureSpec(GordianKeyPairType.DILITHIUM, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create falconSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec falcon() {
-        return new GordianSignatureSpec(GordianKeyPairType.FALCON, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create picnicSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec picnic() {
-        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create picnicSpec.
-     * @param pDigest the digestSpec
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
-        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);
-    }
-
-    /**
-     * Create rainbowSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec rainbow() {
-        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create xmssSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec xmss() {
-        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create xmssPHSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec xmssph() {
-        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.PREHASH);
-    }
-
-    /**
-     * Create lmsSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec lms() {
-        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create CompositeSpec.
-     * @param pSpecs the list of encryptorSpecs
-     * @return the encryptorSpec
-     */
-    public static GordianSignatureSpec composite(final GordianSignatureSpec... pSpecs) {
-        return composite(Arrays.asList(pSpecs));
-    }
-
-    /**
-     * Create CompositeSpec.
-     * @param pSpecs the list of encryptorSpecs
-     * @return the encryptorSpec
-     */
-    public static GordianSignatureSpec composite(final List<GordianSignatureSpec> pSpecs) {
-        return new GordianSignatureSpec(GordianKeyPairType.COMPOSITE, pSpecs);
-    }
     /**
      * Obtain the keyPairType.
      * @return the keyPairType.
@@ -429,24 +271,14 @@ public final class GordianSignatureSpec {
         /* Access the target SignatureSpec */
         final GordianSignatureSpec myThat = (GordianSignatureSpec) pThat;
 
-        /* Check KeyPairType and signatureType */
-        if (theKeyPairType != myThat.getKeyPairType()
-                || theSignatureType != myThat.getSignatureType()) {
-            return false;
-        }
-
-        /* Match signatureSpec */
-        return Objects.equals(theSignatureSpec, myThat.theSignatureSpec);
+        /* Check KeyPairType, signatureType and signatureSpec */
+        return theKeyPairType == myThat.getKeyPairType()
+                && theSignatureType == myThat.getSignatureType()
+                && Objects.equals(theSignatureSpec, myThat.theSignatureSpec);
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        hashCode += theSignatureType.hashCode();
-        hashCode <<= TethysDataConverter.BYTE_SHIFT;
-        if (theSignatureSpec != null) {
-            hashCode += theSignatureSpec.hashCode();
-        }
-        return hashCode;
+        return Objects.hash(theKeyPairType, theSignatureType, theSignatureSpec);
     }
 }

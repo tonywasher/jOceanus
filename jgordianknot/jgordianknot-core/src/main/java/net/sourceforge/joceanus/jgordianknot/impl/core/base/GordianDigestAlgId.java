@@ -35,6 +35,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 
 /**
@@ -106,60 +107,60 @@ public class GordianDigestAlgId {
      * Add SHA digests.
      */
     private void addSHADigests() {
-        addToMaps(GordianDigestSpec.sha1(), new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
-        addToMaps(GordianDigestSpec.sha2(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha2(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha2(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha2(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha2Alt(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_224, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha2Alt(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_224, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_512, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.shake128(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.shake256(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha1(), new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
+        addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2Alt(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_224, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2Alt(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_224, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_512, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.shake128(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.shake256(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE));
     }
 
     /**
      * Add Blake digests.
      */
     private void addBlakeDigests() {
-        addToMaps(GordianDigestSpec.blake2(GordianLength.LEN_128), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s128, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b160, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2Alt(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s160, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2(GordianLength.LEN_224), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s224, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2Alt(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2(GordianLength.LEN_384), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b384, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.blake2(GordianLength.LEN_512), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b512, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_128), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s128, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b160, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s160, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_224), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s224, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_384), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b384, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_512), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b512, DERNull.INSTANCE));
     }
 
     /**
      * Add GOST digests.
      */
     private void addGOSTDigests() {
-        addToMaps(GordianDigestSpec.gost(), new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3411));
-        addToMaps(GordianDigestSpec.streebog(GordianLength.LEN_256), new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.streebog(GordianLength.LEN_512), new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_512, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.kupyna(GordianLength.LEN_256), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564digest_256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.kupyna(GordianLength.LEN_384), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564digest_384, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.kupyna(GordianLength.LEN_512), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564digest_512, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.gost(), new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3411));
+        addToMaps(GordianDigestSpecBuilder.streebog(GordianLength.LEN_256), new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.streebog(GordianLength.LEN_512), new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_512, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.kupyna(GordianLength.LEN_256), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564digest_256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.kupyna(GordianLength.LEN_384), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564digest_384, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.kupyna(GordianLength.LEN_512), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564digest_512, DERNull.INSTANCE));
     }
 
     /**
      * Add Sundry digests.
      */
     private void addSundryDigests() {
-        addToMaps(GordianDigestSpec.md2(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md2, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.md4(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md4, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.md5(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md5, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.sm3(), new AlgorithmIdentifier(GMObjectIdentifiers.sm3, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.whirlpool(), new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.0.10118.3.0.55"), DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.tiger(), new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.6.1.4.1.11591.12.2"), DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.ripemd(GordianLength.LEN_128), new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ripemd128, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.ripemd(GordianLength.LEN_160), new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ripemd160, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.ripemd(GordianLength.LEN_256), new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ripemd256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.md2(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md2, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.md4(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md4, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.md5(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md5, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sm3(), new AlgorithmIdentifier(GMObjectIdentifiers.sm3, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.whirlpool(), new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.0.10118.3.0.55"), DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.tiger(), new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.6.1.4.1.11591.12.2"), DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.ripemd(GordianLength.LEN_128), new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ripemd128, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.ripemd(GordianLength.LEN_160), new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ripemd160, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.ripemd(GordianLength.LEN_256), new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ripemd256, DERNull.INSTANCE));
     }
 
     /**

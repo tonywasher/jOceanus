@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -33,13 +34,21 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianStreamSubKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -358,7 +367,7 @@ public abstract class GordianCoreCipherFactory
         final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
         if (myPBESpec instanceof GordianPBEDigestAndCountSpec) {
             final GordianDigestSpec mySpec = ((GordianPBEDigestAndCountSpec) myPBESpec).getDigestSpec();
-            return GordianDigestSpec.sha2(GordianLength.LEN_512).equals(mySpec);
+            return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512).equals(mySpec);
         }
 
         /* OK */
@@ -393,12 +402,12 @@ public abstract class GordianCoreCipherFactory
         final List<GordianStreamCipherSpec> myResult = new ArrayList<>();
         for (GordianStreamKeySpec mySpec : listAllSupportedStreamKeySpecs(pKeyLen)) {
             /* Add the standard cipher */
-            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
+            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(mySpec);
             myResult.add(myCipherSpec);
 
             /* Add the AAD Cipher if supported */
             if (mySpec.supportsAAD()) {
-                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(mySpec, true);
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(mySpec, true);
                 if (supportedStreamCipherSpecs().test(myAADSpec)) {
                     myResult.add(myAADSpec);
                 }
@@ -409,7 +418,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
-        return GordianStreamKeySpec.listAll(pKeyLen)
+        return listAllStreamKeySpecs(pKeyLen)
                 .stream()
                 .filter(supportedStreamKeySpecs())
                 .collect(Collectors.toList());
@@ -469,5 +478,86 @@ public abstract class GordianCoreCipherFactory
 
         /* Return the list */
         return myList;
+    }
+
+    /**
+     * List all possible streamKeySpecs for the keyLength.
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    private static List<GordianStreamKeySpec> listAllStreamKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianStreamKeySpec> myList = new ArrayList<>();
+
+        /* Check that the keyLength is supported */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return myList;
+        }
+
+        /* For each streamKey type */
+        for (final GordianStreamKeyType myType : GordianStreamKeyType.values()) {
+            /* if valid for keyLength */
+            if (myType.validForKeyLength(pKeyLen)) {
+                /* If we need a subType */
+                if (myType.needsSubKeyType()) {
+                    /* Add all valid subKeyTypes */
+                    myList.addAll(listStreamSubKeys(myType, pKeyLen));
+
+                    /* Else just add the spec */
+                } else {
+                    myList.add(new GordianStreamKeySpec(myType, pKeyLen));
+                }
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * List all possible subKeyTypes Specs.
+     * @param pKeyType the keyType
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    private static List<GordianStreamKeySpec> listStreamSubKeys(final GordianStreamKeyType pKeyType,
+                                                                final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianStreamKeySpec> myList = new ArrayList<>();
+
+        /* Loop through the subKeyTypes */
+        for (GordianStreamSubKeyType mySubKeyType : listStreamSubKeys(pKeyType)) {
+            /* Add valid subKeySpec */
+            final GordianStreamKeySpec mySpec = new GordianStreamKeySpec(pKeyType, pKeyLen, mySubKeyType);
+            if (mySpec.isValid()) {
+                myList.add(mySpec);
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * List all possible subKeyTypes.
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    private static List<GordianStreamSubKeyType> listStreamSubKeys(final GordianStreamKeyType pKeyType) {
+        /* Switch on keyType */
+        switch (pKeyType) {
+            case SALSA20:
+                return Arrays.asList(GordianSalsa20Key.values());
+            case CHACHA20:
+                return Arrays.asList(GordianChaCha20Key.values());
+            case VMPC:
+                return Arrays.asList(GordianVMPCKey.values());
+            case SKEINXOF:
+                return Arrays.asList(GordianSkeinXofKey.values());
+            case BLAKE2XOF:
+                return Arrays.asList(GordianBlakeXofKey.values());
+            default:
+                return Collections.emptyList();
+        }
     }
 }

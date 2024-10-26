@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -288,7 +289,7 @@ public class GordianIdManager {
         }
 
         /* Modify list to remove rawPoly1305 */
-        mySpecs.remove(GordianMacSpec.poly1305Mac());
+        mySpecs.remove(GordianMacSpecBuilder.poly1305Mac());
 
         /* Extract the macTypes */
         final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).collect(Collectors.toList());
