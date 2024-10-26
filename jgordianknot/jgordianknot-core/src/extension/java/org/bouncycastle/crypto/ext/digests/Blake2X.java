@@ -272,9 +272,12 @@ public class Blake2X
     @Override
     public void reset() {
         theUnderlying.reset();
+        theComposite.reset();
         theRoot = null;
         theCurrent = null;
         theXofRemaining = -1L;
+        theHashIndex = 0;
+        theNodeIndex = 0;
     }
 
     @Override

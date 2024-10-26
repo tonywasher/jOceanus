@@ -26,6 +26,7 @@ import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.ext.macs.Blake3Mac;
+import org.bouncycastle.crypto.ext.macs.KMACWrapper;
 import org.bouncycastle.crypto.ext.macs.SkeinMac;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
@@ -36,7 +37,6 @@ import org.bouncycastle.crypto.macs.CMac;
 import org.bouncycastle.crypto.macs.DSTU7564Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.GOST28147Mac;
-import org.bouncycastle.crypto.macs.KMAC;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.SipHash128;
@@ -267,7 +267,7 @@ public class BouncyMacFactory
     }
 
     /**
-     * Create the BouncyCastle blakeMac.
+     * Create the BouncyCastle blake3Mac.
      *
      * @param pSpec the digestSpec
      * @return the MAC
@@ -285,7 +285,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKMAC(final GordianMacSpec pSpec) {
         final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new KMAC(mySpec.getStateLength().getLength(), new byte[0]);
+        return new KMACWrapper(mySpec.getStateLength().getLength());
     }
 
     /**

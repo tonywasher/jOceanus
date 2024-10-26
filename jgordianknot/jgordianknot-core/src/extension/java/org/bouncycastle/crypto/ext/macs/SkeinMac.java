@@ -2,8 +2,11 @@ package org.bouncycastle.crypto.ext.macs;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.ext.digests.SkeinBase;
+import org.bouncycastle.crypto.ext.digests.SkeinXof;
+import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.SkeinParameters;
 
@@ -21,7 +24,7 @@ import org.bouncycastle.crypto.params.SkeinParameters;
  * @see SkeinParameters
  */
 public class SkeinMac
-        implements Mac
+        implements Mac, Xof
 {
     /**
      * 256 bit block size - Skein MAC-256
@@ -37,6 +40,7 @@ public class SkeinMac
     public static final int SKEIN_1024 = SkeinBase.SKEIN_1024;
 
     private SkeinBase engine;
+    private SkeinXof xof;
 
     /**
      * Constructs a Skein MAC with an internal state size and output size.
@@ -48,11 +52,13 @@ public class SkeinMac
     public SkeinMac(int stateSizeBits, int digestSizeBits)
     {
         this.engine = new SkeinBase(stateSizeBits, digestSizeBits);
+        this.xof = new SkeinXof(engine);
     }
 
     public SkeinMac(SkeinMac mac)
     {
         this.engine = new SkeinBase(mac.engine);
+        this.xof = new SkeinXof(engine);
     }
 
     public String getAlgorithmName()
@@ -69,14 +75,14 @@ public class SkeinMac
     public void init(CipherParameters params)
             throws IllegalArgumentException
     {
-        SkeinParameters skeinParameters;
-        if (params instanceof SkeinParameters)
+        SkeinXParameters skeinParameters;
+        if (params instanceof SkeinXParameters)
         {
-            skeinParameters = (SkeinParameters)params;
+            skeinParameters = (SkeinXParameters)params;
         }
         else if (params instanceof KeyParameter)
         {
-            skeinParameters = new SkeinParameters.Builder().setKey(((KeyParameter)params).getKey()).build();
+            skeinParameters = new SkeinXParameters.Builder().setKey(((KeyParameter)params).getKey()).build();
         }
         else
         {
@@ -97,22 +103,41 @@ public class SkeinMac
 
     public void reset()
     {
-        engine.reset();
+        xof.reset();
     }
 
     public void update(byte in)
     {
-        engine.update(in);
+        xof.update(in);
     }
 
     public void update(byte[] in, int inOff, int len)
     {
-        engine.update(in, inOff, len);
+        xof.update(in, inOff, len);
     }
 
     public int doFinal(byte[] out, int outOff)
     {
-        return engine.doFinal(out, outOff);
+        return xof.doFinal(out, outOff);
     }
 
+    @Override
+    public int doFinal(final byte[] out, final int outOff, final int outLen) {
+        return xof.doFinal(out, outOff, outLen);
+    }
+
+    @Override
+    public int doOutput(final byte[] out, final int outOff, final int outLen) {
+        return xof.doOutput(out, outOff, outLen);
+    }
+
+    @Override
+    public int getByteLength() {
+        return xof.getByteLength();
+    }
+
+    @Override
+    public int getDigestSize() {
+        return xof.getDigestSize();
+    }
 }

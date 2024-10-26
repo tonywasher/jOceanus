@@ -465,7 +465,7 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
-     * Check blake keyLength validity.
+     * Check KMAC keyLength validity.
      * @param pKeyLen the keyLength
      * @param pSpec the digestSpec
      * @return valid true/false
@@ -538,6 +538,9 @@ public final class GordianMacSpec implements GordianKeySpec {
                 case BLAKE2:
                     theName = GordianDigestType.getBlake2AlgorithmForStateLength(getDigestStateLength())
                                  + "Mac" + getDigestLength() + SEP + theKeyLength;
+                    break;
+                case BLAKE3:
+                    theName += SEP + getDigestLength();
                     break;
                 case VMPC:
                     theName += theKeyLength;

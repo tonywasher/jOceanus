@@ -99,6 +99,14 @@ public class SkeinXof
     }
 
     /**
+     * Constructor.
+     * @param pDigest the underlying digest.
+     */
+    public SkeinXof(final SkeinDigest pDigest) {
+        this(pDigest.getBase());
+    }
+
+    /**
      * Initialise.
      * @param pParams the parameters.
      */

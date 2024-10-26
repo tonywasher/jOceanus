@@ -19,95 +19,105 @@ package org.bouncycastle.crypto.ext.macs;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
-import org.bouncycastle.crypto.ext.digests.Blake3Digest;
-import org.bouncycastle.crypto.ext.params.Blake3Parameters;
+import org.bouncycastle.crypto.ext.params.KeccakParameters;
+import org.bouncycastle.crypto.ext.params.KeccakParameters.Builder;
+import org.bouncycastle.crypto.macs.KMAC;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
- * Bouncy implementation of Blake3Mac.
+ * KMAC.
  */
-public class Blake3Mac
-        implements Mac, Xof {
+public class KMACWrapper
+    implements Mac, Xof {
     /**
-     * Digest.
+     * The bit length for the Mac.
      */
-    private final Blake3Digest theDigest;
+    private final int theBitLength;
 
     /**
-     * Create a blake2Mac with the specified digest.
-     * @param pDigest the base digest.
+     * The base digest.
      */
-    public Blake3Mac(final Blake3Digest pDigest) {
-        /* Store the digest */
-        theDigest = pDigest;
+    private KMAC theMac;
+
+    /**
+     * Constructor.
+     * @param pBitLength the bitLength
+     */
+    public KMACWrapper(final int pBitLength) {
+        theBitLength = pBitLength;
+        theMac = new KMAC(theBitLength, null);
     }
 
     @Override
     public String getAlgorithmName() {
-        return theDigest.getAlgorithmName() + "Mac";
+        return theMac.getAlgorithmName();
     }
 
     @Override
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
-        if (myParams instanceof KeyParameter) {
-            myParams = Blake3Parameters.key(((KeyParameter) myParams).getKey());
+        byte[] myPersonal = null;
+        if (myParams instanceof KeccakParameters) {
+            KeccakParameters myKeccakParams = (KeccakParameters) myParams;
+            myParams = new KeyParameter(myKeccakParams.getKey());
+            myPersonal = myKeccakParams.getPersonalisation();
         }
-        if (!(myParams instanceof Blake3Parameters)) {
-            throw new IllegalArgumentException("Invalid parameter passed to Blake3Mac init - "
+        if (!(myParams instanceof KeyParameter)) {
+            throw new IllegalArgumentException("Invalid parameter passed to KMAC init - "
                     + pParams.getClass().getName());
         }
-        final Blake3Parameters myBlakeParams = (Blake3Parameters) myParams;
-        if (myBlakeParams.getKey() == null) {
-            throw new IllegalArgumentException("Blake3Mac requires a key parameter.");
+        final KeyParameter myKeyParams = (KeyParameter) myParams;
+        if (myKeyParams.getKey() == null) {
+            throw new IllegalArgumentException("KMAC requires a key parameter.");
         }
 
-        /* Configure the digest */
-        theDigest.init(myBlakeParams);
+        /* Configure the Mac */
+        theMac = new KMAC(theBitLength, myPersonal);
+        theMac.init(myKeyParams);
     }
 
     @Override
     public int getMacSize() {
-        return theDigest.getDigestSize();
+        return theMac.getMacSize();
     }
 
     @Override
     public void update(final byte in) {
-        theDigest.update(in);
+        theMac.update(in);
     }
 
     @Override
     public void update(final byte[] in, final int inOff, final int len) {
-        theDigest.update(in, inOff, len);
+        theMac.update(in, inOff, len);
     }
 
     @Override
     public int doFinal(final byte[] out, final int outOff) {
-        return theDigest.doFinal(out, outOff);
+        return theMac.doFinal(out, outOff);
     }
 
     @Override
     public void reset() {
-        theDigest.reset();
+        theMac.reset();
     }
 
     @Override
     public int doFinal(final byte[] out, final int outOff, final int outLen) {
-        return theDigest.doFinal(out, outOff, outLen);
+        return theMac.doFinal(out, outOff, outLen);
     }
 
     @Override
     public int doOutput(final byte[] out, final int outOff, final int outLen) {
-        return theDigest.doOutput(out, outOff, outLen);
+        return theMac.doOutput(out, outOff, outLen);
     }
 
     @Override
     public int getByteLength() {
-        return theDigest.getByteLength();
+        return theMac.getByteLength();
     }
 
     @Override
     public int getDigestSize() {
-        return theDigest.getDigestSize();
+        return theMac.getDigestSize();
     }
 }

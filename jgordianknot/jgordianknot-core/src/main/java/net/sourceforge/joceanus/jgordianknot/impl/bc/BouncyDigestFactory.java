@@ -53,6 +53,7 @@ import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupilamiFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
+import org.bouncycastle.crypto.ext.digests.SkeinXof;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -270,7 +271,8 @@ public class BouncyDigestFactory
      */
     private static Digest getSkeinDigest(final GordianLength pStateLength,
                                          final GordianLength pLength) {
-        return new SkeinDigest(pStateLength.getLength(), pLength.getLength());
+        final SkeinDigest myDigest = new SkeinDigest(pStateLength.getLength(), pLength.getLength());
+        return new SkeinXof(myDigest);
     }
 
     /**
