@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -25,6 +23,8 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+
+import java.util.Objects;
 
 /**
  * Mac Specification.
@@ -526,7 +526,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += SEP + getDigestLength() + SEP + theKeyLength;
                     break;
                 case KMAC:
-                    theName += getDigestStateLength() + SEP + getDigestLength() + SEP + theKeyLength;
+                    theName += getDigestStateLength() + SEP + theKeyLength;
                     break;
                 case SKEIN:
                     theName += SEP + getDigestStateLength() + SEP + getDigestLength() + SEP + theKeyLength;

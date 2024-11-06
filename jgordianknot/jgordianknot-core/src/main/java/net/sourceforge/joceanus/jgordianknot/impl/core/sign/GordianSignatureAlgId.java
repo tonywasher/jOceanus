@@ -16,13 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -43,24 +53,12 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * OID Manager for Signatures.
@@ -251,7 +249,7 @@ public class GordianSignatureAlgId {
                             NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384);
         addPSS128Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512),
                             NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512);
-        addPSS128Algorithms(GordianDigestSpecBuilder.shake128(GordianLength.LEN_256),
+        addPSS128Algorithms(GordianDigestSpecBuilder.shake128(),
                             NISTObjectIdentifiers.id_shake128_len, GordianLength.LEN_256);
 
         addPSS256Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224),
@@ -270,7 +268,7 @@ public class GordianSignatureAlgId {
                             NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384);
         addPSS256Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512),
                             NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512);
-        addPSS256Algorithms(GordianDigestSpecBuilder.shake256(GordianLength.LEN_512),
+        addPSS256Algorithms(GordianDigestSpecBuilder.shake256(),
                             NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_512);
 
         addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.md2()),
@@ -403,7 +401,7 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha3_512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.shake256(GordianLength.LEN_512)),
+        addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.shake256()),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.rainbow(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.rainbow, DERNull.INSTANCE));

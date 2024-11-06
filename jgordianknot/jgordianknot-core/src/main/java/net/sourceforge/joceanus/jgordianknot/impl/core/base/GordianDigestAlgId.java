@@ -16,9 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
@@ -32,11 +34,8 @@ import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mappings from EncodedId to DigestSpec.
@@ -118,8 +117,8 @@ public class GordianDigestAlgId {
         addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_512, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.shake128(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.shake256(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.shake128(), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.shake256(), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE));
     }
 
     /**

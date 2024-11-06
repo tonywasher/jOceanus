@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * XMSS KeySpec.
@@ -376,9 +376,9 @@ public class GordianXMSSKeySpec {
                 case SHA512:
                     return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512);
                 case SHAKE128:
-                    return GordianDigestSpecBuilder.shake128(GordianLength.LEN_256);
+                    return GordianDigestSpecBuilder.shake128();
                 case SHAKE256:
-                    return GordianDigestSpecBuilder.shake256(GordianLength.LEN_512);
+                    return GordianDigestSpecBuilder.shake256();
                 default:
                     throw new IllegalStateException();
             }

@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -41,6 +38,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSig
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 
 /**
  * Jca Signature Factory.
@@ -207,7 +207,7 @@ public class JcaSignatureFactory
     private static boolean validRSASHAKESignature(final GordianSignatureSpec pSpec) {
         /* Must be pure SHAKE */
         final GordianDigestSpec myDigest = pSpec.getDigestSpec();
-        if (!pSpec.getSignatureType().isPSS() || !myDigest.isPureSHAKE()) {
+        if (!pSpec.getSignatureType().isPSS()) {
             return false;
         }
 

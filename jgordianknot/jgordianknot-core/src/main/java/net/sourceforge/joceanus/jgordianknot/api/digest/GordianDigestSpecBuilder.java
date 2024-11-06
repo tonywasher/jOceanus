@@ -206,20 +206,18 @@ public final class GordianDigestSpecBuilder {
 
     /**
      * Create shake128DigestSpec.
-     * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec shake128(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_128, pLength);
+    public static GordianDigestSpec shake128() {
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_128, GordianLength.LEN_256);
     }
 
     /**
      * Create shake256DigestSpec.
-     * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec shake256(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_256, pLength);
+    public static GordianDigestSpec shake256() {
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_256, GordianLength.LEN_512);
     }
 
     /**
