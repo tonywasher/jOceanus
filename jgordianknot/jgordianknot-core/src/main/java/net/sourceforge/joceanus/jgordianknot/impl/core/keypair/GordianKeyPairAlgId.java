@@ -16,16 +16,37 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDILITHIUMSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLKEMSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -71,37 +92,15 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
 import org.bouncycastle.util.Pack;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDILITHIUMSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mappings from EncodedId to KeyPairSpec.
@@ -165,7 +164,7 @@ public class GordianKeyPairAlgId {
         GordianCMCEEncodedParser.register(this);
         GordianFrodoEncodedParser.register(this);
         GordianSABEREncodedParser.register(this);
-        GordianKyberEncodedParser.register(this);
+        GordianMLKEMEncodedParser.register(this);
         GordianDilithiumEncodedParser.register(this);
         GordianHQCEncodedParser.register(this);
         GordianBIKEEncodedParser.register(this);
@@ -878,9 +877,9 @@ public class GordianKeyPairAlgId {
     }
 
     /**
-     * Kyber Encoded parser.
+     * MLKEM Encoded parser.
      */
-    private static class GordianKyberEncodedParser implements GordianEncodedParser {
+    private static class GordianMLKEMEncodedParser implements GordianEncodedParser {
         /**
          * AsymKeySpec.
          */
@@ -890,7 +889,7 @@ public class GordianKeyPairAlgId {
          * Constructor.
          * @param pKeySpec the keySpec
          */
-        GordianKyberEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianMLKEMEncodedParser(final GordianKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -899,9 +898,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.kyber512, new GordianKyberEncodedParser(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER512)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber768, new GordianKyberEncodedParser(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER768)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber1024, new GordianKyberEncodedParser(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER1024)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_alg_ml_kem_512, new GordianMLKEMEncodedParser(GordianKeyPairSpecBuilder.mlkem(GordianMLKEMSpec.MLKEM512)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_alg_ml_kem_768, new GordianMLKEMEncodedParser(GordianKeyPairSpecBuilder.mlkem(GordianMLKEMSpec.MLKEM768)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_alg_ml_kem_1024, new GordianMLKEMEncodedParser(GordianKeyPairSpecBuilder.mlkem(GordianMLKEMSpec.MLKEM1024)));
         }
 
         @Override

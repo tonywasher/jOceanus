@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Asymmetric KeyPair Specification Builder.
@@ -219,12 +219,12 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create KYBERKey.
-     * @param pSpec the KYBER Spec
+     * Create MLKEMKey.
+     * @param pSpec the MLKEM Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec kyber(final GordianKYBERSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.KYBER, pSpec);
+    public static GordianKeyPairSpec mlkem(final GordianMLKEMSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.MLKEM, pSpec);
     }
 
     /**

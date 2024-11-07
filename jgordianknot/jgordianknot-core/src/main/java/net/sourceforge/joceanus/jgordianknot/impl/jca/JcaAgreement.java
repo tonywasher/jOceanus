@@ -16,22 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-import javax.crypto.KeyAgreement;
-import javax.crypto.KeyGenerator;
-
-import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
-import org.bouncycastle.jcajce.spec.DHUParameterSpec;
-import org.bouncycastle.jcajce.spec.KEMExtractSpec;
-import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
-import org.bouncycastle.jcajce.spec.MQVParameterSpec;
-import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
-
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -46,6 +33,19 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.spec.DHUParameterSpec;
+import org.bouncycastle.jcajce.spec.KEMExtractSpec;
+import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.jcajce.spec.MQVParameterSpec;
+import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
+
+import javax.crypto.KeyAgreement;
+import javax.crypto.KeyGenerator;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Agreement classes.
@@ -180,7 +180,9 @@ public final class JcaAgreement {
 
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
-                theGenerator.init(new KEMGenerateSpec(myTarget.getPublicKey(), GordianSymKeyType.AES.toString()), getRandom());
+                final KEMGenerateSpec mySpec = new KEMGenerateSpec.Builder(myTarget.getPublicKey(),
+                        GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withNoKdf().build();
+                theGenerator.init(mySpec, getRandom());
                 final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
                 /* Create the clientHello */
@@ -204,7 +206,9 @@ public final class JcaAgreement {
 
                 /* Derive the secret */
                 final JcaPrivateKey myTarget = (JcaPrivateKey) getPrivateKey(pServer);
-                theGenerator.init(new KEMExtractSpec(myTarget.getPrivateKey(), pClientHello.getEncapsulated(), GordianSymKeyType.AES.toString()));
+                final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myTarget.getPrivateKey(), pClientHello.getEncapsulated(),
+                        GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withNoKdf().build();
+                theGenerator.init(mySpec);
                 final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
                 /* Store secret */

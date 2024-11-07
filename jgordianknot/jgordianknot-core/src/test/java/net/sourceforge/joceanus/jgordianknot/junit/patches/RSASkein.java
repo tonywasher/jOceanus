@@ -1,8 +1,5 @@
 package net.sourceforge.joceanus.jgordianknot.junit.patches;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
@@ -19,6 +16,9 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.ISOTrailers;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.BigIntegers;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 /**
  * RSASkein test.

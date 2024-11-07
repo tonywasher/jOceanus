@@ -1,13 +1,5 @@
 package net.sourceforge.joceanus.jgordianknot.junit.pgp;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.openpgp.PGPCompressedData;
 import org.bouncycastle.openpgp.PGPEncryptedDataList;
@@ -31,6 +23,14 @@ import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * PGP XDecrypt and verify.
@@ -105,7 +105,7 @@ public class PGPXDecryptVerify {
         final Iterator<?> it = myEncList.getEncryptedDataObjects();
         while (it.hasNext()) {
             final PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) it.next();
-            final PGPSecretKey mySecret = pSecret.getSecretKey(pbe.getKeyID());
+            final PGPSecretKey mySecret = pSecret.getSecretKey(pbe.getKeyIdentifier());
             if (mySecret != null) {
                 return pbe;
             }
@@ -126,7 +126,7 @@ public class PGPXDecryptVerify {
                                                       final BcPGPSecretKeyRing pSecret) throws PGPException, IOException {
 
         final String myPass = DECRYPT.obtainPassword4Secret();
-        final PGPSecretKey mySecret = pSecret.getSecretKey(pEncrypted.getKeyID());
+        final PGPSecretKey mySecret = pSecret.getSecretKey(pEncrypted.getKeyIdentifier());
         final PBESecretKeyDecryptor myDecryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(myPass.toCharArray());
         final BcPublicKeyDataDecryptorFactory myDecFactory = new BcPublicKeyDataDecryptorFactory(mySecret.extractPrivateKey(myDecryptor));
         final BcPGPObjectFactory myFact = new BcPGPObjectFactory(pEncrypted.getDataStream(myDecFactory));

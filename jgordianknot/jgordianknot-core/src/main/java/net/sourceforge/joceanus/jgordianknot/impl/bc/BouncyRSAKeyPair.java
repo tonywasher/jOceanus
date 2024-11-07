@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -399,9 +398,6 @@ public final class BouncyRSAKeyPair {
                             pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake256()).getDigest(), mySaltLength);
                 case PSSMGF1:
                 default:
-                    if (myDigest.getDigestSpec().getDigestType() == GordianDigestType.SKEIN) {
-                        int i = 0;
-                    }
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);
             }
         }

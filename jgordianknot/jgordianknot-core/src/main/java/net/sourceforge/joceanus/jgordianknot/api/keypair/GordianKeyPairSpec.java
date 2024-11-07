@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 
 /**
  * Asymmetric KeyPair Specification.
@@ -230,14 +230,14 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the Kyber keySpec.
+     * Obtain the MLKEM keySpec.
      * @return the keySpec.
      */
-    public GordianKYBERSpec getKyberKeySpec() {
-        if (!(theSubKeyType instanceof GordianKYBERSpec)) {
+    public GordianMLKEMSpec getMLKEMKeySpec() {
+        if (!(theSubKeyType instanceof GordianMLKEMSpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianKYBERSpec) theSubKeyType;
+        return (GordianMLKEMSpec) theSubKeyType;
     }
 
     /**
@@ -456,8 +456,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianFRODOSpec;
             case SABER:
                 return theSubKeyType instanceof GordianSABERSpec;
-            case KYBER:
-                return theSubKeyType instanceof GordianKYBERSpec;
+            case MLKEM:
+                return theSubKeyType instanceof GordianMLKEMSpec;
             case DILITHIUM:
                 return theSubKeyType instanceof GordianDILITHIUMSpec;
             case HQC:

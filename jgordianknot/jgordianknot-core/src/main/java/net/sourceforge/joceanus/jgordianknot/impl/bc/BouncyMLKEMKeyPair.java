@@ -16,31 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-
-import javax.security.auth.DestroyFailedException;
-
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.SecretWithEncapsulation;
-import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberKEMExtractor;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberKEMGenerator;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberParameters;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
-
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -52,37 +27,60 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.SecretWithEncapsulation;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMExtractor;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMGenerator;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMParameters;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 /**
- * KYBER KeyPair classes.
+ * MLKEM KeyPair classes.
  */
-public final class BouncyKYBERKeyPair {
+public final class BouncyMLKEMKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyKYBERKeyPair() {
+    private BouncyMLKEMKeyPair() {
     }
 
     /**
      * Bouncy KYBER PublicKey.
      */
-    public static class BouncyKYBERPublicKey
-            extends BouncyPublicKey<KyberPublicKeyParameters> {
+    public static class BouncyMLKEMPublicKey
+            extends BouncyPublicKey<MLKEMPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyKYBERPublicKey(final GordianKeyPairSpec pKeySpec,
-                             final KyberPublicKeyParameters pPublicKey) {
+        BouncyMLKEMPublicKey(final GordianKeyPairSpec pKeySpec,
+                             final MLKEMPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final KyberPublicKeyParameters myThis = getPublicKey();
-            final KyberPublicKeyParameters myThat = (KyberPublicKeyParameters) pThat;
+            final MLKEMPublicKeyParameters myThis = getPublicKey();
+            final MLKEMPublicKeyParameters myThat = (MLKEMPublicKeyParameters) pThat;
 
             /* Compare keys */
             return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
@@ -90,17 +88,17 @@ public final class BouncyKYBERKeyPair {
     }
 
     /**
-     * Bouncy Kyber PrivateKey.
+     * Bouncy MLKEM PrivateKey.
      */
-    public static class BouncyKYBERPrivateKey
-            extends BouncyPrivateKey<KyberPrivateKeyParameters> {
+    public static class BouncyMLKEMPrivateKey
+            extends BouncyPrivateKey<MLKEMPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyKYBERPrivateKey(final GordianKeyPairSpec pKeySpec,
-                              final KyberPrivateKeyParameters pPrivateKey) {
+        BouncyMLKEMPrivateKey(final GordianKeyPairSpec pKeySpec,
+                              final MLKEMPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -108,8 +106,8 @@ public final class BouncyKYBERKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final KyberPrivateKeyParameters myThis = getPrivateKey();
-            final KyberPrivateKeyParameters myThat = (KyberPrivateKeyParameters) pThat;
+            final MLKEMPrivateKeyParameters myThis = getPrivateKey();
+            final MLKEMPrivateKeyParameters myThat = (MLKEMPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
@@ -117,14 +115,14 @@ public final class BouncyKYBERKeyPair {
     }
 
     /**
-     * BouncyCastle Kyber KeyPair generator.
+     * BouncyCastle MLKEM KeyPair generator.
      */
-    public static class BouncyKYBERKeyPairGenerator
+    public static class BouncyMLKEMKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final KyberKeyPairGenerator theGenerator;
+        private final MLKEMKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
@@ -132,19 +130,19 @@ public final class BouncyKYBERKeyPair {
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        BouncyKYBERKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyMLKEMKeyPairGenerator(final BouncyFactory pFactory,
                                     final GordianKeyPairSpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            theGenerator = new KyberKeyPairGenerator();
+            theGenerator = new MLKEMKeyPairGenerator();
 
             /* Determine the parameters */
-            final KyberParameters myParms = pKeySpec.getKyberKeySpec().getParameters();
+            final MLKEMParameters myParms = pKeySpec.getMLKEMKeySpec().getParameters();
 
             /* Initialise the generator */
-            final KyberKeyGenerationParameters myParams = new KyberKeyGenerationParameters(getRandom(), myParms);
+            final MLKEMKeyGenerationParameters myParams = new MLKEMKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -152,8 +150,8 @@ public final class BouncyKYBERKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyKYBERPublicKey myPublic = new BouncyKYBERPublicKey(getKeySpec(), (KyberPublicKeyParameters) myPair.getPublic());
-            final BouncyKYBERPrivateKey myPrivate = new BouncyKYBERPrivateKey(getKeySpec(), (KyberPrivateKeyParameters) myPair.getPrivate());
+            final BouncyMLKEMPublicKey myPublic = new BouncyMLKEMPublicKey(getKeySpec(), (MLKEMPublicKeyParameters) myPair.getPublic());
+            final BouncyMLKEMPrivateKey myPrivate = new BouncyMLKEMPrivateKey(getKeySpec(), (MLKEMPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -165,8 +163,8 @@ public final class BouncyKYBERKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyKYBERPrivateKey myPrivateKey = (BouncyKYBERPrivateKey) getPrivateKey(pKeyPair);
-                final KyberPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyMLKEMPrivateKey myPrivateKey = (BouncyMLKEMPrivateKey) getPrivateKey(pKeyPair);
+                final MLKEMPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -184,10 +182,10 @@ public final class BouncyKYBERKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyKYBERPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyMLKEMPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final KyberPrivateKeyParameters myParms = (KyberPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyKYBERPrivateKey myPrivate = new BouncyKYBERPrivateKey(getKeySpec(), myParms);
+                final MLKEMPrivateKeyParameters myParms = (MLKEMPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyMLKEMPrivateKey myPrivate = new BouncyMLKEMPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -209,8 +207,8 @@ public final class BouncyKYBERKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyKYBERPublicKey myPublicKey = (BouncyKYBERPublicKey) getPublicKey(pKeyPair);
-                final KyberPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyMLKEMPublicKey myPublicKey = (BouncyMLKEMPublicKey) getPublicKey(pKeyPair);
+                final MLKEMPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);
                 return new X509EncodedKeySpec(myBytes);
@@ -222,7 +220,7 @@ public final class BouncyKYBERKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            final BouncyKYBERPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyMLKEMPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -232,7 +230,7 @@ public final class BouncyKYBERKeyPair {
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncyKYBERPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyMLKEMPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -240,8 +238,8 @@ public final class BouncyKYBERKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final KyberPublicKeyParameters myParms = (KyberPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyKYBERPublicKey(getKeySpec(), myParms);
+                final MLKEMPublicKeyParameters myParms = (MLKEMPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyMLKEMPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -250,27 +248,27 @@ public final class BouncyKYBERKeyPair {
     }
 
     /**
-     * Kyber Agreement.
+     * MLKEM Agreement.
      */
-    public static class BouncyKYBERAgreement
+    public static class BouncyMLKEMAgreement
             extends GordianCoreAnonymousAgreement {
         /**
          * The generator.
          */
-        private final KyberKEMGenerator theGenerator;
+        private final MLKEMGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyKYBERAgreement(final BouncyFactory pFactory,
+        BouncyMLKEMAgreement(final BouncyFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create Agreement */
-            theGenerator = new KyberKEMGenerator(getRandom());
+            theGenerator = new MLKEMGenerator(getRandom());
         }
 
         @Override
@@ -282,7 +280,7 @@ public final class BouncyKYBERKeyPair {
                 checkKeyPair(pServer);
 
                 /* Create encapsulation */
-                final BouncyKYBERPublicKey myPublic = (BouncyKYBERPublicKey) getPublicKey(pServer);
+                final BouncyMLKEMPublicKey myPublic = (BouncyMLKEMPublicKey) getPublicKey(pServer);
                 final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
 
                 /* Build the clientHello Message */
@@ -307,8 +305,8 @@ public final class BouncyKYBERKeyPair {
             checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
-            final BouncyKYBERPrivateKey myPrivate = (BouncyKYBERPrivateKey) getPrivateKey(pServer);
-            final KyberKEMExtractor myExtractor = new KyberKEMExtractor(myPrivate.getPrivateKey());
+            final BouncyMLKEMPrivateKey myPrivate = (BouncyMLKEMPrivateKey) getPrivateKey(pServer);
+            final MLKEMExtractor myExtractor = new MLKEMExtractor(myPrivate.getPrivateKey());
 
             /* Parse clientHello message and store secret */
             final byte[] myMessage = pClientHello.getEncapsulated();

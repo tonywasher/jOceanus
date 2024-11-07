@@ -71,7 +71,7 @@ public enum GordianKDFType {
             case CMCE:
             case FRODO:
             case SABER:
-            case KYBER:
+            case MLKEM:
             case HQC:
             case BIKE:
             case NTRU:

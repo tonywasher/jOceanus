@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -38,9 +35,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFALCONKeyPair.BouncyF
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKYBERKeyPair.BouncyKYBERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICKeyPairGenerator;
@@ -58,6 +55,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BouncyCastle KeyPair Factory.
@@ -170,8 +170,8 @@ public class BouncyKeyPairFactory
                 return new BouncyFrodoKeyPairGenerator(getFactory(), pKeySpec);
             case SABER:
                 return new BouncySABERKeyPairGenerator(getFactory(), pKeySpec);
-            case KYBER:
-                return new BouncyKYBERKeyPairGenerator(getFactory(), pKeySpec);
+            case MLKEM:
+                return new BouncyMLKEMKeyPairGenerator(getFactory(), pKeySpec);
             case DILITHIUM:
                 return new BouncyDILITHIUMKeyPairGenerator(getFactory(), pKeySpec);
             case HQC:

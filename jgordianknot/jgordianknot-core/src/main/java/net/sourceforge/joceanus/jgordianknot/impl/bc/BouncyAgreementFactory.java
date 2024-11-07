@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKYBERKeyPair.BouncyKYBERAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncapsulationAgreement;
@@ -104,8 +104,8 @@ public class BouncyAgreementFactory
                 return new BouncyFrodoAgreement(getFactory(), pSpec);
             case SABER:
                 return new BouncySABERAgreement(getFactory(), pSpec);
-            case KYBER:
-                return new BouncyKYBERAgreement(getFactory(), pSpec);
+            case MLKEM:
+                return new BouncyMLKEMAgreement(getFactory(), pSpec);
             case HQC:
                 return new BouncyHQCAgreement(getFactory(), pSpec);
             case BIKE:
