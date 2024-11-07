@@ -83,9 +83,9 @@ public enum GordianKeyPairType {
     LMS,
 
     /**
-     * SPHINCSPlus.
+     * SLHDSA.
      */
-    SPHINCSPLUS,
+    SLHDSA,
 
     /**
      * CMCE.
@@ -173,7 +173,7 @@ public enum GordianKeyPairType {
      */
     public GordianRequired useDigestForSignatures() {
         switch (this) {
-            case SPHINCSPLUS:
+            case SLHDSA:
             case MLDSA:
             case FALCON:
             case XMSS:
@@ -214,12 +214,12 @@ public enum GordianKeyPairType {
             case EDDSA:
             case MLKEM:
             case MLDSA:
+            case SLHDSA:
                 return true;
             case BIKE:
             case FRODO:
             case SABER:
             case CMCE:
-            case SPHINCSPLUS:
             case FALCON:
             case RAINBOW:
             case NTRU:

@@ -42,6 +42,7 @@ import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
 import org.bouncycastle.jce.spec.ElGamalParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
@@ -58,7 +59,6 @@ import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.RainbowParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
@@ -476,14 +476,14 @@ public abstract class JcaKeyPairGenerator
     }
 
     /**
-     * Jca SPHINCSPlus KeyPair generator.
+     * Jca SLHDSA KeyPair generator.
      */
-    public static class JcaSPHINCSPlusKeyPairGenerator
+    public static class JcaSLHDSAKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
          * SPHINCS algorithm.
          */
-        private static final String SPHINCS_ALGO = "SPHINCS+";
+        private static final String SLHDSA_ALGO = "SLH-DSA";
 
         /**
          * Generator.
@@ -496,23 +496,23 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        JcaSPHINCSPlusKeyPairGenerator(final JcaFactory pFactory,
-                                       final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        JcaSLHDSAKeyPairGenerator(final JcaFactory pFactory,
+                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
-                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SPHINCS_ALGO, true);
-                final SPHINCSPlusParameterSpec myParms = pKeySpec.getSPHINCSPlusKeySpec().getParameterSpec();
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SLHDSA_ALGO, false);
+                final SLHDSAParameterSpec myParms = pKeySpec.getSLHDSAKeySpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SPHINCS_ALGO, true));
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SLHDSA_ALGO, false));
 
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create SPHINCS+generator", e);
+                throw new GordianCryptoException("Failed to create SLHDSAgenerator", e);
             }
         }
 
@@ -716,7 +716,7 @@ public abstract class JcaKeyPairGenerator
                 setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(MLKEM_ALGO, false));
 
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create KYBERgenerator", e);
+                throw new GordianCryptoException("Failed to create MLKEMgenerator", e);
             }
         }
 
@@ -767,7 +767,7 @@ public abstract class JcaKeyPairGenerator
                 setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(MLDSA_ALGO, false));
 
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create DilithiumGenerator", e);
+                throw new GordianCryptoException("Failed to create MLDSAGenerator", e);
             }
         }
 

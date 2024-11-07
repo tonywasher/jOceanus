@@ -183,12 +183,12 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create SPHINCSPlusKey.
-     * @param pSpec the SPHINCSPlus Spec
+     * Create SLHDSAKey.
+     * @param pSpec the SLHDSA Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec sphincsPlus(final GordianSPHINCSPlusSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SPHINCSPLUS, pSpec);
+    public static GordianKeyPairSpec slhdsa(final GordianSLHDSASpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.SLHDSA, pSpec);
     }
 
     /**

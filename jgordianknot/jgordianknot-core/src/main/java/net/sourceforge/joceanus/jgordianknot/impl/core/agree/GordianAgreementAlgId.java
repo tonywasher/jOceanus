@@ -216,8 +216,8 @@ public class GordianAgreementAlgId {
             case DSTU4145:
                 myId = myId.branch(Integer.toString(((GordianDSTU4145Elliptic) pSpec.getElliptic()).ordinal() + 1));
                 break;
-            case SPHINCSPLUS:
-                myId = myId.branch(Integer.toString(pSpec.getSPHINCSPlusKeySpec().ordinal() + 1));
+            case SLHDSA:
+                myId = myId.branch(Integer.toString(pSpec.getSLHDSAKeySpec().ordinal() + 1));
                 break;
             case CMCE:
                 myId = myId.branch(Integer.toString(pSpec.getCMCEKeySpec().ordinal() + 1));

@@ -172,7 +172,7 @@ public final class GordianSignatureSpec {
                 final GordianDigestSpec mySpec = getDigestSpec();
                 return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
             case EDDSA:
-            case SPHINCSPLUS:
+            case SLHDSA:
             case MLDSA:
             case FALCON:
             case RAINBOW:

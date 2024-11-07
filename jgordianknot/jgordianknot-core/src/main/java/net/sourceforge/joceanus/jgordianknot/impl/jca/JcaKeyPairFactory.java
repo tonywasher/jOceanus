@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRSA
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSPHINCSPlusKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -150,8 +150,8 @@ public class JcaKeyPairFactory
                 return new JcaEdKeyPairGenerator(getFactory(), pKeySpec);
             case DH:
                 return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);
-            case SPHINCSPLUS:
-                return new JcaSPHINCSPlusKeyPairGenerator(getFactory(), pKeySpec);
+            case SLHDSA:
+                return new JcaSLHDSAKeyPairGenerator(getFactory(), pKeySpec);
             case CMCE:
                 return new JcaCMCEKeyPairGenerator(getFactory(), pKeySpec);
             case FRODO:

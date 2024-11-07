@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAK
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
@@ -162,8 +162,8 @@ public class BouncyKeyPairFactory
                 return new BouncyDSAKeyPairGenerator(getFactory(), pKeySpec);
             case DH:
                 return new BouncyDHKeyPairGenerator(getFactory(), pKeySpec);
-            case SPHINCSPLUS:
-                return new BouncySPHINCSPlusKeyPairGenerator(getFactory(), pKeySpec);
+            case SLHDSA:
+                return new BouncySLHDSAKeyPairGenerator(getFactory(), pKeySpec);
             case CMCE:
                 return new BouncyCMCEKeyPairGenerator(getFactory(), pKeySpec);
             case FRODO:

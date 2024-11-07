@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyP
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -97,8 +97,8 @@ public class BouncySignatureFactory
                 return new BouncyEdDSASignature(getFactory(), pSignatureSpec);
             case DSA:
                 return new BouncyDSASignature(getFactory(), pSignatureSpec);
-            case SPHINCSPLUS:
-                return new BouncySPHINCSPlusSignature(getFactory(), pSignatureSpec);
+            case SLHDSA:
+                return new BouncySLHDSASignature(getFactory(), pSignatureSpec);
             case MLDSA:
                 return new BouncyMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:

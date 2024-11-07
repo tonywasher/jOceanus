@@ -356,8 +356,8 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpecBuilder.gost2012(GordianLength.LEN_512);
             case EDDSA:
                 return GordianSignatureSpecBuilder.edDSA();
-            case SPHINCSPLUS:
-                return GordianSignatureSpecBuilder.sphincsPlus();
+            case SLHDSA:
+                return GordianSignatureSpecBuilder.slhdsa();
             case MLDSA:
                 return GordianSignatureSpecBuilder.mldsa();
             case FALCON:

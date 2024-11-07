@@ -110,11 +110,6 @@ public abstract class JcaSignature
     private static final String EC_SM2_ALGOBASE = "WITHSM2";
 
     /**
-     * The SPHINCS Signature.
-     */
-    static final String SPHINCS_ALGOBASE = "withSPHINCS256";
-
-    /**
      * The DSTU Signature.
      */
     private static final String DSTU_SIGN = "DSTU4145";
@@ -381,9 +376,9 @@ public abstract class JcaSignature
     }
 
     /**
-     * SPHINCSPlus signature.
+     * SLHDSA signature.
      */
-    static class JcaSPHINCSPlusSignature
+    static class JcaSLHDSASignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -391,13 +386,13 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws OceanusException on error
          */
-        JcaSPHINCSPlusSignature(final GordianCoreFactory pFactory,
-                                final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        JcaSLHDSASignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("SPHINCSPLUS", true));
+            setSigner(JcaSignatureFactory.getJavaSignature("SLH-DSA", false));
         }
     }
 

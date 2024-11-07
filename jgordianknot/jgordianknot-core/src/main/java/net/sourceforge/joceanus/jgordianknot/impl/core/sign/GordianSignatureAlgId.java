@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuild
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
@@ -430,8 +430,8 @@ public class GordianSignatureAlgId {
      * Add XMSS signatures.
      */
     private void addSPHINCSPlusSignatures() {
-        for (GordianSPHINCSPlusSpec mySpec : GordianSPHINCSPlusSpec.values()) {
-            addToMaps(GordianSignatureSpecBuilder.sphincsPlus(), GordianKeyPairSpecBuilder.sphincsPlus(mySpec),
+        for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {
+            addToMaps(GordianSignatureSpecBuilder.slhdsa(), GordianKeyPairSpecBuilder.slhdsa(mySpec),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
         }
     }

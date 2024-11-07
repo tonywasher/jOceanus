@@ -182,7 +182,7 @@ public final class GordianKeyPairValidity {
             case GOST2012:
             case DSTU4145:
             case SM2:
-            case SPHINCSPLUS:
+            case SLHDSA:
             case MLDSA:
             case FALCON:
             case PICNIC:

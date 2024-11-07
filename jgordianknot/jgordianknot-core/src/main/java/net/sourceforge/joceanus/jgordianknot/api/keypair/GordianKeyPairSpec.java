@@ -186,14 +186,14 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the SPHINCSPlus keySpec.
+     * Obtain the SLHDSA keySpec.
      * @return the keySpec.
      */
-    public GordianSPHINCSPlusSpec getSPHINCSPlusKeySpec() {
-        if (!(theSubKeyType instanceof GordianSPHINCSPlusSpec)) {
+    public GordianSLHDSASpec getSLHDSAKeySpec() {
+        if (!(theSubKeyType instanceof GordianSLHDSASpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianSPHINCSPlusSpec) theSubKeyType;
+        return (GordianSLHDSASpec) theSubKeyType;
     }
 
     /**
@@ -448,8 +448,8 @@ public class GordianKeyPairSpec {
             case XMSS:
                 return theSubKeyType instanceof GordianXMSSKeySpec
                         && ((GordianXMSSKeySpec) theSubKeyType).isValid();
-            case SPHINCSPLUS:
-                return theSubKeyType instanceof GordianSPHINCSPlusSpec;
+            case SLHDSA:
+                return theSubKeyType instanceof GordianSLHDSASpec;
             case CMCE:
                 return theSubKeyType instanceof GordianCMCESpec;
             case FRODO:

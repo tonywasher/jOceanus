@@ -101,11 +101,11 @@ public final class GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create SPHINCSPlusSpec.
+     * Create SLHDSASpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec sphincsPlus() {
-        return new GordianSignatureSpec(GordianKeyPairType.SPHINCSPLUS, GordianSignatureType.NATIVE);
+    public static GordianSignatureSpec slhdsa() {
+        return new GordianSignatureSpec(GordianKeyPairType.SLHDSA, GordianSignatureType.NATIVE);
     }
 
     /**
