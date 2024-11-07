@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.InvalidKeyException;
-import java.security.Signature;
-import java.security.SignatureException;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -33,6 +29,10 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.security.InvalidKeyException;
+import java.security.Signature;
+import java.security.SignatureException;
 
 /**
  * Jca implementation of signature.
@@ -402,9 +402,9 @@ public abstract class JcaSignature
     }
 
     /**
-     * SPHINCSPlus signature.
+     * MLDSA signature.
      */
-    static class JcaDilithiumSignature
+    static class JcaMLDSASignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -412,13 +412,13 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws OceanusException on error
          */
-        JcaDilithiumSignature(final GordianCoreFactory pFactory,
-                              final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        JcaMLDSASignature(final GordianCoreFactory pFactory,
+                          final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("DILITHIUM", true));
+            setSigner(JcaSignatureFactory.getJavaSignature("ML-DSA", false));
         }
     }
 

@@ -16,14 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
@@ -39,6 +31,13 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * GordianKnot base for signatureFactory.
@@ -359,8 +358,8 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpecBuilder.edDSA();
             case SPHINCSPLUS:
                 return GordianSignatureSpecBuilder.sphincsPlus();
-            case DILITHIUM:
-                return GordianSignatureSpecBuilder.dilithium();
+            case MLDSA:
+                return GordianSignatureSpecBuilder.mldsa();
             case FALCON:
                 return GordianSignatureSpecBuilder.falcon();
             case PICNIC:

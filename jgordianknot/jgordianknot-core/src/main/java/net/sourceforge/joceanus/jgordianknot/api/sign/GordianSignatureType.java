@@ -141,7 +141,7 @@ public enum GordianSignatureType {
             case DSTU4145:
             case GOST2012:
             case SPHINCSPLUS:
-            case DILITHIUM:
+            case MLDSA:
             case FALCON:
             case PICNIC:
             case RAINBOW:

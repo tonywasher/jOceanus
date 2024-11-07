@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.Go
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDILITHIUMKeyPair.BouncyDILITHIUMKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd25519KeyPairGenerator;
@@ -172,8 +172,8 @@ public class BouncyKeyPairFactory
                 return new BouncySABERKeyPairGenerator(getFactory(), pKeySpec);
             case MLKEM:
                 return new BouncyMLKEMKeyPairGenerator(getFactory(), pKeySpec);
-            case DILITHIUM:
-                return new BouncyDILITHIUMKeyPairGenerator(getFactory(), pKeySpec);
+            case MLDSA:
+                return new BouncyMLDSAKeyPairGenerator(getFactory(), pKeySpec);
             case HQC:
                 return new BouncyHQCKeyPairGenerator(getFactory(), pKeySpec);
             case BIKE:

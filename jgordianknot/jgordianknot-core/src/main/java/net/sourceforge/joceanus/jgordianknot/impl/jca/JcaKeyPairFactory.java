@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeySt
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDILITHIUMKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
@@ -160,8 +160,8 @@ public class JcaKeyPairFactory
                 return new JcaSABERKeyPairGenerator(getFactory(), pKeySpec);
             case MLKEM:
                 return new JcaMLKEMKeyPairGenerator(getFactory(), pKeySpec);
-            case DILITHIUM:
-                return new JcaDILITHIUMKeyPairGenerator(getFactory(), pKeySpec);
+            case MLDSA:
+                return new JcaMLDSAKeyPairGenerator(getFactory(), pKeySpec);
             case HQC:
                 return new JcaHQCKeyPairGenerator(getFactory(), pKeySpec);
             case BIKE:

@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
@@ -390,9 +391,21 @@ public class GordianSignatureAlgId {
         addToMaps(GordianSignatureSpecBuilder.lms(),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
 
+        /* Add mldsa signatures */
+        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ml_dsa_44, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA65),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ml_dsa_65, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA87),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ml_dsa_87, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44SHA),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA65SHA),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA87SHA),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512, DERNull.INSTANCE));
+
         /* Add new PQC signatures */
-        addToMaps(GordianSignatureSpecBuilder.dilithium(),
-                  new AlgorithmIdentifier(BCObjectIdentifiers.dilithium, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.falcon(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.picnic(),

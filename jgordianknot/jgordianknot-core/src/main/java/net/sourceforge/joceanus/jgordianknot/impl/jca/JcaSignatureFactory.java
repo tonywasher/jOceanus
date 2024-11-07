@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDilithiumSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaFalconSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
@@ -117,8 +117,8 @@ public class JcaSignatureFactory
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
-            case DILITHIUM:
-                return new JcaDilithiumSignature(getFactory(), pSignatureSpec);
+            case MLDSA:
+                return new JcaMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:
                 return new JcaFalconSignature(getFactory(), pSignatureSpec);
             case PICNIC:
@@ -155,7 +155,7 @@ public class JcaSignatureFactory
                 return validDSASignature(pSpec);
             case XMSS:
             case SPHINCSPLUS:
-            case DILITHIUM:
+            case MLDSA:
             case FALCON:
             case PICNIC:
             case RAINBOW:

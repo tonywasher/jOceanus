@@ -16,68 +16,68 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.crystals.dilithium.DilithiumKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.crystals.dilithium.DilithiumKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.crystals.dilithium.DilithiumParameters;
-import org.bouncycastle.pqc.crypto.crystals.dilithium.DilithiumPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.crystals.dilithium.DilithiumPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.crystals.dilithium.DilithiumSigner;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
-
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSASigner;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 /**
- * Dilithium KeyPair classes.
+ * MLDSA KeyPair classes.
  */
-public final class BouncyDILITHIUMKeyPair {
+public final class BouncyMLDSAKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyDILITHIUMKeyPair() {
+    private BouncyMLDSAKeyPair() {
     }
 
     /**
-     * Bouncy Dilithium PublicKey.
+     * Bouncy MLDSA PublicKey.
      */
-    public static class BouncyDILITHIUMPublicKey
-            extends BouncyPublicKey<DilithiumPublicKeyParameters> {
+    public static class BouncyMLDSAPublicKey
+            extends BouncyPublicKey<MLDSAPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyDILITHIUMPublicKey(final GordianKeyPairSpec pKeySpec,
-                                 final DilithiumPublicKeyParameters pPublicKey) {
+        BouncyMLDSAPublicKey(final GordianKeyPairSpec pKeySpec,
+                             final MLDSAPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final DilithiumPublicKeyParameters myThis = getPublicKey();
-            final DilithiumPublicKeyParameters myThat = (DilithiumPublicKeyParameters) pThat;
+            final MLDSAPublicKeyParameters myThis = getPublicKey();
+            final MLDSAPublicKeyParameters myThat = (MLDSAPublicKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -89,24 +89,24 @@ public final class BouncyDILITHIUMKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final DilithiumPublicKeyParameters pFirst,
-                                           final DilithiumPublicKeyParameters pSecond) {
+        private static boolean compareKeys(final MLDSAPublicKeyParameters pFirst,
+                                           final MLDSAPublicKeyParameters pSecond) {
             return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * Bouncy Dilithium PrivateKey.
+     * Bouncy MLDSA PrivateKey.
      */
-    public static class BouncyDILITHIUMPrivateKey
-            extends BouncyPrivateKey<DilithiumPrivateKeyParameters> {
+    public static class BouncyMLDSAPrivateKey
+            extends BouncyPrivateKey<MLDSAPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyDILITHIUMPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                  final DilithiumPrivateKeyParameters pPrivateKey) {
+        BouncyMLDSAPrivateKey(final GordianKeyPairSpec pKeySpec,
+                              final MLDSAPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -114,8 +114,8 @@ public final class BouncyDILITHIUMKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final DilithiumPrivateKeyParameters myThis = getPrivateKey();
-            final DilithiumPrivateKeyParameters myThat = (DilithiumPrivateKeyParameters) pThat;
+            final MLDSAPrivateKeyParameters myThis = getPrivateKey();
+            final MLDSAPrivateKeyParameters myThat = (MLDSAPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -127,38 +127,38 @@ public final class BouncyDILITHIUMKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final DilithiumPrivateKeyParameters pFirst,
-                                           final DilithiumPrivateKeyParameters pSecond) {
+        private static boolean compareKeys(final MLDSAPrivateKeyParameters pFirst,
+                                           final MLDSAPrivateKeyParameters pSecond) {
             return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle Dilithium KeyPair generator.
+     * BouncyCastle MLDSA KeyPair generator.
      */
-    public static class BouncyDILITHIUMKeyPairGenerator
+    public static class BouncyMLDSAKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final DilithiumKeyPairGenerator theGenerator;
+        private final MLDSAKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyDILITHIUMKeyPairGenerator(final BouncyFactory pFactory,
-                                        final GordianKeyPairSpec pKeySpec) {
+        BouncyMLDSAKeyPairGenerator(final BouncyFactory pFactory,
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final DilithiumParameters myParms = pKeySpec.getDilithiumKeySpec().getParameters();
+            final MLDSAParameters myParms = pKeySpec.getMLDSAKeySpec().getParameters();
 
             /* Create and initialise the generator */
-            theGenerator = new DilithiumKeyPairGenerator();
-            final DilithiumKeyGenerationParameters myParams = new DilithiumKeyGenerationParameters(getRandom(), myParms);
+            theGenerator = new MLDSAKeyPairGenerator();
+            final MLDSAKeyGenerationParameters myParams = new MLDSAKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -166,8 +166,8 @@ public final class BouncyDILITHIUMKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyDILITHIUMPublicKey myPublic = new BouncyDILITHIUMPublicKey(getKeySpec(), (DilithiumPublicKeyParameters) myPair.getPublic());
-            final BouncyDILITHIUMPrivateKey myPrivate = new BouncyDILITHIUMPrivateKey(getKeySpec(), (DilithiumPrivateKeyParameters) myPair.getPrivate());
+            final BouncyMLDSAPublicKey myPublic = new BouncyMLDSAPublicKey(getKeySpec(), (MLDSAPublicKeyParameters) myPair.getPublic());
+            final BouncyMLDSAPrivateKey myPrivate = new BouncyMLDSAPrivateKey(getKeySpec(), (MLDSAPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -179,8 +179,8 @@ public final class BouncyDILITHIUMKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyDILITHIUMPrivateKey myPrivateKey = (BouncyDILITHIUMPrivateKey) getPrivateKey(pKeyPair);
-                final DilithiumPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyMLDSAPrivateKey myPrivateKey = (BouncyMLDSAPrivateKey) getPrivateKey(pKeyPair);
+                final MLDSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -198,10 +198,10 @@ public final class BouncyDILITHIUMKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyDILITHIUMPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyMLDSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final DilithiumPrivateKeyParameters myParms = (DilithiumPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyDILITHIUMPrivateKey myPrivate = new BouncyDILITHIUMPrivateKey(getKeySpec(), myParms);
+                final MLDSAPrivateKeyParameters myParms = (MLDSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyMLDSAPrivateKey myPrivate = new BouncyMLDSAPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -223,8 +223,8 @@ public final class BouncyDILITHIUMKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyDILITHIUMPublicKey myPublicKey = (BouncyDILITHIUMPublicKey) getPublicKey(pKeyPair);
-                final DilithiumPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyMLDSAPublicKey myPublicKey = (BouncyMLDSAPublicKey) getPublicKey(pKeyPair);
+                final MLDSAPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -235,7 +235,7 @@ public final class BouncyDILITHIUMKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            final BouncyDILITHIUMPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyMLDSAPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -245,7 +245,7 @@ public final class BouncyDILITHIUMKeyPair {
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncyDILITHIUMPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyMLDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -253,8 +253,8 @@ public final class BouncyDILITHIUMKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final DilithiumPublicKeyParameters myParms = (DilithiumPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyDILITHIUMPublicKey(getKeySpec(), myParms);
+                final MLDSAPublicKeyParameters myParms = (MLDSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyMLDSAPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -263,14 +263,14 @@ public final class BouncyDILITHIUMKeyPair {
     }
 
     /**
-     * Dilithium signer.
+     * MLDSA signer.
      */
-    public static class BouncyDILITHIUMSignature
-            extends BouncyDigestSignature {
+    public static class BouncyMLDSASignature
+            extends GordianCoreSignature {
         /**
-         * The SPHINCSPlus Signer.
+         * The MLDSA Signer.
          */
-        private final DilithiumSigner theSigner;
+        private final MLDSASigner theSigner;
 
         /**
          * Constructor.
@@ -278,11 +278,11 @@ public final class BouncyDILITHIUMKeyPair {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        BouncyDILITHIUMSignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyMLDSASignature(final BouncyFactory pFactory,
+                             final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-            theSigner = new DilithiumSigner();
+            theSigner = new MLDSASigner();
         }
 
         @Override
@@ -292,7 +292,7 @@ public final class BouncyDILITHIUMKeyPair {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyDILITHIUMPrivateKey myPrivate = (BouncyDILITHIUMPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyMLDSAPrivateKey myPrivate = (BouncyMLDSAPrivateKey) getKeyPair().getPrivateKey();
             final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
@@ -304,8 +304,40 @@ public final class BouncyDILITHIUMKeyPair {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyDILITHIUMPublicKey myPublic = (BouncyDILITHIUMPublicKey) getKeyPair().getPublicKey();
+            final BouncyMLDSAPublicKey myPublic = (BouncyMLDSAPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
+        }
+
+        @Override
+        public void update(final byte[] pBytes,
+                           final int pOffset,
+                           final int pLength) {
+            theSigner.update(pBytes, pOffset, pLength);
+        }
+
+        @Override
+        public void update(final byte pByte) {
+            theSigner.update(pByte);
+        }
+
+        @Override
+        public void update(final byte[] pBytes) {
+            theSigner.update(pBytes, 0, pBytes.length);
+        }
+
+        @Override
+        public void reset() {
+            theSigner.reset();
+        }
+
+        @Override
+        protected BouncyKeyPair getKeyPair() {
+            return (BouncyKeyPair) super.getKeyPair();
+        }
+
+        @Override
+        public BouncyFactory getFactory() {
+            return (BouncyFactory) super.getFactory();
         }
 
         @Override
@@ -314,7 +346,11 @@ public final class BouncyDILITHIUMKeyPair {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            return theSigner.generateSignature(getDigest());
+            try {
+                return theSigner.generateSignature();
+            } catch (CryptoException e) {
+                throw new GordianCryptoException("Failed to sign message", e);
+            }
         }
 
         @Override
@@ -323,7 +359,7 @@ public final class BouncyDILITHIUMKeyPair {
             checkMode(GordianSignatureMode.VERIFY);
 
             /* Verify the message */
-            return theSigner.verifySignature(getDigest(), pSignature);
+            return theSigner.verifySignature(pSignature);
         }
     }
 }

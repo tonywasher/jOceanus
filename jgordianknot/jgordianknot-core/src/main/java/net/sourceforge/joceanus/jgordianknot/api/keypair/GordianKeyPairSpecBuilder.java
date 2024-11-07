@@ -228,12 +228,12 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create DILITHIUMKey.
-     * @param pSpec the DILITHIUM Spec
+     * Create MLDSAKey.
+     * @param pSpec the MLDSA Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec dilithium(final GordianDILITHIUMSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DILITHIUM, pSpec);
+    public static GordianKeyPairSpec mldsa(final GordianMLDSASpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.MLDSA, pSpec);
     }
 
     /**

@@ -108,9 +108,9 @@ public enum GordianKeyPairType {
     MLKEM,
 
     /**
-     * Dilithium.
+     * MLDSA.
      */
-    DILITHIUM,
+    MLDSA,
 
     /**
      * HQC.
@@ -174,7 +174,7 @@ public enum GordianKeyPairType {
     public GordianRequired useDigestForSignatures() {
         switch (this) {
             case SPHINCSPLUS:
-            case DILITHIUM:
+            case MLDSA:
             case FALCON:
             case XMSS:
             case EDDSA:
@@ -213,13 +213,13 @@ public enum GordianKeyPairType {
             case XDH:
             case EDDSA:
             case MLKEM:
+            case MLDSA:
                 return true;
             case BIKE:
             case FRODO:
             case SABER:
             case CMCE:
             case SPHINCSPLUS:
-            case DILITHIUM:
             case FALCON:
             case RAINBOW:
             case NTRU:

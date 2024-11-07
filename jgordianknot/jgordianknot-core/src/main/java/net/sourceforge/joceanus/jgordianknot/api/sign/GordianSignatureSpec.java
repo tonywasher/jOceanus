@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Signature Specification.
@@ -173,7 +173,7 @@ public final class GordianSignatureSpec {
                 return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
             case EDDSA:
             case SPHINCSPLUS:
-            case DILITHIUM:
+            case MLDSA:
             case FALCON:
             case RAINBOW:
             case XMSS:

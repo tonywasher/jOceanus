@@ -241,14 +241,14 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the Dilithium keySpec.
+     * Obtain the MLDSA keySpec.
      * @return the keySpec.
      */
-    public GordianDILITHIUMSpec getDilithiumKeySpec() {
-        if (!(theSubKeyType instanceof GordianDILITHIUMSpec)) {
+    public GordianMLDSASpec getMLDSAKeySpec() {
+        if (!(theSubKeyType instanceof GordianMLDSASpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianDILITHIUMSpec) theSubKeyType;
+        return (GordianMLDSASpec) theSubKeyType;
     }
 
     /**
@@ -458,8 +458,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianSABERSpec;
             case MLKEM:
                 return theSubKeyType instanceof GordianMLKEMSpec;
-            case DILITHIUM:
-                return theSubKeyType instanceof GordianDILITHIUMSpec;
+            case MLDSA:
+                return theSubKeyType instanceof GordianMLDSASpec;
             case HQC:
                 return theSubKeyType instanceof GordianHQCSpec;
             case BIKE:

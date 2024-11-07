@@ -40,13 +40,13 @@ import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
 import org.bouncycastle.jce.spec.ElGamalParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
@@ -731,14 +731,14 @@ public abstract class JcaKeyPairGenerator
     }
 
     /**
-     * Jca Dilithium KeyPair generator.
+     * Jca MLDSA KeyPair generator.
      */
-    public static class JcaDILITHIUMKeyPairGenerator
+    public static class JcaMLDSAKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
-         * DILITHIUM algorithm.
+         * MLDSA algorithm.
          */
-        private static final String DILITHIUM_ALGO = "DILITHIUM";
+        private static final String MLDSA_ALGO = "ML-DSA";
 
         /**
          * Generator.
@@ -751,20 +751,20 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        JcaDILITHIUMKeyPairGenerator(final JcaFactory pFactory,
-                                     final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        JcaMLDSAKeyPairGenerator(final JcaFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
-                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(DILITHIUM_ALGO, true);
-                final DilithiumParameterSpec myParms = pKeySpec.getDilithiumKeySpec().getParameterSpec();
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(MLDSA_ALGO, false);
+                final MLDSAParameterSpec myParms = pKeySpec.getMLDSAKeySpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(DILITHIUM_ALGO, true));
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(MLDSA_ALGO, false));
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create DilithiumGenerator", e);

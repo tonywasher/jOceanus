@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDILITHIUMSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
@@ -936,9 +936,12 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium2, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM2)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium3, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM3)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium5, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM5)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_ml_dsa_44, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_ml_dsa_65, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA65)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_ml_dsa_87, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA87)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44SHA)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA65SHA)));
+            pIdManager.registerParser(NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA87SHA)));
         }
 
         @Override

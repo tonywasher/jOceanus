@@ -16,11 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDILITHIUMKeyPair.BouncyDILITHIUMSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
@@ -28,6 +25,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFALCONKeyPair.BouncyFALCONSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowSignature;
@@ -39,6 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.function.Predicate;
 
 /**
  * Bouncy Signature Factory.
@@ -99,8 +99,8 @@ public class BouncySignatureFactory
                 return new BouncyDSASignature(getFactory(), pSignatureSpec);
             case SPHINCSPLUS:
                 return new BouncySPHINCSPlusSignature(getFactory(), pSignatureSpec);
-            case DILITHIUM:
-                return new BouncyDILITHIUMSignature(getFactory(), pSignatureSpec);
+            case MLDSA:
+                return new BouncyMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:
                 return new BouncyFALCONSignature(getFactory(), pSignatureSpec);
             case PICNIC:

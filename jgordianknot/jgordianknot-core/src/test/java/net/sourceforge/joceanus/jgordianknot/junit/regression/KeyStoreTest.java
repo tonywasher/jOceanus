@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDILITHIUMSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
@@ -168,7 +168,7 @@ public class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.dstu4145(GordianDSTU4145Elliptic.DSTU9)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM2)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.falcon(GordianFALCONSpec.FALCON512)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1FS)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC3)),

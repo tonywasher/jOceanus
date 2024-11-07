@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Signature Specification Builder.
@@ -109,11 +109,11 @@ public final class GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create DilithiumSpec.
+     * Create MLDSASpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec dilithium() {
-        return new GordianSignatureSpec(GordianKeyPairType.DILITHIUM, GordianSignatureType.NATIVE);
+    public static GordianSignatureSpec mldsa() {
+        return new GordianSignatureSpec(GordianKeyPairType.MLDSA, GordianSignatureType.NATIVE);
     }
 
     /**

@@ -183,7 +183,7 @@ public final class GordianKeyPairValidity {
             case DSTU4145:
             case SM2:
             case SPHINCSPLUS:
-            case DILITHIUM:
+            case MLDSA:
             case FALCON:
             case PICNIC:
             case RAINBOW:
