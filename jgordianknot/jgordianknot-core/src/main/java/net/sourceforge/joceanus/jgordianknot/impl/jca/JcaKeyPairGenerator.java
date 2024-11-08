@@ -481,9 +481,14 @@ public abstract class JcaKeyPairGenerator
     public static class JcaSLHDSAKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
-         * SPHINCS algorithm.
+         * SLHDSA algorithm.
          */
         private static final String SLHDSA_ALGO = "SLH-DSA";
+
+        /**
+         * HASH indication.
+         */
+        private static final String SLHDSA_HASH = "HASH-" + SLHDSA_ALGO;
 
         /**
          * Generator.
@@ -503,13 +508,16 @@ public abstract class JcaKeyPairGenerator
 
             /* Protect against exceptions */
             try {
+                /* Determine algorithm */
+                final String myAlgo = pKeySpec.getSLHDSAKeySpec().isHash() ? SLHDSA_HASH : SLHDSA_ALGO;
+
                 /* Create and initialise the generator */
-                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SLHDSA_ALGO, false);
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(myAlgo, false);
                 final SLHDSAParameterSpec myParms = pKeySpec.getSLHDSAKeySpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SLHDSA_ALGO, false));
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(myAlgo, false));
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create SLHDSAgenerator", e);
@@ -741,6 +749,11 @@ public abstract class JcaKeyPairGenerator
         private static final String MLDSA_ALGO = "ML-DSA";
 
         /**
+         * HASH indication.
+         */
+        private static final String MLDSA_HASH = "HASH-" + MLDSA_ALGO;
+
+        /**
          * Generator.
          */
         private final KeyPairGenerator theGenerator;
@@ -758,13 +771,16 @@ public abstract class JcaKeyPairGenerator
 
             /* Protect against exceptions */
             try {
+                /* Determine algorithm */
+                final String myAlgo = pKeySpec.getMLDSAKeySpec().isHash() ? MLDSA_HASH : MLDSA_ALGO;
+
                 /* Create and initialise the generator */
-                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(MLDSA_ALGO, false);
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(myAlgo, false);
                 final MLDSAParameterSpec myParms = pKeySpec.getMLDSAKeySpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(MLDSA_ALGO, false));
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(myAlgo, false));
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create MLDSAGenerator", e);

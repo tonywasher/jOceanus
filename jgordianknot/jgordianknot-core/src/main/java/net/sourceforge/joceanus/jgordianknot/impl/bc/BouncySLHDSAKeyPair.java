@@ -29,8 +29,10 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.slhdsa.HashSLHDSASigner;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAParameters;
@@ -274,6 +276,16 @@ public final class BouncySLHDSAKeyPair {
         private final SLHDSASigner theSigner;
 
         /**
+         * The SLHDSAHash Signer.
+         */
+        private final HashSLHDSASigner theHashSigner;
+
+        /**
+         * Is this a hash signer?
+         */
+        private boolean isHash;
+
+        /**
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
@@ -284,6 +296,7 @@ public final class BouncySLHDSAKeyPair {
             /* Initialise underlying class */
             super(pFactory, pSpec);
             theSigner = new SLHDSASigner();
+            theHashSigner = new HashSLHDSASigner();
         }
 
         @Override
@@ -292,10 +305,17 @@ public final class BouncySLHDSAKeyPair {
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
+            /* Determine whether this is a hashSigner */
+            isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+
             /* Initialise and set the signer */
             final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) getKeyPair().getPrivateKey();
-            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
-            theSigner.init(true, myParms);
+            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            if (isHash) {
+                theHashSigner.init(true, myParms);
+            } else {
+                theSigner.init(true, myParms);
+            }
         }
 
         @Override
@@ -304,9 +324,54 @@ public final class BouncySLHDSAKeyPair {
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
+            /* Determine whether this is a hashSigner */
+            isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+
             /* Initialise and set the signer */
             final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) getKeyPair().getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
+            if (isHash) {
+                theHashSigner.init(false, myPublic.getPublicKey());
+            } else {
+                theSigner.init(false, myPublic.getPublicKey());
+            }
+        }
+
+        @Override
+        public void update(final byte[] pBytes,
+                           final int pOffset,
+                           final int pLength) {
+            if (isHash) {
+                theHashSigner.update(pBytes, pOffset, pLength);
+            } else {
+                super.update(pBytes, pOffset, pLength);
+            }
+        }
+
+        @Override
+        public void update(final byte pByte) {
+            if (isHash) {
+                theHashSigner.update(pByte);
+            } else {
+                super.update(pByte);
+            }
+        }
+
+        @Override
+        public void update(final byte[] pBytes) {
+            if (isHash) {
+                theHashSigner.update(pBytes, 0, pBytes.length);
+            } else {
+                super.update(pBytes);
+            }
+        }
+
+        @Override
+        public void reset() {
+            if (isHash) {
+                theHashSigner.reset();
+            } else {
+                super.reset();
+            }
         }
 
         @Override
@@ -315,8 +380,14 @@ public final class BouncySLHDSAKeyPair {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            return theSigner.generateSignature(getDigest());
-        }
+            try {
+                return isHash
+                        ? theHashSigner.generateSignature()
+                        : theSigner.generateSignature(getDigest());
+            } catch (CryptoException e) {
+                throw new GordianCryptoException("Failed to sign message", e);
+            }
+         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
@@ -324,7 +395,9 @@ public final class BouncySLHDSAKeyPair {
             checkMode(GordianSignatureMode.VERIFY);
 
             /* Verify the message */
-            return theSigner.verifySignature(getDigest(), pSignature);
+            return isHash
+                    ? theHashSigner.verifySignature(pSignature)
+                    : theSigner.verifySignature(getDigest(), pSignature);
         }
     }
 }

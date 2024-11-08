@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 
@@ -81,6 +83,22 @@ public enum GordianFRODOSpec {
             case SHAKE976:  return FrodoParameterSpec.frodokem976shake;
             case AES1344:   return FrodoParameterSpec.frodokem1344aes;
             case SHAKE1344: return FrodoParameterSpec.frodokem1344shake;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain Frodo algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case AES640:        return BCObjectIdentifiers.frodokem640aes;
+            case SHAKE640:      return BCObjectIdentifiers.frodokem640shake;
+            case AES976:        return BCObjectIdentifiers.frodokem976aes;
+            case SHAKE976:      return BCObjectIdentifiers.frodokem976shake;
+            case AES1344:       return BCObjectIdentifiers.frodokem1344aes;
+            case SHAKE1344:     return BCObjectIdentifiers.frodokem1344shake;
             default: throw new IllegalArgumentException();
         }
     }

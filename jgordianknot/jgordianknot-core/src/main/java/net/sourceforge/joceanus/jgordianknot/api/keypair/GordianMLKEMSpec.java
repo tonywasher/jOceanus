@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.pqc.crypto.mlkem.MLKEMParameters;
 
@@ -60,6 +62,19 @@ public enum GordianMLKEMSpec {
             case MLKEM512:     return MLKEMParameterSpec.ml_kem_512;
             case MLKEM768:     return MLKEMParameterSpec.ml_kem_768;
             case MLKEM1024:    return MLKEMParameterSpec.ml_kem_1024;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain MLKEM algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case MLKEM512:   return NISTObjectIdentifiers.id_alg_ml_kem_512;
+            case MLKEM768:   return NISTObjectIdentifiers.id_alg_ml_kem_768;
+            case MLKEM1024:  return NISTObjectIdentifiers.id_alg_ml_kem_1024;
             default: throw new IllegalArgumentException();
         }
     }

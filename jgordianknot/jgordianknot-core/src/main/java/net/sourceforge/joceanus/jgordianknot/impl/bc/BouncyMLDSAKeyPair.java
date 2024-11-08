@@ -30,8 +30,10 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.mldsa.HashMLDSASigner;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
@@ -270,7 +272,7 @@ public final class BouncyMLDSAKeyPair {
         /**
          * The MLDSA Signer.
          */
-        private final MLDSASigner theSigner;
+        private Signer theSigner;
 
         /**
          * Constructor.
@@ -282,7 +284,21 @@ public final class BouncyMLDSAKeyPair {
                              final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-            theSigner = new MLDSASigner();
+        }
+
+        /**
+         * Create the signer according to the keyPair.
+         * @param pKeyPair the keyPair
+         * @return the signer
+         */
+        private static Signer createSigner(final GordianKeyPair pKeyPair) {
+            /* Determine whether this is a hashSigner */
+            final boolean isHash = pKeyPair.getKeyPairSpec().getMLDSAKeySpec().isHash();
+
+            /* Create the internal digests */
+            return isHash
+                    ? new HashMLDSASigner()
+                    : new MLDSASigner();
         }
 
         @Override
@@ -292,6 +308,7 @@ public final class BouncyMLDSAKeyPair {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
+            theSigner = createSigner(pKeyPair);
             final BouncyMLDSAPrivateKey myPrivate = (BouncyMLDSAPrivateKey) getKeyPair().getPrivateKey();
             final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
@@ -304,6 +321,7 @@ public final class BouncyMLDSAKeyPair {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
+            theSigner = createSigner(pKeyPair);
             final BouncyMLDSAPublicKey myPublic = (BouncyMLDSAPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }

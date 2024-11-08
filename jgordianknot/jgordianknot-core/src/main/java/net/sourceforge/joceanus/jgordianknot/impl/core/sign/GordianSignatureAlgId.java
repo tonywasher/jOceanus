@@ -392,18 +392,7 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
 
         /* Add mldsa signatures */
-        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ml_dsa_44, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA65),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ml_dsa_65, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA87),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ml_dsa_87, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44SHA),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA65SHA),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA87SHA),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512, DERNull.INSTANCE));
+        addMLDSASignatures();
 
         /* Add new PQC signatures */
         addToMaps(GordianSignatureSpecBuilder.falcon(),
@@ -419,17 +408,27 @@ public class GordianSignatureAlgId {
         addToMaps(GordianSignatureSpecBuilder.rainbow(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.rainbow, DERNull.INSTANCE));
 
-        /* Add SPHINCSPlus signatures */
-        addSPHINCSPlusSignatures();
+        /* Add SLHDSA signatures */
+        addSLHDSASignatures();
 
         /* Add XMSS signatures */
         addXMSSSignatures();
     }
 
     /**
-     * Add XMSS signatures.
+     * Add SLHDSA signatures.
      */
-    private void addSPHINCSPlusSignatures() {
+    private void addMLDSASignatures() {
+        for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {
+            addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(mySpec),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add SLHDSA signatures.
+     */
+    private void addSLHDSASignatures() {
         for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {
             addToMaps(GordianSignatureSpecBuilder.slhdsa(), GordianKeyPairSpecBuilder.slhdsa(mySpec),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));

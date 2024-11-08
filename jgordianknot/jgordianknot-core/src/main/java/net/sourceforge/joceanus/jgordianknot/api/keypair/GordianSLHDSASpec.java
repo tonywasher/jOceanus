@@ -145,6 +145,43 @@ public enum GordianSLHDSASpec {
      */
     SHAKE256S_HASH;
 
+
+    /**
+     * Is this a hash signer?
+     * @return true/false
+     */
+    public boolean isHash() {
+        switch(this) {
+            case SHA128F:
+            case SHA128S:
+            case SHA192F:
+            case SHA192S:
+            case SHA256F:
+            case SHA256S:
+            case SHAKE128F:
+            case SHAKE128S:
+            case SHAKE192F:
+            case SHAKE192S:
+            case SHAKE256F:
+            case SHAKE256S:
+                return false;
+            case SHA128F_HASH:
+            case SHA128S_HASH:
+            case SHA192F_HASH:
+            case SHA192S_HASH:
+            case SHA256F_HASH:
+            case SHA256S_HASH:
+            case SHAKE128F_HASH:
+            case SHAKE128S_HASH:
+            case SHAKE192F_HASH:
+            case SHAKE192S_HASH:
+            case SHAKE256F_HASH:
+            case SHAKE256S_HASH:
+            default:
+                return true;
+        }
+    }
+
     /**
      * Obtain SLHDSA Parameters.
      * @return the parameters.
@@ -214,8 +251,8 @@ public enum GordianSLHDSASpec {
     }
 
     /**
-     * Obtain SPHINCSPlus ParameterSpec.
-     * @return the parameters.
+     * Obtain SLHDSA algorithm Identifier.
+     * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
         switch (this) {

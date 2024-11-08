@@ -115,6 +115,11 @@ public abstract class JcaSignature
     private static final String DSTU_SIGN = "DSTU4145";
 
     /**
+     * The PQC Hash prefix.
+     */
+    private static final String PQC_HASH_PFX = "HASH-";
+
+    /**
      * The RSA Signer.
      */
     private Signature theSigner;
@@ -381,6 +386,11 @@ public abstract class JcaSignature
     static class JcaSLHDSASignature
             extends JcaSignature {
         /**
+         * Base name.
+         */
+        private static final String BASE_NAME = "SLH-DSA";
+
+        /**
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
@@ -390,9 +400,39 @@ public abstract class JcaSignature
                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
+        }
 
-            /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("SLH-DSA", false));
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         */
+        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
+            /* Build the algorithm */
+            final boolean isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
 
@@ -401,6 +441,11 @@ public abstract class JcaSignature
      */
     static class JcaMLDSASignature
             extends JcaSignature {
+        /**
+         * Base name.
+         */
+        private static final String BASE_NAME = "ML-DSA";
+
         /**
          * Constructor.
          * @param pFactory the factory
@@ -411,9 +456,39 @@ public abstract class JcaSignature
                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
+        }
 
-            /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("ML-DSA", false));
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         */
+        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
+            /* Build the algorithm */
+            final boolean isHash = pKeyPair.getKeyPairSpec().getMLDSAKeySpec().isHash();
+            return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
 

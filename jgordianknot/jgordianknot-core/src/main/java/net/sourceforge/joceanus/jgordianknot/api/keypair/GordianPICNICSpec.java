@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.picnic.PicnicParameters;
 import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 
@@ -123,6 +125,28 @@ public enum GordianPICNICSpec {
             case L5FS:   return PicnicParameterSpec.picnicl5fs;
             case L5FULL: return PicnicParameterSpec.picnicl5full;
             case L53:    return PicnicParameterSpec.picnic3l5;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain Picnic algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case L1UR:   return BCObjectIdentifiers.picnicl1ur;
+            case L1FS:   return BCObjectIdentifiers.picnicl1fs;
+            case L1FULL: return BCObjectIdentifiers.picnicl1full;
+            case L13:    return BCObjectIdentifiers.picnic3l1;
+            case L3UR:   return BCObjectIdentifiers.picnicl3ur;
+            case L3FS:   return BCObjectIdentifiers.picnicl3fs;
+            case L3FULL: return BCObjectIdentifiers.picnicl3full;
+            case L33:    return BCObjectIdentifiers.picnic3l3;
+            case L5UR:   return BCObjectIdentifiers.picnicl5ur;
+            case L5FS:   return BCObjectIdentifiers.picnicl5fs;
+            case L5FULL: return BCObjectIdentifiers.picnicl5full;
+            case L53:    return BCObjectIdentifiers.picnic3l5;
             default: throw new IllegalArgumentException();
         }
     }

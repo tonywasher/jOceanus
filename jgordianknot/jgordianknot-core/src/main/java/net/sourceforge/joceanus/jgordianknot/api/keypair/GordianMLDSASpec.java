@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
 
@@ -54,6 +56,24 @@ public enum GordianMLDSASpec {
     MLDSA87SHA;
 
     /**
+     * Is this a hash signer?
+     * @return true/false
+     */
+    public boolean isHash() {
+        switch(this) {
+            case MLDSA44SHA:
+            case MLDSA65SHA:
+            case MLDSA87SHA:
+                return true;
+            case MLDSA44:
+            case MLDSA65:
+            case MLDSA87:
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Obtain MLDSA Parameters.
      * @return the parameters.
      */
@@ -81,6 +101,22 @@ public enum GordianMLDSASpec {
             case MLDSA44SHA: return MLDSAParameterSpec.ml_dsa_44_with_sha512;
             case MLDSA65SHA: return MLDSAParameterSpec.ml_dsa_65_with_sha512;
             case MLDSA87SHA: return MLDSAParameterSpec.ml_dsa_87_with_sha512;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain MLDSA algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case MLDSA44:    return NISTObjectIdentifiers.id_ml_dsa_44;
+            case MLDSA65:    return NISTObjectIdentifiers.id_ml_dsa_65;
+            case MLDSA87:    return NISTObjectIdentifiers.id_ml_dsa_87;
+            case MLDSA44SHA: return NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512;
+            case MLDSA65SHA: return NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512;
+            case MLDSA87SHA: return NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512;
             default: throw new IllegalArgumentException();
         }
     }

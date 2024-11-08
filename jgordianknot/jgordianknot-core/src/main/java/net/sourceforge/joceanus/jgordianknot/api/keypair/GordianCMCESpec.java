@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
 import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
 
@@ -109,6 +111,26 @@ public enum GordianCMCESpec {
             case PIVOT6960: return CMCEParameterSpec.mceliece6960119f;
             case BASE8192:  return CMCEParameterSpec.mceliece8192128;
             case PIVOT8192: return CMCEParameterSpec.mceliece8192128f;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain CMCE algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case BASE3488:      return BCObjectIdentifiers.mceliece348864_r3;
+            case PIVOT3488:     return BCObjectIdentifiers.mceliece348864f_r3;
+            case BASE4608:      return BCObjectIdentifiers.mceliece460896_r3;
+            case PIVOT4608:     return BCObjectIdentifiers.mceliece460896f_r3;
+            case BASE6688:      return BCObjectIdentifiers.mceliece6688128_r3;
+            case PIVOT6688:     return BCObjectIdentifiers.mceliece6688128f_r3;
+            case BASE6960:      return BCObjectIdentifiers.mceliece6960119_r3;
+            case PIVOT6960:     return BCObjectIdentifiers.mceliece6960119f_r3;
+            case BASE8192:      return BCObjectIdentifiers.mceliece8192128_r3;
+            case PIVOT8192:     return BCObjectIdentifiers.mceliece8192128f_r3;
             default: throw new IllegalArgumentException();
         }
     }

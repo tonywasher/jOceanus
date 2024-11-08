@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.ntru.NTRUParameters;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 
@@ -81,6 +83,22 @@ public enum GordianNTRUSpec {
             case HPS1229:  return NTRUParameterSpec.ntruhps40961229;
             case HRSS701: return NTRUParameterSpec.ntruhrss701;
             case HRSS1373: return NTRUParameterSpec.ntruhrss1373;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain NTRU algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case HPS509:     return BCObjectIdentifiers.ntruhps2048509;
+            case HPS677:     return BCObjectIdentifiers.ntruhps2048677;
+            case HPS821:     return BCObjectIdentifiers.ntruhps4096821;
+            case HPS1229:    return BCObjectIdentifiers.ntruhps40961229;
+            case HRSS701:    return BCObjectIdentifiers.ntruhrss701;
+            case HRSS1373:   return BCObjectIdentifiers.ntruhrss1373;
             default: throw new IllegalArgumentException();
         }
     }

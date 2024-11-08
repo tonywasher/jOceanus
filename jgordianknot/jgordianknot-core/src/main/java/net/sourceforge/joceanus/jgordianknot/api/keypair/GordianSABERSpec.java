@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.saber.SABERParameters;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 
@@ -102,6 +104,25 @@ public enum GordianSABERSpec {
             case LIGHT256: return SABERParameterSpec.lightsaberkem256r3;
             case BASE256:  return SABERParameterSpec.saberkem256r3;
             case FIRE256:  return SABERParameterSpec.firesaberkem256r3;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain Saber algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case LIGHT128:   return BCObjectIdentifiers.lightsaberkem128r3;
+            case BASE128:    return BCObjectIdentifiers.saberkem128r3;
+            case FIRE128:    return BCObjectIdentifiers.firesaberkem128r3;
+            case LIGHT192:   return BCObjectIdentifiers.lightsaberkem192r3;
+            case BASE192:    return BCObjectIdentifiers.saberkem192r3;
+            case FIRE192:    return BCObjectIdentifiers.firesaberkem192r3;
+            case LIGHT256:   return BCObjectIdentifiers.lightsaberkem256r3;
+            case BASE256:    return BCObjectIdentifiers.saberkem256r3;
+            case FIRE256:    return BCObjectIdentifiers.firesaberkem256r3;
             default: throw new IllegalArgumentException();
         }
     }

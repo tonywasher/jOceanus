@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.hqc.HQCParameters;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
 
@@ -60,6 +62,19 @@ public enum GordianHQCSpec {
             case HQC128: return HQCParameterSpec.hqc128;
             case HQC192: return HQCParameterSpec.hqc192;
             case HQC256: return HQCParameterSpec.hqc256;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain HQC algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case HQC128:  return BCObjectIdentifiers.hqc128;
+            case HQC192:  return BCObjectIdentifiers.hqc192;
+            case HQC256:  return BCObjectIdentifiers.hqc256;
             default: throw new IllegalArgumentException();
         }
     }
