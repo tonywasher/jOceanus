@@ -16,15 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.KeyAgreement;
-import javax.crypto.KeyGenerator;
-
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -37,6 +32,11 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaPostQuantu
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaUnifiedAgreement;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import javax.crypto.KeyAgreement;
+import javax.crypto.KeyGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 
 /**
  * Jca Agreement Factory.
@@ -88,7 +88,7 @@ public class JcaAgreementFactory
             case CMCE:
             case FRODO:
             case SABER:
-            case KYBER:
+            case MLKEM:
             case HQC:
             case BIKE:
             case NTRU:
@@ -242,13 +242,23 @@ public class JcaAgreementFactory
         try {
             /* Determine the algorithm name */
             String myName = pSpec.getKeyPairType().toString();
-            if (pSpec.getKeyPairType() == GordianKeyPairType.NTRUPRIME) {
-                final GordianNTRUPrimeSpec mySpec = pSpec.getNTRUPrimeKeySpec();
-                myName = mySpec.getType() + "PRIME";
+            switch (pSpec.getKeyPairType()) {
+                case NTRUPRIME:
+                    final GordianNTRUPrimeSpec myNTRUSpec = pSpec.getNTRUPrimeKeySpec();
+                    myName = myNTRUSpec.getType() + "PRIME";
+                    break;
+                case MLKEM:
+                    myName = "ML-KEM";
+                    break;
+                default:
+                    break;
             }
 
+            /* Determine source of keyGenerator */
+            final Provider myProvider = pSpec.getKeyPairType().isStandardJca() ? JcaFactory.BCPROV : JcaFactory.BCPQPROV;
+
             /* Return a KeyAgreement for the algorithm */
-            return KeyGenerator.getInstance(myName, JcaFactory.BCPQPROV);
+            return KeyGenerator.getInstance(myName, myProvider);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -275,7 +285,7 @@ public class JcaAgreementFactory
             case CMCE:
             case FRODO:
             case SABER:
-            case KYBER:
+            case MLKEM:
             case HQC:
             case BIKE:
             case NTRU:

@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.ntruprime.NTRULPRimeParameters;
 import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeParameters;
 import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * NTRUPRIME KeySpec.
@@ -248,6 +250,22 @@ public class GordianNTRUPrimeSpec {
         }
 
         /**
+         * Obtain NTRUL algorithm Identifier.
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getNTRULIdentifier() {
+            switch (this) {
+                case PR653:   return BCObjectIdentifiers.ntrulpr653;
+                case PR761:   return BCObjectIdentifiers.ntrulpr761;
+                case PR857:   return BCObjectIdentifiers.ntrulpr857;
+                case PR953:   return BCObjectIdentifiers.ntrulpr953;
+                case PR1013:  return BCObjectIdentifiers.ntrulpr1013;
+                case PR1277:  return BCObjectIdentifiers.ntrulpr1277;
+                default: throw new IllegalArgumentException();
+            }
+        }
+
+        /**
          * Obtain NTRUL Parameters.
          * @return the parameters.
          */
@@ -275,6 +293,22 @@ public class GordianNTRUPrimeSpec {
                 case PR953:   return SNTRUPrimeParameterSpec.sntrup953;
                 case PR1013:  return SNTRUPrimeParameterSpec.sntrup1013;
                 case PR1277:  return SNTRUPrimeParameterSpec.sntrup1277;
+                default: throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * Obtain SNTRU algorithm Identifier.
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getSNTRUIdentifier() {
+            switch (this) {
+                case PR653:   return BCObjectIdentifiers.sntrup653;
+                case PR761:   return BCObjectIdentifiers.sntrup761;
+                case PR857:   return BCObjectIdentifiers.sntrup857;
+                case PR953:   return BCObjectIdentifiers.sntrup953;
+                case PR1013:  return BCObjectIdentifiers.sntrup1013;
+                case PR1277:  return BCObjectIdentifiers.sntrup1277;
                 default: throw new IllegalArgumentException();
             }
         }

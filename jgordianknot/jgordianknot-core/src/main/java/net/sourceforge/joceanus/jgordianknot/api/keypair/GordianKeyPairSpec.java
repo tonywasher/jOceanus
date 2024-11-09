@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 
 /**
  * Asymmetric KeyPair Specification.
@@ -186,14 +186,14 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the SPHINCSPlus keySpec.
+     * Obtain the SLHDSA keySpec.
      * @return the keySpec.
      */
-    public GordianSPHINCSPlusSpec getSPHINCSPlusKeySpec() {
-        if (!(theSubKeyType instanceof GordianSPHINCSPlusSpec)) {
+    public GordianSLHDSASpec getSLHDSAKeySpec() {
+        if (!(theSubKeyType instanceof GordianSLHDSASpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianSPHINCSPlusSpec) theSubKeyType;
+        return (GordianSLHDSASpec) theSubKeyType;
     }
 
     /**
@@ -230,25 +230,25 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the Kyber keySpec.
+     * Obtain the MLKEM keySpec.
      * @return the keySpec.
      */
-    public GordianKYBERSpec getKyberKeySpec() {
-        if (!(theSubKeyType instanceof GordianKYBERSpec)) {
+    public GordianMLKEMSpec getMLKEMKeySpec() {
+        if (!(theSubKeyType instanceof GordianMLKEMSpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianKYBERSpec) theSubKeyType;
+        return (GordianMLKEMSpec) theSubKeyType;
     }
 
     /**
-     * Obtain the Dilithium keySpec.
+     * Obtain the MLDSA keySpec.
      * @return the keySpec.
      */
-    public GordianDILITHIUMSpec getDilithiumKeySpec() {
-        if (!(theSubKeyType instanceof GordianDILITHIUMSpec)) {
+    public GordianMLDSASpec getMLDSAKeySpec() {
+        if (!(theSubKeyType instanceof GordianMLDSASpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianDILITHIUMSpec) theSubKeyType;
+        return (GordianMLDSASpec) theSubKeyType;
     }
 
     /**
@@ -448,18 +448,18 @@ public class GordianKeyPairSpec {
             case XMSS:
                 return theSubKeyType instanceof GordianXMSSKeySpec
                         && ((GordianXMSSKeySpec) theSubKeyType).isValid();
-            case SPHINCSPLUS:
-                return theSubKeyType instanceof GordianSPHINCSPlusSpec;
+            case SLHDSA:
+                return theSubKeyType instanceof GordianSLHDSASpec;
             case CMCE:
                 return theSubKeyType instanceof GordianCMCESpec;
             case FRODO:
                 return theSubKeyType instanceof GordianFRODOSpec;
             case SABER:
                 return theSubKeyType instanceof GordianSABERSpec;
-            case KYBER:
-                return theSubKeyType instanceof GordianKYBERSpec;
-            case DILITHIUM:
-                return theSubKeyType instanceof GordianDILITHIUMSpec;
+            case MLKEM:
+                return theSubKeyType instanceof GordianMLKEMSpec;
+            case MLDSA:
+                return theSubKeyType instanceof GordianMLDSASpec;
             case HQC:
                 return theSubKeyType instanceof GordianHQCSpec;
             case BIKE:

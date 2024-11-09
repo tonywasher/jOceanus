@@ -16,37 +16,39 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
-import org.bouncycastle.pqc.crypto.crystals.kyber.KyberParameters;
-import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMParameters;
 
 /**
  * Kyber KeySpec.
  */
-public enum GordianKYBERSpec {
+public enum GordianMLKEMSpec {
     /**
      * Kyber 512.
      */
-    KYBER512,
+    MLKEM512,
 
     /**
      * Kyber 768.
      */
-    KYBER768,
+    MLKEM768,
 
     /**
      * Kyber 1024.
      */
-    KYBER1024;
+    MLKEM1024;
 
     /**
      * Obtain KYBER Parameters.
      * @return the parameters.
      */
-    public KyberParameters getParameters() {
+    public MLKEMParameters getParameters() {
         switch (this) {
-            case KYBER512:     return KyberParameters.kyber512;
-            case KYBER768:     return KyberParameters.kyber768;
-            case KYBER1024:    return KyberParameters.kyber1024;
+            case MLKEM512:     return MLKEMParameters.ml_kem_512;
+            case MLKEM768:     return MLKEMParameters.ml_kem_768;
+            case MLKEM1024:    return MLKEMParameters.ml_kem_1024;
             default: throw new IllegalArgumentException();
         }
     }
@@ -55,11 +57,24 @@ public enum GordianKYBERSpec {
      * Obtain Kyber ParameterSpec.
      * @return the parameters.
      */
-    public KyberParameterSpec getParameterSpec() {
+    public MLKEMParameterSpec getParameterSpec() {
         switch (this) {
-            case KYBER512:     return KyberParameterSpec.kyber512;
-            case KYBER768:     return KyberParameterSpec.kyber768;
-            case KYBER1024:    return KyberParameterSpec.kyber1024;
+            case MLKEM512:     return MLKEMParameterSpec.ml_kem_512;
+            case MLKEM768:     return MLKEMParameterSpec.ml_kem_768;
+            case MLKEM1024:    return MLKEMParameterSpec.ml_kem_1024;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain MLKEM algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case MLKEM512:   return NISTObjectIdentifiers.id_alg_ml_kem_512;
+            case MLKEM768:   return NISTObjectIdentifiers.id_alg_ml_kem_768;
+            case MLKEM1024:  return NISTObjectIdentifiers.id_alg_ml_kem_1024;
             default: throw new IllegalArgumentException();
         }
     }

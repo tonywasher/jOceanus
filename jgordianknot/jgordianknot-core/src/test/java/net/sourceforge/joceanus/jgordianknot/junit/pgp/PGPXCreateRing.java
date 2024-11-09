@@ -1,21 +1,11 @@
 package net.sourceforge.joceanus.jgordianknot.junit.pgp;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
+import org.bouncycastle.bcpg.PublicKeyPacket;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.bcpg.sig.Features;
 import org.bouncycastle.bcpg.sig.KeyFlags;
@@ -59,6 +49,17 @@ import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPGPKeyPair;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * PGP Create keyRings.
@@ -163,7 +164,7 @@ public class PGPXCreateRing {
                                                  final PGPSecretKeyRing pRing) throws PGPException {
         /* Build the new secretKey */
         final String myUserId = pType.obtainAltIdentity();
-        final PGPSignatureGenerator mySigner = new PGPSignatureGenerator(pBuilder);
+        final PGPSignatureGenerator mySigner = new PGPSignatureGenerator(pBuilder, pRing.getPublicKey());
         mySigner.init(PGPSignature.POSITIVE_CERTIFICATION, pSigner.getPrivateKey());
         final PGPSignatureSubpacketGenerator svg = new PGPSignatureSubpacketGenerator();
         final PGPSignatureSubpacketVector hashedPcks = createMasterPackets(pSigner.getPublicKey(), pType.getKeyPairStyle(), false);
@@ -214,13 +215,13 @@ public class PGPXCreateRing {
         final Date date = new Date();
         final PGPXKeyRingStyle myStyle = pType.getKeyPairStyle();
         final AsymmetricCipherKeyPair kpCert = kpg.generateKeyPair();
-        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PGPPublicKey.RSA_GENERAL, kpCert, date);
+        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.RSA_GENERAL, kpCert, date);
         if (myStyle != PGPXKeyRingStyle.SOLO) {
             final AsymmetricCipherKeyPair kpEnc = kpg.generateKeyPair();
-            final PGPKeyPair encKeyPair = new BcPGPKeyPair(PGPPublicKey.RSA_GENERAL, kpEnc, date);
+            final PGPKeyPair encKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.RSA_GENERAL, kpEnc, date);
             if (myStyle == PGPXKeyRingStyle.TRIO) {
                 final AsymmetricCipherKeyPair kpSgn = kpg.generateKeyPair();
-                final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PGPPublicKey.RSA_GENERAL, kpSgn, date);
+                final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.RSA_GENERAL, kpSgn, date);
                 return new KeyPairSet(certKeyPair, encKeyPair, sgnKeyPair);
             } else {
                 return new KeyPairSet(certKeyPair, encKeyPair);
@@ -257,11 +258,11 @@ public class PGPXCreateRing {
         final PGPXKeyRingStyle myStyle = pType.getKeyPairStyle();
         final AsymmetricCipherKeyPair kpCert = kpgSign.generateKeyPair();
         final AsymmetricCipherKeyPair kpEnc = kpgEnc.generateKeyPair();
-        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PGPPublicKey.DSA, kpCert, date);
-        final PGPKeyPair encKeyPair = new BcPGPKeyPair(PGPPublicKey.ELGAMAL_ENCRYPT, kpEnc, date);
+        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.DSA, kpCert, date);
+        final PGPKeyPair encKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.ELGAMAL_ENCRYPT, kpEnc, date);
         if (myStyle == PGPXKeyRingStyle.TRIO) {
             final AsymmetricCipherKeyPair kpSgn = kpgSign.generateKeyPair();
-            final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PGPPublicKey.DSA, kpSgn, date);
+            final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.DSA, kpSgn, date);
             return new KeyPairSet(certKeyPair, encKeyPair, sgnKeyPair);
         } else {
             return new KeyPairSet(certKeyPair, encKeyPair);
@@ -286,13 +287,13 @@ public class PGPXCreateRing {
         final Date date = new Date();
         final PGPXKeyRingStyle myStyle = pType.getKeyPairStyle();
         final AsymmetricCipherKeyPair kpCert = kpg.generateKeyPair();
-        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PGPPublicKey.ECDSA, kpCert, date);
+        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.ECDSA, kpCert, date);
         if (myStyle != PGPXKeyRingStyle.SOLO) {
             final AsymmetricCipherKeyPair kpEnc = kpg.generateKeyPair();
-            final PGPKeyPair encKeyPair = new BcPGPKeyPair(PGPPublicKey.ECDH, kpEnc, date);
+            final PGPKeyPair encKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.ECDH, kpEnc, date);
             if (myStyle == PGPXKeyRingStyle.TRIO) {
                 final AsymmetricCipherKeyPair kpSgn = kpg.generateKeyPair();
-                final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PGPPublicKey.ECDSA, kpSgn, date);
+                final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.ECDSA, kpSgn, date);
                 return new KeyPairSet(certKeyPair, encKeyPair, sgnKeyPair);
             } else {
                 return new KeyPairSet(certKeyPair, encKeyPair);
@@ -321,11 +322,11 @@ public class PGPXCreateRing {
         final PGPXKeyRingStyle myStyle = pType.getKeyPairStyle();
         final AsymmetricCipherKeyPair kpCert = kpgSign.generateKeyPair();
         final AsymmetricCipherKeyPair kpEnc = kpgEnc.generateKeyPair();
-        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PGPPublicKey.Ed448, kpCert, date);
-        final PGPKeyPair encKeyPair = new BcPGPKeyPair(PGPPublicKey.ECDH, kpEnc, date);
+        final PGPKeyPair certKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.Ed448, kpCert, date);
+        final PGPKeyPair encKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.ECDH, kpEnc, date);
         if (myStyle == PGPXKeyRingStyle.TRIO) {
             final AsymmetricCipherKeyPair kpSgn = kpgSign.generateKeyPair();
-            final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PGPPublicKey.Ed448, kpSgn, date);
+            final PGPKeyPair sgnKeyPair = new BcPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.Ed448, kpSgn, date);
             return new KeyPairSet(certKeyPair, encKeyPair, sgnKeyPair);
         } else {
             return new KeyPairSet(certKeyPair, encKeyPair);
@@ -391,7 +392,7 @@ public class PGPXCreateRing {
                                                                         final PGPKeyPair pSigner,
                                                                         final BcPGPContentSignerBuilder pBuilder) throws PGPException, IOException {
         /* Create embedded signature */
-        final PGPSignatureGenerator mySigner = new PGPSignatureGenerator(pBuilder);
+        final PGPSignatureGenerator mySigner = new PGPSignatureGenerator(pBuilder, pMaster);
         mySigner.init(PGPSignature.PRIMARYKEY_BINDING, pSigner.getPrivateKey());
         PGPSignatureSubpacketGenerator svg = new PGPSignatureSubpacketGenerator();
         svg.setIssuerFingerprint(false, pSigner.getPublicKey());

@@ -39,11 +39,11 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.78.1"
-        jUnitVersion = "5.11.2"
+        bouncyCastleVersion = "1.79"
+        jUnitVersion = "5.11.3"
         jsonVersion = "20240303"
         mySQLVersion = "9.1.0"
-        MariaDBVersion = "3.4.1"
+        MariaDBVersion = "3.5.0"
         postGreSQLVersion = "42.7.4"
         mssqlVersion = "12.8.1.jre11"
         h2Version = "2.3.232"
@@ -59,11 +59,11 @@ allprojects {
         jetBrainsAnnotationsVersion = "24.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.18.2"
+        checkStyleVersion = "10.20.0"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "7.6.0"
+        pmdVersion = "7.7.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.12"

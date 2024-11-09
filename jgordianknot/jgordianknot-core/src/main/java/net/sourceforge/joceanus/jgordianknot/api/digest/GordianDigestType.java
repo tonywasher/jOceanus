@@ -60,7 +60,7 @@ public enum GordianDigestType {
     /**
      * SHAKE.
      */
-    SHAKE(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
+    SHAKE(GordianLength.LEN_256, GordianLength.LEN_512),
 
     /**
      * Skein.
@@ -207,8 +207,7 @@ public enum GordianDigestType {
             case SHAKE:
             case KANGAROO:
                 return pStateLength != null
-                        && (pStateLength.equals(getSHAKEStateForLength(pLength))
-                        || pStateLength.equals(getAlternateSHAKEStateForLength(pLength)));
+                        && pStateLength.equals(getSHAKEStateForLength(pLength));
             case SKEIN:
                 return pStateLength != null
                         && (pStateLength.equals(getSkeinStateForLength(pLength))
@@ -276,13 +275,9 @@ public enum GordianDigestType {
      */
     private static GordianLength getSHAKEStateForLength(final GordianLength pLength) {
         switch (pLength) {
-            case LEN_256:
-            case LEN_384:
             case LEN_512:
                 return GordianLength.LEN_256;
-            case LEN_128:
-            case LEN_160:
-            case LEN_224:
+            case LEN_256:
                 return GordianLength.LEN_128;
             default:
                 return null;
@@ -326,9 +321,6 @@ public enum GordianDigestType {
         switch (this) {
             case SHA2:
                 return getAlternateSha2StateForLength(pLength);
-            case SHAKE:
-            case KANGAROO:
-                return getAlternateSHAKEStateForLength(pLength);
             case SKEIN:
                 return getAlternateSkeinStateForLength(pLength);
             case BLAKE2:
@@ -358,17 +350,6 @@ public enum GordianDigestType {
             default:
                 return null;
         }
-    }
-
-    /**
-     * Obtain the alternate shakeState length.
-     * @param pLength the length
-     * @return the length (null if not supported)
-     */
-    private static GordianLength getAlternateSHAKEStateForLength(final GordianLength pLength) {
-        return GordianLength.LEN_256.equals(pLength)
-               ?  GordianLength.LEN_128
-               : null;
     }
 
     /**

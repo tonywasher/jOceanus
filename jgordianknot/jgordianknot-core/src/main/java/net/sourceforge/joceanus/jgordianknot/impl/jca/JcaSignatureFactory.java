@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -30,7 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDilithiumSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaFalconSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
@@ -38,9 +35,12 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignatu
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 
 /**
  * Jca Signature Factory.
@@ -115,10 +115,10 @@ public class JcaSignatureFactory
                 return new JcaGOSTSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
-            case SPHINCSPLUS:
-                return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
-            case DILITHIUM:
-                return new JcaDilithiumSignature(getFactory(), pSignatureSpec);
+            case SLHDSA:
+                return new JcaSLHDSASignature(getFactory(), pSignatureSpec);
+            case MLDSA:
+                return new JcaMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:
                 return new JcaFalconSignature(getFactory(), pSignatureSpec);
             case PICNIC:
@@ -154,8 +154,8 @@ public class JcaSignatureFactory
             case DSA:
                 return validDSASignature(pSpec);
             case XMSS:
-            case SPHINCSPLUS:
-            case DILITHIUM:
+            case SLHDSA:
+            case MLDSA:
             case FALCON:
             case PICNIC:
             case RAINBOW:
@@ -207,7 +207,7 @@ public class JcaSignatureFactory
     private static boolean validRSASHAKESignature(final GordianSignatureSpec pSpec) {
         /* Must be pure SHAKE */
         final GordianDigestSpec myDigest = pSpec.getDigestSpec();
-        if (!pSpec.getSignatureType().isPSS() || !myDigest.isPureSHAKE()) {
+        if (!pSpec.getSignatureType().isPSS()) {
             return false;
         }
 

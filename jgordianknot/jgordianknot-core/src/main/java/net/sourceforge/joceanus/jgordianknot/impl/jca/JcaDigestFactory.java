@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Jca Digest Factory.
@@ -100,11 +100,6 @@ public class JcaDigestFactory
         /* Perform standard checks */
         if (!super.validDigestSpec(pDigestSpec)) {
             return false;
-        }
-
-        /* Additional restrictions on SHAKE */
-        if (pDigestSpec.getDigestType() == GordianDigestType.SHAKE) {
-           return pDigestSpec.isPureSHAKE();
         }
 
         /* OK */

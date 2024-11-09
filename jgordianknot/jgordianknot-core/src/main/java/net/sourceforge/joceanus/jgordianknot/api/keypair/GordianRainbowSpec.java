@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowParameters;
 import org.bouncycastle.pqc.jcajce.spec.RainbowParameterSpec;
 
@@ -81,6 +83,22 @@ public enum GordianRainbowSpec {
             case CLASSIC5:    return RainbowParameterSpec.rainbowVclassic;
             case CIRCUM5:     return RainbowParameterSpec.rainbowVcircumzenithal;
             case COMPRESSED5: return RainbowParameterSpec.rainbowVcompressed;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain Rainbow algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case CLASSIC3:    return BCObjectIdentifiers.rainbow_III_classic;
+            case CIRCUM3:     return BCObjectIdentifiers.rainbow_III_circumzenithal;
+            case COMPRESSED3: return BCObjectIdentifiers.rainbow_III_compressed;
+            case CLASSIC5:    return BCObjectIdentifiers.rainbow_V_classic;
+            case CIRCUM5:     return BCObjectIdentifiers.rainbow_V_circumzenithal;
+            case COMPRESSED5: return BCObjectIdentifiers.rainbow_V_compressed;
             default: throw new IllegalArgumentException();
         }
     }

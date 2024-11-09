@@ -16,14 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import javax.crypto.spec.PSource;
-import javax.security.auth.DestroyFailedException;
-
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
@@ -55,24 +64,13 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import javax.crypto.spec.PSource;
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 /**
  * RSA KeyPair classes.
@@ -394,10 +392,10 @@ public final class BouncyRSAKeyPair {
                     return new RSADigestSigner(myDigest.getDigest());
                 case PSS128:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake128(GordianLength.LEN_256)).getDigest(), mySaltLength);
+                            pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake128()).getDigest(), mySaltLength);
                 case PSS256:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake256(GordianLength.LEN_512)).getDigest(), mySaltLength);
+                            pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake256()).getDigest(), mySaltLength);
                 case PSSMGF1:
                 default:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);

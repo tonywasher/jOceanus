@@ -83,9 +83,9 @@ public enum GordianKeyPairType {
     LMS,
 
     /**
-     * SPHINCSPlus.
+     * SLHDSA.
      */
-    SPHINCSPLUS,
+    SLHDSA,
 
     /**
      * CMCE.
@@ -103,14 +103,14 @@ public enum GordianKeyPairType {
     SABER,
 
     /**
-     * Kyber.
+     * MLKEM.
      */
-    KYBER,
+    MLKEM,
 
     /**
-     * Dilithium.
+     * MLDSA.
      */
-    DILITHIUM,
+    MLDSA,
 
     /**
      * HQC.
@@ -173,8 +173,8 @@ public enum GordianKeyPairType {
      */
     public GordianRequired useDigestForSignatures() {
         switch (this) {
-            case SPHINCSPLUS:
-            case DILITHIUM:
+            case SLHDSA:
+            case MLDSA:
             case FALCON:
             case XMSS:
             case EDDSA:
@@ -194,5 +194,42 @@ public enum GordianKeyPairType {
      */
     public boolean subTypeForSignatures() {
         return this == XMSS;
+    }
+
+    /**
+     * Is the keyPair in the standard jcaProvider?
+     * @return true/false
+     */
+    public boolean isStandardJca() {
+        switch (this) {
+            case RSA:
+            case DSA:
+            case EC:
+            case ELGAMAL:
+            case DH:
+            case SM2:
+            case GOST2012:
+            case DSTU4145:
+            case XDH:
+            case EDDSA:
+            case MLKEM:
+            case MLDSA:
+            case SLHDSA:
+                return true;
+            case BIKE:
+            case FRODO:
+            case SABER:
+            case CMCE:
+            case FALCON:
+            case RAINBOW:
+            case NTRU:
+            case NTRUPRIME:
+            case HQC:
+            case PICNIC:
+            case XMSS:
+            case LMS:
+            default:
+                return false;
+        }
     }
 }

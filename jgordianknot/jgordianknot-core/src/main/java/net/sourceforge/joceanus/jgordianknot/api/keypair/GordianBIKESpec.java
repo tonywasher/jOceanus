@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.bike.BIKEParameters;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 
@@ -60,6 +62,19 @@ public enum GordianBIKESpec {
             case BIKE128: return BIKEParameterSpec.bike128;
             case BIKE192: return BIKEParameterSpec.bike192;
             case BIKE256: return BIKEParameterSpec.bike256;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain BIKE algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case BIKE128:  return BCObjectIdentifiers.bike128;
+            case BIKE192:  return BCObjectIdentifiers.bike192;
+            case BIKE256:  return BCObjectIdentifiers.bike256;
             default: throw new IllegalArgumentException();
         }
     }

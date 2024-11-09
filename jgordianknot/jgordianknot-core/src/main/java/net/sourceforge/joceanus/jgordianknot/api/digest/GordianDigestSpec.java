@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+
+import java.util.Objects;
 
 /**
  * Digest Specification.
@@ -132,16 +132,6 @@ public class GordianDigestSpec
     }
 
     /**
-     * Is this a pureSHAKE digest.
-     * @return true/false
-     */
-    public boolean isPureSHAKE() {
-        return GordianDigestType.SHAKE.equals(theDigestType)
-                && theStateLength != null
-                && theLength.getByteLength() == 2 * theStateLength.getByteLength();
-    }
-
-    /**
      * Check spec validity.
      * @return valid true/false
      */
@@ -183,9 +173,6 @@ public class GordianDigestSpec
                         break;
                     case SHAKE:
                         theName += theStateLength;
-                        if (!isPureSHAKE()) {
-                            theName += SEP + theLength;
-                        }
                         break;
                     case SKEIN:
                         theName += SEP + theStateLength;
@@ -197,7 +184,6 @@ public class GordianDigestSpec
                         break;
                     case KANGAROO:
                         theName = GordianDigestType.getKangarooAlgorithmForStateLength(theStateLength);
-                        theName += SEP + theLength;
                         break;
                     case HARAKA:
                         theName += SEP + theStateLength;

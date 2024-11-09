@@ -96,7 +96,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec kMac(final GordianLength pKeyLength) {
-        return kMac(pKeyLength, GordianDigestSpecBuilder.shake128(GordianDigestType.SHAKE.getDefaultLength()));
+        return kMac(pKeyLength, GordianDigestSpecBuilder.shake128());
     }
 
     /**

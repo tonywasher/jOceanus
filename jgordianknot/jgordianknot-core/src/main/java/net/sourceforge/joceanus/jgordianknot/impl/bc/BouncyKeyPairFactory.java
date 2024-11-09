@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -27,7 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.Go
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDILITHIUMKeyPair.BouncyDILITHIUMKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd25519KeyPairGenerator;
@@ -38,9 +35,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFALCONKeyPair.BouncyF
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKYBERKeyPair.BouncyKYBERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICKeyPairGenerator;
@@ -48,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAK
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
@@ -58,6 +55,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BouncyCastle KeyPair Factory.
@@ -162,18 +162,18 @@ public class BouncyKeyPairFactory
                 return new BouncyDSAKeyPairGenerator(getFactory(), pKeySpec);
             case DH:
                 return new BouncyDHKeyPairGenerator(getFactory(), pKeySpec);
-            case SPHINCSPLUS:
-                return new BouncySPHINCSPlusKeyPairGenerator(getFactory(), pKeySpec);
+            case SLHDSA:
+                return new BouncySLHDSAKeyPairGenerator(getFactory(), pKeySpec);
             case CMCE:
                 return new BouncyCMCEKeyPairGenerator(getFactory(), pKeySpec);
             case FRODO:
                 return new BouncyFrodoKeyPairGenerator(getFactory(), pKeySpec);
             case SABER:
                 return new BouncySABERKeyPairGenerator(getFactory(), pKeySpec);
-            case KYBER:
-                return new BouncyKYBERKeyPairGenerator(getFactory(), pKeySpec);
-            case DILITHIUM:
-                return new BouncyDILITHIUMKeyPairGenerator(getFactory(), pKeySpec);
+            case MLKEM:
+                return new BouncyMLKEMKeyPairGenerator(getFactory(), pKeySpec);
+            case MLDSA:
+                return new BouncyMLDSAKeyPairGenerator(getFactory(), pKeySpec);
             case HQC:
                 return new BouncyHQCKeyPairGenerator(getFactory(), pKeySpec);
             case BIKE:

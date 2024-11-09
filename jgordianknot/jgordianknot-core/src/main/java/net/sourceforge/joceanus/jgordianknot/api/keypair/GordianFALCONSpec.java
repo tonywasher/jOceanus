@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 
@@ -53,6 +55,18 @@ public enum GordianFALCONSpec {
         switch (this) {
             case FALCON512:  return FalconParameterSpec.falcon_512;
             case FALCON1024: return FalconParameterSpec.falcon_1024;
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain Falcon algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (this) {
+            case FALCON512:   return BCObjectIdentifiers.falcon_512;
+            case FALCON1024:  return BCObjectIdentifiers.falcon_1024;
             default: throw new IllegalArgumentException();
         }
     }

@@ -16,19 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
@@ -55,6 +42,18 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mappings from EncodedId to AgreementSpec.
@@ -217,8 +216,8 @@ public class GordianAgreementAlgId {
             case DSTU4145:
                 myId = myId.branch(Integer.toString(((GordianDSTU4145Elliptic) pSpec.getElliptic()).ordinal() + 1));
                 break;
-            case SPHINCSPLUS:
-                myId = myId.branch(Integer.toString(pSpec.getSPHINCSPlusKeySpec().ordinal() + 1));
+            case SLHDSA:
+                myId = myId.branch(Integer.toString(pSpec.getSLHDSAKeySpec().ordinal() + 1));
                 break;
             case CMCE:
                 myId = myId.branch(Integer.toString(pSpec.getCMCEKeySpec().ordinal() + 1));
@@ -229,8 +228,8 @@ public class GordianAgreementAlgId {
             case SABER:
                 myId = myId.branch(Integer.toString(pSpec.getSABERKeySpec().ordinal() + 1));
                 break;
-            case KYBER:
-                myId = myId.branch(Integer.toString(pSpec.getKyberKeySpec().ordinal() + 1));
+            case MLKEM:
+                myId = myId.branch(Integer.toString(pSpec.getMLKEMKeySpec().ordinal() + 1));
                 break;
             case HQC:
                 myId = myId.branch(Integer.toString(pSpec.getHQCKeySpec().ordinal() + 1));

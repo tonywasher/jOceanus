@@ -16,15 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
-import java.util.Arrays;
-
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
@@ -39,6 +36,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.Arrays;
 
 /**
  * KeyPair validity checking.
@@ -183,8 +182,8 @@ public final class GordianKeyPairValidity {
             case GOST2012:
             case DSTU4145:
             case SM2:
-            case SPHINCSPLUS:
-            case DILITHIUM:
+            case SLHDSA:
+            case MLDSA:
             case FALCON:
             case PICNIC:
             case RAINBOW:
@@ -202,7 +201,7 @@ public final class GordianKeyPairValidity {
             case CMCE:
             case FRODO:
             case SABER:
-            case KYBER:
+            case MLKEM:
             case HQC:
             case BIKE:
             case NTRU:

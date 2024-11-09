@@ -16,20 +16,40 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLDSASpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMLKEMSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSLHDSASpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
@@ -71,37 +91,15 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
 import org.bouncycastle.util.Pack;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianBIKESpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDILITHIUMSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFALCONSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianHQCSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKYBERSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianNTRUSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianPICNICSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRainbowSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mappings from EncodedId to KeyPairSpec.
@@ -158,15 +156,15 @@ public class GordianKeyPairAlgId {
         GordianDSTUEncodedParser.register(this);
         GordianGOSTEncodedParser.register(this);
         GordianEdwardsEncodedParser.register(this);
-        GordianSPHINCSPlusEncodedParser.register(this);
+        GordianSLHDSAEncodedParser.register(this);
         GordianXMSSEncodedParser.register(this);
         GordianXMSSMTEncodedParser.register(this);
         GordianLMSEncodedParser.register(this);
         GordianCMCEEncodedParser.register(this);
         GordianFrodoEncodedParser.register(this);
         GordianSABEREncodedParser.register(this);
-        GordianKyberEncodedParser.register(this);
-        GordianDilithiumEncodedParser.register(this);
+        GordianMLKEMEncodedParser.register(this);
+        GordianMLDSAEncodedParser.register(this);
         GordianHQCEncodedParser.register(this);
         GordianBIKEEncodedParser.register(this);
         GordianNTRUEncodedParser.register(this);
@@ -652,9 +650,9 @@ public class GordianKeyPairAlgId {
     }
 
     /**
-     * SPHINCSPlus Encoded parser.
+     * SLHDSA Encoded parser.
      */
-    private static class GordianSPHINCSPlusEncodedParser implements GordianEncodedParser {
+    private static class GordianSLHDSAEncodedParser implements GordianEncodedParser {
         /**
          * AsymKeySpec.
          */
@@ -664,7 +662,7 @@ public class GordianKeyPairAlgId {
          * Constructor.
          * @param pKeySpec the keySpec
          */
-        GordianSPHINCSPlusEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianSLHDSAEncodedParser(final GordianKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -673,67 +671,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128f,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128s,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA128S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192f,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA192F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192s,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA192S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256f,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA256F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256s,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA256S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128f,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128s,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192f,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192s,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256f,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256F)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256s,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256S)));
-
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA128F_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_128s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA128S_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA192F_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_192s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA192S_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA256F_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_sha2_256s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHA256S_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128F_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_128s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE128S_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192F_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_192s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE192S_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256f_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256F_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_shake_256s_r3,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.SHAKE256S_R)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128F_S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_128s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA128S_S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_192f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA192F_S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_192s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA192S_S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256f_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256F_S)));
-            pIdManager.registerParser(BCObjectIdentifiers.sphincsPlus_haraka_256s_r3_simple,
-                    new GordianSPHINCSPlusEncodedParser(GordianKeyPairSpecBuilder.sphincsPlus(GordianSPHINCSPlusSpec.HARAKA256S_S)));
+            for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSLHDSAEncodedParser(GordianKeyPairSpecBuilder.slhdsa(mySpec)));
+            }
         }
 
         @Override
@@ -769,16 +709,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece348864_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece348864f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.PIVOT3488)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece460896_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE4608)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece460896f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.PIVOT4608)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6688128_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE6688)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6688128f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.PIVOT6688)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6960119_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE6960)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece6960119f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.PIVOT6960)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece8192128_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE8192)));
-            pIdManager.registerParser(BCObjectIdentifiers.mceliece8192128f_r3, new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.PIVOT8192)));
+            for (GordianCMCESpec mySpec : GordianCMCESpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(mySpec)));
+            }
         }
 
         @Override
@@ -814,12 +747,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem640aes, new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem640shake, new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.SHAKE640)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem976aes, new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES976)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem976shake, new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.SHAKE976)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem1344aes, new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES1344)));
-            pIdManager.registerParser(BCObjectIdentifiers.frodokem1344shake, new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.SHAKE1344)));
+            for (GordianFRODOSpec mySpec : GordianFRODOSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(mySpec)));
+            }
         }
 
         @Override
@@ -855,15 +785,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem128r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.LIGHT128)));
-            pIdManager.registerParser(BCObjectIdentifiers.saberkem128r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)));
-            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem128r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.FIRE128)));
-            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem192r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.LIGHT192)));
-            pIdManager.registerParser(BCObjectIdentifiers.saberkem192r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE192)));
-            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem192r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.FIRE192)));
-            pIdManager.registerParser(BCObjectIdentifiers.lightsaberkem256r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.LIGHT256)));
-            pIdManager.registerParser(BCObjectIdentifiers.saberkem256r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE256)));
-            pIdManager.registerParser(BCObjectIdentifiers.firesaberkem256r3, new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.FIRE256)));
+            for (GordianSABERSpec mySpec : GordianSABERSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(mySpec)));
+            }
         }
 
         @Override
@@ -878,9 +802,9 @@ public class GordianKeyPairAlgId {
     }
 
     /**
-     * Kyber Encoded parser.
+     * MLKEM Encoded parser.
      */
-    private static class GordianKyberEncodedParser implements GordianEncodedParser {
+    private static class GordianMLKEMEncodedParser implements GordianEncodedParser {
         /**
          * AsymKeySpec.
          */
@@ -890,7 +814,7 @@ public class GordianKeyPairAlgId {
          * Constructor.
          * @param pKeySpec the keySpec
          */
-        GordianKyberEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianMLKEMEncodedParser(final GordianKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -899,9 +823,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.kyber512, new GordianKyberEncodedParser(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER512)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber768, new GordianKyberEncodedParser(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER768)));
-            pIdManager.registerParser(BCObjectIdentifiers.kyber1024, new GordianKyberEncodedParser(GordianKeyPairSpecBuilder.kyber(GordianKYBERSpec.KYBER1024)));
+            for (GordianMLKEMSpec mySpec : GordianMLKEMSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLKEMEncodedParser(GordianKeyPairSpecBuilder.mlkem(mySpec)));
+            }
         }
 
         @Override
@@ -916,9 +840,9 @@ public class GordianKeyPairAlgId {
     }
 
     /**
-     * Dilithium Encoded parser.
+     * MLDSA Encoded parser.
      */
-    private static class GordianDilithiumEncodedParser implements GordianEncodedParser {
+    private static class GordianMLDSAEncodedParser implements GordianEncodedParser {
         /**
          * AsymKeySpec.
          */
@@ -928,7 +852,7 @@ public class GordianKeyPairAlgId {
          * Constructor.
          * @param pKeySpec the keySpec
          */
-        GordianDilithiumEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianMLDSAEncodedParser(final GordianKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -937,9 +861,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium2, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM2)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium3, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM3)));
-            pIdManager.registerParser(BCObjectIdentifiers.dilithium5, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.dilithium(GordianDILITHIUMSpec.DILITHIUM5)));
+            for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLDSAEncodedParser(GordianKeyPairSpecBuilder.mldsa(mySpec)));
+            }
         }
 
         @Override
@@ -975,9 +899,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.hqc128, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.hqc(GordianHQCSpec.HQC128)));
-            pIdManager.registerParser(BCObjectIdentifiers.hqc192, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.hqc(GordianHQCSpec.HQC192)));
-            pIdManager.registerParser(BCObjectIdentifiers.hqc256, new GordianDilithiumEncodedParser(GordianKeyPairSpecBuilder.hqc(GordianHQCSpec.HQC256)));
+            for (GordianHQCSpec mySpec : GordianHQCSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianHQCEncodedParser(GordianKeyPairSpecBuilder.hqc(mySpec)));
+            }
         }
 
         @Override
@@ -1013,9 +937,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.bike128, new GordianBIKEEncodedParser(GordianKeyPairSpecBuilder.bike(GordianBIKESpec.BIKE128)));
-            pIdManager.registerParser(BCObjectIdentifiers.bike192, new GordianBIKEEncodedParser(GordianKeyPairSpecBuilder.bike(GordianBIKESpec.BIKE192)));
-            pIdManager.registerParser(BCObjectIdentifiers.bike256, new GordianBIKEEncodedParser(GordianKeyPairSpecBuilder.bike(GordianBIKESpec.BIKE256)));
+            for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianBIKEEncodedParser(GordianKeyPairSpecBuilder.bike(mySpec)));
+            }
         }
 
         @Override
@@ -1051,12 +975,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.ntruhps2048509, new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HPS509)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntruhps2048677, new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HPS677)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntruhps4096821, new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HPS821)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntruhps40961229, new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HPS1229)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntruhrss701, new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HRSS701)));
-            pIdManager.registerParser(BCObjectIdentifiers.ntruhrss1373, new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HRSS1373)));
+            for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(mySpec)));
+            }
         }
 
         @Override
@@ -1092,30 +1013,12 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr653,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR653))));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr761,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR761))));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr857,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR857))));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr953,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR953))));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1013,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR1013))));
-            pIdManager.registerParser(BCObjectIdentifiers.ntrulpr1277,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR1277))));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup653,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR653))));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup761,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR761))));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup857,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR857))));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup953,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR953))));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup1013,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR1013))));
-            pIdManager.registerParser(BCObjectIdentifiers.sntrup1277,
-                new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, GordianNTRUPrimeParams.PR1277))));
+            for (GordianNTRUPrimeParams myParams : GordianNTRUPrimeParams.values()) {
+                pIdManager.registerParser(myParams.getNTRULIdentifier(),
+                        new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, myParams))));
+                pIdManager.registerParser(myParams.getSNTRUIdentifier(),
+                        new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, myParams))));
+            }
         }
 
         @Override
@@ -1151,8 +1054,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.falcon_512, new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(GordianFALCONSpec.FALCON512)));
-            pIdManager.registerParser(BCObjectIdentifiers.falcon_1024, new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(GordianFALCONSpec.FALCON1024)));
+            for (GordianFALCONSpec mySpec : GordianFALCONSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(mySpec)));
+            }
         }
 
         @Override
@@ -1188,18 +1092,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl1ur, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1UR)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl1fs, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1FS)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl1full, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1FULL)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnic3l1, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L13)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl3ur, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L3UR)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl3fs, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L3FS)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl3full, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L3FULL)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnic3l3, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L33)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl5ur, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L5UR)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl5fs, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L5FS)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnicl5full, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L5FULL)));
-            pIdManager.registerParser(BCObjectIdentifiers.picnic3l5, new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L53)));
+            for (GordianPICNICSpec mySpec : GordianPICNICSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(mySpec)));
+            }
         }
 
         @Override
@@ -1235,12 +1130,9 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(BCObjectIdentifiers.rainbow_III_classic, new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC3)));
-            pIdManager.registerParser(BCObjectIdentifiers.rainbow_III_circumzenithal, new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CIRCUM3)));
-            pIdManager.registerParser(BCObjectIdentifiers.rainbow_III_compressed, new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.COMPRESSED3)));
-            pIdManager.registerParser(BCObjectIdentifiers.rainbow_V_classic, new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC5)));
-            pIdManager.registerParser(BCObjectIdentifiers.rainbow_V_circumzenithal, new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CIRCUM5)));
-            pIdManager.registerParser(BCObjectIdentifiers.rainbow_V_compressed, new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.COMPRESSED5)));
+            for (GordianRainbowSpec mySpec : GordianRainbowSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(mySpec)));
+            }
         }
 
         @Override

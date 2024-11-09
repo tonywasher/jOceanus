@@ -16,6 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
@@ -53,15 +60,6 @@ import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupilamiFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
-import org.bouncycastle.crypto.ext.digests.SkeinXof;
-
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * BouncyCastle Digest Factory.
@@ -271,8 +269,7 @@ public class BouncyDigestFactory
      */
     private static Digest getSkeinDigest(final GordianLength pStateLength,
                                          final GordianLength pLength) {
-        final SkeinDigest myDigest = new SkeinDigest(pStateLength.getLength(), pLength.getLength());
-        return new SkeinXof(myDigest);
+        return new SkeinDigest(pStateLength.getLength(), pLength.getLength());
     }
 
     /**

@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.InvalidKeyException;
-import java.security.Signature;
-import java.security.SignatureException;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -33,6 +29,10 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.security.InvalidKeyException;
+import java.security.Signature;
+import java.security.SignatureException;
 
 /**
  * Jca implementation of signature.
@@ -110,14 +110,14 @@ public abstract class JcaSignature
     private static final String EC_SM2_ALGOBASE = "WITHSM2";
 
     /**
-     * The SPHINCS Signature.
-     */
-    static final String SPHINCS_ALGOBASE = "withSPHINCS256";
-
-    /**
      * The DSTU Signature.
      */
     private static final String DSTU_SIGN = "DSTU4145";
+
+    /**
+     * The PQC Hash prefix.
+     */
+    private static final String PQC_HASH_PFX = "HASH-";
 
     /**
      * The RSA Signer.
@@ -381,44 +381,114 @@ public abstract class JcaSignature
     }
 
     /**
-     * SPHINCSPlus signature.
+     * SLHDSA signature.
      */
-    static class JcaSPHINCSPlusSignature
+    static class JcaSLHDSASignature
             extends JcaSignature {
+        /**
+         * Base name.
+         */
+        private static final String BASE_NAME = "SLH-DSA";
+
         /**
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
          * @throws OceanusException on error
          */
-        JcaSPHINCSPlusSignature(final GordianCoreFactory pFactory,
-                                final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        JcaSLHDSASignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
+        }
 
-            /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("SPHINCSPLUS", true));
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         */
+        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
+            /* Build the algorithm */
+            final boolean isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
 
     /**
-     * SPHINCSPlus signature.
+     * MLDSA signature.
      */
-    static class JcaDilithiumSignature
+    static class JcaMLDSASignature
             extends JcaSignature {
+        /**
+         * Base name.
+         */
+        private static final String BASE_NAME = "ML-DSA";
+
         /**
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
          * @throws OceanusException on error
          */
-        JcaDilithiumSignature(final GordianCoreFactory pFactory,
-                              final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        JcaMLDSASignature(final GordianCoreFactory pFactory,
+                          final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
+        }
 
-            /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("DILITHIUM", true));
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         */
+        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
+            /* Build the algorithm */
+            final boolean isHash = pKeyPair.getKeyPairSpec().getMLDSAKeySpec().isHash();
+            return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
 
