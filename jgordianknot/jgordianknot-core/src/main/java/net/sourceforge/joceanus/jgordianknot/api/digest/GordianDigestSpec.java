@@ -124,11 +124,14 @@ public class GordianDigestSpec
     }
 
     /**
-     * Is this a hybrid state.
+     * Is this a sha2 hybrid state.
      * @return true/false
      */
-    public boolean isHybrid() {
-        return theStateLength != null && !theStateLength.equals(theLength);
+    public boolean isSha2Hybrid() {
+        return GordianDigestType.SHA2.equals(theDigestType)
+                && GordianLength.LEN_512.equals(theStateLength)
+                && (GordianLength.LEN_224.equals(theLength)
+                    || GordianLength.LEN_256.equals(theLength));
     }
 
     /**

@@ -202,8 +202,9 @@ public enum GordianDigestType {
                                          final GordianLength pLength) {
         switch (this) {
             case SHA2:
-                return pStateLength == null
-                        || pStateLength.equals(getAlternateSha2StateForLength(pLength));
+                return pStateLength != null
+                        && (pStateLength.equals(getSha2StateForLength(pLength))
+                        || pStateLength.equals(getAlternateSha2StateForLength(pLength)));
             case SHAKE:
             case KANGAROO:
                 return pStateLength != null
@@ -232,6 +233,8 @@ public enum GordianDigestType {
      */
     public GordianLength getStateForLength(final GordianLength pLength) {
         switch (this) {
+            case SHA2:
+                return getSha2StateForLength(pLength);
             case SKEIN:
                 return getSkeinStateForLength(pLength);
             case SHAKE:
@@ -245,6 +248,27 @@ public enum GordianDigestType {
                 return null;
         }
     }
+
+    /**
+     * Obtain the standard skeinState length.
+     * @param pLength the length
+     * @return the length (null if not supported)
+     */
+    private static GordianLength getSha2StateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_384:
+            case LEN_512:
+                return GordianLength.LEN_512;
+            case LEN_128:
+            case LEN_160:
+            case LEN_224:
+            case LEN_256:
+                return GordianLength.LEN_256;
+            default:
+                return null;
+        }
+    }
+
 
     /**
      * Obtain the standard skeinState length.

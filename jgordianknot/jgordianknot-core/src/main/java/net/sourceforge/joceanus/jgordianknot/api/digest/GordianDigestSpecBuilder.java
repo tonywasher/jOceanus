@@ -90,7 +90,7 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec sha2(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHA2, null, pLength);
+        return new GordianDigestSpec(GordianDigestType.SHA2, pLength);
     }
 
     /**

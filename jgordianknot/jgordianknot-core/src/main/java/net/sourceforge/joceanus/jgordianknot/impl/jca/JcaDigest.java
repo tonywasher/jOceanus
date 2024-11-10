@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.DigestException;
-import java.security.MessageDigest;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -26,6 +23,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigest;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.security.DigestException;
+import java.security.MessageDigest;
 
 /**
  * Jca Digest.
@@ -91,15 +91,15 @@ public final class JcaDigest
     }
 
     /**
-     * Create the BouncyCastle digest.
+     * Obtain the sha2 signature algorithm.
      * @param pDigestSpec the digestSpec
-     * @return the digest
+     * @return the algorithm
      * @throws OceanusException on error
      */
     static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
-                && pDigestSpec.getStateLength() != null) {
+                && pDigestSpec.isSha2Hybrid()) {
             return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())
                    ? "SHA512(256)"
                    : "SHA512(224)";
@@ -110,15 +110,15 @@ public final class JcaDigest
     }
 
     /**
-     * Create the BouncyCastle digest.
+     * Create the sha2 hMac algorithm.
      * @param pDigestSpec the digestSpec
-     * @return the digest
+     * @return the algorithm
      * @throws OceanusException on error
      */
     static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
-                && pDigestSpec.getStateLength() != null) {
+                && pDigestSpec.isSha2Hybrid()) {
             return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())
                    ? "SHA512/256"
                    : "SHA512/224";
@@ -247,11 +247,11 @@ public final class JcaDigest
         /* Switch on length */
         switch (myLen) {
             case LEN_224:
-                return myState == null
+                return GordianLength.LEN_256.equals(myState)
                        ? "SHA224"
                        : "SHA-512/224";
             case LEN_256:
-                return myState == null
+                return GordianLength.LEN_256.equals(myState)
                        ? "SHA256"
                        : "SHA-512/256";
             case LEN_384:

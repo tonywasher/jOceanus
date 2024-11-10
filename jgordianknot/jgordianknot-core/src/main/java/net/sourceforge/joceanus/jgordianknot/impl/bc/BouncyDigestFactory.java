@@ -225,11 +225,11 @@ public class BouncyDigestFactory
         final GordianLength myState = pSpec.getStateLength();
         switch (myLen) {
             case LEN_224:
-                return myState == null
+                return GordianLength.LEN_256.equals(myState)
                        ? new SHA224Digest()
                        : new SHA512tDigest(myLen.getLength());
             case LEN_256:
-                return myState == null
+                return GordianLength.LEN_256.equals(myState)
                        ? new SHA256Digest()
                        : new SHA512tDigest(myLen.getLength());
             case LEN_384:

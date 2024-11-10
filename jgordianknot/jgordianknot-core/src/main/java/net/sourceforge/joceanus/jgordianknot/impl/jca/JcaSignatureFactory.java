@@ -232,7 +232,7 @@ public class JcaSignatureFactory
         final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA2:
-                return myDigest.getStateLength() == null;
+                return !myDigest.isSha2Hybrid();
             case SHA3:
                 return !GordianSignatureType.NR.equals(pSpec.getSignatureType());
             case SHAKE:
@@ -252,7 +252,7 @@ public class JcaSignatureFactory
         final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA2:
-                return myDigest.getStateLength() == null;
+                return !myDigest.isSha2Hybrid();
             case SHA1:
             case SHA3:
                 return true;
