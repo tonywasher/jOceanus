@@ -16,20 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.digest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Base Digest Factory.
@@ -98,13 +99,13 @@ public abstract class GordianCoreDigestFactory
 
         /* Access details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
-        final GordianLength myStateLen = pDigestSpec.getStateLength();
+        final GordianDigestState myState = pDigestSpec.getDigestState();
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Check validity */
         return supportedDigestTypes().test(myType)
                 && myType.isLengthValid(myLen)
-                && myType.isStateValidForLength(myStateLen, myLen);
+                && myType.isStateValidForLength(myState, myLen);
     }
 
     /**
@@ -149,7 +150,7 @@ public abstract class GordianCoreDigestFactory
             /* For each length */
             for (final GordianLength myLength : myType.getSupportedLengths()) {
                 myList.add(new GordianDigestSpec(myType, myLength));
-                final GordianLength myState = myType.getAlternateStateForLength(myLength);
+                final GordianDigestState myState = myType.getAlternateStateForLength(myLength);
                 if (myState != null) {
                     myList.add(new GordianDigestSpec(myType, myState, myLength));
                 }

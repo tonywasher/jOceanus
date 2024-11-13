@@ -16,12 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -36,6 +30,12 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Jca Cipher Factory.
@@ -289,14 +289,10 @@ public class JcaMacFactory
      * @return the algorithm
      */
     private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
-        final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
-        final String myState = Integer.toString(pSpec.getStateLength().getLength());
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Skein-MAC-")
-                .append(myState)
-                .append('-')
-                .append(myLen);
-        return myBuilder.toString();
+        return "Skein-MAC-"
+                + pSpec.getDigestState()
+                + '-'
+                + pSpec.getDigestLength();
     }
 
     /**

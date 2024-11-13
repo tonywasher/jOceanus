@@ -16,9 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
@@ -46,18 +55,8 @@ import org.bouncycastle.crypto.patch.macs.DSTUX7624Mac;
 import org.bouncycastle.crypto.patch.macs.KXGMac;
 import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Factory for BouncyCastle Macs.
@@ -231,7 +230,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
-        return new SkeinMac(pSpec.getStateLength().getLength(), pSpec.getDigestLength().getLength());
+        return new SkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -285,7 +284,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKMAC(final GordianMacSpec pSpec) {
         final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new KMACWrapper(mySpec.getStateLength().getLength());
+        return new KMACWrapper(mySpec.getDigestState().getLength().getLength());
     }
 
     /**

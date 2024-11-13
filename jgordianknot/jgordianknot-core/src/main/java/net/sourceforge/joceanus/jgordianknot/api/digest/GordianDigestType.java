@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 
 /**
  * DataDigest types. Available algorithms.
@@ -193,36 +194,36 @@ public enum GordianDigestType {
     }
 
     /**
-     * is length available?
-     * @param pStateLength the length
+     * is state valid for length?
+     * @param pState the state
      * @param pLength the length
      * @return true/false
      */
-    public boolean isStateValidForLength(final GordianLength pStateLength,
+    public boolean isStateValidForLength(final GordianDigestSubSpec pState,
                                          final GordianLength pLength) {
         switch (this) {
             case SHA2:
-                return pStateLength != null
-                        && (pStateLength.equals(getSha2StateForLength(pLength))
-                        || pStateLength.equals(getAlternateSha2StateForLength(pLength)));
+                return pState != null
+                        && (pState.equals(getSha2StateForLength(pLength))
+                            || pState.equals(getAlternateSha2StateForLength(pLength)));
             case SHAKE:
             case KANGAROO:
-                return pStateLength != null
-                        && pStateLength.equals(getSHAKEStateForLength(pLength));
+                return pState != null
+                        && pState.equals(getSHAKEStateForLength(pLength));
             case SKEIN:
-                return pStateLength != null
-                        && (pStateLength.equals(getSkeinStateForLength(pLength))
-                        || pStateLength.equals(getAlternateSkeinStateForLength(pLength)));
+                return pState != null
+                        && (pState.equals(getSkeinStateForLength(pLength))
+                            || pState.equals(getAlternateSkeinStateForLength(pLength)));
             case BLAKE2:
-                return pStateLength != null
-                        && (pStateLength.equals(getBLAKE2StateForLength(pLength))
-                        || pStateLength.equals(getAlternateBLAKE2StateForLength(pLength)));
+                return pState != null
+                        && (pState.equals(getBLAKE2StateForLength(pLength))
+                            || pState.equals(getAlternateBLAKE2StateForLength(pLength)));
             case HARAKA:
-                return pStateLength != null
-                        && (pStateLength.equals(getDefaultHarakaState())
-                        || pStateLength.equals(getAlternateHarakaState()));
+                return pState != null
+                        && (pState.equals(getDefaultHarakaState())
+                            || pState.equals(getAlternateHarakaState()));
             default:
-                return pStateLength == null;
+                return pState == null;
         }
     }
 
@@ -231,7 +232,7 @@ public enum GordianDigestType {
      * @param pLength the length
      * @return true/false
      */
-    public GordianLength getStateForLength(final GordianLength pLength) {
+    public GordianDigestState getStateForLength(final GordianLength pLength) {
         switch (this) {
             case SHA2:
                 return getSha2StateForLength(pLength);
@@ -250,79 +251,78 @@ public enum GordianDigestType {
     }
 
     /**
-     * Obtain the standard skeinState length.
+     * Obtain the standard skeinState.
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    private static GordianLength getSha2StateForLength(final GordianLength pLength) {
+    private static GordianDigestState getSha2StateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_384:
             case LEN_512:
-                return GordianLength.LEN_512;
+                return GordianDigestState.STATE512;
             case LEN_128:
             case LEN_160:
             case LEN_224:
             case LEN_256:
-                return GordianLength.LEN_256;
+                return GordianDigestState.STATE256;
             default:
                 return null;
         }
     }
 
-
     /**
-     * Obtain the standard skeinState length.
+     * Obtain the standard skeinState.
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    private static GordianLength getSkeinStateForLength(final GordianLength pLength) {
+    private static GordianDigestState getSkeinStateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_1024:
-                return GordianLength.LEN_1024;
+                return GordianDigestState.STATE1024;
             case LEN_384:
             case LEN_512:
-                return GordianLength.LEN_512;
+                return GordianDigestState.STATE512;
             case LEN_128:
             case LEN_160:
             case LEN_224:
             case LEN_256:
-                return GordianLength.LEN_256;
+                return GordianDigestState.STATE256;
             default:
                 return null;
         }
     }
 
     /**
-     * Obtain the standard shakeState length.
+     * Obtain the standard shakeState.
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    private static GordianLength getSHAKEStateForLength(final GordianLength pLength) {
+    private static GordianDigestState getSHAKEStateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_512:
-                return GordianLength.LEN_256;
+                return GordianDigestState.STATE256;
             case LEN_256:
-                return GordianLength.LEN_128;
+                return GordianDigestState.STATE128;
             default:
                 return null;
         }
     }
 
     /**
-     * Obtain the standard blake2State length.
+     * Obtain the standard blake2State.
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    private static GordianLength getBLAKE2StateForLength(final GordianLength pLength) {
+    private static GordianDigestState getBLAKE2StateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_160:
             case LEN_256:
             case LEN_384:
             case LEN_512:
-                return GordianLength.LEN_512;
+                return GordianDigestState.STATE512;
             case LEN_128:
             case LEN_224:
-                return GordianLength.LEN_256;
+                return GordianDigestState.STATE256;
             default:
                 return null;
         }
@@ -332,16 +332,16 @@ public enum GordianDigestType {
      * Obtain the standard harakaState length.
      * @return the length
      */
-    private static GordianLength getDefaultHarakaState() {
-        return GordianLength.LEN_256;
+    private static GordianDigestState getDefaultHarakaState() {
+        return GordianDigestState.STATE256;
     }
 
     /**
      * Obtain the alternate stateLength for this length?
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    public GordianLength getAlternateStateForLength(final GordianLength pLength) {
+    public GordianDigestState getAlternateStateForLength(final GordianLength pLength) {
         switch (this) {
             case SHA2:
                 return getAlternateSha2StateForLength(pLength);
@@ -357,90 +357,90 @@ public enum GordianDigestType {
     }
 
     /**
-     * Obtain the alternate skeinState length.
+     * Obtain the alternate skeinState.
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    private static GordianLength getAlternateSkeinStateForLength(final GordianLength pLength) {
+    private static GordianDigestState getAlternateSkeinStateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_384:
             case LEN_512:
-                return GordianLength.LEN_1024;
+                return GordianDigestState.STATE1024;
             case LEN_128:
             case LEN_160:
             case LEN_224:
             case LEN_256:
-                return GordianLength.LEN_512;
+                return GordianDigestState.STATE512;
             default:
                 return null;
         }
     }
 
     /**
-     * Obtain the alternate blake2State length.
+     * Obtain the alternate blake2State.
      * @param pLength the length
-     * @return the length (null if not supported)
+     * @return the state (null if not supported)
      */
-    private static GordianLength getAlternateBLAKE2StateForLength(final GordianLength pLength) {
+    private static GordianDigestState getAlternateBLAKE2StateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_160:
             case LEN_256:
-                return GordianLength.LEN_256;
+                return GordianDigestState.STATE256;
             default:
                 return null;
         }
     }
 
     /**
-     * Obtain the extended sha2State length.
+     * Obtain the extended sha2State.
      * @param pLength the length
-     * @return the length
+     * @return the state (null if not supported)
      */
-    private static GordianLength getAlternateSha2StateForLength(final GordianLength pLength) {
+    private static GordianDigestState getAlternateSha2StateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_224:
             case LEN_256:
-                return GordianLength.LEN_512;
+                return GordianDigestState.STATE512;
             default:
                 return null;
         }
     }
 
     /**
-     * Obtain the alternate harakaState length.
-     * @return the length
+     * Obtain the alternate harakaState.
+     * @return the state
      */
-    private static GordianLength getAlternateHarakaState() {
-        return GordianLength.LEN_512;
+    private static GordianDigestState getAlternateHarakaState() {
+        return GordianDigestState.STATE512;
     }
 
     /**
      * Is this the Blake2b algorithm?
-     * @param pLength the length
+     * @param pState the state
      * @return true/false
      */
-    public static boolean isBlake2bState(final GordianLength pLength) {
-        return GordianLength.LEN_512.equals(pLength);
+    public static boolean isBlake2bState(final GordianDigestSubSpec pState) {
+        return GordianDigestState.STATE512.equals(pState);
     }
 
     /**
      * Obtain the blakeAlgorithm name for State.
-     * @param pLength the length
-     * @return the length
+     * @param pState the state
+     * @return the algorithm
      */
-    public static String getBlake2AlgorithmForStateLength(final GordianLength pLength) {
-        return BLAKE2.toString() + (isBlake2bState(pLength)
+    public static String getBlake2AlgorithmForState(final GordianDigestSubSpec pState) {
+        return BLAKE2.toString() + (isBlake2bState(pState)
                                          ? "b"
                                          : "s");
     }
 
     /**
-     * Obtain the blakeAlgorithm name for State.
-     * @param pLength the length
-     * @return the length
+     * Obtain the kangarooAlgorithm name for State.
+     * @param pState the state
+     * @return the algorithm
      */
-    public static String getKangarooAlgorithmForStateLength(final GordianLength pLength) {
-        return GordianLength.LEN_256.equals(pLength)
+    public static String getKangarooAlgorithmForState(final GordianDigestSubSpec pState) {
+        return GordianDigestState.STATE256.equals(pState)
                ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()
                : GordianDigestResource.DIGEST_KANGAROO.getValue();
     }

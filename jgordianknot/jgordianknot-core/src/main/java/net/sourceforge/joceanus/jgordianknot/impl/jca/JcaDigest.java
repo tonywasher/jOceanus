@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -171,7 +172,7 @@ public final class JcaDigest
             case KUPYNA:
                 return getKupynaAlgorithm(myLen);
             case SHAKE:
-                return getSHAKEAlgorithm(pDigestSpec.getStateLength());
+                return getSHAKEAlgorithm(pDigestSpec.getDigestState());
             case HARAKA:
                 return pDigestSpec.toString();
             case GOST:
@@ -241,17 +242,17 @@ public final class JcaDigest
      */
     private static String getSHA2Algorithm(final GordianDigestSpec pSpec) {
         /* Access lengths */
-        final GordianLength myState = pSpec.getStateLength();
+        final GordianDigestState myState = pSpec.getDigestState();
         final GordianLength myLen = pSpec.getDigestLength();
 
         /* Switch on length */
         switch (myLen) {
             case LEN_224:
-                return GordianLength.LEN_256.equals(myState)
+                return GordianDigestState.STATE256.equals(myState)
                        ? "SHA224"
                        : "SHA-512/224";
             case LEN_256:
-                return GordianLength.LEN_256.equals(myState)
+                return GordianDigestState.STATE256.equals(myState)
                        ? "SHA256"
                        : "SHA-512/256";
             case LEN_384:
@@ -286,9 +287,9 @@ public final class JcaDigest
      * @param pState the stateLength
      * @return the name
      */
-    private static String getSHAKEAlgorithm(final GordianLength pState) {
+    private static String getSHAKEAlgorithm(final GordianDigestState pState) {
         /* Determine SHAKE digest */
-        return "SHAKE" + pState.getLength();
+        return "SHAKE" + pState;
     }
 
     /**
@@ -297,14 +298,10 @@ public final class JcaDigest
      * @return the name
      */
     private static String getSkeinAlgorithm(final GordianDigestSpec pSpec) {
-        final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
-        final String myState = Integer.toString(pSpec.getStateLength().getLength());
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Skein-")
-                .append(myState)
-                .append('-')
-                .append(myLen);
-        return myBuilder.toString();
+        return "Skein-"
+                + pSpec.getDigestState()
+                + '-'
+                + pSpec.getDigestLength();
     }
 
     /**
@@ -313,10 +310,7 @@ public final class JcaDigest
      * @return the name
      */
     private static String getStreebogAlgorithm(final GordianLength pLength) {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("GOST3411-2012-")
-                .append(pLength.getLength());
-        return myBuilder.toString();
+        return "GOST3411-2012-" + pLength;
     }
 
     /**

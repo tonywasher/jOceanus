@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -27,11 +27,11 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaFalconSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
@@ -214,9 +214,9 @@ public class JcaSignatureFactory
         /* Switch on SignatureType */
         switch (pSpec.getSignatureType()) {
             case PSS128:
-                return GordianLength.LEN_128.equals(myDigest.getStateLength());
+                return GordianDigestState.STATE128.equals(myDigest.getDigestState());
             case PSS256:
-                return GordianLength.LEN_256.equals(myDigest.getStateLength());
+                return GordianDigestState.STATE256.equals(myDigest.getDigestState());
             default:
                 return false;
         }
