@@ -96,16 +96,9 @@ public abstract class GordianCoreDigestFactory
         if (pDigestSpec == null || !pDigestSpec.isValid()) {
             return false;
         }
-
-        /* Access details */
-        final GordianDigestType myType = pDigestSpec.getDigestType();
-        final GordianDigestState myState = pDigestSpec.getDigestState();
-        final GordianLength myLen = pDigestSpec.getDigestLength();
-
+        
         /* Check validity */
-        return supportedDigestTypes().test(myType)
-                && myType.isLengthValid(myLen)
-                && myType.isStateValidForLength(myState, myLen);
+        return supportedDigestTypes().test(pDigestSpec.getDigestType());
     }
 
     /**

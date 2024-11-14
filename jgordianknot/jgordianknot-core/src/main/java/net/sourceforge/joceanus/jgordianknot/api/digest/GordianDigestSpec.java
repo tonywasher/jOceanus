@@ -73,7 +73,7 @@ public class GordianDigestSpec
     public GordianDigestSpec(final GordianDigestType pDigestType,
                              final GordianLength pLength) {
         /* Store parameters */
-        this(pDigestType, pDigestType.getStateForLength(pLength), pLength);
+        this(pDigestType, GordianDigestSubSpec.getDefaultSubSpecForTypeAndLength(pDigestType, pLength), pLength);
     }
 
     /**
@@ -150,7 +150,7 @@ public class GordianDigestSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        /* Handle null keyType */
+        /* Handle null spec/length */
         if (theDigestType == null || theLength == null) {
             return false;
         }
@@ -163,9 +163,11 @@ public class GordianDigestSpec
             case SHAKE:
             case KANGAROO:
             case HARAKA:
-                return theSubSpec instanceof GordianDigestState;
+                return theSubSpec instanceof GordianDigestState
+                        && getDigestState().validForTypeAndLength(theDigestType, theLength);
             default:
-                return theSubSpec == null;
+                return theSubSpec == null
+                        && theDigestType.isLengthValid(theLength);
         }
     }
 
@@ -192,11 +194,11 @@ public class GordianDigestSpec
                         theName += SEP + theLength;
                         break;
                     case BLAKE2:
-                        theName = GordianDigestType.getBlake2AlgorithmForState(theSubSpec);
+                        theName = getDigestState().getBlake2Algorithm();
                         theName += SEP + theLength;
                         break;
                     case KANGAROO:
-                        theName = GordianDigestType.getKangarooAlgorithmForState(theSubSpec);
+                        theName = getDigestState().getKangarooAlgorithm();
                         break;
                     case HARAKA:
                         theName += SEP + theSubSpec;

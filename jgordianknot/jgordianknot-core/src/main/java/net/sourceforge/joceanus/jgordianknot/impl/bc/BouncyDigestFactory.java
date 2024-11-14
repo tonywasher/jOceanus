@@ -185,7 +185,7 @@ public class BouncyDigestFactory
      */
     static Blake2 getBlake2Digest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getLength();
-        return GordianDigestType.isBlake2bState(pSpec.getDigestState())
+        return pSpec.getDigestState().isBlake2bState()
                ? new Blake2b(myLength)
                : new Blake2s(myLength);
     }

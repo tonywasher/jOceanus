@@ -306,7 +306,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                        ? 0
                        : GordianLength.LEN_128.getByteLength();
             case BLAKE2:
-                return GordianDigestType.isBlake2bState(getDigestState())
+                return getDigestState().isBlake2bState()
                        ? GordianLength.LEN_128.getByteLength()
                        : GordianLength.LEN_64.getByteLength();
             case GMAC:
@@ -537,7 +537,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += theSubSpec.toString() + SEP + theKeyLength;
                     break;
                 case BLAKE2:
-                    theName = GordianDigestType.getBlake2AlgorithmForState(getDigestState())
+                    theName = getDigestState().getBlake2Algorithm()
                                  + "Mac" + getDigestLength() + SEP + theKeyLength;
                     break;
                 case BLAKE3:

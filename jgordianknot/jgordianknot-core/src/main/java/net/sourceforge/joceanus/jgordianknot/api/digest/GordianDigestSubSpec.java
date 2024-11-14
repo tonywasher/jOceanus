@@ -28,8 +28,8 @@ public interface GordianDigestSubSpec {
      * @param pLength the length
      * @return the subSpec
      */
-    static GordianDigestSubSpec getSubSpecForTypeAndLength(final GordianDigestType pType,
-                                                           final GordianLength pLength) {
+    static GordianDigestSubSpec getDefaultSubSpecForTypeAndLength(final GordianDigestType pType,
+                                                                  final GordianLength pLength) {
         switch (pType) {
             case SHA2:
                 return pLength == GordianLength.LEN_224 || pLength == GordianLength.LEN_256
@@ -282,6 +282,14 @@ public interface GordianDigestSubSpec {
                 default:
                     return false;
             }
+        }
+
+        /**
+         * Is this the Blake2b algorithm?
+         * @return true/false
+         */
+        public boolean isBlake2bState() {
+            return GordianDigestState.STATE512.equals(this);
         }
 
         /**
