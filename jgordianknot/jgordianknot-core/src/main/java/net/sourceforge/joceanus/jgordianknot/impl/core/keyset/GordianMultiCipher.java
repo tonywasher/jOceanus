@@ -16,12 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
@@ -30,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -47,6 +40,11 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * MultiKey Cipher.

@@ -139,9 +139,13 @@ public final class JcaDigest
         /* Access standard name */
         final String myAlgorithm = getAlgorithm(pDigestSpec);
 
-        return pDigestSpec.getDigestType() == GordianDigestType.SHAKE
-               ? myAlgorithm + "-" + pDigestSpec.getDigestLength()
-               : myAlgorithm;
+        switch (pDigestSpec.getDigestType()) {
+            case SHAKE:
+            case BLAKE3:
+                return myAlgorithm + "-" + pDigestSpec.getDigestLength();
+            default:
+                return myAlgorithm;
+        }
     }
 
     /**
@@ -185,6 +189,8 @@ public final class JcaDigest
             case MD2:
             case SM3:
                 return myType.name();
+            case BLAKE3:
+                return pDigestSpec.toString();
             default:
                 throw new GordianDataException("Invalid DigestSpec :- " + pDigestSpec);
         }
@@ -321,6 +327,7 @@ public final class JcaDigest
     static boolean isHMacSupported(final GordianDigestType pDigestType) {
         switch (pDigestType) {
             case BLAKE2:
+            case BLAKE3:
             case KUPYNA:
             case SHAKE:
                 return false;

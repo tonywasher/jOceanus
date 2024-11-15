@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 
 /**
  * DataDigest types. Available algorithms.
@@ -26,7 +25,7 @@ public enum GordianDigestType {
     /**
      * SHA2.
      */
-    SHA2(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    SHA2(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * Tiger.
@@ -41,12 +40,12 @@ public enum GordianDigestType {
     /**
      * RIPEMD.
      */
-    RIPEMD(GordianLength.LEN_320, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256),
+    RIPEMD(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256, GordianLength.LEN_320),
 
     /**
      * GOST2012.
      */
-    STREEBOG(GordianLength.LEN_512, GordianLength.LEN_256),
+    STREEBOG(GordianLength.LEN_256, GordianLength.LEN_512),
 
     /**
      * GOST.
@@ -56,7 +55,7 @@ public enum GordianDigestType {
     /**
      * SHA3.
      */
-    SHA3(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    SHA3(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * SHAKE.
@@ -66,12 +65,12 @@ public enum GordianDigestType {
     /**
      * Skein.
      */
-    SKEIN(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_1024),
+    SKEIN(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512, GordianLength.LEN_1024),
 
     /**
      * Kupyna.
      */
-    KUPYNA(GordianLength.LEN_512, GordianLength.LEN_256, GordianLength.LEN_384),
+    KUPYNA(GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * SM3.
@@ -81,7 +80,7 @@ public enum GordianDigestType {
     /**
      * Blake2.
      */
-    BLAKE2(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    BLAKE2(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * SHA1.
@@ -106,17 +105,17 @@ public enum GordianDigestType {
     /**
      * JH.
      */
-    JH(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    JH(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * GROESTL.
      */
-    GROESTL(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    GROESTL(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * CubeHash.
      */
-    CUBEHASH(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    CUBEHASH(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * Kangaroo.
@@ -131,7 +130,7 @@ public enum GordianDigestType {
     /**
      * Blake3.
      */
-    BLAKE3(GordianLength.LEN_256, GordianLength.LEN_512);
+    BLAKE3(GordianLength.LEN_256);
 
     /**
      * The Supported lengths.
@@ -168,7 +167,34 @@ public enum GordianDigestType {
      * @return the default length
      */
     public GordianLength getDefaultLength() {
-        return theLengths[0];
+
+        switch(this) {
+            case MD2:
+            case MD4:
+            case MD5:
+            case SHA1:
+            case TIGER:
+            case SM3:
+            case GOST:
+            case WHIRLPOOL:
+            case HARAKA:
+            case BLAKE3:
+                return theLengths[0];
+            case SHA2:
+            case RIPEMD:
+            case SHA3:
+            case STREEBOG:
+            case SHAKE:
+            case SKEIN:
+            case KUPYNA:
+            case BLAKE2:
+            case GROESTL:
+            case JH:
+            case CUBEHASH:
+            case KANGAROO:
+            default:
+                return GordianLength.LEN_256;
+        }
     }
 
     /**

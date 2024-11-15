@@ -114,10 +114,10 @@ public class JcaMacFactory
     protected boolean validMacType(final GordianMacType pMacType) {
         switch (pMacType) {
             case BLAKE2:
+            case BLAKE3:
             case KALYNA:
             case CBCMAC:
             case CFBMAC:
-            case KMAC:
                 return false;
             default:
                 return super.validMacType(pMacType);
@@ -141,6 +141,7 @@ public class JcaMacFactory
             case SIPHASH:
             case GOST:
             case ZUC:
+            case KMAC:
                 return getJavaMac(getMacSpecAlgorithm(pMacSpec));
             case VMPC:
                 return getJavaMac("VMPC-MAC");
@@ -229,6 +230,8 @@ public class JcaMacFactory
                 return getZucMacAlgorithm(pMacSpec);
             case SIPHASH:
                 return pMacSpec.toString();
+            case KMAC:
+                return pMacSpec.getMacType().toString() + pMacSpec.getDigestSpec().getDigestState();
             case GOST:
                 return "GOST28147MAC";
             case VMPC:
