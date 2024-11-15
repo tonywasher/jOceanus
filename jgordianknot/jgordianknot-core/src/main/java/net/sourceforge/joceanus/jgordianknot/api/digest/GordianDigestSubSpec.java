@@ -23,6 +23,27 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
  */
 public interface GordianDigestSubSpec {
     /**
+     * Obtain the possible subSpecTypes for the digestType.
+     * @param pType the digestType
+     * @return the subSpec types
+     */
+    static GordianDigestSubSpec[] getPossibleSubSpecsForType(final GordianDigestType pType) {
+        switch (pType) {
+            case SHA2:
+            case BLAKE2:
+            case HARAKA:
+                return new GordianDigestState[] { GordianDigestState.STATE256, GordianDigestState.STATE512 };
+            case SKEIN:
+                return new GordianDigestState[] { GordianDigestState.STATE256, GordianDigestState.STATE512, GordianDigestState.STATE1024 };
+            case SHAKE:
+            case KANGAROO:
+                return new GordianDigestState[] { GordianDigestState.STATE128, GordianDigestState.STATE256 };
+            default:
+                return new GordianDigestState[] { null };
+        }
+    }
+
+    /**
      * Obtain the subSpec for the type and length.
      * @param pType the digestType
      * @param pLength the length

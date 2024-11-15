@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.digest;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -96,7 +96,7 @@ public abstract class GordianCoreDigestFactory
         if (pDigestSpec == null || !pDigestSpec.isValid()) {
             return false;
         }
-        
+
         /* Check validity */
         return supportedDigestTypes().test(pDigestSpec.getDigestType());
     }
@@ -140,12 +140,14 @@ public abstract class GordianCoreDigestFactory
 
         /* For each digest type */
         for (final GordianDigestType myType : GordianDigestType.values()) {
-            /* For each length */
-            for (final GordianLength myLength : myType.getSupportedLengths()) {
-                myList.add(new GordianDigestSpec(myType, myLength));
-                final GordianDigestState myState = myType.getAlternateStateForLength(myLength);
-                if (myState != null) {
-                    myList.add(new GordianDigestSpec(myType, myState, myLength));
+            /* For each subSpecType */
+            for (GordianDigestSubSpec mySubSpec : GordianDigestSubSpec.getPossibleSubSpecsForType(myType)) {
+                /* For each length */
+                for (final GordianLength myLength : myType.getSupportedLengths()) {
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, mySubSpec, myLength);
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
                 }
             }
         }

@@ -192,8 +192,8 @@ public class GordianSM2EncryptionSpec {
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_256)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2(GordianLength.LEN_512)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2s(GordianLength.LEN_256)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2b(GordianLength.LEN_512)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.whirlpool()));
         }
 

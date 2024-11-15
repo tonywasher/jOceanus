@@ -112,8 +112,8 @@ public class GordianDigestAlgId {
         addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.sha2Alt(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_224, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.sha2Alt(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_224, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_256, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_224, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE));
         addToMaps(GordianDigestSpecBuilder.sha3(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE));
@@ -126,14 +126,14 @@ public class GordianDigestAlgId {
      * Add Blake digests.
      */
     private void addBlakeDigests() {
-        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_128), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s128, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b160, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s160, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_224), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s224, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s256, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_384), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b384, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpecBuilder.blake2(GordianLength.LEN_512), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b512, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2s(GordianLength.LEN_128), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s128, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2b(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b160, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2s(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s160, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2s(GordianLength.LEN_224), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s224, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2b(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2s(GordianLength.LEN_256), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2b(GordianLength.LEN_384), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b384, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpecBuilder.blake2b(GordianLength.LEN_512), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b512, DERNull.INSTANCE));
     }
 
     /**
