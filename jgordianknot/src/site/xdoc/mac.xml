@@ -55,7 +55,7 @@
                     <tr><td>GOSTMac</td><td>32</td><td>256</td><td>Y</td><td/></tr>
                     <tr><td>SipHash</td><td>64, 128</td><td>128</td><td>Y</td><td/></tr>
                     <tr><td>ZucMac</td><td>32,64,128</td><td>128,256</td><td>Y</td><td>For 128 bit keys the only output length supported is 32</td></tr>
-                    <tr><td>KMAC</td><td>as per SHAKE</td><td>All</td><td/><td>Key Length must be at least as long as the underlying SHAKE state length</td></tr>
+                    <tr><td>KMAC</td><td>as per SHAKE</td><td>All</td><td>Y</td><td>Key Length must be at least as long as the underlying SHAKE state length</td></tr>
                 </table>
             </subsection>
         </section>

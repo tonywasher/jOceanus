@@ -109,13 +109,13 @@
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
-    <SonarQubePluginVersion>4.0.0.4121</SonarQubePluginVersion>
+    <SonarQubePluginVersion>5.0.0.4389</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.26.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.7</GPGPluginVersion>
-    <JetBrainsAnnotationsVersion>24.0.1</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.17.1</VersionsPluginVersion>
+    <JetBrainsAnnotationsVersion>26.0.1</JetBrainsAnnotationsVersion>
+    <VersionsPluginVersion>2.18.0</VersionsPluginVersion>
   </properties>
   <build>
     <resources>
