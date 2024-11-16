@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 
 /**
@@ -145,7 +146,21 @@ public final class GordianMacSpecBuilder {
     public static GordianMacSpec skeinMac(final GordianLength pKeyLength,
                                           final GordianLength pLength) {
         final GordianDigestSpec mySpec = GordianDigestSpecBuilder.skein(pLength);
-        return new GordianMacSpec(GordianMacType.SKEIN, pKeyLength, mySpec);
+        return skeinMac(pKeyLength, mySpec);
+    }
+
+    /**
+     * Create skeinMacSpec.
+     * @param pKeyLength the keyLength
+     * @param pState the digestState
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec skeinMac(final GordianLength pKeyLength,
+                                          final GordianDigestState pState,
+                                          final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.skein(pState, pLength);
+        return skeinMac(pKeyLength, mySpec);
     }
 
     /**
@@ -160,23 +175,26 @@ public final class GordianMacSpecBuilder {
     }
 
     /**
-     * Create blakeMacSpec.
-     * @param pKeyLength the length
-     * @return the MacSpec
-     */
-    public static GordianMacSpec blake2Mac(final GordianLength pKeyLength) {
-        return blake2Mac(pKeyLength, GordianDigestType.BLAKE2.getDefaultLength());
-    }
-
-    /**
-     * Create blakeMacSpec.
+     * Create blake2sMacSpec.
      * @param pKeyLength the length
      * @param pLength the length
      * @return the MacSpec
      */
-    public static GordianMacSpec blake2Mac(final GordianLength pKeyLength,
-                                           final GordianLength pLength) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.blake2(pLength);
+    public static GordianMacSpec blake2sMac(final GordianLength pKeyLength,
+                                            final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.blake2s(pLength);
+        return blake2Mac(pKeyLength, mySpec);
+    }
+
+    /**
+     * Create blake2bMacSpec.
+     * @param pKeyLength the length
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec blake2bMac(final GordianLength pKeyLength,
+                                            final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.blake2b(pLength);
         return blake2Mac(pKeyLength, mySpec);
     }
 

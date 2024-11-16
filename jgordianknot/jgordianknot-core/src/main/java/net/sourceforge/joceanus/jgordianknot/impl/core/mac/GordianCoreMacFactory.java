@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -28,6 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -39,6 +35,11 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Core Mac Factory.
@@ -318,22 +319,19 @@ public abstract class GordianCoreMacFactory
             myList.add(GordianMacSpecBuilder.kupynaMac(pKeyLen, myLength));
         }
 
-        /* Add SkeinMacs */
-        for (final GordianLength myLength : GordianDigestType.SKEIN.getSupportedLengths()) {
-            myList.add(GordianMacSpecBuilder.skeinMac(pKeyLen, myLength));
-            if (GordianDigestType.SKEIN.getAlternateStateForLength(myLength) != null) {
-                myList.add(GordianMacSpecBuilder.skeinMac(pKeyLen, GordianDigestSpecBuilder.skeinAlt(myLength)));
+        /* Loop through states */
+        for (final GordianDigestState myState : GordianDigestState.values()) {
+            /* Add SkeinMacs */
+            for (final GordianLength myLength : GordianDigestType.SKEIN.getSupportedLengths()) {
+                final GordianMacSpec mySpec = GordianMacSpecBuilder.skeinMac(pKeyLen, myState, myLength);
+                if (mySpec.isValid()) {
+                    myList.add(mySpec);
+                }
             }
-        }
 
-        /* Add blakeMacs */
-        for (final GordianLength myLength : GordianDigestType.BLAKE2.getSupportedLengths()) {
-            GordianMacSpec mySpec = GordianMacSpecBuilder.blake2Mac(pKeyLen, myLength);
-            if (mySpec.isValid()) {
-                myList.add(mySpec);
-            }
-            if (GordianDigestType.BLAKE2.getAlternateStateForLength(myLength) != null) {
-                mySpec = GordianMacSpecBuilder.blake2Mac(pKeyLen, GordianDigestSpecBuilder.blake2Alt(myLength));
+            /* Add blake2Macs */
+            for (final GordianLength myLength : GordianDigestType.BLAKE2.getSupportedLengths()) {
+                final GordianMacSpec mySpec = GordianMacSpecBuilder.blake2Mac(pKeyLen, GordianDigestSpecBuilder.blake2(myState, myLength));
                 if (mySpec.isValid()) {
                     myList.add(mySpec);
                 }

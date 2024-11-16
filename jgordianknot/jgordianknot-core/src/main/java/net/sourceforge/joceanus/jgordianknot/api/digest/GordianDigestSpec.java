@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.digest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 
 import java.util.Objects;
 
@@ -37,9 +38,9 @@ public class GordianDigestSpec
     private final GordianDigestType theDigestType;
 
     /**
-     * The Digest State Length.
+     * The Digest SubSpec.
      */
-    private final GordianLength theStateLength;
+    private final GordianDigestSubSpec theSubSpec;
 
     /**
      * The Digest Length.
@@ -72,21 +73,21 @@ public class GordianDigestSpec
     public GordianDigestSpec(final GordianDigestType pDigestType,
                              final GordianLength pLength) {
         /* Store parameters */
-        this(pDigestType, pDigestType.getStateForLength(pLength), pLength);
+        this(pDigestType, GordianDigestSubSpec.getDefaultSubSpecForTypeAndLength(pDigestType, pLength), pLength);
     }
 
     /**
      * Constructor.
      * @param pDigestType the digestType
-     * @param pStateLength the stateLength
+     * @param pState the digestState
      * @param pLength the length
      */
     public GordianDigestSpec(final GordianDigestType pDigestType,
-                             final GordianLength pStateLength,
+                             final GordianDigestSubSpec pState,
                              final GordianLength pLength) {
         /* Store parameters */
         theDigestType = pDigestType;
-        theStateLength = pStateLength;
+        theSubSpec = pState;
         theLength = pLength;
         isValid = checkValidity();
     }
@@ -100,11 +101,21 @@ public class GordianDigestSpec
     }
 
     /**
-     * Obtain State Length.
+     * Obtain DigestSubSpec.
+     * @return the SubSpec
+     */
+    public GordianDigestSubSpec getSubSpec() {
+        return theSubSpec;
+    }
+
+    /**
+     * Obtain DigestState.
      * @return the Length
      */
-    public GordianLength getStateLength() {
-        return theStateLength;
+    public GordianDigestState getDigestState() {
+        return theSubSpec instanceof GordianDigestState
+                ? (GordianDigestState) theSubSpec :
+                null;
     }
 
     /**
@@ -124,11 +135,14 @@ public class GordianDigestSpec
     }
 
     /**
-     * Is this a hybrid state.
+     * Is this a sha2 hybrid state.
      * @return true/false
      */
-    public boolean isHybrid() {
-        return theStateLength != null && !theStateLength.equals(theLength);
+    public boolean isSha2Hybrid() {
+        return GordianDigestType.SHA2.equals(theDigestType)
+                && GordianDigestState.STATE512.equals(theSubSpec)
+                && (GordianLength.LEN_224.equals(theLength)
+                    || GordianLength.LEN_256.equals(theLength));
     }
 
     /**
@@ -136,23 +150,24 @@ public class GordianDigestSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        /* Handle null keyType */
+        /* Handle null spec/length */
         if (theDigestType == null || theLength == null) {
             return false;
         }
 
         /* Switch on keyType */
         switch (theDigestType) {
+            case SHA2:
             case SKEIN:
             case BLAKE2:
             case SHAKE:
             case KANGAROO:
             case HARAKA:
-                return theStateLength != null;
-            case SHA2:
-                return true;
+                return theSubSpec instanceof GordianDigestState
+                        && getDigestState().validForTypeAndLength(theDigestType, theLength);
             default:
-                return theStateLength == null;
+                return theSubSpec == null
+                        && theDigestType.isLengthValid(theLength);
         }
     }
 
@@ -166,27 +181,27 @@ public class GordianDigestSpec
                 theName = theDigestType.toString();
                 switch (theDigestType) {
                     case SHA2:
-                        if (theStateLength != null) {
-                            theName += SEP + theStateLength;
+                        if (isSha2Hybrid()) {
+                            theName += SEP + theSubSpec;
                         }
                         theName += SEP + theLength;
                         break;
                     case SHAKE:
-                        theName += theStateLength;
+                        theName += theSubSpec;
                         break;
                     case SKEIN:
-                        theName += SEP + theStateLength;
+                        theName += SEP + theSubSpec;
                         theName += SEP + theLength;
                         break;
                     case BLAKE2:
-                        theName = GordianDigestType.getBlake2AlgorithmForStateLength(theStateLength);
+                        theName = getDigestState().getBlake2Algorithm();
                         theName += SEP + theLength;
                         break;
                     case KANGAROO:
-                        theName = GordianDigestType.getKangarooAlgorithmForStateLength(theStateLength);
+                        theName = getDigestState().getKangarooAlgorithm();
                         break;
                     case HARAKA:
-                        theName += SEP + theStateLength;
+                        theName += SEP + theSubSpec;
                         break;
                     default:
                         if (theDigestType.getSupportedLengths().length > 1) {
@@ -196,7 +211,7 @@ public class GordianDigestSpec
                 }
             }  else {
                 /* Report invalid spec */
-                theName = "InvalidDigestSpec: " + theDigestType + ":" + theStateLength + ":" + theLength;
+                theName = "InvalidDigestSpec: " + theDigestType + ":" + theSubSpec + ":" + theLength;
             }
         }
 
@@ -224,12 +239,12 @@ public class GordianDigestSpec
 
         /* Check subFields */
         return theDigestType == myThat.getDigestType()
-                && theStateLength == myThat.getStateLength()
+                && theSubSpec == myThat.getSubSpec()
                 && theLength == myThat.getDigestLength();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theDigestType, theStateLength, theLength);
+        return Objects.hash(theDigestType, theSubSpec, theLength);
     }
 }

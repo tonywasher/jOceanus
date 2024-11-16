@@ -16,20 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
-import java.security.SecureRandom;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.util.Arrays;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -54,21 +40,18 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
-import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
-import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
@@ -79,10 +62,26 @@ import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.Fac
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
+import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.util.Arrays;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.security.SecureRandom;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.
@@ -671,7 +670,7 @@ class SymmetricTest {
         final byte[] myBytes = "DigestInput".getBytes();
         return pDigestSpec.getDigestType().supportsLargeData()
                ? myBytes
-               : Arrays.copyOf(myBytes, pDigestSpec.getStateLength().getByteLength());
+               : Arrays.copyOf(myBytes, pDigestSpec.getDigestState().getLength().getByteLength());
       }
 
     /**

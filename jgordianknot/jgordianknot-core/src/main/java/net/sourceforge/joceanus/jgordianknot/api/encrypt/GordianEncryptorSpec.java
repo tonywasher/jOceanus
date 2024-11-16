@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Asymmetric Encryption Specification.
@@ -164,7 +164,7 @@ public final class GordianEncryptorSpec {
             case RSA:
             case ELGAMAL:
                 final GordianDigestSpec mySpec = getDigestSpec();
-                return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
+                return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
             case EC:
             case GOST2012:
             case SM2:

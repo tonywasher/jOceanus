@@ -16,12 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -36,6 +30,12 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Jca Cipher Factory.
@@ -114,10 +114,10 @@ public class JcaMacFactory
     protected boolean validMacType(final GordianMacType pMacType) {
         switch (pMacType) {
             case BLAKE2:
+            case BLAKE3:
             case KALYNA:
             case CBCMAC:
             case CFBMAC:
-            case KMAC:
                 return false;
             default:
                 return super.validMacType(pMacType);
@@ -141,6 +141,7 @@ public class JcaMacFactory
             case SIPHASH:
             case GOST:
             case ZUC:
+            case KMAC:
                 return getJavaMac(getMacSpecAlgorithm(pMacSpec));
             case VMPC:
                 return getJavaMac("VMPC-MAC");
@@ -229,6 +230,8 @@ public class JcaMacFactory
                 return getZucMacAlgorithm(pMacSpec);
             case SIPHASH:
                 return pMacSpec.toString();
+            case KMAC:
+                return pMacSpec.getMacType().toString() + pMacSpec.getDigestSpec().getDigestState();
             case GOST:
                 return "GOST28147MAC";
             case VMPC:
@@ -289,14 +292,10 @@ public class JcaMacFactory
      * @return the algorithm
      */
     private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
-        final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
-        final String myState = Integer.toString(pSpec.getStateLength().getLength());
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Skein-MAC-")
-                .append(myState)
-                .append('-')
-                .append(myLen);
-        return myBuilder.toString();
+        return "Skein-MAC-"
+                + pSpec.getDigestState()
+                + '-'
+                + pSpec.getDigestLength();
     }
 
     /**

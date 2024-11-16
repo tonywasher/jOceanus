@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -112,11 +113,11 @@ public class BouncyDigestFactory
             case RIPEMD:
                 return getRIPEMDDigest(myLen);
             case SKEIN:
-                return getSkeinDigest(pDigestSpec.getStateLength(), myLen);
+                return getSkeinDigest(pDigestSpec.getDigestState(), myLen);
             case SHA3:
                 return getSHA3Digest(myLen);
             case SHAKE:
-                return new SHAKEDigest(pDigestSpec.getStateLength().getLength());
+                return new SHAKEDigest(pDigestSpec.getDigestState().getLength().getLength());
             case KANGAROO:
                 return getKangarooDigest(pDigestSpec);
             case HARAKA:
@@ -184,7 +185,7 @@ public class BouncyDigestFactory
      */
     static Blake2 getBlake2Digest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getLength();
-        return GordianDigestType.isBlake2bState(pSpec.getStateLength())
+        return pSpec.getDigestState().isBlake2bState()
                ? new Blake2b(myLength)
                : new Blake2s(myLength);
     }
@@ -197,7 +198,7 @@ public class BouncyDigestFactory
      */
     private static KangarooBase getKangarooDigest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getByteLength();
-        return GordianLength.LEN_128 == pSpec.getStateLength()
+        return GordianDigestState.STATE128.equals(pSpec.getDigestState())
                ? new KangarooTwelve(myLength)
                : new MarsupilamiFourteen(myLength);
     }
@@ -209,7 +210,7 @@ public class BouncyDigestFactory
      * @return the digest
      */
     private static Digest getHarakaDigest(final GordianDigestSpec pSpec) {
-        return GordianLength.LEN_256 == pSpec.getStateLength()
+        return GordianDigestState.STATE256.equals(pSpec.getDigestState())
                ? new Haraka256Digest()
                : new Haraka512Digest();
     }
@@ -222,14 +223,14 @@ public class BouncyDigestFactory
      */
     private static Digest getSHA2Digest(final GordianDigestSpec pSpec) {
         final GordianLength myLen = pSpec.getDigestLength();
-        final GordianLength myState = pSpec.getStateLength();
+        final GordianDigestState myState = pSpec.getDigestState();
         switch (myLen) {
             case LEN_224:
-                return myState == null
+                return GordianDigestState.STATE256.equals(myState)
                        ? new SHA224Digest()
                        : new SHA512tDigest(myLen.getLength());
             case LEN_256:
-                return myState == null
+                return GordianDigestState.STATE256.equals(myState)
                        ? new SHA256Digest()
                        : new SHA512tDigest(myLen.getLength());
             case LEN_384:
@@ -263,13 +264,13 @@ public class BouncyDigestFactory
     /**
      * Create the BouncyCastle skeinDigest.
      *
-     * @param pStateLength the state length
-     * @param pLength      the digest length
+     * @param pState the state
+     * @param pLength the digest length
      * @return the digest
      */
-    private static Digest getSkeinDigest(final GordianLength pStateLength,
+    private static Digest getSkeinDigest(final GordianDigestState pState,
                                          final GordianLength pLength) {
-        return new SkeinDigest(pStateLength.getLength(), pLength.getLength());
+        return new SkeinDigest(pState.getLength().getLength(), pLength.getLength());
     }
 
     /**

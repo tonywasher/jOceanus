@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
-import java.math.BigInteger;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
@@ -36,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -44,6 +43,8 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.math.BigInteger;
 
 /**
  * Knuth Obfuscater.
@@ -295,11 +296,11 @@ public class GordianCoreKnuthObfuscater
     private static int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
-        final GordianLength myState = pDigestSpec.getStateLength();
-        myCode <<= determineShiftForEnum(GordianLength.class);
+        final GordianDigestState myState = pDigestSpec.getDigestState();
+        myCode <<= determineShiftForEnum(GordianDigestState.class);
         myCode += myState == null
                   ? 0
-                  : deriveEncodedIdFromLength(myState);
+                  : deriveEncodedIdFromDigestState(myState);
         myCode <<= determineShiftForEnum(GordianLength.class);
         myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
 
@@ -317,15 +318,15 @@ public class GordianCoreKnuthObfuscater
         /* Isolate id Components */
         final int myLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianLength.class);
-        final int myStateCode = myCode & determineMaskForEnum(GordianLength.class);
-        final int myId = myCode >> determineShiftForEnum(GordianLength.class);
+        final int myStateCode = myCode & determineMaskForEnum(GordianDigestState.class);
+        final int myId = myCode >> determineShiftForEnum(GordianDigestState.class);
 
         /* Translate components */
         final GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);
         final GordianLength myLength = deriveLengthFromEncodedId(myLenCode);
-        final GordianLength myState = myStateCode == 0
+        final GordianDigestState myState = myStateCode == 0
                                       ? null
-                                      : deriveLengthFromEncodedId(myStateCode);
+                                      : deriveDigestStateFromEncodedId(myStateCode);
 
         /* Create DigestSpec */
         return new GordianDigestSpec(myType, myState, myLength);
@@ -763,6 +764,25 @@ public class GordianCoreKnuthObfuscater
      */
     private static GordianLength deriveLengthFromEncodedId(final int pEncodedId) throws OceanusException {
         return deriveEnumFromEncodedId(pEncodedId, GordianLength.class);
+    }
+
+    /**
+     * Obtain encoded digestState.
+     * @param pState the state
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromDigestState(final GordianDigestState pState) {
+        return deriveEncodedIdFromEnum(pState);
+    }
+
+    /**
+     * Obtain digestState from encoded Id.
+     * @param pEncodedId the encoded id
+     * @return the length
+     * @throws OceanusException on error
+     */
+    private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianDigestState.class);
     }
 
     /**

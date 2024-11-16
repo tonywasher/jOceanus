@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 
-import java.security.SecureRandom;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianSeededRandom;
+
+import java.security.SecureRandom;
 
 /**
  * Combined Random.
@@ -127,7 +127,7 @@ public class GordianCombinedRandom
 
     /**
      * Xor bytes from buffer into output bytes.
-     * @param pBufPos the starting positionin the buffer
+     * @param pBufPos the starting position in the buffer
      * @param pOutput the output buffer,
      * @param pOutPos the starting position in the output buffer
      * @param pNumBytes the number of bytes to process

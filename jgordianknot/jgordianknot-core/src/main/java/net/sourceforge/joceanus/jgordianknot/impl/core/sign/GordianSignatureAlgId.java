@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -288,9 +289,9 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha384WithRSAEncryption, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512WithRSAEncryption, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2Alt(GordianLength.LEN_224)),
+        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_224)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_224WithRSAEncryption, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2Alt(GordianLength.LEN_256)),
+        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_256)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_256WithRSAEncryption, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha3(GordianLength.LEN_224)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_224, DERNull.INSTANCE));
@@ -640,8 +641,8 @@ public class GordianSignatureAlgId {
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
 
-            /* Add a branch if there is a stateLength */
-            final GordianLength myState = myDigestSpec.getStateLength();
+            /* Add a branch if there is a state */
+            final GordianDigestState myState = myDigestSpec.getDigestState();
             if (myState != null) {
                 myId = myId.branch(Integer.toString(myState.ordinal() + 1));
             }

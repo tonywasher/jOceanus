@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 
 /**
  * Digest Specification Builder.
@@ -90,16 +91,18 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec sha2(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHA2, null, pLength);
+        return new GordianDigestSpec(GordianDigestType.SHA2, pLength);
     }
 
     /**
-     * Create sha2 alternate DigestSpec.
+     * Create sha2 DigestSpec.
+     * @param pState the state
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec sha2Alt(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHA2, GordianDigestType.SHA2.getAlternateStateForLength(pLength), pLength);
+    public static GordianDigestSpec sha2(final GordianDigestState pState,
+                                         final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SHA2, pState, pLength);
     }
 
     /**
@@ -112,32 +115,32 @@ public final class GordianDigestSpecBuilder {
     }
 
     /**
-     * Create blake2bDigestSpec.
-     * @param pLength the length
-     * @return the DigestSpec
-     */
-    public static GordianDigestSpec blake2(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.BLAKE2, GordianDigestType.BLAKE2.getStateForLength(pLength), pLength);
-    }
-
-    /**
      * Create blake2sDigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec blake2Alt(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.BLAKE2, GordianDigestType.BLAKE2.getAlternateStateForLength(pLength), pLength);
+    public static GordianDigestSpec blake2s(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, GordianDigestState.STATE256, pLength);
+    }
+
+    /**
+     * Create blake2bDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec blake2b(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, GordianDigestState.STATE512, pLength);
     }
 
     /**
      * Create blake2DigestSpec.
-     * @param pStateLength the state length
+     * @param pState the state
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec blake2(final GordianLength pStateLength,
+    public static GordianDigestSpec blake2(final GordianDigestState pState,
                                            final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.BLAKE2, pStateLength, pLength);
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, pState, pLength);
     }
 
     /**
@@ -172,27 +175,18 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec skein(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SKEIN, GordianDigestType.SKEIN.getStateForLength(pLength), pLength);
+        return new GordianDigestSpec(GordianDigestType.SKEIN, pLength);
     }
 
     /**
      * Create skeinDigestSpec.
+     * @param pState the state
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec skeinAlt(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SKEIN, GordianDigestType.SKEIN.getAlternateStateForLength(pLength), pLength);
-    }
-
-    /**
-     * Create skeinDigestSpec.
-     * @param pStateLength the state length
-     * @param pLength the length
-     * @return the DigestSpec
-     */
-    public static GordianDigestSpec skein(final GordianLength pStateLength,
+    public static GordianDigestSpec skein(final GordianDigestState pState,
                                           final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SKEIN, pStateLength, pLength);
+        return new GordianDigestSpec(GordianDigestType.SKEIN, pState, pLength);
     }
 
     /**
@@ -209,7 +203,7 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec shake128() {
-        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_128, GordianLength.LEN_256);
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianDigestState.STATE128, GordianLength.LEN_256);
     }
 
     /**
@@ -217,7 +211,7 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec shake256() {
-        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_256, GordianLength.LEN_512);
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianDigestState.STATE256, GordianLength.LEN_512);
     }
 
     /**
@@ -262,7 +256,7 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec kangaroo(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.KANGAROO, GordianLength.LEN_128, pLength);
+        return new GordianDigestSpec(GordianDigestType.KANGAROO, GordianDigestState.STATE128, pLength);
     }
 
     /**
@@ -271,7 +265,7 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec marsupimal(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.KANGAROO, GordianLength.LEN_256, pLength);
+        return new GordianDigestSpec(GordianDigestType.KANGAROO, GordianDigestState.STATE256, pLength);
     }
 
     /**
@@ -279,7 +273,7 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec haraka256() {
-        return new GordianDigestSpec(GordianDigestType.HARAKA, GordianLength.LEN_256);
+        return new GordianDigestSpec(GordianDigestType.HARAKA, GordianDigestState.STATE256, GordianLength.LEN_256);
     }
 
     /**
@@ -287,6 +281,6 @@ public final class GordianDigestSpecBuilder {
      * @return the DigestSpec
      */
     public static GordianDigestSpec haraka512() {
-        return new GordianDigestSpec(GordianDigestType.HARAKA, GordianLength.LEN_512, GordianLength.LEN_256);
+        return new GordianDigestSpec(GordianDigestType.HARAKA, GordianDigestState.STATE512, GordianLength.LEN_256);
     }
 }

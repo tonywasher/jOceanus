@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * SM2 EncryptionSpec.
@@ -120,12 +120,12 @@ public class GordianSM2EncryptionSpec {
     private boolean isDigestSupported() {
         switch (theDigest.getDigestType()) {
             case SHA2:
-                return theDigest.getStateLength() == null;
+                return !theDigest.isSha2Hybrid();
             case WHIRLPOOL:
             case SM3:
                 return true;
             case BLAKE2:
-                return theDigest.getDigestLength().equals(theDigest.getStateLength());
+                return theDigest.getDigestLength().equals(theDigest.getDigestState().getLength());
             default:
                 return false;
         }
@@ -192,8 +192,8 @@ public class GordianSM2EncryptionSpec {
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2Alt(GordianLength.LEN_256)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2(GordianLength.LEN_512)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2s(GordianLength.LEN_256)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.blake2b(GordianLength.LEN_512)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpecBuilder.whirlpool()));
         }
 

@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * SecureRandom source.
