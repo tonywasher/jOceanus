@@ -82,12 +82,17 @@ public class JcaDigestFactory
             return false;
         }
 
-        /* Disable JH, Groestl, Kangaroo, CubeHash and BLAKE3 */
+        /* Disable non-JCE digests */
         switch (pDigestType) {
             case JH:
             case GROESTL:
             case CUBEHASH:
             case KANGAROO:
+            case ASCON:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
                 return false;
             default:
                 return true;
