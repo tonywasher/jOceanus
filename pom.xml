@@ -27,7 +27,7 @@
     </developer>
   </developers>
   <modules>
-    <module>jmoneywise</module>
+    <module>moneywise</module>
     <module>themis</module>
     <module>coeus</module>
     <module>jprometheus</module>
