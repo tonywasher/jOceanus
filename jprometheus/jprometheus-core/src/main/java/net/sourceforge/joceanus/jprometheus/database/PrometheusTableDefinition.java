@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
+import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusColumnDefinition.PrometheusBinaryColumn;

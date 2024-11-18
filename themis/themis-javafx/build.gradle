@@ -9,17 +9,16 @@ javafx {
 
 /* Dependencies */
 dependencies {
-    implementation project(':jthemis-core')
-    implementation project(':jmetis-core')
+    implementation project(':themis-core')
     implementation project(':jtethys-javafx')
     implementation project(':jtethys-core')
 }
 
 /* Details */
 description = 'Themis JavaFX Project Framework'
-mainClass = "net.sourceforge.joceanus.jthemis.ui.javafx.Themis4FX"
-moduleName = "net.sourceforge.joceanus.jthemis.javafx"
-preLoaderClass = "net.sourceforge.joceanus.jthemis.ui.javafx.ThemisFXpreLoader"
+mainClass = "net.sourceforge.joceanus.themis.ui.javafx.Themis4FX"
+moduleName = "net.sourceforge.joceanus.themis.javafx"
+preLoaderClass = "net.sourceforge.joceanus.themis.ui.javafx.ThemisFXpreLoader"
 
 /* Register the project */
 registerProject(project) 

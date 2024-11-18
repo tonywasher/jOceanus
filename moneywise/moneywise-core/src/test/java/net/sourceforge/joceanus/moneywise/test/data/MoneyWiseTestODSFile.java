@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.junit.jupiter.api.Assertions;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;

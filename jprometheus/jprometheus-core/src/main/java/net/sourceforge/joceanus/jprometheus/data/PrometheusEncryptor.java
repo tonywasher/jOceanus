@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;

@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
+import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;

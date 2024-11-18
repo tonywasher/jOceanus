@@ -9,19 +9,16 @@ javafx {
 
 /* Dependencies */
 dependencies {
-    implementation project(':jmoneywise-core')
-    implementation project(':jprometheus-core')
-    implementation project(':jmetis-core')
-    implementation project(':jgordianknot-core')
+    implementation project(':moneywise-core')
     implementation project(':jtethys-javafx')
     implementation project(':jtethys-core')
 }
 
 /* Details */
 description = 'MoneyWise Personal Finance - javaFX'
-mainClass = "net.sourceforge.joceanus.jmoneywise.ui.javafx.MoneyWise4FX"
-moduleName = "net.sourceforge.joceanus.jmoneywise.javafx"
-preLoaderClass = "net.sourceforge.joceanus.jmoneywise.ui.javafx.MoneyWiseFXpreLoader"
+mainClass = "net.sourceforge.joceanus.moneywise.ui.javafx.MoneyWise4FX"
+moduleName = "net.sourceforge.joceanus.moneywise.javafx"
+preLoaderClass = "net.sourceforge.joceanus.moneywise.ui.javafx.MoneyWiseFXpreLoader"
 
 /* Register the project */
 registerProject(project)

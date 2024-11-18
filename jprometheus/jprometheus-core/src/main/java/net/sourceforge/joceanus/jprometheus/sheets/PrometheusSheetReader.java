@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;

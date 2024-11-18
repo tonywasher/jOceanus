@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;

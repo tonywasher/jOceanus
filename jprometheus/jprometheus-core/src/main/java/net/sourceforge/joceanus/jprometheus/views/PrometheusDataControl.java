@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.views;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;

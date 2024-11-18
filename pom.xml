@@ -32,7 +32,7 @@
     <module>coeus</module>
     <module>jprometheus</module>
     <module>metis</module>
-    <module>jgordianknot</module>
+    <module>gordianknot</module>
     <module>jtethys</module>
   </modules>
   <scm>

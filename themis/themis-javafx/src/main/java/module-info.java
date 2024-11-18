@@ -23,7 +23,6 @@ module net.sourceforge.joceanus.themis.javafx {
     requires javafx.graphics;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jtethys.javafx;
     requires net.sourceforge.joceanus.themis.core;

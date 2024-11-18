@@ -9,18 +9,16 @@ javafx {
 
 /* Dependencies */
 dependencies {
-    implementation project(':jcoeus-core')
-    implementation project(':jmetis-core')
-    implementation project(':jgordianknot-core')
+    implementation project(':coeus-core')
     implementation project(':jtethys-javafx')
     implementation project(':jtethys-core')
 }
 
 /* Details */
 description = 'Coeus javaFX Peer2Peer Analysis'
-mainClass = "net.sourceforge.joceanus.jcoeus.ui.javafx.Coeus4FX"
-moduleName = "net.sourceforge.joceanus.jcoeus.javafx"
-preLoaderClass = "net.sourceforge.joceanus.jcoeus.ui.javafx.CoeusFXpreLoader"
+mainClass = "net.sourceforge.joceanus.coeus.ui.javafx.Coeus4FX"
+moduleName = "net.sourceforge.joceanus.coeus.javafx"
+preLoaderClass = "net.sourceforge.joceanus.coeus.ui.javafx.CoeusFXpreLoader"
 
 /* Register the project */
 registerProject(project) 

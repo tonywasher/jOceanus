@@ -23,9 +23,7 @@ module net.sourceforge.joceanus.moneywise.javafx {
 
     /* Exports */
     requires net.sourceforge.joceanus.moneywise.core;
-    requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jprometheus.core;
     requires net.sourceforge.joceanus.jtethys.javafx;
 
     /* Exports */

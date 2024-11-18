@@ -16,11 +16,6 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>metis-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>jtethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -1,6 +1,6 @@
 /* Dependencies */
 dependencies {
-    implementation project(':jmetis-core')
+    implementation project(':metis-core')
     implementation project(':jtethys-core')
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"

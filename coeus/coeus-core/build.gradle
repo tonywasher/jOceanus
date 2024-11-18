@@ -1,7 +1,6 @@
 /* Dependencies */
 dependencies {
-    implementation project(':jmetis-core')
-    implementation project(':jgordianknot-core')
+    implementation project(':metis-core')
     implementation project(':jtethys-core')
     implementation "org.jsoup:jsoup:$jsoupVersion"
 }

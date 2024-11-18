@@ -24,7 +24,7 @@ module net.sourceforge.joceanus.moneywise.core {
     /* jOceanus */
     requires net.sourceforge.joceanus.jprometheus.core;
     requires net.sourceforge.joceanus.metis.core;
-    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.gordianknot.core;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jprometheus.sheet.api;
 

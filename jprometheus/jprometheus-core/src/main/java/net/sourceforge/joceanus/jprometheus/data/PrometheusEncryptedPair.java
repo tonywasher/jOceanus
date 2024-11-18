@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Arrays;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference.MetisDataDiffers;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;

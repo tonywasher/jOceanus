@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
