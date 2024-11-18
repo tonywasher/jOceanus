@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAEADCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * KeySet Cipher.
  */
 public interface GordianKeySetAADCipher
-    extends GordianKeySetCipher, GordianAADCipher {
+    extends GordianKeySetCipher, GordianAEADCipher {
     /**
      * Initialise the cipher for encryption.
      * @param pInitialAEAD the initialAEAD

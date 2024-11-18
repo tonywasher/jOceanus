@@ -18,6 +18,10 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import org.bouncycastle.crypto.engines.AsconEngine.AsconParameters;
+import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.engines.ISAPEngine.IsapType;
+import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
 
 import java.util.Objects;
 
@@ -116,34 +120,7 @@ public class GordianStreamKeySpec
      * @return true/false
      */
     public boolean needsIV() {
-        return getIVLength(false) > 0;
-    }
-
-    /**
-     * Obtain the IV Length.
-     * @param pAAD is this an AAD cipher
-     * @return the IV length.
-     */
-    public int getIVLength(final boolean pAAD) {
-        switch (theStreamKeyType) {
-            case SALSA20:
-                return theSubKeyType != GordianSalsa20Key.STD
-                       ? GordianLength.LEN_192.getByteLength()
-                       : theStreamKeyType.getIVLength(theKeyLength);
-            case CHACHA20:
-                if (theSubKeyType == GordianChaCha20Key.XCHACHA) {
-                    return GordianLength.LEN_192.getByteLength();
-                }
-                return theSubKeyType == GordianChaCha20Key.ISO7539
-                            ? GordianLength.LEN_96.getByteLength()
-                            : theStreamKeyType.getIVLength(theKeyLength);
-            case BLAKE2XOF:
-                return theSubKeyType == GordianBlakeXofKey.BLAKE2XS
-                       ? GordianLength.LEN_64.getByteLength()
-                       : GordianLength.LEN_128.getByteLength();
-            default:
-                return theStreamKeyType.getIVLength(theKeyLength);
-        }
+        return getIVLength() > 0;
     }
 
     /**
@@ -169,6 +146,17 @@ public class GordianStreamKeySpec
                 return checkSkeinValidity();
             case BLAKE2XOF:
                 return checkBlake2Validity();
+            case ASCON:
+                return theSubKeyType instanceof GordianAsconKey
+                        && theStreamKeyType.validForKeyLength(theKeyLength);
+            case ELEPHANT:
+                return theSubKeyType instanceof GordianElephantKey
+                        && theStreamKeyType.validForKeyLength(theKeyLength);
+            case ISAP:
+                return theSubKeyType instanceof GordianISAPKey
+                        && theStreamKeyType.validForKeyLength(theKeyLength);
+            case SPARKLE:
+                return checkSparkleValidity();
             default:
                 return theSubKeyType == null
                         && theStreamKeyType.validForKeyLength(theKeyLength);
@@ -236,7 +224,7 @@ public class GordianStreamKeySpec
     }
 
     /**
-     * Check skein spec validity.
+     * Check blake2 spec validity.
      * @return valid true/false
      */
     private boolean checkBlake2Validity() {
@@ -250,6 +238,20 @@ public class GordianStreamKeySpec
         return  theStreamKeyType.validForKeyLength(theKeyLength)
                 && (myType != GordianBlakeXofKey.BLAKE2XS
                     || theKeyLength != GordianLength.LEN_512);
+    }
+
+    /**
+     * Check sparkle spec validity.
+     * @return valid true/false
+     */
+    private boolean checkSparkleValidity() {
+        /* SubKeyType must be a GordianSparkleKey */
+        if (!(theSubKeyType instanceof GordianSparkleKey)) {
+            return false;
+        }
+
+        /* Check keyLength validity */
+        return theKeyLength == ((GordianSparkleKey) theSubKeyType).requiredKeyLength();
     }
 
     @Override
@@ -279,19 +281,19 @@ public class GordianStreamKeySpec
         /* Handle VMPC-KSA */
         if (theStreamKeyType == GordianStreamKeyType.VMPC
             && theSubKeyType == GordianVMPCKey.KSA) {
-           return theStreamKeyType.toString() + "KSA3";
+           return theStreamKeyType + "KSA3";
         }
 
         /* Handle XSalsa20 */
         if (theStreamKeyType == GordianStreamKeyType.SALSA20
                 && theSubKeyType == GordianSalsa20Key.XSALSA) {
-            return "X" + theStreamKeyType.toString();
+            return "X" + theStreamKeyType;
         }
 
         /* Handle XChaCha20 */
         if (theStreamKeyType == GordianStreamKeyType.CHACHA20
                 && theSubKeyType == GordianChaCha20Key.XCHACHA) {
-            return "X" + theStreamKeyType.toString();
+            return "X" + theStreamKeyType;
         }
 
         /* Handle ChaCha7539 */
@@ -302,25 +304,92 @@ public class GordianStreamKeySpec
 
         /* Handle Skein */
         if (theStreamKeyType == GordianStreamKeyType.SKEINXOF) {
-            return theStreamKeyType.toString() + SEP + theSubKeyType.toString();
+            return theStreamKeyType + SEP + theSubKeyType.toString();
         }
 
-        /* Handle Blake */
-        if (theStreamKeyType == GordianStreamKeyType.BLAKE2XOF) {
-            return theSubKeyType.toString();
+        /* Handle Remaining types */
+        switch (theStreamKeyType) {
+            case BLAKE2XOF:
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case SPARKLE:
+                return theSubKeyType.toString();
+            default:
+                return theStreamKeyType.toString();
         }
-
-        /* return the name */
-        return theStreamKeyType.toString();
     }
 
     /**
-     * Determine the name for the KeySpec.
-     * @return the name
+     * Obtain the IV Length.
+     * @return the IV length.
      */
-    public boolean supportsAAD() {
+    public int getIVLength() {
+        switch (theStreamKeyType) {
+            case RABBIT:
+                return GordianLength.LEN_64.getByteLength();
+            case GRAIN:
+            case ELEPHANT:
+                return GordianLength.LEN_96.getByteLength();
+            case SOSEMANUK:
+            case SNOW3G:
+             case BLAKE3XOF:
+            case SKEINXOF:
+            case ASCON:
+            case ISAP:
+            case PHOTONBEETLE:
+            case XOODYAK:
+                return GordianLength.LEN_128.getByteLength();
+            case HC:
+                return GordianLength.LEN_128 == theKeyLength
+                        ? GordianLength.LEN_128.getByteLength()
+                        : GordianLength.LEN_256.getByteLength();
+            case ZUC:
+                return GordianLength.LEN_128 == theKeyLength
+                        ? GordianLength.LEN_128.getByteLength()
+                        : GordianLength.LEN_200.getByteLength();
+            case VMPC:
+                return theKeyLength.getByteLength();
+            case BLAKE2XOF:
+                return ((GordianBlakeXofKey) theSubKeyType).requiredIVLength().getByteLength();
+            case CHACHA20:
+                return ((GordianChaCha20Key) theSubKeyType).requiredIVLength().getByteLength();
+            case SALSA20:
+                return ((GordianSalsa20Key) theSubKeyType).requiredIVLength().getByteLength();
+            case SPARKLE:
+                return ((GordianSparkleKey) theSubKeyType).requiredIVLength().getByteLength();
+            case ISAAC:
+            case RC4:
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Does this keySpec optionally support AEAD?
+     * @return true/false
+     */
+    public boolean supportsAEAD() {
         return theStreamKeyType == GordianStreamKeyType.CHACHA20
                  && theSubKeyType != GordianChaCha20Key.STD;
+    }
+
+    /**
+     * Is this keySpec an AEAD keySpec?
+     * @return true/false
+     */
+    public boolean isAEAD() {
+        switch (theStreamKeyType) {
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -370,6 +439,14 @@ public class GordianStreamKeySpec
                 return GordianSkeinXofKey.STATE1024;
             case BLAKE2XOF:
                 return GordianBlakeXofKey.BLAKE2XB;
+            case ASCON:
+                return GordianAsconKey.ASCON128;
+            case ELEPHANT:
+                return GordianElephantKey.ELEPHANT160;
+            case ISAP:
+                return GordianISAPKey.ISAPA128;
+            case SPARKLE:
+                return GordianSparkleKey.SPARKLE128_128;
             default:
                 return null;
         }
@@ -411,6 +488,20 @@ public class GordianStreamKeySpec
          * XSalsa20.
          */
         XSALSA;
+
+        /**
+         * Obtain required ivLength.
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+            switch (this) {
+                case STD:
+                    return GordianLength.LEN_64;
+                case XSALSA:
+                default:
+                    return GordianLength.LEN_192;
+            }
+        }
     }
 
     /**
@@ -432,6 +523,22 @@ public class GordianStreamKeySpec
          * XChaCha20.
          */
         XCHACHA;
+
+        /**
+         * Obtain required ivLength.
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+            switch (this) {
+                case STD:
+                    return GordianLength.LEN_64;
+                case ISO7539:
+                    return GordianLength.LEN_96;
+                case XCHACHA:
+                default:
+                    return GordianLength.LEN_192;
+            }
+        }
     }
 
     /**
@@ -481,7 +588,7 @@ public class GordianStreamKeySpec
         }
 
         /**
-         * Obtain subKeyType for length.
+         * Obtain subKeyType for stateLength.
          * @param pLength the length
          * @return the subKeyType
          */
@@ -514,61 +621,253 @@ public class GordianStreamKeySpec
         public String toString() {
             return this == BLAKE2XB ? "Blake2Xb" : "Blake2Xs";
         }
+
+        /**
+         * Obtain required ivLength.
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+            switch (this) {
+                case BLAKE2XS:
+                    return GordianLength.LEN_64;
+                case BLAKE2XB:
+                default:
+                    return GordianLength.LEN_128;
+            }
+        }
     }
 
     /**
-     * KMACXof Key styles.
+     * Ascon Key styles.
      */
-    public enum GordianKMACXofKey
+    public enum GordianAsconKey
             implements GordianStreamSubKeyType {
         /**
-         * 128State.
+         * Ascon128.
          */
-        STATE128(GordianLength.LEN_128),
+        ASCON128,
 
         /**
-         * 256State.
+         * Ascon128a.
          */
-        STATE256(GordianLength.LEN_256);
-
-        /**
-         * The length.
-         */
-        private final GordianLength theLength;
-
-        /**
-         * Constructor.
-         * @param pLength the stateLength
-         */
-        GordianKMACXofKey(final GordianLength pLength) {
-            theLength = pLength;
-        }
-
-        /**
-         * Obtain length.
-         * @return the length.
-         */
-        public GordianLength getLength() {
-            return theLength;
-        }
+        ASCON128A;
 
         @Override
         public String toString() {
-            return theLength.toString();
+            return GordianStreamKeyType.ASCON.toString() + (this == ASCON128 ? "128" : "128a");
         }
 
         /**
-         * Obtain subKeyType for length.
-         * @param pLength the length
-         * @return the subKeyType
+         * Obtain the Ascon parameters.
+         * @return the parameters
          */
-        public static GordianKMACXofKey getKeyTypeForLength(final GordianLength pLength) {
-            for (GordianKMACXofKey myType : values()) {
-                if (pLength == myType.theLength) {
-                    return myType;
-                }
+        public AsconParameters getParameters() {
+            return this == ASCON128 ? AsconParameters.ascon128 : AsconParameters.ascon128a;
+        }
+    }
+
+    /**
+     * Elephant Key styles.
+     */
+    public enum GordianElephantKey
+            implements GordianStreamSubKeyType {
+        /**
+         * Elephant160.
+         */
+        ELEPHANT160,
+
+        /**
+         * Elephant176.
+         */
+        ELEPHANT176,
+
+        /**
+         * Elephant200.
+         */
+        ELEPHANT200;
+
+        @Override
+        public String toString() {
+            final String myBase = GordianStreamKeyType.ELEPHANT.toString();
+            switch (this) {
+                case ELEPHANT160:
+                    return myBase + "160";
+                case ELEPHANT176:
+                    return myBase + "176";
+                case ELEPHANT200:
+                default:
+                    return myBase + "200";
             }
-            throw new IllegalArgumentException("Unsupported state length");
+        }
+
+        /**
+         * Obtain the elephant parameters.
+         * @return the parameters
+         */
+        public ElephantParameters getParameters() {
+            switch (this) {
+                case ELEPHANT160:
+                    return ElephantParameters.elephant160;
+                case ELEPHANT176:
+                    return ElephantParameters.elephant176;
+                case ELEPHANT200:
+                default:
+                    return ElephantParameters.elephant200;
+            }
+        }
+    }
+
+    /**
+     * ISAP Key styles.
+     */
+    public enum GordianISAPKey
+            implements GordianStreamSubKeyType {
+        /**
+         * ISAPA128.
+         */
+        ISAPA128,
+
+        /**
+         * ISAPA128A.
+         */
+        ISAPA128A,
+
+        /**
+         * ISAPK128.
+         */
+        ISAPK128,
+
+        /**
+         * ISAPK128A.
+         */
+        ISAPK128A;
+
+        @Override
+        public String toString() {
+            final String myBase = GordianStreamKeyType.ISAP.toString();
+            switch (this) {
+                case ISAPA128:
+                    return myBase + "A128";
+                case ISAPA128A:
+                    return myBase + "A128A";
+                case ISAPK128:
+                    return myBase + "K128";
+                case ISAPK128A:
+                default:
+                    return myBase + "K128A";
+            }
+        }
+
+        /**
+         * Obtain the ISAP type.
+         * @return the type
+         */
+        public IsapType getType() {
+            switch (this) {
+                case ISAPA128:
+                    return IsapType.ISAP_A_128;
+                case ISAPA128A:
+                    return IsapType.ISAP_A_128A;
+                case ISAPK128:
+                    return IsapType.ISAP_K_128;
+                case ISAPK128A:
+                default:
+                    return IsapType.ISAP_K_128A;
+            }
+        }
+    }
+
+    /**
+     * Sparkle Key styles.
+     */
+    public enum GordianSparkleKey
+            implements GordianStreamSubKeyType {
+        /**
+         * Sparkle128_128.
+         */
+        SPARKLE128_128,
+
+        /**
+         * Sparkle256_128.
+         */
+        SPARKLE256_128,
+
+        /**
+         * Sparkle192_192.
+         */
+        SPARKLE192_192,
+
+        /**
+         * Sparkle256_256.
+         */
+        SPARKLE256_256;
+
+        @Override
+        public String toString() {
+            final String myBase = GordianStreamKeyType.SPARKLE.toString();
+            switch (this) {
+                case SPARKLE128_128:
+                    return myBase + "128_128";
+                case SPARKLE256_128:
+                    return myBase + "256_128";
+                case SPARKLE192_192:
+                    return myBase + "192_192";
+                case SPARKLE256_256:
+                default:
+                    return myBase + "256_256";
+            }
+        }
+
+        /**
+         * Obtain required keyLength.
+         * @return the keyLength
+         */
+        GordianLength requiredKeyLength() {
+            switch (this) {
+                case SPARKLE128_128:
+                case SPARKLE256_128:
+                    return GordianLength.LEN_128;
+                case SPARKLE192_192:
+                    return GordianLength.LEN_192;
+                case SPARKLE256_256:
+                default:
+                    return GordianLength.LEN_256;
+            }
+        }
+
+        /**
+         * Obtain required ivLength.
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+            switch (this) {
+                case SPARKLE128_128:
+                    return GordianLength.LEN_128;
+                case SPARKLE192_192:
+                    return GordianLength.LEN_192;
+                case SPARKLE256_128:
+                case SPARKLE256_256:
+                default:
+                    return GordianLength.LEN_256;
+            }
+        }
+
+        /**
+         * Obtain the Sparkle parameters.
+         * @return the parameters
+         */
+        public SparkleParameters getParameters() {
+            switch (this) {
+                case SPARKLE128_128:
+                    return SparkleParameters.SCHWAEMM128_128;
+                case SPARKLE256_128:
+                    return SparkleParameters.SCHWAEMM256_128;
+                case SPARKLE192_192:
+                    return SparkleParameters.SCHWAEMM192_192;
+                case SPARKLE256_256:
+                default:
+                    return SparkleParameters.SCHWAEMM256_256;
+            }
         }
     }
 }

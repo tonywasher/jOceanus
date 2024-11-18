@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+
+import java.util.Objects;
 
 /**
  * The StreamCipherSpec class.
@@ -32,9 +32,9 @@ public final class GordianStreamCipherSpec
     private final boolean isValid;
 
     /**
-     * Is this an AAD Spec.
+     * Is this an AEAD Spec.
      */
-    private final boolean isAAD;
+    private final boolean isAEAD;
 
     /**
      * The String name.
@@ -52,12 +52,12 @@ public final class GordianStreamCipherSpec
     /**
      * Constructor.
      * @param pKeySpec the keySpec
-     * @param pAAD is this an AAD cipher?
+     * @param pAEAD is this an AAD cipher?
      */
     public GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec,
-                                   final boolean pAAD) {
+                                   final boolean pAEAD) {
         super(pKeySpec);
-        isAAD = pAAD;
+        isAEAD = pAEAD;
         isValid = checkValidity();
     }
 
@@ -68,15 +68,23 @@ public final class GordianStreamCipherSpec
 
     @Override
     public int getIVLength() {
-        return getKeyType().getIVLength(isAAD);
+        return getKeyType().getIVLength();
     }
 
     /**
-     * Is the keySpec an AAD cipher?
+     * Is the keySpec an AEAD cipher mode?
      * @return true/false.
      */
-    public boolean isAAD() {
-        return isAAD;
+    public boolean isAEADMode() {
+        return isAEAD;
+    }
+
+    /**
+     * Is the keySpec an AEAD cipher?
+     * @return true/false.
+     */
+    public boolean isAEAD() {
+        return isAEAD || getKeyType().isAEAD();
     }
 
     @Override
@@ -96,8 +104,8 @@ public final class GordianStreamCipherSpec
             return false;
         }
 
-        /* KeySpec must support AAD if requested */
-        return !isAAD || mySpec.supportsAAD();
+        /* KeySpec must support AEAD if requested */
+        return !isAEAD || mySpec.supportsAEAD();
     }
 
     @Override
@@ -108,7 +116,7 @@ public final class GordianStreamCipherSpec
             if (isValid) {
                 /* Load the name */
                 theName = super.toString();
-                if (isAAD) {
+                if (isAEAD) {
                     theName += "Poly1305";
                 }
             }  else {
@@ -141,11 +149,11 @@ public final class GordianStreamCipherSpec
 
         /* Check KeyType */
         return getKeyType().equals(myThat.getKeyType())
-                && isAAD == myThat.isAAD();
+                && isAEAD == myThat.isAEADMode();
     }
 
     @Override
     public int hashCode() {
-       return Objects.hash(getKeyType(), isAAD());
+       return Objects.hash(getKeyType(), isAEADMode());
     }
 }

@@ -26,137 +26,107 @@ public enum GordianStreamKeyType {
     /**
      * Salsa20.
      */
-    SALSA20(GordianLength.LEN_64),
+    SALSA20,
 
     /**
      * HC.
      */
-    HC(GordianLength.LEN_128, GordianLength.LEN_256),
+    HC,
 
     /**
      * ChaCha20.
      */
-    CHACHA20(GordianLength.LEN_64, GordianLength.LEN_96),
+    CHACHA20,
 
     /**
      * VMPC.
      */
-    VMPC(GordianLength.LEN_128, GordianLength.LEN_256),
+    VMPC,
 
     /**
      * ISAAC.
      */
-    ISAAC(null),
+    ISAAC,
 
     /**
      * RC4.
      */
-    RC4(null),
+    RC4,
 
     /**
      * Grain.
      */
-    GRAIN(GordianLength.LEN_96),
+    GRAIN,
 
     /**
      * Sosemanuk.
      */
-    SOSEMANUK(GordianLength.LEN_128),
+    SOSEMANUK,
 
     /**
      * Rabbit.
      */
-    RABBIT(GordianLength.LEN_64),
+    RABBIT,
 
     /**
      * Snow3G.
      */
-    SNOW3G(GordianLength.LEN_128),
+    SNOW3G,
 
     /**
      * Zuc.
      */
-    ZUC(GordianLength.LEN_128, GordianLength.LEN_200),
+    ZUC,
 
     /**
      * SkeinXof.
      */
-    SKEINXOF(GordianLength.LEN_128),
+    SKEINXOF,
 
     /**
      * Blake2Xof.
      */
-    BLAKE2XOF(GordianLength.LEN_128),
+    BLAKE2XOF,
 
     /**
      * Blake3Xof.
      */
-    BLAKE3XOF(GordianLength.LEN_128);
+    BLAKE3XOF,
 
     /**
-     * The IV Length.
+     * Ascon.
      */
-    private final GordianLength theShortIVLen;
+    ASCON,
 
     /**
-     * The long IV Length.
+     * Elephant.
      */
-    private final GordianLength theLongIVLen;
+    ELEPHANT,
+
+    /**
+     * ISAP.
+     */
+    ISAP,
+
+    /**
+     * PhotonBeetle.
+     */
+    PHOTONBEETLE,
+
+    /**
+     * Sparkle.
+     */
+    SPARKLE,
+
+    /**
+     * Xoodyak.
+     */
+    XOODYAK;
 
     /**
      * The String name.
      */
     private String theName;
-
-    /**
-     * Constructor.
-     * @param pIVLen the IV length
-     */
-    GordianStreamKeyType(final GordianLength pIVLen) {
-        this(pIVLen, pIVLen);
-    }
-
-    /**
-     * Constructor.
-     * @param pShortIVLen the short IV length
-     * @param pLongIVLen the short IV length
-     */
-    GordianStreamKeyType(final GordianLength pShortIVLen,
-                         final GordianLength pLongIVLen) {
-        theShortIVLen = pShortIVLen;
-        theLongIVLen = pLongIVLen;
-    }
-
-    /**
-     * Obtain the IV Length.
-     * @param pKeyLen the keyLength
-     * @return the IV length.
-     */
-    public int getIVLength(final GordianLength pKeyLen) {
-        switch (this) {
-            case ISAAC:
-            case RC4:
-                return 0;
-            case VMPC:
-                return pKeyLen.getByteLength();
-            case HC:
-            case ZUC:
-                return GordianLength.LEN_128 == pKeyLen
-                        ? theShortIVLen.getByteLength()
-                        : theLongIVLen.getByteLength();
-            case BLAKE2XOF:
-            case BLAKE3XOF:
-            case CHACHA20:
-            case SALSA20:
-            case GRAIN:
-            case SOSEMANUK:
-            case RABBIT:
-            case SNOW3G:
-            case SKEINXOF:
-            default:
-                return theShortIVLen.getByteLength();
-        }
-    }
 
     /**
      * Does the keyType need a subKeyType?
@@ -169,6 +139,10 @@ public enum GordianStreamKeyType {
             case VMPC:
             case SKEINXOF:
             case BLAKE2XOF:
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case SPARKLE:
                 return true;
             default:
                 return false;
@@ -203,7 +177,12 @@ public enum GordianStreamKeyType {
             case GRAIN:
             case RABBIT:
             case SNOW3G:
-                return GordianLength.LEN_128 == pKeyLen;
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case XOODYAK:
+                 return GordianLength.LEN_128 == pKeyLen;
             case HC:
             case CHACHA20:
             case SALSA20:
@@ -231,6 +210,24 @@ public enum GordianStreamKeyType {
                 return false;
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Does the keyType need reInit after finish?
+     * @return true/false.
+     */
+    public boolean needsReInit() {
+        switch (this) {
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
+                return true;
+            default:
+                return false;
         }
     }
 }

@@ -16,12 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestResource;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Cipher package.
@@ -240,7 +241,37 @@ public enum GordianCipherResource implements TethysBundleId {
     /**
      * StreamKey Blake3Xof.
      */
-    STREAMKEY_BLAKE3("streamKey.BLAKE3");
+    STREAMKEY_BLAKE3("streamKey.BLAKE3"),
+
+    /**
+     * StreamKey Ascon.
+     */
+    STREAMKEY_ASCON(GordianDigestResource.DIGEST_ASCON),
+
+    /**
+     * StreamKey Elephant.
+     */
+    STREAMKEY_ELEPHANT("streamKey.Elephant"),
+
+    /**
+     * StreamKey ISAP.
+     */
+    STREAMKEY_ISAP(GordianDigestResource.DIGEST_ISAP),
+
+    /**
+     * StreamKey PhotonBeetle.
+     */
+    STREAMKEY_PHOTONBEETLE(GordianDigestResource.DIGEST_PHOTONBEETLE),
+
+    /**
+     * StreamKey Sparkle.
+     */
+    STREAMKEY_SPARKLE(GordianDigestResource.DIGEST_SPARKLE),
+
+    /**
+     * StreamKey Xoodyak.
+     */
+    STREAMKEY_XOODYAK(GordianDigestResource.DIGEST_XOODYAK);
 
     /**
      * The SymKey Map.
@@ -274,6 +305,15 @@ public enum GordianCipherResource implements TethysBundleId {
      */
     GordianCipherResource(final String pKeyName) {
         theKeyName = pKeyName;
+    }
+
+    /**
+     * Constructor.
+     * @param pResource the underlying resource
+     */
+    GordianCipherResource(final TethysBundleId pResource) {
+        theKeyName = null;
+        theValue = pResource.getValue();
     }
 
     @Override
@@ -367,6 +407,12 @@ public enum GordianCipherResource implements TethysBundleId {
         myMap.put(GordianStreamKeyType.SKEINXOF, STREAMKEY_SKEIN);
         myMap.put(GordianStreamKeyType.BLAKE2XOF, STREAMKEY_BLAKE2);
         myMap.put(GordianStreamKeyType.BLAKE3XOF, STREAMKEY_BLAKE3);
+        myMap.put(GordianStreamKeyType.ASCON, STREAMKEY_ASCON);
+        myMap.put(GordianStreamKeyType.ELEPHANT, STREAMKEY_ELEPHANT);
+        myMap.put(GordianStreamKeyType.ISAP, STREAMKEY_ISAP);
+        myMap.put(GordianStreamKeyType.PHOTONBEETLE, STREAMKEY_PHOTONBEETLE);
+        myMap.put(GordianStreamKeyType.SPARKLE, STREAMKEY_SPARKLE);
+        myMap.put(GordianStreamKeyType.XOODYAK, STREAMKEY_XOODYAK);
         return myMap;
     }
 

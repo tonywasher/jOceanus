@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
@@ -45,6 +41,10 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerat
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Symmetric Tests Data Classes.
@@ -641,7 +641,7 @@ class SymmetricStore {
          * @return true/false
          */
         public boolean hasAAD() {
-            if (theKeySpec.supportsAAD()) {
+            if (theKeySpec.supportsAEAD()) {
                 final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(theKeySpec, true);
                 return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);
             }

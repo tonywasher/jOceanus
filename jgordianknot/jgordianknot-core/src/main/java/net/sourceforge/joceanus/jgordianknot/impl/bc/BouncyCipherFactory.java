@@ -16,9 +16,34 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;
@@ -26,6 +51,7 @@ import org.bouncycastle.crypto.DefaultBufferedBlockCipher;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.ARIAEngine;
+import org.bouncycastle.crypto.engines.AsconEngine;
 import org.bouncycastle.crypto.engines.BlowfishEngine;
 import org.bouncycastle.crypto.engines.CAST5Engine;
 import org.bouncycastle.crypto.engines.CAST6Engine;
@@ -34,6 +60,7 @@ import org.bouncycastle.crypto.engines.ChaCha7539Engine;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.engines.DSTU7624Engine;
+import org.bouncycastle.crypto.engines.ElephantEngine;
 import org.bouncycastle.crypto.engines.GOST28147Engine;
 import org.bouncycastle.crypto.engines.GOST3412_2015Engine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
@@ -41,7 +68,10 @@ import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
 import org.bouncycastle.crypto.engines.IDEAEngine;
 import org.bouncycastle.crypto.engines.ISAACEngine;
+import org.bouncycastle.crypto.engines.ISAPEngine;
 import org.bouncycastle.crypto.engines.NoekeonEngine;
+import org.bouncycastle.crypto.engines.PhotonBeetleEngine;
+import org.bouncycastle.crypto.engines.PhotonBeetleEngine.PhotonBeetleParameters;
 import org.bouncycastle.crypto.engines.RC2Engine;
 import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.engines.RC532Engine;
@@ -53,6 +83,7 @@ import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.engines.SerpentEngine;
 import org.bouncycastle.crypto.engines.Shacal2Engine;
 import org.bouncycastle.crypto.engines.SkipjackEngine;
+import org.bouncycastle.crypto.engines.SparkleEngine;
 import org.bouncycastle.crypto.engines.TEAEngine;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.engines.TwofishEngine;
@@ -60,6 +91,7 @@ import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
+import org.bouncycastle.crypto.engines.XoodyakEngine;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
@@ -80,6 +112,7 @@ import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.modes.GCMSIVBlockCipher;
 import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
+import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.modes.CCMBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
@@ -104,28 +137,8 @@ import org.bouncycastle.crypto.paddings.X923Padding;
 import org.bouncycastle.crypto.patch.modes.KCCMXBlockCipher;
 import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Factory for BouncyCastle Ciphers.
@@ -180,7 +193,7 @@ public class BouncyCipherFactory
         if (pCipherSpec.isAAD()) {
             /* Create the AAD cipher */
             final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
-            return new BouncySymKeyAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            return new BouncySymKeyAEADCipher(getFactory(), pCipherSpec, myBCCipher);
 
             /* else create the standard cipher */
         } else {
@@ -191,15 +204,14 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
 
         /* Create the cipher */
-        final StreamCipher myBCCipher = getBCStreamCipher(pCipherSpec);
-        return myBCCipher instanceof ChaChaPoly1305
-               ? new BouncyStreamKeyAADCipher(getFactory(), pCipherSpec, (ChaChaPoly1305) myBCCipher)
-               : new BouncyStreamKeyCipher(getFactory(), pCipherSpec, myBCCipher);
+        return pCipherSpec.isAEAD()
+               ? new BouncyStreamKeyAEADCipher(getFactory(), pCipherSpec, getBCAEADStreamCipher(pCipherSpec))
+               : new BouncyStreamKeyCipher(getFactory(), pCipherSpec, getBCStreamCipher(pCipherSpec));
     }
 
     @Override
@@ -257,9 +269,9 @@ public class BouncyCipherFactory
             case CHACHA20:
                 switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
                     case XCHACHA:
-                        return pCipherSpec.isAAD() ? new ChaChaPoly1305(new XChaCha20Engine()) : new XChaCha20Engine();
+                        return new XChaCha20Engine();
                     case ISO7539:
-                        return pCipherSpec.isAAD() ? new ChaChaPoly1305(new ChaCha7539Engine()) : new ChaCha7539Engine();
+                        return new ChaCha7539Engine();
                     default:
                         return new ChaChaEngine();
                 }
@@ -295,6 +307,41 @@ public class BouncyCipherFactory
                 return new Blake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType ? new Blake2b() : new Blake2s());
             case BLAKE3XOF:
                 return new Blake3Engine();
+            default:
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle AEAD Stream Cipher.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @return the Cipher
+     * @throws OceanusException on error
+     */
+    private static AEADCipher getBCAEADStreamCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+        final GordianStreamKeySpec mySpec = pCipherSpec.getKeyType();
+        switch (mySpec.getStreamKeyType()) {
+            case CHACHA20:
+                switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
+                    case XCHACHA:
+                        return new ChaChaPoly1305(new XChaCha20Engine());
+                    case ISO7539:
+                    default:
+                        return new ChaChaPoly1305(new ChaCha7539Engine());
+                }
+            case ASCON:
+                return new AsconEngine(((GordianAsconKey) mySpec.getSubKeyType()).getParameters());
+            case ELEPHANT:
+                return new ElephantEngine(((GordianElephantKey) mySpec.getSubKeyType()).getParameters());
+            case ISAP:
+                return new ISAPEngine(((GordianISAPKey) mySpec.getSubKeyType()).getType());
+            case PHOTONBEETLE:
+                return new PhotonBeetleEngine(PhotonBeetleParameters.pb128);
+            case SPARKLE:
+                return new SparkleEngine(((GordianSparkleKey) mySpec.getSubKeyType()).getParameters());
+            case XOODYAK:
+                return new XoodyakEngine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
@@ -471,5 +518,14 @@ public class BouncyCipherFactory
             default:
                 return new DefaultBufferedBlockCipher(pEngine);
         }
+    }
+
+    @Override
+    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+        /* Disable Elephant for the time being */
+        if (pKeyType == null || pKeyType == GordianStreamKeyType.ELEPHANT) {
+            return false;
+        }
+        return super.validStreamKeyType(pKeyType);
     }
 }
