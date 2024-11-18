@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Coeus: Peer2Peer Analysis
+ * Themis: Java Project Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
- * Coeus javaFX.
+ * Themis Cancel Exception.
  */
-module net.sourceforge.joceanus.coeus.javafx {
-    /* Java Libraries */
-    requires javafx.graphics;
+public class ThemisCancelException
+        extends OceanusException {
+    /**
+     * SerialId.
+     */
+    private static final long serialVersionUID = 8610621822129819107L;
 
-    /* jOceanus */
-    requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.coeus.ui.javafx to javafx.graphics;
+    /**
+     * Create a new Themis Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public ThemisCancelException(final String s) {
+        super(s);
+    }
 }

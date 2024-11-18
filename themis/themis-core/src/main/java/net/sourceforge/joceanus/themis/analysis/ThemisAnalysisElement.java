@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Coeus: Peer2Peer Analysis
+ * Themis: Java Project Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.analysis;
+
 /**
- * Coeus javaFX.
+ * Marker interface for lines.
  */
-module net.sourceforge.joceanus.coeus.javafx {
-    /* Java Libraries */
-    requires javafx.graphics;
-
-    /* jOceanus */
-    requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.coeus.ui.javafx to javafx.graphics;
+public interface ThemisAnalysisElement {
 }

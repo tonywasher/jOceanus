@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Coeus: Peer2Peer Analysis
+ * Themis: Java Project Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.statements;
+
 /**
- * Coeus javaFX.
+ * Entity.
  */
-module net.sourceforge.joceanus.coeus.javafx {
-    /* Java Libraries */
-    requires javafx.graphics;
+public class ThemisStatementEntity
+        implements ThemisStatementElement {
+    /**
+     * Entity.
+     */
+    private final String theEntity;
 
-    /* jOceanus */
-    requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
+    /**
+     * Constructor.
+     * @param pName the entity
+     */
+    ThemisStatementEntity(final String pName) {
+        theEntity = pName;
+    }
 
-    /* Exports */
-    exports net.sourceforge.joceanus.coeus.ui.javafx to javafx.graphics;
+    @Override
+    public String toString() {
+        return theEntity;
+    }
 }

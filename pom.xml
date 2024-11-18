@@ -28,7 +28,7 @@
   </developers>
   <modules>
     <module>jmoneywise</module>
-    <module>jthemis</module>
+    <module>themis</module>
     <module>coeus</module>
     <module>jprometheus</module>
     <module>jmetis</module>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Coeus: Peer2Peer Analysis
+ * Themis: Java Project Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.statements;
+
 /**
- * Coeus javaFX.
+ * Shift operators.
  */
-module net.sourceforge.joceanus.coeus.javafx {
-    /* Java Libraries */
-    requires javafx.graphics;
+public enum ThemisStatementUnary {
+    /**
+     * Increment.
+     */
+    INCREMENT("++"),
 
-    /* jOceanus */
-    requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
+    /**
+     * Decrement.
+     */
+    DECREMENT("--"),
 
-    /* Exports */
-    exports net.sourceforge.joceanus.coeus.ui.javafx to javafx.graphics;
+    /**
+     * PLUS.
+     */
+    PLUS("-"),
+
+    /**
+     * MINUS.
+     */
+    MINUS("-"),
+
+    /**
+     * TILDE.
+     */
+    TILDE("~"),
+
+    /**
+     * NOT.
+     */
+    NOT("!");
+
+    /**
+     * The sequence.
+     */
+    private final String theSequence;
+
+    /**
+     * Constructor.
+     * @param pSequence the sequence
+     */
+    ThemisStatementUnary(final String pSequence) {
+        theSequence = pSequence;
+    }
+
+    @Override
+    public String toString() {
+        return theSequence;
+    }
 }

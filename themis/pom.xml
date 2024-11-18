@@ -5,17 +5,16 @@
     <artifactId>joceanus</artifactId>
     <version>1.6.3-SNAPSHOT</version>
   </parent>
-  <artifactId>coeus</artifactId>
-  <name>Coeus Peer2Peer Analysis</name>
-  <description>Peer2Peer Analysis</description>
+  <artifactId>themis</artifactId>
+  <name>Themis Project Framework</name>
+  <description>Java Project Framework</description>
   <packaging>pom</packaging>
   <modules>
-    <module>coeus-swing</module>
-    <module>coeus-javafx</module>
-    <module>coeus-core</module>
+    <module>themis-core</module>
+    <module>themis-javafx</module>
   </modules>
   <properties>
-    <scmComponent>coeus</scmComponent>
+    <scmComponent>themis</scmComponent>
     <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>
