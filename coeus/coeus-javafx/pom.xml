@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sourceforge.joceanus</groupId>
+    <artifactId>coeus</artifactId>
+    <version>1.6.3-SNAPSHOT</version>
+  </parent>
+  <artifactId>coeus-javafx</artifactId>
+  <name>Coeus javaFX Peer2Peer Analysis</name>
+  <description>Peer2Peer javaFX Analysis</description>
+  <dependencies>
+    <dependency>
+      <groupId>net.sourceforge.joceanus</groupId>
+      <artifactId>coeus-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.joceanus</groupId>
+      <artifactId>jmetis-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.joceanus</groupId>
+      <artifactId>jtethys-javafx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <properties>
+    <moduleName>${packageName}.javafx</moduleName>
+    <packageMain>${packageName}.ui.javafx.Coeus4FX</packageMain>
+    <packagePreLoader>${packageName}.ui.javafx.CoeusFXpreLoader</packagePreLoader>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${JarPluginVersion}</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+   	          <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
