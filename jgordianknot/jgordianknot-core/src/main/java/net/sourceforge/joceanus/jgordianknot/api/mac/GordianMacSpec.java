@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.mac;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -317,7 +316,9 @@ public final class GordianMacSpec implements GordianKeySpec {
             case GOST:
                 return GordianLength.LEN_64.getByteLength();
             case ZUC:
-                return GordianStreamKeyType.ZUC.getIVLength(theKeyLength);
+                return GordianLength.LEN_128 == theKeyLength
+                                     ? GordianLength.LEN_128.getByteLength()
+                                     : GordianLength.LEN_200.getByteLength();
             default:
                 return 0;
         }

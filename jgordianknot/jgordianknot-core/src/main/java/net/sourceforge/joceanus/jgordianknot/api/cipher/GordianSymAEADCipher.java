@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 /**
- * GordianKnot streamKey AAD Cipher.
+ * GordianKnot symKey AAD Cipher.
  */
-public interface GordianStreamAADCipher
-        extends GordianAADCipher, GordianStreamCipher {
+public interface GordianSymAEADCipher
+        extends GordianAEADCipher, GordianSymCipher {
 }

@@ -283,4 +283,45 @@ public final class GordianDigestSpecBuilder {
     public static GordianDigestSpec haraka512() {
         return new GordianDigestSpec(GordianDigestType.HARAKA, GordianDigestState.STATE512, GordianLength.LEN_256);
     }
+
+    /**
+     * Create asconDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec ascon() {
+        return new GordianDigestSpec(GordianDigestType.ASCON, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create ISAPDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec isap() {
+        return new GordianDigestSpec(GordianDigestType.ISAP, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create photonBeetleDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec photonBeetle() {
+        return new GordianDigestSpec(GordianDigestType.PHOTONBEETLE, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create sparkleDigestSpec.
+     * @param pLength the digest length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec sparkle(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SPARKLE, pLength);
+    }
+
+    /**
+     * Create xoodyakDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec xoodyak() {
+        return new GordianDigestSpec(GordianDigestType.XOODYAK, GordianLength.LEN_256);
+    }
 }

@@ -16,8 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.Arrays;
-
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.ExtendedDigest;
@@ -26,9 +27,7 @@ import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Memoable;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.util.Arrays;
 
 /**
  * HMac implementation that utilises Xof digests.
@@ -94,10 +93,11 @@ public class BouncyHMac
                final GordianMacSpec pMacSpec) throws OceanusException  {
         theMacSpec = pMacSpec;
         theDigest = pFactory.createDigest(pMacSpec.getDigestSpec()).getDigest();
-        theBlockLen = theDigest instanceof ExtendedDigest
+        theDigestLen = theMacSpec.getMacLength().getByteLength();
+        final int myBlockLen = theDigest instanceof ExtendedDigest
                 ? ((ExtendedDigest) theDigest).getByteLength()
                 : GordianLength.LEN_64.getLength();
-        theDigestLen = theMacSpec.getMacLength().getByteLength();
+        theBlockLen = Math.max(myBlockLen, theDigestLen);
         theIPadBuffer = new byte[theBlockLen];
         theOPadBuffer = new byte[theBlockLen + theDigestLen];
     }

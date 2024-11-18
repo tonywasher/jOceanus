@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.digest;
 
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Digests package.
@@ -140,7 +140,32 @@ public enum GordianDigestResource implements TethysBundleId {
     /**
      * Digest Haraka.
      */
-    DIGEST_HARAKA("Haraka");
+    DIGEST_HARAKA("Haraka"),
+
+    /**
+     * Digest Ascon.
+     */
+    DIGEST_ASCON("Ascon"),
+
+    /**
+     * Digest ISAP.
+     */
+    DIGEST_ISAP("ISAP"),
+
+    /**
+     * Digest PhotonBeetle.
+     */
+    DIGEST_PHOTONBEETLE("PhotonBeetle"),
+
+    /**
+     * Digest Sparkle.
+     */
+    DIGEST_SPARKLE("Sparkle"),
+
+    /**
+     * Digest Haraka.
+     */
+    DIGEST_XOODYAK("Xoodyak");
 
     /**
      * The Digest Map.
@@ -222,6 +247,11 @@ public enum GordianDigestResource implements TethysBundleId {
         myMap.put(GordianDigestType.CUBEHASH, DIGEST_CUBEHASH);
         myMap.put(GordianDigestType.KANGAROO, DIGEST_KANGAROO);
         myMap.put(GordianDigestType.HARAKA, DIGEST_HARAKA);
+        myMap.put(GordianDigestType.ASCON, DIGEST_ASCON);
+        myMap.put(GordianDigestType.ISAP, DIGEST_ISAP);
+        myMap.put(GordianDigestType.PHOTONBEETLE, DIGEST_PHOTONBEETLE);
+        myMap.put(GordianDigestType.SPARKLE, DIGEST_SPARKLE);
+        myMap.put(GordianDigestType.XOODYAK, DIGEST_XOODYAK);
         return myMap;
     }
 

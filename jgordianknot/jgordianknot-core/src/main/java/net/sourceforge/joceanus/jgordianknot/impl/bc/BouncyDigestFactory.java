@@ -26,15 +26,19 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestF
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.AsconDigest;
+import org.bouncycastle.crypto.digests.AsconXof;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
 import org.bouncycastle.crypto.digests.Haraka256Digest;
 import org.bouncycastle.crypto.digests.Haraka512Digest;
+import org.bouncycastle.crypto.digests.ISAPDigest;
 import org.bouncycastle.crypto.digests.MD2Digest;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.PhotonBeetleDigest;
 import org.bouncycastle.crypto.digests.RIPEMD128Digest;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.digests.RIPEMD256Digest;
@@ -48,8 +52,11 @@ import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
 import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
+import org.bouncycastle.crypto.digests.SparkleDigest;
+import org.bouncycastle.crypto.digests.SparkleDigest.SparkleParameters;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
+import org.bouncycastle.crypto.digests.XoodyakDigest;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
@@ -152,6 +159,16 @@ public class BouncyDigestFactory
                 return new MD4Digest();
             case MD2:
                 return new MD2Digest();
+            case ASCON:
+                return getAsconDigest(pDigestSpec);
+            case ISAP:
+                return new ISAPDigest();
+            case PHOTONBEETLE:
+                return new PhotonBeetleDigest();
+            case SPARKLE:
+                return getSparkleDigest(pDigestSpec);
+            case XOODYAK:
+                return new XoodyakDigest();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec.toString()));
         }
@@ -213,6 +230,38 @@ public class BouncyDigestFactory
         return GordianDigestState.STATE256.equals(pSpec.getDigestState())
                ? new Haraka256Digest()
                : new Haraka512Digest();
+    }
+
+    /**
+     * Create the BouncyCastle Ascon digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static Digest getAsconDigest(final GordianDigestSpec pSpec) {
+        switch (pSpec.getAsconSubSpec()) {
+            case ASCONHASH:
+                return new AsconDigest(AsconDigest.AsconParameters.AsconHash);
+            case ASCONHASHA:
+                return new AsconDigest(AsconDigest.AsconParameters.AsconHashA);
+            case ASCONXOF:
+                return new AsconXof(AsconXof.AsconParameters.AsconXof);
+            case ASCONXOFA:
+            default:
+                return new AsconXof(AsconXof.AsconParameters.AsconXofA);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Sparkle digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static Digest getSparkleDigest(final GordianDigestSpec pSpec) {
+        return GordianLength.LEN_256 == pSpec.getDigestLength()
+                ? new SparkleDigest(SparkleParameters.ESCH256)
+                : new SparkleDigest(SparkleParameters.ESCH384);
     }
 
     /**

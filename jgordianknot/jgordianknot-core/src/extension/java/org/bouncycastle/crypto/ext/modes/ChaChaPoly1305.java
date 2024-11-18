@@ -6,6 +6,7 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.macs.Poly1305;
+import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -16,7 +17,7 @@ import org.bouncycastle.util.Pack;
  * ChaCha20Poly1305 Engine.
  */
 public class ChaChaPoly1305
-    implements StreamCipher {
+    implements AEADCipher {
     /**
      * The MacSize.
      */
@@ -186,6 +187,14 @@ public class ChaChaPoly1305
         /* Process the bytes */
         polyMac.update(in, inOff, len);
         aeadLength += len;
+    }
+
+    @Override
+    public int processByte(final byte pByte,
+                           final byte[] out,
+                           final int outOffset) throws DataLengthException {
+        final byte[] myByte = new byte[] { pByte };
+        return processBytes(myByte, 0, 1, out, outOffset);
     }
 
     /**

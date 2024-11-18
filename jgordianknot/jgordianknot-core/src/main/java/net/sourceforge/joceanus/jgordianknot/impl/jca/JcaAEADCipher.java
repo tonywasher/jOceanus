@@ -16,10 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAEADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAEADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAEADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.jcajce.spec.AEADParameterSpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -27,30 +37,18 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
-
-import org.bouncycastle.jcajce.spec.AEADParameterSpec;
-
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.util.Arrays;
 
 /**
- * Cipher for JCA BouncyCastle AAD Ciphers.
+ * Cipher for JCA BouncyCastle AEAD Ciphers.
  * @param <T> the key Type
  */
-public class JcaAADCipher<T extends GordianKeySpec>
+public class JcaAEADCipher<T extends GordianKeySpec>
         extends GordianCoreCipher<T>
-        implements GordianAADCipher {
+        implements GordianAEADCipher {
     /**
      * Cipher.
      */
@@ -67,9 +65,9 @@ public class JcaAADCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    JcaAADCipher(final JcaFactory pFactory,
-                 final GordianCipherSpec<T> pCipherSpec,
-                 final Cipher pCipher) {
+    JcaAEADCipher(final JcaFactory pFactory,
+                  final GordianCipherSpec<T> pCipherSpec,
+                  final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
@@ -169,37 +167,37 @@ public class JcaAADCipher<T extends GordianKeySpec>
     /**
      * JcaSymAADCipher.
      */
-    public static class JcaSymAADCipher
-            extends JcaAADCipher<GordianSymKeySpec>
-            implements GordianSymAADCipher {
+    public static class JcaSymAEADCipher
+            extends JcaAEADCipher<GordianSymKeySpec>
+            implements GordianSymAEADCipher {
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaSymAADCipher(final JcaFactory pFactory,
-                        final GordianSymCipherSpec pCipherSpec,
-                        final Cipher pCipher) {
+        JcaSymAEADCipher(final JcaFactory pFactory,
+                         final GordianSymCipherSpec pCipherSpec,
+                         final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
     }
 
     /**
-     * JcaStreamAADCipher.
+     * JcaStreamAEADCipher.
      */
-    public static class JcaStreamAADCipher
-            extends JcaAADCipher<GordianStreamKeySpec>
-            implements GordianStreamAADCipher {
+    public static class JcaStreamAEADCipher
+            extends JcaAEADCipher<GordianStreamKeySpec>
+            implements GordianStreamAEADCipher {
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaStreamAADCipher(final JcaFactory pFactory,
-                           final GordianStreamCipherSpec pCipherSpec,
-                           final Cipher pCipher) {
+        JcaStreamAEADCipher(final JcaFactory pFactory,
+                            final GordianStreamCipherSpec pCipherSpec,
+                            final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
     }
@@ -215,10 +213,10 @@ public class JcaAADCipher<T extends GordianKeySpec>
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof JcaAADCipher)) {
+        if (!(pThat instanceof JcaAEADCipher)) {
             return false;
         }
-        final JcaAADCipher<?> myThat = (JcaAADCipher<?>) pThat;
+        final JcaAEADCipher<?> myThat = (JcaAEADCipher<?>) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting

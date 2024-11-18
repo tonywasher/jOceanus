@@ -16,13 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
@@ -46,11 +39,18 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAADCipher.JcaStreamAADCipher;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAADCipher.JcaSymAADCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAEADCipher.JcaStreamAEADCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAEADCipher.JcaSymAEADCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaCipher.JcaStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaCipher.JcaSymCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Jca Cipher Factory.
@@ -120,7 +120,7 @@ public class JcaCipherFactory
         if (pCipherSpec.isAAD()) {
             /* Create the cipher */
             final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-            return new JcaSymAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            return new JcaSymAEADCipher(getFactory(), pCipherSpec, myBCCipher);
 
             /* else create the standard cipher */
         } else {
@@ -136,8 +136,8 @@ public class JcaCipherFactory
         checkStreamCipherSpec(pCipherSpec);
 
         final Cipher myJCACipher = getJavaCipher(pCipherSpec);
-        return pCipherSpec.isAAD()
-               ? new JcaStreamAADCipher(getFactory(), pCipherSpec, myJCACipher)
+        return pCipherSpec.isAEAD()
+               ? new JcaStreamAEADCipher(getFactory(), pCipherSpec, myJCACipher)
                : new JcaStreamCipher(getFactory(), pCipherSpec, myJCACipher);
     }
 
@@ -218,7 +218,7 @@ public class JcaCipherFactory
     private static Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
         String myAlgo = getStreamKeyAlgorithm(myKeySpec);
-        if (pCipherSpec.isAAD()
+        if (pCipherSpec.isAEAD()
                 && GordianStreamKeyType.CHACHA20 == myKeySpec.getStreamKeyType()) {
             myAlgo = "CHACHA20-POLY1305";
         }
@@ -441,6 +441,12 @@ public class JcaCipherFactory
             case SKEINXOF:
             case BLAKE2XOF:
             case BLAKE3XOF:
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
                 return false;
             default:
                 return super.validStreamKeyType(pKeyType);

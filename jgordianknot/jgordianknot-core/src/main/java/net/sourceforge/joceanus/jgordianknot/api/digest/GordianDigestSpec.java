@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.digest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianAsconSubSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 
 import java.util.Objects;
@@ -110,12 +111,22 @@ public class GordianDigestSpec
 
     /**
      * Obtain DigestState.
-     * @return the Length
+     * @return the State
      */
     public GordianDigestState getDigestState() {
         return theSubSpec instanceof GordianDigestState
-                ? (GordianDigestState) theSubSpec :
-                null;
+                ? (GordianDigestState) theSubSpec
+                :  null;
+    }
+
+    /**
+     * Obtain AsconSubSpec.
+     * @return the SubSpec
+     */
+    public GordianAsconSubSpec getAsconSubSpec() {
+        return theSubSpec instanceof GordianAsconSubSpec
+                ? (GordianAsconSubSpec) theSubSpec
+                : null;
     }
 
     /**
@@ -165,6 +176,9 @@ public class GordianDigestSpec
             case HARAKA:
                 return theSubSpec instanceof GordianDigestState
                         && getDigestState().validForTypeAndLength(theDigestType, theLength);
+            case ASCON:
+                return theSubSpec instanceof GordianAsconSubSpec
+                        && theDigestType.isLengthValid(theLength);
             default:
                 return theSubSpec == null
                         && theDigestType.isLengthValid(theLength);
@@ -202,6 +216,9 @@ public class GordianDigestSpec
                         break;
                     case HARAKA:
                         theName += SEP + theSubSpec;
+                        break;
+                    case ASCON:
+                        theName = theSubSpec.toString();
                         break;
                     default:
                         if (theDigestType.getSupportedLengths().length > 1) {

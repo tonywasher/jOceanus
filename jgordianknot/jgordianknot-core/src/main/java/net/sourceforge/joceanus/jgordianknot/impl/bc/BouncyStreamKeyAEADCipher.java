@@ -16,32 +16,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import java.util.Arrays;
-
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAEADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
+import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import java.util.Arrays;
 
 /**
  * Cipher for BouncyCastle Stream Ciphers.
  */
-public class BouncyStreamKeyAADCipher
-        extends BouncyStreamKeyCipher
-        implements GordianStreamAADCipher {
+public class BouncyStreamKeyAEADCipher
+        extends GordianCoreCipher<GordianStreamKeySpec>
+        implements GordianStreamAEADCipher {
     /**
      * The cipher.
      */
-    private final ChaChaPoly1305 theCipher;
+    private final AEADCipher theCipher;
 
     /**
      * is the cipher encrypting?
@@ -54,10 +55,10 @@ public class BouncyStreamKeyAADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    BouncyStreamKeyAADCipher(final BouncyFactory pFactory,
-                             final GordianStreamCipherSpec pCipherSpec,
-                             final ChaChaPoly1305 pCipher) {
-        super(pFactory, pCipherSpec, pCipher);
+    BouncyStreamKeyAEADCipher(final BouncyFactory pFactory,
+                              final GordianStreamCipherSpec pCipherSpec,
+                              final AEADCipher pCipher) {
+        super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
@@ -92,6 +93,28 @@ public class BouncyStreamKeyAADCipher
     }
 
     @Override
+    public int doUpdate(final byte[] pBytes,
+                        final int pOffset,
+                        final int pLength,
+                        final byte[] pOutput,
+                        final int pOutOffset) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+            return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
+
+            /* Handle exceptions */
+        } catch (DataLengthException e) {
+            throw new GordianCryptoException("Failed to process bytes", e);
+        }
+    }
+
+    @Override
+    public int getBlockSize() {
+        return 0;
+    }
+
+    @Override
     public int doFinish(final byte[] out,
                         final int outOff) throws OceanusException {
         try {
@@ -112,10 +135,10 @@ public class BouncyStreamKeyAADCipher
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof BouncyStreamKeyAADCipher)) {
+        if (!(pThat instanceof BouncyStreamKeyAEADCipher)) {
             return false;
         }
-        final BouncyStreamKeyAADCipher myThat = (BouncyStreamKeyAADCipher) pThat;
+        final BouncyStreamKeyAEADCipher myThat = (BouncyStreamKeyAEADCipher) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting

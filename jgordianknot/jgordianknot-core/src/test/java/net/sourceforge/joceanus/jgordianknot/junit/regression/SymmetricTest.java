@@ -26,12 +26,12 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAEADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAEADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -896,7 +896,7 @@ class SymmetricTest {
         /* Access Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianSymAADCipher myCipher = (GordianSymAADCipher) myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianSymAEADCipher myCipher = (GordianSymAEADCipher) myCipherFactory.createSymKeyCipher(mySpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();
@@ -936,7 +936,7 @@ class SymmetricTest {
         /* Encrypt Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianSymAADCipher myCipher = (GordianSymAADCipher) myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianSymAEADCipher myCipher = (GordianSymAEADCipher) myCipherFactory.createSymKeyCipher(mySpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();
@@ -944,7 +944,7 @@ class SymmetricTest {
         final byte[] myEncrypted = myCipher.finish(myTestData);
 
         /* Decrypt data at partner */
-        final GordianSymAADCipher myPartnerCipher = (GordianSymAADCipher) myPartnerFactory.createSymKeyCipher(mySpec);
+        final GordianSymAEADCipher myPartnerCipher = (GordianSymAEADCipher) myPartnerFactory.createSymKeyCipher(mySpec);
         myParms = GordianCipherParameters.keyAndNonce(myPartnerKey, myIV);
         myPartnerCipher.initForDecrypt(myParms);
         myPartnerCipher.updateAAD(myAADData);
@@ -976,6 +976,9 @@ class SymmetricTest {
         final byte[] myIV = myCipher.getInitVector();
         myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
         final byte[] myEncrypted = myCipher.finish(myTestData);
+        if (myCipherSpec.getKeyType().getStreamKeyType().needsReInit()) {
+            myCipher.initForEncrypt(myParms);
+        }
         final byte[] myEncrypted2 = myCipher.finish(myTestData);
         myCipher.initForDecrypt(myParms);
         final byte[] myResult = myCipher.finish(myEncrypted);
@@ -1031,7 +1034,7 @@ class SymmetricTest {
         /* Access Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianStreamAADCipher myCipher = (GordianStreamAADCipher) myCipherFactory.createStreamKeyCipher(mySpec);
+        final GordianStreamAEADCipher myCipher = (GordianStreamAEADCipher) myCipherFactory.createStreamKeyCipher(mySpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();

@@ -17,9 +17,13 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 
 /**
@@ -193,5 +197,57 @@ public final class GordianStreamKeySpecBuilder {
      */
     public static GordianStreamKeySpec blake3Xof() {
         return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE3XOF, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create asconKeySpec.
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec ascon(final GordianAsconKey pSubSpec) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.ASCON, GordianLength.LEN_256, pSubSpec);
+    }
+
+    /**
+     * Create elephantKeySpec.
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec elephant(final GordianElephantKey pSubSpec) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.ELEPHANT, GordianLength.LEN_256, pSubSpec);
+    }
+
+    /**
+     * Create isapKeySpec.
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec isap(final GordianISAPKey pSubSpec) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.ISAP, GordianLength.LEN_256, pSubSpec);
+    }
+
+    /**
+     * Create photonBeetleKeySpec.
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec photonBeetle() {
+        return new GordianStreamKeySpec(GordianStreamKeyType.PHOTONBEETLE, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create sparkleKeySpec.
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec sparkle(final GordianSparkleKey pSubSpec) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.SPARKLE, pSubSpec.requiredKeyLength(), pSubSpec);
+    }
+
+    /**
+     * Create xoodyakKeySpec.
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec xoodyak() {
+        return new GordianStreamKeySpec(GordianStreamKeyType.XOODYAK, GordianLength.LEN_256);
     }
 }

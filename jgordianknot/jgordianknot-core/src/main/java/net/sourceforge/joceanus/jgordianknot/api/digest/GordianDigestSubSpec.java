@@ -38,6 +38,9 @@ public interface GordianDigestSubSpec {
             case SHAKE:
             case KANGAROO:
                 return new GordianDigestState[] { GordianDigestState.STATE128, GordianDigestState.STATE256 };
+            case ASCON:
+                return new GordianAsconSubSpec[] { GordianAsconSubSpec.ASCONHASH, GordianAsconSubSpec.ASCONHASHA,
+                        GordianAsconSubSpec.ASCONXOF, GordianAsconSubSpec.ASCONXOFA };
             default:
                 return new GordianDigestState[] { null };
         }
@@ -77,6 +80,8 @@ public interface GordianDigestSubSpec {
                         : GordianDigestState.STATE512;
             case HARAKA:
                 return GordianDigestState.STATE256;
+            case ASCON:
+                return GordianAsconSubSpec.ASCONHASH;
             default:
                 return null;
         }
@@ -331,6 +336,42 @@ public interface GordianDigestSubSpec {
             return this == STATE256
                     ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()
                     : GordianDigestResource.DIGEST_KANGAROO.getValue();
+        }
+    }
+
+    /**
+     * Ascon subSpecification.
+     */
+    enum GordianAsconSubSpec implements GordianDigestSubSpec {
+        /**
+         * Hash.
+         */
+        ASCONHASH,
+
+        /**
+         * HashA.
+         */
+        ASCONHASHA,
+
+        /**
+         * Xof.
+         */
+        ASCONXOF,
+
+        /**
+         * XofA.
+         */
+        ASCONXOFA;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case ASCONHASH:  return "AsconHash";
+                case ASCONHASHA: return "AsconHashA";
+                case ASCONXOF:   return "AsconXof";
+                case ASCONXOFA:
+                default:         return "AsconXofA";
+            }
         }
     }
 }

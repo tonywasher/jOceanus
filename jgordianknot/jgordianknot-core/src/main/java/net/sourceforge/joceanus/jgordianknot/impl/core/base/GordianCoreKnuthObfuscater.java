@@ -23,10 +23,14 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianStreamSubKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -34,6 +38,8 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianAsconSubSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
@@ -297,10 +303,13 @@ public class GordianCoreKnuthObfuscater
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
         final GordianDigestState myState = pDigestSpec.getDigestState();
-        myCode <<= determineShiftForEnum(GordianDigestState.class);
-        myCode += myState == null
-                  ? 0
-                  : deriveEncodedIdFromDigestState(myState);
+        final GordianAsconSubSpec myAscon = pDigestSpec.getAsconSubSpec();
+        myCode <<= determineShiftForDigestSubSpec();
+        if (myState != null) {
+            myCode += deriveEncodedIdFromDigestState(myState);
+        } else if (myAscon != null) {
+            myCode += deriveEncodedIdFromAsconSubSpec(myAscon);
+        }
         myCode <<= determineShiftForEnum(GordianLength.class);
         myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
 
@@ -318,18 +327,21 @@ public class GordianCoreKnuthObfuscater
         /* Isolate id Components */
         final int myLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianLength.class);
-        final int myStateCode = myCode & determineMaskForEnum(GordianDigestState.class);
-        final int myId = myCode >> determineShiftForEnum(GordianDigestState.class);
+        final int mySubSpecCode = myCode & determineMaskForDigestSubSpec();
+        final int myId = myCode >> determineShiftForDigestSubSpec();
 
         /* Translate components */
         final GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);
         final GordianLength myLength = deriveLengthFromEncodedId(myLenCode);
-        final GordianDigestState myState = myStateCode == 0
-                                      ? null
-                                      : deriveDigestStateFromEncodedId(myStateCode);
+        GordianDigestSubSpec mySubSpec = null;
+        if (GordianDigestType.ASCON.equals(myType)) {
+            mySubSpec = deriveAsconSubSpecFromEncodedId(mySubSpecCode);
+        } else if (mySubSpecCode != 0) {
+            mySubSpec = deriveDigestStateFromEncodedId(mySubSpecCode);
+        }
 
         /* Create DigestSpec */
-        return new GordianDigestSpec(myType, myState, myLength);
+        return new GordianDigestSpec(myType, mySubSpec, myLength);
     }
 
     /**
@@ -458,7 +470,7 @@ public class GordianCoreKnuthObfuscater
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromStreamKeySpec(pCipherSpec.getKeyType());
         myCode <<= 1;
-        myCode += (pCipherSpec.isAAD() ? 1 : 0);
+        myCode += (pCipherSpec.isAEADMode() ? 1 : 0);
 
         /* Return the encoded id */
         return myCode;
@@ -498,6 +510,14 @@ public class GordianCoreKnuthObfuscater
                 return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());
             case BLAKE2XOF:
                 return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());
+            case ASCON:
+                return deriveEncodedIdFromEnum((GordianAsconKey) pStreamKeySpec.getSubKeyType());
+            case ELEPHANT:
+                return deriveEncodedIdFromEnum((GordianElephantKey) pStreamKeySpec.getSubKeyType());
+            case ISAP:
+                return deriveEncodedIdFromEnum((GordianISAPKey) pStreamKeySpec.getSubKeyType());
+            case SPARKLE:
+                return deriveEncodedIdFromEnum((GordianSparkleKey) pStreamKeySpec.getSubKeyType());
             default:
                 return 0;
         }
@@ -524,9 +544,34 @@ public class GordianCoreKnuthObfuscater
                 return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);
             case BLAKE2XOF:
                 return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);
+            case ASCON:
+                return deriveEnumFromEncodedId(pEncodedId, GordianAsconKey.class);
+            case ELEPHANT:
+                return deriveEnumFromEncodedId(pEncodedId, GordianElephantKey.class);
+            case ISAP:
+                return deriveEnumFromEncodedId(pEncodedId, GordianISAPKey.class);
+            case SPARKLE:
+                return deriveEnumFromEncodedId(pEncodedId, GordianSparkleKey.class);
             default:
                 return null;
         }
+    }
+
+    /**
+     * Obtain mask for DigestSubSpec.
+     * @return the mask
+     */
+    private static int determineMaskForDigestSubSpec() {
+        return ~(-1 << determineShiftForDigestSubSpec());
+    }
+
+    /**
+     * Obtain shift for StreamKeySubType.
+     * @return the bit shift
+     */
+    private static int determineShiftForDigestSubSpec() {
+        int myShift = determineShiftForEnum(GordianDigestState.class);
+        return Math.max(myShift, determineShiftForEnum(GordianAsconSubSpec.class));
     }
 
     /**
@@ -544,7 +589,13 @@ public class GordianCoreKnuthObfuscater
     private static int determineShiftForStreamKeySubType() {
         int myShift = determineShiftForEnum(GordianVMPCKey.class);
         myShift = Math.max(myShift, determineShiftForEnum(GordianSalsa20Key.class));
-        return Math.max(myShift, determineShiftForEnum(GordianChaCha20Key.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianChaCha20Key.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianSkeinXofKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianBlakeXofKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianAsconKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianElephantKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianISAPKey.class));
+        return Math.max(myShift, determineShiftForEnum(GordianSparkleKey.class));
     }
 
     /**
@@ -778,11 +829,30 @@ public class GordianCoreKnuthObfuscater
     /**
      * Obtain digestState from encoded Id.
      * @param pEncodedId the encoded id
-     * @return the length
+     * @return the state
      * @throws OceanusException on error
      */
     private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws OceanusException {
         return deriveEnumFromEncodedId(pEncodedId, GordianDigestState.class);
+    }
+
+    /**
+     * Obtain encoded asconSubSpec.
+     * @param pAscon the ascon subSpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromAsconSubSpec(final GordianAsconSubSpec pAscon) {
+        return deriveEncodedIdFromEnum(pAscon);
+    }
+
+    /**
+     * Obtain asconSubSpec from encoded Id.
+     * @param pEncodedId the encoded id
+     * @return the subSpec
+     * @throws OceanusException on error
+     */
+    private static GordianAsconSubSpec deriveAsconSubSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianAsconSubSpec.class);
     }
 
     /**

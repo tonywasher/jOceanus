@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianAsconSubSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -197,11 +198,16 @@ public class GordianDigestAlgId {
         final GordianDigestType myType = pSpec.getDigestType();
         ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
 
-        /* Determine stateLength */
+        /* Adjust for subSpec */
         final GordianDigestState myState = pSpec.getDigestState();
-        myId = myState == null
-               ? myId.branch("1")
-               : myId.branch(Integer.toString(myState.ordinal() + 2));
+        final GordianAsconSubSpec myAscon = pSpec.getAsconSubSpec();
+        if (myState != null) {
+            myId = myId.branch("1").branch(Integer.toString(myState.ordinal() + 1));
+        } else if (myAscon != null) {
+            myId = myId.branch("2").branch(Integer.toString(myAscon.ordinal() + 1));
+        } else {
+            myId = myId.branch("3");
+        }
 
         /* Add length */
         return myId.branch(Integer.toString(pSpec.getDigestLength().ordinal() + 1));

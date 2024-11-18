@@ -130,7 +130,32 @@ public enum GordianDigestType {
     /**
      * Blake3.
      */
-    BLAKE3(GordianLength.LEN_256);
+    BLAKE3(GordianLength.LEN_256),
+
+    /**
+     * Ascon.
+     */
+    ASCON(GordianLength.LEN_256),
+
+    /**
+     * ISAP.
+     */
+    ISAP(GordianLength.LEN_256),
+
+    /**
+     * PhotonBeetle.
+     */
+    PHOTONBEETLE(GordianLength.LEN_256),
+
+    /**
+     * Sparkle.
+     */
+    SPARKLE(GordianLength.LEN_256, GordianLength.LEN_384),
+
+    /**
+     * Xoodyak.
+     */
+    XOODYAK(GordianLength.LEN_256);
 
     /**
      * The Supported lengths.
@@ -179,6 +204,10 @@ public enum GordianDigestType {
             case WHIRLPOOL:
             case HARAKA:
             case BLAKE3:
+            case ASCON:
+            case ISAP:
+            case PHOTONBEETLE:
+            case XOODYAK:
                 return theLengths[0];
             case SHA2:
             case RIPEMD:
@@ -192,6 +221,7 @@ public enum GordianDigestType {
             case JH:
             case CUBEHASH:
             case KANGAROO:
+            case SPARKLE:
             default:
                 return GordianLength.LEN_256;
         }

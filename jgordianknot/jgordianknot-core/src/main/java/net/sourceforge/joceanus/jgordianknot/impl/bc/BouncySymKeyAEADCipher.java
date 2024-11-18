@@ -27,7 +27,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAEADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Cipher for BouncyCastle AAD Symmetric Ciphers.
  */
-public class BouncySymKeyAADCipher
+public class BouncySymKeyAEADCipher
         extends GordianCoreCipher<GordianSymKeySpec>
-        implements GordianSymAADCipher {
+        implements GordianSymAEADCipher {
     /**
      * Cipher.
      */
@@ -56,9 +56,9 @@ public class BouncySymKeyAADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    BouncySymKeyAADCipher(final BouncyFactory pFactory,
-                          final GordianSymCipherSpec pCipherSpec,
-                          final AEADBlockCipher pCipher) {
+    BouncySymKeyAEADCipher(final BouncyFactory pFactory,
+                           final GordianSymCipherSpec pCipherSpec,
+                           final AEADBlockCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
@@ -156,10 +156,10 @@ public class BouncySymKeyAADCipher
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof BouncySymKeyAADCipher)) {
+        if (!(pThat instanceof BouncySymKeyAEADCipher)) {
             return false;
         }
-        final BouncySymKeyAADCipher myThat = (BouncySymKeyAADCipher) pThat;
+        final BouncySymKeyAEADCipher myThat = (BouncySymKeyAEADCipher) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting
