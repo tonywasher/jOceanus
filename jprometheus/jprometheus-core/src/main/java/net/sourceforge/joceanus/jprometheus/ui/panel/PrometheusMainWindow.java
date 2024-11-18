@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.panel;
 
-import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
-import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
+import net.sourceforge.joceanus.metis.help.MetisHelpModule;
+import net.sourceforge.joceanus.metis.help.MetisHelpWindow;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateTables;
 import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.threads.PrometheusThreadCreateBackup;

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.controls;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;

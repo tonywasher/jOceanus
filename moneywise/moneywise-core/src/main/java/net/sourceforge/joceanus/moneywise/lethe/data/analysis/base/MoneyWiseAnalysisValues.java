@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.moneywise.lethe.data.analysis.base;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;

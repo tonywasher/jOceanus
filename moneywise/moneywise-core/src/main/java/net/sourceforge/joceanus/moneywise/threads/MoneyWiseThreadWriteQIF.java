@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;

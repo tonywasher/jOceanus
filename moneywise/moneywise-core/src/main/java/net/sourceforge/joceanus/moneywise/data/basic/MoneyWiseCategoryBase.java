@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCategoryInterface;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInstanceMap;

@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket.MoneyWiseXAnalysisCashBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashCategoryBucket.MoneyWiseXAnalysisCashCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket.MoneyWiseXAnalysisDepositBucketList;

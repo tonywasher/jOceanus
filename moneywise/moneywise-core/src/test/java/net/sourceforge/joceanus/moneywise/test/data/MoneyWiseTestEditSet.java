@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 import org.junit.jupiter.api.Assertions;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;

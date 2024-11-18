@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
+import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

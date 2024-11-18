@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.coeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.coeus.ui.CoeusUIResource;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

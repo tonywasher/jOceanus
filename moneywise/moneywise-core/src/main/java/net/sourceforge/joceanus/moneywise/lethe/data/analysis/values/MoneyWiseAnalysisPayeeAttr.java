@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
 
 /**

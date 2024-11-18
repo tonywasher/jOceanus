@@ -16,7 +16,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-core</artifactId>
+      <artifactId>metis-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

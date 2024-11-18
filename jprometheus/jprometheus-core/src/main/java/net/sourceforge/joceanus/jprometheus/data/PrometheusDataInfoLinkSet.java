@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;

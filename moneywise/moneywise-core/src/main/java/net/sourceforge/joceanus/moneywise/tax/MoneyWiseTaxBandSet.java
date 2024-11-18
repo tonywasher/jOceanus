@@ -21,10 +21,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;

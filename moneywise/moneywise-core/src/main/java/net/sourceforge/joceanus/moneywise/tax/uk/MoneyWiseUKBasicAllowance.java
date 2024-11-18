@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;

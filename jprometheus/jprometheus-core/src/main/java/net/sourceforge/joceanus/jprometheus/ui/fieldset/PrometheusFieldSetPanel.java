@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.ui.fieldset;
 
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 
 /**

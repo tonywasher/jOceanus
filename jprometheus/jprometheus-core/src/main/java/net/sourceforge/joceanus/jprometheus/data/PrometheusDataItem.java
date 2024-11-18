@@ -18,15 +18,15 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataEditState;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldState;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.jtethys.OceanusException;

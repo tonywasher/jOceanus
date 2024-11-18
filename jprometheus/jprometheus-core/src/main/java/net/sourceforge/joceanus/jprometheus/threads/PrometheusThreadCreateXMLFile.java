@@ -20,8 +20,8 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;

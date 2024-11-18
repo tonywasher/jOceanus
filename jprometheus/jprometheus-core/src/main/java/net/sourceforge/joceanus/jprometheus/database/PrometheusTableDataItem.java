@@ -23,10 +23,10 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;

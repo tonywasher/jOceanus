@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.coeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusAnnualFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 

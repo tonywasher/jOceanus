@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;

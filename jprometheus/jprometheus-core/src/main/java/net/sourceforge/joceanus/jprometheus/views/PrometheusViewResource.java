@@ -20,7 +20,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;

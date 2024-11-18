@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui;
 
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.jprometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.toolkit;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceView;

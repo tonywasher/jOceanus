@@ -22,7 +22,7 @@ import java.util.List;
 import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;

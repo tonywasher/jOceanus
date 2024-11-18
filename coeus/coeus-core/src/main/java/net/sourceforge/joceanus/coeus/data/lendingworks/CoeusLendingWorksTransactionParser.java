@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
+import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 

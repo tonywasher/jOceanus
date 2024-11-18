@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jprometheus.database;
 import java.util.EnumSet;
 import java.util.Set;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;

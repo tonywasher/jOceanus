@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.coeus.data.ratesetter.CoeusRateSetterLoader;
 import net.sourceforge.joceanus.coeus.data.zopa.CoeusZopaLoader;
 import net.sourceforge.joceanus.coeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.coeus.ui.CoeusPreference.CoeusPreferences;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 

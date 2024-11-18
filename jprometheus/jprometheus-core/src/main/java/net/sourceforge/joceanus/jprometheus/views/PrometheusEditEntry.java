@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.views;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;

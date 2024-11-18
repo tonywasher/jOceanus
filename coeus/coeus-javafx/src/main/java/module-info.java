@@ -23,7 +23,7 @@ module net.sourceforge.joceanus.coeus.javafx {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jtethys.javafx;
 

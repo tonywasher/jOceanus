@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.moneywise.ui.base;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;

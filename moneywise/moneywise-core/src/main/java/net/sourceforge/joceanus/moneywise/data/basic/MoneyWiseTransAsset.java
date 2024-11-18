@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 

@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.moneywise.ui.panel;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;

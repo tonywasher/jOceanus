@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.report.MetisReportBase;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;

@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.moneywise.ui.panel;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.report.MetisReportEvent;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;

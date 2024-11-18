@@ -23,13 +23,13 @@ module net.sourceforge.joceanus.moneywise.core {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.jprometheus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.jgordianknot.core;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jprometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.moneywise.quicken.definitions to net.sourceforge.joceanus.jmetis.core;
-    exports net.sourceforge.joceanus.moneywise.tax.uk to net.sourceforge.joceanus.jmetis.core;
+    exports net.sourceforge.joceanus.moneywise.quicken.definitions to net.sourceforge.joceanus.metis.core;
+    exports net.sourceforge.joceanus.moneywise.tax.uk to net.sourceforge.joceanus.metis.core;
     exports net.sourceforge.joceanus.moneywise.launch;
 }

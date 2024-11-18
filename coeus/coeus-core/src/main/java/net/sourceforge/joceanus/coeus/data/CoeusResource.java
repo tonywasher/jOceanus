@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.coeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 

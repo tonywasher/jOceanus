@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.database;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusControlKeySet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataKeySet;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;

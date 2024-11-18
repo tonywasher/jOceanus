@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.service.sheet;
 
-import java.io.InputStream;
-
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+
+import java.io.InputStream;
 
 /**
  * WorkBook Factory.

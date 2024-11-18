@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusMarket;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;

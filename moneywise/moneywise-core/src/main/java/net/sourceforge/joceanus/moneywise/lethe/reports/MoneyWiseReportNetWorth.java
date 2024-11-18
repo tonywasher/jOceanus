@@ -21,12 +21,12 @@ import java.util.Iterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTable;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
-import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.report.MetisReportBase;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;

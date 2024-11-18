@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.http.MetisHTTPYQLClient;
+import net.sourceforge.joceanus.metis.http.MetisHTTPYQLClient;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;

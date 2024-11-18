@@ -20,12 +20,12 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmetis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerExceptionWrapper;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.jprometheus.database.PrometheusDataStore;

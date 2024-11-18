@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.data.MetisDataEditState;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList.PrometheusDataListSet;

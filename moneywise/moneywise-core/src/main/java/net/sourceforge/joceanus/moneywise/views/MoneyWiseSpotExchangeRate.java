@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.moneywise.views;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.data.MetisDataEditState;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;

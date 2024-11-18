@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;

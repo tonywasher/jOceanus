@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 

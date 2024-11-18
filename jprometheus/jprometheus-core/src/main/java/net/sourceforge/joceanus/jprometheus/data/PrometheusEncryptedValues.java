@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

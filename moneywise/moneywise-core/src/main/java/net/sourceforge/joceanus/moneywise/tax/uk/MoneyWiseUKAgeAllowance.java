@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax.uk;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;

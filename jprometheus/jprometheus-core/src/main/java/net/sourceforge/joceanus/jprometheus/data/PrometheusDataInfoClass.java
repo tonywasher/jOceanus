@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.metis.data.MetisDataType;
 
 /**
  * DataInfoClass interface.

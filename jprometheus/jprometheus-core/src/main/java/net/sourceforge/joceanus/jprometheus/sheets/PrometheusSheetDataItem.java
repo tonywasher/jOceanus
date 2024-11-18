@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;

@@ -20,11 +20,11 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;

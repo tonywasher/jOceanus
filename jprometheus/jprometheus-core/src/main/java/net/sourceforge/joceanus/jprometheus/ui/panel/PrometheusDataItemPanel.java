@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui.panel;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.jmetis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;

@@ -31,7 +31,7 @@
     <module>themis</module>
     <module>coeus</module>
     <module>jprometheus</module>
-    <module>jmetis</module>
+    <module>metis</module>
     <module>jgordianknot</module>
     <module>jtethys</module>
   </modules>

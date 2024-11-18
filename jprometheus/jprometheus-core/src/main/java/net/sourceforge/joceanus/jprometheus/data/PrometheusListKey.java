@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jprometheus.data;
 
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldItemType;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
 
 /**
  * ListKey.

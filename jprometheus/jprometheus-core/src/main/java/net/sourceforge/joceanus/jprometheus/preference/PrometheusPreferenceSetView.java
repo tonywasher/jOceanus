@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preference;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet.MetisPreferenceItem;
-import net.sourceforge.joceanus.jmetis.ui.MetisPreferenceSetView;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
+import net.sourceforge.joceanus.metis.ui.MetisPreferenceSetView;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceSet.PrometheusByteArrayPreference;
 import net.sourceforge.joceanus.jprometheus.preference.PrometheusPreferenceSet.PrometheusCharArrayPreference;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;

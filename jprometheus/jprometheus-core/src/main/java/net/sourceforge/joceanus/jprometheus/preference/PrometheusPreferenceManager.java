@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preference;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

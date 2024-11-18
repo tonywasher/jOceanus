@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;

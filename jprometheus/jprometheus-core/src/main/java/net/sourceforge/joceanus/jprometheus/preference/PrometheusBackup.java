@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.jprometheus.preference;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;

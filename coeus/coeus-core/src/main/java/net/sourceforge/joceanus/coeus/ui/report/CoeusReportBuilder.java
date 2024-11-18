@@ -24,8 +24,8 @@ import org.w3c.dom.Document;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter;
-import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.report.MetisReportBase;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
 
 /**
  * Report Builder.

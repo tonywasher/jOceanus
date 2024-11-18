@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.help;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jmetis.help.MetisHelpModule.MetisHelpId;
+import net.sourceforge.joceanus.metis.help.MetisHelpModule.MetisHelpId;
 
 /**
  * Help Page definitions.

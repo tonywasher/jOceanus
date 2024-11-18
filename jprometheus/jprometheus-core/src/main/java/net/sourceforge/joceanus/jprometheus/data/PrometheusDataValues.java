@@ -27,12 +27,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 
 /**

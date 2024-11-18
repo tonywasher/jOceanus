@@ -11,7 +11,7 @@
   <dependencies>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jmetis-core</artifactId>
+      <artifactId>metis-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

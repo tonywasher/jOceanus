@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDeletableItem;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldUpdatableItem;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataDeletableItem;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldUpdatableItem;
 
 /**
  * Table Item interface.

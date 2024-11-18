@@ -25,7 +25,7 @@ module net.sourceforge.joceanus.jprometheus.core {
     /* jOceanus */
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jgordianknot.core;
-    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.jprometheus.sheet.api;
 
     /* Exports */

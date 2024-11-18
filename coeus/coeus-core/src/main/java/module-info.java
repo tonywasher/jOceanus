@@ -25,12 +25,12 @@ module net.sourceforge.joceanus.coeus.core {
     requires org.jsoup;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.coeus.ui.launch;
 
     /* Allow properties to be read */
-    opens net.sourceforge.joceanus.coeus.ui to net.sourceforge.joceanus.jmetis.core;
+    opens net.sourceforge.joceanus.coeus.ui to net.sourceforge.joceanus.metis.core;
 }
