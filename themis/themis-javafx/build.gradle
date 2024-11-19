@@ -1,0 +1,31 @@
+/* javaFX Specifics */
+plugins {
+    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+}
+javafx {
+    version = "$javaFXVersion"
+    modules = [ 'javafx.graphics' ]
+}
+
+/* Dependencies */
+dependencies {
+    implementation project(':themis-core')
+    implementation project(':tethys-javafx')
+    implementation project(':tethys-core')
+}
+
+/* Details */
+description = 'Themis JavaFX Project Framework'
+mainClass = "net.sourceforge.joceanus.themis.ui.javafx.Themis4FX"
+moduleName = "net.sourceforge.joceanus.themis.javafx"
+preLoaderClass = "net.sourceforge.joceanus.themis.ui.javafx.ThemisFXpreLoader"
+
+/* Register the project */
+registerProject(project) 
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

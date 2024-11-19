@@ -1,0 +1,27 @@
+/* Dependencies */
+dependencies {
+    implementation project(':prometheus-sheet-api')
+    implementation project(':metis-core')
+    implementation project(':gordianknot-core')
+    implementation project(':tethys-core')
+    runtimeOnly "com.mysql:mysql-connector-j:$mySQLVersion"
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$MariaDBVersion"
+    runtimeOnly "org.postgresql:postgresql:$postGreSQLVersion"
+    runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:$mssqlVersion"
+    runtimeOnly "com.h2database:h2:$h2Version"
+    runtimeOnly project(':prometheus-sheet-hssf')
+    runtimeOnly project(':prometheus-sheet-odf')
+}
+
+/* Description */
+description = 'Prometheus Core Application Framework'
+
+/* Register the project */
+registerProject(project) 
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

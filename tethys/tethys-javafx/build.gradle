@@ -1,0 +1,26 @@
+/* javaFX Specifics */
+plugins {
+    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+}
+javafx {
+    version = "$javaFXVersion"
+    modules = [ 'javafx.web', 'javafx.controls', 'javafx.graphics' ]
+}
+
+/* Dependencies */
+dependencies {
+    implementation project(':tethys-core')
+}
+
+/* Description */
+description = 'Tethys JavaFX Utilities'
+
+/* Register the project */
+registerProject(project) 
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)         
+    }
+}

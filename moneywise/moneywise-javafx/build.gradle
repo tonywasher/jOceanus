@@ -1,0 +1,31 @@
+/* JavaFX specific */
+plugins {
+    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+}
+javafx {
+    version = "$javaFXVersion"
+    modules = [ 'javafx.graphics' ]
+}
+
+/* Dependencies */
+dependencies {
+    implementation project(':moneywise-core')
+    implementation project(':tethys-javafx')
+    implementation project(':tethys-core')
+}
+
+/* Details */
+description = 'MoneyWise Personal Finance - javaFX'
+mainClass = "net.sourceforge.joceanus.moneywise.ui.javafx.MoneyWise4FX"
+moduleName = "net.sourceforge.joceanus.moneywise.javafx"
+preLoaderClass = "net.sourceforge.joceanus.moneywise.ui.javafx.MoneyWiseFXpreLoader"
+
+/* Register the project */
+registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

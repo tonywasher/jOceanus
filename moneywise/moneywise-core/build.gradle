@@ -1,0 +1,30 @@
+/* Dependencies */
+dependencies {
+    implementation project(':prometheus-core')
+    implementation project(':prometheus-sheet-api')
+    implementation project(':metis-core')
+    implementation project(':gordianknot-core')
+    implementation project(':tethys-core')
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
+}
+
+/* Description */
+description = 'MoneyWise Personal Finance - Core'
+
+/* Register the project */
+registerProject(project) 
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)
+}
+publishing.publications.maven.artifact(testsJar)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

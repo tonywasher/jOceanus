@@ -1,0 +1,19 @@
+/* Dependencies */
+dependencies {
+    implementation project(':prometheus-sheet-api')
+    implementation project(':tethys-core')
+    implementation "org.apache.poi:poi:$apachePOIVersion"
+}
+
+/* Description */
+description = 'Prometheus Sheet HSSF Service'
+
+/* Register the project */
+registerProject(project) 
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

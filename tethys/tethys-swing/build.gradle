@@ -1,0 +1,18 @@
+/* Dependencies */
+dependencies {
+    implementation project(':tethys-core')
+    implementation "org.jfree:jfreechart:$jFreeChartVersion"
+}
+
+/* Description */
+description = 'Tethys Java Swing Utilities'
+
+/* Register the project */
+registerProject(project) 
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)         
+    }
+}

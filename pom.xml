@@ -27,13 +27,13 @@
     </developer>
   </developers>
   <modules>
-    <module>jmoneywise</module>
-    <module>jthemis</module>
-    <module>jcoeus</module>
-    <module>jprometheus</module>
-    <module>jmetis</module>
-    <module>jgordianknot</module>
-    <module>jtethys</module>
+    <module>moneywise</module>
+    <module>themis</module>
+    <module>coeus</module>
+    <module>prometheus</module>
+    <module>metis</module>
+    <module>gordianknot</module>
+    <module>tethys</module>
   </modules>
   <scm>
     <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>

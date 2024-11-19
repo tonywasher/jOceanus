@@ -1,0 +1,22 @@
+/* Dependencies */
+dependencies {
+    implementation project(':coeus-core')
+    implementation project(':tethys-swing')
+    implementation project(':tethys-core')
+}
+
+/* Details */
+description = 'Coeus Swing Peer2Peer Analysis'
+mainClass = "net.sourceforge.joceanus.coeus.ui.swing.Coeus4Swing"
+moduleName = "net.sourceforge.joceanus.coeus.swing"
+splashScreen = "net/sourceforge/joceanus/coeus/ui/icons/swing/CoeusSplash.png"
+
+/* Register the project */
+registerProject(project) 
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}
