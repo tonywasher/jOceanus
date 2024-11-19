@@ -29,11 +29,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoClass;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList.PrometheusDataListSet;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 

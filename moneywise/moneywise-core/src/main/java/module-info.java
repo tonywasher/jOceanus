@@ -22,11 +22,11 @@ module net.sourceforge.joceanus.moneywise.core {
     requires java.xml;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.jprometheus.core;
+    requires net.sourceforge.joceanus.prometheus.core;
     requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.gordianknot.core;
     requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jprometheus.sheet.api;
+    requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Exports */
     exports net.sourceforge.joceanus.moneywise.quicken.definitions to net.sourceforge.joceanus.metis.core;

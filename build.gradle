@@ -191,7 +191,7 @@ task distribute {
         }
     }        
 }
-distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":coeus-javafx:jar", ":coeus-swing:jar", ":jprometheus-sheet-odf:jar", ":jprometheus-sheet-hssf:jar"
+distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":coeus-javafx:jar", ":coeus-swing:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
 assemble.dependsOn distribute
 
 /* Make sure distribution directory is cleared on clean */

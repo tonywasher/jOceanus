@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.statics;
 
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

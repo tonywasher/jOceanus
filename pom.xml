@@ -30,7 +30,7 @@
     <module>moneywise</module>
     <module>themis</module>
     <module>coeus</module>
-    <module>jprometheus</module>
+    <module>prometheus</module>
     <module>metis</module>
     <module>gordianknot</module>
     <module>jtethys</module>

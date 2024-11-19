@@ -21,11 +21,11 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusStaticDataClass;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

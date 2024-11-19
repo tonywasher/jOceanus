@@ -13,7 +13,7 @@
     <module>gordianknot-core</module>
   </modules>
   <properties>
-    <scmComponent>jgordianknot</scmComponent>
+    <scmComponent>gordianknot</scmComponent>
     <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

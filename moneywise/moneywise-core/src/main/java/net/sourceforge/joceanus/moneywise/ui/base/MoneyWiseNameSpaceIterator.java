@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
-import net.sourceforge.joceanus.jprometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * NameSpace iterator.

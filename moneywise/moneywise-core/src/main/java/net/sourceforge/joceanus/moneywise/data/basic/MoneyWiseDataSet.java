@@ -61,10 +61,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWi
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
-import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusListKey;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;

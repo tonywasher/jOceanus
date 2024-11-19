@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.moneywise.sheets;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetDataInfo;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetDataInfo;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

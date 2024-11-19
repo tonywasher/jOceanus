@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
-import net.sourceforge.joceanus.jprometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
 

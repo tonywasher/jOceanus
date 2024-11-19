@@ -27,12 +27,12 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.jprometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.jprometheus.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

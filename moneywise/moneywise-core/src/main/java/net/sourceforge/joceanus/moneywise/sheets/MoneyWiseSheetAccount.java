@@ -32,9 +32,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadCancelException;
