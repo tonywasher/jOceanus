@@ -34,6 +34,7 @@
     <module>metis</module>
     <module>gordianknot</module>
     <module>tethys</module>
+    <module>oceanus</module>
   </modules>
   <scm>
     <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>
@@ -512,11 +513,11 @@
           </reportSet>
         </reportSets>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javancss-maven-plugin</artifactId>
         <version>${JavaNCSSPluginVersion}</version>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>

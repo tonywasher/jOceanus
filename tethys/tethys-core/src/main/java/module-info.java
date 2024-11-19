@@ -22,15 +22,8 @@ module net.sourceforge.joceanus.tethys.core {
     /* External libraries */
     requires org.jsoup;
 
-    /* Exports */
-    exports net.sourceforge.joceanus.tethys;
-    exports net.sourceforge.joceanus.tethys.date;
-    exports net.sourceforge.joceanus.tethys.decimal;
-    exports net.sourceforge.joceanus.tethys.event;
-    exports net.sourceforge.joceanus.tethys.jar;
-    exports net.sourceforge.joceanus.tethys.logger;
-    exports net.sourceforge.joceanus.tethys.profile;
-    exports net.sourceforge.joceanus.tethys.resource;
+    /* Oceanus */
+    requires net.sourceforge.joceanus.core;
 
     /* New exports */
     exports net.sourceforge.joceanus.tethys.ui.api.base;

@@ -2,6 +2,7 @@
 dependencies {
     implementation project(':metis-core')
     implementation project(':tethys-core')
+    implementation project(':oceanus')
     implementation "org.jsoup:jsoup:$jsoupVersion"
 }
 

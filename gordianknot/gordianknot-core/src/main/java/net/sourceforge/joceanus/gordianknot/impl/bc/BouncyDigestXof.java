@@ -50,7 +50,9 @@ public class BouncyDigestXof
     }
 
     @Override
-    public int output(byte[] pOutBuf, int pOutOff, int pOutLen) {
+    public int output(final byte[] pOutBuf,
+                      final int pOutOff,
+                      final int pOutLen) {
         return theXof.doOutput(pOutBuf, pOutOff, pOutLen);
     }
 

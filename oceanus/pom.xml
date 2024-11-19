@@ -2,28 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
-    <artifactId>themis</artifactId>
+    <artifactId>joceanus</artifactId>
     <version>1.6.3-SNAPSHOT</version>
   </parent>
-  <artifactId>themis-core</artifactId>
-  <name>Themis Core Project Framework</name>
-  <description>Java Core Project Framework</description>
+  <artifactId>oceanus</artifactId>
+  <name>Oceanus Java Core Utilities</name>
+  <description>Java Core Utilities</description>
   <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>metis-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tethys-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -38,6 +23,8 @@
     </dependency>
   </dependencies>
   <properties>
+    <scmComponent>oceanus</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
     <moduleName>${packageName}.core</moduleName>
   </properties>
 </project>

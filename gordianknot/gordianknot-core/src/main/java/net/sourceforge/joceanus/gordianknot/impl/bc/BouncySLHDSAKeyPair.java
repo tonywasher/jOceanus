@@ -310,7 +310,7 @@ public final class BouncySLHDSAKeyPair {
 
             /* Initialise and set the signer */
             final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) getKeyPair().getPrivateKey();
-            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             if (isHash) {
                 theHashSigner.init(true, myParms);
             } else {

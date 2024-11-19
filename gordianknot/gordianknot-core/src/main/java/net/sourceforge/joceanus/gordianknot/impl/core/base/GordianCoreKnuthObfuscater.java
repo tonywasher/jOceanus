@@ -570,7 +570,7 @@ public class GordianCoreKnuthObfuscater
      * @return the bit shift
      */
     private static int determineShiftForDigestSubSpec() {
-        int myShift = determineShiftForEnum(GordianDigestState.class);
+        final int myShift = determineShiftForEnum(GordianDigestState.class);
         return Math.max(myShift, determineShiftForEnum(GordianAsconSubSpec.class));
     }
 

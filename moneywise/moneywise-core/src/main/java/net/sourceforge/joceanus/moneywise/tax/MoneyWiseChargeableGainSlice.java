@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
@@ -33,10 +29,14 @@ import net.sourceforge.joceanus.tethys.date.TethysDateRange;
 import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Chargeable Gains Slice record.
  */
-public class MoneyWiseChargeableGainSlice
+public final class MoneyWiseChargeableGainSlice
         implements MetisFieldItem {
     /**
      * Local Report fields.
@@ -112,7 +112,7 @@ public class MoneyWiseChargeableGainSlice
         theTrans = pTrans;
         theDate = theTrans.getDate();
         theGain = pGain;
-        theSlice= pSlice;
+        theSlice = pSlice;
         theYears = pYears;
     }
 

@@ -60,7 +60,7 @@ public enum GordianMLDSASpec {
      * @return true/false
      */
     public boolean isHash() {
-        switch(this) {
+        switch (this) {
             case MLDSA44SHA:
             case MLDSA65SHA:
             case MLDSA87SHA:

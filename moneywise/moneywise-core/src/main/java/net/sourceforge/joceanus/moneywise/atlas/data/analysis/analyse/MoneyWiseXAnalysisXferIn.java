@@ -164,7 +164,7 @@ public class MoneyWiseXAnalysisXferIn {
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
         /* Obtain credit amount and credit delta units */
-        TethysUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
+        final TethysUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
 
         /* Access the Asset Security Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);

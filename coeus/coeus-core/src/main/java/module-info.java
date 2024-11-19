@@ -24,9 +24,10 @@ module net.sourceforge.joceanus.coeus.core {
     /* External Libraries */
     requires org.jsoup;
 
-    /* jOceanus */
+    /* Oceanus */
     requires net.sourceforge.joceanus.metis.core;
     requires net.sourceforge.joceanus.tethys.core;
+    requires net.sourceforge.joceanus.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.coeus.ui.launch;

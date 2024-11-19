@@ -46,12 +46,16 @@ public class BouncyMacXof
     }
 
     @Override
-    public int finish(byte[] pOutBuf, int pOutOff, int pOutLen) {
+    public int finish(final byte[] pOutBuf,
+                      final int pOutOff,
+                      final int pOutLen) {
         return theXof.doFinal(pOutBuf, pOutOff, pOutLen);
     }
 
     @Override
-    public int output(byte[] pOutBuf, int pOutOff, int pOutLen) {
+    public int output(final byte[] pOutBuf,
+                      final int pOutOff,
+                      final int pOutLen) {
         return theXof.doOutput(pOutBuf, pOutOff, pOutLen);
     }
 

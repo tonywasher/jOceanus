@@ -16,17 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.swing.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.core.dialog.TethysUICoreChildDialog;
 import net.sourceforge.joceanus.tethys.ui.swing.base.TethysUISwingNode;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+/**
+ * Swing Child Dialog.
+ */
 public class TethysUISwingChildDialog
         extends TethysUICoreChildDialog {
     /**

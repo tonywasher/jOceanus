@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import java.util.Currency;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -51,6 +47,10 @@ import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The Security Bucket class.
@@ -563,14 +563,14 @@ public final class MoneyWiseXAnalysisSecurityBucket
         }
 
         /* If we are funded */
-        TethysMoney myFunded = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED));
+        final TethysMoney myFunded = new TethysMoney(theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED));
         if (myFunded.isNonZero()) {
             /* Set funded to zero */
             theValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.FUNDED);
 
             /* If we have zero units, honour autoUnits */
             final MoneyWiseSecurityClass mySecClass = getSecurity().getCategoryClass();
-            TethysUnits myUnits = theValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+            final TethysUnits myUnits = theValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
             if (myUnits.isZero() && mySecClass.isAutoUnits()) {
                 final TethysUnits myAutoUnits = TethysUnits.getWholeUnits(mySecClass.getAutoUnits());
                 theValues.setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, myAutoUnits);

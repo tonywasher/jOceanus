@@ -167,6 +167,7 @@ public class GordianHKDFEngine {
     /**
      * Extract keying material.
      * @param ikmIterator the iterator over the initial keying material
+     * @return the extracted material
      * @throws OceanusException on error
      */
     private byte[] extractKeyingMaterial(final Iterator<byte[]> ikmIterator) throws OceanusException {
@@ -181,6 +182,7 @@ public class GordianHKDFEngine {
     /**
      * Expane the pseudo-random key.
      * @param pPRK the pseudo-random key
+     * @return the expanded material
      * @throws OceanusException on error
      */
     private byte[] expandKeyingMaterial(final byte[] pPRK) throws OceanusException {
@@ -190,6 +192,7 @@ public class GordianHKDFEngine {
         /* Allocate the output buffer */
         int myLenRemaining = theParams.getLength();
         final byte[] myOutput = new byte[myLenRemaining];
+        final int myHashLen = theHMac.getMacSize();
 
         /* Initialise variables */
         byte[] myInput = null;
@@ -216,7 +219,7 @@ public class GordianHKDFEngine {
             myInput = theHMac.finish();
 
             /* Output the required bytes */
-            int myLenToCopy = Math.min(myLenRemaining, 32);
+            final int myLenToCopy = Math.min(myLenRemaining, myHashLen);
             System.arraycopy(myInput, 0, myOutput, myOffset, myLenToCopy);
             myOffset += myLenToCopy;
             myLenRemaining -= myLenToCopy;

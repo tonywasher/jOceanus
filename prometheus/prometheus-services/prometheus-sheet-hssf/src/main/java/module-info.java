@@ -22,7 +22,8 @@ module net.sourceforge.joceanus.prometheus.sheet.hssf {
     /* External libraries */
     requires org.apache.poi.poi;
 
-    /* jOceanus */
+    /* Oceanus */
+    requires net.sourceforge.joceanus.core;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 

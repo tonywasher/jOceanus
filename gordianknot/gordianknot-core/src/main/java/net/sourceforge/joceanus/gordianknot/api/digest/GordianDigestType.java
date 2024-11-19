@@ -193,7 +193,7 @@ public enum GordianDigestType {
      */
     public GordianLength getDefaultLength() {
 
-        switch(this) {
+        switch (this) {
             case MD2:
             case MD4:
             case MD5:

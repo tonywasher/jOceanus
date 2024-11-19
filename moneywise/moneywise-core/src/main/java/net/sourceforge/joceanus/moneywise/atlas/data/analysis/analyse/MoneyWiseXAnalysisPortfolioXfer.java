@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.moneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
@@ -33,6 +31,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.tethys.OceanusException;
 import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+
+import java.util.Iterator;
 
 /**
  * Portfolio Xfer support.
@@ -178,10 +178,10 @@ public class MoneyWiseXAnalysisPortfolioXfer {
     private void processPortfolioXfer(final MoneyWiseXAnalysisSecurityBucket pSource,
                                       final MoneyWiseXAnalysisSecurityBucket pTarget) {
         /* Access source details */
-        MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();
-        TethysUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-        TethysMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-        TethysMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
+        final MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();
+        final TethysUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        final TethysMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        final TethysMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
 
         /* Determine value of the stock being transferred */
         final TethysMoney myStockValue = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);

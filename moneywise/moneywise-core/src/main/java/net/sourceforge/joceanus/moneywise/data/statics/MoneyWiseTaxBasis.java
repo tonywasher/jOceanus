@@ -128,7 +128,7 @@ public class MoneyWiseTaxBasis
     }
 
     /**
-     * Represents a list of {@link TaxBasis} objects.
+     * Represents a list of {@link MoneyWiseTaxBasis} objects.
      */
     public static class MoneyWiseTaxBasisList
             extends PrometheusStaticList<MoneyWiseTaxBasis> {

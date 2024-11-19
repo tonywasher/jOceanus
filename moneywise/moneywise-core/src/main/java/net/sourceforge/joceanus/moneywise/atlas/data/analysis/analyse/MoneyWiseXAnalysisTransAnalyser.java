@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.List;
-
 import net.sourceforge.joceanus.moneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
@@ -41,6 +39,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryCla
 import net.sourceforge.joceanus.tethys.OceanusException;
 import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+
+import java.util.List;
 
 /**
  * Transaction analyser.
@@ -447,7 +447,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     }
 
     /**
-     * adjustForeignDebit
+     * adjustForeignDebit.
      * @param pExchangeRate the exchangeRate
      * @return the adjusted debitAmount
      */
@@ -470,7 +470,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     }
 
     /**
-     * adjustForeignCredit
+     * adjustForeignCredit.
      * @param pExchangeRate the exchangeRate
      * @return the adjusted creditAmount
      */

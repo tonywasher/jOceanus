@@ -173,7 +173,7 @@ public class MoneyWiseXAnalysisSecurity {
     }
 
     /**
-     * Obtain the trans analyser
+     * Obtain the trans analyser.
      * @return the transAnalyser
      */
     MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
@@ -181,7 +181,7 @@ public class MoneyWiseXAnalysisSecurity {
     }
 
     /**
-     * Obtain the xferIn analyser
+     * Obtain the xferIn analyser.
      * @return the xferInAnalyser
      */
     MoneyWiseXAnalysisXferIn getXferInAnalyser() {
@@ -297,6 +297,7 @@ public class MoneyWiseXAnalysisSecurity {
 
     /**
      * adjust Asset Valuation.
+     * @param pAsset the asset
      */
     void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
         /* Value the asset and calculate unrealised gains */

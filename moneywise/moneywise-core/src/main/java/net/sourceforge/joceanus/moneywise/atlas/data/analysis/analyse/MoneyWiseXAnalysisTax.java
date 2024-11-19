@@ -156,7 +156,7 @@ public class MoneyWiseXAnalysisTax {
     }
 
     /**
-     * Declare the Security analyser
+     * Declare the Security analyser.
      * @param pSecurity the securityAnalyser
      */
     void declareSecurityAnalyser(final MoneyWiseXAnalysisSecurity pSecurity) {
@@ -628,9 +628,6 @@ public class MoneyWiseXAnalysisTax {
      * @throws OceanusException on error
      */
     private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
-        if (pTrans == null) {
-            int i = 0;
-        }
         /* Switch on the category type */
         switch (pTrans.getCategoryClass()) {
             case TAXEDINCOME:

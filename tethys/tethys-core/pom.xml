@@ -6,9 +6,14 @@
     <version>1.6.3-SNAPSHOT</version>
   </parent>
   <artifactId>tethys-core</artifactId>
-  <name>Tethys Java Core Utilities</name>
-  <description>Java Core Utilities</description>
+  <name>Tethys UI Core Utilities</name>
+  <description>UI Core Utilities</description>
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>oceanus</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>

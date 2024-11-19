@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.tethys.date.TethysDate;
@@ -29,6 +26,9 @@ import net.sourceforge.joceanus.tethys.decimal.TethysRate;
 import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Values for a bucket.
@@ -66,7 +66,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
     }
 
     /**
-     * Reset nonPreserved items
+     * Reset nonPreserved items.
      */
     void resetNonPreserved() {
         /* Loop through the constants */

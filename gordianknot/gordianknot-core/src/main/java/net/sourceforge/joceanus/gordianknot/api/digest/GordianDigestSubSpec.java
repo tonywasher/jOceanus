@@ -138,7 +138,7 @@ public interface GordianDigestSubSpec {
         }
 
         /**
-         * Is this state a hybrid for sha2 length
+         * Is this state a hybrid for sha2 length?
          * @param pLength the length
          * @return true/false
          */

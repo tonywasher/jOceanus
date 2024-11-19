@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.time.temporal.ChronoUnit;
-
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -32,6 +30,8 @@ import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.tethys.decimal.TethysRate;
 import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+
+import java.time.temporal.ChronoUnit;
 
 /**
  * Debit XferOut Analysis.
@@ -145,8 +145,8 @@ public class MoneyWiseXAnalysisXferOut {
                 : theTransaction.getDebitAmount();
 
         /* Assume that the allowed cost is the full value */
-        TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-        TethysMoney myAllowedCost;
+        final TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        final TethysMoney myAllowedCost;
         final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Determine the delta units */

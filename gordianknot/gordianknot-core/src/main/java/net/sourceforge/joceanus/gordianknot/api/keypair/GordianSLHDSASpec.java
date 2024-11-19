@@ -151,7 +151,7 @@ public enum GordianSLHDSASpec {
      * @return true/false
      */
     public boolean isHash() {
-        switch(this) {
+        switch (this) {
             case SHA128F:
             case SHA128S:
             case SHA192F:

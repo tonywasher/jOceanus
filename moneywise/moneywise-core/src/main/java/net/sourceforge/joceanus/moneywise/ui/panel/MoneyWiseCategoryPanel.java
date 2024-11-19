@@ -52,6 +52,9 @@ import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUICardPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 
+/**
+ * Category panel.
+ */
 public class MoneyWiseCategoryPanel
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**

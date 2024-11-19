@@ -4,6 +4,7 @@ dependencies {
     implementation project(':metis-core')
     implementation project(':gordianknot-core')
     implementation project(':tethys-core')
+    implementation project(':oceanus')
     runtimeOnly "com.mysql:mysql-connector-j:$mySQLVersion"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$MariaDBVersion"
     runtimeOnly "org.postgresql:postgresql:$postGreSQLVersion"

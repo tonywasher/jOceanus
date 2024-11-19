@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.Currency;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -32,6 +29,9 @@ import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+
+import java.util.Currency;
+import java.util.Objects;
 
 /**
  * Stock Takeover analysis.
@@ -160,9 +160,9 @@ public class MoneyWiseXAnalysisTakeover {
 
         /* Access the Asset Security Buckets */
         final MoneyWiseXAnalysisSecurityBucket myDebitAsset = thePortfolios.getBucket(myDebit);
-        MoneyWiseXAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
+        final MoneyWiseXAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
         final MoneyWiseXAnalysisSecurityBucket myCreditAsset = thePortfolios.getBucket(myCredit);
-        MoneyWiseXAnalysisSecurityValues myCreditValues = myDebitAsset.getValues();
+        final MoneyWiseXAnalysisSecurityValues myCreditValues = myDebitAsset.getValues();
 
         /* Get the appropriate prices for the assets */
         final TethysMoney myStartingDebitValue = myDebitValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);

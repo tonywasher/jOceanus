@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
 /**
- * Tethys Swing.
+ * Oceanus Core.
  */
-module net.sourceforge.joceanus.tethys.swing {
-    /* Java runTime */
-    requires java.desktop;
-
-    /* External libraries */
-    requires org.jfree.jfreechart;
-
-    /* Oceanus */
-    requires net.sourceforge.joceanus.core;
-    requires net.sourceforge.joceanus.tethys.core;
-
+module net.sourceforge.joceanus.core {
     /* Exports */
-    exports net.sourceforge.joceanus.tethys.ui.swing.launch;
+    exports net.sourceforge.joceanus.tethys;
+    exports net.sourceforge.joceanus.tethys.date;
+    exports net.sourceforge.joceanus.tethys.decimal;
+    exports net.sourceforge.joceanus.tethys.event;
+    exports net.sourceforge.joceanus.tethys.jar;
+    exports net.sourceforge.joceanus.tethys.logger;
+    exports net.sourceforge.joceanus.tethys.profile;
+    exports net.sourceforge.joceanus.tethys.resource;
 }
